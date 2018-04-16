@@ -1,0 +1,24 @@
+1.Version filed -> taken from path.keyword
+	Language : Painless
+	Type     : String
+	Format   : -default-
+	Script   : 
+			def m = /(([0-9]+\.)+[0-9]+)+/.matcher(doc['path.keyword'].value);
+			for(int i=0;i<2;i++){
+			if(!m.find()){
+				return "no version value"
+				} 
+			}
+			return m.group()
+			
+			
+2.Folder filed -> taken from path.keyword
+	Language : Painless
+	Type     : String
+	Format   : -default-
+	Script   : 
+			Matcher m = /(asil\-.+\-[a-z]+)/.matcher(doc['path.keyword'].value);
+			if(m.find()) {
+				return m.group();
+			}
+			return "";

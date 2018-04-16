@@ -1,0 +1,80 @@
+package Utils.Iperf;
+
+import Utils.GeneralUtils;
+import Utils.Pair;
+
+public abstract class IPerfWindowsMachine extends IPerfMachine{
+	private String lastReadedLine;
+	protected abstract String sendCommandAndWaitForRespond(String command);
+	
+	public IPerfWindowsMachine() {
+		super();
+		lastReadedLine = "";
+	}
+
+	@Override
+	public boolean connect() {
+		resetParams();
+		preAddressTpFile = "C:\\Users\\"+username+"\\";
+		return false;
+	}
+
+	@Override
+	public void disconnect() {
+		GeneralUtils.printToConsole("IPerfWindowsMachine.disconnect did NOT Implemented.");
+	}
+	
+	public Pair<Boolean, String> returnPair(Boolean status) {
+		Pair<Boolean, String> res = new Pair<Boolean, String>(status, "");
+		return res;
+	}
+
+	@Override
+	public boolean startIPerfTraffic(String clientCommand, String tpFileName){
+		clientCommand = "iperf " + clientCommand;
+		sendCommand(clientCommand);
+		return true;
+	}
+	
+	@Override
+	public boolean startIPerfListener(Integer numberOfParallelIPerfStreams, String serverCommand, String tpFileName) {
+		lastReadedLine = "";
+		serverCommand = "iperf " + serverCommand;
+		String windowsServerCommand = serverCommand + " > " + preAddressTpFile + tpFileName;
+		if(numberOfParallelIPerfStreams != null && numberOfParallelIPerfStreams > 1){
+			windowsServerCommand = serverCommand + " | find \"SUM\" > " + preAddressTpFile + tpFileName;
+		}else{
+			windowsServerCommand = serverCommand + " > " + preAddressTpFile + tpFileName;
+		}
+		return sendCommand(windowsServerCommand).getElement0();
+	}
+
+	@Override
+	public boolean stopIPerf(){
+		return sendCommand("taskkill /f /im iperf.exe").getElement0();
+	}
+
+	protected abstract Process sendCommandAndReturtExexcProcess(String string);
+	
+	@Override
+	public String getStrCounters(String tpCountersFileNames) {
+		String respond = "";
+		String[] tpCountersFileNamesArray = tpCountersFileNames.split(".txt");
+		if(tpCountersFileNamesArray != null){
+			for(String fileName : tpCountersFileNamesArray){
+				int numberOfLinesForSample = 0;
+				numberOfLinesForSample = IPerfMachine.getNumberOfLinesForSample();
+				String getLastTpLines = "tail -"+numberOfLinesForSample+" " + fileName.trim() +".txt";
+				respond += ("==> " + fileName.trim() + ".txt" + "\n");
+				respond += sendCommandAndWaitForRespond(getLastTpLines);
+			}
+		}
+		if(lastReadedLine.equals(respond)){
+			respond = "";
+		}else{
+			lastReadedLine = respond;
+		}
+		GeneralUtils.printToConsole("### " + respond + " ###");
+		return respond;
+	}
+}

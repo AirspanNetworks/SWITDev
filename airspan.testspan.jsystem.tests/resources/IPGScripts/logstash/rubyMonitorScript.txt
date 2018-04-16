@@ -1,0 +1,62 @@
+# JSON Parsing example
+require "rubygems"
+require "json"
+require "fileutils"
+
+#Remove /home/logHello.log file
+def removeLogFile(myFileString)
+        if(File.file?(myFileString))
+                FileUtils.rm(myFileString);
+        end
+end
+
+#get pipeline -> events -> in value
+def getInPipeLineValue(myFileString)
+        file = open(myFileString);
+        json = file.read;
+        parsed = JSON.parse(json);
+        inP = parsed["pipeline"] ["events"] ["in"];
+        return inP;
+end
+
+
+#send curl command for logstash stats
+def sendCurlCommand(myFileString)
+        system("curl -s -XGET http://localhost:9601/_node/stats/pipeline?pretty >> "+myFileString);
+end
+
+
+##PROGRAM START##
+myFileString = String.new("rubyLog.log");
+arrayOfIns = [1,1,1,1,1];
+sum = 0;
+avrage = 0;
+
+#Getting Start Value
+        removeLogFile(myFileString);
+        sendCurlCommand(myFileString);
+        startValue = getInPipeLineValue(myFileString);
+        puts("start Value : "+startValue.to_s);
+
+#Getting 5 new results
+        i=0
+        loop do
+                i += 1
+                if (i == 5)
+                        break
+                end
+                removeLogFile(myFileString);
+                sendCurlCommand(myFileString);
+                arrayOfIns[i] = getInPipeLineValue(myFileString) - startValue;
+                startValue += arrayOfIns[i];
+                sum += arrayOfIns[i];
+                puts("Sample "+i.to_s+" "+arrayOfIns[i].to_s);
+                sleep(1);
+        end
+
+#Checking Avrage value.
+        if(sum == 0)
+                abort("Sum of all results is 0!");
+        end
+        avrage = sum / 3;
+        puts("Avrage : "+avrage.to_s);

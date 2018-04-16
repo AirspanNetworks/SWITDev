@@ -1,0 +1,54 @@
+package Netspan.DataObjects;
+
+import Netspan.API.Enums.DiscoveredByValues;
+import Netspan.API.Enums.EnbTypes;
+import Netspan.API.Enums.HandoverType;
+import Netspan.API.Enums.HoControlStateTypes;
+import Netspan.API.Enums.X2ControlStateTypes;
+import Netspan.API.Enums.NghCellStatus;
+
+public class NeighborData {
+	public String name;
+	public String ipAddress;
+    public Integer pci;
+    public EnbTypes enbType;
+    public String enbId;
+    public Integer cellId;
+    public Integer cellIdentity;
+    public Integer tac;
+    public Integer downlinkEarfcn;
+    public String mcc;
+    public String mnc;
+    public HoControlStateTypes hoControlStatus;
+    public X2ControlStateTypes x2ControlStatus;
+    public HandoverType handoverType;
+    public DiscoveredByValues discoveredBy;
+    public Boolean isStaticNeighbour;
+    public Integer hoSuccessRate;
+    public Integer pi;
+    public String qOffset;
+    public String activeQOffset;
+    public String mvno1Mcc;
+    public String mvno1Mnc;
+    public String mvno2Mcc;
+    public String mvno2Mnc;
+    public String mvno3Mcc;
+    public String mvno3Mnc;
+    public String mvno4Mcc;
+    public String mvno4Mnc;
+    public String mvno5Mcc;
+    public String mvno5Mnc;
+    public String cellIndividualOffset;
+    public String activeCellIndividualOffset;
+    public Integer prachRsi;
+    public Integer prachRsi0CorelZoneConfig;
+    public Integer prachFreqOffset;
+    public Integer prachCfgIndex;
+    public Integer commsStatus;
+    public String commsStatusDisplay;
+    public String neighbourOfCell;
+    public NghCellStatus cellStatus;
+    public Integer csgId;
+    public Integer avgRsrp;
+    public Boolean interferingNeighbor;
+}

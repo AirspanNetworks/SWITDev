@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Logger>
+<!--###############################################################
+	log lines to search on the getCounters test
+  ###############################################################-->  
+  
+   <Logline exp="FAIL not enough memory for" src="XLP" count="True">
+    <Severity>ERROR</Severity>
+  </Logline>
+    <Logline exp="GPS ERROR" src="XLP">
+    <Severity>ERROR</Severity>
+  </Logline>
+    <Logline exp="CON RES FAILURE" src="XLP" count="True">
+    <Severity>ERROR</Severity>
+  </Logline>
+    <Logline exp="enodeb:WR INFO&gt; UE LINK FAILURE DETECTED" src="XLP" count="True">
+    <Severity>ERROR</Severity>
+  </Logline>
+    <Logline exp="28V is down" src="XLP" count="True">
+    <Severity>ERROR</Severity>
+  </Logline>
+  <Logline exp="&lt;=== UE [RRC] CONNECTION REESTABLISHMENT REQUEST" src="XLP" count="True">
+    <Severity>ERROR</Severity>
+  </Logline>
+  
+<!--###############################################################
+	log lines related to Testspan - DO NOT TOUCH ! ! !
+  ###############################################################-->
+  <Logline exp="ASIL XLP Stage 1 Loader" src="XLP">
+    <Severity>SYSTEM</Severity>
+    <Categories>
+      <Category name="StateChange">
+        <Subcategory name="Booting" />
+      </Category>
+    </Categories>
+  </Logline>  
+  <Logline exp="Booted from" src="XLP">
+    <Severity>SYSTEM</Severity>
+    <Categories>
+      <Category name="StateChange">
+        <Subcategory name="Booting" />
+      </Category>
+    </Categories>
+  </Logline>
+  <Logline exp="Android Bootloader" src="XLP">
+	<Severity>SYSTEM</Severity> 
+- 	<Categories>
+- 		<Category name="StateChange">
+			<Subcategory name="Booting" /> 
+		</Category>
+	</Categories>
+  </Logline>
+   <Logline exp="Starting ENB" src="XLP">
+    <Severity>SYSTEM</Severity>
+    <Categories>
+      <Category name="StateChange">
+        <Subcategory name="Starting" />
+      </Category>
+    </Categories>
+  </Logline> 
+  <Logline exp="STARTING AIRSPAN ENB" src="XLP">
+    <Severity>SYSTEM</Severity>
+    <Categories>
+      <Category name="StateChange">
+        <Subcategory name="Starting" />
+      </Category>
+    </Categories>
+  </Logline> 
+  <Logline exp="middle of core dumping" src="XLP" count="True">
+    <Severity>FAIL</Severity>
+    <Categories>
+      <Category name="StateChange">
+        <Subcategory name="CoreDump" />
+      </Category>
+      <Category name="CoreDump">
+        <Subcategory name="start" />
+      </Category>
+    </Categories>
+  </Logline> 
+  <Logline exp="Corecare" src="XLP">
+    <Severity>FAIL</Severity>
+    <Categories>
+      <Category name="StateChange">
+        <Subcategory name="CoreDump" />
+      </Category>
+      <Category name="CoreDump">
+        <Subcategory name="finish" />
+      </Category>
+    </Categories>
+  </Logline> 
+  <Logline exp="Segmentation fault" src="XLP" count="True">
+    <Severity>WARNING</Severity>
+    <Categories>
+      <Category name="StateChange">
+        <Subcategory name="CoreDump" />
+      </Category>
+    </Categories>
+  </Logline> 
+  <Logline exp="  PHY " src="XLP">
+    <Severity>SYSTEM</Severity>
+    <Categories>
+      <Category name="BootVars">
+        <Subcategory name="PHY" />
+      </Category>
+    </Categories>
+  </Logline> 
+    <Logline exp="PHY ASSERT DETECTED" src="XLP" count="true">
+    <Severity>FAIL</Severity>
+    <Categories>
+      <Category name="StateChange">
+        <Subcategory name="PhyAssert" />
+      </Category>
+     <Category name="Assert">
+     	<Subcategory name="PHY"/>
+     </Category>
+    </Categories>
+  </Logline>
+   <Logline exp="Booting..." src="DAN">
+    <Severity>SYSTEM</Severity>
+    <Categories>
+    <Category name="StateChange">
+      <Subcategory name="Booting" />
+    </Category>
+    </Categories>
+  </Logline>
+  <Logline exp="phy_start" src="DAN">
+    <Severity>SYSTEM</Severity>
+    <Categories>
+    <Category name="StateChange">
+      <Subcategory name="Starting" />
+    </Category>
+    </Categories>
+  </Logline>
+  <Logline exp="U-Boot" src="Wintegra">
+    <Severity>SYSTEM</Severity>
+    <Categories>
+    <Category name="StateChange">
+      <Subcategory name="Booting" />
+    </Category>
+    </Categories>
+  </Logline>
+  <Logline exp="Welcome to Airspan Air4G" src="Wintegra">
+    <Severity>SYSTEM</Severity>
+    <Categories>
+    <Category name="StateChange">
+      <Subcategory name="Starting" />
+    </Category>
+    </Categories>
+  </Logline>
+</Logger>

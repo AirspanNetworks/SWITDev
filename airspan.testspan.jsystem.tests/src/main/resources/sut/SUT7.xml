@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sut validators="">
+
+	<SingleDUT>Velocity86</SingleDUT>
+	<SecondSingleDUT>Velocity87</SecondSingleDUT>
+	<MultiDUT>Velocity86,Velocity87</MultiDUT>
+	<defaultRadioBW>20</defaultRadioBW>
+	<defaultRadioFC>2</defaultRadioFC>
+	<defaultPci>86</defaultPci>
+	<AutoPci>386</AutoPci>
+
+	<!-- Test Config -->
+	<TestConfig>
+		<class>TestingServices.TestConfig</class>
+		<nodes>Velocity86</nodes>
+		<staticUEs>static1</staticUEs>
+		<!--dynamicUEs>dyn2,dyn3,dyn4</dynamicUEs-->
+		<dynamicUEs>dyn2</dynamicUEs>
+		<UE_Restart>SNMP</UE_Restart>
+		<passCriteriaTPT>70</passCriteriaTPT>    
+		<interEarfcn>39150</interEarfcn>
+		<defaultEarfcn>39350</defaultEarfcn>
+		<pciStart>486</pciStart>
+		<pciEnd>490</pciEnd>
+	</TestConfig>
+
+	<!-- Cisco EPC -->
+	<EPC>
+		<class>EPC.CiscoEPC</class>
+		<ipAddress>192.168.58.63</ipAddress>
+		<username>root</username>
+		<password>SWITcis</password>
+		<MME index="0">
+		 <class>EPC.MME</class>
+			<s1IpAdress>172.23.52.4</s1IpAdress>
+			<S6aAddress>172.23.52.11</S6aAddress>
+		 </MME>
+		 <MME index="1">
+		 <class>EPC.MME</class>
+		 <s1IpAdress>172.21.52.4</s1IpAdress>
+		 <S6aAddress>172.23.52.11</S6aAddress>
+		 </MME>
+	</EPC>
+
+	<!-- IPG -->
+	<IPG>
+         <class>IPG.IPG</class>
+         <serverIP>192.168.58.128</serverIP>
+         <userName>swit</userName>
+         <serverPassword>swit_user1</serverPassword>
+		 <fakeIP>172.21.36.7</fakeIP>
+    </IPG>
+	
+	<!-- File Server -->
+	<FileServer>
+		<class>Utils.FTPServer</class>
+		<name>SWIT_FTP</name>
+		<ipAddress>100.100.0.250</ipAddress>
+		<username>swuser</username>
+		<password>sw_grp2</password>
+	</FileServer>
+	
+	<!-- Netspan -->
+	<NMS>
+		<class>Netspan.NBI_15_5.NetspanServer_15_5</class>
+		<hostname>192.168.58.47</hostname>
+	</NMS>
+
+	<!-- DHCP -->
+	<DHCP>
+		<class>Utils.DHCP</class>
+		<ipAddress>192.168.58.43</ipAddress>
+		<username>root</username>
+		<password>SWITswit</password>
+	</DHCP>
+
+	<!-- IPSec -->
+	<IPSecServer>
+		<class>Utils.IPSecServer</class>
+		<ipAddress>192.168.58.58</ipAddress>
+		<username>root</username>
+		<password>SWITswit</password>
+	</IPSecServer>
+
+	<!-- Upgrade server -->
+	<UpgradeServer>
+		<class>EnodeB.EnodeBUpgradeServer</class>
+		<upgradeServerIp>100.100.0.250</upgradeServerIp>
+		<upgradeUser>swuser</upgradeUser>
+		<upgradePassword>sw_grp2</upgradePassword>
+		<protocolType>tftp</protocolType>
+	</UpgradeServer>
+
+	<!-- Static UEs-->
+	<static1>
+		<class>UE.GemtekUE</class>
+		<IPerfUlMachine>192.7.1.253</IPerfUlMachine>
+		<IPerfDlMachine>91.91.71.240</IPerfDlMachine>
+		<wanIpAddress>42.42.7.1</wanIpAddress>
+		<lanIpAddress>192.7.1.254</lanIpAddress>
+		<imsi>200010001002970</imsi>
+		<powerControllerMapping>aviosys/A3</powerControllerMapping>
+	</static1>
+
+	<!-- Dynamic UEs -->
+	<dyn2>
+		<class>UE.GemtekUE</class>
+		<IPerfUlMachine>192.7.2.253</IPerfUlMachine>
+		<IPerfDlMachine>91.91.72.240</IPerfDlMachine>
+		<wanIpAddress>42.42.7.2</wanIpAddress>
+		<lanIpAddress>192.7.2.254</lanIpAddress>
+		<imsi>200010001002971</imsi>
+		<powerControllerMapping>aviosys/A3</powerControllerMapping>
+	</dyn2>
+	<!-- 
+	<dyn3>
+		<class>UE.AndroidUE</class>
+		<deviceId>eece68cb9804</deviceId>
+		<IPerfUlMachine>42.42.7.3</IPerfUlMachine>
+		<IPerfDlMachine>91.91.73.240</IPerfDlMachine>
+		<wanIpAddress>42.42.7.3</wanIpAddress>
+		<imsi>200010001007822</imsi>
+	</dyn3>
+	
+	<dyn4>
+		<class>UE.AndroidUE</class>
+		<deviceId>1222ce649804</deviceId>
+		<IPerfUlMachine>42.42.7.4</IPerfUlMachine>
+		<IPerfDlMachine>91.91.74.240</IPerfDlMachine>
+		<wanIpAddress>42.42.7.4</wanIpAddress>
+		<imsi>200010001008864</imsi>
+	</dyn4>
+	-->
+	<!-- EnodeBs configuration -->
+	
+	<Velocity86>
+		<class>EnodeB.AirVelocity</class>
+		<netspanName>SWIT7-Velocity86</netspanName>
+		<s1IpAddress>20.20.107.4</s1IpAddress>
+		<staticUEs>static1</staticUEs>
+		<enodeBVersion>15_5</enodeBVersion>
+		<connectInfo>
+			<class>EnodeB.ConnectionInfo</class>
+			<ipAddress>20.20.2.86</ipAddress>
+			<xlpInfo>
+				<class>EnodeB.SerialConnectionInfo</class>
+				<serialIP>192.168.58.94</serialIP>
+				<serialPort>4012</serialPort>
+			</xlpInfo>
+		</connectInfo>
+		<defaultNetspanProfiles>
+			<class>Utils.DefaultNetspanProfiles</class>
+			<systemDefault>SR15.5v7 AirVelocity system defaults</systemDefault>
+			<enodeBAdvanced>SR15.0 AirVelocity Defaults</enodeBAdvanced>
+			<Network>SWIT7_Velocity_VLAN_107_207_Cisco</Network>
+			<synchronisation>SWIT SVG Velocity PTP</synchronisation>
+			<security>SR14.5 AirVelocity Default_with_5_SSH</security>
+			<SON>SR14.2 AirVelocity Disabled_TPM Disabled</SON>
+			<management>SR14.0 AirVelocity: 5 minutes</management>
+			<multiCell>AirVelocity Default Disabled</multiCell>
+			<NeighbourManagement>AirVelocity default All PCI</NeighbourManagement>
+			<cellProfiles index="0">
+				<class>Utils.CellNetspanProfiles</class>
+				<cellId>1</cellId>
+				<PCI>86</PCI>
+				<cellAdvanced>SR15.0 AirVelocity Defaults</cellAdvanced>
+				<Radio>SWIT7-Velocity86_2.37_GHz_B40_20MHz_FC2_Tx_5dBm</Radio>
+				<Mobility>SR15.0v2 AirVelocity</Mobility>
+				<embms>SR14.5 AirVelocity Disabled</embms>
+				<trafficManagement>SR14.5 AirVelocity Defaults</trafficManagement>
+				<callTrace>AirVelocity Call Trace Disabled</callTrace>
+			</cellProfiles>
+		</defaultNetspanProfiles>
+	</Velocity86>
+	
+	<Velocity87>
+		<class>EnodeB.AirVelocity</class>
+		<netspanName>SWIT7-Velocity87</netspanName>
+		<s1IpAddress>20.20.107.5</s1IpAddress>
+		<enodeBVersion>15_5</enodeBVersion>
+		<connectInfo>
+			<class>EnodeB.ConnectionInfo</class>
+			<ipAddress>20.20.2.87</ipAddress>
+			<xlpInfo>
+				<class>EnodeB.SerialConnectionInfo</class>
+				<serialIP>192.168.58.94</serialIP>
+				<serialPort>4013</serialPort>
+			</xlpInfo>
+		</connectInfo>
+		<defaultNetspanProfiles>
+			<class>Utils.DefaultNetspanProfiles</class>
+			<systemDefault>SR15.5v7 AirVelocity system defaults</systemDefault>
+			<enodeBAdvanced>SR15.0 AirVelocity Defaults</enodeBAdvanced>
+			<Network>SWIT7_Velocity_VLAN_107_207_Cisco</Network>
+			<synchronisation>SWIT SVG Velocity PTP</synchronisation>
+			<security>SR14.5 AirVelocity Default_with_5_SSH</security>
+			<SON>SR14.2 AirVelocity Disabled_TPM Disabled</SON>
+			<management>SR14.0 AirVelocity: 5 minutes</management>
+			<multiCell>AirVelocity Default Disabled</multiCell>
+			<NeighbourManagement>AirVelocity default All PCI</NeighbourManagement>
+			<cellProfiles index="0">
+				<class>Utils.CellNetspanProfiles</class>
+				<cellId>1</cellId>
+				<PCI>87</PCI>
+				<cellAdvanced>SR15.0 AirVelocity Defaults</cellAdvanced>
+				<Radio>SWIT7-Velocity87_2.37_GHz_B40_20MHz_FC2_Tx_0dBm</Radio>
+				<Mobility>SR15.0v2 AirVelocity</Mobility>
+				<embms>SR14.5 AirVelocity Disabled</embms>
+				<trafficManagement>SR14.5 AirVelocity Defaults</trafficManagement>
+				<callTrace>AirVelocity Call Trace Disabled</callTrace>
+			</cellProfiles>
+		</defaultNetspanProfiles>
+	</Velocity87>
+
+	<!-- Rudat Attenuator configuration -->
+
+	<rudat_set>
+		<class>Attenuators.AttenuatorSet</class>
+		<attenuators index="0">
+			<class>Attenuators.RudatAttenuator</class>
+            <maxAttenuation>30</maxAttenuation>
+			<IP>100.100.0.159</IP>
+		</attenuators>
+		<attenuators index="1">
+			<class>Attenuators.RudatAttenuator</class>
+            <maxAttenuation>30</maxAttenuation>
+			<IP>100.100.0.149</IP>
+		</attenuators>
+		<waitTime>1000</waitTime>
+		<stepTime>500</stepTime>
+		<attenuationStep>2</attenuationStep>
+		<maxAttenuation>30</maxAttenuation>
+		<minAttenuation>0</minAttenuation>
+	</rudat_set>
+
+	<!-- IP Power configuration -->
+
+	<aviosys>
+		<class>PowerControllers.Aviosys9820</class>
+		<ipAddress>192.168.58.97</ipAddress>
+		<!-- 1= SNMP version2c -->
+		<snmpVersion>V1</snmpVersion>
+		<readCommunity>public</readCommunity>
+		<writeCommunity>public</writeCommunity>
+		<ports index="0">
+			<class>PowerControllers.PowerControllerPort</class>
+			<port>A3</port>
+			<description>All_UEs</description>
+		</ports>
+	</aviosys>
+
+	<!-- STC configuration -->
+
+	<RestSTC>
+		<class>STCImp.STCChassis</class>
+		<defultConfigFile>C:\Users\swuser\Documents\Spirent\SETUP7.tcc</defultConfigFile>
+		<chassisHost>192.168.58.150</chassisHost>
+		<restMachineIP>192.168.58.201</restMachineIP>
+	</RestSTC>
+	
+	<!-- IPerf -->
+	<!--IPerf>
+		<class>Utils.Iperf.IPerf</class>
+		<iperfMachineDL>
+			<class>Utils.Iperf.IPerfLinuxMachine</class>
+			<hostname>asil-swit7-dl</hostname>
+			<username>swit</username>
+			<password>swit_user1</password>
+		</iperfMachineDL>
+		<iperfMachineUL>
+			<class>Utils.Iperf.IPerfLocalWindowsMachine</class>
+			<hostname>asil-swlab-100</hostname>
+			<username>swuser</username>
+			<password>sw_grp2</password>
+		</iperfMachineUL>
+	</IPerf-->
+</sut>

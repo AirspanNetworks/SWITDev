@@ -1,0 +1,70 @@
+Testing PUT mapping API:
+
+//Get Index From ElasticSearch//
+curl -XGET 192.168.56.158:9200/<NameOfindex>?pretty
+
+
+//Create Index:// 
+curl -XPUT '192.168.56.158:9200/tests?pretty' -H 'Content-Type: application/json' -d'
+{
+    "settings" : {
+        "index" : {
+            "number_of_shards" : 3, 
+            "number_of_replicas" : 2 
+        }
+    }
+}
+'
+
+//Test1 - change Tests/test mapping//
+curl -XPUT '192.168.56.158:9200/tests/test/_mapping?pretty' -H 'Content-Type: application/json' -d'
+{
+  "mappings": {
+    "test_TypeName": {
+      "properties": {
+        "dateInNodeTest": {
+          "type":   "date",
+          "format": "yyyy-MM-dd"
+        }
+      }
+   }
+  }
+}
+'
+
+
+//Test2 - change Tests/test mapping//
+curl -XPOST '192.168.56.158:9200/tests/test/_mapping?pretty' -H 'Content-Type: application/json' -d'
+{
+  "mappings": {
+    "test_TypeName": {
+      "properties": {
+        "dateInNodeTest": {
+          "type":   "date",
+          "format": "yyyy-MM-dd"
+        }
+      }
+   }
+  }
+}
+'
+
+
+curl -XPUT '192.168.56.158:9200/tests?pretty' -H 'Content-Type: application/json' -d'
+{
+    "settings" : {
+        "number_of_shards" : 1
+    },
+    "mappings" : {
+        "date" : {
+            "properties" : {
+                "dateInNodeTest" : { "type" : "date" }
+            }
+        }
+    }
+}
+'
+
+
+//Test3 - Delete Index //
+curl -XDELETE 192.168.56.158:9200/tests

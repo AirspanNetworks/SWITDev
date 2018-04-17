@@ -32,6 +32,8 @@ public class P0 extends TestspanTest {
 	ArrayList<UE> dynUEList = new ArrayList<>();
 	public EnodeB dut1;
 	public EnodeB dut2;
+	
+	//TEST
 	private EnodeBConfig enodeBConfig;
 	private TestConfig testConfig;
 	private EPC epc;

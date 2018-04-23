@@ -34,6 +34,8 @@ public class P0 extends TestspanTest {
 	public EnodeB dut2;
 	
 	//TEST
+	
+	Array[String] bla = new 
 	private EnodeBConfig enodeBConfig;
 	private TestConfig testConfig;
 	private EPC epc;

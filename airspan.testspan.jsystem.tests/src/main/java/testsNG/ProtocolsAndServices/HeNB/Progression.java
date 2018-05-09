@@ -183,7 +183,7 @@ public class Progression extends TestspanTest {
 
 	private boolean setMmes(){
 		NetworkParameters np = new NetworkParameters();
-		np.setMMEIPS( mme1.getS1IpAdress(), mme2.getS1IpAdress() );
+		np.setMMEIPS( mme1.getS1IpAddress(), mme2.getS1IpAddress() );
 		return enodeBConfig.cloneAndSetNetworkProfileViaNetSpan(dut1, dut1.getDefaultNetspanProfiles().getNetwork(), np);
 	}
 	
@@ -206,9 +206,9 @@ public class Progression extends TestspanTest {
 		ArrayList<String> mmeIps = enodeBConfig.getMMeIpAdresses(dut1);
 		for(String mmeIp : mmeIps)
 		{
-			if(mmeIp.equals(mme1.getS1IpAdress()))
+			if(mmeIp.equals(mme1.getS1IpAddress()))
 				flag1 = true;
-			if(mmeIp.equals(mme2.getS1IpAdress()))
+			if(mmeIp.equals(mme2.getS1IpAddress()))
 				flag2 = true;
 		}
 		return flag1 && flag2;
@@ -216,8 +216,8 @@ public class Progression extends TestspanTest {
 	
 	private void fixMmesOrder(){
 		HashMap<String, NetworkElementStatus> mmeStatuses = ((Netspan_15_5_abilities)netspanServer).getMMEStatuses(dut1);
-		NetworkElementStatus status1 = mmeStatuses.get(mme1.getS1IpAdress());
-		NetworkElementStatus status2 = mmeStatuses.get(mme2.getS1IpAdress());
+		NetworkElementStatus status1 = mmeStatuses.get(mme1.getS1IpAddress());
+		NetworkElementStatus status2 = mmeStatuses.get(mme2.getS1IpAddress());
 		MME temp;
 		if(status2.equals(NetworkElementStatus.ACTIVE)){
 			temp = mme1;
@@ -228,19 +228,19 @@ public class Progression extends TestspanTest {
 	
 	private boolean verifyMmesStatus(NetworkElementStatus mme1ExpectedStatus, NetworkElementStatus mme2ExpectedStatus){
 		HashMap<String, NetworkElementStatus> mmeStatuses = ((Netspan_15_5_abilities)netspanServer).getMMEStatuses(dut1);
-		NetworkElementStatus status = mmeStatuses.get(mme1.getS1IpAdress());
+		NetworkElementStatus status = mmeStatuses.get(mme1.getS1IpAddress());
 		if(status != null && status.equals(mme1ExpectedStatus))
-			report.step(String.format("MME %s status is %s as expected", mme1.getS1IpAdress(), mme1ExpectedStatus));
+			report.step(String.format("MME %s status is %s as expected", mme1.getS1IpAddress(), mme1ExpectedStatus));
 		else{
-			report.report(String.format("MME %s status is %s instead of %s", mme1.getS1IpAdress(), status, mme1ExpectedStatus), Reporter.FAIL);
+			report.report(String.format("MME %s status is %s instead of %s", mme1.getS1IpAddress(), status, mme1ExpectedStatus), Reporter.FAIL);
 			GeneralUtils.reportHtmlLink(dut1.getName() + " - db get mmeStatus", dut1.lteCli("db get mmeStatus"));
 		}
 		
-		status = mmeStatuses.get(mme2.getS1IpAdress());
+		status = mmeStatuses.get(mme2.getS1IpAddress());
 		if(status != null && status.equals(mme2ExpectedStatus))
-			report.step(String.format("MME %s status is %s as expected", mme2.getS1IpAdress(), mme2ExpectedStatus));
+			report.step(String.format("MME %s status is %s as expected", mme2.getS1IpAddress(), mme2ExpectedStatus));
 		else{
-			report.report(String.format("MME %s status is %s instead of %s", mme2.getS1IpAdress(), status, mme2ExpectedStatus), Reporter.FAIL);
+			report.report(String.format("MME %s status is %s instead of %s", mme2.getS1IpAddress(), status, mme2ExpectedStatus), Reporter.FAIL);
 			GeneralUtils.reportHtmlLink(dut1.getName() + " - db get mmeStatus", dut1.lteCli("db get mmeStatus"));
 		}
 		return false;
@@ -254,23 +254,23 @@ public class Progression extends TestspanTest {
 		report.report("STEP 1: Get initial MME statuses");
 		NetworkElementStatus expectedStatus = henbGwEnabled == EnabledDisabledStates.ENABLED ? NetworkElementStatus.SCTP_ONLY : NetworkElementStatus.ACTIVE;
 		verifyMmesStatus(NetworkElementStatus.ACTIVE, expectedStatus);
-		report.report("STEP 2: Block connection to " + mme1.getS1IpAdress() + " and wait 2 min");
-		dut1.shell("route add -host " + mme1.getS1IpAdress() + " reject");
+		report.report("STEP 2: Block connection to " + mme1.getS1IpAddress() + " and wait 2 min");
+		dut1.shell("route add -host " + mme1.getS1IpAddress() + " reject");
 		GeneralUtils.unSafeSleep(120 * 1000);
 		report.report("STEP 3: Get MME statuses");
 		verifyMmesStatus(NetworkElementStatus.INACTIVE, NetworkElementStatus.ACTIVE);
-		report.report("STEP 4: Renew connection to " + mme1.getS1IpAdress() + " and wait 2 min");
-		dut1.shell("route del -host " + mme1.getS1IpAdress() + " reject");
+		report.report("STEP 4: Renew connection to " + mme1.getS1IpAddress() + " and wait 2 min");
+		dut1.shell("route del -host " + mme1.getS1IpAddress() + " reject");
 		GeneralUtils.unSafeSleep(120 * 1000);
 		report.report("STEP 5: Get MME statuses");
 		verifyMmesStatus(expectedStatus, NetworkElementStatus.ACTIVE);
-		report.report("STEP 6: Block connection to " + mme2.getS1IpAdress() + " and wait 2 min");
-		dut1.shell("route add -host " + mme2.getS1IpAdress() + " reject");
+		report.report("STEP 6: Block connection to " + mme2.getS1IpAddress() + " and wait 2 min");
+		dut1.shell("route add -host " + mme2.getS1IpAddress() + " reject");
 		GeneralUtils.unSafeSleep(120 * 1000);
 		report.report("STEP 7: Get MME statuses");
 		verifyMmesStatus(NetworkElementStatus.ACTIVE, NetworkElementStatus.INACTIVE);
-		report.report("STEP 8: Renew connection to " + mme2.getS1IpAdress() + " and wait 2 min");
-		dut1.shell("route del -host " + mme2.getS1IpAdress() + " reject");
+		report.report("STEP 8: Renew connection to " + mme2.getS1IpAddress() + " and wait 2 min");
+		dut1.shell("route del -host " + mme2.getS1IpAddress() + " reject");
 		GeneralUtils.unSafeSleep(120 * 1000);
 		report.report("STEP 9: Get MME statuses");
 		verifyMmesStatus(NetworkElementStatus.ACTIVE, expectedStatus);

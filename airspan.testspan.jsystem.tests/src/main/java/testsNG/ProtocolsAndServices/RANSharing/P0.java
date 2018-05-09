@@ -34,8 +34,6 @@ public class P0 extends TestspanTest {
 	public EnodeB dut2;
 	
 	//TEST
-	
-	Array[String] bla = new 
 	private EnodeBConfig enodeBConfig;
 	private TestConfig testConfig;
 	private EPC epc;
@@ -55,7 +53,7 @@ public class P0 extends TestspanTest {
 	ParallelCommandsThread commandsThread1 = null;
 	ParallelCommandsThread commandsThread2 = null;
 	ArrayList<Plmn> usedPlmnsInTest;
-
+	
 	private static final int WAITTIME = 5*60*1000; // 5 minutes
 
 	@Override

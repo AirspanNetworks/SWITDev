@@ -35,7 +35,11 @@ public class P0 extends TestspanTest {
 	public EnodeB dut2;
 	
 	//TEST
+<<<<<<< HEAD
 	//moran
+=======
+	//bla bla bla
+>>>>>>> refs/heads/moran
 	private EnodeBConfig enodeBConfig;
 	private TestConfig testConfig;
 	private EPC epc;

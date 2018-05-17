@@ -34,7 +34,6 @@ public class P0 extends TestspanTest {
 	public EnodeB dut1;
 	public EnodeB dut2; 
 	private EnodeBConfig enodeBConfig;  
-	//bla
 	private TestConfig testConfig;
 	private EPC epc;
 	private Traffic traffic;

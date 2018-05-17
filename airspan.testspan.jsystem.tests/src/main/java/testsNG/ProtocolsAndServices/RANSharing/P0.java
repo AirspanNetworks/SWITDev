@@ -54,6 +54,7 @@ public class P0 extends TestspanTest {
 	ParallelCommandsThread commandsThread2 = null;
 	ArrayList<Plmn> usedPlmnsInTest;
 
+	//bla bla bla
 	private static final int WAITTIME = 5 * 60 * 1000; // 5 minutes
 
 	@Override

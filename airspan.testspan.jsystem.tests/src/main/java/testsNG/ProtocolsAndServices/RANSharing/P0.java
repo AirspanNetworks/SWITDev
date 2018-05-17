@@ -39,8 +39,8 @@ public class P0 extends TestspanTest {
 	//moran
 =======
 	//bla bla bla
->>>>>>> refs/heads/moran
-	private EnodeBConfig enodeBConfig;
+>>>>>>> refs/heads/moran   
+	private EnodeBConfig enodeBConfig;      
 	private TestConfig testConfig;
 	private EPC epc;
 	private Traffic traffic;

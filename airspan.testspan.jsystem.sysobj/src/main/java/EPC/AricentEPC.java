@@ -88,4 +88,12 @@ public class AricentEPC extends EPC {
 		return false;
 	}
 
+	@Override
+	public MME getCurrentMME(UE ue, ArrayList<MME> possibleMmes) {
+		report.report("getCurrentMME method is not implemented in Aricent!");
+		return null;
+	}
+
+
+
 }

@@ -62,6 +62,8 @@ public abstract class EPC extends SystemObjectImpl {
 	
 	public abstract EnodeB getCurrentEnodB(UE ue, ArrayList<EnodeB> possibleEnbs);
 	
+	public abstract MME getCurrentMME(UE ue, ArrayList<MME> possibleMmes);
+	
 	public abstract boolean checkUEConnectedToNode(UE ue, EnodeB node);
 	
 	public abstract int checkNumberOfConnectedUEs(ArrayList<UE> ues, EnodeB enb,boolean printToConsole) throws Exception;
@@ -169,4 +171,5 @@ public abstract class EPC extends SystemObjectImpl {
 			GeneralUtils.printToConsole(buffer);
 		return buffer;
 	}
+
 }

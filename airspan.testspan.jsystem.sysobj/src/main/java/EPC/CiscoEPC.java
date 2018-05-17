@@ -135,6 +135,29 @@ public class CiscoEPC extends EPC{
 		return null;
 		
 	}
+	
+	public MME getCurrentMME(UE ue, ArrayList<MME> possibleMmes) {
+		String allMMEs="";
+		if(checkConnection()){
+			try{						
+				for(MME mme : possibleMmes){
+					mme.setMMEName();
+					allMMEs+=(mme.getS1IpAddress()+" ");
+					String buffer = sendCommand(String.format("show subscribers mme-service %s imsi %s",mme.getName(),ue.getImsi()), true);
+					if (buffer.contains(ue.getImsi())){
+						report.report(String.format("[INFO]: Ue %s with IMSI %s is connected to EnodeB %s.",ue.getName(),ue.getImsi(), mme.getName()));							
+						return mme;
+					}
+				}
+			}
+			catch(Exception e) {
+				report.report(String.format("[WARNING]: EPC connction failed message: %s", e.getMessage()), Reporter.WARNING);
+			}
+		}
+		report.report(String.format("[INFO]: Ue %s with IMSI %s is NOT connected to any MME from this list: %s.",ue.getName(),ue.getImsi(), allMMEs));
+		return null;
+		
+	}
 
 	/**
 	 * return a message with state:<state> and peer address:<s1IPNode>.

@@ -55,7 +55,8 @@ public class P0 extends TestspanTest {
 	ArrayList<Plmn> usedPlmnsInTest;
 	
 	private static final int WAITTIME = 5*60*1000; // 5 minutes
-
+	//
+	//
 	@Override
 	public void init() throws Exception {
 		enodeBConfig = EnodeBConfig.getInstance();

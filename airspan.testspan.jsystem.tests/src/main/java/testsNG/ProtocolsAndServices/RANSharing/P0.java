@@ -33,7 +33,8 @@ public class P0 extends TestspanTest {
 	ArrayList<UE> dynUEList = new ArrayList<>();
 	public EnodeB dut1;
 	public EnodeB dut2; 
-	private EnodeBConfig enodeBConfig;      
+	private EnodeBConfig enodeBConfig;  
+	//moran
 	private TestConfig testConfig;
 	private EPC epc;
 	private Traffic traffic;

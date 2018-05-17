@@ -32,14 +32,7 @@ import testsNG.Actions.Utils.ParallelCommandsThread;
 public class P0 extends TestspanTest {
 	ArrayList<UE> dynUEList = new ArrayList<>();
 	public EnodeB dut1;
-	public EnodeB dut2;
-	
-	//TEST
-<<<<<<< HEAD
-	//moran
-=======
-	//bla bla bla
->>>>>>> refs/heads/moran   
+	public EnodeB dut2; 
 	private EnodeBConfig enodeBConfig;      
 	private TestConfig testConfig;
 	private EPC epc;

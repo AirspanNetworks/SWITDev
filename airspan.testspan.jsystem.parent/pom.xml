@@ -25,7 +25,6 @@
 	</pluginRepositories>
 
 
-
 	<dependencyManagement>
 		<dependencies>
 			<dependency>

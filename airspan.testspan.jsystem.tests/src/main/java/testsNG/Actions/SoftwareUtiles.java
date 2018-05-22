@@ -1060,7 +1060,7 @@ public class SoftwareUtiles {
 					upgradeImage.setName(softwareImage);
 					upgradeImage.setImageType(eNodeB.getImageType().value());
 					if (enodeBUpgradeServer.getUpgradeServerProtocolType() == ServerProtocolType.SFTP){
-						buildFileName = "/upload/"+buildFileName;
+						buildFileName = "/upload/"+buildFileName; 
 					}
 					upgradeImage.setBuildPath(buildFileName);
 					upgradeImage.setVersion(build);

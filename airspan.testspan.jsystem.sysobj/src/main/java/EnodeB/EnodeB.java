@@ -324,8 +324,8 @@ public abstract class EnodeB extends SystemObjectImpl {
 		try {
 			rebootStatus = NetspanServer.getInstance().resetNode(getNetspanName());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			report.report("Failed to reboot via netspan");
 		}
 		if(!rebootStatus){
 			report.report("Rebooting " + getNetspanName() + " via SNMP");

@@ -3,13 +3,13 @@
 	Type     : String
 	Format   : -default-
 	Script   : 
-			def m = /(([0-9]+\.)+[0-9]+)+/.matcher(doc['path.keyword'].value);
-			for(int i=0;i<2;i++){
-			if(!m.find()){
-				return "no version value"
-				} 
+			def m= /(([0-9]+\.)+[0-9]+)+/.matcher(doc['path.keyword'].value);
+				for(int i=0;i<2;i++){
+				if(!m.find()){
+  					return "no version value";
+  				}
 			}
-			return m.group()
+			return m.group();
 			
 			
 2.Folder filed -> taken from path.keyword

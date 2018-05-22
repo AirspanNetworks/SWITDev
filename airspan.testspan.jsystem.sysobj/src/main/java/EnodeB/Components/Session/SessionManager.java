@@ -81,15 +81,16 @@ public class SessionManager {
 		}
 	}
 
-	private synchronized void openConsoleSession() {
+	private synchronized boolean openConsoleSession() {
 		Session newConsoleSession = new Session(getEnodeBComponent().getName() + "_" + CONSOLE_SESSION_NAME, getEnodeBComponent(), getEnodeBComponent().serialCom.getSerial(), serialLogLevel);
 		boolean ans = newConsoleSession.waitForSessionToConnect(SESSION_WAIT_TIMEOUT);
 		sessions.add(newConsoleSession);
 		setSerialSession(newConsoleSession);
-		newConsoleSession.loginSerial();
+		boolean loginSuccess = newConsoleSession.loginSerial();
 		String idResult = newConsoleSession.sendCommands(EnodeBComponent.SHELL_PROMPT, "id", "");
 		GeneralUtils.printToConsole("serial id: " + idResult);
 		GeneralUtils.printToConsole("Session " + newConsoleSession.getName() + " opened Status:" + ans);
+		return loginSuccess;
 	}
 
 	public synchronized String openSession() {

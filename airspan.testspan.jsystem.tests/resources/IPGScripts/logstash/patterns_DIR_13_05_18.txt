@@ -1,0 +1,7 @@
+ERRORMES <\w+\d*:\w+\sERROR+>
+METHOD \w+\(\)
+MSG .*
+FOLDER [\w+\-\w+]+
+COSTDATE %{DATE}\s%{HOUR}:%{MINUTE}:%{SECOND}:%{NUMBER}
+SYSTEMmes <\w+\d*:\w+\sSYSTEM+>
+COSDATE2 %{DATE}\-%{HOUR}:%{MINUTE}:%{SECOND}

@@ -42,6 +42,10 @@ public class CommandMemoryCPU extends Command {
 		}
 		
 	}
+	
+	public String getNodeName() {
+		return dut.getName();
+	}
 
 	@Override
 	public int getExecutionDelaySec() {
@@ -63,11 +67,19 @@ public class CommandMemoryCPU extends Command {
 		buildHTMLTable(avgCPU,avgMemory,maxCPU,maxMemory);
 	}
 	
+	public ArrayList<Integer> getMemoryValuesList(){
+		return memory;
+	}
+	
+	public ArrayList<Integer> getCpuValuesList(){
+		return cpu;
+	}
+	
 	private void buildHTMLTable(Double avgCPU, Double avgMemory, int maxCPU, int maxMemory) {
 		GeneralUtils.HtmlTable table = new HtmlTable();
 		//HeadLine
-		table.addNewColumn("CPU");
-		table.addNewColumn("Memory");
+		table.addNewColumn("CPU %");
+		table.addNewColumn("Memory %");
 		
 		//Average
 		table.addNewRow("AVG");

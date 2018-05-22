@@ -65,8 +65,6 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		return instance;
 	}
 
-	
-	private static boolean areIPerfMachinesConnected=false;
 	public void init(ArrayList<UE> ues) throws Exception{
 		Connect();
 		
@@ -76,7 +74,14 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		tpDlCountersFileNames = "";
 		tpUlCountersFileNames = "";
 		qciList.add('9');
+		qciList.add('8');
 		qciList.add('7');
+		qciList.add('6');
+		qciList.add('5');
+		qciList.add('4');
+		qciList.add('3');
+		qciList.add('2');
+		qciList.add('1');
 		allUEsIPerfList.clear();
 		if(ues != null){
 			for(UE ue : ues){
@@ -94,55 +99,31 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		updateConfigFile();
 	}
 	
-	private static boolean isTrafficOn=false;
 	public void startTraffic() throws Exception{
-		
-		if(isTrafficOn==false){
-			Connect();
-			ExecutorService exe =  Executors.newFixedThreadPool(allUEsIPerfList.size());
-			for(UEIPerf ueIPerf : allUEsIPerfList){
-				exe.execute(ueIPerf);
-			}
-			GeneralUtils.unSafeSleep(30000);
-			isTrafficOn=true;
+		Connect();
+		ExecutorService exe =  Executors.newFixedThreadPool(allUEsIPerfList.size());
+		for(UEIPerf ueIPerf : allUEsIPerfList){
+			exe.execute(ueIPerf);
 		}
-		
+		GeneralUtils.unSafeSleep(30000);
 	}
 	
-	private static boolean isDLon=false;
 	public void startTrafficDL() throws Exception{
-		
-		if(isDLon==false){
-			for(UEIPerf ueIPerf : allUEsIPerfList){
-				ueIPerf.runTrafficDL();
-			}
-			isDLon=true;
+		for(UEIPerf ueIPerf : allUEsIPerfList){
+			ueIPerf.runTrafficDL();
 		}
-		
 	}
 	
-	private static boolean isULon=false;
 	public void startTrafficUL() throws Exception{
-		
-		if(isULon==false){
-			for(UEIPerf ueIPerf : allUEsIPerfList){
-				ueIPerf.runTrafficUL();
-			}
-			isULon=true;
+		for(UEIPerf ueIPerf : allUEsIPerfList){
+			ueIPerf.runTrafficUL();
 		}
-		
 	}
 	
 	public void stopTraffic() throws Exception{
-		if(isTrafficOn==true){
-			for(UEIPerf ueIPerf : allUEsIPerfList){
-				ueIPerf.stopTraffic();
-			}
-			isTrafficOn=true;
+		for(UEIPerf ueIPerf : allUEsIPerfList){
+			ueIPerf.stopTraffic();
 		}
-		isTrafficOn=false;
-		isDLon=false;
-		isULon=false;
 		Disconnect();
 	}
 
@@ -206,28 +187,22 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 	
 	@Override
 	public void Connect() throws Exception {
-		if(areIPerfMachinesConnected == false){
-			areIPerfMachinesConnected = true;
-			if(iperfMachineDL != null){
-				areIPerfMachinesConnected = areIPerfMachinesConnected && iperfMachineDL.connect();
-			}
-			if(iperfMachineUL != null){
-				areIPerfMachinesConnected = areIPerfMachinesConnected && iperfMachineUL.connect();
-			}
+		if(iperfMachineDL != null){
+			iperfMachineDL.connect();
+		}
+		if(iperfMachineUL != null){
+			iperfMachineUL.connect();
 		}
 	}
 
 
 	@Override
 	public void Disconnect() throws Exception {
-		if(areIPerfMachinesConnected == true){ 
-			if(iperfMachineDL != null){ 
-				iperfMachineDL.disconnect();
-			}
-			if(iperfMachineUL != null){
-				iperfMachineUL.disconnect();
-			}
-			areIPerfMachinesConnected = false;
+		if(iperfMachineDL != null){ 
+			iperfMachineDL.disconnect();
+		}
+		if(iperfMachineUL != null){
+			iperfMachineUL.disconnect();
 		}
 	}
 
@@ -336,7 +311,7 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		int numberOfUEsWithActiveDlStreams = 0;
 		int numberOfUEsWithActiveUlStreams = 0;
 		for(UEIPerf ueIPerf : allUEsIPerfList){
-			Pair<Integer, Integer> dlAndUlActiveStreams = ueIPerf.getNumberOfDlAndUlActiveStreams();
+			Pair<Integer, Integer> dlAndUlActiveStreams = ueIPerf.getNumberOfDlAndUlActiveAndNotRunningStreams();
 			if(dlAndUlActiveStreams.getElement0() > 0){
 				numberOfUEsWithActiveDlStreams++;
 			}
@@ -436,6 +411,25 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		return enableDisableStreams;
 	}
 
+	private ArrayList<ArrayList<String>> setStreamsStateAndNoChangeOthers(ArrayList<String> ueNameList,
+			ArrayList<Character> qciList, 
+			TransmitDirection transmitDirection,
+			boolean state){
+		
+		ArrayList<ArrayList<String>> enableDisableStreams = new ArrayList<ArrayList<String>>();
+		tpDlCountersFileNames = "";
+		tpUlCountersFileNames = "";
+		for(UEIPerf ueIPerf : allUEsIPerfList){
+			ArrayList<ArrayList<String>> enableDisableUeIPerfStreams = ueIPerf.setStreamsStateAndNoChangeOthers(ueNameList, qciList, transmitDirection, state);
+			enableDisableStreams.add(enableDisableUeIPerfStreams.get(0));
+			enableDisableStreams.add(enableDisableUeIPerfStreams.get(1));
+			tpDlCountersFileNames += (" " + ueIPerf.getDlActiveStreamFileNames());
+			tpUlCountersFileNames += (" " + ueIPerf.getUlActiveStreamFileNames());
+		}
+		updateConfigFile();
+		return enableDisableStreams;
+	}
+	
 	@Override
 	public boolean isConnected() {
 		GeneralUtils.printToConsole("isConnected NOT Implemented!");
@@ -496,8 +490,7 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 	@Override
 	public ArrayList<String> enableStreamsByUeNameQciAndPortDirection(ArrayList<String> ueNamesAllowdInTest,
 			ArrayList<Character> qciListAllowdInTest, TransmitDirection transmitDirection) {
-		GeneralUtils.printToConsole("enableStreamsByUeNameQciAndPortDirection NOT Implemented!");
-		return new ArrayList<String>();
+		return setStreamsStateAndNoChangeOthers(ueNamesAllowdInTest, qciListAllowdInTest, transmitDirection, true).get(0);
 	}
 
 

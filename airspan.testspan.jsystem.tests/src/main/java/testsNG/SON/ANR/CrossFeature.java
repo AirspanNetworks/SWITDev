@@ -101,7 +101,7 @@ public class CrossFeature extends TestspanTest {
 		earfcnList.add(inter);
 		earfcnList.add(intra);
 		enodeBConfig.configureOnlyANRtoEnableViaNms(dut, "Configure ANR to enable with inter("+inter+" EARFCN) and intra("+intra+" EARFCN) frequency", earfcnList);
-		int numberOfActiveCells = dut.getNumberOfActiveCells();
+		int numberOfActiveCells = enodeBConfig.getNumberOfActiveCells(dut);
 		report.report(dut.getNetspanName() + " Number Of Active Cells: " + numberOfActiveCells);
 		for (int i = 1; i <= numberOfActiveCells; i++) {
 			report.startLevel("Test on Cell ID: " + i + " with PCI: "+dut.getPci(39+i));
@@ -126,7 +126,7 @@ public class CrossFeature extends TestspanTest {
 		earfcnList.add(inter);
 		earfcnList.add(intra);
 		enodeBConfig.configureOnlyANRtoEnableViaNms(dut, "Configure ANR to enable with inter("+inter+" EARFCN) and intra("+intra+" EARFCN) frequency", earfcnList);
-		int numberOfActiveCells = dut.getNumberOfActiveCells();
+		int numberOfActiveCells = enodeBConfig.getNumberOfActiveCells(dut);
 		report.report(dut.getNetspanName() + " Number Of Active Cells: " + numberOfActiveCells);
 		report.report("Wait for ANR Steady State (TimeOut = 3 Minutes)");
 		boolean flag = enodeBConfig.waitForAnrState(dut, 3*60*1000, 3);

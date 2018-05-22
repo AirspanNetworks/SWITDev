@@ -113,6 +113,7 @@ import Netspan.NBI_14_50.API.Status.NodePtpGetResult;
 import Netspan.NBI_14_50.API.Status.NodeSoftwareGetResult;
 import Netspan.Profiles.ManagementParameters;
 import Netspan.Profiles.CellAdvancedParameters;
+import Netspan.Profiles.CellBarringPolicyParameters;
 import Netspan.Profiles.EnodeBAdvancedParameters;
 import Netspan.Profiles.INetspanProfile;
 import Netspan.Profiles.MobilityParameters;
@@ -126,6 +127,7 @@ import Netspan.Profiles.SonParameters;
 import Netspan.Profiles.SyncParameters;
 import Netspan.Profiles.SystemDefaultParameters;
 import Utils.GeneralUtils;
+import Utils.GeneralUtils.RebootType;
 import Utils.Pair;
 import jsystem.framework.IgnoreMethod;
 import jsystem.framework.report.Reporter;
@@ -1590,6 +1592,10 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 	@Override
 	public RadioParameters radioProfileGet(EnodeB enb) throws Exception {
 		String enbRadioProfileName = this.getCurrentRadioProfileName(enb);
+		if(enbRadioProfileName == null) {
+			report.report("Could not get Radio Profile name from Netspan - Going for SNMP");
+			throw new Exception();
+		}
 		LteRadioProfileGetResult netspanResult = null;
 		List<java.lang.String> enbList = new ArrayList<java.lang.String>();
 		enbList.add(enbRadioProfileName);
@@ -2950,5 +2956,34 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 	public String getGPSStatus(EnodeB enb) {
 		report.report("getGPSStatus method is not implemented for this netspan(14_5)!", Reporter.WARNING);
 		return null;
+	}
+	
+	@Override
+	public String getMangementIp(EnodeB enb) {
+		report.report("getMangementIp method is not implemented for this netspan(14_5)!", Reporter.WARNING);
+		return GeneralUtils.ERROR_VALUE+"";
+	}
+
+	@Override
+	public int getNumberOfActiveCellsForNode(EnodeB node) {
+		return 1;
+	}
+
+	@Override
+	public boolean forcedResetNode(String nodeName, RebootType rebootType) {
+		report.report("forcedResetNode method is not implemented for this netspan(14_5)!", Reporter.WARNING);
+		return false;
+	}
+
+	@Override
+	public boolean resetNode(String nodeName) {
+		report.report("resetNode method is not implemented for this netspan(14_5)!", Reporter.WARNING);
+		return false;
+	}
+	
+	@Override
+	public boolean setEnbAccessClassBarring(EnodeB dut, CellBarringPolicyParameters cellBarringParams) {
+		report.report("setEnbAccessClassBarring method is not implemented for this netspan(14_5)!", Reporter.WARNING);
+		return false;
 	}
 }

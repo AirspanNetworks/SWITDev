@@ -334,6 +334,7 @@ public class Neighbors {
 				if (added) {
 					EnodeB neighbor = new AirVelocity();
 					neighbor.setNetspanName(name);
+					neighbor.setName(name);
 					neighbor.setCellIdentity(String.valueOf(j));
 					neighbor.setMcc(String.format("%03d", mcc));
 					neighbor.setMnc(String.format("%03d", mnc));

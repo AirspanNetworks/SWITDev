@@ -8,6 +8,7 @@ import Netspan.NetspanServer;
 import Netspan.API.Lte.PTPStatus;
 import Netspan.API.Lte.RFStatus;
 import Netspan.API.Lte.SONStatus;
+import Utils.GeneralUtils;
 import jsystem.framework.report.ListenerstManager;
 import jsystem.framework.report.Reporter;
 
@@ -33,8 +34,10 @@ public class Statuses {
 	public List<RFStatus> getRFStatus(EnodeB enb){
 		List<RFStatus> ret = new ArrayList<RFStatus>();
 		ret = netspanServer.getRFStatus(enb);
-		if (ret.size()<=0 || ret == null)
+		if (ret.size()<=0 || ret == null){
+			report.report("Failed getting RF status from netspan, using SNMP fallback.",Reporter.WARNING);
 			ret = enb.getRFStatus();
+		}
 		return ret;
 	}
 	

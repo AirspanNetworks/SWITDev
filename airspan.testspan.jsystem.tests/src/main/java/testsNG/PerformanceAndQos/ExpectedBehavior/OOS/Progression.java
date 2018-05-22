@@ -124,10 +124,10 @@ public class Progression extends TestspanTest{
 	returnParam = { "IsTestWasSuccessful" }, 
 	paramsExclude = {"IsTestWasSuccessful","Neighbor"})
 	public void verifyOosBehaviorAfterSettingCell0ToOos(){
-		if(dut.getNumberOfActiveCells() > 1){
+		if(enodeBConfig.getNumberOfActiveCells(dut) > 1){
 			testOutOfServiceInServiceExpectedBehavior(dut, CellIndex.FORTY, CellIndex.FORTY_ONE);
 		}else{
-			report.report("TEST for MC eNodeB, but NumberOfActiveCells=" + dut.getNumberOfActiveCells(), Reporter.WARNING);
+			report.report("TEST for MC eNodeB, but NumberOfActiveCells=" + enodeBConfig.getNumberOfActiveCells(dut), Reporter.WARNING);
 		}
 	}
 	
@@ -139,10 +139,10 @@ public class Progression extends TestspanTest{
 	returnParam = { "IsTestWasSuccessful" }, 
 	paramsExclude = {"IsTestWasSuccessful","Neighbor"})
 	public void verifyOosBehaviorAfterSettingCell1ToOos(){
-		if(dut.getNumberOfActiveCells() > 1){
+		if(enodeBConfig.getNumberOfActiveCells(dut) > 1){
 			testOutOfServiceInServiceExpectedBehavior(dut, CellIndex.FORTY_ONE, CellIndex.FORTY);
 		}else{
-			report.report("TEST for MC eNodeB, but NumberOfActiveCells=" + dut.getNumberOfActiveCells(), Reporter.WARNING);
+			report.report("TEST for MC eNodeB, but NumberOfActiveCells=" + enodeBConfig.getNumberOfActiveCells(dut), Reporter.WARNING);
 		}
 	}
 
@@ -154,7 +154,7 @@ public class Progression extends TestspanTest{
 	returnParam = { "IsTestWasSuccessful" }, 
 	paramsExclude = {"IsTestWasSuccessful"})
 	public void verifyOosBehaviorAfterPciCollisionAndNoAvailablePciInTheRange(){
-		if(dut.getNumberOfActiveCells() > 1){
+		if(enodeBConfig.getNumberOfActiveCells(dut) > 1){
 			Neighbors ngh = Neighbors.getInstance();
 			boolean is3rdPartyNeighborNeeded = false;
 			if(neighbor == null){
@@ -183,30 +183,31 @@ public class Progression extends TestspanTest{
 			report.report("Waiting For All Running.");
 			dut.waitForAllRunning(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);
 		}else{
-			report.report("TEST for MC eNodeB, but NumberOfActiveCells=" + dut.getNumberOfActiveCells(), Reporter.WARNING);
+			report.report("TEST for MC eNodeB, but NumberOfActiveCells=" + enodeBConfig.getNumberOfActiveCells(dut), Reporter.WARNING);
 		}
 	}	
 	
 	/********************************* HELPER ********************************/
 	
 	private void testOutOfServiceInServiceExpectedBehavior(EnodeB eNodeB, CellIndex oosCellIndex, CellIndex isCellIndex) {
-		if(eNodeB.getNumberOfActiveCells() > 1 || oosCellIndex == CellIndex.FORTY){
+		int cells = enodeBConfig.getNumberOfActiveCells(eNodeB);
+		if(cells > 1 || oosCellIndex == CellIndex.FORTY){
 			report.report("Set Cell "+(oosCellIndex.value%40)+" to Out Of Service.");
 			eNodeB.setServiceState(oosCellIndex, 0);
 		}
-		if(eNodeB.getNumberOfActiveCells() > 1 || isCellIndex == CellIndex.FORTY){
+		if(cells > 1 || isCellIndex == CellIndex.FORTY){
 			report.report("Set Cell "+(isCellIndex.value%40)+" to In Service.");
 			eNodeB.setServiceState(isCellIndex, 1);
 		}
 		GeneralUtils.unSafeSleep(5000);
-		if(eNodeB.getNumberOfActiveCells() > 1 || oosCellIndex == CellIndex.FORTY){
+		if(cells > 1 || oosCellIndex == CellIndex.FORTY){
 			checkForOutOfServiceBehavior(eNodeB, oosCellIndex);
 		}
-		if(eNodeB.getNumberOfActiveCells() > 1 || isCellIndex == CellIndex.FORTY){
+		if(cells > 1 || isCellIndex == CellIndex.FORTY){
 			checkForInServiceBehavior(eNodeB, isCellIndex);
 		}
 		
-		if(eNodeB.getNumberOfActiveCells() > 1 || oosCellIndex == CellIndex.FORTY){
+		if(cells > 1 || oosCellIndex == CellIndex.FORTY){
 			report.report("Post Test: Set Cell "+(oosCellIndex.value%40)+" to In Service.");
 			eNodeB.setServiceState(oosCellIndex, 1);
 		}

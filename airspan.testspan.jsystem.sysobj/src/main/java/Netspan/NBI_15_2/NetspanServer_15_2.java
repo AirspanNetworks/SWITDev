@@ -146,6 +146,7 @@ import Netspan.NBI_15_2.Status.LteUeStatusWs;
 import Netspan.NBI_15_2.Status.NodePtpGetResult;
 import Netspan.NBI_15_2.Status.NodeSoftwareGetResult;
 import Netspan.Profiles.CellAdvancedParameters;
+import Netspan.Profiles.CellBarringPolicyParameters;
 import Netspan.Profiles.EnodeBAdvancedParameters;
 import Netspan.Profiles.INetspanProfile;
 import Netspan.Profiles.ManagementParameters;
@@ -160,6 +161,7 @@ import Netspan.Profiles.SonParameters;
 import Netspan.Profiles.SyncParameters;
 import Netspan.Profiles.SystemDefaultParameters;
 import Utils.GeneralUtils;
+import Utils.GeneralUtils.RebootType;
 import Utils.Pair;
 import Utils.Triple;
 import jsystem.framework.report.Reporter;
@@ -221,6 +223,10 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
 	@Override
 	public RadioParameters radioProfileGet(EnodeB enb) throws Exception {
 		String enbRadioProfileName = this.getCurrentRadioProfileName(enb);
+		if(enbRadioProfileName == null) {
+			report.report("Could not get Radio Profile name from Netspan - Going for SNMP");
+			throw new Exception();
+		}
 		LteRadioProfileGetResult netspanResult = null;
 		List<java.lang.String> enbList = new ArrayList<java.lang.String>();
 		enbList.add(enbRadioProfileName);
@@ -3750,7 +3756,7 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
 		Netspan.NBI_15_2.Software.SwFileInfoWs softwareFileInfo = new Netspan.NBI_15_2.Software.SwFileInfoWs();
 		Netspan.NBI_15_2.Software.ObjectFactory objectFactory = new Netspan.NBI_15_2.Software.ObjectFactory();
 
-		softwareFileInfo.setImageType(objectFactory.createSwFileInfoWsImageType(ImageType.fromValue("LTE")));
+		softwareFileInfo.setImageType(objectFactory.createSwFileInfoWsImageType(ImageType.fromValue(upgradeImage.getImageType())));
 
 		if (upgradeImage.getBuildPath() != null) {
 			softwareFileInfo.setFileNameWithPath(upgradeImage.getBuildPath());
@@ -4224,5 +4230,50 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
 	public List<LteBackhaul> getBackhaulInterfaceStatus(EnodeB node) {
 		report.report("getBackhaulInterfaceStatus method is not implemented for this netspan(15_2)!");
 		return null;
+	}
+	
+	@Override
+	public String getMangementIp(EnodeB enb) {
+		EnbDetailsGet enbConfig = getNodeConfig(enb);
+		if (enbConfig == null) {
+			GeneralUtils.printToConsole("getMangementIp failed!");
+			return GeneralUtils.ERROR_VALUE+"";
+		}
+		String managmentIp = enbConfig.getManagementIpAddress();
+		return managmentIp;		
+	}
+
+	@Override
+	public int getNumberOfActiveCellsForNode(EnodeB node) {
+		int numberOfActiveCells = 0;
+		EnbDetailsGet nodeConf = getNodeConfig(node);
+		if(nodeConf == null){
+			return 0;
+		}
+		List<LteCellGetWs> cellsList = nodeConf.getLteCell();
+		for(LteCellGetWs cell : cellsList) {
+			if(cell.getIsEnabled().getValue()) {
+				numberOfActiveCells++;
+			}
+		}
+		return numberOfActiveCells;
+	}
+
+	@Override
+	public boolean forcedResetNode(String nodeName, RebootType rebootType) {
+		report.report("forcedResetNode method is not implemented for this netspan(15_2)!", Reporter.WARNING);
+		return false;
+	}
+
+	@Override
+	public boolean resetNode(String nodeName) {
+		report.report("resetNode method is not implemented for this netspan(15_2)!", Reporter.WARNING);
+		return false;
+	}
+	
+	@Override
+	public boolean setEnbAccessClassBarring(EnodeB dut, CellBarringPolicyParameters cellBarringParams) {
+		report.report("setEnbAccessClassBarring method is not implemented for this netspan(15_2)!");
+		return false;
 	}
 }

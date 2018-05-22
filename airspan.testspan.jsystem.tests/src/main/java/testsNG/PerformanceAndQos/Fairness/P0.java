@@ -1785,12 +1785,12 @@ public class P0 extends TestspanTest {
 			ues2.add("UE" + i);
 		}
 		try {
-			traffic.enableStreamsByNameAndQci(ues, qci1);
+			traffic.enableStreamsByNameAndQciAndDirection(ues, qci1, TransmitDirection.BOTH);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		try {
-			traffic.enableStreamsByNameAndQci(ues2, qci2);
+			traffic.enableStreamsByNameAndQciAndDirection(ues2, qci2, TransmitDirection.BOTH);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1812,12 +1812,12 @@ public class P0 extends TestspanTest {
 			ues2.add("UE" + i);
 		}
 		try {
-			traffic.enableStreamsByNameAndQci(ues, qci1);
+			traffic.enableStreamsByNameAndQciAndDirection(ues, qci1, TransmitDirection.BOTH);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		try {
-			traffic.enableStreamsByNameAndQci(ues2, qci2);
+			traffic.enableStreamsByNameAndQciAndDirection(ues2, qci2, TransmitDirection.BOTH);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

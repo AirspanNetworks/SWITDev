@@ -638,7 +638,7 @@ public class TPTBase extends TestspanTest {
 	private Pair<Double, Double> calculateTrafficLoadAccordingToMultiCell(Pair<Double, Double> trafficValuPair) {
 		//in case SNMP fail in 2nd time - test can go wrong.
 		if(cellNumber != 2) {
-			cellNumber = dut.getNumberOfActiveCells();
+			cellNumber = enbConfig.getNumberOfActiveCells(dut);
 		}
 		double cellNumDoubl = Double.valueOf(cellNumber);
 		Pair<Double, Double> retValues;
@@ -1181,7 +1181,7 @@ public class TPTBase extends TestspanTest {
 //			GeneralUtils.printToConsole("OverAll pass criteria : "+passCriteria);
 //		}
 
-		int numberOfCells = dut.getNumberOfActiveCells();
+		int numberOfCells = enbConfig.getNumberOfActiveCells(dut);
 		printPortSummeryBeforeTestEnds(debugPrinter, uLrxTotal, dlrxTotal);
 
 		double ul_Divided_With_Number_Of_Streams = uLrxTotal / 1000000.0 / listOfStreamList.size();
@@ -1517,7 +1517,7 @@ public class TPTBase extends TestspanTest {
 		}
 		try {
 			GraphAdder.AddGraph(String.format("%s %s", testName, dut.getNetspanName()), "Time Stamp / Sec", "RX / Mb",
-					ulRx, dlRx, Time, isQci9);
+					ulRx, dlRx, Time, isQci9,true);
 			isQci9 = false;
 		} catch (IOException e) {
 			GeneralUtils.printToConsole(e.getMessage());

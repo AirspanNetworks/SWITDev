@@ -2,6 +2,7 @@ package testsNG.ProtocolsAndServices.NeighborManagement;
 
 import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
+import testsNG.Actions.EnodeBConfig;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -602,7 +603,7 @@ public class P0 extends NeighborManagementBase {
 	@TestProperties(name = "AddNGH_Maximum_Neighbors_Mixed_Ctrl_Per_Cell", returnParam = {"IsTestWasSuccessful" }, paramsExclude = { "IsTestWasSuccessful" })
 	public void configurationMaximumAllowedNeighbors() throws UnknownHostException{
 		performPostTest = false;
-		int numberOfActiveCells = DUT1.getNumberOfActiveCells();
+		int numberOfActiveCells = EnodeBConfig.getInstance().getNumberOfActiveCells(DUT1);
 		report.report(DUT1.getNetspanName() + " Number Of Active Cells: " + numberOfActiveCells);
 		for (int i = 1; i <= numberOfActiveCells; i++) {
 			if (numberOfActiveCells == i) {
@@ -621,7 +622,7 @@ public class P0 extends NeighborManagementBase {
 	@TestProperties(name = "Add_Maximum_X2_Neighbors_Per_Cell_Via_IPG", returnParam = {"IsTestWasSuccessful" }, paramsExclude = { "IsTestWasSuccessful" })
 	public void configurationMaximumAllowedNeighborsPerCellViaIPG() throws Exception {
 		performPostTest = false;
-		int numberOfActiveCells = DUT1.getNumberOfActiveCells();
+		int numberOfActiveCells = EnodeBConfig.getInstance().getNumberOfActiveCells(DUT1);
 		report.report(DUT1.getNetspanName() + " Number Of Active Cells: " + numberOfActiveCells);
 		for (int i = 1; i <= numberOfActiveCells; i++) {
 			if (numberOfActiveCells == i) {

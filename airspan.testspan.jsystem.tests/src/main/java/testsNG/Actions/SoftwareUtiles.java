@@ -1,11 +1,14 @@
 package testsNG.Actions;
 
+import EnodeB.AirUnity;
 import EnodeB.EnodeB;
 import EnodeB.EnodeBUpgradeImage;
 import EnodeB.EnodeBUpgradeServer;
 import EnodeB.Components.EnodeBComponentTypes;
+import EnodeB.Components.XLP.XLP.SwStatus;
 import EnodeB.EnodeB.Architecture;
 import Netspan.NetspanServer;
+import Netspan.API.Enums.HardwareCategory;
 import Netspan.API.Enums.ImageType;
 import Netspan.API.Enums.ServerProtocolType;
 import Netspan.API.Lte.EventInfo;
@@ -14,6 +17,7 @@ import Netspan.API.Software.SoftwareStatus;
 import TestingServices.TestConfig;
 import Utils.GeneralUtils;
 import Utils.Pair;
+import Utils.Triple;
 import jsystem.framework.report.ListenerstManager;
 import jsystem.framework.report.Reporter;
 
@@ -21,6 +25,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static java.nio.file.StandardCopyOption.*;
@@ -803,6 +808,7 @@ public class SoftwareUtiles {
 				report.report("Software server: "+ upgradeImage.getUpgradeServerName());
 				report.report("Build path: " + upgradeImage.getBuildPath());
 				report.report("Software version: "+ upgradeImage.getVersion());
+				report.report("Software image type: "+ upgradeImage.getImageType());
 			}
 			
 		} catch (Exception e) {
@@ -941,11 +947,11 @@ public class SoftwareUtiles {
 		return tempPass;
 	}
 	
-	public boolean createUpgradeImage(EnodeBUpgradeServer server, String buildName, String imageName, String targetVer, EnodeB enodeb){
+	public boolean createUpgradeImage(EnodeBUpgradeServer server, String buildName, String imageName, String targetVer, HardwareCategory hardwareCategory, String imageType){
 		if (server.getUpgradeServerProtocolType() == ServerProtocolType.SFTP){
 			buildName = "/upload/"+buildName;
 		}
-		EnodeBUpgradeImage image = new EnodeBUpgradeImage(imageName , EnodeBConfig.getInstance().getHardwareCategory(enodeb), server.getUpgradeServerName(), server.getUpgradeServerProtocolType(), buildName, targetVer);
+		EnodeBUpgradeImage image = new EnodeBUpgradeImage(imageName , hardwareCategory, server.getUpgradeServerName(), server.getUpgradeServerProtocolType(), buildName, targetVer, imageType);
 		boolean flag = true;
 
 		GeneralUtils.startLevel("Creating Software Image");
@@ -975,8 +981,10 @@ public class SoftwareUtiles {
 		return this.notToValidateNodes;
 	}
 	
-	public int updatDefaultSoftwareImage(EnodeB eNodeB) {
+	public Triple<Integer, String, String> updatDefaultSoftwareImage(EnodeB eNodeB) {
 		int numberOfExpectedReboots = 0;
+		String build = "";
+		String relayBuild = "";
 		String softwareImage = eNodeB.defaultNetspanProfiles.getSoftwareImage();
 		if(softwareImage != null){
 			EnodeBUpgradeImage enodeBUpgradeImage = netspanServer.getSoftwareImage(softwareImage);
@@ -991,130 +999,386 @@ public class SoftwareUtiles {
 			}
 		
 			String buildsPath = System.getProperty("BuildMachineVerPath");
-			String relayBuildPath = System.getProperty("BuildMachineRelayVerPath");
 			
 			if (buildsPath != null && buildsPath.startsWith("\\") && !buildsPath.startsWith("\\\\")){
 				buildsPath = "\\" + buildsPath;
 			}
-			if (relayBuildPath != null && relayBuildPath.startsWith("\\") && !relayBuildPath.startsWith("\\\\")){
-				relayBuildPath = "\\" + relayBuildPath;
-			}
 	        
 			setSourceServer(buildsPath);
-	        setBuildFiles();
-	        VersionCopyWorker versionCopyWorker = new VersionCopyWorker(eNodeB.getArchitecture(), enodeBUpgradeServer.getUpgradeServerProtocolType());
-	        versionCopyWorker.startCopy();
-	        
-	        String fsmBuildFileName = getFSMBuild();
-	        String xlpBuildFileName = getXLPBuild();
-	        String relayBuildFileName = getRelayBuildFileName(relayBuildPath);
-	        
-	        String fsmBuild = "";
-	        if(fsmBuildFileName != null){
-	        	fsmBuild = fsmBuildFileName.substring(fsmBuildFileName.indexOf(".") + 1);
-	        	fsmBuild = fsmBuild.substring(0, fsmBuild.indexOf("."));
-	        }
-	        String xlpBuild = "";
-	        if(xlpBuildFileName != null){
-	        	xlpBuild = xlpBuildFileName.substring(xlpBuildFileName.indexOf(".") + 1);
-	        	xlpBuild = xlpBuild.substring(0, xlpBuild.indexOf("."));
-	        }
-	        String relayBuild = "";
-	        if(relayBuildFileName != null && relayBuildFileName != ""){
-	        	relayBuild = relayBuildFileName.substring(relayBuildFileName.indexOf("-") + 1);
-	        	relayBuild = relayBuild.substring(0, relayBuild.indexOf(".pak")); 
-	        }
-	        
-	        String buildFileName = ""; 
-	        String build = "";
-	        if(eNodeB.getArchitecture() == Architecture.FSM){
-	        	buildFileName = fsmBuildFileName;
-	        	build = fsmBuild;
-	        }else if(eNodeB.getArchitecture() == Architecture.XLP){
-	        	buildFileName = xlpBuildFileName;
-	        	build = xlpBuild;
-	        }
-	        build = build.replaceAll("_", ".");
-	        if(buildFileName != ""){
-	        	SoftwareStatus softwareStatus = netspanServer.getSoftwareStatus(eNodeB.getNetspanName(), eNodeB.getImageType());
-	        	if(softwareStatus != null){
-	        		report.report(eNodeB.getName() + "'s Running Version: " + softwareStatus.RunningVersion);
-	        		if(!softwareStatus.RunningVersion.equals(build)){
-	        			numberOfExpectedReboots++;
-	        		}else{
-	        			report.report("Running Version equals Target Version - No Need To Upgrade eNodeB Version.");
-	        		}
-	        	}
-	        	
-	        	EnodeBUpgradeImage upgradeImage = new EnodeBUpgradeImage();
-				upgradeImage.setName(softwareImage);
-				upgradeImage.setImageType(eNodeB.getImageType().value());
-				upgradeImage.setBuildPath(buildFileName);
-				upgradeImage.setVersion(build);
-				if(netspanServer.updateSoftwareImage(upgradeImage) == false){
-					report.report("FAILED To Update Software Image.", Reporter.WARNING);
-					numberOfExpectedReboots = -1;
-				}
-	        }
-	        if(relayBuild != ""){
-	        	SoftwareStatus softwareStatus = netspanServer.getSoftwareStatus(eNodeB.getNetspanName(), ImageType.RELAY);
-	        	if(softwareStatus != null){
-	        		report.report(eNodeB.getName() + "'s Relay Running Version: " + softwareStatus.RunningVersion);
-	        		if(!softwareStatus.RunningVersion.equals(relayBuild)){
-	        			numberOfExpectedReboots++;
-	        		}else{
-	        			report.report("Running Version equals Target Version - No Need To Upgrade Relay Version.");
-	        		}
-	        	}
-	        	
-	        	EnodeBUpgradeImage upgradeImage = new EnodeBUpgradeImage();
-				upgradeImage.setName(softwareImage);
-				upgradeImage.setImageType(ImageType.RELAY.value());
-				upgradeImage.setBuildPath(relayBuildFileName);
-				upgradeImage.setVersion(relayBuild);
-				if(softwareStatus != null){
-					if(netspanServer.updateSoftwareImage(upgradeImage) == false){
-						report.report("FAILED To Update Software Image with Relay Version.", Reporter.WARNING);
-						numberOfExpectedReboots = -1;
+	        if(setBuildFiles()){
+		        VersionCopyWorker versionCopyWorker = new VersionCopyWorker(eNodeB.getArchitecture(), enodeBUpgradeServer.getUpgradeServerProtocolType());
+		        versionCopyWorker.startCopy();
+		        
+		        String fsmBuildFileName = getFSMBuild();
+		        String xlpBuildFileName = getXLPBuild();
+		        String relayBuildFileName = getRelayTargetBuildFileName();
+		        
+		        if((eNodeB instanceof AirUnity) && (relayBuildFileName == null || relayBuildFileName == "")){ // when build not mention or not found, set the running version as target version.
+		        	report.report("Relay build not mention or not found, setting running version as target version.", Reporter.WARNING);
+		        	SoftwareStatus softwareStatus = netspanServer.getSoftwareStatus(eNodeB.getNetspanName(), ImageType.RELAY);
+		        	if(softwareStatus != null){
+		        		relayBuildFileName = "airunity-"+softwareStatus.RunningVersion+".pak";
+		        	}
+		        }
+		        
+		        String fsmBuild = "";
+		        if(fsmBuildFileName != null){
+		        	fsmBuild = fsmBuildFileName.substring(fsmBuildFileName.indexOf(".") + 1);
+		        	fsmBuild = fsmBuild.substring(0, fsmBuild.indexOf("."));
+		        }
+		        String xlpBuild = "";
+		        if(xlpBuildFileName != null){
+		        	xlpBuild = xlpBuildFileName.substring(xlpBuildFileName.indexOf(".") + 1);
+		        	xlpBuild = xlpBuild.substring(0, xlpBuild.indexOf("."));
+		        }
+		        
+		        if(eNodeB instanceof AirUnity){
+		        	relayBuild = getRelayTargetBuild(eNodeB, relayBuildFileName);
+		        }
+		        
+		        String buildFileName = ""; 
+		        if(eNodeB.getArchitecture() == Architecture.FSM){
+		        	buildFileName = fsmBuildFileName;
+		        	build = fsmBuild;
+		        }else if(eNodeB.getArchitecture() == Architecture.XLP){
+		        	buildFileName = xlpBuildFileName;
+		        	build = xlpBuild;
+		        }
+		        build = build.replaceAll("_", ".");
+		        if(buildFileName != ""){
+		        	SoftwareStatus softwareStatus = netspanServer.getSoftwareStatus(eNodeB.getNetspanName(), eNodeB.getImageType());
+		        	if(softwareStatus != null){
+		        		report.report(eNodeB.getName() + "'s Running Version: " + softwareStatus.RunningVersion);
+		        		if(!softwareStatus.RunningVersion.equals(build)){
+		        			numberOfExpectedReboots++;
+		        		}else{
+		        			report.report("Running Version equals Target Version - No Need To Upgrade eNodeB Version.");
+		        		}
+		        	}
+		        	
+		        	EnodeBUpgradeImage upgradeImage = new EnodeBUpgradeImage();
+					upgradeImage.setName(softwareImage);
+					upgradeImage.setImageType(eNodeB.getImageType().value());
+					if (enodeBUpgradeServer.getUpgradeServerProtocolType() == ServerProtocolType.SFTP){
+						buildFileName = "/upload/"+buildFileName;
 					}
-				}
+					upgradeImage.setBuildPath(buildFileName);
+					upgradeImage.setVersion(build);
+					if(updateSoftwareImage(upgradeImage) == false){
+						report.report("FAILED To Update Software Image.", Reporter.FAIL);
+						numberOfExpectedReboots = GeneralUtils.ERROR_VALUE;
+					}
+		        }
+		        if((eNodeB instanceof AirUnity) && (relayBuild != "")){
+		        	SoftwareStatus softwareStatus = netspanServer.getSoftwareStatus(eNodeB.getNetspanName(), ImageType.RELAY);
+		        	if(softwareStatus != null){
+		        		report.report(eNodeB.getName() + "'s Relay Running Version: " + softwareStatus.RunningVersion);
+		        		if(!softwareStatus.RunningVersion.equals(relayBuild)){
+		        			numberOfExpectedReboots++;
+		        		}else{
+		        			report.report("Running Version equals Target Version - No Need To Upgrade Relay Version.");
+		        		}
+		        	}
+		        	
+		        	EnodeBUpgradeImage upgradeImage = new EnodeBUpgradeImage();
+					upgradeImage.setName(softwareImage);
+					upgradeImage.setImageType(ImageType.RELAY.value());
+					upgradeImage.setBuildPath(relayBuildFileName);
+					upgradeImage.setVersion(relayBuild);
+					if(softwareStatus != null){
+						if(updateSoftwareImage(upgradeImage) == false){
+							report.report("FAILED To Update Software Image with Relay Version.", Reporter.FAIL);
+							numberOfExpectedReboots = GeneralUtils.ERROR_VALUE;
+						}
+					}
+		        }
+	        }else{
+	        	report.report("FAILED to find build files.", Reporter.FAIL);
+				numberOfExpectedReboots = GeneralUtils.ERROR_VALUE;
 	        }
 		}else{
 			report.report("SoftwareImage doesn't exist.", Reporter.FAIL);
+			numberOfExpectedReboots = GeneralUtils.ERROR_VALUE;
 		}
 		report.report("Number Of Expected Reboots: " + numberOfExpectedReboots);
-		return numberOfExpectedReboots;
+		return new Triple<Integer, String, String>(numberOfExpectedReboots, build, relayBuild);
 	}
 
-	private String getRelayBuildFileName(String relayBuildPath) {
+	private String getRelayTargetBuildFileName() {
 		String fileName = "";
-		File relaySourceServer = new File(relayBuildPath);
-		File[] files = relaySourceServer.listFiles();
-		if(files != null){
-	        for (File file : files) {
-	            GeneralUtils.printToConsole("Checking File:" + file.toString());
-	            if (file.getName().contains(".pak") && (!file.getName().contains("mirror"))){
-	            	fileName = file.getName();
-	            	report.report("Relay Build Name Is: " + fileName);
-	            	File destFile = new File(destServer.getPath().toString() + File.separator + fileName);;
-	                File sourceFile = file;
-		            /**
-		             * copying the file from the server
-		             **/
-		            try {
-		                if (!Files.exists(new File(destFile.getPath()).toPath())) {
-		                	report.report("Copying file: Relay Build", Reporter.PASS);
-		                    Files.copy(sourceFile.toPath(), destFile.toPath(), REPLACE_EXISTING);
-		                } else {
-		                	report.report("Relay file already exists", Reporter.PASS);
-		                }
-		            } catch (Exception e) {
-		            	
+		String relayBuildPath = System.getProperty("BuildMachineRelayVerPath");
+		if (relayBuildPath != null){
+			if(relayBuildPath.startsWith("\\") && !relayBuildPath.startsWith("\\\\")){
+				relayBuildPath = "\\" + relayBuildPath;
+			}
+			
+			File relaySourceServer = new File(relayBuildPath);
+			File[] files = relaySourceServer.listFiles();
+			if(files != null){
+		        for (File file : files) {
+		            GeneralUtils.printToConsole("Checking File:" + file.toString());
+		            if (file.getName().contains(".pak") && (!file.getName().contains("mirror"))){
+		            	fileName = file.getName();
+		            	report.report("Relay Build Name Is: " + fileName);
+		            	File destFile = new File(destServer.getPath().toString() + File.separator + fileName);;
+		                File sourceFile = file;
+			            /**
+			             * copying the file from the server
+			             **/
+			            try {
+			                if (!Files.exists(new File(destFile.getPath()).toPath())) {
+			                	report.report("Copying file: Relay Build", Reporter.PASS);
+			                    Files.copy(sourceFile.toPath(), destFile.toPath(), REPLACE_EXISTING);
+			                } else {
+			                	report.report("Relay file already exists", Reporter.PASS);
+			                }
+			            } catch (Exception e) {
+			            	
+			            }
+		            	break;
 		            }
-	            	break;
-	            }
+				}
 			}
 		}
 		return fileName;
+	}
+	
+	private String getRelayTargetBuild(EnodeB eNodeB, String relayBuildFileName){
+		String relayBuild = "";
+		if(relayBuildFileName != null && relayBuildFileName != ""){
+        	relayBuild  = relayBuildFileName.substring(relayBuildFileName.indexOf("-") + 1);
+        	relayBuild = relayBuild.substring(0, relayBuild.indexOf(".pak")); 
+        }
+		return relayBuild;
+	}
+
+	public boolean isRelayVersionUpdated(EnodeB eNodeB, String realyTargetVersion, int logLevel) {
+		boolean result = false;
+		if((eNodeB instanceof AirUnity) && (realyTargetVersion != null) && (realyTargetVersion != "")){
+		
+			SoftwareStatus softwareStatus = netspanServer.getSoftwareStatus(eNodeB.getNetspanName(), ImageType.RELAY);
+	    	if(softwareStatus != null){
+	    		report.report(eNodeB.getName() + "'s Relay Running Version: " + softwareStatus.RunningVersion);
+	    		if(softwareStatus.RunningVersion.equals(realyTargetVersion)){
+	    			report.report("The running bank contains target version " + realyTargetVersion + " on eNodeB's Relay: " + eNodeB.getName());
+	    			result = true;
+	    		}else{
+	    			report.report("The running bank does NOT contains target version, running version is " + softwareStatus.RunningVersion + " on eNodeB's Relay: " + eNodeB.getName() + " while target version is " + realyTargetVersion, logLevel);
+	    			result = false;
+	    		}
+	    	}
+		}else{
+			result = true;
+		}
+    	
+		return result;
+	}
+
+	public void printSoftwareImageDetails(EnodeB eNodeB) {
+		EnodeBUpgradeImage enodeBUpgradeImage = netspanServer.getSoftwareImage(eNodeB.getDefaultNetspanProfiles().getSoftwareImage());
+		EnodeBUpgradeServer enodeBUpgradeServer = netspanServer.getSoftwareServer(enodeBUpgradeImage.getUpgradeServerName());
+		GeneralUtils.startLevel(eNodeB.getName() + "'s Software Image Details.");
+		report.report("Software Image = " + enodeBUpgradeImage.getName());
+		report.report("eNodeB Software Version = " + enodeBUpgradeImage.getVersion());
+		report.report("Software Server = " + enodeBUpgradeImage.getUpgradeServerName());
+		report.report("Software Server IP = " + enodeBUpgradeServer.getUpgradeServerIp());
+		report.report("Software Server Protocol Type = " + enodeBUpgradeServer.getUpgradeServerProtocolType());
+		if(eNodeB instanceof AirUnity){
+			report.report("Relay Software Version = " + enodeBUpgradeImage.getSecondVersion());
+		}
+		GeneralUtils.stopLevel();
+	}
+	
+	public ArrayList<EnodebSwStatus> followSoftwareActivationProgressViaNetspan(long softwareActivateStartTimeInMili, ArrayList<Pair<EnodeB, Triple<Integer, String, String>>> eNodebList) {
+		ArrayList<EnodebSwStatus> eNodebSwStausList = new ArrayList<EnodebSwStatus>();
+		for(Pair<EnodeB, Triple<Integer, String, String>> eNodeB : eNodebList){
+			eNodebSwStausList.add(new EnodebSwStatus(eNodeB.getElement0(), eNodeB.getElement1().getLeftElement(), eNodeB.getElement1().getMiddleElement(), eNodeB.getElement1().getRightElement()));
+		}
+		@SuppressWarnings("unchecked")
+		ArrayList<EnodebSwStatus> eNodebThatNeedsRebootSwStausListTmp = new ArrayList<EnodebSwStatus>();
+		for(EnodebSwStatus eNodebSwStaus : eNodebSwStausList){
+			printSoftwareImageDetails(eNodebSwStaus.eNodeB);
+			if(eNodebSwStaus.numberOfExpectedReboots > 0){
+				eNodebSwStaus.eNodeB.setExpectBooting(true);
+				eNodebThatNeedsRebootSwStausListTmp.add(eNodebSwStaus);
+			}
+		}
+
+		for(int i = 1; i <= 2; i++){//max number of reboot is 2
+			if(!eNodebThatNeedsRebootSwStausListTmp.isEmpty()){
+				Date softwareActivateStartTimeInDate = new Date(softwareActivateStartTimeInMili);
+				GeneralUtils.startLevel("Verify Software Activation.");
+				followSoftwareDownloadProgresViaNetspan(eNodebThatNeedsRebootSwStausListTmp, softwareActivateStartTimeInMili);
+				waitForRebootAndSetExpectedBootingForSecondReboot(eNodebThatNeedsRebootSwStausListTmp, softwareActivateStartTimeInDate, 5 * 60 * 1000);
+				GeneralUtils.stopLevel();
+				
+				for(EnodebSwStatus eNodebSwStaus : eNodebSwStausList){
+					if(eNodebSwStaus.numberOfExpectedReboots <= 1){
+						eNodebThatNeedsRebootSwStausListTmp.remove(eNodebSwStaus);
+					}
+				}
+			}
+		}
+		return eNodebSwStausList;
+	}
+	
+	private void followSoftwareDownloadProgresViaNetspan(ArrayList<EnodebSwStatus> eNodebSwStausList, long softwareActivateStartTimeInMili){
+		Date softwareActivateStartTimeInDate = new Date(softwareActivateStartTimeInMili);
+		@SuppressWarnings("unchecked")
+		ArrayList<EnodebSwStatus> eNodebSwStausListTmp = (ArrayList<EnodebSwStatus>) eNodebSwStausList.clone();
+		GeneralUtils.startLevel("Verify Software Download.");
+		do {
+			ArrayList<EnodebSwStatus> eNodebSwStausListToRemove = new ArrayList<EnodebSwStatus>();
+			for(EnodebSwStatus eNodebSwStaus : eNodebSwStausListTmp){
+				Pair<Boolean, SwStatus> swStatus = eNodebSwStaus.eNodeB.isSoftwareDownloadCompletedSuccessfully(); 
+				eNodebSwStaus.swStatus = swStatus.getElement1();
+				if((eNodebSwStaus.swUpgradeEventInfoList.length <= eNodebSwStaus.receivedEventIndex) || (swStatus.getElement0())){
+					eNodebSwStaus.isSwDownloadCompleted = true;
+					eNodebSwStausListToRemove.add(eNodebSwStaus);
+				}else if((eNodebSwStaus.swStatus == SwStatus.SW_STATUS_INSTALL_FAILURE || eNodebSwStaus.swStatus == SwStatus.SW_STATUS_ACTIVATION_FAILURE)){
+					eNodebSwStaus.isSwDownloadCompleted = false;
+					eNodebSwStausListToRemove.add(eNodebSwStaus);
+				}else{
+					eNodebSwStaus.isSwDownloadCompleted = false;
+				}
+				GeneralUtils.unSafeSleep(10 * 1000);
+				eNodebSwStaus.reportUploadedNetspanEvent(softwareActivateStartTimeInDate);
+			}
+			for(EnodebSwStatus eNodebSwStaus : eNodebSwStausListToRemove){
+				eNodebSwStausListTmp.remove(eNodebSwStaus);
+			}
+			
+		}while ((!eNodebSwStausListTmp.isEmpty()) && (System.currentTimeMillis() - softwareActivateStartTimeInMili <= (EnodeB.UPGRADE_TIMEOUT/3)));
+		for(EnodebSwStatus eNodebSwStaus : eNodebSwStausListTmp){
+			if(eNodebSwStaus.isSwDownloadCompleted == false){
+				report.report(eNodebSwStaus.eNodeB.getName() + ": Software Download Didn't End.", Reporter.WARNING);
+			}
+		}
+		GeneralUtils.stopLevel();
+	}
+			
+
+	
+	private void waitForRebootAndSetExpectedBootingForSecondReboot(ArrayList<EnodebSwStatus> eNodebSwStausList, Date softwareActivateStartTimeInDate, long timeout) {
+		GeneralUtils.startLevel("Verify Software Activation.");
+		@SuppressWarnings("unchecked")
+		ArrayList<EnodebSwStatus> eNodebSwStausListTmp = (ArrayList<EnodebSwStatus>) eNodebSwStausList.clone();
+		final long waitForRebootStartTime = System.currentTimeMillis();
+		do{
+			ArrayList<EnodebSwStatus> eNodebSwStausListToRemove = new ArrayList<EnodebSwStatus>();
+			for(EnodebSwStatus eNodebSwStaus : eNodebSwStausListTmp){
+				eNodebSwStaus.reportUploadedAllNetspanEvents(softwareActivateStartTimeInDate);
+				GeneralUtils.printToConsole(eNodebSwStaus.eNodeB.getName() + ".isExpectBooting() = " + eNodebSwStaus.eNodeB.isExpectBooting());
+				if(eNodebSwStaus.eNodeB.isExpectBooting() == false){
+					eNodebSwStausListToRemove.add(eNodebSwStaus);
+					eNodebSwStaus.numberOfReboot++;
+					if(eNodebSwStaus.numberOfReboot < eNodebSwStaus.numberOfExpectedReboots){
+						eNodebSwStaus.eNodeB.setExpectBooting(true);
+					}
+				}
+			}
+			for(EnodebSwStatus eNodebSwStaus : eNodebSwStausListToRemove){
+				eNodebSwStausListTmp.remove(eNodebSwStaus);
+			}
+			GeneralUtils.unSafeSleep(5000);
+		}while((!eNodebSwStausListTmp.isEmpty()) &&(System.currentTimeMillis() - waitForRebootStartTime <= timeout));
+		for(EnodebSwStatus eNodebSwStaus : eNodebSwStausListTmp){
+			report.report(eNodebSwStaus.eNodeB.getName() + " has NOT been rebooted.", Reporter.WARNING);
+		}
+		GeneralUtils.stopLevel();
+	}
+
+	public void waitForAllRunningAndInService(long softwareActivateStartTimeInMili, ArrayList<EnodebSwStatus> eNodebSwStausList) {
+		@SuppressWarnings("unchecked")
+		ArrayList<EnodebSwStatus> eNodebSwStausListTmp = (ArrayList<EnodebSwStatus>) eNodebSwStausList.clone();
+		GeneralUtils.startLevel("Wait For ALL RUNNING And In Service.");
+		while((!eNodebSwStausListTmp.isEmpty()) && (System.currentTimeMillis() - softwareActivateStartTimeInMili <= (EnodeB.UPGRADE_TIMEOUT))){
+			ArrayList<EnodebSwStatus> eNodebSwStausListToRemove = new ArrayList<EnodebSwStatus>();
+			for(EnodebSwStatus eNodebSwStaus : eNodebSwStausListTmp){
+				if(eNodebSwStaus.eNodeB.isInOperationalStatus()){
+					eNodebSwStaus.isInRunningState = true;
+					eNodebSwStausListToRemove.add(eNodebSwStaus);
+					report.report(eNodebSwStaus.eNodeB.getName() + " is in Running State.", Reporter.PASS);
+				}
+			}
+			for(EnodebSwStatus eNodebSwStaus : eNodebSwStausListToRemove){
+				eNodebSwStausListTmp.remove(eNodebSwStaus);
+			}
+			GeneralUtils.unSafeSleep(5 * 1000);
+		}
+		for(EnodebSwStatus eNodebSwStaus : eNodebSwStausListTmp){
+			if(eNodebSwStaus.isSwDownloadCompleted == false){
+				report.report(eNodebSwStaus.eNodeB.getName() + ": Didn't Reach To Running State.", Reporter.FAIL);
+			}
+		}
+		GeneralUtils.stopLevel();
+	}
+	
+	public boolean validateRunningVersion(ArrayList<EnodebSwStatus> eNodebSwStausList) {
+		boolean res = true;
+		GeneralUtils.startLevel("Validate Running Version.");
+		for(EnodebSwStatus eNodebSwStaus : eNodebSwStausList){
+			res = res && isUpdatedViaSnmp(eNodebSwStaus.eNodeB, Reporter.FAIL);
+			res = res &&  isRelayVersionUpdated(eNodebSwStaus.eNodeB, eNodebSwStaus.realyTargetVersion, Reporter.FAIL);
+		}
+		GeneralUtils.stopLevel();
+		return res;
+	}
+
+	public class EnodebSwStatus{
+		public final String[] swUpgradeEventInfoList = new String[]{
+			"Download in progress",
+			"Download completed",
+			"Activate in progress",
+			"Activate completed"
+		};
+		public EnodeB eNodeB;
+		public SwStatus swStatus;
+		public boolean isSwDownloadCompleted;
+		public boolean isInRunningState;
+		public int receivedEventIndex;
+		public final int numberOfExpectedReboots;
+		public int numberOfReboot;
+		public final String targetVersion;
+		public final String realyTargetVersion;
+		private AlarmsAndEvents alarmsAndEvents;
+				
+		public EnodebSwStatus(EnodeB eNodeB, int numberOfExpectedReboots, String targetVersion, String realyTargetVersion) {
+			this.eNodeB = eNodeB;
+			this.swStatus = SwStatus.SW_STATUS_IDLE;
+			this.isSwDownloadCompleted = false;
+			this.isInRunningState = false;
+			this.receivedEventIndex = 0;
+			this.numberOfReboot = 0;
+			this.numberOfExpectedReboots = numberOfExpectedReboots;
+			this.targetVersion = targetVersion;
+			this.realyTargetVersion = realyTargetVersion;
+			this.alarmsAndEvents = AlarmsAndEvents.getInstance();
+		}
+		
+		public void reportUploadedNetspanEvent(Date softwareActivateStartTimeInDate){
+			List<EventInfo> eventInfoListFromNMS = alarmsAndEvents.getAllEventsNode(eNodeB, softwareActivateStartTimeInDate, new Date(System.currentTimeMillis()));
+			for(EventInfo eventInfo :eventInfoListFromNMS){
+				if(swUpgradeEventInfoList.length > receivedEventIndex){
+					if(eventInfo.getEventInfo().contains(swUpgradeEventInfoList[receivedEventIndex])){
+						GeneralUtils.startLevel(eNodeB.getName() + "-"+eventInfo.getSourceType()+": " + 
+								swUpgradeEventInfoList[receivedEventIndex]);
+						report.report("Event Type: " + eventInfo.getEventType());
+						report.report("Source Type: " + eventInfo.getSourceType()); 
+						report.report("Event Info: " + eventInfo.getEventInfo());
+						report.report("Received Time: " + eventInfo.getReceivedTime().toString());
+						GeneralUtils.stopLevel();
+						receivedEventIndex++;
+						break;
+					}
+				}
+			}
+		}
+		
+		public void reportUploadedAllNetspanEvents(Date softwareActivateStartTimeInDate){
+			for(int i = 1; i <= swUpgradeEventInfoList.length; i++){
+				reportUploadedNetspanEvent(softwareActivateStartTimeInDate);
+			}
+		}
 	}
 }

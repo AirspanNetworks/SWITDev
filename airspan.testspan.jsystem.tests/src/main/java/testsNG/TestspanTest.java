@@ -32,6 +32,7 @@ import Utils.ScenarioUtils;
 import Utils.ScpClient;
 import Utils.SetupUtils;
 import Utils.TunnelManager;
+import Utils.Reporters.GraphAdder;
 import Utils.Snmp.MibReader;
 import Utils.WatchDog.CommandMemoryCPU;
 import Utils.WatchDog.CommandWatchInService;
@@ -306,6 +307,7 @@ public class TestspanTest extends SystemTestCase4 {
 		EnodeBConfig.getInstance().deleteClonedProfiles();
 		String coreFilesPath = "";
 		printMemoryTables(cpuCommands);
+		printMemoryGraph(cpuCommands);
 		WatchDogManager.getInstance().shutDown();
 
 		if (this.isPass) {
@@ -430,6 +432,51 @@ public class TestspanTest extends SystemTestCase4 {
 
 		GeneralUtils.printToConsole(ScenarioUtils.getInstance().getMemoryConsumption());
 	}
+
+	private void printMemoryGraph(ArrayList<CommandMemoryCPU> cpuCommands2) {
+		if(cpuCommands2 == null) {
+			report.report("cpu and memory watchdog hasn't been initiated!");
+		}
+		
+		for(CommandMemoryCPU command : cpuCommands2) {
+			printGraphForCPUCommand(command);
+		}
+		
+	}
+
+	private void printGraphForCPUCommand(CommandMemoryCPU command) {
+		//make integers lists into double lists.
+		ArrayList<Double> memoryDouble = turnIntArrayToDoubleArray(command.getMemoryValuesList());
+		ArrayList<Double> cpuDouble = turnIntArrayToDoubleArray(command.getCpuValuesList());
+ 		ArrayList<Long> time = new ArrayList<Long>();
+ 		
+ 		//initialize time just for order of the graph
+		time = initTimeList(time,memoryDouble.size());
+		
+		try {
+			GraphAdder.AddGraph(String.format("%s %s", "graph Test", command.getNodeName()), "time stamp / sec", "node % usage", memoryDouble, cpuDouble, time, "memory","cpu",false);
+		}catch(Exception e) {
+			e.printStackTrace();
+			report.report("problem while trying to create memory graphs! - check console");
+		}
+	}
+	
+	private ArrayList<Long> initTimeList(ArrayList<Long> time, int size) {
+		ArrayList<Long> returnList = new ArrayList<Long>();
+		for(int i=0; i<size; i++) {
+			returnList.add(new Long(i));
+		}
+		return returnList;
+	}
+
+	private ArrayList<Double> turnIntArrayToDoubleArray(ArrayList<Integer> list){
+		ArrayList<Double> doubleList = new ArrayList<Double>();
+		for(Integer i : list) {
+			doubleList.add(i.doubleValue());
+		}
+		return doubleList;
+	}
+	
 
 	/**
 	 * 

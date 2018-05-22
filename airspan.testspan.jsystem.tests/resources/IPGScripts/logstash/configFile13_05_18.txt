@@ -1,0 +1,44 @@
+input {
+        file{
+        path => [ "/mnt/log/**/**\.log","/mnt/log/**/**\.log" ]
+        start_position => "beginning"
+        sincedb_path => "/etc/logstash/conf.d/sincedb.log"
+        }
+ }
+
+filter{
+
+        grok{
+                break_on_match => false
+                match => ["path" , "/mnt/log/%{FOLDER:folder}/**/.\w+.\w+.\w+.\w+%{IP:ip}\w+%{IP:versions}.\w+"]
+                tag_on_failure => [ "_LogFileVersionFailed" ]
+                patterns_dir => ["./patterns"]
+                add_tag => [ "%{folder}" ]
+        }
+
+          grok{
+                break_on_match => true
+                #Error logs Regexes
+                match => [ "message" , "^%{COSDATE2:preDate}::%{COSTDATE:dateInNodeTest}\s+%{METHOD:function}\:%{INT:functionLine}\s+%{ERRORMES:unitMacErr}\s+%{MSG:errorMessage}" ]
+                match => [ "message" , "^%{COSTDATE:dateInNodeTest}\s+%{METHOD:function}\:%{INT:functionLine}\s+%{ERRORMES:unitMacErr}\s+%{MSG:errorMessage}" ]
+                match => [ "message" , "^%{COSTDATE:dateInNodeTest}\s+%{ERRORMES:unitMacErr}\s+\w+\=\w+\:\w+\s+%{METHOD:function}\s+%{MSG:errorMessage}" ]
+                patterns_dir => ["./patterns"]
+        }
+
+        date{
+                match => ["dateInNodeTest", "dd/MM/yyyy HH:mm:ss:SSS"]
+                timezone => "Asia/Jerusalem"
+        }
+
+        mutate{
+                remove_field =>["@version"]
+                remove_field =>["host"]
+        }
+}
+
+output {
+        if "_grokparsefailure" not in [tags] {
+        elasticsearch{ hosts =>["localhost:9200"]}
+        }
+}
+

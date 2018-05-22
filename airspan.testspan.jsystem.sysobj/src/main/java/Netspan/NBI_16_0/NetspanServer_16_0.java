@@ -27,6 +27,7 @@ import Netspan.NBI_16_0.Lte.EnbAdvancedProfile;
 import Netspan.NBI_16_0.Lte.EnbDetailsGet;
 import Netspan.NBI_16_0.Lte.EnbRadioProfile;
 import Netspan.NBI_16_0.Lte.EnbSyncProfile;
+import Netspan.NBI_16_0.Lte.LteCellGetWs;
 import Netspan.NBI_16_0.Lte.LteEnbConfigGetResult;
 import Netspan.NBI_16_0.Lte.LtePnpConfigGetResult;
 import Netspan.NBI_16_0.Lte.LteSyncProfileGetResult;
@@ -711,5 +712,21 @@ public class NetspanServer_16_0 extends NetspanServer_15_5 implements Netspan_16
 		}
 		GeneralUtils.printToConsole("eventListNode via Netspan for eNodeB " + dut.getNetspanName() + " succeeded");
 		return eventsList;
+	}
+	
+	@Override
+	public int getNumberOfActiveCellsForNode(EnodeB node) {
+		int numberOfActiveCells = 0;
+		EnbDetailsGet nodeConf = getNodeConfig(node);
+		if(nodeConf == null){
+			return 0;
+		}
+		List<LteCellGetWs> cells = nodeConf.getLteCell();
+		for(LteCellGetWs cell : cells) {
+			if(cell.getIsEnabled().getValue()) {
+				numberOfActiveCells++;
+			}
+		}
+		return numberOfActiveCells;
 	}
 }

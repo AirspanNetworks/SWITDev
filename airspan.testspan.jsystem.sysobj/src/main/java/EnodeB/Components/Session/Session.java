@@ -406,28 +406,22 @@ public class Session implements Runnable {
 	public boolean updateLogLevel() {
 		boolean verify = false;
 		GeneralUtils.printToConsole("Setting Session " + getName() +" for EnodeB "+enbComp.getIpAddress()+ " log level to " + logLevel);
-		if (name.contains(SessionManager.CONSOLE_SESSION_NAME)) {
-			GeneralUtils.printToConsole("Serial session. No need to update");
-			return true;
-		}
-		else
-		{
-			if (connected && logLevel >= 0) {
-				GeneralUtils.printToConsole("Setting log level");
+		if (connected && logLevel >= 0) {
+			GeneralUtils.printToConsole("Setting log level");
+			enbComp.setSessionLogLevel(name, logLevel);
+			GeneralUtils.printToConsole("Verifying log level");
+			verify = verifyLogLevel();
+			if(!verify){					
+				GeneralUtils.printToConsole("Failed to set log level. Setting log level again");
+				GeneralUtils.unSafeSleep(10*1000);
 				enbComp.setSessionLogLevel(name, logLevel);
 				GeneralUtils.printToConsole("Verifying log level");
 				verify = verifyLogLevel();
-				if(!verify){					
-					GeneralUtils.printToConsole("Failed to set log level. Setting log level again");
-					GeneralUtils.unSafeSleep(10*1000);
-					enbComp.setSessionLogLevel(name, logLevel);
-					GeneralUtils.printToConsole("Verifying log level");
-					verify = verifyLogLevel();
-				}
 			}
-			else
-				return false;
 		}
+		else
+			return false;
+		
 		if (verify) 
 			GeneralUtils.printToConsole(getName() + " log level is at " + logLevel + " as wanted.");		
 		else

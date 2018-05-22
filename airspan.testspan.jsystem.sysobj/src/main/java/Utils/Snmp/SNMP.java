@@ -493,9 +493,12 @@ public class SNMP extends SystemObjectImpl {
 	}
 
 	public HashMap<String, Variable> SnmpWalk(String strOID)  {
+		return SnmpWalk(strOID, true);
+	}
+	
+	public HashMap<String, Variable> SnmpWalk(String strOID, boolean printOutput)  {
 		HashMap<String, Variable> ret = new HashMap<>();
-		ret =  doSnmpWalk(strOID);
-		
+		ret =  doSnmpWalk(strOID, printOutput);
 		return ret;
 	}
 	
@@ -509,14 +512,14 @@ public class SNMP extends SystemObjectImpl {
 	 * @throws IOException 
 	 * @throws general exception
 	 * */
-	private HashMap<String, Variable> doSnmpWalk(String strOID) {
+	private HashMap<String, Variable> doSnmpWalk(String strOID, boolean printOutput) {
 		HashMap<String, Variable> values = new HashMap<String, Variable>();
 		
 		if (!this.isAvailable()) {
 			GeneralUtils.printToConsole("Unable to get SNMP for OID " + strOID);
 			return values;
 		}
-		SNMPWalkThread worker = new SNMPWalkThread(snmp, target, pdu, transport, strOID);
+		SNMPWalkThread worker = new SNMPWalkThread(snmp, target, pdu, transport, strOID, printOutput);
 		worker.start();
 		long snmpWalkTimeout = 10000;
 		long startTime = System.currentTimeMillis(); // fetch starting time
@@ -529,12 +532,10 @@ public class SNMP extends SystemObjectImpl {
 		if (!worker.snmpWalkFinished) {
 			GeneralUtils.printToConsole("SNMP Walk reached timeout, closing process.");
 			worker.interrupt();
-			report.report("Failed to complete SNMP Walk, timeout reached.", Reporter.WARNING);
+			GeneralUtils.printToConsole("Failed to complete SNMP Walk, timeout reached.");
 		}
 		return worker.values;
-	}
-	
-	
+	}	
 
 	/**
 	 * Purpose of the function is to translate String representation of the SNMP

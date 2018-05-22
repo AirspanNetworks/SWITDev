@@ -24,7 +24,7 @@ public class P0 extends OtdoaBase {
 		setNetworkWithNetspan(dut);
 		
 		//Multi Cell - disable all cells OTDOA abilities and change cell to 2
-		if(dut.getNumberOfActiveCells() > 1){
+		if(enodeBConfig.getNumberOfActiveCells(dut) > 1){
 			report.report("Disable OTDOA for cell 1");
 			dut.setCellContextNumber(1);
 			setRadioWithNetspan(dut,false,null,false,null,null,null,null,null,null,null,null,null,null);
@@ -58,7 +58,7 @@ public class P0 extends OtdoaBase {
 		setNetworkWithNetspan(dut);
 		
 		//Multi Cell - disable all cells OTDOA abilities and change cell to 1
-		if(dut.getNumberOfActiveCells() > 1){
+		if(enodeBConfig.getNumberOfActiveCells(dut) > 1){
 			report.report("Disable OTDOA for cell 2");
 			dut.setCellContextNumber(2);
 			setRadioWithNetspan(dut,false,null,false,null,null,null,null,null,null,null,null,null,null);
@@ -93,7 +93,7 @@ public class P0 extends OtdoaBase {
 		report.report("Disable OTDOA for cell 1");
 		dut.setCellContextNumber(1);
 		setRadioWithNetspan(dut,false,null,false,null,null,null,null,null,null,null,null,null,null);
-		if(dut.getNumberOfActiveCells() > 1){
+		if(enodeBConfig.getNumberOfActiveCells(dut) > 1){
 			dut.setCellContextNumber(2);
 			report.report("Disable OTDOA for cell 2");
 			setRadioWithNetspan(dut,false,null,false,null,null,null,null,null,null,null,null,null,null);
@@ -123,7 +123,7 @@ public class P0 extends OtdoaBase {
 		setNetworkWithNetspan(dut);
 				
 		//Multi Cell - disable all cells OTDOA abilities and change cell to 1
-		if(dut.getNumberOfActiveCells() > 1){
+		if(enodeBConfig.getNumberOfActiveCells(dut) > 1){
 			report.report("Disable OTDOA for cell 2");
 			dut.setCellContextNumber(2);
 			setRadioWithNetspan(dut,false,null,false,null,null,null,null,null,null,null,null,null,null);
@@ -155,7 +155,7 @@ public class P0 extends OtdoaBase {
 		setNetworkWithNetspan(dut);
 				
 		//Multi Cell - disable all cells OTDOA abilities and change cell to 1
-		if(dut.getNumberOfActiveCells() > 1){
+		if(enodeBConfig.getNumberOfActiveCells(dut) > 1){
 			report.report("Disable OTDOA for cell 2");
 			dut.setCellContextNumber(2);
 			setRadioWithNetspan(dut,false,null,false,null,null,null,null,null,null,null,null,null,null);
@@ -187,7 +187,7 @@ public class P0 extends OtdoaBase {
 		setNetworkWithNetspan(dut);
 				
 		//Disable both Cells OTDOA feature.
-		if(dut.getNumberOfActiveCells() > 1){
+		if(enodeBConfig.getNumberOfActiveCells(dut) > 1){
 			report.report("Disable OTDOA for cell 2");
 			dut.setCellContextNumber(2);
 			setRadioWithNetspan(dut,false,null,false,null,null,null,null,null,null,null,null,null,null);
@@ -219,7 +219,7 @@ public class P0 extends OtdoaBase {
 		setNetworkWithNetspan(dut);
 				
 		//Disable both Cells OTDOA feature.
-		if(dut.getNumberOfActiveCells() > 1){
+		if(enodeBConfig.getNumberOfActiveCells(dut) > 1){
 			report.report("Disable OTDOA for cell 2");
 			dut.setCellContextNumber(2);
 			setRadioWithNetspan(dut,false,null,false,null,null,null,null,null,null,null,null,null,null);
@@ -259,7 +259,7 @@ public class P0 extends OtdoaBase {
 		setNetworkWithNetspan(dut);
 				
 		//Disable both Cells OTDOA feature.
-		if(dut.getNumberOfActiveCells() > 1){
+		if(enodeBConfig.getNumberOfActiveCells(dut) > 1){
 			report.report("Disable OTDOA for cell 2");
 			dut.setCellContextNumber(2);
 			setRadioWithNetspan(dut,false,null,false,null,null,null,null,null,null,null,null,null,null);

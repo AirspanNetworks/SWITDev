@@ -11,18 +11,21 @@ import java.util.Set;
 import org.junit.Test;
 import org.snmp4j.smi.Variable;
 
+import Action.UeAction.UeAction;
 import EnodeB.EnodeB;
 import Entities.LoadParam;
 import Entities.StreamParams;
 import Entities.ITrafficGenerator.CounterUnit;
+import Entities.ITrafficGenerator.TransmitDirection;
 import UE.UE;
 import UE.UESimulator;
 import UE.VirtualUE;
 import Utils.GeneralUtils;
+import Utils.GeneralUtils.RebootType;
 import Utils.SetupUtils;
 import Utils.StreamList;
 import Utils.WatchDog.CommandWatchActiveUEsNmsTable;
-import Utils.WatchDog.CommandWatchUeLinkStatusVolte;
+import Utils.WatchDog.CommandWatchUeLinkStatusVolteOrEmergency;
 import Utils.WatchDog.WatchDogManager;
 import jsystem.framework.ParameterProperties;
 import jsystem.framework.TestProperties;
@@ -37,10 +40,13 @@ public class P0 extends TPTBase{
 	protected static final int HALT_STREAM_PARAM_VOLTE = 200;
 	protected static final double DATA_QCIS_THRESHOLD_PERCENT = 0.5;
 
-	
 	protected CommandWatchActiveUEsNmsTable wdActiveUesQci1;
 	protected CommandWatchActiveUEsNmsTable wdActiveUesQci9;
-	protected CommandWatchUeLinkStatusVolte wdUeLinkStatus;
+	protected CommandWatchUeLinkStatusVolteOrEmergency wdUeLinkStatus;
+	protected CommandWatchUeLinkStatusVolteOrEmergency wdUeLinkStatusEmergency;
+	protected CommandWatchUeLinkStatusVolteOrEmergency wdUeLinkStatusEmergencyNoVolte;
+	protected ArrayList<UE> ueListEmergency;
+	
 	protected double dlCriteriaQcisInList;
 	protected double ulCriteriaQcisInList;
 	protected double dlCriteriaDataQcis;
@@ -54,6 +60,7 @@ public class P0 extends TPTBase{
 	protected ArrayList<String> headLines = null;
 	protected HashMap<String,Double> streamsSum;
 	protected HashMap<String,Integer> streamsCounter;
+		
 	protected String shortTerm = CounterUnit.SHORT_TERM_AVG_LATENCY.value;
 	protected String rfcAvgJitter = CounterUnit.RFC_4689_ABSOLUTE_AVG_JITTER.value;
 	protected String avgJitter = CounterUnit.AVG_JITTER.value;
@@ -78,6 +85,29 @@ public class P0 extends TPTBase{
 	private int qci1LoadInFps;
 	private int qci5LoadInKbps;
 	
+	private boolean isEmergencyCallTest;
+	private boolean qci1DataBeforeECue;
+	private boolean isSamplingTest = true;
+	
+	private String apnEmergencyCall = null;
+	private String defaultApn = null;
+	
+	public String getApnEmergencyCall() {
+		return apnEmergencyCall;
+	}
+
+	public void setApnEmergencyCall(String apnEmergencyCall) {
+		this.apnEmergencyCall = apnEmergencyCall;
+	}
+
+	public String getDefaultApn() {
+		return defaultApn;
+	}
+
+	public void setDefaultApn(String defaultApn) {
+		this.defaultApn = defaultApn;
+	}
+
 	@Override
 	public void init() throws Exception {
 		resetParams();
@@ -87,7 +117,10 @@ public class P0 extends TPTBase{
 		loadPerUEDl = 0;
 		loadPerUEUl = 0;
 		loadingParametersDl = null;
-		loadingParametersUl = null;		
+		loadingParametersUl = null;
+		isEmergencyCallTest = false;
+		qci1DataBeforeECue = false;
+		isSamplingTest = true;
 		wd = WatchDogManager.getInstance();
 		
 		try {
@@ -99,9 +132,13 @@ public class P0 extends TPTBase{
 		super.init();
 	}
 	
+	/**
+	 * Tests
+	 */
+	
 	@Test
 	@TestProperties(name = "VoLTE - General Volte test", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {
-			"IsTestWasSuccessful","RunTime","Load_DL","Expected_UL","Load_UL","Expected_DL" })
+			"IsTestWasSuccessful","RunTime","Load_DL","Expected_UL","Load_UL","Expected_DL","ApnEmergencyCall","DefaultApn" })
 	public void General_Volte_Test(){
 		packetSize = qci1_5PacketSize;
 		testName = "VoLTE_Pt"+(totalUEsPerCell==1?"":"M")+"P_Basic_Call";
@@ -126,6 +163,14 @@ public class P0 extends TPTBase{
 		preTestVolte();
 		TestProcess();
 		afterTestVolte(TPT_THRESHOLD_PRECENT);
+	}
+	
+	@Test
+	@TestProperties(name = "Emergency Call - General Volte test", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {
+			"IsTestWasSuccessful","RunTime","Load_DL","Expected_UL","Load_UL","Expected_DL","ApnEmergencyCall","DefaultApn" })
+	public void General_Emergency_Call_Test(){
+		isEmergencyCallTest = true;
+		General_Volte_Test();
 	}
 	
 	@Test
@@ -178,6 +223,216 @@ public class P0 extends TPTBase{
 			GeneralUtils.stopLevel();			
 		}
 	}
+	
+	@Test
+	@TestProperties(name = "Emergency Call prioritized over reboot", returnParam = { "IsTestWasSuccessful" }, paramsInclude = {"DUT"})
+	public void emergency_call_Prioritized_over_reboot(){
+		isSamplingTest = false;
+		isEmergencyCallTest = true;
+
+		setRuntime(2);
+		setTotalUEsPerCell(1);
+		setUdpDataLoad(0);
+		setQci1_5PacketSize(112);
+		setQci1LoadInFps(50);
+		setQci5LoadInKbps(20);
+		
+		testName = "Emergency Call prioritized over reboot";
+		streamsMode = "PTP";
+		packetSize = qci1_5PacketSize;
+		TEST_TIME_MILLIS = (long) (runtime*60*1000);
+		qci.add('1');
+		qci.add('5');
+		GeneralUtils.printToConsole(dut.getName() + " " + dut.getNetspanName());
+		ueList = getUES(dut,1);
+		ueNameListStc = convertUeToNamesList(ueList);
+		preTestVolte();
+		
+		try {
+			startTrafficInTest();
+			GeneralUtils.startLevel("rebooting with Netspan");
+			boolean actionReboot = enbConfig.rebootWithNetspanOnly(dut, RebootType.WARM_REBOOT,true,40*1000);
+			GeneralUtils.stopLevel();
+			
+			if(actionReboot) {
+				report.report("Boot detected before Emergency call finished!",Reporter.FAIL);
+			}else{
+				dut.setExpectBooting(true);
+				report.report("Enodeb was not booted while UE was connected");
+				GeneralUtils.startLevel("Stopping UEs");
+				peripheralsConfig.stopUEsOnlySnmp(ueList);
+				GeneralUtils.stopLevel();
+				
+				if(dut.waitForReboot(2*60*1000)) {
+					report.report("Boot detected after Emergency call finished");
+				}else {
+					report.report("Boot NOT detected after Emergency call finished!",Reporter.FAIL);
+				}
+			}
+			dut.setExpectBooting(false);
+			report.report("Waiting for all running");
+			dut.waitForAllRunningAndInService(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);
+			report.report("Enodeb is in all running state");
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		//add parallel commands
+		if(syncCommands != null){
+			report.report("Stopping Parallel Commands");
+			syncCommands.stopCommands();
+			makeThreadObjectFinish();
+			report.report("Commands File Path: " + syncCommands.getFile());
+			syncCommands.moveFileToReporterAndAddLink();
+		}
+		GeneralUtils.startLevel("Stopping Traffic");
+		trafficSTC.stopTraffic();
+		GeneralUtils.stopLevel();
+		
+		GeneralUtils.startLevel("Starting UEs");
+		peripheralsConfig.startUEsOnlySnmp(ueList);
+		GeneralUtils.stopLevel();
+	}
+	
+	@Test
+	@TestProperties(name = "Emergency Call prioritized over regular VoLTE at max VoLTE users", returnParam = { "IsTestWasSuccessful" }, paramsInclude = {
+			"DUT","ApnEmergencyCall","DefaultApn"})
+	public void Emergency_Call_Prioritized_over_regular_VoLTE_at_max_VoLTE_users(){
+		if(apnEmergencyCall == null || defaultApn == null){
+			report.report("One the apns is not configured. Failing test", Reporter.FAIL);
+		}
+		int volteOriginal = dut.getMaxVolteCalls();
+		boolean setMaxVolte;
+		GeneralUtils.startLevel("Setting max volte calls to 1 and rebooting enodeb");
+		setMaxVolte = setMaxVolteCallAndReboot(1);
+		setMaxVolte = setMaxVolte && dut.getMaxVolteCalls()==1;
+		GeneralUtils.stopLevel();
+		if(!setMaxVolte){
+			report.report("Failed to set max volte calls to 1 in enodeb "+dut.getNetspanName(),Reporter.FAIL);
+		}else{
+			report.report("Succeeded to set max volte calls to 1 in enodeb "+dut.getNetspanName());
+		}
+		
+		if(setMaxVolte){
+			ueListEmergency = getUES(dut,2);
+			setRuntime(1);
+			setTotalUEsPerCell(1);
+			setUdpDataLoad(0);
+			setQci1_5PacketSize(112);
+			setQci1LoadInFps(50);
+			setQci5LoadInKbps(20);
+			
+			testName = "VoLTE_Call_Reject_when_maximum_VoLTE_Active_Calls";
+			streamsMode = "PTP";
+			packetSize = qci1_5PacketSize;
+			TEST_TIME_MILLIS = (long) (runtime*60*1000);
+			qci.add('1');
+			qci.add('5');
+			GeneralUtils.printToConsole(dut.getName() + " " + dut.getNetspanName());
+			ueList = new ArrayList<UE>();
+			ueList.add(ueListEmergency.get(0));
+			ueNameListStc = convertUeToNamesList(ueList);
+			preTestVolte();
+			TestProcessEmergencyCallPrioritized();
+			afterTestVolteEmergencyCallPrioritized(TPT_THRESHOLD_PRECENT);			
+		}
+		
+		if(volteOriginal==GeneralUtils.ERROR_VALUE){
+			if(dut.getArchitecture()==EnodeB.Architecture.XLP){
+				volteOriginal = 80;
+			}else{
+				volteOriginal = 64;
+			}
+		}
+		if(dut.getMaxVolteCalls() != volteOriginal){
+			GeneralUtils.startLevel("Setting max volte calls to original value and rebooting enodeb");
+			setMaxVolteCallAndReboot(volteOriginal);
+			GeneralUtils.stopLevel();			
+		}
+	}
+	
+	private void afterTestVolteEmergencyCallPrioritized(double passCriteria) {
+		boolean flagActive1 = false;
+		if(wdActiveUesQci1 != null){
+			flagActive1 = wdActiveUesQci1.getFlagActive();
+		}
+		boolean flagUeLinkStatus = false;
+		if(wdUeLinkStatus != null){
+			flagUeLinkStatus = wdUeLinkStatus.getFlagActive();			
+		}
+		boolean flagUeLinkStatusEmergency = false;
+		if(wdUeLinkStatusEmergency != null){
+			flagUeLinkStatusEmergency = wdUeLinkStatusEmergency.getFlagActive();			
+		}
+		boolean flagUeLinkStatusEmergencyNoVolte = false;
+		if(wdUeLinkStatusEmergencyNoVolte != null){
+			flagUeLinkStatusEmergencyNoVolte = wdUeLinkStatusEmergencyNoVolte.getFlagActive();			
+		}
+		boolean flagActive9 = false;
+		if(wdActiveUesQci9!=null){
+			flagActive9 = wdActiveUesQci9.getFlagActive();			
+		}
+		if(DLULwd != null){
+			printDLandULAverageTableAndCounters();			
+		}
+		terminateWatchDogVolte();
+		
+		report.report("Stop traffic");
+		trafficSTC.stopTraffic();
+
+		if (exceptionThrown) {
+			report.report("Exception failed the test - No Results");
+		} else {
+			sumAndPrintTablesPerPort();
+			printPerStreamTables(listOfStreamList);
+
+			GeneralUtils.printToConsole("Print Results state: "+printResultsForTest);
+			if (printResultsForTest) {
+				checkTptOverThreshold(debugPrinter, listOfStreamList, passCriteria);
+				if(flagActive1 && qci1DataBeforeECue){
+					report.report("Number of Qci 1 active UEs in NMS status table was 1 during the whole test");
+				}else{
+					report.report("Number of Qci 1 active UEs in NMS status table was not 1 during the whole test",Reporter.FAIL);
+					reason = "Number of Qci 1 active UEs in NMS status table was not 1 during the whole test";
+				}
+				if(flagActive9){
+					report.report("Number of Qci 9 active UEs in NMS status table was 1 or more during the whole test");
+				}else{
+					report.report("Number of Qci 9 active UEs in NMS status table was not 1 or more during the whole test",Reporter.FAIL);
+					reason = "Number of Qci 9 active UEs in NMS status table was not 1 or more during the whole test";
+				}
+				if(flagUeLinkStatus){
+					report.report("First UE was connected to enodeb with volte flag enabled before connection Emergency UE");
+				}else{
+					report.report("First UE was not connected to enodeb with volte flag enabled before connection Emergency UE",Reporter.FAIL);
+					reason = "First UE was not connected to enodeb with volte flag enabled before connection Emergency UE";
+				}
+				if(flagUeLinkStatusEmergency){
+					report.report("Second UE was connected with emergency flag enabled");
+				}else{
+					report.report("Second UE was not connected with emergency flag enabled",Reporter.FAIL);
+					reason = "Second UE was not connected with emergency flag enabled";
+				}
+				if(flagUeLinkStatusEmergencyNoVolte){
+					report.report("After connecting Emergency UE, no UE was connected with volte flag");
+				}else{
+					report.report("After connecting Emergency UE, at least 1 UE was connected with volte flag",Reporter.FAIL);
+					reason = "After connecting Emergency UE, at least 1 UE was connected with volte flag";
+				}
+				printDataOfUes();
+			}
+		}
+		if(ueList.size()>1){
+			UeAction ueAction = new UeAction();
+			ueAction.setUEs(newUe.getName());
+			ueAction.setApnName(defaultApn);
+			ueAction.setAPN();			
+		}
+	}
+	
+	/**
+	 * Infra methods
+	 */
 
 	private void gettingLoadPerStreamQci9(){
 		getRadioProfile();
@@ -520,6 +775,8 @@ public class P0 extends TPTBase{
 		commandList.add("ue show qos");
 		commandList.add("volte show link");
 		commandList.add("volte show rate");
+		commandList.add("pdcp show ulstats");
+		commandList.add("pdcp show dlstats");
 		super.syncGeneralCommands();
 	}
 	
@@ -529,15 +786,18 @@ public class P0 extends TPTBase{
 		resetTestBol = false;
 		trafficSTC.setactiveStreamsArray(stringArrayStreamNames);
 		
-		GeneralUtils.startLevel("Turning on ues in setup");
-		peripheralsConfig.startUEsOnlySnmp(SetupUtils.getInstance().getAllUEs());
+		GeneralUtils.startLevel("Turning off ues in setup");
+		peripheralsConfig.stopUEsOnlySnmp(SetupUtils.getInstance().getAllUEs());
+		GeneralUtils.stopLevel();
+		
+		GeneralUtils.startLevel("Turning on ues in primary UE list");
+		peripheralsConfig.startUEsOnlySnmp(ueList);
 		GeneralUtils.stopLevel();
 		
 		GeneralUtils.startLevel("Disable un-needed UEs");
 		disableUEsNotInTest(ueNameListStc,SetupUtils.getInstance().getAllUEs());
 		GeneralUtils.unSafeSleep(1000 * 5);
 		GeneralUtils.stopLevel();
-		
 		
 		
 		if(!peripheralsConfig.checkIfAllUEsAreConnectedToNode(ueList, dut)){
@@ -547,7 +807,8 @@ public class P0 extends TPTBase{
 
 		syncGeneralCommands();
 		
-		if(!checkAllUesAreVolte(ueNameListStc.size())){
+		if(!checkAllUesAreVolteOrEmergency(ueNameListStc.size())){
+			resetUEs = true;
 			return false;
 		}
 		
@@ -586,7 +847,12 @@ public class P0 extends TPTBase{
 			
 		// init Protocol
 		GeneralUtils.startLevel("init Protocol ("+this.protocol+")");
-		trafficSTC.initProtocol(this.protocol);
+		if(!trafficSTC.initProtocol(this.protocol)){
+			reason = "Cant set traffic protocol.";
+			report.report("Cant start traffic. protocol not supported.", Reporter.WARNING);
+			GeneralUtils.stopLevel();
+			return false;
+		}
 		GeneralUtils.stopLevel();
 			
 		// Save Configurate File and ReStarting Traffic
@@ -594,33 +860,43 @@ public class P0 extends TPTBase{
 		uploadConfigFileToReport();
 		trafficSTC.saveConfigFileAndStart();
 		
-		report.report("Starting TPT-"+streamsMode+" with "+ueNameListStc.size() +" UEs, for "+SoftwareUtiles.milisToFormat(TEST_TIME_MILLIS));
-		GeneralUtils.startLevel("Sampling Results each second");
+		if(isSamplingTest){
+			report.report("Starting TPT-"+streamsMode+" with "+ueNameListStc.size() +" UEs, for "+SoftwareUtiles.milisToFormat(TEST_TIME_MILLIS));
+			GeneralUtils.startLevel("Sampling Results each second");
+		}
 		// loop for time of TEST_TIME
 		report.report("waiting 20 seconds for traffic to stabilize");
+		
 		GeneralUtils.unSafeSleep(1000 * 20);
 		removeAllCommandsFromWatchDog();
 		//DLULwd = new commandWatchDLAndUL(dut);
 		//wd.addCommand(DLULwd);		
-		wdActiveUesQci1 = new CommandWatchActiveUEsNmsTable(dut,ueNameListStc.size(),'1',true);
-		wd.addCommand(wdActiveUesQci1);		
-		wdUeLinkStatus = new CommandWatchUeLinkStatusVolte(dut,ueNameListStc.size(),null);
-		wd.addCommand(wdUeLinkStatus);
+		if(isSamplingTest){
+			wdActiveUesQci1 = new CommandWatchActiveUEsNmsTable(dut,ueNameListStc.size(),'1',true);
+			wd.addCommand(wdActiveUesQci1);		
+			wdUeLinkStatus = new CommandWatchUeLinkStatusVolteOrEmergency(dut,ueNameListStc.size(),null,isEmergencyCallTest);
+			wd.addCommand(wdUeLinkStatus);
+		}
 		return true;
 	}
 	
-	private boolean checkAllUesAreVolte(int numOfUes){
+	private boolean checkAllUesAreVolteOrEmergency(int numOfUes){
 		boolean action = true;
-		GeneralUtils.startLevel("Check if all UEs are connected with volte flag");
-		int number = dut.getNumberOfUELinkStatusVolte();
+		GeneralUtils.startLevel("Check if all UEs are connected with "+(isEmergencyCallTest?"Emergency":"VoLTE")+" flag");
+		int number = 0;
+		if(!isEmergencyCallTest){
+			number = dut.getNumberOfUELinkStatusVolte();
+		}else{
+			number = dut.getNumberOfUELinkStatusEmergency();
+		}
 		if(number == GeneralUtils.ERROR_VALUE){
 			report.report("Version does not support this MIB or UEs still not connected");				
 		}else{
 			if(numOfUes > number){
-				report.report("Number of UEs connected with volte is "+number+" instead of "+numOfUes, Reporter.FAIL);
+				report.report("Number of UEs connected with "+(isEmergencyCallTest?"Emergency":"VoLTE")+" is "+number+" instead of "+numOfUes, Reporter.FAIL);
 				action = false;
 			}else{
-				report.report("Number of UEs connected with volte is "+number+" - as expected");
+				report.report("Number of UEs connected with "+(isEmergencyCallTest?"Emergency":"VoLTE")+" is "+number+" - as expected");
 			}			
 		}
 		GeneralUtils.stopLevel();
@@ -651,7 +927,7 @@ public class P0 extends TPTBase{
 		ues.add(ueNameListStc.get(1));
 		
 		try {
-			trafficSTC.enableStreamsByNameAndQci(ues, qci1);
+			trafficSTC.enableStreamsByNameAndQciAndDirection(ues, qci1, TransmitDirection.BOTH);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -716,7 +992,7 @@ public class P0 extends TPTBase{
 	protected void compareResults(StreamList debugPrinter, Long uLrxTotalQcisInList, Long dlrxTotalQcisInList,
 			Long uLrxTotalDataQcis, Long dlrxTotalDataQcis, double passCriteria){
 
-		int numberOfCells = dut.getNumberOfActiveCells();
+		int numberOfCells = enbConfig.getNumberOfActiveCells(dut);
 		String numberOfCellsStr = "1";
 		numberOfCellsStr = String.valueOf(numberOfCells);
 		report.report("number of cells: " + numberOfCellsStr);
@@ -798,6 +1074,12 @@ public class P0 extends TPTBase{
 		if(DLULwd != null){
 			wd.removeCommand(DLULwd);			
 		}
+		if(wdUeLinkStatusEmergency!=null){
+			wd.removeCommand(wdUeLinkStatusEmergency);
+		}
+		if(wdUeLinkStatusEmergencyNoVolte!=null){
+			wd.removeCommand(wdUeLinkStatusEmergencyNoVolte);
+		}
 	}
 	
 	private void validateActiveFlag(boolean active){
@@ -811,10 +1093,10 @@ public class P0 extends TPTBase{
 	
 	private void validateUELinkStatus(boolean linked){
 		if(linked){
-			report.report("Number of UEs with VoLTE support flag active was "+ueNameListStc.size()+" or more during the whole test");
+			report.report("Number of UEs with "+ (isEmergencyCallTest?"Emergency":"VoLTE") +" support flag active was "+ueNameListStc.size()+" or more during the whole test");
 		}else{
-			report.report("Number of UEs with VoLTE support flag active was not "+ueNameListStc.size()+" or more during the whole test", Reporter.FAIL);
-			reason = "Number of UEs with VoLTE support flag active was not "+ueNameListStc.size()+" or more during the whole test";
+			report.report("Number of UEs with "+ (isEmergencyCallTest?"Emergency":"VoLTE") +" support flag active was not "+ueNameListStc.size()+" or more during the whole test", Reporter.FAIL);
+			reason = "Number of UEs with "+ (isEmergencyCallTest?"Emergency":"VoLTE") +" support flag active was not "+ueNameListStc.size()+" or more during the whole test";
 		}
 	}
 	
@@ -1073,20 +1355,22 @@ public class P0 extends TPTBase{
 		return true;
 	}
 	
-	protected void startTrafficAndSampleRejectTest() throws Exception{
+	protected boolean startTrafficAndSampleRejectTest() throws Exception{
 		ueList = getUES(dut,1);
 		ueNameListStc = convertUeToNamesList(ueList);
-		startTrafficInTest();
+		if(!startTrafficInTest()){
+			return false;
+		}
 		String rnti = getRntiUeInRejectTest();
 		removeAllCommandsFromWatchDog();				
 		wdActiveUesQci1 = new CommandWatchActiveUEsNmsTable(dut,1,'1',false);
 		wd.addCommand(wdActiveUesQci1);
-		wdUeLinkStatus = new CommandWatchUeLinkStatusVolte(dut,ueNameListStc.size(),rnti);
+		wdUeLinkStatus = new CommandWatchUeLinkStatusVolteOrEmergency(dut,ueNameListStc.size(),rnti,isEmergencyCallTest);
 		wd.addCommand(wdUeLinkStatus);
 		startingTestTime = System.currentTimeMillis();
 		newUe = null;
 		if(!helperStartTrafficRejectTest(true,false)){
-			return;
+			return true;
 		}
 		if(!peripheralsConfig.checkSingleUEConnectionToNode(newUe, dut)){
 			report.report("test will go on with a warning about UES",Reporter.WARNING);
@@ -1095,6 +1379,8 @@ public class P0 extends TPTBase{
 		enableAditionalUE();
 		setLoadPerStreamTestAditionalUE();
 		trafficSTC.saveConfigFileAndStart();
+		report.report("Wait 10 seconds for traffic of second UE to stabilize");
+		GeneralUtils.unSafeSleep(10*1000);
 		if(wdActiveUesQci9!=null){
 			wd.removeCommand(wdActiveUesQci9);							
 		}
@@ -1102,13 +1388,19 @@ public class P0 extends TPTBase{
 		wd.addCommand(wdActiveUesQci9);	
 		startingTestTime = System.currentTimeMillis();
 		helperStartTrafficRejectTest(false,true);
+		return true;
 	}
 	
 	protected void TestProcessRejectTest() {
 		while (testIsNotDoneStatus) {
 			resetParams();
 			try {
-				startTrafficAndSampleRejectTest();
+				if(!startTrafficAndSampleRejectTest()){
+					testIsNotDoneStatus = false;
+					resetTestBol = false;
+					exceptionThrown = true;
+					GeneralUtils.stopAllLevels();					
+				}
 			} catch (Exception e) {
 				report.report("Stopping Parallel Commands From Java Exception");
 				testIsNotDoneStatus = false;
@@ -1218,7 +1510,159 @@ public class P0 extends TPTBase{
 			}
 		}
 	}
+
+	protected void TestProcessEmergencyCallPrioritized() {
+		while (testIsNotDoneStatus) {
+			resetParams();
+			try {
+				if(!startTrafficAndSampleEmergencyCallPrioritized()){
+					testIsNotDoneStatus = false;
+					resetTestBol = false;
+					exceptionThrown = true;
+					GeneralUtils.stopAllLevels();					
+				}
+			} catch (Exception e) {
+				report.report("Stopping Parallel Commands From Java Exception");
+				testIsNotDoneStatus = false;
+				resetTestBol = false;
+				exceptionThrown = true;
+				reason = "network connection Error";
+				report.report(e.getMessage() + " caused Test to stop", Reporter.FAIL);
+				e.printStackTrace();
+				GeneralUtils.stopAllLevels(); 
+			}
+			if (resetTestBol) {
+				numberOfResets++;
+				if(syncCommands != null){
+					report.report("Stopping Parallel Commands");
+					syncCommands.stopCommands();
+				}
+				makeThreadObjectFinish();
+				if(syncCommands != null){
+					report.report("Commands File Path: " + syncCommands.getFile());					
+				}
+				testIsNotDoneStatus = true;
+				try {
+					if(syncCommands != null){
+						syncCommands.moveFileToReporterAndAddLink();
+					}
+					report.report("Stopping Traffic");
+					trafficSTC.stopTraffic();
+					report.report("Resetting test", Reporter.WARNING);
+					reason = "reset Test because of stream halt";
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		if (numberOfResets >= 3) {
+			// using this flag in order to NOT print results.
+			testIsNotDoneStatus = false;
+			printResultsForTest = false;
+			report.report("Test Was Reseted Too many times because of more then " + PRECENT_OF_UE_RESET + "%"
+					+ " Of the Streams are in Halt - check Setup", Reporter.FAIL);
+			reason = "Test Was Restarted Too many Times due to Traffic halt";
+		}
+		try {
+			syncCommands.stopCommands();
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		makeThreadObjectFinish();
+		try {
+			syncCommands.moveFileToReporterAndAddLink();
+		} catch (Exception e) {
+			report.report("Exception in ReporterHelper.copyFileToReporterAndAddLink could not attach Command File");
+			e.printStackTrace();
+		}
+	}
 	
+	protected boolean startTrafficAndSampleEmergencyCallPrioritized() throws Exception{
+		ueList = new ArrayList<UE>();
+		ueList.add(ueListEmergency.get(0));
+		ueNameListStc = convertUeToNamesList(ueList);
+		if(!startTrafficInTest()){
+			return false;
+		}
+		String rnti = getRntiUeInRejectTest();
+		removeAllCommandsFromWatchDog();				
+		wdActiveUesQci1 = new CommandWatchActiveUEsNmsTable(dut,1,'1',false);
+		wd.addCommand(wdActiveUesQci1);
+		wdUeLinkStatus = new CommandWatchUeLinkStatusVolteOrEmergency(dut,ueNameListStc.size(),rnti,false);
+		wd.addCommand(wdUeLinkStatus);
+		startingTestTime = System.currentTimeMillis();
+		newUe = null;
+		if(!helperStartTrafficRejectTest(false,false)){
+			return true;
+		}
+		wd.removeCommand(wdUeLinkStatus);
+		qci1DataBeforeECue = wdActiveUesQci1.getFlagActive();
+		wd.removeCommand(wdActiveUesQci1);
+		ueList = ueListEmergency;
+		ueNameListStc = convertUeToNamesList(ueList);
+		try{
+			newUe = ueList.get(1);
+		}catch(Exception e){
+			report.report("Only 1 UE configured in setup");
+			e.printStackTrace();
+			return false;
+		}
+		UeAction ueAction = new UeAction();
+		ueAction.setUEs(newUe.getName());
+		ueAction.setApnName(apnEmergencyCall);
+		ueAction.setAPN();
+		newUe.start();
+		GeneralUtils.unSafeSleep(10*1000);
+		if(!peripheralsConfig.checkSingleUEConnectionToNode(newUe, dut)){
+			report.report("test will go on with a warning about UES",Reporter.WARNING);
+			reason = "UE not connected to DUT";
+		}
+		
+		enableAditionalUE();
+		setLoadPerStreamTestAditionalUE();
+		trafficSTC.saveConfigFileAndStart();
+		report.report("Wait 10 seconds for traffic of second UE to stabilize");
+		GeneralUtils.unSafeSleep(10*1000);
+		if(wdActiveUesQci9!=null){
+			wd.removeCommand(wdActiveUesQci9);							
+		}
+		wdActiveUesQci9 = new CommandWatchActiveUEsNmsTable(dut,1,'9',true);
+		wd.addCommand(wdActiveUesQci9);	
+		if(wdUeLinkStatusEmergencyNoVolte!=null){
+			wd.removeCommand(wdUeLinkStatusEmergencyNoVolte);							
+		}
+		wdUeLinkStatusEmergencyNoVolte = new CommandWatchUeLinkStatusVolteOrEmergency(dut, ueNameListStc.size(), "", false);
+		wd.addCommand(wdUeLinkStatusEmergencyNoVolte);
+		if(wdUeLinkStatusEmergency!=null){
+			wd.removeCommand(wdUeLinkStatusEmergency);							
+		}
+		String rntiEmergency = getRntiUeInEmergencyTest();
+		wdUeLinkStatusEmergency = new CommandWatchUeLinkStatusVolteOrEmergency(dut, ueNameListStc.size(), rntiEmergency, true);
+		wd.addCommand(wdUeLinkStatusEmergency);
+		wdActiveUesQci1 = new CommandWatchActiveUEsNmsTable(dut,1,'1',false);
+		wd.addCommand(wdActiveUesQci1);
+		startingTestTime = System.currentTimeMillis();
+		helperStartTrafficRejectTest(false,true);
+		return true;
+	}
+	
+	private String getRntiUeInEmergencyTest() {
+		HashMap<String, Integer> result = null;
+		result = dut.getUELinkStatusEmergencyTable();				
+		
+		if(!result.isEmpty()){
+			for (String key : result.keySet()) {
+				String[] rntis = key.split("\\.");
+				String rnti = rntis[rntis.length-1];
+				if(result.get(key)==1){
+					return rnti;
+				}
+		    }
+		}
+		return null;
+	}
+
 	public int getRuntime() {
 		return runtime;
 	}

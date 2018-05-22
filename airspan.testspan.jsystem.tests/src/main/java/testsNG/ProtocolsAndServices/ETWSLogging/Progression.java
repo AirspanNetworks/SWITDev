@@ -41,7 +41,7 @@ public class Progression extends TestspanTest {
 	private IPG ipg;
 	private FileServer fileServer;
 	private ScpClient ipgScpClient;
-	private boolean changeMme;
+	private boolean changeMme = true;
 	private boolean isUserMode;
 	ParallelCommandsThread commandsThread1 = null;
 
@@ -52,8 +52,8 @@ public class Progression extends TestspanTest {
 			"IsTestWasSuccessful" }, paramsExclude = { "IsTestWasSuccessful" })
 	public void etwsLoggingFunctionalityNoData() {
 		changeMme = false;
-		preTest();
-		etwsNoDataTest();
+		if(preTest())
+			etwsNoDataTest();
 		postTest();
 	}
 
@@ -70,8 +70,8 @@ public class Progression extends TestspanTest {
 	@TestProperties(name = "ETWS Logging Stress User Mode", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {
 			"IsTestWasSuccessful" })
 	public void etwsLoggingStressUserMode() {
-		preTest();
-		etwsStressTest(false);
+		if(preTest())
+			etwsStressTest(false);
 		postTest();
 	}
 
@@ -79,8 +79,8 @@ public class Progression extends TestspanTest {
 	@TestProperties(name = "ETWS Logging Stress User Mode No FTP", returnParam = {
 			"IsTestWasSuccessful" }, paramsExclude = { "IsTestWasSuccessful" })
 	public void etwsLoggingStressUserModeNoFTP() {
-		preTest();
-		etwsStressTest(true);
+		if(preTest())
+			etwsStressTest(true);
 		postTest();
 	}
 
@@ -118,14 +118,16 @@ public class Progression extends TestspanTest {
 		GeneralUtils.startLevel("Pre Test");
 		clearEtwsFilesFromFileServer();
 		deleteEtwsFilesLocaly();
-		peripheralsConfig.stopUEs(SetupUtils.getInstance().getAllUEs());
-		ipg.setRealMME(enodeBConfig.getMMeIpAdress(dut));
-		actionState = prepareIpg();
-		NetworkParameters params = new NetworkParameters();
-		params.setMMEIPS(ipg.getRealMME(), ipg.getFakeIP());
-		actionState &= enodeBConfig.changeNetworkProfile(dut, params);
-		actionState &= dut.reboot();
-		actionState &= dut.waitForAllRunning(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);
+		if(changeMme){
+			peripheralsConfig.stopUEs(SetupUtils.getInstance().getAllUEs());
+			ipg.setRealMME(enodeBConfig.getMMeIpAdress(dut));
+			actionState = prepareIpg();
+			NetworkParameters params = new NetworkParameters();
+			params.setMMEIPS(ipg.getRealMME(), ipg.getFakeIP());
+			actionState &= enodeBConfig.changeNetworkProfile(dut, params);
+			actionState &= dut.reboot();
+			actionState &= dut.waitForAllRunning(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);
+		}
 		if(!actionState)
 			report.report("PreTest failed skipping test",Reporter.FAIL);
 		GeneralUtils.stopLevel();
@@ -146,6 +148,7 @@ public class Progression extends TestspanTest {
 	}
 
 	private boolean enableEtws(int uploadPeriod, int uploadPeriodNoData) {
+		GeneralUtils.startLevel(String.format("Enable ETWS: uploadPeriod - %s, uploadPeriodNoData - %s", uploadPeriod, uploadPeriodNoData));
 		boolean actionState = true;
 		NetworkParameters params = new NetworkParameters();
 		params.setEtwsEnabled(EnabledDisabledStates.ENABLED);
@@ -156,25 +159,30 @@ public class Progression extends TestspanTest {
 		params.setEtwsUploadPeriod(uploadPeriod);
 		params.setEtwsUploadPeriodNoData(uploadPeriodNoData);
 		actionState = enodeBConfig.changeNetworkProfile(dut, params);
+		GeneralUtils.stopLevel();
 		return actionState;
 	}
 
 	private boolean enableUserMode(int sib10Duration, int sib11Duration) {
 		boolean actionState = true;
+		GeneralUtils.startLevel(String.format("Enable user mode: sib10Duration - %s, sib11Duration - %s", sib10Duration, sib11Duration));
 		CellAdvancedParameters params = new CellAdvancedParameters();
 		params.setEtwsUserMode(EnabledDisabledStates.ENABLED);
 		params.setSib10Duration(sib10Duration);
 		params.setSib11Duration(sib11Duration);
 		actionState = enodeBConfig.changeCellAdvancedProfile(dut, params);
 		isUserMode = true;
+		GeneralUtils.stopLevel();
 		return actionState;
 	}
 
 	private boolean disableEtws() {
+		GeneralUtils.startLevel("Disable ETWS");
 		boolean actionState = true;
 		NetworkParameters params = new NetworkParameters();
 		params.setEtwsEnabled(EnabledDisabledStates.DISABLED);
 		actionState = enodeBConfig.changeNetworkProfile(dut, params);
+		GeneralUtils.stopLevel();
 		return actionState;
 	}
 
@@ -256,22 +264,25 @@ public class Progression extends TestspanTest {
 	}
 
 	private boolean etwsNoDataTest() {
+		GeneralUtils.startLevel("ETWS No Data Test");
 		enableEtws(3, 1);
 		printDebugData();
-		GeneralUtils.unSafeSleep(60000);
+		GeneralUtils.unSafeSleep(120 * 1000);
 		disableEtws();
 		isPass = verifyEtwsNoDataFiles();
 		if (isPass)
 			report.step("Test passed. \"No Data\" files uploaded to file server as expected");
 		else
-			report.report("Test failed. couldn't find \"No Data\" files in the file server");
+			report.report("Test failed. couldn't find \"No Data\" files in the file server", Reporter.FAIL);
+		GeneralUtils.stopLevel();
 		return isPass;
 	}
 
 	private boolean etwsFunctionalityTest() {
+		GeneralUtils.startLevel("ETWS Functionality Test");
 		enableEtws(3, 1000);
 		printDebugData();
-		report.report("Send ETWS message and wait %s seconds", 30);
+		report.report(String.format("Send ETWS message and wait %s seconds", 30));
 		ipg.runScript(scriptParams);
 		GeneralUtils.unSafeSleep(30000);
 		disableEtws();
@@ -283,20 +294,24 @@ public class Progression extends TestspanTest {
 			report.step("Test passed. SIB10 & SIB11 count is as expected");
 		else
 			report.report("Test failed. SIB10 & SIB11 count is not as expected", Reporter.FAIL);
+		GeneralUtils.stopLevel();
 		return isPass;
 	}
 
 	private boolean etwsStressTest(boolean ftpClosed) {
 		if (ftpClosed) {
+			GeneralUtils.startLevel("ETWS Stress Test No FTP");
 			report.report("Block File Server");
 			dut.shell(String.format("route add -host %s reject", fileServer.getIpAddress()));
 		}
+		else
+			GeneralUtils.startLevel("ETWS Stress Test");
 		commands();
 		enableEtws(10, 1000);
 		int numOfSibs = STRESS_TEST_TIME/1000;
 		enableUserMode(numOfSibs, numOfSibs);
 		printDebugData();
-		report.report("Send ETWS message and wait %s seconds", numOfSibs);
+		report.report(String.format("Send ETWS message and wait %s seconds", numOfSibs));
 		ipg.runScript(scriptParams);
 		// wait test time + 30 sec for script delay.
 		GeneralUtils.unSafeSleep(STRESS_TEST_TIME + 30 * 1000);
@@ -315,6 +330,7 @@ public class Progression extends TestspanTest {
 			report.step("Test passed. SIB10 & SIB11 count is as expected");
 		else
 			report.report("Test failed. SIB10 & SIB11 count is not as expected", Reporter.FAIL);
+		GeneralUtils.stopLevel();
 		return isPass;
 	}
 
@@ -365,8 +381,10 @@ public class Progression extends TestspanTest {
 			actionState &= enodeBConfig.setProfile(dut, EnbProfiles.Cell_Advanced_Profile,
 					dut.defaultNetspanProfiles.getCellAdvanced());
 		enodeBConfig.deleteClonedProfiles();
-		actionState &= dut.reboot();
-		actionState &= dut.waitForAllRunning(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);
+		if(changeMme){
+			actionState &= dut.reboot();
+			actionState &= dut.waitForAllRunning(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);
+		}
 		if(!actionState)
 			report.report("PostTest failed",Reporter.WARNING);
 		GeneralUtils.stopLevel();

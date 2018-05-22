@@ -131,6 +131,9 @@ public class UEIPerf implements Runnable {
 	public void stopUlTraffic() {
 		if(iperfMachineUL != null){
 			iperfMachineUL.stopIPerf();
+			for(IPerfStream ulIPerfStream : ulStreamArrayList){
+				ulIPerfStream.setRunningTraffic(false);
+			}
 		}else{
 			GeneralUtils.printToConsole("UL IPerf Machine equals NULL.");
 		}
@@ -139,6 +142,9 @@ public class UEIPerf implements Runnable {
 	public void stopDlTraffic() {
 		if(iperfMachineDL != null){
 			iperfMachineDL.stopIPerf();
+			for(IPerfStream dlIPerfStream : dlStreamArrayList){
+				dlIPerfStream.setRunningTraffic(false);
+			}
 		}else{
 			GeneralUtils.printToConsole("DL IPerf Machine equals NULL.");
 		}
@@ -154,8 +160,9 @@ public class UEIPerf implements Runnable {
 	public void runTrafficULClient() {
 		if(iperfMachineUL != null){
 			for(IPerfStream ulIPerfStream : ulStreamArrayList){
-				if(ulIPerfStream.isActive()){
+				if(ulIPerfStream.isActive() && !ulIPerfStream.isRunningTraffic()){
 					iperfMachineUL.startIPerfTraffic(ulIPerfStream.getIperfClientCommand(), ulIPerfStream.getClientOutputFileName());
+					ulIPerfStream.setRunningTraffic(true);
 				}
 			}
 		}else{
@@ -166,7 +173,7 @@ public class UEIPerf implements Runnable {
 	public void startULListener() {
 		if(iperfMachineDL != null){
 			for(IPerfStream ulIPerfStream : ulStreamArrayList){
-				if(ulIPerfStream.isActive()){
+				if(ulIPerfStream.isActive() && !ulIPerfStream.isRunningTraffic()){
 					iperfMachineDL.startIPerfListener(ulIPerfStream.getNumberOfParallelIPerfStreams(), ulIPerfStream.getIperfServerCommand(), ulIPerfStream.getTpFileName());
 				}
 			}
@@ -185,8 +192,9 @@ public class UEIPerf implements Runnable {
 	public void runTrafficDLClient() {
 		if(iperfMachineDL != null){
 			for(IPerfStream dlIPerfStream : dlStreamArrayList){
-				if(dlIPerfStream.isActive()){
+				if(dlIPerfStream.isActive() && !dlIPerfStream.isRunningTraffic()){
 					iperfMachineDL.startIPerfTraffic(dlIPerfStream.getIperfClientCommand(), dlIPerfStream.getClientOutputFileName());
+					dlIPerfStream.setRunningTraffic(true);
 				}
 			}
 		}else{
@@ -197,7 +205,7 @@ public class UEIPerf implements Runnable {
 	public void startDLListener() {
 		if(iperfMachineUL != null){
 			for(IPerfStream dlIPerfStream : dlStreamArrayList){
-				if(dlIPerfStream.isActive()){
+				if(dlIPerfStream.isActive() && !dlIPerfStream.isRunningTraffic()){
 					iperfMachineUL.startIPerfListener(dlIPerfStream.getNumberOfParallelIPerfStreams(), dlIPerfStream.getIperfServerCommand(), dlIPerfStream.getTpFileName());
 				}
 			}
@@ -277,7 +285,7 @@ public class UEIPerf implements Runnable {
 		this.ulUeLoad = ulUeLoad;
 		int numberOfUlActiveStreamsPerDirection = 0;
 		for(IPerfStream ulIPerfStream : ulStreamArrayList){
-			if(ulIPerfStream.isActive()){
+			if(ulIPerfStream.isActive() && !ulIPerfStream.isRunningTraffic()){
 				numberOfUlActiveStreamsPerDirection++;
 			}
 		}
@@ -295,13 +303,13 @@ public class UEIPerf implements Runnable {
 		this.dlUeLoad = dlUeLoad;
 		int numberOfDlActiveStreamsPerDirection = 0;
 		for(IPerfStream dlIPerfStream : dlStreamArrayList){
-			if(dlIPerfStream.isActive()){
+			if(dlIPerfStream.isActive() && !dlIPerfStream.isRunningTraffic()){
 				numberOfDlActiveStreamsPerDirection++;
 			}
 		}
 		double dlStreamLoad = dlUeLoad/numberOfDlActiveStreamsPerDirection;
 		for(IPerfStream dlIPerfStream : dlStreamArrayList){
-			dlIPerfStream.setStreamLoad(dlStreamLoad);
+			dlIPerfStream.setStreamLoad(dlStreamLoad);				
 		}
 	}
 
@@ -350,6 +358,40 @@ public class UEIPerf implements Runnable {
 		return enableDisableStreamName; 
 	}
 
+	public ArrayList<ArrayList<String>> setStreamsStateAndNoChangeOthers(ArrayList<String> ueNameList, ArrayList<Character> qciList,
+			TransmitDirection transmitDirection, boolean state) {
+		ArrayList<IPerfStream> allStream = new ArrayList<IPerfStream>();
+		ArrayList<String> notStateStreamList = new ArrayList<String>();
+		ArrayList<String> stateStreamList = new ArrayList<String>();
+		allStream.addAll(dlStreamArrayList);
+		allStream.addAll(ulStreamArrayList);
+		for(IPerfStream iperfStream : allStream){
+			//qci from stram
+			char qciFromSTC = iperfStream.getStreamName().charAt(iperfStream.getStreamName().length() - 1); 
+			//UE name form Stream (UE_)
+			String ueNameFromIPerf = iperfStream.getStreamName().substring(3,iperfStream.getStreamName().length()-1);
+			if(transmitDirection.value.contains(iperfStream.getTransmitDirection().value) &&
+					qciList.contains(qciFromSTC) && ueNameList.contains(ueNameFromIPerf)){
+				stateStreamList.add(iperfStream.getStreamName());
+				System.out.println("Stream : "+iperfStream.getStreamName()+" isActive set to "+state);
+				iperfStream.setActive(state);
+			}
+		}
+		
+		ArrayList<ArrayList<String>> enableDisableStreamName = new ArrayList<ArrayList<String>>();
+		enableDisableStreamName.add(stateStreamList);
+		enableDisableStreamName.add(notStateStreamList);
+
+		if(state){
+			enableDisableStreamName.add(stateStreamList);
+			enableDisableStreamName.add(notStateStreamList);
+		}else{
+			enableDisableStreamName.add(notStateStreamList);
+			enableDisableStreamName.add(stateStreamList);
+		}
+		return enableDisableStreamName; 
+	}
+	
 	public void setActiveState(ArrayList<String> streamNames, boolean state) {
 		ArrayList<IPerfStream> allStream = new ArrayList<IPerfStream>();
 		allStream.addAll(dlStreamArrayList);
@@ -361,6 +403,22 @@ public class UEIPerf implements Runnable {
 		}
 	}
 
+	public Pair<Integer, Integer> getNumberOfDlAndUlActiveAndNotRunningStreams() {
+		int numberOfActiveDlStreams = 0;
+		int numberOfActiveUlStreams = 0;
+		for(IPerfStream dlIPerfStream : dlStreamArrayList){
+			if(dlIPerfStream.isActive() && !dlIPerfStream.isRunningTraffic()){
+				numberOfActiveDlStreams++;
+			}
+		}
+		for(IPerfStream ulIPerfStream : ulStreamArrayList){
+			if(ulIPerfStream.isActive() && !ulIPerfStream.isRunningTraffic()){
+				numberOfActiveUlStreams++;
+			}
+		}
+		return new Pair<Integer, Integer>(numberOfActiveDlStreams, numberOfActiveUlStreams);
+	}
+	
 	public Pair<Integer, Integer> getNumberOfDlAndUlActiveStreams() {
 		int numberOfActiveDlStreams = 0;
 		int numberOfActiveUlStreams = 0;

@@ -6,6 +6,7 @@ import java.util.Arrays;
 public class Earfcn {
 	static public int GetEarfcnFromFreqAndBand(int freqInKhz, int band)
 	{
+		GeneralUtils.printToConsole("calculate earfcn from frequency: " + freqInKhz + " and band " + band);
 		int earfcn = -1;
 	    for(LteBand lteBand : m_BandList){
 	    	if (lteBand.Band == band){

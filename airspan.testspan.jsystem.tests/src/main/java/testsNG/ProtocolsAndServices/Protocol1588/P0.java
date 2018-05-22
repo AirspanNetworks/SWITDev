@@ -1,4 +1,5 @@
 package testsNG.ProtocolsAndServices.Protocol1588;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -178,7 +179,10 @@ public class P0 extends Base1588 {
 			return;
 
 		GeneralUtils.startLevel("Searching alarms with type 'node in holdover'");
-		reportOnSearchAlarms("node in holdover", false);
+		List<String> alarmType = new ArrayList<String>();
+		alarmType.add("node in holdover");
+		alarmType.add("eNodeB is in holdover");
+		reportOnSearchAlarms(false,alarmType);
 		GeneralUtils.stopLevel();
 		
 		ptpStatus = status.getPTPStatus(dut);
@@ -275,7 +279,10 @@ public class P0 extends Base1588 {
 		GeneralUtils.unSafeSleep(1000 * 30);
 
 		GeneralUtils.startLevel("Searching alarms with type 'node in holdover'");
-		reportOnSearchAlarms("node in holdover", true);
+		List<String> alarmToSearch = new ArrayList<String>();
+		alarmToSearch.add("node in holdover");
+		alarmToSearch.add("eNodeB is in holdover");
+		reportOnSearchAlarms(true,alarmToSearch);
 		GeneralUtils.stopLevel();
 
 		reportOnPTPInterfaceStatus();

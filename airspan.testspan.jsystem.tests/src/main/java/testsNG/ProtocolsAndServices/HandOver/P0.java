@@ -38,16 +38,13 @@ import testsNG.Actions.TrafficCapacity;
 import testsNG.Actions.Traffic.TrafficType;
 import testsNG.Actions.Utils.ParallelCommandsThread;
 import testsNG.Actions.Utils.TrafficGeneratorType;
-//making some changes
-//some more changes
+
 /**
  * @author mgoldenberg
  *
  */
 public class P0 extends TestspanTest {
-//other changes
-	//testind
-	//bla bla
+
 	private static final int LONG_TEST_DURATION = 600000;  // 10 minutes
 	private static final int STABILITY_TEST_DURATION = 14400000;  // 4 hours
 	private static int ATT_SLEEP = 500;
@@ -1180,11 +1177,14 @@ public class P0 extends TestspanTest {
 	
 	private boolean checkFrequency() {
 		GeneralUtils.startLevel("Checking that frequencies match the test type.");
-		report.report(enodeB.getName() + " Earfcn: " + enodeB.getEarfcn());
-		report.report(neighbor.getName() + " Earfcn: " + neighbor.getEarfcn());
+		Integer enbEarfcn = enodeBConfig.getEARFCNforNode(enodeB);
+		Integer neighborEarfcn = enodeBConfig.getEARFCNforNode(neighbor);
+		
+		report.report(enodeB.getName() + " Earfcn: " + enbEarfcn);
+		report.report(neighbor.getName() + " Earfcn: " + neighborEarfcn);
 		
 		if (isIntra) {
-			if (enodeB.getEarfcn() != neighbor.getEarfcn()) {
+			if (!enbEarfcn.equals(neighborEarfcn)) {
 				report.report("EnodeB frequences are diffrent in an Intra test.", Reporter.FAIL);
 				reason = "EnodeB frequences are diffrent in an Intra test.";
 				GeneralUtils.stopLevel();
@@ -1192,7 +1192,7 @@ public class P0 extends TestspanTest {
 			}
 		}
 		else
-			if (enodeB.getEarfcn() == neighbor.getEarfcn()) {
+			if (enbEarfcn.equals(neighborEarfcn)) {
 				report.report("EnodeB frequences are equal in an Inter test.", Reporter.FAIL);
 				reason = "EnodeB frequences are equal in an Inter test.";
 				GeneralUtils.stopLevel();

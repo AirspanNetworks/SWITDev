@@ -3,14 +3,15 @@ package testsNG.Actions.Utils;
 import java.io.IOException;
 import java.util.List;
 
+import EnodeB.EnodeBWithDonor;
 import EnodeB.Ninja;
 
 public class ParallelCommandsThreadEnodbWithDonor extends ParallelCommandsThreadEnodeBComponent{
 	private ParallelCommandsThreadEnodeBComponent donorSyncCommands;
 
-	public ParallelCommandsThreadEnodbWithDonor(List<String> enodebCmdSet, Ninja ninja, List<String> donorCmdSet) throws IOException {
-		super(enodebCmdSet, ninja, ninja.getXLPName());
-		donorSyncCommands = new ParallelCommandsThreadEnodeBComponent(donorCmdSet, ninja.getDonor(), ninja.getDonor().getXLPName());
+	public ParallelCommandsThreadEnodbWithDonor(List<String> enodebCmdSet, EnodeBWithDonor enbWithDonor, List<String> donorCmdSet) throws IOException {
+		super(enodebCmdSet, enbWithDonor, enbWithDonor.getXLPName());
+		donorSyncCommands = new ParallelCommandsThreadEnodeBComponent(donorCmdSet, enbWithDonor.getDonor(), enbWithDonor.getDonor().getXLPName());
 	}
 
 	@Override

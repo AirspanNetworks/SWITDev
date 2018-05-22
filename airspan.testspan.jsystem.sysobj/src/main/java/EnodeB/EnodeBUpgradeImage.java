@@ -15,12 +15,15 @@ public class EnodeBUpgradeImage  extends SystemObjectImpl{
 	private String buildPath;
 	private String version;
 	private String imageType;
+	private String secondBuildPath;
+	private String secondVersion;
+	private String secondImageType;
 	
 	public EnodeBUpgradeImage() {
 		super();
 	}
 	public EnodeBUpgradeImage(String name, HardwareCategory hardwareCategory, String upgradeServerName,
-			ServerProtocolType protocolType, String buildPath, String version) {
+			ServerProtocolType protocolType, String buildPath, String version, String imageType) {
 		super();
 		this.name = name;
 		this.hardwareCategory = hardwareCategory;
@@ -28,6 +31,7 @@ public class EnodeBUpgradeImage  extends SystemObjectImpl{
 		this.protocolType = protocolType;
 		this.buildPath = buildPath;
 		this.version = version;
+		this.imageType = imageType;
 	}
 	
 	public String getName() {
@@ -73,4 +77,24 @@ public class EnodeBUpgradeImage  extends SystemObjectImpl{
 	public void setImageType(String imageType) {
 		this.imageType = imageType;
 	}
+	public String getSecondBuildPath() {
+		return secondBuildPath;
+	}
+	public void setSecondBuildPath(String secondBuildPath) {
+		this.secondBuildPath = secondBuildPath;
+	}
+	public String getSecondVersion() {
+		return secondVersion;
+	}
+	public void setSecondVersion(String secondVersion) {
+		this.secondVersion = secondVersion;
+	}
+	public String getSecondImageType() {
+		return secondImageType;
+	}
+	public void setSecondImageType(String secondImageType) {
+		this.secondImageType = secondImageType;
+	}
+	
+	
 }

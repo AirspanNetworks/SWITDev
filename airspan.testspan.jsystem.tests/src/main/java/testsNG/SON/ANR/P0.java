@@ -309,7 +309,9 @@ public class P0 extends TestspanTest {
 			
 			GeneralUtils.startLevel("Checking frequencies");
 			int startEarfcm = neighbor.getEarfcn() ;
+			report.report(neighbor.getName() + " Earfcn: " + startEarfcm);
 			int mainEarfcm = enodeB.getEarfcn();
+			report.report(enodeB.getName() + " Earfcn: " + mainEarfcm);
 			GeneralUtils.reportHtmlLink("Main: db get cellcfg", enodeB.lteCli("db get cellcfg"));
 			GeneralUtils.reportHtmlLink("Neighbor: db get cellcfg", neighbor.lteCli("db get cellcfg"));
 			

@@ -12,7 +12,8 @@ public enum EnbProfiles {
 	Son_Profile("son"),
  	Management_Profile("management"),
  	MultiCell_Profile("multiCell"),
-	Neighbour_Management_Profile("neighbourManagement");
+	Neighbour_Management_Profile("neighbourManagement"),
+	Relay_Profile("relay");
     
     private final String value;
 

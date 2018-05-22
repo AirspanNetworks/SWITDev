@@ -11,8 +11,7 @@ import org.joda.time.Duration;
 import org.joda.time.Interval;
 import org.junit.Test;
 import EnodeB.EnodeB;
-import EnodeB.EnodeB.Architecture;
-import EnodeB.EnodeBUpgradeImage;
+import EnodeB.EnodeBWithDonor;
 import EnodeB.Ninja;
 import EnodeB.Components.EnodeBComponent;
 import Netspan.API.Lte.EventInfo;
@@ -45,7 +44,7 @@ public class Progression extends TestspanTest{
 			new Triple<String, String, String>("PnP State Change", "iRelay", "PnP State=Configure"),
 			new Triple<String, String, String>("Node Reprovision", "iRelay", "Type=Automatic,Reason=Plug and Play"),
 			new Triple<String, String, String>("Node Connection State Change", "iRelay", "ConnectionState=Online"),
-			new Triple<String, String, String>("PnP State Change", "iRelay", "PnP State=Completed"),
+			new Triple<String, String, String>("PnP State Change", "iRelay", "PnP State=Completed"), 
 	};
 	private final Triple[] relayScanListEventListToFollow = {
 			/*new Triple<String, String, String>("Scan Status", "iRelay", "Status=stop,Info=Scan started"),
@@ -79,164 +78,41 @@ public class Progression extends TestspanTest{
 	};
 	private final long COLLECT_EVENTS_FROM_NMS_TIMEOUT = 90 * 1000;
 	private final int WAIT_FOR_PTR_REQUEST_TIMEOUT = 10 * 60;
-	private final long WAIT_FOR_ALTIAR_CONNECT_DONOR = 4 * 60 * 1000;
-	private final long WAIT_FOR_ALTIAR_DISCONNECT_DONOR = 1 * 60 * 1000;
+	private final long WAIT_FOR_RELAY_CONNECT_DONOR = 4 * 60 * 1000;
+	private final long WAIT_FOR_RELAY_DISCONNECT_DONOR = 1 * 60 * 1000;
 	private final long WAIT_UNTIL_SNMP_AVAIALBLILITY = 5 * 60 * 1000;
 	private long WAIT_FOR_ALL_RUNNING_TIME = 10 * 60 * 1000;
 	private final long WAIT_FOR_DEBUG_PORT_TIMEOUT = 1 * 60 * 1000;
-	private final long FIRST_ALTAIR_ATTACH_EXPECTED_DURATION_IN_MILI = ((3 * 60) + 50) * 1000;
+	private final long FIRST_RELAY_ATTACH_EXPECTED_DURATION_IN_MILI = ((3 * 60) + 50) * 1000;
 	private final long FIRST_DNS_QUERY_EXPECTED_DURATION_IN_MILI = ((1 * 60) + 20) * 1000;
 	private final long FIRST_IPSEC_BRING_UP_EXPECTED_DURATION_IN_MILI = ((1 * 60) + 40) * 1000;
 	private final long COLD_RELAY_PNP_EVENTS_EXPECTED_DURATION_IN_MILI = 20 * 1000;
 	private final long SCAN_LIST_EVENTS_EXPECTED_DURATION_IN_MILI = ((1 * 60) + 10) * 1000;
-	private final long SECOND_ALTAIR_ATTACH_EXPECTED_DURATION_IN_MILI = ((1 * 60) + 10) * 1000;
+	private final long SECOND_RELAY_ATTACH_EXPECTED_DURATION_IN_MILI = ((1 * 60) + 10) * 1000;
 	private final long SECOND_DNS_QUERY_EXPECTED_DURATION_IN_MILI = 35 * 1000;
 	private long SECOND_IPSEC_BRING_UP_EXPECTED_DURATION_IN_MILI = 20 * 1000;
 	private final long WARM_RELAY_PNP_EVENTS_EXPECTED_DURATION_IN_MILI = 20 * 1000;
 	private long COLD_ENODEB_PNP_EVENTS_EXPECTED_DURATION_IN_MILI = 30 * 1000;
 	private long WAIT_FOR_ALL_RUNNING_EXPECTED_DURATION_IN_MILI = 50 * 1000;
 	
-	
-	final long[] expectedDurationsOrderedForNinja = {0,
-			FIRST_ALTAIR_ATTACH_EXPECTED_DURATION_IN_MILI,
-			FIRST_DNS_QUERY_EXPECTED_DURATION_IN_MILI,
-			FIRST_IPSEC_BRING_UP_EXPECTED_DURATION_IN_MILI,
-			COLD_RELAY_PNP_EVENTS_EXPECTED_DURATION_IN_MILI,
-			SECOND_ALTAIR_ATTACH_EXPECTED_DURATION_IN_MILI,
-			SECOND_DNS_QUERY_EXPECTED_DURATION_IN_MILI,
-			SECOND_IPSEC_BRING_UP_EXPECTED_DURATION_IN_MILI,
-			WARM_RELAY_PNP_EVENTS_EXPECTED_DURATION_IN_MILI,
-			COLD_ENODEB_PNP_EVENTS_EXPECTED_DURATION_IN_MILI,
-			WAIT_FOR_ALL_RUNNING_EXPECTED_DURATION_IN_MILI
-	};
-	
-	final long[] expectedDurationsOrderedForRegularEnodeB = {0,
-			3 * 60 * 1000,
-			5 * 60 * 1000,
-			2 * 60 * 1000
-	};
-	
-	final String[] stageNamesOrderedForNinja = {"Cold Reboot.",
-			"First Altair Attach.",
-			"First DNS Query.",
-			"First IPSec Bring Up.",
-			"Cold Relay PnP.",
-			"Scan List And Second Altair Attach.",
-			"Second DNS Query.",
-			"Second IPSec Bring Up.",
-			"Warm Relay PnP.",
-			"Cold eNodeB PnP.",
-			"All Running."
-	};
-	
-	final String[] stageNamesOrderedForRegularEnodeB = {"Cold Reboot.",
-			"SNMP Availability / IPSec Bring Up.",
-			"Cold eNodeB PnP.",
-			"All Running."
-	};
-	
-	final long[] expectedDurationsOrderedForNinjaWithSoftwareDownload = {0,
-			FIRST_ALTAIR_ATTACH_EXPECTED_DURATION_IN_MILI,
-			FIRST_DNS_QUERY_EXPECTED_DURATION_IN_MILI,
-			FIRST_IPSEC_BRING_UP_EXPECTED_DURATION_IN_MILI,
-			COLD_RELAY_PNP_EVENTS_EXPECTED_DURATION_IN_MILI,
-			SECOND_ALTAIR_ATTACH_EXPECTED_DURATION_IN_MILI,
-			SECOND_DNS_QUERY_EXPECTED_DURATION_IN_MILI,
-			SECOND_IPSEC_BRING_UP_EXPECTED_DURATION_IN_MILI,
-			WARM_RELAY_PNP_EVENTS_EXPECTED_DURATION_IN_MILI,
-			COLD_ENODEB_PNP_EVENTS_EXPECTED_DURATION_IN_MILI,
-			1,
-			FIRST_ALTAIR_ATTACH_EXPECTED_DURATION_IN_MILI,
-			FIRST_DNS_QUERY_EXPECTED_DURATION_IN_MILI,
-			FIRST_IPSEC_BRING_UP_EXPECTED_DURATION_IN_MILI,
-			COLD_RELAY_PNP_EVENTS_EXPECTED_DURATION_IN_MILI,
-			SECOND_ALTAIR_ATTACH_EXPECTED_DURATION_IN_MILI,
-			SECOND_DNS_QUERY_EXPECTED_DURATION_IN_MILI,
-			SECOND_IPSEC_BRING_UP_EXPECTED_DURATION_IN_MILI,
-			WARM_RELAY_PNP_EVENTS_EXPECTED_DURATION_IN_MILI,
-			COLD_ENODEB_PNP_EVENTS_EXPECTED_DURATION_IN_MILI,
-			COLD_ENODEB_PNP_EVENTS_EXPECTED_DURATION_IN_MILI,
-			WAIT_FOR_ALL_RUNNING_EXPECTED_DURATION_IN_MILI
-	};
-	
-	final long[] expectedDurationsOrderedForRegularEnodebWithSoftwareDownload = {0,
-			3 * 60 * 1000,
-			COLD_ENODEB_PNP_EVENTS_EXPECTED_DURATION_IN_MILI,
-			1,
-			3 * 60 * 1000,
-			5 * 60 * 1000,
-			COLD_ENODEB_PNP_EVENTS_EXPECTED_DURATION_IN_MILI,
-			2 * 60 * 1000
-	};
-	
-	final String[] stageNamesOrderedForNinjaWithSoftwareDownload = {"Cold Reboot.",
-			"First Altair Attach.",
-			"First DNS Query.",
-			"First IPSec Bring Up.",
-			"Cold Relay PnP.",
-			"Scan List And Second Altair Attach.",
-			"Second DNS Query.",
-			"Second IPSec Bring Up.",
-			"Warm Relay PnP.",
-			"Cold eNodeB PnP & Software Download.",
-			"Reboot After Software Download.",
-			"First Altair Attach After Software Download.",
-			"First DNS Query After Software Download.",
-			"First IPSec Bring Up After Software Download.",
-			"Cold Relay PnP After Software Download.",
-			"Scan List And Second Altair Attach After Software Download.",
-			"Second DNS Query After Software Download.",
-			"Second IPSec Bring Up.",
-			"Warm Relay PnP After Software Download.",
-			"Cold eNodeB PnP.",
-			"eNodeb Software Activate Completed",
-			"All Running."
-	};
-	
-	final String[] stageNamesOrderedForRegularEnodebWithSoftwareDownload = {"Cold Reboot.",
-			"SNMP Availability / IPSec Bring Up.",
-			"Cold eNodeB PnP & Software Download.",
-			"Reboot After Software Download.",
-			"SNMP Availability / IPSec Bring Up.",
-			"Cold eNodeB PnP.",
-			"eNodeb Software Activate Completed",
-			"All Running."
-	};
-	
 	private EnodeB dut;
 	private ParallelCommandsThread syncCommands;
+	private boolean isEnodeBWithDonor;
 	private boolean isNinja;
 	private HtmlTable htmlTable;
 	private HtmlTimelineStage[] htmlTimelineTable;
-	private long[] expectedDurationsOrdered;
-	private String[] stageNamesOrdered;
+	private Pair<Long, String>[] expectedDurationsAndStageNamesOrdered;
 	
 	@Override
 	public void init() throws Exception {
 		enbInTest = new ArrayList<EnodeB>();
 		enbInTest.add(dut);
 		super.init();
-		if(dut instanceof Ninja){
-			isNinja = true;
-			if(dut.isSwUpgradeDuringPnP()){
-				this.expectedDurationsOrdered = this.expectedDurationsOrderedForNinjaWithSoftwareDownload;
-				this.stageNamesOrdered = this.stageNamesOrderedForNinjaWithSoftwareDownload;
-			}else{
-				this.expectedDurationsOrdered = this.expectedDurationsOrderedForNinja;
-				this.stageNamesOrdered = this.stageNamesOrderedForNinja;
+		if(dut instanceof EnodeBWithDonor){
+			isEnodeBWithDonor = true;
+			if(dut instanceof Ninja){
+				isNinja = true;
 			}
-		}else{
-			isNinja = false;
-			if(dut.isSwUpgradeDuringPnP()){
-				this.expectedDurationsOrdered = this.expectedDurationsOrderedForRegularEnodebWithSoftwareDownload;
-				this.stageNamesOrdered = this.stageNamesOrderedForRegularEnodebWithSoftwareDownload;
-			}else{
-				this.expectedDurationsOrdered = this.expectedDurationsOrderedForRegularEnodeB;
-				this.stageNamesOrdered = this.stageNamesOrderedForRegularEnodeB;
-			}
-			SECOND_IPSEC_BRING_UP_EXPECTED_DURATION_IN_MILI = this.expectedDurationsOrdered[1];
-			COLD_ENODEB_PNP_EVENTS_EXPECTED_DURATION_IN_MILI = this.expectedDurationsOrdered[2];
-			WAIT_FOR_ALL_RUNNING_EXPECTED_DURATION_IN_MILI = this.expectedDurationsOrdered[3];
 		}
 		htmlTable = new HtmlTable();
 		htmlTable.addNewRow("Timeline");
@@ -246,7 +122,7 @@ public class Progression extends TestspanTest{
 	@Override
 	public void end(){
 		 WatchDogManager.getInstance().shutDown();
-		 if(isNinja){
+		 if(isEnodeBWithDonor){
 			 DNS.getInstance().closeConnection();
 		 }
 		//stopParallelCommands();
@@ -267,6 +143,7 @@ public class Progression extends TestspanTest{
 	returnParam = { "IsTestWasSuccessful"},
 	paramsExclude = {"IsTestWasSuccessful"})
 	public void pnpColdReboot() {
+		this.expectedDurationsAndStageNamesOrdered = dut.getExpectedDurationsAndStageNamesOrderedForColdReboot();
 		int step = 1;
 		int timelineStageIndex = 0;
 		htmlTimelineTable = new HtmlTimelineStage[40];
@@ -275,9 +152,9 @@ public class Progression extends TestspanTest{
 		WatchNmsEvents watchNmsEventsRelayColdReboot = null, watchNmsEventsRelayScanList = null, watchNmsEventsRelayWarmReboot = null, watchNmsEventsEnodebColdReboot = null;
 		WaitForPtrRequest waitForFirstPtrRequestfterSoftwareDownload = null, waitForSecondPtrRequestfterSoftwareDownload = null;
 		WatchNmsEvents watchNmsEventsEnodebColdRebootSoftwareDownload = null, watchNmsEventsRelayColdRebootAfterSoftwareDownload = null, watchNmsEventsRelayScanListAfterSoftwareDownload = null, watchNmsEventsRelayWarmRebootAfterSoftwareDownload = null, watchNmsEventsEnodebSoftwareActivate = null;
-		if(isNinja){
-			Ninja ninjaDut = (Ninja)dut;
-			EnodeB donor = ninjaDut.getDonor();
+		if(isEnodeBWithDonor){
+			EnodeBWithDonor eNodeBWithDonorDut = (EnodeBWithDonor)dut;
+			EnodeB donor = eNodeBWithDonorDut.getDonor();
 			if (donor.isInOperationalStatus()){
 				report.report("Donor is in Running State.");
 			}else{
@@ -285,36 +162,37 @@ public class Progression extends TestspanTest{
 				reason = "Donor is NOT in Running State.";
 				return;
 			}
-			String altairVersion = ninjaDut.getRelayRunningVersion();
-			if(altairVersion != ""){
-				report.report("Altair's Running Version: " + altairVersion);
+			String relayVersion = eNodeBWithDonorDut.getRelayRunningVersion();
+			if(relayVersion != ""){
+				report.report("Relay's Running Version: " + relayVersion);
 			}
 		}
 		report.report(dut.getName() + "'s Running Version: " + dut.getRunningVersion());
 		suspendIpsecTunnelManagerIfEnabled(dut); 
 		//openLogs(dut);
-		final long rebootTime = performColdRebootAndConvertNmsProfileToPnP(step++, timelineStageIndex++, dut, watchAllRunningTimeout);
+		Pair<Long, Triple<Integer, String, String>> rebootTimeAndSwActivationDetails = performColdRebootAndConvertNmsProfileToPnP(step++, timelineStageIndex++, dut, watchAllRunningTimeout);
+		final long rebootTime = rebootTimeAndSwActivationDetails.getElement0();
 		if(rebootTime == 0){
 			return;
 		}
-		if(isNinja){
-			Ninja ninjaDut = (Ninja)dut;
-			waitForDebugPortAvailability(ninjaDut);
-			startToCollectPacketsSentByAltairToDnsAndWaitForAltairToConnectToDonor(step++, timelineStageIndex++, rebootTime, ninjaDut, "First Altair Attach.", FIRST_ALTAIR_ATTACH_EXPECTED_DURATION_IN_MILI);
+		if(isEnodeBWithDonor){
+			EnodeBWithDonor eNodeBWithDonor = (EnodeBWithDonor)dut;
+			waitForDebugPortAvailability((EnodeBWithDonor)eNodeBWithDonor);
+			startToCollectPacketsSentByRelayToDnsAndWaitForRelayToConnectToDonor(step++, timelineStageIndex++, rebootTime, eNodeBWithDonor, "First Relay Attach.", FIRST_RELAY_ATTACH_EXPECTED_DURATION_IN_MILI);
 			GeneralUtils.boldReportLine(step++ + ". For First DNS Query see Appendix A.");
-			waitForFirstPtrRequest = waitForPtrRequest(timelineStageIndex++, "First DNS Query.", ninjaDut, rebootTime, FIRST_DNS_QUERY_EXPECTED_DURATION_IN_MILI);//Doesn't Wait, uses WatchDog
-			waitForFirstIPSecBringUp(step++, timelineStageIndex++, rebootTime, ninjaDut, FIRST_IPSEC_BRING_UP_EXPECTED_DURATION_IN_MILI);
+			waitForFirstPtrRequest = waitForPtrRequest(timelineStageIndex++, "First DNS Query.", eNodeBWithDonor, rebootTime, FIRST_DNS_QUERY_EXPECTED_DURATION_IN_MILI);//Doesn't Wait, uses WatchDog
+			waitForFirstIPSecBringUp(step++, timelineStageIndex++, rebootTime, (EnodeBWithDonor)eNodeBWithDonor, FIRST_IPSEC_BRING_UP_EXPECTED_DURATION_IN_MILI);
 			GeneralUtils.boldReportLine(step++ + ". For Cold Relay PnP see Appendix B.");
-			watchNmsEventsRelayColdReboot = startFollowNmsEvents(timelineStageIndex++, COLD_RELAY_PNP_EVENTS_EXPECTED_DURATION_IN_MILI, ninjaDut, rebootTime, COLLECT_EVENTS_FROM_NMS_TIMEOUT, "Cold Relay PnP.", relayColdRebootPnpEventListToFollow, 0, false);//Doesn't Wait, uses WatchDog
-			waitForAltairDisconnectDonor(step++, ninjaDut);
+			watchNmsEventsRelayColdReboot = startFollowNmsEvents(timelineStageIndex++, COLD_RELAY_PNP_EVENTS_EXPECTED_DURATION_IN_MILI, eNodeBWithDonor, rebootTime, COLLECT_EVENTS_FROM_NMS_TIMEOUT, "Cold Relay PnP.", relayColdRebootPnpEventListToFollow, 0, false);//Doesn't Wait, uses WatchDog
+			waitForRelayDisconnectDonor(step++, eNodeBWithDonor);
 			GeneralUtils.boldReportLine(step++ + ". For Build Scan List see Appendix C.");
-			watchNmsEventsRelayScanList = startFollowNmsEvents(GeneralUtils.ERROR_VALUE, SCAN_LIST_EVENTS_EXPECTED_DURATION_IN_MILI, ninjaDut, rebootTime, COLLECT_EVENTS_FROM_NMS_TIMEOUT, "Build Scan List.", relayScanListEventListToFollow, 0, false);//Doesn't Wait, uses WatchDog
-			startToCollectPacketsSentByAltairToDnsAndWaitForAltairToConnectToDonor(step++, timelineStageIndex++, rebootTime, ninjaDut, "Second Altair Attach.", SECOND_ALTAIR_ATTACH_EXPECTED_DURATION_IN_MILI);//Doesn't Wait, uses WatchDog
+			watchNmsEventsRelayScanList = startFollowNmsEvents(GeneralUtils.ERROR_VALUE, SCAN_LIST_EVENTS_EXPECTED_DURATION_IN_MILI, eNodeBWithDonor, rebootTime, COLLECT_EVENTS_FROM_NMS_TIMEOUT, "Build Scan List.", relayScanListEventListToFollow, 0, false);//Doesn't Wait, uses WatchDog
+			startToCollectPacketsSentByRelayToDnsAndWaitForRelayToConnectToDonor(step++, timelineStageIndex++, rebootTime, eNodeBWithDonor, "Second Relay Attach.", SECOND_RELAY_ATTACH_EXPECTED_DURATION_IN_MILI);//Doesn't Wait, uses WatchDog
 			GeneralUtils.boldReportLine(step++ + ". For Second DNS Query see Appendix D.");
-			waitForSecondPtrRequest = waitForPtrRequest(timelineStageIndex++, "Second DNS Query.", ninjaDut, rebootTime, SECOND_DNS_QUERY_EXPECTED_DURATION_IN_MILI);//Doesn't Wait, uses WatchDog
+			waitForSecondPtrRequest = waitForPtrRequest(timelineStageIndex++, "Second DNS Query.", eNodeBWithDonor, rebootTime, SECOND_DNS_QUERY_EXPECTED_DURATION_IN_MILI);//Doesn't Wait, uses WatchDog
 		}
-		waitForSnmpAvailability(step++, timelineStageIndex++, rebootTime, dut, SECOND_IPSEC_BRING_UP_EXPECTED_DURATION_IN_MILI);
-		if(isNinja){
+		waitForSnmpAvailability(step++, timelineStageIndex++, rebootTime, dut, SECOND_IPSEC_BRING_UP_EXPECTED_DURATION_IN_MILI, RebootType.COLD_REBOOT);
+		if(isEnodeBWithDonor){
 			GeneralUtils.boldReportLine(step++ + ". For Warm Relay PnP see Appendix E.");
 			watchNmsEventsRelayWarmReboot = startFollowNmsEvents(timelineStageIndex++, WARM_RELAY_PNP_EVENTS_EXPECTED_DURATION_IN_MILI, dut, rebootTime, COLLECT_EVENTS_FROM_NMS_TIMEOUT, "Warm Relay PnP.", relayWarmRebootPnpEventListToFollow, 0, false);//Doesn't Wait, uses WatchDog
 			GeneralUtils.unSafeSleep(6000);//In purpose that Warm Relay PnP stage will finish before Cold eNodeB PnP for the timeline.
@@ -325,38 +203,37 @@ public class Progression extends TestspanTest{
 		long rebootTimeAfterSoftwareDownload = 0;
 		if(dut.isSwUpgradeDuringPnP()){
 			GeneralUtils.startLevel(step++ + ". For Cold eNodeB PnP & Software Download see Appendix E1.");
-			dut.downloadStats();
+			suspendIpsecTunnelManagerIfEnabled(dut);
+			ArrayList<Pair<EnodeB, Triple<Integer, String, String>>> dutInArray = new ArrayList<Pair<EnodeB, Triple<Integer, String, String>>>();
+			dutInArray.add(new Pair<EnodeB, Triple<Integer, String, String>>(dut, rebootTimeAndSwActivationDetails.getElement1()));
+			SoftwareUtiles.getInstance().followSoftwareActivationProgressViaNetspan(System.currentTimeMillis(), dutInArray);
 			GeneralUtils.stopLevel();
 			watchNmsEventsEnodebColdRebootSoftwareDownload = startFollowNmsEvents(timelineStageIndex++, COLD_ENODEB_PNP_EVENTS_EXPECTED_DURATION_IN_MILI, dut, rebootTime, COLLECT_EVENTS_FROM_NMS_TIMEOUT, "Cold eNodeB PnP & Software Download.", eNodebColdRebootPnpSoftwareDownloadEventListToFollow, 0, false);//Doesn't Wait, uses WatchDog
-			suspendIpsecTunnelManagerIfEnabled(dut);
-			GeneralUtils.boldReportLine("Waiting For Reboot After Software Download.");
-			dut.setExpectBooting(true);
-			dut.waitForExpectBootingValue(EnodeB.UPGRADE_TIMEOUT, false);
 			rebootTimeAfterSoftwareDownload = System.currentTimeMillis();
 			saveStageTimeForHtmlTable(timelineStageIndex++, "Reboot After Software Download.", rebootTime, rebootTimeAfterSoftwareDownload, 1, true);
 			GeneralUtils.unSafeSleep(60 * 1000);
-			if(isNinja){
-				Ninja ninjaDut = (Ninja)dut;
-				waitForDebugPortAvailability(ninjaDut);
-				ninjaDut.echoToSkipCmpv2();
-				startToCollectPacketsSentByAltairToDnsAndWaitForAltairToConnectToDonor(step++, timelineStageIndex++, rebootTime, ninjaDut, "First Altair Attach After Software Download.", FIRST_ALTAIR_ATTACH_EXPECTED_DURATION_IN_MILI);
+			if(isEnodeBWithDonor){
+				EnodeBWithDonor eNodeBWithDonor = (EnodeBWithDonor)dut;
+				waitForDebugPortAvailability(eNodeBWithDonor);
+				eNodeBWithDonor.echoToSkipCmpv2();
+				startToCollectPacketsSentByRelayToDnsAndWaitForRelayToConnectToDonor(step++, timelineStageIndex++, rebootTime, eNodeBWithDonor, "First Relay Attach After Software Download.", FIRST_RELAY_ATTACH_EXPECTED_DURATION_IN_MILI);
 				GeneralUtils.boldReportLine(step++ + ". For First DNS Query After Software Download see Appendix E2.");
-				waitForFirstPtrRequestfterSoftwareDownload = waitForPtrRequest(timelineStageIndex++, "First DNS Query After Software Download.", ninjaDut, rebootTime, FIRST_DNS_QUERY_EXPECTED_DURATION_IN_MILI);//Doesn't Wait, uses WatchDog
-				waitForFirstIPSecBringUp(step++, timelineStageIndex++, rebootTime, ninjaDut, FIRST_IPSEC_BRING_UP_EXPECTED_DURATION_IN_MILI);
+				waitForFirstPtrRequestfterSoftwareDownload = waitForPtrRequest(timelineStageIndex++, "First DNS Query After Software Download.", eNodeBWithDonor, rebootTime, FIRST_DNS_QUERY_EXPECTED_DURATION_IN_MILI);//Doesn't Wait, uses WatchDog
+				waitForFirstIPSecBringUp(step++, timelineStageIndex++, rebootTime, eNodeBWithDonor, FIRST_IPSEC_BRING_UP_EXPECTED_DURATION_IN_MILI);
 				GeneralUtils.boldReportLine(step++ + ". For Cold Relay PnP After Software Download see Appendix E3.");
-				watchNmsEventsRelayColdRebootAfterSoftwareDownload = startFollowNmsEvents(timelineStageIndex++, COLD_RELAY_PNP_EVENTS_EXPECTED_DURATION_IN_MILI, ninjaDut, rebootTime, COLLECT_EVENTS_FROM_NMS_TIMEOUT, "Cold Relay PnP After Software Download.", relayColdRebootPnpEventListToFollow, rebootTimeAfterSoftwareDownload, true);//Doesn't Wait, uses WatchDog
-				waitForAltairDisconnectDonor(step++, ninjaDut);
+				watchNmsEventsRelayColdRebootAfterSoftwareDownload = startFollowNmsEvents(timelineStageIndex++, COLD_RELAY_PNP_EVENTS_EXPECTED_DURATION_IN_MILI, eNodeBWithDonor, rebootTime, COLLECT_EVENTS_FROM_NMS_TIMEOUT, "Cold Relay PnP After Software Download.", relayColdRebootPnpEventListToFollow, rebootTimeAfterSoftwareDownload, true);//Doesn't Wait, uses WatchDog
+				waitForRelayDisconnectDonor(step++, eNodeBWithDonor);
 				GeneralUtils.boldReportLine(step++ + ". For Build Scan List After Software Download see Appendix E4.");
-				watchNmsEventsRelayScanListAfterSoftwareDownload = startFollowNmsEvents(GeneralUtils.ERROR_VALUE, SCAN_LIST_EVENTS_EXPECTED_DURATION_IN_MILI, ninjaDut, rebootTime, COLLECT_EVENTS_FROM_NMS_TIMEOUT, "Build Scan List After Software Download.", relayScanListEventListToFollow, rebootTimeAfterSoftwareDownload, true);//Doesn't Wait, uses WatchDog
-				startToCollectPacketsSentByAltairToDnsAndWaitForAltairToConnectToDonor(step++, timelineStageIndex++, rebootTime, ninjaDut, "Second Altair Attach After Software Download.", SECOND_ALTAIR_ATTACH_EXPECTED_DURATION_IN_MILI);//Doesn't Wait, uses WatchDog
+				watchNmsEventsRelayScanListAfterSoftwareDownload = startFollowNmsEvents(GeneralUtils.ERROR_VALUE, SCAN_LIST_EVENTS_EXPECTED_DURATION_IN_MILI, eNodeBWithDonor, rebootTime, COLLECT_EVENTS_FROM_NMS_TIMEOUT, "Build Scan List After Software Download.", relayScanListEventListToFollow, rebootTimeAfterSoftwareDownload, true);//Doesn't Wait, uses WatchDog
+				startToCollectPacketsSentByRelayToDnsAndWaitForRelayToConnectToDonor(step++, timelineStageIndex++, rebootTime, eNodeBWithDonor, "Second Relay Attach After Software Download.", SECOND_RELAY_ATTACH_EXPECTED_DURATION_IN_MILI);//Doesn't Wait, uses WatchDog
 				GeneralUtils.boldReportLine(step++ + ". For Second DNS Query After Software Download see Appendix E5.");
-				waitForSecondPtrRequestfterSoftwareDownload = waitForPtrRequest(timelineStageIndex++, "Second DNS Query After Software Download.", ninjaDut, rebootTime, SECOND_DNS_QUERY_EXPECTED_DURATION_IN_MILI);//Doesn't Wait, uses WatchDog
+				waitForSecondPtrRequestfterSoftwareDownload = waitForPtrRequest(timelineStageIndex++, "Second DNS Query After Software Download.", eNodeBWithDonor, rebootTime, SECOND_DNS_QUERY_EXPECTED_DURATION_IN_MILI);//Doesn't Wait, uses WatchDog
 			}else if(dut.isIpsecTunnelEnabled()){
 				GeneralUtils.unSafeSleep(30 * 1000);
 				dut.echoToSkipCmpv2();
 			}
-			waitForSnmpAvailability(step++, timelineStageIndex++, rebootTime, dut, SECOND_IPSEC_BRING_UP_EXPECTED_DURATION_IN_MILI);
-			if(isNinja){
+			waitForSnmpAvailability(step++, timelineStageIndex++, rebootTime, dut, SECOND_IPSEC_BRING_UP_EXPECTED_DURATION_IN_MILI, RebootType.COLD_REBOOT);
+			if(isEnodeBWithDonor){
 				GeneralUtils.boldReportLine(step++ + ". For Warm Relay PnP After Software Download see Appendix E6.");
 				watchNmsEventsRelayWarmRebootAfterSoftwareDownload = startFollowNmsEvents(timelineStageIndex++, WARM_RELAY_PNP_EVENTS_EXPECTED_DURATION_IN_MILI, dut, rebootTime, COLLECT_EVENTS_FROM_NMS_TIMEOUT, "Warm Relay PnP After Software Download.", relayWarmRebootPnpEventListToFollow, rebootTimeAfterSoftwareDownload, true);//Doesn't Wait, uses WatchDog
 				GeneralUtils.unSafeSleep(6000);//In purpose that Warm Relay PnP stage will finish before Cold eNodeB PnP for the timeline.
@@ -371,18 +248,23 @@ public class Progression extends TestspanTest{
 			GeneralUtils.boldReportLine(step++ + ". For eNodeb Software Activate Completed see Appendix F1.");
 			watchNmsEventsEnodebSoftwareActivate = startFollowNmsEvents(timelineStageIndex++, COLD_ENODEB_PNP_EVENTS_EXPECTED_DURATION_IN_MILI, dut, rebootTime, COLLECT_EVENTS_FROM_NMS_TIMEOUT, "eNodeb Software Activate Completed.", eNodebSoftwareActivateCompletedEventListToFollow, rebootTimeAfterSoftwareDownload, true);//Doesn't Wait, uses WatchDog
 		}
-		if(isNinja){
-			checkIfClockSyncLock(step++, ((Ninja)dut));
+		if(isEnodeBWithDonor){
+			checkIfClockSyncLock(step++, ((EnodeBWithDonor)dut));
 		}
 		watchAllRunningTimeout.run();
-		waitForAllRunning(step++, timelineStageIndex++, rebootTime, dut, WAIT_FOR_ALL_RUNNING_EXPECTED_DURATION_IN_MILI, watchAllRunningTimeout);
+		waitForAllRunning(step++, timelineStageIndex++, rebootTime, dut, WAIT_FOR_ALL_RUNNING_EXPECTED_DURATION_IN_MILI);
 		watchAllRunningTimeout.stopCounting();
 		watchAllRunningTimeout.printStatus();
+		if(dut.isSwUpgradeDuringPnP()){
+			SoftwareUtiles softwareUtiles = SoftwareUtiles.getInstance();
+			softwareUtiles.isUpdatedViaSnmp(dut, Reporter.FAIL);
+			softwareUtiles.isRelayVersionUpdated(dut, rebootTimeAndSwActivationDetails.getElement1().getRightElement(), Reporter.FAIL);
+		}
 		checkIfUEsAreConnectedToEnodeB(step++, dut);
 		waitForAllProcessesToEnd(waitForFirstPtrRequest, watchNmsEventsRelayColdReboot, watchNmsEventsRelayScanList, waitForSecondPtrRequest, watchNmsEventsRelayWarmReboot, watchNmsEventsEnodebColdRebootSoftwareDownload);
 		waitForAllProcessesToEnd(waitForFirstPtrRequestfterSoftwareDownload, watchNmsEventsRelayColdRebootAfterSoftwareDownload, watchNmsEventsRelayScanListAfterSoftwareDownload, waitForSecondPtrRequestfterSoftwareDownload, watchNmsEventsRelayWarmRebootAfterSoftwareDownload,	watchNmsEventsEnodebColdReboot);
 		addAllStagesTimeToHtmlTableAndPrintHtmlTable(timelineStageIndex, rebootTime);
-		if(isNinja){
+		if(isEnodeBWithDonor){
 			if(waitForFirstPtrRequest != null){waitForFirstPtrRequest.printStatus("Appendix A");}
 			if(watchNmsEventsRelayColdReboot != null){watchNmsEventsRelayColdReboot.printStatus("Appendix B");}
 			if(watchNmsEventsRelayScanList != null){watchNmsEventsRelayScanList.printStatus("Appendix C");}
@@ -391,7 +273,7 @@ public class Progression extends TestspanTest{
 		}
 		if(dut.isSwUpgradeDuringPnP()){
 			if(watchNmsEventsEnodebColdRebootSoftwareDownload != null){watchNmsEventsEnodebColdRebootSoftwareDownload.printStatus("Appendix E1");}
-			if(isNinja){
+			if(isEnodeBWithDonor){
 				if(waitForFirstPtrRequestfterSoftwareDownload != null){waitForFirstPtrRequestfterSoftwareDownload.printStatus("Appendix E2");}
 				if(watchNmsEventsRelayColdRebootAfterSoftwareDownload != null){watchNmsEventsRelayColdRebootAfterSoftwareDownload.printStatus("Appendix E3");}
 				if(watchNmsEventsRelayScanListAfterSoftwareDownload != null){watchNmsEventsRelayScanListAfterSoftwareDownload.printStatus("Appendix E4");}
@@ -405,18 +287,67 @@ public class Progression extends TestspanTest{
 		}
 		//closeLogs(dut);
 	}
+	
+	@Test
+	@TestProperties(name = "Test PnP after Warm Reboot",
+	returnParam = { "IsTestWasSuccessful"},
+	paramsExclude = {"IsTestWasSuccessful"})
+	public void pnpWarmReboot() {
+		this.expectedDurationsAndStageNamesOrdered = dut.getExpectedDurationsAndStageNamesOrderedForWarmReboot();
+		int step = 1;
+		int timelineStageIndex = 0;
+		htmlTimelineTable = new HtmlTimelineStage[40];
+		WatchAllRunningTimeout watchAllRunningTimeout = new WatchAllRunningTimeout(dut);
+		if(isEnodeBWithDonor){
+			EnodeBWithDonor eNodeBWithDonorDut = (EnodeBWithDonor)dut;
+			EnodeB donor = eNodeBWithDonorDut.getDonor();
+			if (donor.isInOperationalStatus()){
+				report.report("Donor is in Running State.");
+			}else{
+				report.report("Donor is NOT in Running State.", Reporter.FAIL);
+				reason = "Donor is NOT in Running State.";
+				return;
+			}
+			String relayVersion = eNodeBWithDonorDut.getRelayRunningVersion();
+			if(relayVersion != ""){
+				report.report("Relay's Running Version: " + relayVersion);
+			}
+		}
+		report.report(dut.getName() + "'s Running Version: " + dut.getRunningVersion());
+		suspendIpsecTunnelManagerIfEnabled(dut); 
+		final long rebootTime = performWarmReboot(step++, timelineStageIndex++, dut, watchAllRunningTimeout);
+		if(rebootTime == 0){
+			return;
+		}
+		if(isEnodeBWithDonor){
+			EnodeBWithDonor eNodeBWithDonor = (EnodeBWithDonor)dut;
+			waitForDebugPortAvailability((EnodeBWithDonor)eNodeBWithDonor);
+			startToCollectPacketsSentByRelayToDnsAndWaitForRelayToConnectToDonor(step++, timelineStageIndex++, rebootTime, eNodeBWithDonor, "Relay Attach.", FIRST_RELAY_ATTACH_EXPECTED_DURATION_IN_MILI);
+		}
+		waitForSnmpAvailability(step++, timelineStageIndex++, rebootTime, dut, FIRST_IPSEC_BRING_UP_EXPECTED_DURATION_IN_MILI, RebootType.WARM_REBOOT);
+		if(isEnodeBWithDonor){
+			checkIfClockSyncLock(step++, ((EnodeBWithDonor)dut));
+		}
+		watchAllRunningTimeout.run();
+		waitForAllRunning(step++, timelineStageIndex++, rebootTime, dut, WAIT_FOR_ALL_RUNNING_EXPECTED_DURATION_IN_MILI);
+		watchAllRunningTimeout.stopCounting();
+		watchAllRunningTimeout.printStatus();
+		checkIfUEsAreConnectedToEnodeB(step++, dut);
+		addAllStagesTimeToHtmlTableAndPrintHtmlTable(timelineStageIndex, rebootTime);
+	}
 
 	/***************** Test Helper Functions ********************/
 	
-	private long performColdRebootAndConvertNmsProfileToPnP(int step, int timelineStageIndex, EnodeB eNodeB, WatchAllRunningTimeout watchAllRunningTimeout) {
+	private Pair<Long, Triple<Integer, String, String>> performColdRebootAndConvertNmsProfileToPnP(int step, int timelineStageIndex, EnodeB eNodeB, WatchAllRunningTimeout watchAllRunningTimeout) {
 		GeneralUtils.startLevel(step + ". Start Up.");
 		report.report("Perform Cold Reboot.");
 		long rebootTime = 0;
+		Triple<Integer, String, String> swActivationDetails = null;
 		if(eNodeB.reboot(RebootType.COLD_REBOOT)){
 			rebootTime = System.currentTimeMillis();
 			if(eNodeB.isSwUpgradeDuringPnP()){
-				WAIT_FOR_ALL_RUNNING_TIME = 20 * 60 * 1000;
-				SoftwareUtiles.getInstance().updatDefaultSoftwareImage(eNodeB);
+				WAIT_FOR_ALL_RUNNING_TIME = 30 * 60 * 1000;
+				swActivationDetails = SoftwareUtiles.getInstance().updatDefaultSoftwareImage(eNodeB);
 			}
 			watchAllRunningTimeout.startCounting(rebootTime, WAIT_FOR_ALL_RUNNING_TIME);
 			report.report("Convert To PnP Configuration in NMS.");
@@ -430,97 +361,131 @@ public class Progression extends TestspanTest{
 		GeneralUtils.unSafeSleep(1*60*1000);
 		GeneralUtils.stopLevel();
 		
+		return new Pair<Long, Triple<Integer, String, String>>(rebootTime, swActivationDetails);
+	}
+	
+	private long performWarmReboot(int step, int timelineStageIndex, EnodeB eNodeB, WatchAllRunningTimeout watchAllRunningTimeout) {
+		GeneralUtils.startLevel(step + ". Start Up.");
+		report.report("Perform Warm Reboot.");
+		long rebootTime = 0;
+		if(eNodeB.reboot(RebootType.WARM_REBOOT)){
+			rebootTime = System.currentTimeMillis();
+			WAIT_FOR_ALL_RUNNING_TIME = 5 * 60 * 1000;
+			watchAllRunningTimeout.startCounting(rebootTime, WAIT_FOR_ALL_RUNNING_TIME);
+		}else{
+			report.report("eNodeB is available via SNMP.", Reporter.FAIL);
+			report.report("eNodeB did NOT perform Reboot.", Reporter.FAIL);
+			reason = "eNodeB did NOT perform Reboot.";
+		}
+		saveStageTimeForHtmlTable(timelineStageIndex, "Warm Reboot.", rebootTime, rebootTime, 1, true);
+		GeneralUtils.unSafeSleep(1*60*1000);
+		GeneralUtils.stopLevel();
+		
 		return rebootTime;
 	}
 	
-	private boolean waitForDebugPortAvailability(Ninja ninja){
+	private boolean waitForDebugPortAvailability(EnodeBWithDonor eNodeBWithDonor){
 		long startTime = System.currentTimeMillis();
 		while((System.currentTimeMillis() - startTime) <= WAIT_FOR_DEBUG_PORT_TIMEOUT){
-			if(isNinjaAvailableViaDebugPort(ninja)){
+			if(isNinjaAvailableViaDebugPort(eNodeBWithDonor)){
 				return true;
 			}
 		}
 		return false;
 	}
 	
-	private boolean isNinjaAvailableViaDebugPort(Ninja ninja) {
+	private boolean isNinjaAvailableViaDebugPort(EnodeBWithDonor eNodeBWithDonor) {
 		boolean isAvailable = false;
 		try {
-			ninja.DebugPort.init();
+			eNodeBWithDonor.debugPort.init();
 		} catch (Exception e) {
 			GeneralUtils.printToConsole("FAILED to initialize Ninja's Debug Port.");
 			e.printStackTrace();
 		}
-		if(ninja.DebugPort.isSessionConnected()){
-			report.report("Ninja is available via Debug Port: " + ninja.DebugPort.DEBUG_PORT);
+		if(eNodeBWithDonor.debugPort.isSessionConnected()){
+			report.report("Ninja is available via Debug Port: " + eNodeBWithDonor.debugPort.getDEBUG_PORT());
 			isAvailable  = true;
 		}else{
 			isAvailable = false;
 		}
-		ninja.DebugPort.closeSession();
+		eNodeBWithDonor.debugPort.closeSession();
 		return isAvailable;
 	}
 	
-	private void startToCollectPacketsSentByAltairToDnsAndWaitForAltairToConnectToDonor(int step, int timelineStageIndex, long rebootTime, Ninja ninja, String stageName, long stageExpectedDuration) {
+	private void startToCollectPacketsSentByRelayToDnsAndWaitForRelayToConnectToDonor(int step, int timelineStageIndex, long rebootTime, EnodeBWithDonor eNodeBWithDonor, String stageName, long stageExpectedDuration) {
 		GeneralUtils.startLevel(step +". "+ stageName);
 		boolean isStageCompleted = false;
 		long stageFinishedTimeInMili = GeneralUtils.ERROR_VALUE;
-		UE altair = ninja.getRelay();
-		String wanIpAddress = altair.getWanIpAddress();
+		UE relay = eNodeBWithDonor.getRelay();
+		String wanIpAddress = relay.getWanIpAddress();
 		DNS dns = DNS.getInstance();
 		
 		dns.startToCollectPackets(wanIpAddress, WAIT_FOR_PTR_REQUEST_TIMEOUT);//Collecting all packets from IP Address to DNS.
 		
-		report.report("Wait for the Altair connect Donor (WAN IP Address="+wanIpAddress+").");
-		ArrayList<UE> altairInArray = new ArrayList<UE>();
-		altairInArray.add(altair);
-		if(PeripheralsConfig.getInstance().WaitForUEsAndEnodebConnectivity(altairInArray, ninja.getDonor(), WAIT_FOR_ALTIAR_CONNECT_DONOR)){
-			report.report("Altair is connected to the Donor.");
+		report.report("Wait for the Relay connect Donor (WAN IP Address="+wanIpAddress+").");
+		ArrayList<UE> relayInArray = new ArrayList<UE>();
+		relayInArray.add(relay);
+		if(PeripheralsConfig.getInstance().WaitForUEsAndEnodebConnectivity(relayInArray, eNodeBWithDonor.getDonor(), WAIT_FOR_RELAY_CONNECT_DONOR)){
+			report.report("Relay is connected to the Donor.");
 			isStageCompleted = true;
 			stageFinishedTimeInMili = System.currentTimeMillis();
 		}else{
-			report.report("Reached timeout ("+WAIT_FOR_ALTIAR_CONNECT_DONOR/1000+" sec) and the Altair is NOT connected to the Donor.", Reporter.WARNING);
+			report.report("Reached timeout ("+WAIT_FOR_RELAY_CONNECT_DONOR/1000+" sec) and the Relay is NOT connected to the Donor.", Reporter.WARNING);
 		}
-		if(stageName.toLowerCase().contains("second")){stageName = "Scan List And Second Altair Attach.";}
+		if(stageName.toLowerCase().contains("second")){stageName = "Scan List And Second Relay Attach.";}
 		saveStageTimeForHtmlTable(timelineStageIndex, stageName, rebootTime, stageFinishedTimeInMili, stageExpectedDuration, isStageCompleted);
 		GeneralUtils.stopLevel();
 	}
 	
-	private WaitForPtrRequest waitForPtrRequest(int timelineStageIndex, String stageName, Ninja ninja, long rebootTime, long stageExpectedDuration){
-		WaitForPtrRequest wfpr = new WaitForPtrRequest(stageName, ninja, rebootTime);
+	private WaitForPtrRequest waitForPtrRequest(int timelineStageIndex, String stageName, EnodeBWithDonor eNodeBWithDonor, long rebootTime, long stageExpectedDuration){
+		WaitForPtrRequest wfpr = new WaitForPtrRequest(stageName, eNodeBWithDonor, rebootTime);
 		wfpr.startWaiting(timelineStageIndex, stageExpectedDuration);
 		return wfpr;
 	}
 	
-	private void waitForFirstIPSecBringUp(int step, int timelineStageIndex, long rebootTime, Ninja eNodeB, long stageExpectedDuration) {
-		GeneralUtils.startLevel(step + ". First IPSec Bring Up.");
+	private void waitForFirstIPSecBringUp(int step, int timelineStageIndex, long rebootTime, EnodeBWithDonor eNodeB, long stageExpectedDuration) {
+		String stageName = "";
+		if(eNodeB.isIpsecTunnelEnabled()){
+			stageName = "First IPSec Bring Up.";
+		}else{
+			stageName = "Getting IP Via DHCP";
+		}
+		GeneralUtils.startLevel(step +". "+ stageName);
 		boolean isStageCompleted = false;
 		long stageFinishedTimeInMili = GeneralUtils.ERROR_VALUE;
-		try {
-			if(TunnelManager.getInstance(enbInTest, report).waitForIPSecTunnelToOpen(WAIT_UNTIL_SNMP_AVAIALBLILITY, eNodeB)){
-				report.report("IPSec Tunnel is Opened.");
-				isStageCompleted = true;
-				stageFinishedTimeInMili = System.currentTimeMillis();
-			}else{
-				report.report("IPSec Tunnel Was NOT Opened.", Reporter.WARNING);
+		if(eNodeB.isIpsecTunnelEnabled()){
+			try {
+				if(TunnelManager.getInstance(enbInTest, report).waitForIPSecTunnelToOpen(WAIT_UNTIL_SNMP_AVAIALBLILITY, eNodeB)){
+					report.report("IPSec Tunnel is Opened.");
+					isStageCompleted = true;
+					stageFinishedTimeInMili = System.currentTimeMillis();
+				}else{
+					report.report("IPSec Tunnel Was NOT Opened.", Reporter.WARNING);
+				}
+			} catch (Exception e) {
+				GeneralUtils.printToConsole("FAILED to get TunnelManager");
+				e.printStackTrace();
 			}
-		} catch (Exception e) {
-			GeneralUtils.printToConsole("FAILED to get TunnelManager");
-			e.printStackTrace();
+		}else{
+			if(eNodeB.waitForReachable(WAIT_UNTIL_SNMP_AVAIALBLILITY)){
+				report.report(eNodeB.getName() + " Is Reachable Via " + eNodeB.getIpAddress());
+			}else{
+				report.report(eNodeB.getName() + " Is NOT Reachable Via " + eNodeB.getIpAddress(), Reporter.WARNING);
+			}
 		}
-		saveStageTimeForHtmlTable(timelineStageIndex, "First IPSec Bring Up.", rebootTime, stageFinishedTimeInMili, stageExpectedDuration, isStageCompleted);
+		saveStageTimeForHtmlTable(timelineStageIndex, stageName, rebootTime, stageFinishedTimeInMili, stageExpectedDuration, isStageCompleted);
 		GeneralUtils.stopLevel();
 	}
 	
-	private void waitForAltairDisconnectDonor(int step, EnodeB eNodeB) {
-		GeneralUtils.startLevel(step + ". Wait for the Altair disconnect Donor");
-		Ninja ninjaDut = ((Ninja)eNodeB);
-		ArrayList<UE> altairInArray = new ArrayList<>();
-		altairInArray.add(ninjaDut.getRelay());
-		if(PeripheralsConfig.getInstance().WaitForUEsAndEnodebDisconnect(altairInArray, ninjaDut.getDonor(), WAIT_FOR_ALTIAR_DISCONNECT_DONOR)){
-			report.report("Altair disconnect Donor.");
+	private void waitForRelayDisconnectDonor(int step, EnodeB eNodeB) {
+		GeneralUtils.startLevel(step + ". Wait for the Relay disconnect Donor");
+		EnodeBWithDonor eNodeBWithDonor = ((EnodeBWithDonor)eNodeB);
+		ArrayList<UE> relayInArray = new ArrayList<>();
+		relayInArray.add(eNodeBWithDonor.getRelay());
+		if(PeripheralsConfig.getInstance().WaitForUEsAndEnodebDisconnect(relayInArray, eNodeBWithDonor.getDonor(), WAIT_FOR_RELAY_DISCONNECT_DONOR)){
+			report.report("Relay disconnect Donor.");
 		}else{
-			report.report("Reached timeout ("+WAIT_FOR_ALTIAR_DISCONNECT_DONOR/1000+" sec) and the Altair STILL connected to the Donor.", Reporter.WARNING);
+			report.report("Reached timeout ("+WAIT_FOR_RELAY_DISCONNECT_DONOR/1000+" sec) and the Relay STILL connected to the Donor.", Reporter.WARNING);
 		}
 		GeneralUtils.stopLevel();
 	}
@@ -532,9 +497,9 @@ public class Progression extends TestspanTest{
 		return watchNmsEvents;
 	}
 	
-	private void waitForSnmpAvailability(int step, int timelineStageIndex, long rebootTime, EnodeB eNodeB, long stageExpectedDuration) {
+	private void waitForSnmpAvailability(int step, int timelineStageIndex, long rebootTime, EnodeB eNodeB, long stageExpectedDuration, RebootType rebootType) {
 		String snmpAvailabilityStageName = "SNMP Availability.";
-		if(isNinja){
+		if(isEnodeBWithDonor && eNodeB.isIpsecTunnelEnabled() && (rebootType == RebootType.COLD_REBOOT)){
 			snmpAvailabilityStageName = "Second IPSec Bring Up.";
 		}else if(eNodeB.isIpsecTunnelEnabled()){
 			snmpAvailabilityStageName = "IPSec Bring Up.";
@@ -552,13 +517,13 @@ public class Progression extends TestspanTest{
 				saveStageTimeForHtmlTable(timelineStageIndex, snmpAvailabilityStageName, rebootTime, System.currentTimeMillis(), stageExpectedDuration, true);
 				resumeIpsecTunnelManagerIfEnabled(eNodeB);
 				report.report("IPSec Tunnel is Opened.");
-				if(isNinja){
-					Ninja ninja = (Ninja)eNodeB;
-					if(isNinjaAvailableViaDebugPort(ninja) && ninja.isAvailable()){
-						report.report("Ninja is available via Debug Port: " + ninja.DebugPort.DEBUG_PORT + ", while IPSec Tunnel is open: " + eNodeB.getIpAddress(), Reporter.FAIL);
+				if(isEnodeBWithDonor){
+					EnodeBWithDonor eNodeBWithDonor = (EnodeBWithDonor)eNodeB;
+					if(isNinjaAvailableViaDebugPort(eNodeBWithDonor) && eNodeBWithDonor.isAvailable()){
+						report.report("Ninja is available via Debug Port: " + eNodeBWithDonor.debugPort.getDEBUG_PORT() + ", while IPSec Tunnel is open: " + eNodeB.getIpAddress(), Reporter.FAIL);
 						reason = "Ninja is available via Debug Port.";
 					}else{
-						report.report("Ninja is NOT available via Debug Port: " + ninja.DebugPort.DEBUG_PORT + ", while IPSec Tunnel is open: "+ eNodeB.getIpAddress());
+						report.report("Ninja is NOT available via Debug Port: " + eNodeBWithDonor.debugPort.getDEBUG_PORT() + ", while IPSec Tunnel is open: "+ eNodeB.getIpAddress());
 					}
 				}
 			}else{
@@ -575,9 +540,9 @@ public class Progression extends TestspanTest{
 		GeneralUtils.stopLevel();
 	}
 
-	private void checkIfClockSyncLock(int step, Ninja ninja) {
+	private void checkIfClockSyncLock(int step, EnodeBWithDonor eNodeBWithDonor) {
 		GeneralUtils.startLevel(step + ". Clock Sync.");
-		String syncState = netspanServer.getSyncState(ninja);
+		String syncState = netspanServer.getSyncState(eNodeBWithDonor);
 		if(syncState != null && syncState.equals("Synchronized")){
 			report.report("eNodeB is Synchronized.");
 		}else{
@@ -586,22 +551,15 @@ public class Progression extends TestspanTest{
 		GeneralUtils.stopLevel();
 	}
 	
-	private void waitForAllRunning(int step, int timelineStageIndex, long rebootTime, EnodeB eNodeB, long stageExpectedDuration, WatchAllRunningTimeout watchAllRunningTimeout) {
+	private void waitForAllRunning(int step, int timelineStageIndex, long rebootTime, EnodeB eNodeB, long stageExpectedDuration) {
 		GeneralUtils.startLevel(step + ". Wait for All Running And InService.");
-		long stageEndTime = 0;
 		if(eNodeB.waitForAllRunningAndInService(WAIT_FOR_ALL_RUNNING_TIME)){
-			stageEndTime  = System.currentTimeMillis();
 			report.step("eNodeB Reached to All Running And InService.");
-			if(watchAllRunningTimeout.isReachedToAllRunningBeforeTimeout() == false){
-				report.report("The eNodeB Reached ALL RUNNING within " + ((stageEndTime - rebootTime)/(1000 * 60)) + " minutes and "+ (((stageEndTime - rebootTime)/1000) % 60) +" seconds.");
-			}
 		}else{
-			stageEndTime = System.currentTimeMillis();
 			report.report("eNodeB Did NOT reached to All Running And InService.", Reporter.FAIL);
 			reason = "eNodeB Did NOT reached to All Running And InService.";
 		}
-		
-		saveStageTimeForHtmlTable(timelineStageIndex, "All Running.", rebootTime, stageEndTime, stageExpectedDuration, true);
+		saveStageTimeForHtmlTable(timelineStageIndex, "All Running.", rebootTime, System.currentTimeMillis(), stageExpectedDuration, true);
 		GeneralUtils.stopLevel();
 	}
 
@@ -713,16 +671,16 @@ public class Progression extends TestspanTest{
 		}
 	}
 	
-	private String sendCommandToNinjaViaDebugPort(Ninja ninja, String cmd) {
+	private String sendCommandToNinjaViaDebugPort(EnodeBWithDonor eNodeBWithDonor, String cmd) {
 		String response = "";
 		try {
-			ninja.DebugPort.init();
+			eNodeBWithDonor.debugPort.init();
 		} catch (Exception e) {
 			GeneralUtils.printToConsole("FAILED to initialize Ninja's Debug Port.");
 			e.printStackTrace();
 		}
-		response = ninja.DebugPort.sendCommands(EnodeBComponent.LTE_CLI_PROMPT, cmd);
-		ninja.DebugPort.closeSession();
+		response = eNodeBWithDonor.debugPort.sendCommands(EnodeBComponent.LTE_CLI_PROMPT, cmd);
+		eNodeBWithDonor.debugPort.closeSession();
 		return response;
 	}
 	
@@ -744,13 +702,13 @@ public class Progression extends TestspanTest{
 		for(int i = 1; i < tableSize; i++){
 			if(htmlTimelineTable[i] != null){
 				if(htmlTimelineTable[i].stageFinishedTimeInMili == GeneralUtils.ERROR_VALUE){
-					htmlTimelineTable[i].stageFinishedTimeInMili = htmlTimelineTable[i-1].stageFinishedTimeInMili + expectedDurationsOrdered[i];
+					htmlTimelineTable[i].stageFinishedTimeInMili = htmlTimelineTable[i-1].stageFinishedTimeInMili + expectedDurationsAndStageNamesOrdered[i].getElement0();
 				}
 				addStageTimeToHtmlTable(htmlTimelineTable[i].stageName, htmlTimelineTable[i].rebootTimeInMili,
 					htmlTimelineTable[i].stageFinishedTimeInMili, htmlTimelineTable[i-1].stageFinishedTimeInMili, htmlTimelineTable[i].stageExpectedDuration, htmlTimelineTable[i].isStageCompleted);
 			}else{
-				saveStageTimeForHtmlTable(i, stageNamesOrdered[i], rebootTime, htmlTimelineTable[i-1].stageFinishedTimeInMili + expectedDurationsOrdered[i], expectedDurationsOrdered[i], false);
-				addStageTimeToHtmlTable(stageNamesOrdered[i], rebootTime, htmlTimelineTable[i-1].stageFinishedTimeInMili + expectedDurationsOrdered[i], htmlTimelineTable[i-1].stageFinishedTimeInMili, expectedDurationsOrdered[i], false);
+				saveStageTimeForHtmlTable(i, expectedDurationsAndStageNamesOrdered[i].getElement1(), rebootTime, htmlTimelineTable[i-1].stageFinishedTimeInMili + expectedDurationsAndStageNamesOrdered[i].getElement0(), expectedDurationsAndStageNamesOrdered[i].getElement0(), false);
+				addStageTimeToHtmlTable(expectedDurationsAndStageNamesOrdered[i].getElement1(), rebootTime, htmlTimelineTable[i-1].stageFinishedTimeInMili + expectedDurationsAndStageNamesOrdered[i].getElement0(), htmlTimelineTable[i-1].stageFinishedTimeInMili, expectedDurationsAndStageNamesOrdered[i].getElement0(), false);
 			}
 		}
 	}
@@ -826,10 +784,10 @@ public class Progression extends TestspanTest{
 		htmlTable.addNewRow("Expected Timeline");
 		
 		long timestamp = 0;
-		for(int i = 0; i < expectedDurationsOrdered.length && i < stageNamesOrdered.length; i++){
+		for(int i = 0; i < expectedDurationsAndStageNamesOrdered.length; i++){
 			htmlTable.addField(HtmlFieldColor.WHITE, "Timestamp: " + timeInMiliToString(timestamp)
-						+ "<br />" + "Duration: " + timeInMiliToString(expectedDurationsOrdered[i]));
-			timestamp+=expectedDurationsOrdered[i];
+						+ "<br />" + "Duration: " + timeInMiliToString(expectedDurationsAndStageNamesOrdered[i].getElement0()));
+			timestamp+=expectedDurationsAndStageNamesOrdered[i].getElement0();
 		}
 	}
 	
@@ -838,11 +796,11 @@ public class Progression extends TestspanTest{
 		expectedHtmlTable.addNewRow("Expected Timeline");
 		
 		long timestamp = 0;
-		for(int i = 0; i < expectedDurationsOrdered.length && i < stageNamesOrdered.length; i++){
+		for(int i = 0; i < expectedDurationsAndStageNamesOrdered.length; i++){
 			expectedHtmlTable.addNewColumn("Timestamp: " + timeInMiliToString(timestamp)
-						+ "<br />" + "Duration: " + timeInMiliToString(expectedDurationsOrdered[i]));
-			expectedHtmlTable.addField(HtmlFieldColor.WHITE, stageNamesOrdered[i]);
-			timestamp+=expectedDurationsOrdered[i];
+						+ "<br />" + "Duration: " + timeInMiliToString(expectedDurationsAndStageNamesOrdered[i].getElement0()));
+			expectedHtmlTable.addField(HtmlFieldColor.WHITE, expectedDurationsAndStageNamesOrdered[i].getElement1());
+			timestamp+=expectedDurationsAndStageNamesOrdered[i].getElement0();
 		}
 		expectedHtmlTable.reportTable("");
 	}
@@ -911,7 +869,7 @@ public class Progression extends TestspanTest{
 		@Override
 		public void run() {
 			if(((System.currentTimeMillis() - this.watchNmsStartTime) < timeoutInMili)){
-				List<EventInfo> eventInfoListFromNMS = alarmsAndEvents.getAllEventsNode(eNodeB, coldRebootStartTimeDate);
+				List<EventInfo> eventInfoListFromNMS = alarmsAndEvents.getAllEventsNode(eNodeB, coldRebootStartTimeDate, new Date(System.currentTimeMillis()));
 				ArrayList<Triple<String, String, String>> tmpEventListToRemoveFromFollowList = new ArrayList<Triple<String, String, String>>();
 				for(Triple<String, String, String> eventToFollow : this.tmpEventListToFollow){
 					for(EventInfo eventInfoFromNMS : eventInfoListFromNMS){
@@ -990,7 +948,7 @@ public class Progression extends TestspanTest{
 	
 	class WaitForPtrRequest extends Utils.WatchDog.Command{
 		private WatchDogManager wd;
-		private Ninja ninja;
+		private EnodeBWithDonor eNodeBWithDonor;
 		private WatchdogState state;
 		private String stageName;
 		private Triple<Boolean, String, String> result;
@@ -998,9 +956,9 @@ public class Progression extends TestspanTest{
 		private int timelineStageIndex;
 		private long stageExpectedDuration;
 		
-		WaitForPtrRequest(String stageName, Ninja ninja, long rebootTime){
+		WaitForPtrRequest(String stageName, EnodeBWithDonor eNodeBWithDonor, long rebootTime){
 			 this.wd = WatchDogManager.getInstance();
-			 this.ninja = ninja;
+			 this.eNodeBWithDonor = eNodeBWithDonor;
 			 this.stageName = stageName;
 			 this.rebootTime = rebootTime;
 			 this.result = new Triple<Boolean, String, String>(false, "", "");
@@ -1016,7 +974,7 @@ public class Progression extends TestspanTest{
 		
 		@Override
 		public void run() {
-			this.result = checkIfPtrRequestReceived(this.ninja);
+			this.result = checkIfPtrRequestReceived(this.eNodeBWithDonor);
 			this.state = WatchdogState.ENDED;
 		}
 
@@ -1025,12 +983,12 @@ public class Progression extends TestspanTest{
 			return 5;
 		}
 		
-		private Triple<Boolean, String, String> checkIfPtrRequestReceived(Ninja ninja) {
-			String altairWanIpAddress = ninja.getRelay().getWanIpAddress();
+		private Triple<Boolean, String, String> checkIfPtrRequestReceived(EnodeBWithDonor eNodeBWithDonor) {
+			String relayWanIpAddress = eNodeBWithDonor.getRelay().getWanIpAddress();
 			DNS dns = DNS.getInstance();
 			Pair<Boolean, String> dnsResult = new Pair<Boolean, String>(false, "");
 			
-			dnsResult = dns.isDnsPtrRequestReceived(altairWanIpAddress);
+			dnsResult = dns.isDnsPtrRequestReceived(relayWanIpAddress);
 			if(dnsResult.getElement0()){
 				saveStageTimeForHtmlTable(this.timelineStageIndex, this.stageName, this.rebootTime, System.currentTimeMillis(), stageExpectedDuration, true);
 			}else{
@@ -1038,7 +996,7 @@ public class Progression extends TestspanTest{
 			}
 			
 			Triple<Boolean, String, String> result =  Triple.createTriple(dnsResult.getElement0(), dnsResult.getElement1(),
-					sendCommandToNinjaViaDebugPort(ninja, "db get DhcpInfo"));
+					isEnodeBWithDonor ? sendCommandToNinjaViaDebugPort((EnodeBWithDonor)eNodeBWithDonor, "db get DhcpInfo") : "");
 			
 			return result;
 		}
@@ -1073,7 +1031,6 @@ public class Progression extends TestspanTest{
 		private EnodeB eNodeB;
 		private WatchdogState state;
 		private boolean isReachedToAllRunningBeforeTimeout;
-		private long reachedToAllRunningWithin;
 		
 		WatchAllRunningTimeout(EnodeB eNodeB){
 			 this.wd = WatchDogManager.getInstance();
@@ -1110,7 +1067,6 @@ public class Progression extends TestspanTest{
 				GeneralUtils.printToConsole("WatchAllRunningTimeout.run() - Timeout Expired, eNodeB is" + (eNodeB.isInOperationalStatus() ? "" : "not") + " in operational status");
 				if(eNodeB.isInOperationalStatus()){
 					this.isReachedToAllRunningBeforeTimeout = true;
-					this.reachedToAllRunningWithin = (System.currentTimeMillis() - rebootTime);
 				}else{
 					this.isReachedToAllRunningBeforeTimeout = false;
 				}
@@ -1126,17 +1082,11 @@ public class Progression extends TestspanTest{
 		public void printStatus(){
 			if(this.state == WatchdogState.ENDED){
 				if(this.isReachedToAllRunningBeforeTimeout == false){
-					report.report("The eNodeB Failed to reach ALL RUNNING within " + (timeoutInMili/(1000 * 60)) + " minutes.", Reporter.FAIL);
-					reason = "The eNodeB Failed to reach ALL RUNNING within " + (timeoutInMili/(1000 * 60)) + " minutes.";
-				}else{
-					report.report("The eNodeB Reached ALL RUNNING within " + (this.reachedToAllRunningWithin/(1000 * 60)) + " minutes and "+ ((this.reachedToAllRunningWithin/1000) % 60) +" seconds.", Reporter.PASS);
+					report.report("The eNodeB failed to reach ALL RUNNING within " + (timeoutInMili/(1000 * 60)) + " minutes.", Reporter.FAIL);
+					reason = "The eNodeB did failed to reach ALL RUNNING within " + (timeoutInMili/(1000 * 60)) + " minutes.";
+					this.state = WatchdogState.PRINTED;
 				}
-				this.state = WatchdogState.PRINTED;
 			}
-		}
-
-		public boolean isReachedToAllRunningBeforeTimeout() {
-			return isReachedToAllRunningBeforeTimeout;
 		}
 	}
 	
@@ -1161,7 +1111,7 @@ public class Progression extends TestspanTest{
 	private void startParallelCommands(EnodeB eNodeB){
 		report.report("Starting parallel commands");
 		List<String> commandList = new ArrayList<String>();
-		if(isNinja){
+		if(isEnodeBWithDonor){
 			commandList.add("!ip r s");
 		}
 		commandList.add("cell show operationalStatus");

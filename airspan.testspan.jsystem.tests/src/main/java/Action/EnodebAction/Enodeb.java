@@ -134,6 +134,12 @@ public class Enodeb extends EnodebAction {
 	protected PortStatus portStatus;
 	protected PortSpeed portSpeed;
 	protected EnabledDisabledStates flowControlStatus;
+	
+	private int granularityPeriod = GeneralUtils.ERROR_VALUE;
+
+	public void setGranularityPeriod(String granularityPeriod) {
+		this.granularityPeriod = Integer.valueOf(granularityPeriod);
+	}
 
 	@ParameterProperties(description = "Set cell enable value")
 	public void setEnableCell(boolean enableCell) {
@@ -532,6 +538,8 @@ public class Enodeb extends EnodebAction {
 
 		if (!flag) {
 			report.report("Set " + this.enbProfile + " Failed", Reporter.FAIL);
+		}else{
+			report.report("Succeeded to set profile "+profileName+" to enodeb "+dut.getNetspanName());
 		}
 	}
 
@@ -839,5 +847,28 @@ public class Enodeb extends EnodebAction {
 				break;
 			}
 		}
+	}
+	
+	@Test
+	@TestProperties(name = "Change Granulatiry Period", returnParam = { "IsTestWasSuccessful" }, paramsInclude = {"DUT","GranularityPeriod"})
+	public void changeGranulatiryPeriod() {
+		if(granularityPeriod == GeneralUtils.ERROR_VALUE){
+			report.report("No granularity period was configured", Reporter.FAIL);
+			return;
+		}
+		if(granularityPeriod <= 0){
+			report.report("Can't set granularity period of 0 or less", Reporter.FAIL);
+			return;
+		}
+		boolean setGranularity = EnodeBConfig.getInstance().setGranularityPeriod(dut, granularityPeriod);
+		if(!setGranularity){
+			report.report("Failed to set granularity period",Reporter.FAIL);
+		}
+	}
+	
+	@Test
+	@TestProperties(name = "Wait Granulatiry Period", returnParam = { "IsTestWasSuccessful" }, paramsInclude = {"DUT"})
+	public void waitGranulatiryPeriod() {
+		EnodeBConfig.getInstance().waitGranularityPeriodTime(dut);
 	}
 }

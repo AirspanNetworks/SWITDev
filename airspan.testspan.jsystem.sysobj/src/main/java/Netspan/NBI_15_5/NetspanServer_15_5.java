@@ -4,12 +4,16 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Default;
+
 import EnodeB.EnodeB;
 import EnodeB.EnodeBUpgradeImage;
 import EnodeB.EnodeBUpgradeServer;
 import Netspan.CellProfiles;
 import Netspan.EnbProfiles;
 import Netspan.API.Enums.CategoriesLte;
+import Netspan.API.Enums.CellBarringPolicies;
 import Netspan.API.Enums.DuplexType;
 import Netspan.API.Enums.EnabledDisabledStates;
 import Netspan.API.Enums.EnbTypes;
@@ -27,7 +31,10 @@ import Netspan.NBI_15_5.Status.LteNetworkElementStatusWs;
 import Netspan.NBI_15_5.Lte.NodeResult;
 import Netspan.NBI_15_5.Lte.AnrFreq;
 import Netspan.NBI_15_5.Lte.AnrFreqListContainer;
+import Netspan.NBI_15_5.Lte.AuEnbDetailWs;
+import Netspan.NBI_15_5.Lte.AuNodeDetailsWs;
 import Netspan.NBI_15_5.Lte.AuPnpDetailWs;
+import Netspan.NBI_15_5.Lte.AuRelayDetails;
 import Netspan.NBI_15_5.Lte.EnbCellAdvancedProfile;
 import Netspan.NBI_15_5.Lte.EnbDetailsGet;
 import Netspan.NBI_15_5.Lte.EnbManagementProfile;
@@ -100,7 +107,9 @@ import Netspan.NBI_15_5.Status.LteSonAnrGetResult;
 import Netspan.NBI_15_5.Status.LteSonDynamicIcicUnmanagedInterferenceGetResult;
 import Netspan.NBI_15_5.Status.NodeGpsGetResult;
 import Netspan.NBI_15_5.Status.NodeStatusResultValues;
+import Netspan.Profiles.AccessBarringAdvanced;
 import Netspan.Profiles.CellAdvancedParameters;
+import Netspan.Profiles.CellBarringPolicyParameters;
 import Netspan.Profiles.INetspanProfile;
 import Netspan.Profiles.ManagementParameters;
 import Netspan.Profiles.MobilityParameters;
@@ -118,6 +127,7 @@ import Utils.FileServer;
 import Utils.GeneralUtils;
 import Utils.Pair;
 import Utils.Triple;
+import Utils.GeneralUtils.RebootType;
 import jsystem.framework.report.Reporter;
 
 public class NetspanServer_15_5 extends NetspanServer_15_2 implements Netspan_15_5_abilities {
@@ -285,6 +295,85 @@ public class NetspanServer_15_5 extends NetspanServer_15_2 implements Netspan_15
 		}
 	}
 
+	@Override
+	public boolean setEnbAccessClassBarring(EnodeB dut, CellBarringPolicyParameters  cellBarringParams) {
+		LteEnbDetailsSetWs enbConfigSet = new LteEnbDetailsSetWs();
+		ObjectFactory objectFactory = new ObjectFactory();
+		LteCellSetWs lteCellSet = new LteCellSetWs();
+		try {
+			lteCellSet.setCellNumber(objectFactory.createLteCellSetWsCellNumber(String.valueOf(dut.getCellContextID())));
+			if (cellBarringParams.cellBarringPolicy != null){
+				lteCellSet.setCellBarringPolicy(objectFactory.createLteCellSetWsCellBarringPolicy(cellBarringParams.cellBarringPolicy));
+			}
+			switch(cellBarringParams.cellBarringPolicy){
+			case AC_BARRING:{
+				if (cellBarringParams.IsAccessClassBarred != null){
+					lteCellSet.setIsAccessClassBarred(objectFactory.createLteCellSetWsIsAccessClassBarred(cellBarringParams.IsAccessClassBarred));
+				}
+				if (cellBarringParams.IsAccessClassBarred){
+					if (cellBarringParams.IsEmergencyAccessBarred != null)
+						lteCellSet.setIsEmergencyAccessBarred(objectFactory.createLteCellSetWsIsEmergencyAccessBarred(cellBarringParams.IsEmergencyAccessBarred));
+					if (cellBarringParams.IsSignalingAccessBarred != null){
+						lteCellSet.setIsSignalingAccessBarred(objectFactory.createLteCellSetWsIsSignalingAccessBarred(cellBarringParams.IsSignalingAccessBarred));
+						if(cellBarringParams.IsSignalingAccessBarred){
+							if(cellBarringParams.signalingAccessBarring.getBarringFactor().value() != null)
+								lteCellSet.setSignalingAccessBarringFactor(objectFactory.createLteCellSetWsSignalingAccessBarringFactor(cellBarringParams.signalingAccessBarring.getBarringFactor().value()));
+							if(cellBarringParams.signalingAccessBarring.getBarringTime().value() != null)
+								lteCellSet.setSignalingAccessBarringTimeInSec(objectFactory.createLteCellSetWsSignalingAccessBarringTimeInSec(cellBarringParams.signalingAccessBarring.getBarringTime().value()));
+							if (cellBarringParams.signalingAccessBarring.isBarringClass_11() != null)
+								lteCellSet.setIsSignalingAccessClass11Barred(objectFactory.createLteCellGetWsIsSignalingAccessClass11Barred(cellBarringParams.signalingAccessBarring.isBarringClass_11()));
+							if (cellBarringParams.signalingAccessBarring.isBarringClass_12() != null)
+								lteCellSet.setIsSignalingAccessClass12Barred(objectFactory.createLteCellGetWsIsSignalingAccessClass12Barred(cellBarringParams.signalingAccessBarring.isBarringClass_12()));
+							if (cellBarringParams.signalingAccessBarring.isBarringClass_13() !=null)
+								lteCellSet.setIsSignalingAccessClass13Barred(objectFactory.createLteCellGetWsIsSignalingAccessClass13Barred(cellBarringParams.signalingAccessBarring.isBarringClass_13()));
+							if (cellBarringParams.signalingAccessBarring.isBarringClass_14() !=null)
+								lteCellSet.setIsSignalingAccessClass14Barred(objectFactory.createLteCellGetWsIsSignalingAccessClass14Barred(cellBarringParams.signalingAccessBarring.isBarringClass_14()));
+							if (cellBarringParams.signalingAccessBarring.isBarringClass_15() !=null)
+								lteCellSet.setIsSignalingAccessClass15Barred(objectFactory.createLteCellGetWsIsSignalingAccessClass15Barred(cellBarringParams.signalingAccessBarring.isBarringClass_15()));
+						}	
+					}
+					if (cellBarringParams.IsDataAccessBarred != null){
+						if(cellBarringParams.IsDataAccessBarred){
+							if (cellBarringParams.dataAccessBarring.getBarringFactor().value() != null)
+								lteCellSet.setDataAccessBarringFactor(objectFactory.createLteCellGetWsDataAccessBarringFactor(cellBarringParams.dataAccessBarring.getBarringFactor().value()));
+							if (cellBarringParams.signalingAccessBarring.getBarringTime().value() != null)
+								lteCellSet.setSignalingAccessBarringTimeInSec(objectFactory.createLteCellSetWsSignalingAccessBarringTimeInSec(cellBarringParams.signalingAccessBarring.getBarringTime().value()));
+							if (cellBarringParams.signalingAccessBarring.isBarringClass_11() != null)
+								lteCellSet.setIsSignalingAccessClass11Barred(objectFactory.createLteCellGetWsIsSignalingAccessClass11Barred(cellBarringParams.signalingAccessBarring.isBarringClass_11()));
+							if (cellBarringParams.signalingAccessBarring.isBarringClass_12() != null)
+								lteCellSet.setIsSignalingAccessClass12Barred(objectFactory.createLteCellGetWsIsSignalingAccessClass12Barred(cellBarringParams.signalingAccessBarring.isBarringClass_12()));
+							if (cellBarringParams.signalingAccessBarring.isBarringClass_13() != null)
+								lteCellSet.setIsSignalingAccessClass13Barred(objectFactory.createLteCellGetWsIsSignalingAccessClass13Barred(cellBarringParams.signalingAccessBarring.isBarringClass_13()));
+							if (cellBarringParams.signalingAccessBarring.isBarringClass_14() != null)
+								lteCellSet.setIsSignalingAccessClass14Barred(objectFactory.createLteCellGetWsIsSignalingAccessClass14Barred(cellBarringParams.signalingAccessBarring.isBarringClass_14()));
+							if (cellBarringParams.signalingAccessBarring.isBarringClass_15() != null)
+							lteCellSet.setIsSignalingAccessClass15Barred(objectFactory.createLteCellGetWsIsSignalingAccessClass15Barred(cellBarringParams.signalingAccessBarring.isBarringClass_15()));
+						}
+					}
+					
+				}
+			}
+				break;
+			default:
+				break;
+		}
+			enbConfigSet.getLteCell().add(lteCellSet);
+			Netspan.NBI_15_5.Lte.NodeActionResult result = soapHelper_15_5.getLteSoap().enbConfigSet(dut.getNetspanName(), null, enbConfigSet, null, credentialsLte);
+			if (result.getErrorCode() != Netspan.NBI_15_5.Lte.ErrorCodes.OK) {
+				report.report("setEnbCellProperties via Netspan Failed : " + result.getErrorString(), Reporter.WARNING);
+				return false;
+			} else
+				return true;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			report.report("setEnbCellProperties via Netspan Failed due to: " + e.getMessage(), Reporter.WARNING);
+			return false;
+		} finally {
+			soapHelper_15_5.endLteSoap();
+		}
+	}
+	
 	@Override
 	public boolean setEnbType(String nodeName, EnbTypes type) {
 		LteEnbDetailsSetWs enbConfigSet = new LteEnbDetailsSetWs();
@@ -586,10 +675,44 @@ public class NetspanServer_15_5 extends NetspanServer_15_2 implements Netspan_15
 			lteCellSet.setCellNumber(objectFactory.createLteCellGetWsCellNumber(String.valueOf(cellid)));
 			enbConfigSet.setNeighbourProfile(profileName);
 			return enbSetContent(node, null, enbConfigSet, null);
+		} else if (profileType == EnbProfiles.Relay_Profile) {
+			AuRelayDetails relayDetails = new AuRelayDetails();
+			relayDetails.setRelayProfile(profileName);
+			return setRelayEnbConfig(node, null, relayDetails, null, null, null);
 		} else
 			return super.setProfile(node, cellid, profileType, profileName);
 	}
 
+	private boolean setRelayEnbConfig(EnodeB node, AuNodeDetailsWs nodeDetail,
+			AuRelayDetails relayDetail, AuEnbDetailWs enbDetail, SnmpDetailSetWs relaySnmpDetail,
+			SnmpDetailSetWs enbSnmpDetail){
+		try{
+			Netspan.NBI_15_5.Lte.NodeActionResult result = soapHelper_15_5
+			.getLteSoap()
+			.relayEnbConfigSet(node.getNetspanName(), null, relayDetail, null, null, null, credentialsLte);
+			if(result.getErrorCode() != Netspan.NBI_15_5.Lte.ErrorCodes.OK){
+				String error = "";
+				try{
+					error = result.getNode().get(0).getNodeResultString();
+				}catch(Exception e){
+					error = result.getErrorString();					
+				}
+				report.report("relayEnbConfigSet via Netspan Failed : " + error, Reporter.WARNING);
+				return false;
+			}else{
+				report.report("Succeeded to set content to " + node.getNetspanName());
+				return true;
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+			report.report("Failed to set content for " + node.getNetspanName()
+					+ ", due to: " + e.getMessage(), Reporter.WARNING);
+			return false;
+		}finally{
+			soapHelper_15_5.endLteSoap();
+		}
+	}
+	
 	@Override
 	public boolean cloneMultiCellProfile(EnodeB node, String cloneFromName, MultiCellParameters multiCellParams) {
 		try {
@@ -2104,6 +2227,26 @@ public class NetspanServer_15_5 extends NetspanServer_15_2 implements Netspan_15
 		}
 	}
 	
+	@Override
+	public boolean createSoftwareImage(EnodeBUpgradeImage upgradeImage) {
+		Netspan.NBI_15_5.Software.SwImageWs softwareImage = createSoftwareImageObject(upgradeImage);
+		Netspan.NBI_15_5.Software.SwFileInfoWs softwareFileInfo = createFileInfoObject(upgradeImage);
+		List<Netspan.NBI_15_5.Software.SwFileInfoWs> fileList = softwareImage.getSoftwareFileInfo();
+		fileList.add(softwareFileInfo);
+
+		Netspan.NBI_15_5.Software.SwImageResponse result = soapHelper_15_5
+				.getSoftwareSoap().softwareImageCreate(softwareImage, credentialsSoftware);
+		if (result.getErrorCode() != Netspan.NBI_15_5.Software.ErrorCodes.OK) {
+			report.report("softwareServerCreate via Netspan Failed : " + result.getErrorString(), Reporter.WARNING);
+			soapHelper_15_5.endSoftwareSoap();
+			return false;
+		} else {
+			soapHelper_15_5.endSoftwareSoap();
+			return true;
+		}
+
+	}
+	
 	private Netspan.NBI_15_5.Software.SwImageWs createSoftwareImageObject(EnodeBUpgradeImage upgradeImage) {
 
 		Netspan.NBI_15_5.Software.SwImageWs softwareImage = new Netspan.NBI_15_5.Software.SwImageWs();
@@ -2142,12 +2285,7 @@ public class NetspanServer_15_5 extends NetspanServer_15_2 implements Netspan_15
 				EnodeBUpgradeServer currentUpgradeServer = getSoftwareServer(upgradeServerName);
 				protocolType = currentUpgradeServer.getUpgradeServerProtocolType();
 			}
-			
-			if(protocolType != null && protocolType == ServerProtocolType.SFTP){
-				softwareFileInfo.setFileNameWithPath("/upload/" + upgradeImage.getBuildPath());
-			}else{
-				softwareFileInfo.setFileNameWithPath(upgradeImage.getBuildPath());
-			}
+			softwareFileInfo.setFileNameWithPath(upgradeImage.getBuildPath());
 		}
 		
 		if (upgradeImage.getVersion() != null) {
@@ -2175,16 +2313,25 @@ public class NetspanServer_15_5 extends NetspanServer_15_2 implements Netspan_15
 			}
 
 		} else {
-			Netspan.NBI_15_5.Software.SwImageWs imageResult = result.getSoftwareImageResult().get(0).getSoftwareImage();
-			EnodeBUpgradeImage image = new EnodeBUpgradeImage();
-			image.setName(imageResult.getName());
-			image.setHardwareCategory(imageResult.getHardwareCategory());
-			image.setUpgradeServerName(imageResult.getSoftwareServer());
-			image.setImageType(imageResult.getSoftwareFileInfo().get(0).getImageType().getValue().name());
-			image.setBuildPath(imageResult.getSoftwareFileInfo().get(0).getFileNameWithPath());
-			image.setVersion(imageResult.getSoftwareFileInfo().get(0).getVersion());
-			soapHelper_15_5.endSoftwareSoap();
-			return image;
+			if(result.getSoftwareImageResult().size() > 0){
+				Netspan.NBI_15_5.Software.SwImageWs imageResult = result.getSoftwareImageResult().get(0).getSoftwareImage();
+				EnodeBUpgradeImage image = new EnodeBUpgradeImage();
+				image.setName(imageResult.getName());
+				image.setHardwareCategory(imageResult.getHardwareCategory());
+				image.setUpgradeServerName(imageResult.getSoftwareServer());
+				image.setImageType(imageResult.getSoftwareFileInfo().get(0).getImageType().getValue().name());
+				image.setBuildPath(imageResult.getSoftwareFileInfo().get(0).getFileNameWithPath());
+				image.setVersion(imageResult.getSoftwareFileInfo().get(0).getVersion());
+				if(imageResult.getSoftwareFileInfo().size() > 1){
+					image.setSecondImageType(imageResult.getSoftwareFileInfo().get(1).getImageType().getValue().name());
+					image.setSecondBuildPath(imageResult.getSoftwareFileInfo().get(1).getFileNameWithPath());
+					image.setSecondVersion(imageResult.getSoftwareFileInfo().get(1).getVersion());
+				}
+				soapHelper_15_5.endSoftwareSoap();
+				return image;
+			}else{
+				return null;
+			}
 		}
 	}
 	
@@ -2211,5 +2358,67 @@ public class NetspanServer_15_5 extends NetspanServer_15_2 implements Netspan_15
 			res.add(curr);
 		}
 		return res;
+	}
+	
+	@Override
+	public int getNumberOfActiveCellsForNode(EnodeB node) {
+		int numberOfActiveCells = 0;
+		EnbDetailsGet nodeConf = getNodeConfig(node);
+		if(nodeConf == null){
+			return 0;
+		}
+		List<LteCellGetWs> cells = nodeConf.getLteCell();
+		for(LteCellGetWs cell : cells) {
+			if(cell.getIsEnabled().getValue()) {
+				numberOfActiveCells++;
+			}
+		}
+		return numberOfActiveCells;
+	}
+	
+	@Override
+	public boolean forcedResetNode(String nodeName, RebootType rebootType) {
+		List<String> nodeList = new ArrayList<String>();
+		nodeList.add(nodeName);
+		boolean rebooted = false;
+		Netspan.NBI_15_5.Inventory.NodeActionResult result = null;
+		if(rebootType == RebootType.WARM_REBOOT){
+			result = soapHelper_15_5.getInventorySoap().nodeResetForced(nodeList, null, true, credentialsInventory);
+		}else if(rebootType == RebootType.COLD_REBOOT){
+			result = soapHelper_15_5.getInventorySoap().nodeResetForcedCold(nodeList, null, credentialsInventory);
+		}else{
+			rebooted = super.forcedResetNode(nodeName, rebootType);
+		}
+		
+		if(result != null){
+			if (result.getErrorCode() != Netspan.NBI_15_5.Inventory.ErrorCodes.OK) {
+				report.report("Failed to Reset Node via Netspan  : " + result.getErrorString(), Reporter.WARNING);
+				rebooted = false;
+			}else{
+				rebooted = true;
+			}
+		}
+		
+		return rebooted;
+	}
+	
+	@Override
+	public boolean resetNode(String nodeName) {
+		List<String> nodeList = new ArrayList<String>();
+		nodeList.add(nodeName);
+		boolean rebooted = false;
+		Netspan.NBI_15_5.Inventory.NodeActionResult result = null;
+		result = soapHelper_15_5.getInventorySoap().nodeReset(nodeList, null, false, credentialsInventory);
+		
+		if(result != null){
+			if (result.getErrorCode() != Netspan.NBI_15_5.Inventory.ErrorCodes.OK) {
+				report.report("Failed to Reset Node via Netspan  : " + result.getErrorString(), Reporter.WARNING);
+				rebooted = false;
+			}else{
+				rebooted = true;
+			}
+		}
+		
+		return rebooted;
 	}
 }

@@ -23,7 +23,7 @@ public class Radio extends TestspanTest {
 	private EnodeBConfig enbConfig;
 	static private Provision provision = new Provision();
 	static private HashMap<String,String> nodeNameMultiCellProfMap= new HashMap<String,String>();
-	static private ArrayList<INetspanProfile> clonedProfilesSave = new ArrayList<INetspanProfile>();
+	static private HashMap<EnodeB,ArrayList<INetspanProfile>> clonedProfilesSave = new HashMap<>();
 	private int BW;
 	private int FC;
 	private int EARFCN;
@@ -228,7 +228,6 @@ public class Radio extends TestspanTest {
 			report.report("Update Failed", Reporter.FAIL);
 			return;
 		}
-		removeClonedProfiles();
 		GeneralUtils.unSafeSleep(20*1000);
 		snmpVerification(this.BW,this.FC);
 		status = rebootAndWaitForAllrunning();
@@ -266,41 +265,21 @@ public class Radio extends TestspanTest {
 		}
 	}
 
-	private void removeClonedProfiles() {
-		ArrayList<String> profilesToKeep = new ArrayList<>();
+	private void removeClonedProfiles(EnodeB node) {
 		ArrayList<INetspanProfile> profilesToDelete = new ArrayList<>();
 		
-		//if the list is the same size as number of active cells -> first run nothing to delete.
-		if(clonedProfilesSave.size() == dut.getNumberOfActiveCells()){
-			GeneralUtils.printToConsole("There are "+dut.getNumberOfActiveCells()+", profiles in list to save.");
-			return;
-		}
-		
-		//get current profiles from Netspan.
-		for (Integer cell : cellIds) {
-			dut.setCellContextNumber(cell);
-			String profileName = netspanServer.getCurrentRadioProfileName(dut);
-			GeneralUtils.printToConsole("add profile with the name : "+profileName+", to keep list.");
-			profilesToKeep.add(profileName);
-		}
-
-		//traverse over cloned List and check which profile is not there -> should be removed.
-			for (INetspanProfile profile : clonedProfilesSave) {
-				if (!profilesToKeep.contains(profile.getProfileName())) {
-					GeneralUtils.printToConsole("add profile with the name : "+profile.getProfileName()+", to delete list.");
-					profilesToDelete.add(profile);
-				}
-			}
-		
-
+		profilesToDelete = clonedProfilesSave.get(node);
 		//delete profiles and remove them from main list.
  		for (INetspanProfile profileToRemove : profilesToDelete) {
 			report.report("trying to delete profile with the name : " + profileToRemove.getProfileName() + " from netspan");
 			if (netspanServer.deleteEnbProfile(profileToRemove.getProfileName(), profileToRemove.getType())) {
 				report.report("deleted profile successfully!");
-				clonedProfilesSave.remove(profileToRemove);
 			}
 		}
+ 		
+ 		if(clonedProfilesSave.get(node).size() == 0) {
+ 			clonedProfilesSave.remove(node);
+ 		}
 
 	}
 
@@ -317,7 +296,7 @@ public class Radio extends TestspanTest {
 			cellsIds = cells;
 		} else {
 			// *
-			numberOfCells = dut.getNumberOfActiveCells();
+			numberOfCells = enbConfig.getNumberOfActiveCells(dut);
 			for (int i = 1; i <= numberOfCells; i++) {
 				cellsIds.add(i);
 			}
@@ -330,7 +309,7 @@ public class Radio extends TestspanTest {
 			dut.setCellContextNumber(cell);
 			RadioParameters currentRadioProf = enbConfig.getRadioProfile(dut);
 			// save radio per cell
-			if (provision.needToSave(cell, currentRadioProf)) {
+			if (provision.needToSave(dut,cell, currentRadioProf)) {
 				saveRadio(currentRadioProf, cell);
 			}
 			// set test properties
@@ -351,7 +330,7 @@ public class Radio extends TestspanTest {
 			// local saving for next loop
 			clonedProfiles.put(cell, clonedProfile);
 			// save profile to delete in the end.
-			clonedProfilesSave.add(clonedProfile);
+			addClonedProfilesToSavingMap(dut,clonedProfile);
 			// clone it in Netspan
 			netspanServer.cloneRadioProfile(dut, currentRadioProf.getProfileName(), clonedProfile);
 			GeneralUtils.startLevel("Cell " + cell + " Raw soap XML: ");
@@ -363,6 +342,19 @@ public class Radio extends TestspanTest {
 
 		enbConfig.setNodeConfiguration(dut, clonedProfiles);
 		
+	}
+
+	private void addClonedProfilesToSavingMap(EnodeB node,RadioParameters clonedProfile) {
+		ArrayList<INetspanProfile> profilesList = new ArrayList<>();
+		if(clonedProfilesSave.get(node) == null) {
+			profilesList.add(clonedProfile);
+			clonedProfilesSave.put(node, profilesList);
+			return;
+		}
+		
+		profilesList = clonedProfilesSave.get(node);
+		profilesList.add(clonedProfile);
+		clonedProfilesSave.put(node,profilesList);
 	}
 
 	private RadioParameters handleRadioInCaseOfCA(RadioParameters clonedProfile,RadioParameters currentProfile,int cellNumber) {
@@ -430,7 +422,7 @@ public class Radio extends TestspanTest {
 				+ " \n into Radio profile : " + currentRadioForCell);
 		try {
 			GeneralUtils.printToConsole("Saving Radio Profile");
-			provision.saveRadio(rp, currentCellId);
+			provision.saveRadio(dut,rp, currentCellId);
 		} catch (Exception e) {
 			GeneralUtils.printToConsole("Error while trying to save radio Configurations : " + e.getMessage());
 			e.printStackTrace();
@@ -451,11 +443,11 @@ public class Radio extends TestspanTest {
 		boolean status = false;
 		HashMap<Integer, INetspanProfile> radioProfilesToBringBack = new HashMap<Integer, INetspanProfile>();
 		try {
-			radioProfilesToBringBack = provision.loadRadio();
+			radioProfilesToBringBack = provision.loadRadio(dut);
 			if (radioProfilesToBringBack == null) {
 				report.report("there are no Radio Profiles in the loading list.", Reporter.FAIL);
 			} else {
-				revertMultiRadio(radioProfilesToBringBack);
+				revertMultiRadio(dut,radioProfilesToBringBack);
 
 				status = rebootAndWaitForAllrunning();
 				if (status) {
@@ -469,7 +461,7 @@ public class Radio extends TestspanTest {
 		}
 	}
 
-	private void revertMultiRadio(HashMap<Integer, INetspanProfile> radioProfilesToBringBack) {
+	private void revertMultiRadio(EnodeB node,HashMap<Integer, INetspanProfile> radioProfilesToBringBack) {
 		String profileName = null;
 		for (Integer cell : radioProfilesToBringBack.keySet()) {
 			// put current profiles name in a local map
@@ -481,10 +473,7 @@ public class Radio extends TestspanTest {
 		// setting old profiles back
 		enbConfig.setNodeConfiguration(dut, radioProfilesToBringBack);
 
-		// deleting profiles from netspan
-		for (INetspanProfile profile : clonedProfilesSave) {
-			netspanServer.deleteEnbProfile(profile.getProfileName(), profile.getType());
-		}
+		removeClonedProfiles(node);
 		
 		//clearing all maps.
 		clonedProfilesSave.clear();

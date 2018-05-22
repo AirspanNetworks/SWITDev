@@ -23,8 +23,12 @@ public class IPerfLinuxMachine extends IPerfMachine{
 		preAddressTpFile = "/home/" + username + "/";
 		resetParams();
 		try {
-			sshSession = new SSHConnector(hostname, username, password);
-			sshSession.initConnection();
+			if((sshSession == null) || (!sshSession.isConnected())){
+				sshSession = new SSHConnector(hostname, username, password);
+				sshSession.initConnection();
+			}else{
+				GeneralUtils.printToConsole("IPerf Machine is already connected.");
+			}
 		
 			GeneralUtils.unSafeSleep(2000);
 		} catch (Exception e) {
@@ -77,8 +81,8 @@ public class IPerfLinuxMachine extends IPerfMachine{
 	
 	@Override
 	public boolean stopIPerf() {
-		sendCommand("pkill -9 iperf").getElement0();
-		return sendCommand("pkill -9 iperf").getElement0();
+		sendCommand("pkill -15 iperf").getElement0();
+		return sendCommand("pkill -15 iperf").getElement0();
 	}
 
 	@Override

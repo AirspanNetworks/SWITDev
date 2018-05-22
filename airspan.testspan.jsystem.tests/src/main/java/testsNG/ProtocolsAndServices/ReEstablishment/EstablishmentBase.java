@@ -16,6 +16,7 @@ import testsNG.TestspanTest;
 import testsNG.Actions.PeripheralsConfig;
 import testsNG.Actions.Traffic;
 import testsNG.Actions.TrafficCapacity;
+import testsNG.Actions.Utils.ParallelCommandsThread;
 
 public class EstablishmentBase extends TestspanTest{
 
@@ -27,6 +28,8 @@ public class EstablishmentBase extends TestspanTest{
 	protected NetspanServer netspan;
 	protected int numberOfUesInTest = 0;
 	protected int numberOfTimeResCommandBeenSent = 0;
+	protected ParallelCommandsThread syncCommands;
+	protected List<String> commandList = new ArrayList<String>();
 	protected PeripheralsConfig peripheralsConfig;
 	protected String reEstablishmentCommand = "forceReestab";
 	protected testCounters testCounters;
@@ -61,7 +64,32 @@ public class EstablishmentBase extends TestspanTest{
 		rebootAllUEsInTest(numOfUesInTest);
 		verifyNodesInTestDefaultProfilesInNetspan();
 		initDmToolForEachUE(ueList); 					//dmList = new DM tool list
+		initParallelCommands();
 		GeneralUtils.stopLevel();
+	}
+
+	private void initParallelCommands() {
+		commandList.add("ue show link");
+		commandList.add("ue show rate");
+		commandList.add("rlc show amdlstats");
+		commandList.add("qci show rate");
+		commandList.add("system show memory");
+		commandList.add("system show error");
+		commandList.add("system show phyerror");
+		commandList.add("system show compilationtime");
+		commandList.add("cell show operationalstatus");
+		commandList.add("db get PTPStatus");
+		
+		try {
+			syncCommands = new ParallelCommandsThread(commandList, dut, null, null);
+		}catch(Exception e) {
+			report.report("Cannot initialize streamers in ParallelCommandsThread Class");
+		}
+		
+		if(syncCommands != null) {
+			report.report("Starting parallel commands");
+			syncCommands.start();
+		}
 	}
 
 	//verify default profiles in Netspan//
@@ -247,11 +275,31 @@ public class EstablishmentBase extends TestspanTest{
 	 */
 	protected void afterTest(){
 		stopTraffic();
+		stopParallelCommands();
+		reportParallelCommandsFile();
 		checkCountersAndPrintResults();
 		configureNodesState(EnbStates.IN_SERVICE);
-		end();
 	}
 	
+	private void reportParallelCommandsFile() {
+		report.report("Commands File Path: " + syncCommands.getFile());
+		syncCommands.moveFileToReporterAndAddLink();
+	}
+
+	private void stopParallelCommands() {
+		GeneralUtils.startLevel("Stopping Parallel Commands");
+		syncCommands.stopCommands();
+		
+		try {
+			if(syncCommands != null) {
+				syncCommands.join();
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		GeneralUtils.stopLevel();
+	}
+
 	private void stopTraffic(){
 		GeneralUtils.startLevel("Stop Traffic");
 		if(!traffic.stopTraffic()){
@@ -268,21 +316,16 @@ public class EstablishmentBase extends TestspanTest{
 	}
 	
 	private void checkResultsAndPrintMessages(){
-		reEstablAttResultsPrint(true,"ReEstabAttempts",testCounters.rrcConnectReEstabAttSum,"reEstabSucc",testCounters.rrcConnectReEstabSuccSum,"reEstabFailSum",testCounters.rrcConnectReEstabFailSum);
-		reEstablAttResultsPrint(false,"EstabAttempts",testCounters.rrcConnectEstabAttSum,"EstabSucc",testCounters.rrcConnectEstabSuccSum,"EstabFailSum",testCounters.rrcConnectEstabFailSum);
+		report.report("Test Results : ");
+		reEstablAttResultsPrint(true,"ReEstabAttempts",testCounters.rrcConnectReEstabAttSum,
+									 "reEstabSucc",testCounters.rrcConnectReEstabSuccSum,
+									 "reEstabFailSum",testCounters.rrcConnectReEstabFailSum);
 		
-		report.report("number of sent commands"+" : "+numberOfTimeResCommandBeenSent +
-				" ,"+"EstabSucc"+" : "+testCounters.rrcConnectEstabAttSum+
-				" , "+"reEstabSucc"+" : "+testCounters.rrcConnectReEstabAttSum);
-		if(numberOfTimeResCommandBeenSent != testCounters.rrcConnectEstabAttSum + testCounters.rrcConnectReEstabAttSum){
-			report.report("KPI error due to: rrc connection reEstablishment attempts + rrc connection Establishment attempts is not "+numberOfTimeResCommandBeenSent,Reporter.FAIL);
-		}
-		
-		report.report("5% of total commands"+" : "+((numberOfTimeResCommandBeenSent*5)/100) +
-				" ,"+"EstabSucc"+" : "+testCounters.rrcConnectEstabAttSum+
-				" , "+"reEstabSucc"+" : "+testCounters.rrcConnectReEstabAttSum);
-		if((testCounters.rrcConnectReEstabFailSum + testCounters.rrcConnectEstabAttSum) < ((numberOfTimeResCommandBeenSent*5)/100)){
-			report.report("KPI error due to: attempts are less than 5% of "+numberOfTimeResCommandBeenSent,Reporter.FAIL);
+		report.report("total commands number : "+numberOfTimeResCommandBeenSent+
+				" , 5% of total commands : "+((numberOfTimeResCommandBeenSent*5)/100) +
+				" , reEstabFail : "+testCounters.rrcConnectReEstabFailSum);
+		if((testCounters.rrcConnectReEstabFailSum) > ((numberOfTimeResCommandBeenSent*5)/100)){
+			report.report("Fail due to KPI Threshold : attempts are less than 5% of "+numberOfTimeResCommandBeenSent,Reporter.FAIL);
 		}
 	}
 	
@@ -299,15 +342,6 @@ public class EstablishmentBase extends TestspanTest{
 	
 	private void getAllReEstablishmentCounters(){
 		GeneralUtils.startLevel("get all counters values");
-		testCounters.rrcConnectEstabAttSum = dut.getCountersValue("RrcConnEstabAttSum"); 
-		report.report("RrcConnEstabAttSum = "+testCounters.rrcConnectEstabAttSum);
-		
-		testCounters.rrcConnectEstabFailSum = dut.getCountersValue("RrcConnEstabFailSum");
-		report.report("RrcConnEstabFailSum = "+testCounters.rrcConnectEstabFailSum);
-		
-		testCounters.rrcConnectEstabSuccSum = dut.getCountersValue("RrcConnEstabSuccSum");
-		report.report("RrcConnEstabSuccSum = "+testCounters.rrcConnectEstabSuccSum);
-		
 		testCounters.rrcConnectReEstabAttSum = dut.getCountersValue("RrcConnReEstabAttSum");
 		report.report("RrcConnReEstabAttSum = "+testCounters.rrcConnectReEstabAttSum);
 		
@@ -336,14 +370,10 @@ public class EstablishmentBase extends TestspanTest{
 		this.dut2 = (EnodeB) SysObjUtils.getInstnce().initSystemObject(EnodeB.class,false,dut).get(0);
 	}
 	
-	@SuppressWarnings("unused")
 	private class testCounters{
 		int rrcConnectReEstabAttSum=0;
 		int rrcConnectReEstabSuccSum=0;
 		int rrcConnectReEstabFailSum=0;
-		int rrcConnectEstabAttSum=0;
-		int rrcConnectEstabSuccSum=0;
-		int rrcConnectEstabFailSum=0;
 	}
 	
 }

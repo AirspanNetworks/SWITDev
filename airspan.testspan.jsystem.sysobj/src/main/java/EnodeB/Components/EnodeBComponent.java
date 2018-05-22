@@ -10,12 +10,14 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import EnodeB.EnodeB;
 import EnodeB.Components.Cli.Cli;
 import EnodeB.Components.Log.LogListener;
 import EnodeB.Components.Log.Logger;
 import EnodeB.Components.Log.LoggerEvent;
 import EnodeB.Components.Session.Session;
 import EnodeB.Components.Session.SessionManager;
+import Netspan.NetspanServer;
 import Utils.GeneralUtils;
 import Utils.GeneralUtils.RebootType;
 import Utils.MoxaCom;
@@ -56,7 +58,7 @@ public abstract class EnodeBComponent extends SystemObjectImpl implements LogLis
 	 */
 	public static final String LTE_CLI_PROMPT = "lte_cli:>>";
 
-	public static final List<String> rebootStrings =  Arrays.asList("Android Bootloader", "ASIL XLP Stage 1 Loader");
+	public static final List<String> rebootStrings =  Arrays.asList("Android Bootloader", "Booted from SD/MMC");
 	public static final List<String> coreStrings = Arrays.asList("Corecare", "Segmentation fault", "middle of core dumping");
 	
 	protected String logFilePath;
@@ -92,7 +94,7 @@ public abstract class EnodeBComponent extends SystemObjectImpl implements LogLis
 	public int SWTypeInstnace;
 	public ArrayList<String> debugFlags;
 	public boolean SkipCMP = false;
-	private WaitForSrialPromptAndEchoToSkipCMP waitForSrialPromptAndEchoToSkipCMP;
+	private volatile WaitForSrialPromptAndEchoToSkipCMP waitForSrialPromptAndEchoToSkipCMP;
 
 	public boolean isExpectBooting() {
 		return expectBooting;
@@ -267,6 +269,7 @@ public abstract class EnodeBComponent extends SystemObjectImpl implements LogLis
 	 *            the new ip address
 	 */
 	public synchronized void setIpAddress(String ipAddress) {
+		GeneralUtils.printToConsole("EnodeBComponent.setIpAddress(String ipAddress="+ipAddress+"), while this.ipAddress="+this.ipAddress);
 		if(ipAddress != this.ipAddress){ //avoid starting another Thread to same IP Address!
 			this.ipAddress = ipAddress;
 			final String ip = ipAddress; // so the thread method will compile.
@@ -280,6 +283,18 @@ public abstract class EnodeBComponent extends SystemObjectImpl implements LogLis
 						while (ip.equals(getIpAddress())) {
 							setReachable(PingUtils.isReachable(ip,EnodeBComponent.PING_RETRIES));
 							if (!isReachable()) {
+								try {
+									String managementIp = NetspanServer.getInstance().getMangementIp((EnodeB)getParent());
+									if ((managementIp != null) && (!managementIp.equals("")) && (!managementIp.equals(String.valueOf(GeneralUtils.ERROR_VALUE))) && (!managementIp.equalsIgnoreCase(ip))) {										
+										setIpAddress(managementIp);
+										GeneralUtils.unSafeSleep(2000);
+										initSNMP();
+									}
+									
+								} catch (Exception e) {
+									GeneralUtils.printToConsole("Cant get managementIp from netspan.");
+									e.printStackTrace();
+								}
 								GeneralUtils.printToConsole(getName() + " is unreachable.");
 								snmpWorking = false;
 							}
@@ -696,6 +711,7 @@ public abstract class EnodeBComponent extends SystemObjectImpl implements LogLis
 					report.report(getName() + " - unexpected reboot detected!" , Reporter.FAIL);
 				}
 				if(SkipCMP && (this.waitForSrialPromptAndEchoToSkipCMP.isAlive() == false)){
+					this.waitForSrialPromptAndEchoToSkipCMP = new WaitForSrialPromptAndEchoToSkipCMP(WAIT_FOR_SERIAL_PROMPT);
 					this.waitForSrialPromptAndEchoToSkipCMP.start();
 				}
 			}

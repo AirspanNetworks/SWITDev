@@ -1334,6 +1334,13 @@ public abstract class XLP extends EnodeBComponent {
 		}
 		return returnValue;
 	}
+	
+	public int getCellBarredValue(int cellNum){
+		String oid = MibReader.getInstance().resolveByName("asLteStkCellSib1CfgCellBarred");
+		oid = oid + "." + (40+cellNum);
+		String result = snmp.get(oid);
+		return Integer.parseInt(result);
+	}
 
 	public int getCounterSampleValue() {
 		for (int i = 0; i < 4; i++) {
@@ -1930,12 +1937,12 @@ public abstract class XLP extends EnodeBComponent {
 			GeneralUtils.printToConsole("vswr = " + vswr);
 			newRFStatus.MeasuredVswr = String.valueOf(vswr);
 			GeneralUtils.printToConsole("MeasuredVswr = " + newRFStatus.MeasuredVswr);
-			newRFStatus.ActualTxPowerDbm = GeneralUtils.tryParseStringToFloat(this.snmp.get(oidTxPower, index));
+			newRFStatus.ActualTxPowerDbm = GeneralUtils.tryParseStringToFloat(this.snmp.get(oidTxPower, index)) / 100.0f;
 			GeneralUtils.printToConsole("ActualTxPowerDbm = " + newRFStatus.ActualTxPowerDbm);
 			newRFStatus.OperationalStatus = this.snmp.get(oidOperationalStatus, index);
 			GeneralUtils.printToConsole("OperationalStatus = " + newRFStatus.OperationalStatus);
 			newRFStatus.ConfiguredTxPowerDbm = GeneralUtils
-					.tryParseStringToFloat(this.snmp.get(oidConfiguredTxPowerDbm, index));
+					.tryParseStringToFloat(this.snmp.get(oidConfiguredTxPowerDbm, index)) / 100.0f;
 			GeneralUtils.printToConsole("ConfiguredTxPowerDbm = " + newRFStatus.ConfiguredTxPowerDbm);
 			ret.add(newRFStatus);
 			RFNumber++;
@@ -1945,7 +1952,9 @@ public abstract class XLP extends EnodeBComponent {
 	}
 
 	public int getEarfcn(String cell) {
-		int earfcn = Earfcn.GetEarfcnFromFreqAndBand(getDownlinkFrequency(cell), getBand());
+		int DlFreq = getDownlinkFrequency(cell);
+		int band =  getBand();
+		int earfcn = Earfcn.GetEarfcnFromFreqAndBand(DlFreq, band);
 		return earfcn;
 	}
 
@@ -3589,6 +3598,31 @@ public abstract class XLP extends EnodeBComponent {
 		ans = MapConverter(output);
 		return ans;
 	}
+	
+	public int getNumberOfUELinkStatusEmergency(){
+		String oid = MibReader.getInstance().resolveByName("asLteStkCellUeLinkStatusEmergencyCalls");
+		HashMap<String, org.snmp4j.smi.Variable> output = snmp.SnmpWalk(oid);
+		if(output.isEmpty()){
+			return GeneralUtils.ERROR_VALUE;
+		}
+		int answer = 0;
+		try{
+			for(String key : output.keySet()){
+				answer += Integer.valueOf(output.get(key).toString());
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return answer;
+	}
+	
+	public HashMap<String, Integer> getUELinkStatusEmergencyTable(){
+		String oid = MibReader.getInstance().resolveByName("asLteStkCellUeLinkStatusEmergencyCalls");
+		HashMap<String, org.snmp4j.smi.Variable> output = snmp.SnmpWalk(oid);
+		HashMap<String, Integer> ans = new HashMap<>();
+		ans = MapConverter(output);
+		return ans;
+	}
 
 	public void createSerialCom(String serialIP, Integer port) {
 		if (serialIP == null || port == null)			
@@ -3610,4 +3644,27 @@ public abstract class XLP extends EnodeBComponent {
 		}
 		return null;
 	}
+	
+	public boolean getLoggerDebugCapEnable() {
+		String oid = MibReader.getInstance().resolveByName("asLteStkDebugStatusLoggerStatus");
+		try {
+			return snmp.get(oid).equals("1");
+		} catch (Exception e) {
+			GeneralUtils.printToConsole("Error getting LoggerDebugCapEnable: " + e.getMessage());
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public boolean setLoggerDebugCapEnable(boolean enable) {
+		String oid = MibReader.getInstance().resolveByName("asLteStkDebugCfgLoggerAdmin");
+		try {
+			return snmp.snmpSet(oid,enable ? 1 : 0);
+		} catch (Exception e) {
+			GeneralUtils.printToConsole("Error getting LoggerDebugCapEnable: " + e.getMessage());
+			e.printStackTrace();
+		}
+		return false;
+	}	
+	
 }

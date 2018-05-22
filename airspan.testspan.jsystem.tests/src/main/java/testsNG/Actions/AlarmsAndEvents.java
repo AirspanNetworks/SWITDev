@@ -101,13 +101,15 @@ public class AlarmsAndEvents {
 		return eventsRes;
 	}
 	
-	public List<AlarmInfo> getAllAlarmsNodeWithSpecificType(List<AlarmInfo> alarms, String alarmType) {
-		GeneralUtils.printToConsole("Looking for alarm: " + alarmType);
+	public List<AlarmInfo> getAllAlarmsNodeWithSpecificType(List<AlarmInfo> alarms, List<String> alarmTypes) {
 		List<AlarmInfo> alarmsRes = new ArrayList<AlarmInfo>();
-		for(AlarmInfo alarm: alarms) {
-			GeneralUtils.printToConsole("checking alarm: " + alarm.alarmType + " alarm info: " + alarm.alarmInfo);
-			if(alarm.alarmType.trim().toLowerCase().equals(alarmType.toLowerCase())){
-				alarmsRes.add(alarm);
+		for(String alarmType : alarmTypes) {
+			GeneralUtils.printToConsole("Looking for alarm: " + alarmType);
+			for(AlarmInfo alarm: alarms) {
+				GeneralUtils.printToConsole("checking alarm: " + alarm.alarmType + " alarm info: " + alarm.alarmInfo);
+				if(alarm.alarmType.trim().toLowerCase().equals(alarmType.toLowerCase())){
+					alarmsRes.add(alarm);
+				}
 			}
 		}
 		return alarmsRes;
@@ -162,7 +164,9 @@ public class AlarmsAndEvents {
 		long startTime = System.currentTimeMillis(); // fetch starting time
 		while ((System.currentTimeMillis() - startTime) < timeout) {
 			allAlarms = this.getAllAlarmsNode(dut);
-			alarmsWithType = this.getAllAlarmsNodeWithSpecificType(allAlarms, alarmType);
+			List<String> alarmTypeList = new ArrayList<String>();
+			alarmTypeList.add(alarmType);
+			alarmsWithType = this.getAllAlarmsNodeWithSpecificType(allAlarms, alarmTypeList);
 			if (!alarmsWithType.isEmpty()) {
 				return true;
 			}

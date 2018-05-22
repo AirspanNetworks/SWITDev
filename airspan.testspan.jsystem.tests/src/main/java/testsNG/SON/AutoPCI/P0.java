@@ -275,6 +275,6 @@ public class P0 extends AutoPCIBase {
 		report.reportHtml("db get AutoPciCell", dut.lteCli("db get AutoPciCell"), true);
 		SONStatus newSONStatus = status.getSONStatus(dut);
 		printSONStatus(newSONStatus, "Automatic");
-		validateInNmsSonStatusPciTakenFromValidRange(newSONStatus, pciStart+1, pciEnd);
+		validateInNmsSonStatusPciTakenFromValidRange(newSONStatus, pciStart, pciEnd);
 	}
 }

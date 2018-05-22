@@ -28,6 +28,7 @@ import Netspan.DataObjects.NeighborData;
 import Netspan.NBI_15_5.Netspan_15_5_abilities;
 import Netspan.Profiles.ManagementParameters;
 import Netspan.Profiles.CellAdvancedParameters;
+import Netspan.Profiles.CellBarringPolicyParameters;
 import Netspan.Profiles.EnodeBAdvancedParameters;
 import Netspan.Profiles.INetspanProfile;
 import Netspan.Profiles.MobilityParameters;
@@ -46,6 +47,7 @@ import Netspan.Profiles.SonParameters;
 import Netspan.Profiles.SyncParameters;
 import Netspan.Profiles.SystemDefaultParameters;
 import Utils.GeneralUtils;
+import Utils.GeneralUtils.RebootType;
 import Utils.Snmp.MibReader;
 import jsystem.framework.report.ListenerstManager;
 import jsystem.framework.report.Reporter;
@@ -1688,6 +1690,17 @@ public class EnodeBConfig {
 		return enb.setRSI(rsi);
 	}
 	
+	public boolean setAccessClassBarring(EnodeB enb, CellBarringPolicyParameters cellbarringPrameters) {
+		if (netspanServer.setEnbAccessClassBarring(enb, cellbarringPrameters)) {
+			report.report("Set cell Barring policy success with netspan");
+			return true;
+		}
+		else {
+			report.report("Set cell Barring policy didn't success with netspan", Reporter.WARNING);
+			return false;
+		}
+	}
+	
 	public boolean setAutoRsiCellRsiValue(EnodeB eNodeB, int value) {
 		return setAutoRsiCellRsiValue(eNodeB, 40, value);
 	}
@@ -1899,6 +1912,14 @@ public class EnodeBConfig {
 		}
 		return true;
 	}
+	
+	public int getNumberOfActiveCells(EnodeB node) {
+		int netspanActiveCells = netspanServer.getNumberOfActiveCellsForNode(node);
+		if(netspanActiveCells == 0) {
+			return node.getNumberOfActiveCells();
+		}
+		return netspanActiveCells;
+	}
 
 	/**
 	 * 
@@ -1910,7 +1931,8 @@ public class EnodeBConfig {
 	}
 	
 	/**
-	 * @return boolean - true: need to perform reboot. false: don't need to perform reboot 
+	 * @return boolean - true: granularity period is the input wanted. 
+	 * false: granularity period is NOT the input wanted.
 	 */
 	public boolean setGranularityPeriod(EnodeB enodeB, int value){
 		GeneralUtils.startLevel("Setting granularity period to "+value+" minutes for enodeb "+enodeB.getNetspanName());
@@ -1921,17 +1943,22 @@ public class EnodeBConfig {
 				return true;
 			}else{
 				report.report("Failed to set granularity period");
+				return false;
 			}
 		}else{
 			report.report("Granularity period was already "+value+" minutes. No need to change");
 		}
 		GeneralUtils.stopLevel();
-		return false;
+		return true;
 	}
 	
 	public void waitGranularityPeriodTime(EnodeB enb){
 		int waitingPeriodTime = enb.getGranularityPeriod();
-		report.report("Wait for "+waitingPeriodTime+" minutes for Counter to update");
+		report.report("Wait for "+waitingPeriodTime+" minutes of granularity period");
+		if(waitingPeriodTime<0){
+			report.report("Can't wait negative time",Reporter.FAIL);
+			return;
+		}
 		GeneralUtils.unSafeSleep(waitingPeriodTime*60*1000);
 	}
 	
@@ -2001,6 +2028,29 @@ public class EnodeBConfig {
 		return result;
 	}
 	
+	public boolean rebootWithNetspanOnly(EnodeB node, RebootType rebootType, boolean expectingBoot, long timeout) {
+		boolean rebooted = false;
+		node.setExpectBooting(expectingBoot);
+		
+		try {
+			rebooted = NetspanServer.getInstance().resetNode(node.getNetspanName());
+		} catch (Exception e) {
+			report.report("Failed to reset Node Via Netspan", Reporter.WARNING);
+			e.printStackTrace();
+		}
+		
+		rebooted = rebooted && node.waitForReboot(timeout);
+		node.setExpectBooting(false);
+		
+		if (rebooted){			
+			report.report("Node " + node.getNetspanName() + " has been rebooted via Netspan.");
+		}else{
+			report.report("The Enodeb " + node.getName() + " failed to reboot!");
+		}
+		
+		return rebooted;
+	}
+	
 	public boolean convertToPnPConfig(EnodeB enb){
 		return netspanServer.convertToPnPConfig(enb);
 	}
@@ -2008,5 +2058,16 @@ public class EnodeBConfig {
 	public List<LteBackhaul> getBackhaulInterfaceStatus(EnodeB enb) {
 		List<LteBackhaul> res = netspanServer.getBackhaulInterfaceStatus(enb);
 		return res;
+	}
+	
+	public Integer getEARFCNforNode(EnodeB node) {
+		Integer earfcn = 0;
+		RadioParameters rp = getRadioProfile(node);
+		earfcn = rp.getEarfcn();
+		if(earfcn == null) {
+			//SNMP fall back
+			earfcn =  node.getEarfcn();
+		}
+		return earfcn;
 	}
 }

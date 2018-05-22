@@ -5,12 +5,14 @@ import java.util.regex.Pattern;
 
 import EnodeB.Components.EnodeBComponent;
 import Netspan.API.Enums.ImageType;
-import UE.UE;
 
 public class Ninja extends EnodeBWithDonor{	
 	
 	public Ninja() {
 		super();
+		debugPort.setDEBUG_PORT("192.168.0.20");
+		debugPort.setDEBUG_PORT_USERNAME(EnodeBComponent.ADMIN_USERNAME);
+		debugPort.setDEBUG_PORT_PASSWOED(EnodeBComponent.ADMIN_PASSWORD);
 		WAIT_FOR_ALL_RUNNING_TIME = 10 * 60 * 1000;
 		setSWTypeInstance(22);
 		//addCliDebugFlags("db set debugFlags [*] bhQosSimulateCpeResp=1","!echo 'SKIP_CMPV2=1' > /bs/data/debug_security.cfg");
@@ -26,7 +28,7 @@ public class Ninja extends EnodeBWithDonor{
 		}
 		return loggerUploadAllEnodebIP;
 	}
-
+	@Override
 	public String getRelayRunningVersion() {
 		String response = XLP.shell("ls /bs/relay/ue/altair");
 		String regexPattern = 	"(FL(_\\d+)+)";

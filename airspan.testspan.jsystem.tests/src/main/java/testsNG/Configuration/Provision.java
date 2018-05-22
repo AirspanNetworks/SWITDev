@@ -27,8 +27,8 @@ public class Provision extends TestspanTest {
 	private boolean performReboot = true;
 	private EnodeBConfig enbConfig;
 	boolean status = true;
-
-	HashMap<Integer, ArrayList<INetspanProfile>> profileMap = new HashMap<Integer, ArrayList<INetspanProfile>>();
+	//map that will contain Node -> Cell ->Profiles list
+	static HashMap<EnodeB,HashMap<Integer, ArrayList<INetspanProfile>>> nodeCellProfilesMap = new HashMap<EnodeB,HashMap<Integer, ArrayList<INetspanProfile>>>();;
 	// this map is used to save different values like CA configuration
 	HashMap<String, String> differentMapValues = new HashMap<String, String>();
 	RadioParameters currentRadio = new RadioParameters();
@@ -111,29 +111,26 @@ public class Provision extends TestspanTest {
 	}
 
 	/**
-	 * checking if the list of netspan profiles according to the cell is filled
-	 * with the INetspan instance.
+	 * checking if there is related map for node.
+	 * checking if there is related map for nodes Cell.
+	 * else return false
 	 * 
 	 * @param cellId
 	 * @param profile
 	 * @return false if there is an instance of the INetspan profile in the map
 	 *         equals to the one sent as parameter.
 	 */
-	public boolean needToSave(int cellId, INetspanProfile profile) {
-		if (profileMap.get(cellId) != null) {
-			ArrayList<INetspanProfile> netspanProfilesInCell = new ArrayList<INetspanProfile>();
-			netspanProfilesInCell = profileMap.get(cellId);
-			if (netspanProfilesInCell.size() == 0) {
-				return true;
-			} else {
-				for (INetspanProfile netspanProfile : netspanProfilesInCell) {
-					if (netspanProfile.getClass().isAssignableFrom(profile.getClass())) {
-						return false;
-					}
-				}
-			}
+	public boolean needToSave(EnodeB node,int cellId, INetspanProfile profile) {
+		HashMap<Integer,ArrayList<INetspanProfile>> nodeMap = nodeCellProfilesMap.get(node);
+		if(nodeMap == null) {
+			return true;
 		}
-		return true;
+		
+		if(nodeMap.get(cellId) == null) {
+			return true;
+		}
+		
+		return false;
 	}
 
 	/**
@@ -144,62 +141,67 @@ public class Provision extends TestspanTest {
 	 * @param fc
 	 * @param cellId
 	 */
-	public void saveRadio(RadioParameters rp, int cellId) {
-		// get radio profile from netstpan
-		GeneralUtils.printToConsole("\n ------ System Print : BW : " + rp.getBandwidth() + " , FC : " + rp.getFrameConfig()
-				+ " for cell id: " + cellId + " for Radio profile name: " + rp.getProfileName() + " ------");
-		// new list
-		ArrayList<INetspanProfile> profileList = new ArrayList<INetspanProfile>();
-		GeneralUtils.printToConsole("Radio profile Revieced for cell " + cellId);
+	public void saveRadio(EnodeB node,RadioParameters rp, int cellId) {		
+		GeneralUtils.printToConsole("initalizing new Radio profile for node : "+node.getName()+", to cell : "+cellId);
 		RadioParameters radioToInsert = new RadioParameters();
 		radioToInsert.setProfileName(rp.getProfileName());
 		radioToInsert.setBandwidth(rp.getBandwidth());
-		if(rp.getFrameConfig()!=null){
+		if(rp.getFrameConfig() != null){
 			radioToInsert.setFrameConfig(rp.getFrameConfig());
 		}
-		// checking for the first time inserting profile.
-		if (firstRadio == null) {
-			firstRadio = new RadioParameters();
-			firstRadio.setProfileName(rp.getProfileName());
-			firstRadio.setBandwidth(rp.getBandwidth());
-			if(rp.getFrameConfig()!=null){
-				firstRadio.setFrameConfig(rp.getFrameConfig());				
-			}
-			GeneralUtils.printToConsole("first radio profile in the map");
-			// checking if there is a list with other profiles
-			if (profileMap.get(cellId) != null) {
-				GeneralUtils.printToConsole("there is a list in the current cell ID - adding radio profile");
-				profileMap.get(cellId).add(radioToInsert);
-			} else {
-				// if there is no list, adding new one with the radio profile.
-				GeneralUtils.printToConsole("creating a list to keep profiles in");
-				profileList.add(radioToInsert);
-				profileMap.put(cellId, profileList);
-			}
-			GeneralUtils.printToConsole("setting radio default pointer so there will be an indicator to it's not empty");
-			GeneralUtils.printToConsole("Radio after initating: BW: " + radioToInsert.getBandwidth() + " / FC: "
-					+ radioToInsert.getFrameConfig());
-
-			// radio isn't null - but there can be a different cellId to radio
-			// Profile.
-		} else {
-			if (profileMap.get(cellId) == null) {
-				GeneralUtils.printToConsole("there is no list for the cell id: " + cellId + ", creating new list in the map");
-				profileList.add(radioToInsert);
-				profileMap.put(cellId, profileList);
-			}
+		
+		//case 1 : no map for current node
+		if(nodeCellProfilesMap.get(node) == null) {
+			newNodeToMap(node,cellId,rp);
+			return;
 		}
+		
+		//case 2 : no map for Cell in current node
+		if(nodeCellProfilesMap.get(node).get(cellId) == null) {
+			newCellToExistingNode(node,cellId,rp);
+		}
+		
 	}
 
 	/**
-	 * @return all radio profiles in a list
+	 * update local map object with new cell.
+	 * @param node
+	 * @param cellId2
+	 * @param rp
+	 */
+	private void newCellToExistingNode(EnodeB node, int cellId2, RadioParameters rp) {
+		ArrayList<INetspanProfile> list = new ArrayList<>();
+		
+		list.add(rp);
+		nodeCellProfilesMap.get(node).put(cellId2, list);		
+	}
+
+	/**
+	 * updating local map object with new node.
+	 * @param node
+	 * @param cellId2
+	 * @param rp
+	 */
+	private void newNodeToMap(EnodeB node, int cellId2, RadioParameters rp) {
+		HashMap<Integer,ArrayList<INetspanProfile>> cellWithNetspanProfilesList = new HashMap<>();
+		ArrayList<INetspanProfile> list = new ArrayList<>();
+		
+		list.add(rp);
+		cellWithNetspanProfilesList.put(cellId, list);
+		nodeCellProfilesMap.put(node, cellWithNetspanProfilesList);
+		
+	}
+
+	/**
+	 * @return all radio profiles for node in a list
 	 * @throws Exception
 	 */
-	public HashMap<Integer, INetspanProfile> loadRadio() throws Exception {
+	public HashMap<Integer, INetspanProfile> loadRadio(EnodeB node) throws Exception {
 		HashMap<Integer, INetspanProfile> radioProfiles = new HashMap<Integer, INetspanProfile>();
+		HashMap<Integer,ArrayList<INetspanProfile>> profilesMap = nodeCellProfilesMap.get(node);
 		GeneralUtils.printToConsole("Debug Print");
-		for (Integer cellNumber : profileMap.keySet()) {
-			for (INetspanProfile netspanProfile : profileMap.get(cellNumber)) {
+		for (Integer cellNumber : profilesMap.keySet()) {
+			for (INetspanProfile netspanProfile : profilesMap.get(cellNumber)) {
 				if (netspanProfile instanceof RadioParameters) {
 					GeneralUtils.printToConsole(
 							"Cell number " + cellNumber + " , Parameters : " + netspanProfile.getProfileName());
@@ -210,7 +212,7 @@ public class Provision extends TestspanTest {
 		
 		//remove loaded radio profiles from map - reverting.
 		for(Integer cellNumber : radioProfiles.keySet()){
-			profileMap.remove(cellNumber);
+			nodeCellProfilesMap.remove(cellNumber);
 		}
 
 		if (radioProfiles.isEmpty()) {

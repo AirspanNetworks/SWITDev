@@ -124,6 +124,36 @@ public class Traffic {
 		}
 	}
 
+	public enum GeneratorType{
+		Default, STC, Iperf;
+	}
+	
+	private Traffic(ArrayList<UE> ues, GeneratorType type){
+		if(type == GeneratorType.STC){
+			try {
+				GeneralUtils.printToConsole("Trying to set RestSTC");
+				trafficGenerator = (ITrafficGenerator) system.getSystemObject("RestSTC");
+				generatorType = TrafficGeneratorType.ITraffic;
+				GeneralUtils.printToConsole("done setting RestSTC");
+			} catch (Exception e) {
+				e.printStackTrace();
+				report.report("There is no traffic STC instance in SUT!",Reporter.FAIL);
+				instance = null;
+				return;
+			}
+		}else if(type == GeneratorType.Iperf){
+			GeneralUtils.printToConsole("Trying to set IPERF");
+			trafficGenerator = IPerf.getInstance(ues);
+			if(trafficGenerator == null){
+				report.report("There is no traffic IPERF instance in SUT!",Reporter.FAIL);
+				instance = null;
+				return;
+			}
+			generatorType = TrafficGeneratorType.ITraffic;
+			GeneralUtils.printToConsole("done setting IPERF");
+		}
+	}
+	
 	/**
 	 * returns instance of the current SUT generator
 	 * 
@@ -133,6 +163,17 @@ public class Traffic {
 	public static Traffic getInstance(ArrayList<UE> ues){
 		if (instance == null){
 			instance = new Traffic(ues);
+		}
+		if(instance == null){
+			return null;
+		}
+		instance.revertToDefault(instance.generatorType);
+		return instance;
+	}
+	
+	public static Traffic getInstanceWithSpecificGeneratorType(ArrayList<UE> ues, GeneratorType type){
+		if (instance == null){
+			instance = new Traffic(ues, type);
 		}
 		if(instance == null){
 			return null;
@@ -680,7 +721,6 @@ public class Traffic {
 
 		case ITraffic:
 			try {
-				trafficGenerator.StopTrafficOnAllPorts();
 				trafficGenerator.setFrameSize(frameSize);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -702,7 +742,7 @@ public class Traffic {
 		}
 	}
 	
-	public boolean initProtocol(Protocol protocol) throws TrafficException {
+	public boolean initProtocol(Protocol protocol) {
 		switch (generatorType) {
 		case TestCenter:
 			if (protocol == Protocol.TCP) 
@@ -1320,12 +1360,13 @@ public class Traffic {
 	}
 	
 	// This function ONLY enables stream and not disabled not needed ones
-	public void enableStreamsByNameAndQci(ArrayList<String> ues,ArrayList<Character> qci) throws Exception {
+	public void enableStreamsByNameAndQciAndDirection(ArrayList<String> ues,ArrayList<Character> qci,
+			TransmitDirection direction) throws Exception {
 		ArrayList<String> enabledStreamsList = new ArrayList<String>();
 		
 		if (generatorType == TrafficGeneratorType.ITraffic) {
 			ArrayList<String> returnedArray = 
-					trafficGenerator.enableStreamsByUeNameQciAndPortDirection(ues,qci,TransmitDirection.BOTH);
+					trafficGenerator.enableStreamsByUeNameQciAndPortDirection(ues,qci,direction);
 			enabledStreamsList.addAll(returnedArray);
 			addEnabledStreams(returnedArray);
 		}
@@ -1752,5 +1793,15 @@ public class Traffic {
 		if(generatorType == TrafficGeneratorType.ITraffic){
 			trafficGenerator.takeActionAfterFoundHaltStream();
 		}
+	}
+	
+	public boolean setAllStreamsToState(boolean state){
+		try {
+			trafficGenerator.SetAllStreamActiveState(state);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
 	}
 }

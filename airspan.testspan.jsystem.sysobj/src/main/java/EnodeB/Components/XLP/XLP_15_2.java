@@ -29,7 +29,7 @@ public class XLP_15_2 extends XLP_14_5 {
 		HashMap<String, Variable> valueMap;
 		int ret = 0;
 		String protobufData = MibReader.getInstance().resolveByName("asLteEnbStatsData");
-		valueMap = snmp.SnmpWalk(protobufData);
+		valueMap = snmp.SnmpWalk(protobufData, false);
 		for (Entry<String, Variable> entry : valueMap.entrySet()) {
 			try{
 				byte[] protoBuf = ((OctetString) entry.getValue()).getValue();
@@ -46,7 +46,7 @@ public class XLP_15_2 extends XLP_14_5 {
 		HashMap<String, Variable> valueMap;
 		int ret = 0;
 		String protobufData = MibReader.getInstance().resolveByName("asLteEnbStatsData");
-		valueMap = snmp.SnmpWalk(protobufData);
+		valueMap = snmp.SnmpWalk(protobufData, false);
 		for (Entry<String, Variable> entry : valueMap.entrySet()) {
 			try{
 				byte[] protoBuf = ((OctetString) entry.getValue()).getValue();

@@ -26,13 +26,15 @@ public class SNMPWalkThread extends Thread implements Runnable {
 	private String snmpWalkStrOID;
 	private Target target;
 	private PDU pdu;
+	private boolean print = true;
 
-	public SNMPWalkThread(Snmp snmp, Target target, PDU pdu, TransportMapping<?> transport, String snmpWalkStrOID) {
+	public SNMPWalkThread(Snmp snmp, Target target, PDU pdu, TransportMapping<?> transport, String snmpWalkStrOID, boolean printOutput) {
 		this.snmp = snmp;
 		this.target = target;
 		this.pdu = pdu;
 		this.transport = transport;
 		this.snmpWalkStrOID = snmpWalkStrOID;
+		this.print = printOutput;
 	}
 
 	public void run() {
@@ -62,8 +64,10 @@ public class SNMPWalkThread extends Thread implements Runnable {
 
 							String key = vb.getOid().toString();
 							Variable value = vb.getVariable();
-							GeneralUtils.printToConsole("snmpwalk variable Oid: " + vb.getOid().toString() + ", value: "
+							if(print){
+								GeneralUtils.printToConsole("snmpwalk variable Oid: " + vb.getOid().toString() + ", value: "
 									+ vb.getVariable());
+							}
 							values.put(key, value);
 						}
 					}

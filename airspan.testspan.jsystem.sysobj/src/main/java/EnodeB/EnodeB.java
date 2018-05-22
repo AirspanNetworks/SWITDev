@@ -56,6 +56,30 @@ import jsystem.framework.system.SystemObjectImpl;
  */
 public abstract class EnodeB extends SystemObjectImpl {
 
+	protected final Pair[] expectedDurationsAndStageNamesOrderedForWarmReboot = {
+			new Pair<Long, String>((long)0, "Warm Reboot."),
+			new Pair<Long, String>((long)3 * 60 * 1000, "SNMP Availability / IPSec Bring Up."),
+			new Pair<Long, String>((long)4 * 60 * 1000, "All Running.")
+	};
+	
+	protected final Pair[] expectedDurationsAndStageNamesOrderedForColdReboot = {
+			new Pair<Long, String>((long)0, "Cold Reboot."),
+			new Pair<Long, String>((long)3 * 60 * 1000, "SNMP Availability / IPSec Bring Up."),
+			new Pair<Long, String>((long)5 * 60 * 1000, "Cold eNodeB PnP."),
+			new Pair<Long, String>((long)2 * 60 * 1000, "All Running.")
+	};
+	
+	protected final Pair[] expectedDurationsAndStageNamesOrderedWithSoftwareDownloadForColdReboot = {
+			new Pair<Long, String>((long)0, "Cold Reboot."),
+			new Pair<Long, String>((long)3 * 60 * 1000, "SNMP Availability / IPSec Bring Up."),
+			new Pair<Long, String>((long)30 * 1000, "Cold eNodeB PnP & Software Download."),
+			new Pair<Long, String>((long)1, "Reboot After Software Download."),
+			new Pair<Long, String>((long)3 * 60 * 1000, "SNMP Availability / IPSec Bring Up."),
+			new Pair<Long, String>((long)5 * 60 * 1000, "Cold eNodeB PnP."),
+			new Pair<Long, String>((long)30 * 1000, "eNodeb Software Activate Completed"),
+			new Pair<Long, String>((long)2 * 60 * 1000, "All Running.")
+	};
+	
 	public enum Architecture {
 		XLP, FSM
 	};
@@ -111,7 +135,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 	boolean isCaptureHasBeenMade = false;
 	private boolean enableMACtoPHY;
 	private boolean ipsecTunnelEnabled;
-	private boolean swUpgradeDuringPnP;
+	protected boolean swUpgradeDuringPnP;
 	private String ipsecCertificateMacAddress;
 	int SWTypeInstance;
 	private ArrayList<String> debugFlags = new ArrayList<>();
@@ -160,6 +184,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 			XLP.createSerialCom(connectInfo.serialInfo.getSerialIP(), Integer.parseInt(connectInfo.serialInfo.getSerialPort()) );
 			XLP.setSerialUsername(connectInfo.serialInfo.getUserName());	
 		}
+		XLP.setParent(this);
 		XLP.setIpAddress(connectInfo.getIpAddress());
 		XLP.setSkipCMP(getSkipCMP());
 		XLP.setUsername(connectInfo.getUserName());
@@ -295,12 +320,16 @@ public abstract class EnodeB extends SystemObjectImpl {
 		expecteInServiceState = false;
 		XLP.setExpectBooting(true);
 		report.report("Rebooting " + getNetspanName() + " via SNMP");
-		rebootStatus = XLP.reboot(rebootType);
+		rebootStatus = rebootExecution(rebootType);
 		// wait 1 min to avoid fake allrunning in ipsec setups.
 		GeneralUtils.unSafeSleep(60000);
 		return rebootStatus;
 	}
 
+	protected boolean rebootExecution(RebootType rebootType){
+		return XLP.reboot(rebootType);
+	}
+	
 	public boolean downloadSWSnmp(String fileToInstall, ServerProtocolType downloadType, String user,
 			String password) {
 		return XLP.downloadSWSnmp(fileToInstall, downloadType, user, password);
@@ -1004,6 +1033,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 			if (this.XLP.isReachable() == true) {
 				return true;
 			}
+			GeneralUtils.unSafeSleep(3000);
 		}
 		return false;
 	}
@@ -1082,6 +1112,10 @@ public abstract class EnodeB extends SystemObjectImpl {
 		this.cellContextID = cellNumber;
 	}
 
+	/**
+	 * this method Uses SNMP only.
+	 * @return
+	 */
 	public int getNumberOfActiveCells() {
 		return this.XLP.getNumberOfActiveCells();
 	}
@@ -1179,6 +1213,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 
 	public int getEarfcn() {
 		String cell = getCellContextID() == 1 ? "40" : "41";
+		GeneralUtils.printToConsole("Get earfcn of cell " + cell);
 		return XLP.getEarfcn(cell);
 	}
 
@@ -1372,6 +1407,15 @@ public abstract class EnodeB extends SystemObjectImpl {
 	public HashMap<String, Integer> getUELinkStatusVolteTable(){
 		return XLP.getUELinkStatusVolteTable();
 	}
+	
+	public int getNumberOfUELinkStatusEmergency(){
+		return XLP.getNumberOfUELinkStatusEmergency();
+	}
+	
+	public HashMap<String, Integer> getUELinkStatusEmergencyTable(){
+		return XLP.getUELinkStatusEmergencyTable();
+	}
+	
 	public HashMap<String, Integer> getULCrcPer(){
 		return XLP.getULCrcPer();
 	}
@@ -1406,6 +1450,9 @@ public abstract class EnodeB extends SystemObjectImpl {
 		}
 	}
 	
+	public int getCellBarredMibValue(int cellNum){
+		return XLP.getCellBarredValue(cellNum);
+	}
 	public String shell(String command){
 		return XLP.shell(command);
 	}
@@ -2175,5 +2222,29 @@ public abstract class EnodeB extends SystemObjectImpl {
 
 	public Pair<Boolean, SwStatus> isSoftwareDownloadCompletedSuccessfully() {
 		return XLP.isSoftwareDownloadCompletedSuccessfully();
+	}
+
+	public Pair<Long, String>[] getExpectedDurationsAndStageNamesOrderedForColdReboot() {
+		if(swUpgradeDuringPnP){
+			return expectedDurationsAndStageNamesOrderedWithSoftwareDownloadForColdReboot;
+		}else{
+			return expectedDurationsAndStageNamesOrderedForColdReboot;
+		}
+	}
+
+	public Pair<Long, String>[] getExpectedDurationsAndStageNamesOrderedForWarmReboot() {
+		return expectedDurationsAndStageNamesOrderedForWarmReboot;
+	}
+	
+	public boolean getLoggerDebugCapEnable() {
+		return XLP.getLoggerDebugCapEnable();
+	}
+	
+	public boolean setLoggerDebugCapEnable(boolean enable) {
+		return XLP.setLoggerDebugCapEnable(enable); 
+	}
+	
+	public int getNumberOfCells(){
+		return XLP.getNumberOfCells();
 	}
 }

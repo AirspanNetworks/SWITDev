@@ -13,6 +13,7 @@ import IPG.IPG;
 import Netspan.EnbProfiles;
 import Netspan.NetspanServer;
 import Netspan.API.Enums.EnbStates;
+import Netspan.NBI_14_0.API.Lte.EnbConfigGet;
 import Netspan.Profiles.NetworkParameters;
 import Netspan.Profiles.RadioParameters;
 import Netspan.Profiles.RadioParameters.PRSBandWidthEnum;
@@ -553,7 +554,7 @@ public class OtdoaBase extends TestspanTest{
 		boolean methodResult = false;
 		int counterValueSnmp = dut.getCountersValue(counterName);
 		if (counterValueSnmp != 0){
-			if(dut.getNumberOfActiveCells() > 1){
+			if(enodeBConfig.getNumberOfActiveCells(dut) > 1){
 				counterValueSnmp /= 2;
 			}
 		}
@@ -675,7 +676,7 @@ public class OtdoaBase extends TestspanTest{
 		}
 		
 		if(radioChanged){
-			if(dut.getNumberOfActiveCells() > 1){
+			if(enodeBConfig.getNumberOfActiveCells(dut) > 1){
 				if(localRadioProfileCell2 != null){
 					GeneralUtils.startLevel("Revert to default Radio profile to profile name : "+localRadioProfileCell2+" for Cell 2");
 					dut.setCellContextNumber(2);
@@ -700,5 +701,6 @@ public class OtdoaBase extends TestspanTest{
 		
 		configureNodesState(EnbStates.IN_SERVICE);
 		GeneralUtils.stopLevel();
+		super.end();
 	}
 }

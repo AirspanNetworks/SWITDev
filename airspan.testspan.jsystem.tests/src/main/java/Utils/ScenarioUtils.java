@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import EnodeB.EnodeB;
+import EnodeB.EnodeBWithDonor;
 import EnodeB.Components.Log.Logger;
 import Netspan.NetspanServer;
 import Netspan.API.Lte.NodeInfo;
@@ -121,6 +122,7 @@ public class ScenarioUtils {
 		String usingDonorEnb = "";
 		String ipType = "";
 		String enbTypes = "";
+		String relayVersions = "";
 		String systemDefaultsProfiles = "";
 		String enbAdvancedConfigurationProfiles = "";
 		String cellAdvancedConfigurationProfiles = "";
@@ -142,6 +144,10 @@ public class ScenarioUtils {
 		boolean netspanReachable = netspanServer.isNetspanReachable();
 		EnodeBConfig enbConfig = EnodeBConfig.getInstance();
 		for (EnodeB enb : enbInSetup) {
+			if(enb.hasDonor()){
+				relayVersions += (((EnodeBWithDonor)enb).getRelayRunningVersion() + "(" + enb.getName() + ");");
+			}
+			
 			String enbHardwareType = null;
 			if(netspanReachable){
 				NodeInfo nodeInfo = netspanServer.getNodeDetails(enb);
@@ -260,8 +266,14 @@ public class ScenarioUtils {
 
 
 		if(netspanReachable){
+			if(!relayVersions.equals("")){
+				// RelayVersion
+				report.setContainerProperties(0, "RelayVersions", relayVersions);
+			}
+			
 			// NetspanVar
 			report.setContainerProperties(0, "NetspanVar", netspanServer.getNetspanVersion());
+			
 			// SystemDefaultsProfile
 			report.setContainerProperties(0, "SystemDefaultsProfiles", systemDefaultsProfiles);
 

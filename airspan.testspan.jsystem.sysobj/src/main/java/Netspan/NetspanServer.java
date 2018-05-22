@@ -33,6 +33,7 @@ import Netspan.API.Lte.IRetunTypes.ILteEnbDetailsSet;
 import Netspan.API.Software.SoftwareStatus;
 import Netspan.DataObjects.NeighborData;
 import Netspan.Profiles.CellAdvancedParameters;
+import Netspan.Profiles.CellBarringPolicyParameters;
 import Netspan.Profiles.EnodeBAdvancedParameters;
 import Netspan.Profiles.INetspanProfile;
 import Netspan.Profiles.ManagementParameters;
@@ -45,6 +46,7 @@ import Netspan.Profiles.SecurityParameters;
 import Netspan.Profiles.SonParameters;
 import Netspan.Profiles.SyncParameters;
 import Netspan.Profiles.SystemDefaultParameters;
+import Utils.GeneralUtils.RebootType;
 import jsystem.framework.system.SystemManagerImpl;
 import jsystem.framework.system.SystemObjectImpl;
 
@@ -505,6 +507,7 @@ public abstract class NetspanServer extends SystemObjectImpl {
 	public abstract String getNeighborManagmentProfile(String nodeName);
 	public abstract NeighborData getNeighborData(String nodeName, String nghName);
 	public abstract boolean setEnbCellProperties(EnodeB dut, EnbCellProperties cellProperties);
+	public abstract boolean setEnbAccessClassBarring(EnodeB dut, CellBarringPolicyParameters cellBarringParams);
 	public abstract boolean updateSonProfile(EnodeB node, String cloneFromName, SonParameters sonParams);
 	public abstract EnodeBUpgradeServer getSoftwareServer(String name);
 	public abstract boolean setSoftwareServer(String softwareServername, EnodeBUpgradeServer upgradeServer);
@@ -550,4 +553,13 @@ public abstract class NetspanServer extends SystemObjectImpl {
 	public abstract ArrayList<String> getMMEIpAdresses(EnodeB enb);
 
 	public abstract String getGPSStatus(EnodeB eNodeB);
+	
+	public abstract String getMangementIp(EnodeB enb);
+
+	public abstract int getNumberOfActiveCellsForNode(EnodeB node);
+
+	public abstract boolean forcedResetNode(String nodeName, RebootType rebootType);
+	
+	public abstract boolean resetNode(String nodeName);
+	
 }

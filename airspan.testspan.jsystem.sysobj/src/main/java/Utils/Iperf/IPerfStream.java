@@ -1,5 +1,7 @@
 package Utils.Iperf;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 
 import Entities.ITrafficGenerator.TransmitDirection;
@@ -32,9 +34,8 @@ public class IPerfStream {
 	private ArrayList<Long> countersInBits;
 	private Protocol protocol;
 	private Double lastIntervalUsedForLastSample;
-	
-	
-	
+	private boolean isRunningTraffic; 
+
 	public IPerfStream(TransmitDirection transmitDirection, String ueNumber, int qci, String destIpAddress, String srcIpAddress, boolean state, double streamLoad, Integer frameSize) throws Exception {
 		if(transmitDirection == TransmitDirection.BOTH){
 			throw new Exception("Stream Can't be to BOTH directions (UL & DL).");
@@ -55,36 +56,44 @@ public class IPerfStream {
 		this.streamLoad = streamLoad;
 		this.frameSize = frameSize;
 		this.countersInBits = new ArrayList<Long>();
+		this.isRunningTraffic = false;
 		generateIPerfCommands();
 	}
 	
 	void generateIPerfCommands(){
-		if(this.protocol == Protocol.UDP){
-			this.iperfClientCommand = "-c " + this.destIpAddress + " -u -i 1 -p " + (5000+this.qci) + " -l " + this.frameSize + ".0B -b " + this.streamLoad + "M -t " + UEIPerf.IPERF_TIME_LIMIT;
-			this.iperfServerCommand = "-s -u -i 1 -p " + (5000+this.qci) + " -B " + this.srcIpAddress + " -l " + this.frameSize + ".0B -f k";
-		}else if(this.protocol == Protocol.TCP){
-			this.iperfClientCommand = "-c " + this.destIpAddress + " ";
-			this.iperfServerCommand = "-s ";
-			if(this.numberOfParallelIPerfStreams != null){
-				this.iperfClientCommand += "-P "+numberOfParallelIPerfStreams;
-				this.iperfServerCommand += "-P "+numberOfParallelIPerfStreams;
+		if(!isRunningTraffic()){
+			if(this.protocol == Protocol.UDP){
+				this.iperfClientCommand = "-c " + this.destIpAddress + " -u -i 1 -p " + (5000+this.qci) + " -l " + this.frameSize + ".0B -b " + convertTo3DigitsAfterPoint(this.streamLoad) + "M -t " + UEIPerf.IPERF_TIME_LIMIT;
+				this.iperfServerCommand = "-s -u -i 1 -p " + (5000+this.qci) + " -B " + this.srcIpAddress + " -l " + this.frameSize + ".0B -f k";
+			}else if(this.protocol == Protocol.TCP){
+				this.iperfClientCommand = "-c " + this.destIpAddress + " ";
+				this.iperfServerCommand = "-s ";
+				if(this.numberOfParallelIPerfStreams != null){
+					this.iperfClientCommand += "-P "+numberOfParallelIPerfStreams;
+					this.iperfServerCommand += "-P "+numberOfParallelIPerfStreams;
+				}
+				this.iperfClientCommand += " -i 1 -p " + (5000+this.qci);
+				this.iperfServerCommand += " -i 1 -p " + (5000+this.qci);
+				if(this.windowSizeInKbits != null){
+					this.iperfClientCommand += " -w "+this.windowSizeInKbits+"k";
+					this.iperfServerCommand += " -w "+this.windowSizeInKbits+"k";
+				}
+				this.iperfServerCommand += " -B " + this.srcIpAddress;
+				if(this.frameSize != null){
+					this.iperfClientCommand += " -M "+this.frameSize;
+					this.iperfServerCommand += " -M "+this.frameSize;
+				}
+				this.iperfClientCommand += " -t " + UEIPerf.IPERF_TIME_LIMIT;
+				this.iperfServerCommand += " -f k";
+			}else{
+				GeneralUtils.printToConsole("Protocol NOT UDP and NOT TCP - FAILURE");
 			}
-			this.iperfClientCommand += " -i 1 -p " + (5000+this.qci);
-			this.iperfServerCommand += " -i 1 -p " + (5000+this.qci);
-			if(this.windowSizeInKbits != null){
-				this.iperfClientCommand += " -w "+this.windowSizeInKbits+"k";
-				this.iperfServerCommand += " -w "+this.windowSizeInKbits+"k";
-			}
-			this.iperfServerCommand += " -B " + this.srcIpAddress;
-			if(this.frameSize != null){
-				this.iperfClientCommand += " -M "+this.frameSize;
-				this.iperfServerCommand += " -M "+this.frameSize;
-			}
-			this.iperfClientCommand += " -t " + UEIPerf.IPERF_TIME_LIMIT;
-			this.iperfServerCommand += " -f k";
-		}else{
-			GeneralUtils.printToConsole("Protocol NOT UDP and NOT TCP - FAILURE");
 		}
+	}
+	
+	private String convertTo3DigitsAfterPoint(double val){
+		NumberFormat formatter = new DecimalFormat("#.###");
+		return formatter.format(val);
 	}
 
 	public boolean isActive() {
@@ -116,8 +125,10 @@ public class IPerfStream {
 	}
 
 	public void setStreamLoad(double streamLoad) {
-		this.streamLoad = streamLoad;
-		generateIPerfCommands();
+		if(!isRunningTraffic()){
+			this.streamLoad = streamLoad;
+			generateIPerfCommands();
+		}
 	}
 
 	public Integer getFrameSize() {
@@ -125,18 +136,24 @@ public class IPerfStream {
 	}
 
 	public void setFrameSize(Integer frameSize) {
-		this.frameSize = frameSize;
-		generateIPerfCommands();
+		if(!isRunningTraffic()){
+			this.frameSize = frameSize;
+			generateIPerfCommands();			
+		}
 	}
 
 	public void setWindowSizeInKbits(Double windowSizeInKbits) {
-		this.windowSizeInKbits = windowSizeInKbits;
-		generateIPerfCommands();
+		if(!isRunningTraffic()){
+			this.windowSizeInKbits = windowSizeInKbits;
+			generateIPerfCommands();			
+		}
 	}
 
 	public void setNumberOfParallelIPerfStreams(Integer numberOfParallelIPerfStreams) {
-		this.numberOfParallelIPerfStreams = numberOfParallelIPerfStreams;
-		generateIPerfCommands();
+		if(!isRunningTraffic()){
+			this.numberOfParallelIPerfStreams = numberOfParallelIPerfStreams;
+			generateIPerfCommands();			
+		}
 	}
 	
 	public Protocol getProtocol() {
@@ -144,8 +161,10 @@ public class IPerfStream {
 	}
 
 	public void setProtocol(Protocol protocol) {
-		this.protocol = protocol;
-		generateIPerfCommands();
+		if(!isRunningTraffic()){
+			this.protocol = protocol;
+			generateIPerfCommands();			
+		}
 	}
 
 	public String getIpAddress() {
@@ -195,5 +214,13 @@ public class IPerfStream {
 
 	public Double getLastIntervalUsedForLastSample() {
 		return lastIntervalUsedForLastSample;
+	}
+	
+	public boolean isRunningTraffic() {
+		return isRunningTraffic;
+	}
+	
+	public void setRunningTraffic(boolean isRunningTraffic) {
+		this.isRunningTraffic = isRunningTraffic;
 	}
 }

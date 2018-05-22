@@ -293,8 +293,10 @@ public class AutoRSIBase extends TestspanTest {
 	}
 
 	protected void reportAboutFindAlarm(String alarmType) {
+		List<String> alarmTypes = new ArrayList<String>();
+		alarmTypes.add(alarmType);
 		List<AlarmInfo> alarms = alarmsAndEvents.getAllAlarmsNodeWithSpecificType(alarmsAndEvents.getAllAlarmsNode(dut),
-				alarmType);
+				alarmTypes);
 		if (alarms.isEmpty()) {
 			report.report("Alarm: '" + alarmType + "' does not exist", Reporter.FAIL);
 			reason = "Alarm: '" + alarmType + "' does not exist";

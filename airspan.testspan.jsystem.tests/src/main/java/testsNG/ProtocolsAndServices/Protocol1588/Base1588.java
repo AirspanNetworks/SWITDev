@@ -3,6 +3,7 @@ package testsNG.ProtocolsAndServices.Protocol1588;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -64,23 +65,25 @@ public class Base1588 extends TestspanTest {
 		}
 	}
 
-	protected List<AlarmInfo> reportOnSearchAlarms(String toSearch, boolean needToBeExists) {
+	protected List<AlarmInfo> reportOnSearchAlarms(boolean needToBeExists,List<String> toSearch) {
 		List<AlarmInfo> allAlarms = alarmsAndEvents.getAllAlarmsNode(dut);
 		List<AlarmInfo> alarms = alarmsAndEvents.getAllAlarmsNodeWithSpecificType(allAlarms, toSearch);
+		List<String> searchwords = new ArrayList<String>(toSearch);
+		
 		if (alarms.isEmpty() && needToBeExists) {
-			report.report("'" + toSearch + "' alarm does NOT exist", Reporter.FAIL);
-			reason = "'" + toSearch + "' alarm does NOT exist";
+			report.report("'" + searchwords.toString() + "' alarm does NOT exist", Reporter.FAIL);
+			reason = "'" + searchwords.toString() + "' alarm does NOT exist";
 		}
 
 		else if (alarms.isEmpty() && !needToBeExists)
-			report.report("'" + toSearch + "' alarm does NOT exist");
+			report.report("'" + searchwords.toString() + "' alarm does NOT exist");
 
 		else if (!alarms.isEmpty() && needToBeExists)
-			report.report("There is " + alarms.size() + " '" + toSearch + "' alarms");
+			report.report("There is " + alarms.size() + " '" + searchwords.toString() + "' alarms");
 
 		else if (!alarms.isEmpty() && !needToBeExists) {
-			report.report("There is " + alarms.size() + " '" + toSearch + "' alarms", Reporter.FAIL);
-			reason = "There is " + alarms.size() + " '" + toSearch + "' alarms";
+			report.report("There is " + alarms.size() + " '" + searchwords.toString() + "' alarms", Reporter.FAIL);
+			reason = "There is " + alarms.size() + " '" + searchwords.toString() + "' alarms";
 		}
 		return alarms;
 	}
@@ -143,7 +146,9 @@ public class Base1588 extends TestspanTest {
 
 	protected void reportAboutExistAlarmWithSeverity(List<AlarmInfo> allAlarms, String alarmType,
 			AlarmSeverity severity) {
-		List<AlarmInfo> alarmsWithType = alarmsAndEvents.getAllAlarmsNodeWithSpecificType(allAlarms, alarmType);
+		List<String> alarmTypeList = new ArrayList<String>();
+		alarmTypeList.add(alarmType);
+		List<AlarmInfo> alarmsWithType = alarmsAndEvents.getAllAlarmsNodeWithSpecificType(allAlarms, alarmTypeList);
 		if (alarmsWithType.isEmpty()) {
 			report.report("'" + alarmType + "' alarm does NOT exist", Reporter.FAIL);
 			reason = "'" + alarmType + "' alarm does NOT exist";

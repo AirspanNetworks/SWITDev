@@ -45,7 +45,7 @@ public class GraphAdder {
     public static int oneGraphNo = 0;
     public static int twoGraphNo = 0;
 
-    public static void AddGraph(String title, String titleX, String titleY, ArrayList<Double> upLink, ArrayList<Double> downLink, ArrayList<Long> timeStamp, String series1, String series2,boolean isQci9) throws Exception {
+    public static void AddGraph(String title, String titleX, String titleY, ArrayList<Double> upLink, ArrayList<Double> downLink, ArrayList<Long> timeStamp, String series1, String series2,boolean isQci9,boolean addToMail) throws Exception {
         //title += ":Total_RunTime=" + (timeStamp.get(timeStamp.size()-1)-timeStamp.get(0)/60000.0)+ "Min" ;
         String html = "<div id=\"" + title + "\" style=\"height: 300px; width: 95%;\"></div>"
                 + "<script type=\"text/javascript\">"
@@ -89,27 +89,33 @@ public class GraphAdder {
         report.reportHtml(title, html, true);
         if(isQci9){
             File f = getPictureAsFile(title, titleX, titleY, upLink, downLink, timeStamp, series1, series2);
-            createGraphPicture(title, f);
+            createGraphPicture(title, f,addToMail);
         }
     }
 
-    private static void createGraphPicture(String title, File f) throws Exception {
+    private static void createGraphPicture(String title, File f,boolean addToMail) throws Exception {
         report.startLevel("Graph Picture");
         ReporterHelper.copyFileToReporterAndAddLink(report,f,"Image_" + title);
         //ReporterHelper.copyFileToReporterAndAddLinkProperty(report,f,"Image_"+ System.currentTimeMillis()+ "_" + title,f.getName());
         //report.addProperty("Img_" + title,f.getName());
         String newField = title + "," + f.getName() + ";";
-        imagesPropertyValue = newField;
-        report.addProperty("Images", imagesPropertyValue);
+        if(addToMail) {
+        	imagesPropertyValue = newField;
+        	report.addProperty("Images", imagesPropertyValue);
+        }
         //Property e.g: "Images", "title1,imageName1.png;title2,imageName2.png
         report.stopLevel();
     }
 
-    public static void AddGraph(String title, String titleX, String titleY, ArrayList<Double> upLink, ArrayList<Double> downLink, ArrayList<Long> axisX, boolean isQci9) throws Exception {
-        AddGraph(title, titleX, titleY, upLink, downLink, axisX, "Uplink", "Downlink",isQci9);
+    public static void AddGraph(String title, String titleX, String titleY, ArrayList<Double> upLink, ArrayList<Double> downLink, ArrayList<Long> axisX, boolean isQci9,boolean addToMail) throws Exception {
+        AddGraph(title, titleX, titleY, upLink, downLink, axisX, "Uplink", "Downlink",isQci9,addToMail);
+    }
+    
+    public static void AddGraph(String title, String titleX, String titleY, ArrayList<Double> upLink, ArrayList<Double> downLink, ArrayList<Long> axisX,String legendBlue,String legendRed,boolean addToMail) throws Exception {
+    	AddGraph(title, titleX, titleY, upLink, downLink, axisX, legendBlue, legendRed,true,addToMail);
     }
 
-    public static void AddGraph(String title,String titleX, String titleY, ArrayList<Double> values, ArrayList<Long> timeStamp, String legend, boolean isQci9) throws Exception {
+    public static void AddGraph(String title,String titleX, String titleY, ArrayList<Double> values, ArrayList<Long> timeStamp, String legend, boolean isQci9,boolean addToMail) throws Exception {
         //title += ":Total_RunTime=" + (timeStamp.get(timeStamp.size()-1)-timeStamp.get(0)/60000.0)+ "Min";
         String html = "<div id=\"" + title + "\" style=\"height: 300px; width: 95%;\"></div>"
                 + "<script type=\"text/javascript\">"
@@ -147,7 +153,7 @@ public class GraphAdder {
         report.reportHtml(title, html, true);
         if(isQci9){
             File f = getPictureAsFile(title, titleX, titleY,values,timeStamp,legend);
-        	createGraphPicture(title, f);
+        	createGraphPicture(title, f,addToMail);
         }
     }
 

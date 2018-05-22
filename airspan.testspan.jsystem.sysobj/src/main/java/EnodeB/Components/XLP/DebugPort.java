@@ -4,9 +4,9 @@ import EnodeB.Components.EnodeBComponent;
 import EnodeB.Components.Session.SessionManager;
 
 public class DebugPort extends EnodeBComponent{
-	public final String DEBUG_PORT = "192.168.0.20";
-	public final String DEBUG_PORT_USERNAME = "admin";
-	public final String DEBUG_PORT_PASSWOED = "HeWGEUx66m=_4!ND";
+	private String DEBUG_PORT = "192.168.0.20";
+	private String DEBUG_PORT_USERNAME = "admin";
+	private String DEBUG_PORT_PASSWOED = "HeWGEUx66m=_4!ND";
 
 	@Override
 	public void init() throws Exception {
@@ -30,4 +30,30 @@ public class DebugPort extends EnodeBComponent{
 	public String sendCommands(String lteCliPrompt, String cmd) {
 		return sendCommandsOnSession(SessionManager.SSH_COMMANDS_SESSION_NAME, EnodeBComponent.LTE_CLI_PROMPT, cmd, "");
 	}
+
+	public String getDEBUG_PORT() {
+		return DEBUG_PORT;
+	}
+
+	public void setDEBUG_PORT(String dEBUG_PORT) {
+		DEBUG_PORT = dEBUG_PORT;
+	}
+
+	public String getDEBUG_PORT_USERNAME() {
+		return DEBUG_PORT_USERNAME;
+	}
+
+	public void setDEBUG_PORT_USERNAME(String dEBUG_PORT_USERNAME) {
+		DEBUG_PORT_USERNAME = dEBUG_PORT_USERNAME;
+	}
+
+	public String getDEBUG_PORT_PASSWOED() {
+		return DEBUG_PORT_PASSWOED;
+	}
+
+	public void setDEBUG_PORT_PASSWOED(String dEBUG_PORT_PASSWOED) {
+		DEBUG_PORT_PASSWOED = dEBUG_PORT_PASSWOED;
+	}
+	
+	
 }

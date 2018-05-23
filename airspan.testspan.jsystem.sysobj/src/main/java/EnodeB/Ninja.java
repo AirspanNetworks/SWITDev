@@ -4,12 +4,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import EnodeB.Components.EnodeBComponent;
+import EnodeB.Components.XLP.DebugPort;
 import Netspan.API.Enums.ImageType;
 
 public class Ninja extends EnodeBWithDonor{	
 	
 	public Ninja() {
 		super();
+		setDonor(donorName);
+		debugPort = new DebugPort();
 		debugPort.setDEBUG_PORT("192.168.0.20");
 		debugPort.setDEBUG_PORT_USERNAME(EnodeBComponent.ADMIN_USERNAME);
 		debugPort.setDEBUG_PORT_PASSWOED(EnodeBComponent.ADMIN_PASSWORD);

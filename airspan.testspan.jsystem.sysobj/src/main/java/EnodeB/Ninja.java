@@ -11,8 +11,6 @@ public class Ninja extends EnodeBWithDonor{
 	
 	public Ninja() {
 		super();
-		setDonor(donorName);
-		debugPort = new DebugPort();
 		debugPort.setDEBUG_PORT("192.168.0.20");
 		debugPort.setDEBUG_PORT_USERNAME(EnodeBComponent.ADMIN_USERNAME);
 		debugPort.setDEBUG_PORT_PASSWOED(EnodeBComponent.ADMIN_PASSWORD);

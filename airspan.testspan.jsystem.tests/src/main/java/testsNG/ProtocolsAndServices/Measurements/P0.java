@@ -3252,7 +3252,7 @@ public class P0 extends TestspanTest{
 			
 			if(dutInTest!=null){
 				enodeBConfig.setProfile(dutInTest, EnbProfiles.Son_Profile, dutInTest.getDefaultNetspanProfiles().getSON());
-				enodeBConfig.setProfile(dutInTest, EnbProfiles.Mobility_Profile, dutInTest.getDefaultNetspanProfiles().getMobility());
+				revertMobilityProfiles(dutInTest);
 				if(flagNetwork){
 					enodeBConfig.setProfile(dutInTest, EnbProfiles.Network_Profile, dutInTest.getDefaultNetspanProfiles().getNetwork());
 					if(needsToReboot){
@@ -3290,6 +3290,15 @@ public class P0 extends TestspanTest{
 		super.end();
 	}
 	
+	private void revertMobilityProfiles(EnodeB dutInTest2) {
+		int numOfCells = dutInTest2.getNumberOfActiveCells();
+		while(numOfCells > 0) {
+			dutInTest2.setCellContextNumber(numOfCells);
+			enodeBConfig.setProfile(dutInTest, EnbProfiles.Mobility_Profile, dutInTest.getDefaultNetspanProfiles().getMobility());
+			numOfCells--;
+		}
+	}
+
 	//OTDOA TESTS
 	@Test
 	@TestProperties(name = "OTDOA1_BasicOperation", returnParam = {

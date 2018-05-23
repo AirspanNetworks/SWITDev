@@ -19,6 +19,11 @@ public class Ninja extends EnodeBWithDonor{
 	}
 	
 	@Override
+	public void init() throws Exception {
+		super.init();
+	}
+	
+	@Override
 	public String getLoggerUploadAllEnodebIP() {
 		String loggerUploadAllEnodebIP = null;
 		if(relay != null){

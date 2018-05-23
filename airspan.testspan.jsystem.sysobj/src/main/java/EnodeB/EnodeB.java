@@ -321,12 +321,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 		expecteInServiceState = false;
 		XLP.setExpectBooting(true);
 		report.report("Rebooting " + getNetspanName() + " via Netspan");
-		try {
-			rebootStatus = NetspanServer.getInstance().resetNode(getNetspanName());
-		} catch (Exception e) {
-			e.printStackTrace();
-			report.report("Failed to reboot via netspan");
-		}
+		rebootStatus = resetNodeViaNetspan();
 		if(!rebootStatus){
 			report.report("Rebooting " + getNetspanName() + " via SNMP");
 			rebootStatus = rebootExecution(rebootType);			
@@ -334,6 +329,16 @@ public abstract class EnodeB extends SystemObjectImpl {
 		// wait 1 min to avoid fake allrunning in ipsec setups.
 		GeneralUtils.unSafeSleep(60000);
 		return rebootStatus;
+	}
+
+	private boolean resetNodeViaNetspan() {
+		try {
+			return NetspanServer.getInstance().resetNode(getNetspanName());
+		} catch (Exception e) {
+			e.printStackTrace();
+			report.report("Failed to reboot via netspan",Reporter.WARNING);
+		}
+		return false;
 	}
 
 	protected boolean rebootExecution(RebootType rebootType){

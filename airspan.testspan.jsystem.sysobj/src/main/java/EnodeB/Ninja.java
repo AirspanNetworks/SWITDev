@@ -4,6 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import EnodeB.Components.EnodeBComponent;
+import EnodeB.Components.XLP.DebugPort;
 import Netspan.API.Enums.ImageType;
 
 public class Ninja extends EnodeBWithDonor{	
@@ -16,6 +17,11 @@ public class Ninja extends EnodeBWithDonor{
 		WAIT_FOR_ALL_RUNNING_TIME = 10 * 60 * 1000;
 		setSWTypeInstance(22);
 		//addCliDebugFlags("db set debugFlags [*] bhQosSimulateCpeResp=1","!echo 'SKIP_CMPV2=1' > /bs/data/debug_security.cfg");
+	}
+	
+	@Override
+	public void init() throws Exception {
+		super.init();
 	}
 	
 	@Override

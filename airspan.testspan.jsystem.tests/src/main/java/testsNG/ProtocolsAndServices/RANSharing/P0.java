@@ -978,14 +978,15 @@ public class P0 extends TestspanTest {
 			e.printStackTrace();
 		}
 
-		if (dm.getPLMNs() == null) {
+		HashMap<String, PlmnData> dmPLMNs = dm.getPLMNs();
+		if (dmPLMNs == null) {
 			report.report("Can't return UE information", Reporter.FAIL);
 			dm.close();
 			GeneralUtils.stopLevel();
 			return;
 		}
-		PlmnData hPlmn = dm.getPLMNs().get("home");
-		PlmnData selPlmn = dm.getPLMNs().get("selected");
+		PlmnData hPlmn = dmPLMNs.get("home");
+		PlmnData selPlmn = dmPLMNs.get("selected");
 		if (hPlmn != null && selPlmn != null) {
 			Plmn homePlmn = convertToPlmn(hPlmn);
 			Plmn selectedPlmn = convertToPlmn(selPlmn);

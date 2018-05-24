@@ -27,6 +27,7 @@ import EnodeB.ProtoBuf.PbLteStatusOuterClass.PbLteMmeStatus;
 import EnodeB.ProtoBuf.PbLteStatusOuterClass.PbLteNwElementStatus;
 import EnodeB.ProtoBuf.PbLteStatusOuterClass.PbLteRfStatus;
 import Entities.ITrafficGenerator.TransmitDirection;
+import Netspan.NetspanServer;
 import Netspan.API.Enums.EnabledDisabledStates;
 import Netspan.API.Enums.EnbStates;
 import Netspan.API.Enums.HandoverType;
@@ -319,11 +320,25 @@ public abstract class EnodeB extends SystemObjectImpl {
 		GeneralUtils.unSafeSleep(1000);
 		expecteInServiceState = false;
 		XLP.setExpectBooting(true);
-		report.report("Rebooting " + getNetspanName() + " via SNMP");
-		rebootStatus = rebootExecution(rebootType);
+		report.report("Rebooting " + getNetspanName() + " via Netspan");
+		rebootStatus = resetNodeViaNetspan();
+		if(!rebootStatus){
+			report.report("Rebooting " + getNetspanName() + " via SNMP");
+			rebootStatus = rebootExecution(rebootType);			
+		}
 		// wait 1 min to avoid fake allrunning in ipsec setups.
 		GeneralUtils.unSafeSleep(60000);
 		return rebootStatus;
+	}
+
+	private boolean resetNodeViaNetspan() {
+		try {
+			return NetspanServer.getInstance().resetNode(getNetspanName());
+		} catch (Exception e) {
+			e.printStackTrace();
+			report.report("Failed to reboot via netspan",Reporter.WARNING);
+		}
+		return false;
 	}
 
 	protected boolean rebootExecution(RebootType rebootType){

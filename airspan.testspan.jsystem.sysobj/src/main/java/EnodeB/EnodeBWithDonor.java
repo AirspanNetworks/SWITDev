@@ -74,11 +74,15 @@ public abstract class EnodeBWithDonor extends AirVelocity{
 	public DebugPort debugPort;
 	public abstract String getRelayRunningVersion();
 	
+	public EnodeBWithDonor() {
+		super();
+		debugPort = new DebugPort();
+	}
+
 	@Override
 	public void init() throws Exception {
 		super.init();
 		setDonor(donorName);
-		debugPort = new DebugPort();
 	}
 	
 	public UE getRelay() {

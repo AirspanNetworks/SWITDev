@@ -139,7 +139,7 @@ public class Progression extends TestspanTest {
 	}
 
 	private boolean checkEnodeBEarfcn() {
-		if (enodeBConfig.getEARFCNforNode(dut1).equals(enodeBConfig.getEARFCNforNode(dut2))) {
+		if (!enodeBConfig.getEARFCNforNode(dut1).equals(enodeBConfig.getEARFCNforNode(dut2))) {
 			report.report("EnodeB frequences are diffrent in an Intra test. stopping test", Reporter.FAIL);
 			return false;
 		}

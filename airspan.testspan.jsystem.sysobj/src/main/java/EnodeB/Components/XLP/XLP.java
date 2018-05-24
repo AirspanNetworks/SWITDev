@@ -1767,9 +1767,9 @@ public abstract class XLP extends EnodeBComponent {
 		return getPci(40);
 	}
 
-	public int getPci(int cellIndex) {
+	public int getPci(int oidIndex) {
 		String oid = MibReader.getInstance().resolveByName("asLteStkCellCfgCellId");
-		oid += ("." + cellIndex);
+		oid += ("." + oidIndex);
 		String ans = "";
 		int pci = GeneralUtils.ERROR_VALUE;
 		ans = snmp.get(oid);

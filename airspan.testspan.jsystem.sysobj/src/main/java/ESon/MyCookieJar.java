@@ -29,6 +29,10 @@ public class MyCookieJar implements CookieJar {
 	}
 
 	public String getCookieValue(String cookieName) {
+		if(cookies == null) {
+			GeneralUtils.printToConsole("no cookies!");
+			return "";
+		}
 		for (Cookie cookie : cookies) {
 			if (cookie.name() != null && cookie.name().equals(cookieName)) {
 				GeneralUtils.printToConsole("Cookkie jar - get cookie value: " + cookie.value());

@@ -55,29 +55,34 @@ import jsystem.framework.system.SystemObjectImpl;
  * The Class EnodeB.
  */
 public abstract class EnodeB extends SystemObjectImpl {
+	public final long HALF_MIN = 30 * 1000;
+	public final long TWO_MIN = 2 * 60 * 1000;
+	public final long THREE_MIN = 3 * 60 * 1000;
+	public final long FOUR_MIN = 4 * 60 * 1000;
+	public final long FIVE_MIN = 5 * 60 * 1000;
 
 	protected final Pair[] expectedDurationsAndStageNamesOrderedForWarmReboot = {
 			new Pair<Long, String>((long)0, "Warm Reboot."),
-			new Pair<Long, String>((long)3 * 60 * 1000, "SNMP Availability / IPSec Bring Up."),
-			new Pair<Long, String>((long)4 * 60 * 1000, "All Running.")
+			new Pair<Long, String>((long)THREE_MIN, "SNMP Availability / IPSec Bring Up."),
+			new Pair<Long, String>((long)FOUR_MIN, "All Running.")
 	};
 	
 	protected final Pair[] expectedDurationsAndStageNamesOrderedForColdReboot = {
 			new Pair<Long, String>((long)0, "Cold Reboot."),
-			new Pair<Long, String>((long)3 * 60 * 1000, "SNMP Availability / IPSec Bring Up."),
-			new Pair<Long, String>((long)5 * 60 * 1000, "Cold eNodeB PnP."),
-			new Pair<Long, String>((long)2 * 60 * 1000, "All Running.")
+			new Pair<Long, String>((long)THREE_MIN, "SNMP Availability / IPSec Bring Up."),
+			new Pair<Long, String>((long)FIVE_MIN, "Cold eNodeB PnP."),
+			new Pair<Long, String>((long)TWO_MIN, "All Running.")
 	};
 	
 	protected final Pair[] expectedDurationsAndStageNamesOrderedWithSoftwareDownloadForColdReboot = {
 			new Pair<Long, String>((long)0, "Cold Reboot."),
-			new Pair<Long, String>((long)3 * 60 * 1000, "SNMP Availability / IPSec Bring Up."),
-			new Pair<Long, String>((long)30 * 1000, "Cold eNodeB PnP & Software Download."),
+			new Pair<Long, String>((long)THREE_MIN, "SNMP Availability / IPSec Bring Up."),
+			new Pair<Long, String>((long)HALF_MIN, "Cold eNodeB PnP & Software Download."),
 			new Pair<Long, String>((long)1, "Reboot After Software Download."),
-			new Pair<Long, String>((long)3 * 60 * 1000, "SNMP Availability / IPSec Bring Up."),
-			new Pair<Long, String>((long)5 * 60 * 1000, "Cold eNodeB PnP."),
-			new Pair<Long, String>((long)30 * 1000, "eNodeb Software Activate Completed"),
-			new Pair<Long, String>((long)2 * 60 * 1000, "All Running.")
+			new Pair<Long, String>((long)THREE_MIN, "SNMP Availability / IPSec Bring Up."),
+			new Pair<Long, String>((long)FIVE_MIN, "Cold eNodeB PnP."),
+			new Pair<Long, String>((long)HALF_MIN, "eNodeb Software Activate Completed"),
+			new Pair<Long, String>((long)TWO_MIN, "All Running.")
 	};
 	
 	public enum Architecture {

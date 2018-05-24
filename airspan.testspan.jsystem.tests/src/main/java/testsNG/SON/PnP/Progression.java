@@ -721,6 +721,7 @@ public class Progression extends TestspanTest{
 		GeneralUtils.printToConsole("stageFinishedTimeInMili="+stageFinishedTimeInMili);
 		GeneralUtils.printToConsole("rebootTimeInMili="+rebootTimeInMili);
 		GeneralUtils.printToConsole("stageFinishedTimeInMili="+stageFinishedTimeInMili);
+		GeneralUtils.printToConsole("stageExpectedDuration="+stageExpectedDuration);
 		GeneralUtils.printToConsole("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 		String stageTimeStr = "--:--:--";
 		HtmlFieldColor severity = HtmlFieldColor.WHITE;

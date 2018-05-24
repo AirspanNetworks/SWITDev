@@ -705,7 +705,7 @@ public class Progression extends TestspanTest{
 					htmlTimelineTable[i].stageFinishedTimeInMili = htmlTimelineTable[i-1].stageFinishedTimeInMili + expectedDurationsAndStageNamesOrdered[i].getElement0();
 				}
 				addStageTimeToHtmlTable(htmlTimelineTable[i].stageName, htmlTimelineTable[i].rebootTimeInMili,
-					htmlTimelineTable[i].stageFinishedTimeInMili, htmlTimelineTable[i-1].stageFinishedTimeInMili, htmlTimelineTable[i].stageExpectedDuration, htmlTimelineTable[i].isStageCompleted);
+					htmlTimelineTable[i].stageFinishedTimeInMili, htmlTimelineTable[i-1].stageFinishedTimeInMili, expectedDurationsAndStageNamesOrdered[i].getElement0(), htmlTimelineTable[i].isStageCompleted);
 			}else{
 				saveStageTimeForHtmlTable(i, expectedDurationsAndStageNamesOrdered[i].getElement1(), rebootTime, htmlTimelineTable[i-1].stageFinishedTimeInMili + expectedDurationsAndStageNamesOrdered[i].getElement0(), expectedDurationsAndStageNamesOrdered[i].getElement0(), false);
 				addStageTimeToHtmlTable(expectedDurationsAndStageNamesOrdered[i].getElement1(), rebootTime, htmlTimelineTable[i-1].stageFinishedTimeInMili + expectedDurationsAndStageNamesOrdered[i].getElement0(), htmlTimelineTable[i-1].stageFinishedTimeInMili, expectedDurationsAndStageNamesOrdered[i].getElement0(), false);

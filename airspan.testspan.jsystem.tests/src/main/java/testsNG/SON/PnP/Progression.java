@@ -787,9 +787,9 @@ public class Progression extends TestspanTest{
 		
 		long timestamp = 0;
 		for(int i = 0; i < expectedDurationsAndStageNamesOrdered.length; i++){
+			timestamp+=expectedDurationsAndStageNamesOrdered[i].getElement0();
 			htmlTable.addField(HtmlFieldColor.WHITE, "Timestamp: " + timeInMiliToString(timestamp)
 						+ "<br />" + "Duration: " + timeInMiliToString(expectedDurationsAndStageNamesOrdered[i].getElement0()));
-			timestamp+=expectedDurationsAndStageNamesOrdered[i].getElement0();
 		}
 	}
 	

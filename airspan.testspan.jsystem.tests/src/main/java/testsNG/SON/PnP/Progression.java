@@ -705,7 +705,7 @@ public class Progression extends TestspanTest{
 					htmlTimelineTable[i].stageFinishedTimeInMili = htmlTimelineTable[i-1].stageFinishedTimeInMili + expectedDurationsAndStageNamesOrdered[i].getElement0();
 				}
 				addStageTimeToHtmlTable(htmlTimelineTable[i].stageName, htmlTimelineTable[i].rebootTimeInMili,
-					htmlTimelineTable[i].stageFinishedTimeInMili, htmlTimelineTable[i-1].stageFinishedTimeInMili, htmlTimelineTable[i].stageExpectedDuration, htmlTimelineTable[i].isStageCompleted);
+					htmlTimelineTable[i].stageFinishedTimeInMili, htmlTimelineTable[i-1].stageFinishedTimeInMili, expectedDurationsAndStageNamesOrdered[i].getElement0(), htmlTimelineTable[i].isStageCompleted);
 			}else{
 				saveStageTimeForHtmlTable(i, expectedDurationsAndStageNamesOrdered[i].getElement1(), rebootTime, htmlTimelineTable[i-1].stageFinishedTimeInMili + expectedDurationsAndStageNamesOrdered[i].getElement0(), expectedDurationsAndStageNamesOrdered[i].getElement0(), false);
 				addStageTimeToHtmlTable(expectedDurationsAndStageNamesOrdered[i].getElement1(), rebootTime, htmlTimelineTable[i-1].stageFinishedTimeInMili + expectedDurationsAndStageNamesOrdered[i].getElement0(), htmlTimelineTable[i-1].stageFinishedTimeInMili, expectedDurationsAndStageNamesOrdered[i].getElement0(), false);
@@ -721,6 +721,7 @@ public class Progression extends TestspanTest{
 		GeneralUtils.printToConsole("stageFinishedTimeInMili="+stageFinishedTimeInMili);
 		GeneralUtils.printToConsole("rebootTimeInMili="+rebootTimeInMili);
 		GeneralUtils.printToConsole("stageFinishedTimeInMili="+stageFinishedTimeInMili);
+		GeneralUtils.printToConsole("stageExpectedDuration="+stageExpectedDuration);
 		GeneralUtils.printToConsole("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 		String stageTimeStr = "--:--:--";
 		HtmlFieldColor severity = HtmlFieldColor.WHITE;
@@ -746,6 +747,7 @@ public class Progression extends TestspanTest{
 			GeneralUtils.printToConsole("stageFinishedTimeInMili="+stageFinishedTimeInMili);
 			GeneralUtils.printToConsole("rebootTimeInMili="+rebootTimeInMili);
 			GeneralUtils.printToConsole("stageFinishedTimeInMili="+stageFinishedTimeInMili);
+			GeneralUtils.printToConsole("stageExpectedDuration="+stageExpectedDuration);
 			GeneralUtils.printToConsole("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 		}
 		
@@ -785,9 +787,9 @@ public class Progression extends TestspanTest{
 		
 		long timestamp = 0;
 		for(int i = 0; i < expectedDurationsAndStageNamesOrdered.length; i++){
+			timestamp+=expectedDurationsAndStageNamesOrdered[i].getElement0();
 			htmlTable.addField(HtmlFieldColor.WHITE, "Timestamp: " + timeInMiliToString(timestamp)
 						+ "<br />" + "Duration: " + timeInMiliToString(expectedDurationsAndStageNamesOrdered[i].getElement0()));
-			timestamp+=expectedDurationsAndStageNamesOrdered[i].getElement0();
 		}
 	}
 	

@@ -209,7 +209,7 @@ public class AutoPCIBase extends TestspanTest {
 		revertToDefaultSonProfileAndDeleteClonedProfile(dut);
 		GeneralUtils.startLevel("Checking PCI value.");
 		Boolean isDefault = checkIfPciIsDefault();
-		if (!isDefault.equals(null)) {
+		if (isDefault != null) {
 			if (!isDefault) {
 				int initStatusPhysicalCellId = dut.getDefaultNetspanProfiles()
 						.getCellNetspanProfile(dut.getCellContextID()).getPci();

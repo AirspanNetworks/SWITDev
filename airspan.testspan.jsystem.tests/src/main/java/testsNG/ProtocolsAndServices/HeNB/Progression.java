@@ -139,7 +139,7 @@ public class Progression extends TestspanTest {
 	}
 
 	private boolean checkEnodeBEarfcn() {
-		if (dut1.getEarfcn() != dut2.getEarfcn()) {
+		if (!enodeBConfig.getEARFCNforNode(dut1).equals(enodeBConfig.getEARFCNforNode(dut2))) {
 			report.report("EnodeB frequences are diffrent in an Intra test. stopping test", Reporter.FAIL);
 			return false;
 		}
@@ -214,16 +214,25 @@ public class Progression extends TestspanTest {
 		return flag1 && flag2;
 	}
 	
-	private void fixMmesOrder(){
+	private boolean fixMmesOrder(){
 		HashMap<String, NetworkElementStatus> mmeStatuses = ((Netspan_15_5_abilities)netspanServer).getMMEStatuses(dut1);
 		NetworkElementStatus status1 = mmeStatuses.get(mme1.getS1IpAddress());
+		if (status1 == null) {
+			report.report("Failed to get MME Status for first MME with IP address: " + mme1.getS1IpAddress(), Reporter.FAIL);
+			return false;
+		}
 		NetworkElementStatus status2 = mmeStatuses.get(mme2.getS1IpAddress());
+		if (status2 == null) {
+			report.report("Failed to get MME Status for second MME with IP address: " + mme2.getS1IpAddress(), Reporter.FAIL);
+			return false;
+		}
 		MME temp;
 		if(status2.equals(NetworkElementStatus.ACTIVE)){
 			temp = mme1;
 			mme1 = mme2;
 			mme2 = temp;
 		}
+		return true;
 	}
 	
 	private boolean verifyMmesStatus(NetworkElementStatus mme1ExpectedStatus, NetworkElementStatus mme2ExpectedStatus){
@@ -249,7 +258,10 @@ public class Progression extends TestspanTest {
 	private boolean redundencyTest(){
 		dut1.expecteInServiceState = false;
 		GeneralUtils.startLevel("Redundency Test");
-		fixMmesOrder();
+		if(!fixMmesOrder())
+		{
+			return false;
+		}
 		printDebugData();
 		report.report("STEP 1: Get initial MME statuses");
 		NetworkElementStatus expectedStatus = henbGwEnabled == EnabledDisabledStates.ENABLED ? NetworkElementStatus.SCTP_ONLY : NetworkElementStatus.ACTIVE;

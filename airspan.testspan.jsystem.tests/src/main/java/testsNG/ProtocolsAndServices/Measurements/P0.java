@@ -270,9 +270,9 @@ public class P0 extends TestspanTest{
 		GeneralUtils.startLevel("Clone and set mobility profile");
 		if(tbg){
 			if(enhance){
-				action = setTBGEnableDual();				
+				action = setTBGEnable(true);				
 			}else{
-				action = setTBGEnable();				
+				action = setTBGEnable(false);				
 			}
 		}else{
 			action = setTBGDisable();
@@ -501,7 +501,7 @@ public class P0 extends TestspanTest{
 		report.reportHtml("db get anrcfg", dutInTest.lteCli("db get anrcfg"), true);
 		
 		GeneralUtils.startLevel("Clone and set mobility profile");
-		if(!setTBGDisable()){
+		if(!setTBGEnable(false)){
 			report.report("Failed to clone and set mobility profile",Reporter.FAIL);
 			reason = "Failed to clone and set mobility profile";
 			GeneralUtils.stopLevel();
@@ -825,7 +825,7 @@ public class P0 extends TestspanTest{
 		report.reportHtml("db get anrcfg", dutInTest.lteCli("db get anrcfg"), true);
 		
 		GeneralUtils.startLevel("Clone and set mobility profile");
-		if(!setTBGEnable()){
+		if(!setTBGEnable(false)){
 			report.report("Failed to clone and set mobility profile", Reporter.FAIL);
 			reason = "Failed to clone and set mobility profile";
 			GeneralUtils.stopLevel();
@@ -1312,7 +1312,7 @@ public class P0 extends TestspanTest{
 		report.reportHtml("db get anrcfg", dutInTest.lteCli("db get anrcfg"), true);
 		
 		GeneralUtils.startLevel("Clone and set mobility profile");
-		if(!setTBGEnable()){
+		if(!setTBGEnable(false)){
 			report.report("Failed to clone and set mobility profile", Reporter.FAIL);
 			reason = "Failed to clone and set mobility profile";
 			GeneralUtils.stopLevel();
@@ -2265,39 +2265,41 @@ public class P0 extends TestspanTest{
 		return false;
 	}
 
-	private boolean setTBGEnable(){
+	/**
+	 * 
+	 * @param dualMode
+	 * @return
+	 */
+	private boolean setTBGEnable(boolean dualMode){
 		MobilityParameters mobilityParams = new MobilityParameters();
 		mobilityParams.setThresholdBasedMeasurement(EnabledDisabledStates.ENABLED);
 		report.report("A1 threshold configured: "+stopGap);
 		mobilityParams.setStopGap(stopGap);
 		report.report("A2 threshold configured: "+startGap);
 		mobilityParams.setStartGap(startGap);
-		mobilityParams.setThresholdBasedMeasurementDual(false);
-		if(!enodeBConfig.cloneAndSetMobilityProfileViaNetSpan(dutInTest, dutInTest.getDefaultNetspanProfiles().getMobility(), mobilityParams)){
-			return false;
+		mobilityParams.setThresholdBasedMeasurementDual(dualMode);
+		int numOfCellsInNode = dutInTest.getNumberOfActiveCells();
+		while(numOfCellsInNode > 0) {
+			dutInTest.setCellContextNumber(numOfCellsInNode);
+			if(!enodeBConfig.cloneAndSetMobilityProfileViaNetSpan(dutInTest, dutInTest.getDefaultNetspanProfiles().getMobility(), mobilityParams)){
+				return false;
+			}
+			numOfCellsInNode--;
 		}
-		return true;
-	}
-	
-	private boolean setTBGEnableDual(){
-		MobilityParameters mobilityParams = new MobilityParameters();
-		mobilityParams.setThresholdBasedMeasurement(EnabledDisabledStates.ENABLED);
-		report.report("A1 threshold configured: "+stopGap);
-		mobilityParams.setStopGap(stopGap);
-		report.report("A2 threshold configured: "+startGap);
-		mobilityParams.setStartGap(startGap);
-		mobilityParams.setThresholdBasedMeasurementDual(true);
-		if(!enodeBConfig.cloneAndSetMobilityProfileViaNetSpan(dutInTest, dutInTest.getDefaultNetspanProfiles().getMobility(), mobilityParams)){
-			return false;
-		}
+		
 		return true;
 	}
 	
 	private boolean setTBGDisable(){
 		MobilityParameters mobilityParams = new MobilityParameters();
 		mobilityParams.setThresholdBasedMeasurement(EnabledDisabledStates.DISABLED);
-		if(!enodeBConfig.cloneAndSetMobilityProfileViaNetSpan(dutInTest, dutInTest.getDefaultNetspanProfiles().getMobility(), mobilityParams)){
-			return false;
+		int numOfCellsInNode = dutInTest.getNumberOfActiveCells();
+		while(numOfCellsInNode > 0) {
+			dutInTest.setCellContextNumber(numOfCellsInNode);
+			if(!enodeBConfig.cloneAndSetMobilityProfileViaNetSpan(dutInTest, dutInTest.getDefaultNetspanProfiles().getMobility(), mobilityParams)){
+				return false;
+			}
+			numOfCellsInNode--;
 		}
 		return true;
 	}
@@ -3252,7 +3254,7 @@ public class P0 extends TestspanTest{
 			
 			if(dutInTest!=null){
 				enodeBConfig.setProfile(dutInTest, EnbProfiles.Son_Profile, dutInTest.getDefaultNetspanProfiles().getSON());
-				enodeBConfig.setProfile(dutInTest, EnbProfiles.Mobility_Profile, dutInTest.getDefaultNetspanProfiles().getMobility());
+				revertMobilityProfiles(dutInTest);
 				if(flagNetwork){
 					enodeBConfig.setProfile(dutInTest, EnbProfiles.Network_Profile, dutInTest.getDefaultNetspanProfiles().getNetwork());
 					if(needsToReboot){
@@ -3290,6 +3292,15 @@ public class P0 extends TestspanTest{
 		super.end();
 	}
 	
+	private void revertMobilityProfiles(EnodeB dutInTest2) {
+		int numOfCells = dutInTest2.getNumberOfActiveCells();
+		while(numOfCells > 0) {
+			dutInTest2.setCellContextNumber(numOfCells);
+			enodeBConfig.setProfile(dutInTest2, EnbProfiles.Mobility_Profile, dutInTest2.getDefaultNetspanProfiles().getMobility());
+			numOfCells--;
+		}
+	}
+
 	//OTDOA TESTS
 	@Test
 	@TestProperties(name = "OTDOA1_BasicOperation", returnParam = {

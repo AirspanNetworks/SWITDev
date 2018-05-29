@@ -56,6 +56,8 @@ public class AmariSoftServer extends SystemObjectImpl{
 	public void init() throws Exception {
 		super.init();
 		port = 900 + sdrList[0];
+    	connect();
+
 	}
 	
 	public String getIp() {
@@ -98,8 +100,16 @@ public class AmariSoftServer extends SystemObjectImpl{
 		this.rxgain = Double.valueOf(rxgain);
 	}
 	
-	public String[] getImsiStartList() {
+	public String[] getSdrList() {
 		return sdrList;
+	}
+
+	public void setSdrList(String sdrList) {
+		this.sdrList = sdrList.split(",");
+	}
+	
+	public String[] getImsiStartList() {
+		return imsiStartList;
 	}
 
 	public void setImsiStartList(String imsiStartList) {
@@ -115,12 +125,11 @@ public class AmariSoftServer extends SystemObjectImpl{
 	} 
     
 	public static AmariSoftServer getInstance() throws Exception {
-		AmariSoftServer ns = (AmariSoftServer) SystemManagerImpl.getInstance().getSystemObject("AmariSoftServer");
+		AmariSoftServer ns = (AmariSoftServer) SystemManagerImpl.getInstance().getSystemObject("amariSoftServer");
 		return ns;
 	}
 	
-    private AmariSoftServer() { 
-    	connect();
+    public AmariSoftServer() { 
     }
 
     public boolean startServer(ArrayList<EnodeB> duts){
@@ -212,13 +221,6 @@ public class AmariSoftServer extends SystemObjectImpl{
 		}
 
 		return false;
-	}
-	
-	public void startTraffic(int rateKB, int port){		
-		for (int i = 1; i <= configObject.getUeList().size(); i++) {
-			sendCommands(sshTerminal, "ip netns exec ue"+i+" iperf -c 91.99."+i+".240 -i 5 -p 500"+port+" -t 99999 &","");
-		}		
-		//ip netns exec ue1 iperf -c 91.99.1.240 -u -b 3m  -i 5 -p 5009 -t 99999 
 	}
 		
 	public void sendRawCommand(Terminal terminal, String command){
@@ -393,6 +395,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 	}
 	
 	public void setConfig(ArrayList<EnodeB> duts) {
+		configObject = new ConfigObject();
 		configObject.setLogOptions("all.level=none,all.max_size=0");
 		configObject.setLogFilename("/tmp/ue0.log");
 		configObject.setComAddr("0.0.0.0:"+port);
@@ -421,6 +424,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 		configObject.setTxGain(txgain);
 		configObject.setRxGain(rxgain);
 		configObject.setMultiUe(true);
+		configObject.setRfDriver(new RfDriver());
 		configObject.getRfDriver().setName("sdr");
 		configObject.getRfDriver().setArgs(rfDriver);
 		ArrayList<UeList> ueLists = new ArrayList<UeList>();

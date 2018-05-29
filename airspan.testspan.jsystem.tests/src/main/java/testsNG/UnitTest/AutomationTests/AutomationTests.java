@@ -21,9 +21,9 @@ public class AutomationTests extends TestspanTest{
 
 	@Override
 	public void init() throws Exception {
-		enbInTest = new ArrayList<EnodeB>();
-		enbInTest.add(dut);
-		super.init();
+		//enbInTest = new ArrayList<EnodeB>();
+		//enbInTest.add(dut);
+		//super.init();
 	}
 	
 	@Test
@@ -117,14 +117,14 @@ public class AutomationTests extends TestspanTest{
 		GeneralUtils.printToConsole("getIp: " + as.getIp());
 		GeneralUtils.printToConsole("getusername: " + as.getusername());
 		
-		
+		as.startServer(duts);
 		report.report("Finished amarisoft test.");		
 	}
 	
-	@ParameterProperties(description = "First DUT")
-	public void setDUTs(String dut) {
-		GeneralUtils.printToConsole("Load DUT1 " + dut);
-        this.duts = (ArrayList<EnodeB>) SysObjUtils.getInstnce().initSystemObject(EnodeB.class, false, dut.split(","));
+	@ParameterProperties(description = "DUTs")
+	public void setDUTs(String duts) {
+		GeneralUtils.printToConsole("Load DUTs " + duts);
+        this.duts = (ArrayList<EnodeB>) SysObjUtils.getInstnce().initSystemObject(EnodeB.class, false, duts.split(","));
 	}
 }
 

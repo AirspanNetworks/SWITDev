@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import EnodeB.EnodeB;
+import UE.AmarisoftUE;
 import UeSimulator.Amarisoft.JsonObjects.Actions.UEAction;
 import UeSimulator.Amarisoft.JsonObjects.Actions.UEAction.Actions;
 import UeSimulator.Amarisoft.JsonObjects.ConfigFile.*;
@@ -439,6 +440,8 @@ public class AmariSoftServer extends SystemObjectImpl{
 		ueList.setK("5C95978B5E89488CB7DB44381E237809");
 		ueList.setOp("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
 		ueList.setTunSetupScript("ue-ifup");
+		AmarisoftUE ue= new AmarisoftUE(1, this);
+		
 		ueLists.add(ueList);
 		configObject.setUeList(ueLists);
 		setConfigFile("automationConfiguration");

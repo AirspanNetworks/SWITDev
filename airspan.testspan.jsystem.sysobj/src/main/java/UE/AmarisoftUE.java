@@ -15,6 +15,12 @@ public class AmarisoftUE extends UE{
 		super("AmarisoftUE");
 	}
 	
+	public AmarisoftUE(int ueId, AmariSoftServer server) {
+		this();
+		this.ueId = ueId;
+		this.server = server;
+	}
+	
 	@Override
 	public void init() throws Exception {
 		super.init();

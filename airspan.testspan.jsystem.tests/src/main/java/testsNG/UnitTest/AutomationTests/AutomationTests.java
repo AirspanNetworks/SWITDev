@@ -1,5 +1,6 @@
 package testsNG.UnitTest.AutomationTests;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.junit.Test;
@@ -13,11 +14,13 @@ import jsystem.framework.ParameterProperties;
 import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
 import testsNG.TestspanTest;
+import testsNG.Actions.Utils.ParallelCommandsThread;
 
 public class AutomationTests extends TestspanTest{
     
 	private ArrayList<EnodeB> duts;
-	private EnodeB dut;	
+	private EnodeB dut;
+	private ParallelCommandsThread commandsThread1;	
 
 	@Override
 	public void init() throws Exception {
@@ -59,6 +62,50 @@ public class AutomationTests extends TestspanTest{
 		
 		report.report("Finished no test.");
 		
+	}
+	
+	@Test
+	@TestProperties(name = "noTest", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {"IsTestWasSuccessful" })
+	public void logTest() throws Exception {
+		report.report("Start logTest test.");
+		
+		
+		commands();
+		GeneralUtils.unSafeSleep(1*1*60*1000);
+		stopCommandsAndAttachFiles();
+		
+		report.report("Finished logTest test.");
+		
+	}
+	
+	public void commands() {
+
+		ArrayList<String> commands = new ArrayList<>();
+		commands.add("ue show link");
+		commands.add("system show memory");
+		commands.add("system show memdbg bucket=0 leaks=10");
+		commands.add("system show memdbg bucket=1 leaks=10");
+		commands.add("system show memdbg bucket=2 leaks=10");
+		commands.add("system show memdbg bucket=3 leaks=10");
+		commands.add("system show memdbg bucket=4 leaks=10");
+		commands.add("system show memdbg bucket=5 leaks=10");
+		commands.add("system show memdbg bucket=6 leaks=10");
+		commands.add("system show memdbg bucket=7 leaks=10");
+		commands.add("system show memdbg bucket=8 leaks=10");
+
+		
+		try {
+			commandsThread1 = new ParallelCommandsThread(commands, dut, null, null);
+		} catch (IOException e) {
+			report.report("could not init Commands in parallel", Reporter.WARNING);
+		}
+		commandsThread1.start();
+
+	}
+
+	private void stopCommandsAndAttachFiles(){
+		commandsThread1.stopCommands();
+		commandsThread1.moveFileToReporterAndAddLink();
 	}
 	
 	@Test
@@ -121,11 +168,11 @@ public class AutomationTests extends TestspanTest{
 		report.report("Finished amarisoft test.");		
 	}
 	
-	@ParameterProperties(description = "DUTs")
-	public void setDUTs(String duts) {
-		GeneralUtils.printToConsole("Load DUTs " + duts);
-        this.duts = (ArrayList<EnodeB>) SysObjUtils.getInstnce().initSystemObject(EnodeB.class, false, duts.split(","));
-	}
+//	@ParameterProperties(description = "DUTs")
+//	public void setDUTs(String duts) {
+//		GeneralUtils.printToConsole("Load DUTs " + duts);
+//        this.duts = (ArrayList<EnodeB>) SysObjUtils.getInstnce().initSystemObject(EnodeB.class, false, duts.split(","));
+//	}
 }
 
 

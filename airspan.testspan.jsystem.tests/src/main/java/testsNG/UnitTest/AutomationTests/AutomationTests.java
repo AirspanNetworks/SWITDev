@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import EnodeB.EnodeB;
 import EnodeB.Components.EnodeBComponent;
+import UeSimulator.Amarisoft.AmariSoftServer;
 import Utils.GeneralUtils;
 import Utils.SysObjUtils;
 import jsystem.framework.ParameterProperties;
@@ -99,6 +100,24 @@ public class AutomationTests extends TestspanTest{
 	public void setDUT(String dut) {
 		ArrayList<EnodeB> temp=(ArrayList<EnodeB>)SysObjUtils.getInstnce().initSystemObject(EnodeB.class,false,dut);
 		this.dut = temp.get(0);
+	}
+	
+	@Test
+	@TestProperties(name = "amarisoft", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {"IsTestWasSuccessful" })
+	public void amarisoft() throws Exception {
+		report.report("Start amarisoft test.");
+		
+		AmariSoftServer as = AmariSoftServer.getInstance();
+		GeneralUtils.printToConsole("getImsiStartList: " + as.getImsiStartList());
+		GeneralUtils.printToConsole("getPassword: " + as.getPassword());
+		GeneralUtils.printToConsole("getRxgain: " + as.getRxgain());
+		GeneralUtils.printToConsole("getTxgain: " + as.getTxgain());
+		GeneralUtils.printToConsole("getImsiStopList: " + as.getImsiStopList());
+		GeneralUtils.printToConsole("getIp: " + as.getIp());
+		GeneralUtils.printToConsole("getusername: " + as.getusername());
+
+		
+		report.report("Finished amarisoft test.");		
 	}
 }
 

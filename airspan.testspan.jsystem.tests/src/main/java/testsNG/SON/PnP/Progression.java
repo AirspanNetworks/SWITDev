@@ -115,7 +115,7 @@ public class Progression extends TestspanTest{
 			}
 		}
 		htmlTable = new HtmlTable();
-		htmlTable.addNewRow("Timeline");
+		
 		//startParallelCommands(dut);
 	}
 
@@ -690,13 +690,21 @@ public class Progression extends TestspanTest{
 		}
 	}
 	
-	private void addAllStagesTimeToHtmlTableAndPrintHtmlTable(int timelineStageIndex, long rebootTime) {
-		addAllStagesTimeToHtmlTable(timelineStageIndex, rebootTime);
+	private void addAllStagesTimeToHtmlTableAndPrintHtmlTable(int timelineStageIndex, long rebootTime) {//htmlTable.addNewColumn(stageName);
+		addStageNamesToHtmlTable(timelineStageIndex);
 		addRowExpectedHtmlTimeline(htmlTable);
+		addAllStagesTimeToHtmlTable(timelineStageIndex, rebootTime);
 		htmlTable.reportTable("");
 	}
 	
+	private void addStageNamesToHtmlTable(int tableSize){
+		for(int i = 0; i < tableSize; i++){
+			htmlTable.addNewColumn(expectedDurationsAndStageNamesOrdered[i].getElement1());
+		}
+	}
+	
 	private void addAllStagesTimeToHtmlTable(int tableSize, long rebootTime){
+		htmlTable.addNewRow("Actual Timeline"); 
 		addStageTimeToHtmlTable(htmlTimelineTable[0].stageName, htmlTimelineTable[0].rebootTimeInMili+1000,
 				htmlTimelineTable[0].stageFinishedTimeInMili+1000, htmlTimelineTable[0].stageFinishedTimeInMili, 2000, htmlTimelineTable[0].isStageCompleted);
 		for(int i = 1; i < tableSize; i++){
@@ -764,8 +772,7 @@ public class Progression extends TestspanTest{
 			severity = HtmlFieldColor.YELLOW;
 		}
 	
-		htmlTable.addNewColumn(stageTimeStr);
-		htmlTable.addField(severity, stageName);
+		htmlTable.addField(severity, stageTimeStr);
 		return true;
 	}
 	

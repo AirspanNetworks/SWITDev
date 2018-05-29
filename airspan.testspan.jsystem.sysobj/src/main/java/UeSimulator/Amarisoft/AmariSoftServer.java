@@ -12,19 +12,17 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.WebSocketContainer;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import EPC.EPC;
 import EnodeB.EnodeB;
-import Netspan.NetspanServer;
-import UE.UeListener;
-import UE.UeState;
 import UeSimulator.Amarisoft.JsonObjects.Actions.UEAction;
 import UeSimulator.Amarisoft.JsonObjects.Actions.UEAction.Actions;
 import UeSimulator.Amarisoft.JsonObjects.ConfigFile.*;
-import Utils.GeneralUtils;
+import UeSimulator.Amarisoft.JsonObjects.Status.UeStatus;
 import jsystem.framework.system.SystemManagerImpl;
 import jsystem.framework.system.SystemObjectImpl;
 import systemobject.terminal.SSH;
@@ -53,7 +51,6 @@ public class AmariSoftServer extends SystemObjectImpl{
     private String[] sdrList;
     private String[] imsiStartList;
     private String[] imsiStopList;
-    private EnodeB[] EnodeBList;
 
     @Override
 	public void init() throws Exception {
@@ -123,10 +120,12 @@ public class AmariSoftServer extends SystemObjectImpl{
 	}
 	
     private AmariSoftServer() { 
+    	connect();
     }
 
-    public boolean startServer(){
-    	return startServer("automationDefaultFile");
+    public boolean startServer(ArrayList<EnodeB> duts){
+    	setConfig(duts);
+    	return startServer("automationConfiguration");
     }
     
     public boolean startServer(String configFile){
@@ -143,7 +142,7 @@ public class AmariSoftServer extends SystemObjectImpl{
             System.out.println(container.getDefaultMaxBinaryMessageBufferSize());
             System.out.println(container.getDefaultMaxSessionIdleTimeout());
             System.out.println(container.getDefaultMaxTextMessageBufferSize());
-            
+            startMessageHandler();
         } catch (Exception e) {
             System.out.println("Failed starting server with config file: " + ueConfigFileName);
             System.out.println(e.getMessage());
@@ -151,8 +150,38 @@ public class AmariSoftServer extends SystemObjectImpl{
         }
     	return true;
     }
-	
 
+	private void startMessageHandler() {
+		addMessageHandler(new AmariSoftServer.MessageHandler() {
+			public void handleMessage(String message) {
+				System.out.println("Message recieved: " + message);
+				ObjectMapper mapper = new ObjectMapper();
+
+				// Convert JSON string to Object
+				UeStatus stat = null;
+				try {
+					stat = mapper.readValue(message, UeStatus.class);
+					Double ulRate = stat.getUeList().get(0).getUlBitrate() / 1000;
+					Double dlRate = stat.getUeList().get(0).getDlBitrate() / 1000;
+					String emmState = stat.getUeList().get(0).getEmmState();
+					int ueID = stat.getUeList().get(0).getUeId();
+					System.out.println("UE ID: " + ueID + "\tulRate (kbit): " + ulRate.intValue() + "\tdlRate (kbit): "
+							+ dlRate.intValue() + "\temmState:" + emmState);
+
+				} catch (JsonParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (JsonMappingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+		});
+	}
 
 	public void closeSocket() {
 		
@@ -285,6 +314,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 	public void setConfigFile(String fileName) {
 		ueConfigFileName = fileName;
 	}
+	
 	public void writeConfigFile() {
 		ObjectMapper mapper = new ObjectMapper();
     	mapper.configure(SerializationFeature.INDENT_OUTPUT, false);
@@ -362,16 +392,19 @@ public class AmariSoftServer extends SystemObjectImpl{
 		return true;
 	}
 	
-	public void setConfig() {
+	public void setConfig(ArrayList<EnodeB> duts) {
+		configObject.setLogOptions("all.level=none,all.max_size=0");
+		configObject.setLogFilename("/tmp/ue0.log");
+		configObject.setComAddr("0.0.0.0:"+port);
 		ArrayList<Cell> cells = new ArrayList<Cell>();
 		String rfDriver = "";
 		for (int i = 0; i < sdrList.length; i++) {
 			Cell cell = new Cell();
 			int earfcn;
-			if (EnodeBList.length > i) 
-				earfcn = EnodeBList[i].getEarfcn();			
+			if (duts.size() > i) 
+				earfcn = duts.get(i).getEarfcn();			
 			else
-				earfcn = EnodeBList[EnodeBList.length-1].getEarfcn();
+				earfcn = duts.get(duts.size()-1).getEarfcn();
 			cell.setDlEarfcn(earfcn);
 			cell.setNAntennaDl(2);
 			cell.setNAntennaUl(1);
@@ -383,14 +416,13 @@ public class AmariSoftServer extends SystemObjectImpl{
 		if( ind>=0 )
 			rfDriver = new StringBuilder(rfDriver).replace(ind, ind+1,"").toString();
 		System.out.println("rfDriver String: " + rfDriver);
-		configObject.setBandwidth(20);
+		configObject.setBandwidth(duts.get(0).getBandwidth().getBw());
 		configObject.setCells(cells);
-		configObject.getRfDriver().setArgs("dev0=/dev/sdr0,dev1=/dev/sdr1");
-		ArrayList<SimEvent> simEvents = new ArrayList<SimEvent>();
-		SimEvent simEvent = new SimEvent();
-		simEvent.setEvent("power_on");
-		simEvent.setStartTime(0);
-		simEvents.add(simEvent);
+		configObject.setTxGain(txgain);
+		configObject.setRxGain(rxgain);
+		configObject.setMultiUe(true);
+		configObject.getRfDriver().setName("sdr");
+		configObject.getRfDriver().setArgs(rfDriver);
 		ArrayList<UeList> ueLists = new ArrayList<UeList>();
 		UeList ueList = new UeList();
 		ueList.setAsRelease(13);
@@ -403,7 +435,6 @@ public class AmariSoftServer extends SystemObjectImpl{
 		ueList.setK("5C95978B5E89488CB7DB44381E237809");
 		ueList.setOp("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
 		ueList.setTunSetupScript("ue-ifup");
-		ueList.setSimEvents(simEvents);
 		ueLists.add(ueList);
 		configObject.setUeList(ueLists);
 		setConfigFile("automationConfiguration");

@@ -15,7 +15,8 @@ import jsystem.framework.report.Reporter;
 import testsNG.TestspanTest;
 
 public class AutomationTests extends TestspanTest{
-
+    
+	private ArrayList<EnodeB> duts;
 	private EnodeB dut;	
 
 	@Override
@@ -115,9 +116,15 @@ public class AutomationTests extends TestspanTest{
 		GeneralUtils.printToConsole("getImsiStopList: " + as.getImsiStopList());
 		GeneralUtils.printToConsole("getIp: " + as.getIp());
 		GeneralUtils.printToConsole("getusername: " + as.getusername());
-
+		
 		
 		report.report("Finished amarisoft test.");		
+	}
+	
+	@ParameterProperties(description = "First DUT")
+	public void setDUTs(String dut) {
+		GeneralUtils.printToConsole("Load DUT1 " + dut);
+        this.duts = (ArrayList<EnodeB>) SysObjUtils.getInstnce().initSystemObject(EnodeB.class, false, dut.split(","));
 	}
 }
 

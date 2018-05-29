@@ -44,11 +44,11 @@ public class Program {
 //		} // start server
 		//clientEndPoint = new AmariSoftServer("192.168.58.91", "9002", "root", "SWITswit");
 
-		clientEndPoint.setConfig();
+		//clientEndPoint.setConfig();
 		//clientEndPoint.setConfigFile("1UE_CA_UDP_SWIT24");
 		try
 		{
-		clientEndPoint.startServer();
+		//clientEndPoint.startServer();
 		
 		
 		//sleep(20000);

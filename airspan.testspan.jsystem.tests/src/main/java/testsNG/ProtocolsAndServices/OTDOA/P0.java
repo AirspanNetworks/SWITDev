@@ -175,6 +175,70 @@ public class P0 extends OtdoaBase {
 	}
 	
 	@Test
+	@TestProperties(name = "lppa Message via IPG and netspan RRC Connection ReConf start Counter", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {"DUT2",
+			"IsTestWasSuccessful" })
+	public void lppa_Message_via_IPG_and_RRC_Connection_Reconfiguration_Start_Counter() {
+		boolean ipgEnable = true;
+		Boolean firstCellOtdoa = true;
+		Boolean secondCellOtdoa = null;
+		
+		//All Types of EnodeB
+		preTestIPGTests(ipgEnable);
+		setNetworkWithNetspan(dut);
+				
+		//Multi Cell - disable all cells OTDOA abilities and change cell to 1
+		if(enodeBConfig.getNumberOfActiveCells(dut) > 1){
+			report.report("Disable OTDOA for cell 2");
+			dut.setCellContextNumber(2);
+			setRadioWithNetspan(dut,false,null,false,null,null,null,null,null,null,null,null,null,null);
+			dut.setCellContextNumber(1);
+			secondCellOtdoa = false;
+			}
+		
+		//basic configuration for Netspan to enable OTDOA.
+		report.report("Enable OTDOA for cell 1");
+		setRadioWithNetspan(dut, true, 1000, true, "4",PRSBandWidthEnum.FIFTEEN , PRSPeriodiclyEnum.THREE_HUNDRED_TWENTY, 0, 9000, PRSMutingPeriodiclyEnum.SIXTEE, "1111111111111111", null,null, null);
+		rebootNode(dut);
+		verifyOTDOASnmp(CellIndex.FORTY,firstCellOtdoa,CellIndex.FORTY_ONE,secondCellOtdoa);
+		
+		resetCounter("OtdoaRrcConnectionReconfigStart");
+		sendLPPCommandWithIPG(ipg);
+		checkCounter("OtdoaRrcConnectionReconfigStart",1);	
+	}
+	
+	@Test
+	@TestProperties(name = "lppa Message via IPG and netspan RRC Connection ReConf stop Counter", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {"DUT2",
+			"IsTestWasSuccessful" })
+	public void lppa_Message_via_IPG_and_RRC_Connection_Reconfiguration_Stop_Counter() {
+		boolean ipgEnable = true;
+		Boolean firstCellOtdoa = true;
+		Boolean secondCellOtdoa = null;
+		
+		//All Types of EnodeB
+		preTestIPGTests(ipgEnable);
+		setNetworkWithNetspan(dut);
+				
+		//Multi Cell - disable all cells OTDOA abilities and change cell to 1
+		if(enodeBConfig.getNumberOfActiveCells(dut) > 1){
+			report.report("Disable OTDOA for cell 2");
+			dut.setCellContextNumber(2);
+			setRadioWithNetspan(dut,false,null,false,null,null,null,null,null,null,null,null,null,null);
+			dut.setCellContextNumber(1);
+			secondCellOtdoa = false;
+			}
+		
+		//basic configuration for Netspan to enable OTDOA.
+		report.report("Enable OTDOA for cell 1");
+		setRadioWithNetspan(dut, true, 1000, true, "4",PRSBandWidthEnum.FIFTEEN , PRSPeriodiclyEnum.THREE_HUNDRED_TWENTY, 0, 9000, PRSMutingPeriodiclyEnum.SIXTEE, "1111111111111111", null,null, null);
+		rebootNode(dut);
+		verifyOTDOASnmp(CellIndex.FORTY,firstCellOtdoa,CellIndex.FORTY_ONE,secondCellOtdoa);
+		
+		resetCounter("OtdoaRrcConnectionReconfigStop");
+		sendLPPCommandWithIPG(ipg);
+		checkCounter("OtdoaRrcConnectionReconfigStop",1);	
+	}
+	
+	@Test
 	@TestProperties(name = "lppa Message While OTDOA disable", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {"DUT2",
 			"IsTestWasSuccessful" })
 	public void lppa_Message_While_OTDOA_disable(){

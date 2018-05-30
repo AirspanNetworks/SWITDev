@@ -633,7 +633,7 @@ public class OtdoaBase extends TestspanTest{
 		try{
 			HashMap <String,Variable> a = dut.getUEShowLinkTable();
 			if(a.isEmpty()) {
-				report.report("could not get UE Show link table with SNMP!");
+				report.report("no UEs shown in 'ue show link' table");
 			}
 			for(String key : a.keySet()){
 				if(key.contains("1.3.6.1.4.1.989.1.20.1.4.75.1.1.0")){

@@ -3254,7 +3254,22 @@ public abstract class XLP extends EnodeBComponent {
 		String oid = MibReader.getInstance().resolveByName("asLteStkCellPosMeasCfgPrsBandwidth");
 		try{
 			String result = snmp.get(oid);
-			return Integer.valueOf(result);
+			switch(result) {
+			case "0":
+				return 6;
+			case "1":
+				return 15;
+			case "2":
+				return 25;
+			case "3":
+				return 50;
+			case "4":
+				return 75;
+			case "5":
+				return 100;
+			default:
+				return Integer.parseInt(result);
+			}
 		}catch(Exception e){
 			e.printStackTrace();
 			return GeneralUtils.ERROR_VALUE;

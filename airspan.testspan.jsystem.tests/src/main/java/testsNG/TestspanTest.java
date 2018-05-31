@@ -233,16 +233,13 @@ public class TestspanTest extends SystemTestCase4 {
 				if (debugFtpServer.addressType.equals("1")) 					
 					eNodeB.snmpSet(oid, debugFtpServer.getDebugFtpServerIP());			
 				else{					
-					eNodeB.snmpSet(oid, ""); // set ipv4 field empty.
-					oid = MibReader.getInstance().resolveByName("asLteStkDebugFtpServerCfgFtpServerIp");
-					eNodeB.snmpSet(oid, debugFtpServer.getDebugFtpServerIP());
-					
+					eNodeB.snmpSet(oid, ""); // set ipv4 field empty.					
 				}
 				
 				oid = MibReader.getInstance().resolveByName("asLteStkDebugFtpServerCfgFtpAddress");
 
-				byte[] ipAddr = InetAddressesHelper.ipStringToBytes(debugFtpServer.getDebugFtpServerIP());
-				eNodeB.snmpSet(oid, ipAddr);
+				//byte[] ipAddr = InetAddressesHelper.ipStringToBytes(debugFtpServer.getDebugFtpServerIP());
+				eNodeB.snmpSet(oid, debugFtpServer.getDebugFtpServerIP());
 
 				oid = MibReader.getInstance().resolveByName("asLteStkDebugFtpServerCfgFtpUser");
 				eNodeB.snmpSet(oid, debugFtpServer.getDebugFtpServerUser());

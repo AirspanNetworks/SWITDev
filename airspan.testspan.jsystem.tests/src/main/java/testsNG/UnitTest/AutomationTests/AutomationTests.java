@@ -24,6 +24,7 @@ public class AutomationTests extends TestspanTest{
 
 	@Override
 	public void init() throws Exception {
+		report.report("Init!");
 		enbInTest = new ArrayList<EnodeB>();
 		enbInTest.add(dut);
 		super.init();

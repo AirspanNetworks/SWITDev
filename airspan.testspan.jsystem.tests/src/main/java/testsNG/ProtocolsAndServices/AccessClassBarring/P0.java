@@ -84,6 +84,8 @@ public class P0 extends TestspanTest {
 		}
 		if(!isUEConneted)
 			report.report("There are no UEs connected to enodeB " + dut.getName() + " as expected");
+		report.reportHtml("UE show Link ("+dut.getName() + ")", dut.lteCliWithResponse("ue show link", "lte_cli:>>"), true);
+		report.reportHtml("UE show Rate ("+dut.getName() + ")", dut.lteCliWithResponse("ue show rate", "lte_cli:>>"), true);
 		report.report("Changing the cell barred value back to NOT BARRED");
 		cb.cellBarringPolicy = CellBarringPolicies.NOT_BARRED;
 		for (int i = 1; i <= numOfCells; i++) {
@@ -108,7 +110,8 @@ public class P0 extends TestspanTest {
 		}
 		if(!isUEConneted)
 			report.report("There are no UEs connected to enodeB " + dut.getName() , Reporter.WARNING);
-		
+		report.reportHtml("UE show Link ("+dut.getName() + ")", dut.lteCliWithResponse("ue show link", "lte_cli:>>"), true);
+		report.reportHtml("UE show Rate ("+dut.getName() + ")", dut.lteCliWithResponse("ue show rate", "lte_cli:>>"), true);
 		GeneralUtils.startLevel("Stop Traffic");
 			traffic.stopTraffic();
 		GeneralUtils.stopLevel();

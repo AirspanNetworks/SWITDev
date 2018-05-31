@@ -24,9 +24,9 @@ public class AutomationTests extends TestspanTest{
 
 	@Override
 	public void init() throws Exception {
-		//enbInTest = new ArrayList<EnodeB>();
-		//enbInTest.add(dut);
-		//super.init();
+		enbInTest = new ArrayList<EnodeB>();
+		enbInTest.add(dut);
+		super.init();
 	}
 	
 	@Test
@@ -65,13 +65,13 @@ public class AutomationTests extends TestspanTest{
 	}
 	
 	@Test
-	@TestProperties(name = "noTest", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {"IsTestWasSuccessful" })
+	@TestProperties(name = "logTest", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {"IsTestWasSuccessful" })
 	public void logTest() throws Exception {
 		report.report("Start logTest test.");
 		
 		
 		commands();
-		GeneralUtils.unSafeSleep(1*1*60*1000);
+		GeneralUtils.unSafeSleep(12*60*60*1000);
 		stopCommandsAndAttachFiles();
 		
 		report.report("Finished logTest test.");

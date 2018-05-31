@@ -8,6 +8,7 @@ public class DebugFtpServer extends SystemObjectImpl{
 	private String debugFtpServerIP;
 	private String debugFtpServerUser;
 	private String debugFtpServerPassword;
+	public String addressType = "1";
 	
 	public DebugFtpServer(){
 		debugFtpServerIP="100.100.0.70";
@@ -30,6 +31,12 @@ public class DebugFtpServer extends SystemObjectImpl{
 		return debugFtpServerIP;
 	}
 	public void setDebugFtpServerIP(String debugFtpServerIP) {
+		if (debugFtpServerIP.contains(":")) {
+			addressType = "2";
+			if (!debugFtpServerIP.contains("[")) {
+				debugFtpServerIP= "[" + debugFtpServerIP + "]";
+			}
+		}		
 		this.debugFtpServerIP = debugFtpServerIP;
 	}
 	public String getDebugFtpServerUser() {

@@ -61,6 +61,10 @@ public class P0 extends TPTBase{
 	protected HashMap<String,Double> streamsSum;
 	protected HashMap<String,Integer> streamsCounter;
 		
+	protected ArrayList<ArrayList<StreamParams>> streamsForPriorityTest = new ArrayList<ArrayList<StreamParams>>();
+	protected ArrayList<Long> priorityTestFirstResult;
+	protected ArrayList<Long> priorityTestSecondResult;
+	
 	protected String shortTerm = CounterUnit.SHORT_TERM_AVG_LATENCY.value;
 	protected String rfcAvgJitter = CounterUnit.RFC_4689_ABSOLUTE_AVG_JITTER.value;
 	protected String avgJitter = CounterUnit.AVG_JITTER.value;
@@ -162,7 +166,7 @@ public class P0 extends TPTBase{
 		ueNameListStc = convertUeToNamesList(ueList);
 		preTestVolte();
 		TestProcess();
-		afterTestVolte(TPT_THRESHOLD_PRECENT);
+		afterTestVolte(TPT_THRESHOLD_PRECENT,false);
 	}
 	
 	@Test
@@ -349,6 +353,243 @@ public class P0 extends TPTBase{
 			setMaxVolteCallAndReboot(volteOriginal);
 			GeneralUtils.stopLevel();			
 		}
+	}
+	
+	@Test
+	@TestProperties(name = "VoLTE - PtP Call priority over Data", returnParam = { "IsTestWasSuccessful" }, paramsInclude = {"DUT"})
+	public void VoLTE_PtP_Call_priority_Over_Data(){
+		setRuntime(1);
+		setTotalUEsPerCell(1);
+		setUdpDataLoad(105);
+		setQci1_5PacketSize(82);
+		setQci1LoadInFps(50);
+		setQci5LoadInKbps(20);
+		
+		testName = "VoLTE_PtP_Call_priority_Over_Data";
+		streamsMode = "PTP";
+		packetSize = qci1_5PacketSize;
+		TEST_TIME_MILLIS = (long) (runtime*60*1000);
+		qci.add('9');
+		GeneralUtils.printToConsole(dut.getName() + " " + dut.getNetspanName());
+		ueList = getUES(dut);
+		if(ueList.size()<2){
+			report.report("Minimum of 2 UEs is needed for test",Reporter.FAIL);
+			reason = "Minimum of 2 UEs is needed for test";
+			return;
+		}
+		ueNameListStc = convertUeToNamesList(ueList);
+		preTestVolte();
+		TestProcessCallPriorityOverDataTest();
+		afterTestVolte(TPT_THRESHOLD_PRECENT, true);			
+	}
+	
+	protected void TestProcessCallPriorityOverDataTest() {
+		while (testIsNotDoneStatus) {
+			resetParams();
+			try {
+				if(!startTrafficAndSampleCallPriorityOverDataTest()){
+					testIsNotDoneStatus = false;
+					resetTestBol = false;
+					exceptionThrown = true;
+					GeneralUtils.stopAllLevels();
+					qci = new ArrayList<Character>();
+					qci.add('9');
+				}
+			} catch (Exception e) {
+				report.report("Stopping Parallel Commands From Java Exception");
+				testIsNotDoneStatus = false;
+				resetTestBol = false;
+				exceptionThrown = true;
+				reason = "network connection Error";
+				report.report(e.getMessage() + " caused Test to stop", Reporter.FAIL);
+				e.printStackTrace();
+				GeneralUtils.stopAllLevels(); 
+			}
+			if (resetTestBol) {
+				numberOfResets++;
+				if(syncCommands != null){
+					report.report("Stopping Parallel Commands");
+					syncCommands.stopCommands();
+				}
+				makeThreadObjectFinish();
+				if(syncCommands != null){
+					report.report("Commands File Path: " + syncCommands.getFile());					
+				}
+				testIsNotDoneStatus = true;
+				try {
+					if(syncCommands != null){
+						syncCommands.moveFileToReporterAndAddLink();
+					}
+					report.report("Stopping Traffic");
+					trafficSTC.stopTraffic();
+					report.report("Resetting test", Reporter.WARNING);
+					reason = "reset Test because of stream halt";
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		if (numberOfResets >= 3) {
+			// using this flag in order to NOT print results.
+			testIsNotDoneStatus = false;
+			printResultsForTest = false;
+			report.report("Test Was Reseted Too many times because of more then " + PRECENT_OF_UE_RESET + "%"
+					+ " Of the Streams are in Halt - check Setup", Reporter.FAIL);
+			reason = "Test Was Restarted Too many Times due to Traffic halt";
+		}
+		try {
+			syncCommands.stopCommands();
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		makeThreadObjectFinish();
+		try {
+			syncCommands.moveFileToReporterAndAddLink();
+		} catch (Exception e) {
+			report.report("Exception in ReporterHelper.copyFileToReporterAndAddLink could not attach Command File");
+			e.printStackTrace();
+		}
+	}
+	
+	protected boolean startTrafficAndSampleCallPriorityOverDataTest() throws Exception{
+		if(!startTrafficInTest()){
+			return false;
+		}
+		if(!helperStartTrafficAndSamplePriorityOverDataTest(false)){
+			return true;
+		}
+		enableAditionalStreamsForUEPriorityOverDataTest();
+		setLoadPerStreamPriorityOverDataTest();
+		priorityTestFirstResult = getUlDlResultsFromList(streamsForPriorityTest,false);
+		streamsForPriorityTest = null;
+		streamsForPriorityTest = new ArrayList<ArrayList<StreamParams>>();
+
+		trafficSTC.saveConfigFileAndStart();
+		report.report("Wait 10 seconds for traffic of second UE to stabilize");
+		GeneralUtils.unSafeSleep(10*1000);
+		if(wdActiveUesQci1!=null){
+			wd.removeCommand(wdActiveUesQci1);			
+		}
+		wdActiveUesQci1 = new CommandWatchActiveUEsNmsTable(dut,ueNameListStc.size(),'1',true);
+		wd.addCommand(wdActiveUesQci1);		
+		startingTestTime = System.currentTimeMillis();
+		if(!helperStartTrafficAndSamplePriorityOverDataTest(true)){
+			return true;
+		}
+		priorityTestSecondResult = getUlDlResultsFromList(streamsForPriorityTest,false);
+		return true;
+	}
+	
+	private boolean helperStartTrafficAndSamplePriorityOverDataTest(boolean closeLevel){
+		startingTestTime = System.currentTimeMillis();
+		while (System.currentTimeMillis() - startingTestTime <= TEST_TIME_MILLIS) {
+			sampleResultsStatusOk();
+	
+			if (restartTime) {
+				startingTestTime = System.currentTimeMillis();
+			}
+
+			// if exception thrown = Connection closed -> stop test!
+			if (exceptionThrown) {
+				if(reason == ""){
+					reason = "TRAFFIC ERROR";
+				}
+				
+				report.report("Performance Error in Test! ,reason: "+reason);
+				GeneralUtils.stopLevel();
+				testIsNotDoneStatus = false;
+				return false;
+			}
+			try {
+				synchronized (this) {
+					this.wait(1000);
+				}
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			
+			if(resetUEs){
+				resetUEs = false;
+				resetTestBol = true;
+				report.report("Resetting UES");
+				if(ueList.get(0) instanceof VirtualUE){
+					UESimulator uesim = UESimulator.getInstance();
+					uesim.stop();
+				}else{
+					rebootUEs(ueList);
+				}
+			}
+				
+			if (resetDueToMultiHaltStreams) {
+				// more than 30% of the streams are in halt mode!
+				resetDueToMultiHaltStreams = false;
+				report.report("Reseting Time stamp for test");
+				startingTestTime = System.currentTimeMillis();
+				resetTestBol = true;
+				if (numberOfResets < 3) {
+					GeneralUtils.stopLevel();
+					return false;
+				} else {
+					resetTestBol = false;
+					startingTestTime = TEST_TIME_MILLIS;
+					GeneralUtils.stopLevel();
+					testIsNotDoneStatus = false;
+					return false;
+				}
+			}
+		}
+		testIsNotDoneStatus = false;
+		if(closeLevel){
+			GeneralUtils.stopLevel();
+		}
+		return true;
+	}
+	
+	private void setLoadPerStreamPriorityOverDataTest() {
+		ArrayList<LoadParam> loadDl = new ArrayList<LoadParam>();
+		ArrayList<LoadParam> loadUl = new ArrayList<LoadParam>();
+		
+		for(String str:ueNameListStc){
+			String name = str;
+			int ueNum = Integer.valueOf(name.replaceAll("\\D+", "").trim());
+			double loadInKbpsDl = (488+20)*8*(50)/1000.0;
+			double loadInKbpsUl = 20;
+			
+			report.report(name+": setting DL for stream with qci 1 and 5: "+loadInKbpsDl+" Kbps");
+			LoadParam lpDl = new LoadParam(loadInKbpsDl, '1', ueNum, LoadParam.LoadUnit.KILOBITS_PER_SECOND,packetSize);
+			loadDl.add(lpDl);
+			lpDl = new LoadParam(loadInKbpsDl, '5', ueNum, LoadParam.LoadUnit.KILOBITS_PER_SECOND,packetSize);
+			loadDl.add(lpDl);
+			report.report(name+": setting UL for stream with qci 1 and 5: "+loadInKbpsUl+" Kbps");
+			LoadParam lpUl = new LoadParam(loadInKbpsUl, '1', ueNum, LoadParam.LoadUnit.KILOBITS_PER_SECOND,packetSize);
+			loadUl.add(lpUl);
+			lpUl = new LoadParam(loadInKbpsUl, '5', ueNum, LoadParam.LoadUnit.KILOBITS_PER_SECOND,packetSize);
+			loadUl.add(lpUl);
+			dlCriteriaQcisInList+=2.0*loadInKbpsDl;
+			ulCriteriaQcisInList+=2.0*loadInKbpsUl;			
+		}
+		trafficSTC.setLoadStreamDL(loadDl);	
+		trafficSTC.setLoadStreamUL(loadUl);
+		try{
+			trafficSTC.setFrameSizeStreamDL(loadDl);
+			trafficSTC.setFrameSizeStreamUL(loadUl);			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	private void enableAditionalStreamsForUEPriorityOverDataTest() {
+		ArrayList<Character> qci1 = new ArrayList<Character>();
+		qci1.add('1');
+		qci1.add('5');
+		
+		try {
+			trafficSTC.enableStreamsByNameAndQciAndDirection(ueNameListStc, qci1, TransmitDirection.BOTH);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 	}
 	
 	private void afterTestVolteEmergencyCallPrioritized(double passCriteria) {
@@ -738,7 +979,7 @@ public class P0 extends TPTBase{
 		checkActiveQci9 = false;
 	}
 	
-	protected void afterTestVolte(double passCriteria) {
+	protected void afterTestVolte(double passCriteria, boolean priorityTest) {
 		boolean flagActive = false;
 		boolean flagUeLinkStatus = false;
 		if(wdActiveUesQci1 != null){
@@ -763,12 +1004,52 @@ public class P0 extends TPTBase{
 
 			GeneralUtils.printToConsole("Print Results state: "+printResultsForTest);
 			if (printResultsForTest) {
+				if(priorityTest){
+					checkPriorytyBeforeAndAfter();					
+				}
 				checkTptOverThreshold(debugPrinter, listOfStreamList, passCriteria);
 				validateActiveFlag(flagActive);
 				validateUELinkStatus(flagUeLinkStatus);
 				printDataOfUes();
 			}
 		}
+	}
+	
+	protected void checkPriorytyBeforeAndAfter(){
+		double firstUl = priorityTestFirstResult.get(0)/1000000.0/priorityTestFirstResult.size();
+		double firstDl = priorityTestFirstResult.get(1)/1000000.0/priorityTestFirstResult.size();
+		
+		double secondUl = priorityTestSecondResult.get(0)/1000000.0/priorityTestSecondResult.size();
+		double secondDl = priorityTestSecondResult.get(1)/1000000.0/priorityTestSecondResult.size();
+
+		GeneralUtils.startLevel("Check ratios of qci 9 before and after turning on qci 1 and 5");
+		
+		report.report("Qci 9 average UL before running qci 1 and 5: "+firstUl+" Mbps");
+		report.report("Qci 9 average UL after running qci 1 and 5: "+secondUl+" Mbps");
+		/*if(!(secondUl<firstUl-1)){
+			report.report("Qci 9 average UL after running qci 1 and 5 is not at least 1M lower", Reporter.FAIL);
+		}else{
+			report.report("Qci 9 average UL after running qci 1 and 5 is at least 1M lower");
+		}*/
+		if(!(secondUl>0.9*firstUl)){
+			report.report("Qci 9 average UL after running qci 1 and 5 is not at least 90%", Reporter.FAIL);
+		}else{
+			report.report("Qci 9 average UL after running qci 1 and 5 is at least 90%");
+		}
+		
+		report.report("Qci 9 average DL before running qci 1 and 5: "+convertTo3DigitsAfterPoint(firstDl)+" Mbps");
+		report.report("Qci 9 average DL after running qci 1 and 5: "+convertTo3DigitsAfterPoint(secondDl)+" Mbps");
+		if(!(secondDl<firstDl-dlCriteriaQcisInList)){
+			report.report("Qci 9 average DL after running qci 1 and 5 is not at least "+convertTo3DigitsAfterPoint(dlCriteriaQcisInList)+" lower", Reporter.FAIL);
+		}else{
+			report.report("Qci 9 average DL after running qci 1 and 5 is at least "+convertTo3DigitsAfterPoint(dlCriteriaQcisInList)+" lower");
+		}
+		if(!(secondDl>0.9*firstDl)){
+			report.report("Qci 9 average DL after running qci 1 and 5 is not at least 90%", Reporter.FAIL);
+		}else{
+			report.report("Qci 9 average DL after running qci 1 and 5 is at least 90%");
+		}
+		GeneralUtils.stopLevel();
 	}
 	
 	protected void syncGeneralCommands() {

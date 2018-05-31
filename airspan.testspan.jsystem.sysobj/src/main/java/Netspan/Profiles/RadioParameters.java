@@ -82,7 +82,7 @@ public class RadioParameters implements INetspanProfile {
 	}
 
 	public PRSBandWidthEnum getPRSBandWidth() {
-		if(PRSBandWidth != null){
+		if(PRSBandWidth == null){
 			return PRSBandWidthEnum.SIX;
 		}
 		return PRSBandWidth;
@@ -573,7 +573,7 @@ public class RadioParameters implements INetspanProfile {
 			}
 		}
 
-		public int getPRS() {
+		public Integer getPRS() {
 			return prs;
 		}
 	}
@@ -609,7 +609,7 @@ public class RadioParameters implements INetspanProfile {
 			}
 		}
 
-		public int getPRS() {
+		public Integer getPRS() {
 			return prs;
 		}
 	}
@@ -644,7 +644,7 @@ public class RadioParameters implements INetspanProfile {
 			}
 		}
 
-		public int getPRS() {
+		public Integer getPRS() {
 			return prs;
 		}
 	}

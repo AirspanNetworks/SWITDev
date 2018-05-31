@@ -159,6 +159,9 @@ public class WatchDogManager extends Thread {
 	private void showStatistics() {
 		double totalTimeEff = 0;
 		for (ManagedCommand managedCommand : actions) {
+			if(managedCommand.totalRuns <= 0) {
+				continue;
+			}
 			GeneralUtils.printToConsole(managedCommand.name + " statistics:");
 			GeneralUtils.printToConsole("Total run time " + managedCommand.runTimeTotal + " msec");
 			GeneralUtils.printToConsole("Total runs " + managedCommand.totalRuns);

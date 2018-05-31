@@ -70,6 +70,9 @@ public class OtdoaBase extends TestspanTest{
 		GeneralUtils.startLevel("Init Test");
 		enbInTest = new ArrayList<>();
 		enbInTest.add(dut);
+		if(dut2 != null) {
+			enbInTest.add(dut2);
+		}
 		super.init();
 		peripheralsConfig = PeripheralsConfig.getInstance();
 		enodeBConfig = EnodeBConfig.getInstance();
@@ -195,8 +198,8 @@ public class OtdoaBase extends TestspanTest{
 		return result;
 	}
 	
-	protected boolean verifyOTDOAAndECIDWithSNMP(Boolean ECID,Integer ecidTimer, Boolean OTDOA,Integer subFrames, String prsBW,
-			String prsPeriodicity, Integer prsOffSet,Integer prsPowerOffset, String prsMutingPeri, String prsMutingPattern) {
+	protected boolean verifyOTDOAAndECIDWithSNMP(Boolean ECID,Integer ecidTimer, Boolean OTDOA,Integer subFrames, Integer prsBW,
+			Integer prsPeriodicity, Integer prsOffSet,Integer prsPowerOffset, Integer prsMutingPeri, Integer prsMutingPattern) {
 		GeneralUtils.startLevel("Verify OTDOA and ECID modes and parameters in SNMP");
 		Boolean result = true;
 		
@@ -212,30 +215,30 @@ public class OtdoaBase extends TestspanTest{
 		Integer prsMutingPatternSnmp = dut.getCfgPrsMutePattSeq();
 		
 
-		verifyParameter("ECID",ECIDSnmp,ECID);
-		verifyParameter("OTDOA",OTDOAModeSnmp,OTDOA);
-		verifyParameter("ECID - Timer", ecidTimerSnmp, ecidTimer);
-		verifyParameter("power Off Set", prsPowerOffSetSnmp, prsPowerOffset);
-		verifyParameter("prs Band Width", prsBwSnmp, prsBW);
-		verifyParameter("Mute Pattern", prsMutingPatternSnmp, prsMutingPattern);
-		verifyParameter("Mute periodicity", prsMutePeriodSnmp, prsMutingPeri);
+		result &= verifyParameter("ECID",ECIDSnmp,ECID);
+		result &= verifyParameter("OTDOA",OTDOAModeSnmp,OTDOA);
+		result &= verifyParameter("ECID - Timer", ecidTimerSnmp, ecidTimer);
+		result &= verifyParameter("power Off Set", prsPowerOffSetSnmp, prsPowerOffset);
+		result &= verifyParameter("prs Band Width", prsBwSnmp, prsBW);
+		result &= verifyParameter("Mute Pattern", prsMutingPatternSnmp, prsMutingPattern);
+		result &= verifyParameter("Mute periodicity", prsMutePeriodSnmp, prsMutingPeri);
 		
 		Integer prsCfgIndex = 0;
 		if(prsPeriodicity != null){
 			switch(prsPeriodicity){
-				case "160":{
+				case 160:{
 					prsCfgIndex = prsOffSet + subFrames;
 					break;
 				}
-				case "320":{
+				case 320:{
 					prsCfgIndex = 160 + prsOffSet + subFrames;
 					break;
 				}
-				case "640":{
+				case 640:{
 					prsCfgIndex = 480 + prsOffSet + subFrames;
 					break;
 				}
-				case "1280":{
+				case 1280:{
 					prsCfgIndex = 1120 + prsOffSet + subFrames;
 					break;
 				}
@@ -249,8 +252,15 @@ public class OtdoaBase extends TestspanTest{
 		if(prsOffSet != null){
 			if(prsCfgIndex == 0){
 				report.report("prs Index error Value!");
+				result &= false;
 			}else{
-				verifyParameter("Prs Index", prsCfgIndexSnmp, prsCfgIndex);
+				if((prsCfgIndexSnmp == prsCfgIndex + 1) || (prsCfgIndexSnmp == prsCfgIndex - 1) || (prsCfgIndexSnmp.equals(prsCfgIndex))){
+					report.report("Prs Index value is as expected");
+					result &= true;
+				}else {
+					report.report("Prs Index is not as expected value -  snmp Current Value : "+prsCfgIndexSnmp+"\n wanted Value : "+prsCfgIndex);
+					result &= false;
+				}
 			}
 		}
 		
@@ -268,6 +278,7 @@ public class OtdoaBase extends TestspanTest{
 			report.report(parameterName+" value is as expected");
 		}else{
 			report.report(parameterName+" is not as expected value -  snmp Current Value : "+currentValue+"\n wanted Value : "+expectedValue);
+			result = false;
 		}
 		return result;
 	}
@@ -621,6 +632,9 @@ public class OtdoaBase extends TestspanTest{
 		report.report("Getting Single UE RNTI");
 		try{
 			HashMap <String,Variable> a = dut.getUEShowLinkTable();
+			if(a.isEmpty()) {
+				report.report("no UEs shown in 'ue show link' table");
+			}
 			for(String key : a.keySet()){
 				if(key.contains("1.3.6.1.4.1.989.1.20.1.4.75.1.1.0")){
 					GeneralUtils.printToConsole("targeted mib in potential value : "+a.get(key).toString());
@@ -700,6 +714,8 @@ public class OtdoaBase extends TestspanTest{
 		}
 		
 		configureNodesState(EnbStates.IN_SERVICE);
+		radioChanged = false;
+		networkChanged = false;
 		GeneralUtils.stopLevel();
 		super.end();
 	}

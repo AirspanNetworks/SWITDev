@@ -1,3 +1,22 @@
 /target/
 /.classpath
 /.project
+/.ant.properties
+/.run.properties
+/.testdir.tmp
+/Velocity45_CommandsSession_Velocity45.log
+/Velocity45_SSHlogSession_Velocity45.log
+/Velocity46_CommandsSession_Velocity46.log
+/Velocity46_SSHlogSession_Velocity46.log
+/configFile23_05_2018.xml
+/difido.properties
+/files
+/jsystem0.log
+/jsystem0.log.lck
+/Harmony68_CommandsSession_Harmony68.log
+/Harmony68_SSHlogSession_Harmony68.log
+/Harmony68_Serial_Harmony68.log
+/graph Test Harmony68.png
+/graph Test Velocity45.png
+/graph Test Velocity46.png
+/jsystem1.log

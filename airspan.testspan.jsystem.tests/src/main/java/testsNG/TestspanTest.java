@@ -238,8 +238,8 @@ public class TestspanTest extends SystemTestCase4 {
 				
 				oid = MibReader.getInstance().resolveByName("asLteStkDebugFtpServerCfgFtpAddress");
 
-				//byte[] ipAddr = InetAddressesHelper.ipStringToBytes(debugFtpServer.getDebugFtpServerIP());
-				eNodeB.snmpSet(oid, debugFtpServer.getDebugFtpServerIP());
+				byte[] ipAddr = InetAddressesHelper.ipStringToBytes(debugFtpServer.getDebugFtpServerIP());
+				eNodeB.snmpSet(oid, ipAddr);
 
 				oid = MibReader.getInstance().resolveByName("asLteStkDebugFtpServerCfgFtpUser");
 				eNodeB.snmpSet(oid, debugFtpServer.getDebugFtpServerUser());

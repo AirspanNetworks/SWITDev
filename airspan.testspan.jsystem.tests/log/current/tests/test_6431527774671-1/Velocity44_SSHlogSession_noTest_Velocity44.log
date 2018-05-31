@@ -1,0 +1,679 @@
+31/05/2018 16:57:29:173    ::    31/05/2018 13:57:28:659 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:57:30:088    ::    31/05/2018 13:57:29:659 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:57:30:390    ::    31/05/2018 13:57:29:979 <ptpd:PTPd INFO> PTP_SLAVE_UNICAST_REGISTRATION : 1
+31/05/2018 16:57:30:390    ::    
+31/05/2018 16:57:30:390    ::    31/05/2018 13:57:29:979 <ptpd:PTPd INFO> 
+31/05/2018 16:57:30:390    ::    PTP_SLAVE_UNICAST_REGISTRATION_ANNOUNCE_REQ Failed
+31/05/2018 16:57:30:995    ::    31/05/2018 13:57:30:659 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:57:32:199    ::    31/05/2018 13:57:31:659 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:57:33:102    ::    31/05/2018 13:57:32:659 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:57:34:003    ::    31/05/2018 13:57:33:658 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:57:35:212    ::    31/05/2018 13:57:34:658 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:57:35:513    ::    31/05/2018 13:57:34:979 <ptpd:PTPd INFO> PTP_SLAVE_UNICAST_REGISTRATION : 0
+31/05/2018 16:57:35:513    ::    
+31/05/2018 16:57:35:513    ::    31/05/2018 13:57:34:979 <ptpd:PTPd INFO> Set active clock PRIMARY , IP=20.0.0.200 !!!
+31/05/2018 16:57:35:513    ::    
+31/05/2018 16:57:35:513    ::    31/05/2018 13:57:34:979 <ptpd:PTPd INFO> 
+31/05/2018 16:57:35:513    ::    PTP_SLAVE_UNICAST_REGISTRATION_INIT finish
+31/05/2018 16:57:35:513    ::    
+31/05/2018 16:57:35:513    ::    31/05/2018 13:57:34:980 <ptpd:PTPd INFO> 	SIGNAL_RESP_TIMER is armed(10)!
+31/05/2018 16:57:35:513    ::    
+31/05/2018 16:57:35:513    ::    31/05/2018 13:57:34:980 <ptpd:PTPd INFO> active_clock = 0, snmp_ready = 1       b_connecting = 0
+31/05/2018 16:57:36:115    ::    31/05/2018 13:57:35:657 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:57:37:016    ::    31/05/2018 13:57:36:657 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:57:38:236    ::    31/05/2018 13:57:37:657 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:57:39:161    ::    31/05/2018 13:57:38:657 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:57:40:063    ::    31/05/2018 13:57:39:657 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:57:40:363    ::    31/05/2018 13:57:39:979 <ptpd:PTPd INFO> PTP_SLAVE_UNICAST_REGISTRATION : 1
+31/05/2018 16:57:40:363    ::    
+31/05/2018 16:57:40:363    ::    31/05/2018 13:57:39:979 <ptpd:PTPd INFO> 	SIGNAL_RESP_TIMER is armed(9)!
+31/05/2018 16:57:40:965    ::    31/05/2018 13:57:40:656 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:57:42:168    ::    31/05/2018 13:57:41:656 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:57:42:789    ::    31/05/2018 13:57:42:174 oam_maint_win_resetStackActionCB():824 <oam:OAM_MAINT_WIN SYSTEM> provision ended
+31/05/2018 16:57:43:090    ::    31/05/2018 13:57:42:656 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:57:43:992    ::    31/05/2018 13:57:43:655 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:57:45:193    ::    31/05/2018 13:57:44:656 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:57:45:494    ::    31/05/2018 13:57:44:979 <ptpd:PTPd INFO> PTP_SLAVE_UNICAST_REGISTRATION : 1
+31/05/2018 16:57:45:494    ::    
+31/05/2018 16:57:45:494    ::    31/05/2018 13:57:44:979 <ptpd:PTPd INFO> 	SIGNAL_RESP_TIMER is armed(8)!
+31/05/2018 16:57:46:105    ::    31/05/2018 13:57:45:655 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:57:47:007    ::    31/05/2018 13:57:46:655 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:57:48:042    ::    31/05/2018 13:57:47:655 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:57:48:960    ::    31/05/2018 13:57:48:655 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:57:50:165    ::    31/05/2018 13:57:49:654 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:57:50:466    ::    31/05/2018 13:57:49:979 <ptpd:PTPd INFO> PTP_SLAVE_UNICAST_REGISTRATION : 1
+31/05/2018 16:57:50:466    ::    
+31/05/2018 16:57:50:466    ::    31/05/2018 13:57:49:979 <ptpd:PTPd INFO> 	SIGNAL_RESP_TIMER is armed(7)!
+31/05/2018 16:57:51:069    ::    31/05/2018 13:57:50:654 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:57:51:971    ::    lte_cli:>>31/05/2018 13:57:51:654 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:57:53:174    ::    31/05/2018 13:57:52:654 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:57:54:077    ::    31/05/2018 13:57:53:653 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:57:54:978    ::    31/05/2018 13:57:54:653 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:57:55:278    ::    31/05/2018 13:57:54:979 <ptpd:PTPd INFO> PTP_SLAVE_UNICAST_REGISTRATION : 1
+31/05/2018 16:57:55:278    ::    
+31/05/2018 16:57:55:278    ::    31/05/2018 13:57:54:979 <ptpd:PTPd INFO> 	SIGNAL_RESP_TIMER is armed(6)!
+31/05/2018 16:57:56:180    ::    31/05/2018 13:57:55:653 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:57:57:082    ::    31/05/2018 13:57:56:652 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:57:57:984    ::    31/05/2018 13:57:57:652 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:57:59:187    ::    31/05/2018 13:57:58:652 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:00:111    ::    31/05/2018 13:57:59:651 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:00:415    ::    31/05/2018 13:57:59:979 <ptpd:PTPd INFO> PTP_SLAVE_UNICAST_REGISTRATION : 1
+31/05/2018 16:58:00:415    ::    
+31/05/2018 16:58:00:415    ::    31/05/2018 13:57:59:979 <ptpd:PTPd INFO> 	SIGNAL_RESP_TIMER is armed(5)!
+31/05/2018 16:58:01:016    ::    31/05/2018 13:58:00:652 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:02:220    ::    31/05/2018 13:58:01:651 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:03:122    ::    31/05/2018 13:58:02:651 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:04:022    ::    31/05/2018 13:58:03:650 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:05:224    ::    31/05/2018 13:58:04:651 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:05:526    ::    31/05/2018 13:58:04:979 <ptpd:PTPd INFO> PTP_SLAVE_UNICAST_REGISTRATION : 1
+31/05/2018 16:58:05:526    ::    
+31/05/2018 16:58:05:526    ::    31/05/2018 13:58:04:979 <ptpd:PTPd INFO> 	SIGNAL_RESP_TIMER is armed(4)!
+31/05/2018 16:58:06:127    ::    31/05/2018 13:58:05:650 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:07:030    ::    31/05/2018 13:58:06:650 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:08:232    ::    31/05/2018 13:58:07:650 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:09:133    ::    31/05/2018 13:58:08:649 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:10:036    ::    31/05/2018 13:58:09:654 <prcMngr:PRCMNGR INFO> lost socket connection (fd=48) with entityId=1 (CLI)
+31/05/2018 16:58:10:036    ::    
+31/05/2018 16:58:10:036    ::    31/05/2018 13:58:09:654 <prcMngr:PRCMNGR INFO> socket 48 closed
+31/05/2018 16:58:10:036    ::    
+31/05/2018 16:58:10:036    ::    31/05/2018 13:58:09:649 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:10:339    ::    31/05/2018 13:58:09:979 <ptpd:PTPd INFO> PTP_SLAVE_UNICAST_REGISTRATION : 1
+31/05/2018 16:58:10:339    ::    
+31/05/2018 16:58:10:339    ::    31/05/2018 13:58:09:979 <ptpd:PTPd INFO> 	SIGNAL_RESP_TIMER is armed(3)!
+31/05/2018 16:58:11:243    ::    31/05/2018 13:58:10:649 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:11:849    ::    
+31/05/2018 16:58:11:849    ::    lte_cli:>>
+31/05/2018 16:58:11:849    ::    lte_cli:>>31/05/2018 13:58:11:649 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:12:149    ::    quit
+31/05/2018 16:58:12:750    ::    # 
+31/05/2018 16:58:12:750    ::    # 
+31/05/2018 16:58:13:051    ::    # 
+31/05/2018 16:58:13:051    ::    # 
+31/05/2018 16:58:13:352    ::    # id
+31/05/2018 16:58:13:352    ::    uid=0(root) gid=0(root) groups=0(root),1011(ssh_limited)
+31/05/2018 16:58:13:652    ::    # 
+31/05/2018 16:58:13:652    ::    # 
+31/05/2018 16:58:24:497    ::    /bs/lteCli
+31/05/2018 16:58:24:797    ::    XDB runtime started
+31/05/2018 16:58:26:003    ::    [?1034hlte_cli:>>
+31/05/2018 16:58:26:003    ::    lte_cli:>>
+31/05/2018 16:58:26:003    ::    lte_cli:>>
+31/05/2018 16:58:26:003    ::    lte_cli:>>
+31/05/2018 16:58:26:304    ::    lte_cli:>>
+31/05/2018 16:58:26:304    ::    lte_cli:>>
+31/05/2018 16:58:26:604    ::    lte_cli:>>
+31/05/2018 16:58:26:604    ::    lte_cli:>>
+31/05/2018 16:58:26:905    ::    lte_cli:>>
+31/05/2018 16:58:26:905    ::    lte_cli:>>
+31/05/2018 16:58:28:113    ::    lte_cli:>>logger threshold set client=* process=* cli=3
+31/05/2018 16:58:33:524    ::    lte_cli:>>
+31/05/2018 16:58:33:524    ::    lte_cli:>>
+31/05/2018 16:58:33:524    ::    lte_cli:>>
+31/05/2018 16:58:33:524    ::    lte_cli:>>
+31/05/2018 16:58:33:524    ::    lte_cli:>>
+31/05/2018 16:58:33:524    ::    lte_cli:>>
+31/05/2018 16:58:33:524    ::    lte_cli:>>
+31/05/2018 16:58:33:524    ::    lte_cli:>>
+31/05/2018 16:58:33:524    ::    lte_cli:>>
+31/05/2018 16:58:33:524    ::    lte_cli:>>
+31/05/2018 16:58:33:524    ::    lte_cli:>>
+31/05/2018 16:58:33:524    ::    lte_cli:>>
+31/05/2018 16:58:33:524    ::    lte_cli:>>
+31/05/2018 16:58:33:524    ::    lte_cli:>>
+31/05/2018 16:58:33:524    ::    lte_cli:>>
+31/05/2018 16:58:33:524    ::    lte_cli:>>
+31/05/2018 16:58:33:524    ::    lte_cli:>>
+31/05/2018 16:58:33:524    ::    lte_cli:>>
+31/05/2018 16:58:33:524    ::    lte_cli:>>
+31/05/2018 16:58:33:524    ::    lte_cli:>>
+31/05/2018 16:58:33:524    ::    lte_cli:>>
+31/05/2018 16:58:33:524    ::    lte_cli:>>
+31/05/2018 16:58:33:524    ::    lte_cli:>>
+31/05/2018 16:58:33:524    ::    lte_cli:>>
+31/05/2018 16:58:33:524    ::    lte_cli:>>
+31/05/2018 16:58:33:524    ::    lte_cli:>>
+31/05/2018 16:58:33:524    ::    lte_cli:>>
+31/05/2018 16:58:33:524    ::    lte_cli:>>
+31/05/2018 16:58:34:728    ::    lte_cli:>>
+31/05/2018 16:58:38:960    ::    31/05/2018 13:58:27:770 <ptpd:PTPd INFO> Message timeout by DoClockReport or other part ( big processor time consuming) - Adjust last received messages times. Timeout=101777917
+31/05/2018 16:58:38:960    ::    
+31/05/2018 16:58:38:960    ::    31/05/2018 13:58:28:459 <ptpd:PTPd INFO> Message timeout by DoClockReport or other part ( big processor time consuming) - Adjust last received messages times. Timeout=104000312
+31/05/2018 16:58:38:960    ::    
+31/05/2018 16:58:38:960    ::    31/05/2018 13:58:28:835 <ptpd:PTPd INFO> Message timeout by DoClockReport or other part ( big processor time consuming) - Adjust last received messages times. Timeout=104417500
+31/05/2018 16:58:38:960    ::    
+31/05/2018 16:58:38:960    ::    31/05/2018 13:58:29:211 <ptpd:PTPd INFO> Message timeout by DoClockReport or other part ( big processor time consuming) - Adjust last received messages times. Timeout=105108594
+31/05/2018 16:58:38:960    ::    
+31/05/2018 16:58:38:960    ::    31/05/2018 13:58:30:026 <ptpd:PTPd INFO> PTP_SLAVE_UNICAST_REGISTRATION : 0
+31/05/2018 16:58:38:960    ::    
+31/05/2018 16:58:38:960    ::    31/05/2018 13:58:30:027 <ptpd:PTPd INFO> Set active clock PRIMARY , IP=20.0.0.200 !!!
+31/05/2018 16:58:38:960    ::    
+31/05/2018 16:58:38:960    ::    31/05/2018 13:58:30:027 <ptpd:PTPd INFO> 
+31/05/2018 16:58:38:960    ::    PTP_SLAVE_UNICAST_REGISTRATION_INIT finish
+31/05/2018 16:58:38:960    ::    
+31/05/2018 16:58:38:960    ::    31/05/2018 13:58:30:027 <ptpd:PTPd INFO> 	SIGNAL_RESP_TIMER is armed(10)!
+31/05/2018 16:58:38:960    ::    
+31/05/2018 16:58:38:960    ::    31/05/2018 13:58:30:027 <ptpd:PTPd INFO> active_clock = 0, snmp_ready = 1       b_connecting = 0
+31/05/2018 16:58:38:960    ::    
+31/05/2018 16:58:38:960    ::    31/05/2018 13:58:30:027 <ptpd:PTPd INFO> Message timeout by DoClockReport or other part ( big processor time consuming) - Adjust last received messages times. Timeout=104815520
+31/05/2018 16:58:38:960    ::    
+31/05/2018 16:58:38:960    ::    31/05/2018 13:58:27:645 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:38:960    ::    31/05/2018 13:58:28:644 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:38:960    ::    31/05/2018 13:58:29:644 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:38:960    ::    31/05/2018 13:58:30:644 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:38:960    ::    31/05/2018 13:58:31:643 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:38:960    ::    31/05/2018 13:58:32:643 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:38:960    ::    31/05/2018 13:58:30:396 <ptpd:PTPd INFO> Message timeout by DoClockReport or other part ( big processor time consuming) - Adjust last received messages times. Timeout=103268333
+31/05/2018 16:58:38:960    ::    
+31/05/2018 16:58:38:960    ::    31/05/2018 13:58:31:462 <ptpd:PTPd INFO> Message timeout by DoClockReport or other part ( big processor time consuming) - Adjust last received messages times. Timeout=104813229
+31/05/2018 16:58:38:960    ::    
+31/05/2018 16:58:38:960    ::    31/05/2018 13:58:31:834 <ptpd:PTPd INFO> Message timeout by DoClockReport or other part ( big processor time consuming) - Adjust last received messages times. Timeout=102462084
+31/05/2018 16:58:38:960    ::    
+31/05/2018 16:58:38:960    ::    31/05/2018 13:58:32:522 <ptpd:PTPd INFO> Message timeout by DoClockReport or other part ( big processor time consuming) - Adjust last received messages times. Timeout=102950625
+31/05/2018 16:58:38:960    ::    
+31/05/2018 16:58:38:960    ::    31/05/2018 13:58:33:643 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:38:960    ::    31/05/2018 13:58:34:643 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:38:960    ::    31/05/2018 13:58:35:642 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:38:960    ::    31/05/2018 13:58:36:642 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:38:960    ::    31/05/2018 13:58:37:642 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:38:960    ::    31/05/2018 13:58:33:584 <ptpd:PTPd INFO> Message timeout by DoClockReport or other part ( big processor time consuming) - Adjust last received messages times. Timeout=104610729
+31/05/2018 16:58:38:960    ::    
+31/05/2018 16:58:38:960    ::    31/05/2018 13:58:34:394 <ptpd:PTPd INFO> Message timeout by DoClockReport or other part ( big processor time consuming) - Adjust last received messages times. Timeout=102700000
+31/05/2018 16:58:38:960    ::    
+31/05/2018 16:58:38:960    ::    31/05/2018 13:58:34:708 <ptpd:PTPd INFO> Message timeout by DoClockReport or other part ( big processor time consuming) - Adjust last received messages times. Timeout=101650052
+31/05/2018 16:58:38:960    ::    
+31/05/2018 16:58:38:960    ::    31/05/2018 13:58:34:980 <ptpd:PTPd INFO> PTP_SLAVE_UNICAST_REGISTRATION : 1
+31/05/2018 16:58:38:960    ::    
+31/05/2018 16:58:38:960    ::    31/05/2018 13:58:34:980 <ptpd:PTPd INFO> 	SIGNAL_RESP_TIMER is armed(9)!
+31/05/2018 16:58:38:960    ::    
+31/05/2018 16:58:38:960    ::    31/05/2018 13:58:35:085 <ptpd:PTPd INFO> Message timeout by DoClockReport or other part ( big processor time consuming) - Adjust last received messages times. Timeout=104736823
+31/05/2018 16:58:38:960    ::    
+31/05/2018 16:58:38:960    ::    31/05/2018 13:58:36:396 <ptpd:PTPd INFO> Message timeout by DoClockReport or other part ( big processor time consuming) - Adjust last received messages times. Timeout=103615730
+31/05/2018 16:58:38:960    ::    
+31/05/2018 16:58:38:960    ::    31/05/2018 13:58:36:708 <ptpd:PTPd INFO> Message timeout by DoClockReport or other part ( big processor time consuming) - Adjust last received messages times. Timeout=102063802
+31/05/2018 16:58:38:960    ::    
+31/05/2018 16:58:38:960    ::    31/05/2018 13:58:37:030 <ptpd:PTPd INFO> Message timeout by DoClockReport or other part ( big processor time consuming) - Adjust last received messages times. Timeout=109510469
+31/05/2018 16:58:38:960    ::    
+31/05/2018 16:58:38:960    ::    31/05/2018 13:58:37:396 <ptpd:PTPd INFO> Message timeout by DoClockReport or other part ( big processor time consuming) - Adjust last received messages times. Timeout=101940573
+31/05/2018 16:58:38:960    ::    
+31/05/2018 16:58:38:960    ::    31/05/2018 13:58:38:027 <ptpd:PTPd INFO> Message timeout by DoClockReport or other part ( big processor time consuming) - Adjust last received messages times. Timeout=109922396
+31/05/2018 16:58:38:960    ::    
+31/05/2018 16:58:38:960    ::    31/05/2018 13:58:38:641 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:40:054    ::    31/05/2018 13:58:39:641 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:40:360    ::    31/05/2018 13:58:39:979 <ptpd:PTPd INFO> PTP_SLAVE_UNICAST_REGISTRATION : 1
+31/05/2018 16:58:40:360    ::    
+31/05/2018 16:58:40:360    ::    31/05/2018 13:58:39:979 <ptpd:PTPd INFO> 	SIGNAL_RESP_TIMER is armed(8)!
+31/05/2018 16:58:40:961    ::    31/05/2018 13:58:40:641 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:42:165    ::    31/05/2018 13:58:41:641 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:42:165    ::    
+31/05/2018 16:58:42:165    ::    lte_cli:>>
+31/05/2018 16:58:43:369    ::    lte_cli:>>logger threshold s31/05/2018 13:58:42:641 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:43:369    ::    et client=* process=* cli=3
+31/05/2018 16:58:43:970    ::    lte_cli:>>
+31/05/2018 16:58:43:970    ::    31/05/2018 13:58:43:640 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:43:970    ::    
+31/05/2018 16:58:43:970    ::    lte_cli:>>
+31/05/2018 16:58:44:570    ::    lte_cli:>>logger threshold get
+31/05/2018 16:58:44:570    ::    lte_cli:>>|processName    |clientName          ||cli|file|std_out|syslog|
+31/05/2018 16:58:44:570    ::    |---------------|--------------------||---|----|-------|------|
+31/05/2018 16:58:44:570    ::    |asNLMngr       |ASNLMNGR_GENERAL    ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |asNLMngr       |ASNL_CELLSEARCH     ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |asNLMngr       |ASNL_POOLMNGR       ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |asNLMngr       |PRCMNGR             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |asNLMngr       |XDB                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |bhqosMngr      |BHQOS               ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |bhqosMngr      |BHQOS_FTP           ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |bhqosMngr      |BHQOS_MULTI         ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |bhqosMngr      |PRCMNGR             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |bhqosMngr      |XDB                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |callTrace      |PRCMNGR             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |callTrace      |XDB                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |callTrace      |callTrace           ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |cbsdDpAgent    |CBRS                ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |cbsdDpAgent    |PRCMNGR             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |cbsdDpAgent    |XDB                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |cbsdMngr       |CBSD                ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |cbsdMngr       |PRCMNGR             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |cbsdMngr       |XDB                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |clockMngr      |CLOCKMNGR_GENERAL   ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |clockMngr      |PRCMNGR             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |clockMngr      |XDB                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |cmpClient      |CMPCLIENT           ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |cmpClient      |CMPCLIENT_CRMF      ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |cmpClient      |CMPCLIENT_IPSEC     ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |cmpClient      |CMPCLIENT_OPENSSL   ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |cmpClient      |CMPCLIENT_PRCMNGR   ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |cmpClient      |CMPCLIENT_XDB       ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |cmpClient      |PRCMNGR             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |cmpClient      |XDB                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |ACQI                ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |ACTIVE_UES          ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |ANR                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |ANR_RRC             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |APP                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |APP_TIMERS          ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |APP_TRANSACTIONS    ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |ASN1C               ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |AUTOPCI             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |AUTORSI             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |BACKLOG             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |CMAS_ETWS           ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |CSFB                ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |DCFI                ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |DICIC               ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |DLLA                ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |DLLA_AUTOMATION     ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |DL_FWDING           ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |DL_HARQ             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |DL_RLC_BO           ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |DL_SCH              ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |DL_SCH_ADJUST       ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |DL_SCH_BO           ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |DL_SCH_NEWTX        ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |DL_SCH_PFS          ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |DL_SCH_RETX         ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |DL_VOLTE            ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |DRX                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |ECGI_BASED_HO       ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |ECID                ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |ECSFB               ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |EPFS_ENGINE         ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |FTRM_CLIENT         ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |GEN                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |HOME_ENB            ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |HO_MARKING          ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |INACTIVITY_TMR      ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |INIT_CELL           ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |INTEGRITY           ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |INTER_RAT_ANR       ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |INTRA_ENB_LB        ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |IRAT_HO             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |KPI_INFRA           ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |L2_LOG              ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |LITE_COMP           ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |LS                  ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |MAC                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |MBMS                ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |MBMS_MAC            ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |MBMS_MSI_CALC       ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |MBMS_PAL            ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |MBMS_RLC            ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |MBMS_SYNC           ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |MEAS_CFG            ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |MEAS_GAP            ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |MME_OVERLOAD        ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |MOBILITY            ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |MT                  ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |MULT_AM_DRB         ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |NEIGHBORS           ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |NI                  ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |NLM                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |PAL                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |PASN                ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |PBM                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |PDCCH               ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |PDCP                ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |PKT_FWD             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |PRCMNGR             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |PUCCH_PWR           ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |PUSCH_PWR           ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |QOS_BASED_HO        ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |RACH                ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |RANSHARING          ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |RE_EST              ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |RLC                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |RLC_HO              ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |RLC_SDS             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |RLC_STATUSPDU       ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |RLC_WINDOW          ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |ROHC                ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |ROHC_COMP           ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |ROHC_DECOMP         ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |ROHC_EFFNET         ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |ROHC_FB             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |RQS                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |RRC                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |RRC_UNION           ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |RRM                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |RSSI                ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |S1AP                ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |SCH_DEBUG           ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |SCH_DICIC           ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |SCH_GLB             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |SCH_MEAS            ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |SCTP                ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |SEC_ASYNC           ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |SFR                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |SM                  ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |SON                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |STATS               ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |TIME_ADV            ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |TUCL                ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |ULA_AUTO_PUCCH      ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |ULA_AUTO_PUSCH      ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |ULA_PUSCH           ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |UL_HARQ             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |UL_PFS              ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |UL_SCH              ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |UL_VOLTE            ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |WR_CUT              ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |WR_TPM              ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |X2AP                ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |X2HO                ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |XDB                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |YS                  ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |enodeb0        |eGTP                ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |extPps         |EXTPPS_GENERAL      ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |extPps         |PRCMNGR             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |extPps         |XDB                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |gpsMngr        |GPS                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |gpsMngr        |PRCMNGR             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |gpsMngr        |XDB                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |logProcMngr    |LOGPROC             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |logProcMngr    |PRCMNGR             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |logProcMngr    |XDB                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |ntpClient      |NTP                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |ntpClient      |PRCMNGR             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |ntpClient      |XDB                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |oam            |DHCP                ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |oam            |GENERAL             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |oam            |NETWORKING          ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |oam            |OAM_DNS             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |oam            |OAM_ETHIF           ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |oam            |OAM_FQDN            ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |oam            |OAM_LED             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |oam            |OAM_MAINT_WIN       ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |oam            |OAM_RELAY           ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |oam            |OAM_SNMPD           ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |oam            |OAM_SWDL            ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |oam            |PHY_CFG             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |oam            |PNP                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |oam            |PRCMNGR             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |oam            |RF                  ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |oam            |SECURITY            ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |oam            |SSH                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |oam            |XDB                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |prcMngr        |LOG_DEBUG           ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |prcMngr        |PRCMNGR             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |prcMngr        |RELAY_MSG           ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |prcMngr        |XDB                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |ptpd           |PRCMNGR             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |ptpd           |PTPd                ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |ptpd           |XDB                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |relayProcMgr   |PRCMNGR             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |relayProcMgr   |RELAY_COMM          ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |relayProcMgr   |XDB                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |rfMgr          |PRCMNGR             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |rfMgr          |RFMNGR              ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |rfMgr          |SBA                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |rfMgr          |XDB                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |rnue           |GENERAL             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |rnue           |PRCMNGR             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |rnue           |XDB                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |smonMngr       |PRCMNGR             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |smonMngr       |SMON                ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |smonMngr       |XDB                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |snmp           |AUTO_SNMP           ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |snmp           |ENB_STATS           ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |snmp           |PRCMNGR             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |snmp           |RF_STATUS           ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |snmp           |ROW_STATUS          ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |snmp           |SERIALIZER          ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |snmp           |SNMP                ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |snmp           |SNMP_BULKSTATUS     ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |snmp           |SNMP_SECURITY       ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |snmp           |SNMP_WIN_CMD        ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |snmp           |SON                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |snmp           |STATS_CTRL_TABLE    ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |snmp           |TRAP                ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |snmp           |XDB                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |sonMngr        |PRCMNGR             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |sonMngr        |SON                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |sonMngr        |XDB                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |taskPerformanceCollector|PRCMNGR             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |taskPerformanceCollector|TASKPERFORMANCE     ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |taskPerformanceCollector|XDB                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |tcpdumpMngr    |GENERAL             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |tcpdumpMngr    |PRCMNGR             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |tcpdumpMngr    |XDB                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |twamp          |PRCMNGR             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |twamp          |TWAMP               ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |twamp          |TWAMP_REFLECTOR     ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |twamp          |TWAMP_SENDER        ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |twamp          |TWAMP_TIMERS        ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |twamp          |XDB                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |wifiMngr       |PRCMNGR             ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |wifiMngr       |WIFI                ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    |wifiMngr       |XDB                 ||  3|   3|      5|     6|
+31/05/2018 16:58:44:570    ::    
+31/05/2018 16:58:44:570    ::    31/05/2018 13:58:44:465 <prcMngr:PRCMNGR INFO> socketTxQueueHandle occupancy is 231
+31/05/2018 16:58:44:914    ::    31/05/2018 13:58:44:640 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:45:516    ::    31/05/2018 13:58:44:979 <ptpd:PTPd INFO> PTP_SLAVE_UNICAST_REGISTRATION : 1
+31/05/2018 16:58:45:516    ::    
+31/05/2018 16:58:45:516    ::    31/05/2018 13:58:44:979 <ptpd:PTPd INFO> 	SIGNAL_RESP_TIMER is armed(7)!
+31/05/2018 16:58:46:117    ::    31/05/2018 13:58:45:640 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:47:020    ::    31/05/2018 13:58:46:640 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:48:234    ::    31/05/2018 13:58:47:639 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:48:535    ::    31/05/2018 13:58:48:223 <prcMngr:PRCMNGR INFO> lost socket connection (fd=44) with entityId=1 (CLI)
+31/05/2018 16:58:48:535    ::    
+31/05/2018 16:58:48:535    ::    31/05/2018 13:58:48:224 <prcMngr:PRCMNGR INFO> socket 44 closed
+31/05/2018 16:58:49:136    ::    31/05/2018 13:58:48:639 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:50:037    ::    31/05/2018 13:58:49:639 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:50:338    ::    31/05/2018 13:58:49:979 <ptpd:PTPd INFO> PTP_SLAVE_UNICAST_REGISTRATION : 1
+31/05/2018 16:58:50:338    ::    
+31/05/2018 16:58:50:338    ::    31/05/2018 13:58:49:979 <ptpd:PTPd INFO> 	SIGNAL_RESP_TIMER is armed(6)!
+31/05/2018 16:58:50:949    ::    31/05/2018 13:58:50:639 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:52:152    ::    31/05/2018 13:58:51:638 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:53:055    ::    31/05/2018 13:58:52:638 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:53:957    ::    31/05/2018 13:58:53:638 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:54:257    ::    31/05/2018 13:58:53:728 <oam:SSH INFO> Login Attempt Trap Sent
+31/05/2018 16:58:54:257    ::    31/05/2018 13:58:53:729 <snmp:TRAP INFO> trap loginStateChange was sent
+31/05/2018 16:58:54:257    ::    31/05/2018 13:58:53:730 <snmp:TRAP INFO> trap loginStateChange was sent
+31/05/2018 16:58:55:168    ::    31/05/2018 13:58:54:637 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:55:468    ::    31/05/2018 13:58:54:979 <ptpd:PTPd INFO> PTP_SLAVE_UNICAST_REGISTRATION : 1
+31/05/2018 16:58:55:468    ::    
+31/05/2018 16:58:55:468    ::    31/05/2018 13:58:54:979 <ptpd:PTPd INFO> 	SIGNAL_RESP_TIMER is armed(5)!
+31/05/2018 16:58:55:770    ::    31/05/2018 13:58:55:467 <snmp:TRAP INFO> trap loginStateChange was sent
+31/05/2018 16:58:55:770    ::    31/05/2018 13:58:55:467 <snmp:TRAP INFO> trap loginStateChange was sent
+31/05/2018 16:58:55:770    ::    31/05/2018 13:58:55:465 <oam:SSH INFO> Login Attempt Trap Sent
+31/05/2018 16:58:56:070    ::    31/05/2018 13:58:55:637 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:56:972    ::    31/05/2018 13:58:56:637 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:58:175    ::    31/05/2018 13:58:57:637 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:58:475    ::    31/05/2018 13:58:58:077 <prcMngr:PRCMNGR INFO> Cleaning dead thread PMCLIENT_CONNECT (pid:6168 tid:6173)
+31/05/2018 16:58:58:475    ::    31/05/2018 13:58:58:077 <prcMngr:PRCMNGR INFO> Cleaning dead thread lteCli (pid:6168 tid:6168)
+31/05/2018 16:58:59:080    ::    31/05/2018 13:58:58:577 <prcMngr:PRCMNGR INFO> Cleaning dead thread PMCLIENT_RX (pid:6168 tid:6175)
+31/05/2018 16:58:59:080    ::    31/05/2018 13:58:58:577 <prcMngr:PRCMNGR INFO> Cleaning dead thread lteCli-HANDLE (pid:6168 tid:6174)
+31/05/2018 16:58:59:080    ::    31/05/2018 13:58:58:577 <prcMngr:PRCMNGR INFO> Cleaning dead thread PMCLIENT_TX (pid:6168 tid:6176)
+31/05/2018 16:58:59:080    ::    31/05/2018 13:58:58:637 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:58:59:382    ::    31/05/2018 13:58:58:973 <oam:SSH INFO> Login Attempt Trap Sent
+31/05/2018 16:58:59:382    ::    31/05/2018 13:58:58:974 <snmp:TRAP INFO> trap loginStateChange was sent
+31/05/2018 16:58:59:382    ::    31/05/2018 13:58:58:975 <snmp:TRAP INFO> trap loginStateChange was sent
+31/05/2018 16:58:59:983    ::    31/05/2018 13:58:59:636 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:00:283    ::    31/05/2018 13:58:59:979 <ptpd:PTPd INFO> PTP_SLAVE_UNICAST_REGISTRATION : 1
+31/05/2018 16:59:00:283    ::    
+31/05/2018 16:59:00:283    ::    31/05/2018 13:58:59:979 <ptpd:PTPd INFO> 	SIGNAL_RESP_TIMER is armed(4)!
+31/05/2018 16:59:01:184    ::    31/05/2018 13:59:00:636 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:02:086    ::    31/05/2018 13:59:01:636 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:02:987    ::    31/05/2018 13:59:02:635 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:04:191    ::    31/05/2018 13:59:03:635 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:05:093    ::    31/05/2018 13:59:04:635 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:05:394    ::    31/05/2018 13:59:04:979 <ptpd:PTPd INFO> PTP_SLAVE_UNICAST_REGISTRATION : 1
+31/05/2018 16:59:05:394    ::    
+31/05/2018 16:59:05:394    ::    31/05/2018 13:59:04:979 <ptpd:PTPd INFO> 	SIGNAL_RESP_TIMER is armed(3)!
+31/05/2018 16:59:05:996    ::    31/05/2018 13:59:05:635 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:07:197    ::    31/05/2018 13:59:06:634 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:08:099    ::    31/05/2018 13:59:07:634 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:09:001    ::    31/05/2018 13:59:08:634 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:10:203    ::    31/05/2018 13:59:09:634 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:10:504    ::    31/05/2018 13:59:09:979 <ptpd:PTPd INFO> PTP_SLAVE_UNICAST_REGISTRATION : 1
+31/05/2018 16:59:10:504    ::    
+31/05/2018 16:59:10:504    ::    31/05/2018 13:59:09:979 <ptpd:PTPd INFO> 	SIGNAL_RESP_TIMER is armed(2)!
+31/05/2018 16:59:11:106    ::    31/05/2018 13:59:10:634 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:11:106    ::    31/05/2018 13:59:10:801 <prcMngr:PRCMNGR INFO> XDB set to persistent tables in the past 93 sec
+31/05/2018 16:59:11:106    ::    31/05/2018 13:59:10:801 <prcMngr:PRCMNGR INFO> +----------------------------------------------------------------+-------+-----+
+31/05/2018 16:59:11:106    ::    31/05/2018 13:59:10:802 <prcMngr:PRCMNGR INFO> |                           Table Name                           |TableId|Usage|
+31/05/2018 16:59:11:106    ::    31/05/2018 13:59:10:802 <prcMngr:PRCMNGR INFO> +----------------------------------------------------------------+-------+-----+
+31/05/2018 16:59:11:106    ::    31/05/2018 13:59:10:802 <prcMngr:PRCMNGR INFO> |loggerThresholds                                                |     10|  458|
+31/05/2018 16:59:11:106    ::    31/05/2018 13:59:10:802 <prcMngr:PRCMNGR INFO> +----------------------------------------------------------------+-------+-----+
+31/05/2018 16:59:12:012    ::    31/05/2018 13:59:11:633 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:13:214    ::    31/05/2018 13:59:12:633 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:14:115    ::    31/05/2018 13:59:13:633 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:14:716    ::    31/05/2018 13:59:14:632 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:15:317    ::    lte_cli:>>31/05/2018 13:59:14:979 <ptpd:PTPd INFO> PTP_SLAVE_UNICAST_REGISTRATION : 1
+31/05/2018 16:59:15:317    ::    
+31/05/2018 16:59:15:317    ::    31/05/2018 13:59:14:979 <ptpd:PTPd INFO> 	SIGNAL_RESP_TIMER is armed(1)!
+31/05/2018 16:59:16:218    ::    31/05/2018 13:59:15:632 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:17:119    ::    31/05/2018 13:59:16:632 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:18:020    ::    31/05/2018 13:59:17:632 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:19:223    ::    31/05/2018 13:59:18:631 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:20:126    ::    31/05/2018 13:59:19:631 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:20:427    ::    31/05/2018 13:59:19:980 <ptpd:PTPd INFO> PTP_SLAVE_UNICAST_REGISTRATION : 1
+31/05/2018 16:59:20:427    ::    
+31/05/2018 16:59:20:427    ::    31/05/2018 13:59:19:980 <ptpd:PTPd INFO> 
+31/05/2018 16:59:20:427    ::    PTP_SLAVE_UNICAST_REGISTRATION_ANNOUNCE_REQ Failed
+31/05/2018 16:59:21:029    ::    31/05/2018 13:59:20:631 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:21:930    ::    31/05/2018 13:59:21:631 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:23:147    ::    31/05/2018 13:59:22:630 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:24:049    ::    31/05/2018 13:59:23:630 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:24:949    ::    31/05/2018 13:59:24:630 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:25:550    ::    31/05/2018 13:59:24:979 <ptpd:PTPd INFO> PTP_SLAVE_UNICAST_REGISTRATION : 0
+31/05/2018 16:59:25:550    ::    
+31/05/2018 16:59:25:550    ::    31/05/2018 13:59:24:979 <ptpd:PTPd INFO> Set active clock PRIMARY , IP=20.0.0.200 !!!
+31/05/2018 16:59:25:550    ::    
+31/05/2018 16:59:25:550    ::    31/05/2018 13:59:24:979 <ptpd:PTPd INFO> 
+31/05/2018 16:59:25:550    ::    PTP_SLAVE_UNICAST_REGISTRATION_INIT finish
+31/05/2018 16:59:25:550    ::    
+31/05/2018 16:59:25:550    ::    31/05/2018 13:59:24:979 <ptpd:PTPd INFO> 	SIGNAL_RESP_TIMER is armed(10)!
+31/05/2018 16:59:25:550    ::    
+31/05/2018 16:59:25:550    ::    31/05/2018 13:59:24:979 <ptpd:PTPd INFO> active_clock = 0, snmp_ready = 1       b_connecting = 0
+31/05/2018 16:59:26:152    ::    31/05/2018 13:59:25:630 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:27:056    ::    31/05/2018 13:59:26:629 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:27:957    ::    31/05/2018 13:59:27:629 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:29:160    ::    31/05/2018 13:59:28:629 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:30:061    ::    31/05/2018 13:59:29:629 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:30:361    ::    31/05/2018 13:59:29:979 <ptpd:PTPd INFO> PTP_SLAVE_UNICAST_REGISTRATION : 1
+31/05/2018 16:59:30:361    ::    
+31/05/2018 16:59:30:361    ::    31/05/2018 13:59:29:979 <ptpd:PTPd INFO> 	SIGNAL_RESP_TIMER is armed(9)!
+31/05/2018 16:59:30:961    ::    31/05/2018 13:59:30:628 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:32:164    ::    31/05/2018 13:59:31:628 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:33:065    ::    31/05/2018 13:59:32:628 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:33:966    ::    31/05/2018 13:59:33:628 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:35:167    ::    31/05/2018 13:59:34:628 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:35:467    ::    31/05/2018 13:59:34:979 <ptpd:PTPd INFO> PTP_SLAVE_UNICAST_REGISTRATION : 1
+31/05/2018 16:59:35:467    ::    
+31/05/2018 16:59:35:467    ::    31/05/2018 13:59:34:979 <ptpd:PTPd INFO> 	SIGNAL_RESP_TIMER is armed(8)!
+31/05/2018 16:59:36:069    ::    31/05/2018 13:59:35:627 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:36:971    ::    31/05/2018 13:59:36:627 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:38:173    ::    31/05/2018 13:59:37:627 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:39:075    ::    31/05/2018 13:59:38:626 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:39:978    ::    31/05/2018 13:59:39:626 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:40:278    ::    31/05/2018 13:59:39:979 <ptpd:PTPd INFO> PTP_SLAVE_UNICAST_REGISTRATION : 1
+31/05/2018 16:59:40:278    ::    
+31/05/2018 16:59:40:278    ::    31/05/2018 13:59:39:979 <ptpd:PTPd INFO> 	SIGNAL_RESP_TIMER is armed(7)!
+31/05/2018 16:59:41:179    ::    31/05/2018 13:59:40:626 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:42:080    ::    31/05/2018 13:59:41:626 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:42:982    ::    31/05/2018 13:59:42:625 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:44:184    ::    31/05/2018 13:59:43:625 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:44:784    ::    31/05/2018 13:59:44:625 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:45:386    ::    lte_cli:>>31/05/2018 13:59:44:979 <ptpd:PTPd INFO> PTP_SLAVE_UNICAST_REGISTRATION : 1
+31/05/2018 16:59:45:386    ::    
+31/05/2018 16:59:45:386    ::    31/05/2018 13:59:44:979 <ptpd:PTPd INFO> 	SIGNAL_RESP_TIMER is armed(6)!
+31/05/2018 16:59:45:987    ::    31/05/2018 13:59:45:625 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:47:189    ::    31/05/2018 13:59:46:624 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:48:092    ::    31/05/2018 13:59:47:624 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:48:993    ::    31/05/2018 13:59:48:624 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:50:194    ::    31/05/2018 13:59:49:624 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:50:495    ::    31/05/2018 13:59:49:979 <ptpd:PTPd INFO> PTP_SLAVE_UNICAST_REGISTRATION : 1
+31/05/2018 16:59:50:495    ::    
+31/05/2018 16:59:50:495    ::    31/05/2018 13:59:49:979 <ptpd:PTPd INFO> 	SIGNAL_RESP_TIMER is armed(5)!
+31/05/2018 16:59:51:096    ::    31/05/2018 13:59:50:623 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:51:996    ::    31/05/2018 13:59:51:623 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:53:198    ::    31/05/2018 13:59:52:623 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:54:100    ::    31/05/2018 13:59:53:623 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:55:002    ::    31/05/2018 13:59:54:622 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:55:303    ::    31/05/2018 13:59:54:981 <ptpd:PTPd INFO> PTP_SLAVE_UNICAST_REGISTRATION : 1
+31/05/2018 16:59:55:303    ::    
+31/05/2018 16:59:55:303    ::    31/05/2018 13:59:54:981 <ptpd:PTPd INFO> 	SIGNAL_RESP_TIMER is armed(4)!
+31/05/2018 16:59:56:204    ::    31/05/2018 13:59:55:622 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:57:106    ::    31/05/2018 13:59:56:622 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:58:008    ::    31/05/2018 13:59:57:621 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 16:59:59:210    ::    31/05/2018 13:59:58:621 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 17:00:00:112    ::    31/05/2018 13:59:59:621 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 17:00:00:413    ::    31/05/2018 13:59:59:979 <ptpd:PTPd INFO> PTP_SLAVE_UNICAST_REGISTRATION : 1
+31/05/2018 17:00:00:413    ::    
+31/05/2018 17:00:00:413    ::    31/05/2018 13:59:59:979 <ptpd:PTPd INFO> 	SIGNAL_RESP_TIMER is armed(3)!
+31/05/2018 17:00:00:413    ::    
+31/05/2018 17:00:00:413    ::    31/05/2018 14:00:00:009 <enodeb0:KPI_INFRA INFO> updating the NMS consumer statistics
+31/05/2018 17:00:00:413    ::    31/05/2018 14:00:00:009 <enodeb0:KPI_INFRA INFO> posting NMS consumer cell 0 at time 1527775200, next time in 300 seconds
+31/05/2018 17:00:01:014    ::    31/05/2018 14:00:00:621 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 17:00:02:216    ::    31/05/2018 14:00:01:620 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 17:00:03:118    ::    31/05/2018 14:00:02:620 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 17:00:04:019    ::    31/05/2018 14:00:03:620 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 17:00:04:948    ::    31/05/2018 14:00:04:620 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 17:00:05:248    ::    31/05/2018 14:00:04:979 <ptpd:PTPd INFO> PTP_SLAVE_UNICAST_REGISTRATION : 1
+31/05/2018 17:00:05:248    ::    
+31/05/2018 17:00:05:248    ::    31/05/2018 14:00:04:979 <ptpd:PTPd INFO> 	SIGNAL_RESP_TIMER is armed(2)!
+31/05/2018 17:00:06:152    ::    31/05/2018 14:00:05:619 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 17:00:07:354    ::    31/05/2018 14:00:06:619 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 17:00:07:957    ::    31/05/2018 14:00:07:619 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 17:00:09:158    ::    31/05/2018 14:00:08:619 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 17:00:10:059    ::    31/05/2018 14:00:09:618 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 17:00:10:360    ::    31/05/2018 14:00:09:979 <ptpd:PTPd INFO> PTP_SLAVE_UNICAST_REGISTRATION : 1
+31/05/2018 17:00:10:360    ::    
+31/05/2018 17:00:10:360    ::    31/05/2018 14:00:09:979 <ptpd:PTPd INFO> 	SIGNAL_RESP_TIMER is armed(1)!
+31/05/2018 17:00:10:960    ::    31/05/2018 14:00:10:618 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 17:00:12:161    ::    31/05/2018 14:00:11:618 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 17:00:13:063    ::    31/05/2018 14:00:12:618 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 17:00:13:965    ::    31/05/2018 14:00:13:618 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 17:00:14:866    ::    31/05/2018 14:00:14:618 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 17:00:15:467    ::    lte_cli:>>31/05/2018 14:00:14:979 <ptpd:PTPd INFO> PTP_SLAVE_UNICAST_REGISTRATION : 1
+31/05/2018 17:00:15:467    ::    
+31/05/2018 17:00:15:467    ::    31/05/2018 14:00:14:979 <ptpd:PTPd INFO> 
+31/05/2018 17:00:15:467    ::    PTP_SLAVE_UNICAST_REGISTRATION_ANNOUNCE_REQ Failed
+31/05/2018 17:00:16:068    ::    31/05/2018 14:00:15:617 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 17:00:16:970    ::    31/05/2018 14:00:16:617 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 17:00:18:173    ::    31/05/2018 14:00:17:617 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 17:00:19:074    ::    31/05/2018 14:00:18:616 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 17:00:19:975    ::    31/05/2018 14:00:19:616 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 17:00:20:275    ::    31/05/2018 14:00:19:979 <ptpd:PTPd INFO> PTP_SLAVE_UNICAST_REGISTRATION : 0
+31/05/2018 17:00:20:275    ::    
+31/05/2018 17:00:20:275    ::    31/05/2018 14:00:19:980 <ptpd:PTPd INFO> Set active clock PRIMARY , IP=20.0.0.200 !!!
+31/05/2018 17:00:20:275    ::    
+31/05/2018 17:00:20:275    ::    31/05/2018 14:00:19:980 <ptpd:PTPd INFO> 
+31/05/2018 17:00:20:275    ::    PTP_SLAVE_UNICAST_REGISTRATION_INIT finish
+31/05/2018 17:00:20:275    ::    
+31/05/2018 17:00:20:275    ::    31/05/2018 14:00:19:980 <ptpd:PTPd INFO> 	SIGNAL_RESP_TIMER is armed(10)!
+31/05/2018 17:00:20:275    ::    
+31/05/2018 17:00:20:275    ::    31/05/2018 14:00:19:980 <ptpd:PTPd INFO> active_clock = 0, snmp_ready = 1       b_connecting = 0
+31/05/2018 17:00:21:191    ::    31/05/2018 14:00:20:616 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 17:00:22:105    ::    31/05/2018 14:00:21:616 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 17:00:23:008    ::    31/05/2018 14:00:22:615 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 17:00:23:922    ::    31/05/2018 14:00:23:615 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 17:00:25:136    ::    31/05/2018 14:00:24:615 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 17:00:25:437    ::    31/05/2018 14:00:24:979 <ptpd:PTPd INFO> PTP_SLAVE_UNICAST_REGISTRATION : 1
+31/05/2018 17:00:25:437    ::    
+31/05/2018 17:00:25:437    ::    31/05/2018 14:00:24:979 <ptpd:PTPd INFO> 	SIGNAL_RESP_TIMER is armed(9)!
+31/05/2018 17:00:26:038    ::    31/05/2018 14:00:25:615 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 17:00:26:952    ::    31/05/2018 14:00:26:614 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 17:00:28:169    ::    31/05/2018 14:00:27:614 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 17:00:29:084    ::    31/05/2018 14:00:28:614 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 17:00:29:986    ::    31/05/2018 14:00:29:614 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 17:00:30:287    ::    31/05/2018 14:00:29:979 <ptpd:PTPd INFO> PTP_SLAVE_UNICAST_REGISTRATION : 1
+31/05/2018 17:00:30:287    ::    
+31/05/2018 17:00:30:287    ::    31/05/2018 14:00:29:979 <ptpd:PTPd INFO> 	SIGNAL_RESP_TIMER is armed(8)!
+31/05/2018 17:00:31:189    ::    31/05/2018 14:00:30:613 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 17:00:32:090    ::    31/05/2018 14:00:31:613 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 17:00:32:992    ::    31/05/2018 14:00:32:613 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 17:00:34:194    ::    31/05/2018 14:00:33:612 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 17:00:35:096    ::    31/05/2018 14:00:34:612 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 17:00:35:396    ::    31/05/2018 14:00:34:979 <ptpd:PTPd INFO> PTP_SLAVE_UNICAST_REGISTRATION : 1
+31/05/2018 17:00:35:396    ::    
+31/05/2018 17:00:35:396    ::    31/05/2018 14:00:34:979 <ptpd:PTPd INFO> 	SIGNAL_RESP_TIMER is armed(7)!
+31/05/2018 17:00:35:999    ::    31/05/2018 14:00:35:612 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 17:00:37:208    ::    31/05/2018 14:00:36:612 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 17:00:38:122    ::    31/05/2018 14:00:37:612 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 17:00:39:024    ::    31/05/2018 14:00:38:611 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 17:00:39:938    ::    31/05/2018 14:00:39:611 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]
+31/05/2018 17:00:40:539    ::    31/05/2018 14:00:39:979 <ptpd:PTPd INFO> PTP_SLAVE_UNICAST_REGISTRATION : 1
+31/05/2018 17:00:40:539    ::    
+31/05/2018 17:00:40:539    ::    31/05/2018 14:00:39:979 <ptpd:PTPd INFO> 	SIGNAL_RESP_TIMER is armed(6)!
+31/05/2018 17:00:41:143    ::    31/05/2018 14:00:40:610 <enodeb0:YS INFO> TTI=0:00 Sending Param Request to PHY [sectorIdx=0, vlClState=0]

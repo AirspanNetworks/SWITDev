@@ -1,0 +1,303 @@
+31/05/2018 16:57:31:296    ::    lte_cli:>>
+31/05/2018 16:58:01:317    ::    lte_cli:>>
+31/05/2018 16:58:09:435    ::    lte_cli:>>
+31/05/2018 16:58:09:435    ::    lte_cli:>>
+31/05/2018 16:58:10:036    ::    lte_cli:>>quit
+31/05/2018 16:58:10:640    ::    # 
+31/05/2018 16:58:10:640    ::    # 
+31/05/2018 16:58:10:640    ::    # 
+31/05/2018 16:58:10:640    ::    # 
+31/05/2018 16:58:11:244    ::    # id
+31/05/2018 16:58:11:244    ::    uid=0(root) gid=0(root) groups=0(root),1011(ssh_limited)
+31/05/2018 16:58:11:244    ::    # 
+31/05/2018 16:58:11:244    ::    # 
+31/05/2018 16:58:13:953    ::    # 
+31/05/2018 16:58:13:953    ::    # 
+31/05/2018 16:58:14:253    ::    # su -
+31/05/2018 16:58:14:253    ::    
+31/05/2018 16:58:14:253    ::    
+31/05/2018 16:58:14:253    ::    BusyBox v1.23.1 (2018-04-25 13:04:31 IDT) built-in shell (ash)
+31/05/2018 16:58:14:253    ::    Enter 'help' for a list of built-in commands.
+31/05/2018 16:58:15:157    ::    # HeWGEUx66m=_4!ND
+31/05/2018 16:58:15:773    ::    # /bs/lteCli
+31/05/2018 16:58:16:073    ::    XDB runtime started
+31/05/2018 16:58:16:675    ::    
+31/05/2018 16:58:16:675    ::    
+31/05/2018 16:58:16:675    ::    [?1034hlte_cli:>>
+31/05/2018 16:58:16:675    ::    lte_cli:>>
+31/05/2018 16:58:16:675    ::    lte_cli:>>
+31/05/2018 16:58:16:675    ::    lte_cli:>>
+31/05/2018 16:58:16:975    ::    lte_cli:>>
+31/05/2018 16:58:16:975    ::    lte_cli:>>
+31/05/2018 16:58:18:477    ::    lte_cli:>>db set StackCfg [1] uploadUrl=http://100.100.0.250/upload/upload.php
+31/05/2018 16:58:18:477    ::    1 entries updated
+31/05/2018 16:58:19:086    ::    lte_cli:>>
+31/05/2018 16:58:19:086    ::    lte_cli:>>
+31/05/2018 16:58:20:888    ::    lte_cli:>>db set StackCfg [1] uploadUrl=http://100.100.0.250/upload/upload.php
+31/05/2018 16:58:20:888    ::    1 entries updated
+31/05/2018 16:58:31:420    ::    lte_cli:>>
+31/05/2018 16:58:47:022    ::    lte_cli:>>
+31/05/2018 16:58:47:022    ::    lte_cli:>>
+31/05/2018 16:58:47:323    ::    lte_cli:>>db dump all
+31/05/2018 16:58:47:323    ::    Table AutoPciCell Dump to xml completed
+31/05/2018 16:58:47:323    ::    Table AutoPciEnb Dump to xml completed
+31/05/2018 16:58:47:323    ::    Table AutoRsi Dump to xml completed
+31/05/2018 16:58:47:323    ::    Table BlackCellList Dump to xml completed
+31/05/2018 16:58:47:323    ::    Table CMPv2Config Dump to xml completed
+31/05/2018 16:58:47:323    ::    Table CSFB3GFreqCfg Dump to xml completed
+31/05/2018 16:58:47:323    ::    Table CaCfg Dump to xml completed
+31/05/2018 16:58:47:323    ::    Table Cdma2kNghCellCfg Dump to xml completed
+31/05/2018 16:58:47:323    ::    Table CellCfg Dump to xml completed
+31/05/2018 16:58:47:323    ::    Table CellDedCfg Dump to xml completed
+31/05/2018 16:58:47:323    ::    Table CellIntraEnbLbCfg Dump to xml completed
+31/05/2018 16:58:47:323    ::    Table CellRachCfg Dump to xml completed
+31/05/2018 16:58:47:323    ::    Table CellSib15Cfg Dump to xml completed
+31/05/2018 16:58:47:323    ::    Table CellSib1Cfg Dump to xml completed
+31/05/2018 16:58:47:323    ::    Table CellSib2Cfg Dump to xml completed
+31/05/2018 16:58:47:323    ::    Table CellSib8Cfg Dump to xml completed
+31/05/2018 16:58:47:323    ::    Table CellSrsCfg Dump to xml completed
+31/05/2018 16:58:47:323    ::    Table CellUnavailabilityData Dump to xml completed
+31/05/2018 16:58:47:323    ::    Table ClockSourceCfg Dump to xml completed
+31/05/2018 16:58:47:323    ::    Table CsfbMobilityParamsCfg Dump to xml completed
+31/05/2018 16:58:47:323    ::    Table CsfbSupportCfg Dump to xml completed
+31/05/2018 16:58:47:323    ::    Table DhcpVendorParams Dump to xml completed
+31/05/2018 16:58:47:323    ::    Table EmsimCfg Dump to xml completed
+31/05/2018 16:58:47:323    ::    Table ExtPpsConfig Dump to xml completed
+31/05/2018 16:58:47:323    ::    Table GERANReselectionCfg Dump to xml completed
+31/05/2018 16:58:47:323    ::    Table IPSecCfg Dump to xml completed
+31/05/2018 16:58:47:323    ::    Table IfCfg Dump to xml completed
+31/05/2018 16:58:47:323    ::    Table InterRATReselection Dump to xml completed
+31/05/2018 16:58:47:323    ::    Table InterRATmeasCfg Dump to xml completed
+31/05/2018 16:58:47:323    ::    Table MacCfg Dump to xml completed
+31/05/2018 16:58:47:323    ::    Table MeasGapCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table NLMNeighbours Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table NetworkServices Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table NghListUtra Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table PTPmasters Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table PciRangesForNrtEnb Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table PciRangesHomeEnb Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table PlmnCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table PnPCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table PnPStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table ProcessInformation Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table PscRangesForUtraNrt Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table RACHAccessDelayPerCell Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table RACHPremblSentPerCell Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table RlcPdcpBoThreshold Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table RnUeCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table SBACfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table SFRConfig Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table SnmpCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table Sr15MeasObjCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table Sr15MeasReportConfig Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table Sr15interReselectionParams Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table SystemConfig Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table UTRANReselectionCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table VolteCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table anrCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table anrFreqCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table bhQosCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table bhQosServerIPAddressListCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table cacCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table callTraceCellCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table callTraceEnbCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table compRprhConfig Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table debugCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table debugFlags Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table debugFtpServer Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table debugTcpdump Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table devCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table dicicCellConfiguration Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table dicicEnbConfiguration Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table dlAdaptation Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table drxCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table dscp Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table emergencyCallCfgPerEnb Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table enbNetworkCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table enbX2ControlState Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table featureToggle Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table fsmRfProvisionParams Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table fullDrbRecommendedCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table gpsDeviceConfig Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table harqCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table hoFreqList Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table hoTimers Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table immciCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table interRatAnrCellCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table intraEnbLbCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table intraReselectionParams Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table ipInterfacesCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table irelayRfConditionsCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table loadSheddingCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table logProcCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table loggerConfig Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table loggerThresholds Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table lowResEventsParams Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table maintenanceWinCellCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table maintenanceWinCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table mbmsAdvanced Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table mbmsCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table mbmsServiceArea Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table mbmsSfCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table mbsfnAreaId Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table mmeOverloadCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table nghList Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table ntpWellKnownServerIPAddress Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table onSubbandsToCeuPaIdx Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table pfsCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table pfsMcsWeightCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table pfsPerBwCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table pfsQciWeightCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table positioningMeasCellCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table positioningMeasEnbCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table pucchConfiguration Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table puschConfiguration Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table pwsCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table qcTfcsManagerConfig Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table qosBasedHOEarfcn Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table qosHoTrigger Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table quantityConfig Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table rabParams Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table rebootCounters Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table resource_status_reporting Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table rfCostCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table rrcTimres Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table s1Cfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table securityAlg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table smonThresholds Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table snmpTrapDest Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table sonCellCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table sonCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table stackCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table staticNghFreqListPerCell Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table staticRoute Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table statsConfig Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table tddFactor Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table tpmCellCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table traceSMStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table twampConfig Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table twampReflectorConfig Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table ulMcsParams Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table utranFreqCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table visualCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table wifiCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Dump persistent tables to xml completed
+31/05/2018 16:58:47:626    ::    Table ActiveSIBData Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table ActiveSecurityAlg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table CACapableInfo Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table CbrsCfgDp Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table CbrsStatusDp Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table CellSibDeNBCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table ClkMngrStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table ClkSrcParams Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table ClockSourceStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table CmdQNghList Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table CmdQNghListUtra Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table DhcpInfo Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table ExtPpsStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table ExternalIpInterfacesStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table IPSecStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table Inventory Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table LtePerTargetCellStatsArray Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table NLMCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table NLMScanStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table NLMStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table NLSyncStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table NiAndRssiStat Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table PTPStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table PortSecurityStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table PtpReady Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table RnUeStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table SBAAntennaIndicationStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table StackAction Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table SysEvents Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table SystemSanityTestResults Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table VolteStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table activeRfCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table activeSfrCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table activeSystemCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table backhaulIfStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table bhQosFtpIPAddressListStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table bhQosInterface Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table bhQosServerIPAddressListStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table bhQosStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table callTraceCellStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table callTraceEnbStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table cellRfStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table cellStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table currentSensors Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table dbStatusUpdates Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table dcVoltageSensors Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table gpsStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table gpsStatusTraps Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table ifStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table ipInterfacesStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table irelayRfConditionsStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table logProcStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table lowResEventsStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table m1MulticastIPs Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table maintenanceWinCellStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table mbmsStats Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table mceStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table measFreqList Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table mmeStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table nghListStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table nghListTopIcicStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table nlFreqList Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table nodeSyncTraps Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table ntpServerStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table nwElementStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table pnpStatistics Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table powerSensors Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table profilerCfg Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table rfCostStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table rfStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table rfStatusDebug Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table rohcStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table sgwCommStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table smonMeasurement Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table stackStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table swDlStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table taskPerDebugThreads Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table temperatureSensors Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table tpmStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table trapGlobal Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table trapStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table twampReflectorStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table twampSenderStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table ueLinkStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table visualStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table wifiCommand Dump to xml completed
+31/05/2018 16:58:47:626    ::    Table wifiStatus Dump to xml completed
+31/05/2018 16:58:47:626    ::    Dump non-persistent tables to xml completed
+31/05/2018 16:58:47:626    ::    lte_cli:>>
+31/05/2018 16:58:47:626    ::    lte_cli:>>
+31/05/2018 16:58:48:234    ::    lte_cli:>>
+31/05/2018 16:58:48:234    ::    lte_cli:>>
+31/05/2018 16:58:48:535    ::    lte_cli:>>quit
+31/05/2018 16:58:49:136    ::    # 
+31/05/2018 16:58:49:136    ::    # 
+31/05/2018 16:58:49:437    ::    # 
+31/05/2018 16:58:49:437    ::    # 
+31/05/2018 16:58:49:737    ::    # chmod 777 /bs/db
+31/05/2018 16:58:50:339    ::    # 
+31/05/2018 16:58:50:339    ::    # 
+31/05/2018 16:58:50:640    ::    # 
+31/05/2018 16:58:50:640    ::    # 
+31/05/2018 16:58:51:250    ::    # cd /bs/db
+31/05/2018 16:58:51:250    ::    # 
+31/05/2018 16:58:51:250    ::    # 
+31/05/2018 16:58:51:851    ::    # 
+31/05/2018 16:58:51:851    ::    # 
+31/05/2018 16:58:52:152    ::    # ls -1a >> files
+31/05/2018 16:58:52:754    ::    # 
+31/05/2018 16:58:52:754    ::    # 
+31/05/2018 16:58:54:257    ::    # 
+31/05/2018 16:58:54:257    ::    # 
+31/05/2018 16:58:54:858    ::    # rm /bs/db/files
+31/05/2018 16:58:55:168    ::    # 
+31/05/2018 16:58:55:168    ::    # 
+31/05/2018 16:59:01:485    ::    # 
+31/05/2018 16:59:31:261    ::    # 
+31/05/2018 17:00:01:314    ::    # 
+31/05/2018 17:00:31:489    ::    # 

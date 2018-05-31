@@ -72,7 +72,7 @@ public class AutomationTests extends TestspanTest{
 		
 		
 		commands();
-		GeneralUtils.unSafeSleep(12*60*60*1000);
+		GeneralUtils.unSafeSleep(3*24*60*60*1000);
 		stopCommandsAndAttachFiles();
 		
 		report.report("Finished logTest test.");
@@ -82,7 +82,6 @@ public class AutomationTests extends TestspanTest{
 	public void commands() {
 
 		ArrayList<String> commands = new ArrayList<>();
-		commands.add("ue show link");
 		commands.add("system show memory");
 		commands.add("system show memdbg bucket=0 leaks=10");
 		commands.add("system show memdbg bucket=1 leaks=10");

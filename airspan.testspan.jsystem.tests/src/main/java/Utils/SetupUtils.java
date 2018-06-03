@@ -8,6 +8,7 @@ import EnodeB.EnodeB;
 import TestingServices.TestConfig;
 import UE.UE;
 import UE.UESimulator;
+import UeSimulator.Amarisoft.AmariSoftServer;
 import jsystem.framework.report.ListenerstManager;
 import jsystem.framework.report.Reporter;
 
@@ -53,17 +54,40 @@ public class SetupUtils {
 
 	public ArrayList<UE> getStaticUEs() {
 		ArrayList<UE> temp = new ArrayList<UE>();
-		if (TestConfig.getInstace().getStaticUEs() != null) {
-			temp.addAll((ArrayList<UE>) SysObjUtils.getInstnce().initSystemObject(UE.class, false,
-					TestConfig.getInstace().getStaticUEs()));
+		String[] staticUesArray = TestConfig.getInstace().getStaticUEs();
+ 		if (staticUesArray != null) {
+ 			for (int i = 0; i < staticUesArray.length; i++) {
+				if (staticUesArray[i].toLowerCase().equals(AmariSoftServer.amarisoftIdentifier)) {
+					try {
+						AmariSoftServer uesim = AmariSoftServer.getInstance();
+						temp.addAll(uesim.getUeList());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+				else
+					temp.add((UE) SysObjUtils.getInstnce().initSystemObject(UE.class, false,staticUesArray[i]));
+			}
 		}
 		return temp;
 	}
 
 	public ArrayList<UE> getStaticUEs(EnodeB enb) {
 		ArrayList<UE> temp = new ArrayList<UE>();
-		if (enb.getStaticUes() != null) {
-			temp.addAll((ArrayList<UE>) SysObjUtils.getInstnce().initSystemObject(UE.class, false, enb.getStaticUes()));
+		String[] staticUesArray = enb.getStaticUes();		
+ 		if (staticUesArray != null) {
+ 			for (int i = 0; i < staticUesArray.length; i++) {
+				if (staticUesArray[i].toLowerCase().equals(AmariSoftServer.amarisoftIdentifier)) {
+					try {
+						AmariSoftServer uesim = AmariSoftServer.getInstance();
+						temp.addAll(uesim.getUeList());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+				else
+					temp.add((UE) SysObjUtils.getInstnce().initSystemObject(UE.class, false,staticUesArray[i]));
+			}
 		}
 		return temp;
 	}
@@ -96,16 +120,25 @@ public class SetupUtils {
 		ArrayList<UE> temp = new ArrayList<UE>();
 		String[] dynamicUEs = TestConfig.getInstace().getDynamicUEs();
 		if (dynamicUEs != null) {
-			if (dynamicUEs[0].toLowerCase().equals("uesimulator")) {
-				UESimulator uesim;
-				try {
-					uesim = UESimulator.getInstance();
-					temp.addAll(uesim.getUEs());
-				} catch (Exception e) {
-					e.printStackTrace();
+			for (int i = 0; i < dynamicUEs.length; i++) {
+				if (dynamicUEs[i].toLowerCase().equals("uesimulator")) {
+					UESimulator uesim;
+					try {
+						uesim = UESimulator.getInstance();
+						temp.addAll(uesim.getUEs());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				} else if(dynamicUEs[i].toLowerCase().equals(AmariSoftServer.amarisoftIdentifier)){
+					try {
+						AmariSoftServer uesim = AmariSoftServer.getInstance();
+						temp.addAll(uesim.getUeList());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
-			} else {
-				temp.addAll((ArrayList<UE>) SysObjUtils.getInstnce().initSystemObject(UE.class, false, dynamicUEs));
+				else
+					temp.add((UE) SysObjUtils.getInstnce().initSystemObject(UE.class, false, dynamicUEs[i]));
 			}
 		}
 		return temp;

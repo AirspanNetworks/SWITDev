@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 import EnodeB.EnodeB;
 import UE.AmarisoftUE;
+import UE.UE;
 import UeSimulator.Amarisoft.JsonObjects.Actions.UEAction;
 import UeSimulator.Amarisoft.JsonObjects.Actions.UEAction.Actions;
 import UeSimulator.Amarisoft.JsonObjects.ConfigFile.*;
@@ -37,6 +38,8 @@ import systemobject.terminal.Terminal;
 @ClientEndpoint
 public class AmariSoftServer extends SystemObjectImpl{
 
+	public static String amarisoftIdentifier = "amarisoft";
+	
 	private Terminal sshTerminal;
 	private Terminal lteUeTerminal;
 	private String ip;
@@ -52,13 +55,14 @@ public class AmariSoftServer extends SystemObjectImpl{
     private String[] sdrList;
     private String[] imsiStartList;
     private String[] imsiStopList;
+    private ArrayList<UE> ueList;
 
     @Override
 	public void init() throws Exception {
 		super.init();
 		port = 900 + sdrList[0];
     	connect();
-
+    	ueList = new ArrayList<>();
 	}
 	
 	public String getIp() {
@@ -339,26 +343,26 @@ public class AmariSoftServer extends SystemObjectImpl{
 	{
 		ObjectMapper mapper = new ObjectMapper();
 		ArrayList<UeList> ueLists = new ArrayList<UeList>();
-		UeList ueList = new UeList();
-		ueList.setAsRelease(release);
-		ueList.setUeCategory(category);
-		ueList.setForcedCqi(15);
-		ueList.setForcedRi(2);
-		ueList.setSimAlgo("milenage");
-		ueList.setImsi(imsi);
-		ueList.setImeisv("1234567891234567");
-		ueList.setK("5C95978B5E89488CB7DB44381E237809");
-		ueList.setOp("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
-		ueList.setTunSetupScript("ue-ifup_TCP");
-		ueList.setUeId(ueId);
+		UeList ueProperties = new UeList();
+		ueProperties.setAsRelease(release);
+		ueProperties.setUeCategory(category);
+		ueProperties.setForcedCqi(15);
+		ueProperties.setForcedRi(2);
+		ueProperties.setSimAlgo("milenage");
+		ueProperties.setImsi(imsi);
+		ueProperties.setImeisv("1234567891234567");
+		ueProperties.setK("5C95978B5E89488CB7DB44381E237809");
+		ueProperties.setOp("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+		ueProperties.setTunSetupScript("ue-ifup_TCP");
+		ueProperties.setUeId(ueId);
 		//ueList.setAdditionalProperty("ue_count", 5);
-		ueLists.add(ueList);
+		ueLists.add(ueProperties);
 		UEAction addUE = new UEAction();
 		addUE.setMessage(Actions.UE_ADD);
 		addUE.setUeList(ueLists);
 		String message = mapper.writeValueAsString(addUE);
-		System.out.println("Sending message: " + message);
-		sendMessage(message);
+		sendMessage(message);		
+		ueList.add(new AmarisoftUE(ueId,this));
 	}
 	
 	public boolean uePowerOn(int ueId)
@@ -446,5 +450,10 @@ public class AmariSoftServer extends SystemObjectImpl{
 		configObject.setUeList(ueLists);
 		setConfigFile("automationConfiguration");
 		writeConfigFile();
+	}
+
+	
+	public ArrayList<UE> getUeList() {
+		return ueList;
 	}
 }

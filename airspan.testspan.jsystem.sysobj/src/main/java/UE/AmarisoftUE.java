@@ -19,6 +19,7 @@ public class AmarisoftUE extends UE{
 		this();
 		this.ueId = ueId;
 		this.server = server;
+		setName("amarisoft" + (10000 + ueId));
 	}
 	
 	@Override
@@ -28,21 +29,20 @@ public class AmarisoftUE extends UE{
 
 	@Override
 	public boolean start() {
-		GeneralUtils.printToConsole("AmarisoftUE does not have start method.");
-		return false;
+		return server.uePowerOn(ueId);
 	}
 
 	@Override
 	public boolean reboot() {
-		GeneralUtils.printToConsole("AmarisoftUE does not have reboot method.");
-		boolean flag = false;
+		boolean flag = server.uePowerOff(ueId);
+		GeneralUtils.unSafeSleep(2000);
+		flag = flag && server.uePowerOn(ueId);
 		return flag;
 	}
 
 	@Override
 	public boolean stop() {
-		GeneralUtils.printToConsole("AmarisoftUE does not have stop method.");
-		return false;
+		return server.uePowerOff(ueId);
 	}
 
 	@Override

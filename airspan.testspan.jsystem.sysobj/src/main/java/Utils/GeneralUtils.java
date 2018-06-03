@@ -561,8 +561,8 @@ public class GeneralUtils {
 			String htmlTable = "<style>";
 			for(Triple<StyleTagName, HtmlFieldColor, HtmlFieldColor> style : this.styles){
 				htmlTable += (style.getLeftElement() + "{");
-				htmlTable += ("background-color: " + style.getMiddleElement().value);
-				htmlTable += ("color: " + style.getRightElement().value);
+				htmlTable += ("background-color: " + style.getMiddleElement().value + ";");
+				htmlTable += ("color: " + style.getRightElement().value + ";");
 				htmlTable += "}";
 			}
 			htmlTable += "</style>";

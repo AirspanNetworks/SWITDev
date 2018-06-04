@@ -64,6 +64,8 @@ public class P0 extends TPTBase{
 	protected ArrayList<ArrayList<StreamParams>> streamsForPriorityTest = new ArrayList<ArrayList<StreamParams>>();
 	protected ArrayList<Long> priorityTestFirstResult;
 	protected ArrayList<Long> priorityTestSecondResult;
+	protected int firstResultSizeOfStreams = 1;
+	protected int secondResultSizeOfStreams = 1;
 	
 	protected String shortTerm = CounterUnit.SHORT_TERM_AVG_LATENCY.value;
 	protected String rfcAvgJitter = CounterUnit.RFC_4689_ABSOLUTE_AVG_JITTER.value;
@@ -462,6 +464,7 @@ public class P0 extends TPTBase{
 		enableAditionalStreamsForUEPriorityOverDataTest();
 		setLoadPerStreamPriorityOverDataTest();
 		priorityTestFirstResult = getUlDlResultsFromList(streamsForPriorityTest,false);
+		firstResultSizeOfStreams = streamsForPriorityTest.size();
 		streamsForPriorityTest = null;
 		streamsForPriorityTest = new ArrayList<ArrayList<StreamParams>>();
 
@@ -478,6 +481,7 @@ public class P0 extends TPTBase{
 			return true;
 		}
 		priorityTestSecondResult = getUlDlResultsFromList(streamsForPriorityTest,false);
+		secondResultSizeOfStreams = streamsForPriorityTest.size();
 		return true;
 	}
 	
@@ -1026,10 +1030,10 @@ public class P0 extends TPTBase{
 	
 	protected void checkPriorytyBeforeAndAfter(){
 		//double firstUl = priorityTestFirstResult.get(0)/1000000.0/priorityTestFirstResult.size();
-		double firstDl = priorityTestFirstResult.get(1)/1000000.0/priorityTestFirstResult.size();
+		double firstDl = priorityTestFirstResult.get(1)/1000000.0/firstResultSizeOfStreams;
 		
 		//double secondUl = priorityTestSecondResult.get(0)/1000000.0/priorityTestSecondResult.size();
-		double secondDl = priorityTestSecondResult.get(1)/1000000.0/priorityTestSecondResult.size();
+		double secondDl = priorityTestSecondResult.get(1)/1000000.0/secondResultSizeOfStreams;
 
 		GeneralUtils.startLevel("Check ratios of qci 9 before and after turning on qci 1 and 5");
 		

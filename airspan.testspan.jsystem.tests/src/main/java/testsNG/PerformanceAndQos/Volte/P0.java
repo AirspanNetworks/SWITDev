@@ -549,7 +549,8 @@ public class P0 extends TPTBase{
 	private void setLoadPerStreamPriorityOverDataTest() {
 		ArrayList<LoadParam> loadDl = new ArrayList<LoadParam>();
 		ArrayList<LoadParam> loadUl = new ArrayList<LoadParam>();
-		
+		dlCriteriaQcisInList=0;
+		ulCriteriaQcisInList=0;	
 		for(String str:ueNameListStc){
 			String name = str;
 			int ueNum = Integer.valueOf(name.replaceAll("\\D+", "").trim());
@@ -566,8 +567,8 @@ public class P0 extends TPTBase{
 			loadUl.add(lpUl);
 			lpUl = new LoadParam(loadInKbpsUl, '5', ueNum, LoadParam.LoadUnit.KILOBITS_PER_SECOND,packetSize);
 			loadUl.add(lpUl);
-			dlCriteriaQcisInList+=2.0*loadInKbpsDl;
-			ulCriteriaQcisInList+=2.0*loadInKbpsUl;			
+			dlCriteriaQcisInList+=2.0*loadInKbpsDl/1000.0;
+			ulCriteriaQcisInList+=2.0*loadInKbpsUl/1000.0;			
 		}
 		trafficSTC.setLoadStreamDL(loadDl);	
 		trafficSTC.setLoadStreamUL(loadUl);
@@ -1031,7 +1032,7 @@ public class P0 extends TPTBase{
 		}else{
 			report.report("Qci 9 average UL after running qci 1 and 5 is at least 1M lower");
 		}*/
-		if(!(secondUl>0.9*firstUl)){
+		if(!(secondUl>=0.9*firstUl)){
 			report.report("Qci 9 average UL after running qci 1 and 5 is not at least 90%", Reporter.FAIL);
 		}else{
 			report.report("Qci 9 average UL after running qci 1 and 5 is at least 90%");
@@ -1039,12 +1040,12 @@ public class P0 extends TPTBase{
 		
 		report.report("Qci 9 average DL before running qci 1 and 5: "+convertTo3DigitsAfterPoint(firstDl)+" Mbps");
 		report.report("Qci 9 average DL after running qci 1 and 5: "+convertTo3DigitsAfterPoint(secondDl)+" Mbps");
-		if(!(secondDl<firstDl-dlCriteriaQcisInList)){
-			report.report("Qci 9 average DL after running qci 1 and 5 is not at least "+convertTo3DigitsAfterPoint(dlCriteriaQcisInList)+" lower", Reporter.FAIL);
+		if(!(secondDl<=firstDl-dlCriteriaQcisInList)){
+			report.report("Qci 9 average DL after running qci 1 and 5 is not at least "+convertTo3DigitsAfterPoint(dlCriteriaQcisInList)+" Mbps lower", Reporter.FAIL);
 		}else{
-			report.report("Qci 9 average DL after running qci 1 and 5 is at least "+convertTo3DigitsAfterPoint(dlCriteriaQcisInList)+" lower");
+			report.report("Qci 9 average DL after running qci 1 and 5 is at least "+convertTo3DigitsAfterPoint(dlCriteriaQcisInList)+" Mbps lower");
 		}
-		if(!(secondDl>0.9*firstDl)){
+		if(!(secondDl>=0.9*firstDl)){
 			report.report("Qci 9 average DL after running qci 1 and 5 is not at least 90%", Reporter.FAIL);
 		}else{
 			report.report("Qci 9 average DL after running qci 1 and 5 is at least 90%");
@@ -1532,6 +1533,7 @@ public class P0 extends TPTBase{
 			GeneralUtils.stopLevel();
 		}
 		listOfStreamList.add(sampleArrayList);
+		streamsForPriorityTest.add(sampleArrayList);
 		streams = null;
 		streams = new ArrayList<StreamParams>();
 	}

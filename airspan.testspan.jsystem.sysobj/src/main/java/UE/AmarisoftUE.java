@@ -19,7 +19,7 @@ public class AmarisoftUE extends UE{
 		this();
 		this.ueId = ueId;
 		this.server = server;
-		setName("amarisoft" + (10000 + ueId));
+		setName("AmarisoftUE" + (10000 + ueId));
 	}
 	
 	@Override

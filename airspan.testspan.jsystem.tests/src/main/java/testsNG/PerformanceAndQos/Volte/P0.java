@@ -458,6 +458,8 @@ public class P0 extends TPTBase{
 		if(!startTrafficInTest()){
 			return false;
 		}
+		streamsForPriorityTest = null;
+		streamsForPriorityTest = new ArrayList<ArrayList<StreamParams>>();
 		if(!helperStartTrafficAndSamplePriorityOverDataTest(false)){
 			return true;
 		}
@@ -1312,8 +1314,9 @@ public class P0 extends TPTBase{
 	private void verifyThreshold(double passCriteria, double uLrxTotal, double dlrxTotal, String qciInfo,
 			double dlCriteria, double ulCriteria){
 		report.report("Threshold for "+qciInfo+": " + passCriteria * 100 + "%");
-		double ul = uLrxTotal/1000000.0/listOfStreamList.size();
-		double dl = dlrxTotal/1000000.0/listOfStreamList.size();
+		
+		double ul = uLrxTotal/1000000.0/streamsForPriorityTest.size();
+		double dl = dlrxTotal/1000000.0/streamsForPriorityTest.size();
 		
 		String dlRateToPrint = convertTo3DigitsAfterPoint(dl);
 		String dlCriteriaToPrint = convertTo3DigitsAfterPoint(dlCriteria);

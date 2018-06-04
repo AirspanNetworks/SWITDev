@@ -114,7 +114,6 @@ public class P0 extends TPTBase{
 
 	@Override
 	public void init() throws Exception {
-		report.report("Checking dev-git-linux");
 		resetParams();
 		qcisInList = new ArrayList<>();
 		qcisInList.add("1");

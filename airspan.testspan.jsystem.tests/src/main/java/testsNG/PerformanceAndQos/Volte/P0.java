@@ -728,11 +728,19 @@ public class P0 extends TPTBase{
 			
 			LoadParam lpQci9Dl = new LoadParam(loadPerUEDl*1000, '9', ueNum, LoadParam.LoadUnit.KILOBITS_PER_SECOND,1400);
 			loadingParametersDl.add(lpQci9Dl);
-			dlCriteriaDataQcis+=loadPerUEDl;
+			if(udpDataLoad>100){
+				dlCriteriaDataQcis+=loadPerUEDl*100/udpDataLoad;
+			}else{
+				dlCriteriaDataQcis+=loadPerUEDl;				
+			}
 			
 			LoadParam lpQci9Ul = new LoadParam(loadPerUEUl*1000, '9', ueNum, LoadParam.LoadUnit.KILOBITS_PER_SECOND,1400);
 			loadingParametersUl.add(lpQci9Ul);
-			ulCriteriaDataQcis+=loadPerUEUl;
+			if(udpDataLoad>100){
+				ulCriteriaDataQcis+=loadPerUEUl*100/udpDataLoad;
+			}else{
+				ulCriteriaDataQcis+=loadPerUEUl;			
+			}
 			
 			if(!printed){
 				GeneralUtils.startLevel("Load for each UE");
@@ -1017,26 +1025,26 @@ public class P0 extends TPTBase{
 	}
 	
 	protected void checkPriorytyBeforeAndAfter(){
-		double firstUl = priorityTestFirstResult.get(0)/1000000.0/priorityTestFirstResult.size();
+		//double firstUl = priorityTestFirstResult.get(0)/1000000.0/priorityTestFirstResult.size();
 		double firstDl = priorityTestFirstResult.get(1)/1000000.0/priorityTestFirstResult.size();
 		
-		double secondUl = priorityTestSecondResult.get(0)/1000000.0/priorityTestSecondResult.size();
+		//double secondUl = priorityTestSecondResult.get(0)/1000000.0/priorityTestSecondResult.size();
 		double secondDl = priorityTestSecondResult.get(1)/1000000.0/priorityTestSecondResult.size();
 
 		GeneralUtils.startLevel("Check ratios of qci 9 before and after turning on qci 1 and 5");
 		
-		report.report("Qci 9 average UL before running qci 1 and 5: "+firstUl+" Mbps");
-		report.report("Qci 9 average UL after running qci 1 and 5: "+secondUl+" Mbps");
+		//report.report("Qci 9 average UL before running qci 1 and 5: "+firstUl+" Mbps");
+		//report.report("Qci 9 average UL after running qci 1 and 5: "+secondUl+" Mbps");
 		/*if(!(secondUl<firstUl-1)){
 			report.report("Qci 9 average UL after running qci 1 and 5 is not at least 1M lower", Reporter.FAIL);
 		}else{
 			report.report("Qci 9 average UL after running qci 1 and 5 is at least 1M lower");
-		}*/
+		}
 		if(!(secondUl>=0.9*firstUl)){
 			report.report("Qci 9 average UL after running qci 1 and 5 is not at least 90%", Reporter.FAIL);
 		}else{
 			report.report("Qci 9 average UL after running qci 1 and 5 is at least 90%");
-		}
+		}*/
 		
 		report.report("Qci 9 average DL before running qci 1 and 5: "+convertTo3DigitsAfterPoint(firstDl)+" Mbps");
 		report.report("Qci 9 average DL after running qci 1 and 5: "+convertTo3DigitsAfterPoint(secondDl)+" Mbps");

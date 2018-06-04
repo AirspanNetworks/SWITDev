@@ -636,7 +636,7 @@ public class P0 extends TPTBase{
 
 			GeneralUtils.printToConsole("Print Results state: "+printResultsForTest);
 			if (printResultsForTest) {
-				checkTptOverThreshold(debugPrinter, listOfStreamList, passCriteria);
+				checkTptOverThreshold(debugPrinter, listOfStreamList, passCriteria, false);
 				if(flagActive1 && qci1DataBeforeECue){
 					report.report("Number of Qci 1 active UEs in NMS status table was 1 during the whole test");
 				}else{
@@ -1022,7 +1022,7 @@ public class P0 extends TPTBase{
 				if(priorityTest){
 					checkPriorytyBeforeAndAfter();					
 				}
-				checkTptOverThreshold(debugPrinter, listOfStreamList, passCriteria);
+				checkTptOverThreshold(debugPrinter, listOfStreamList, passCriteria, priorityTest);
 				validateActiveFlag(flagActive);
 				validateUELinkStatus(flagUeLinkStatus);
 				printDataOfUes();
@@ -1248,7 +1248,7 @@ public class P0 extends TPTBase{
 	}
 	
 	protected void checkTptOverThreshold(StreamList debugPrinter, ArrayList<ArrayList<StreamParams>> listOfStreamList2,
-			double passCriteria) {
+			double passCriteria, boolean priorityTest) {
 		ArrayList<Long> listUlAndDlQciInList = new ArrayList<Long>();
 		listUlAndDlQciInList = getUlDlResultsFromList(listOfStreamList2, true);
 		ArrayList<Long> listUlAndDlDataQcis = new ArrayList<Long>();
@@ -1258,7 +1258,7 @@ public class P0 extends TPTBase{
 			listUlAndDlDataQcis.add(0L);
 			listUlAndDlDataQcis.add(0L);
 		}
-		compareResults(debugPrinter, listUlAndDlQciInList.get(0), listUlAndDlQciInList.get(1), listUlAndDlDataQcis.get(0), listUlAndDlDataQcis.get(1), passCriteria);
+		compareResults(debugPrinter, listUlAndDlQciInList.get(0), listUlAndDlQciInList.get(1), listUlAndDlDataQcis.get(0), listUlAndDlDataQcis.get(1), passCriteria, priorityTest);
 	}
 	
 	protected ArrayList<Long> getUlDlResultsFromList(ArrayList<ArrayList<StreamParams>> listOfStreamList2, boolean isQciInList) {
@@ -1286,7 +1286,7 @@ public class P0 extends TPTBase{
 	}
 	
 	protected void compareResults(StreamList debugPrinter, Long uLrxTotalQcisInList, Long dlrxTotalQcisInList,
-			Long uLrxTotalDataQcis, Long dlrxTotalDataQcis, double passCriteria){
+			Long uLrxTotalDataQcis, Long dlrxTotalDataQcis, double passCriteria, boolean priorityTest){
 
 		int numberOfCells = enbConfig.getNumberOfActiveCells(dut);
 		String numberOfCellsStr = "1";
@@ -1294,11 +1294,11 @@ public class P0 extends TPTBase{
 		report.report("number of cells: " + numberOfCellsStr);
 
 		verifyThreshold(passCriteria, uLrxTotalQcisInList, dlrxTotalQcisInList, stringQcisInList(), 
-				dlCriteriaQcisInList, ulCriteriaQcisInList);
+				dlCriteriaQcisInList, ulCriteriaQcisInList, priorityTest);
 		
 		if(udpDataLoad!=0){
 			verifyThreshold(DATA_QCIS_THRESHOLD_PERCENT, uLrxTotalDataQcis, dlrxTotalDataQcis, "data qcis",
-					dlCriteriaDataQcis, ulCriteriaDataQcis);
+					dlCriteriaDataQcis, ulCriteriaDataQcis, priorityTest);
 		}
 	}
 	
@@ -1312,11 +1312,18 @@ public class P0 extends TPTBase{
 	}
 	
 	private void verifyThreshold(double passCriteria, double uLrxTotal, double dlrxTotal, String qciInfo,
-			double dlCriteria, double ulCriteria){
+			double dlCriteria, double ulCriteria, boolean priorityTest){
 		report.report("Threshold for "+qciInfo+": " + passCriteria * 100 + "%");
 		
-		double ul = uLrxTotal/1000000.0/streamsForPriorityTest.size();
-		double dl = dlrxTotal/1000000.0/streamsForPriorityTest.size();
+		double ul = 0;
+		double dl = 0;
+		if(priorityTest && !qciInfo.contains("data")){
+			ul = uLrxTotal/1000000.0/secondResultSizeOfStreams;
+			dl = dlrxTotal/1000000.0/secondResultSizeOfStreams;
+		}else{
+			ul = uLrxTotal/1000000.0/listOfStreamList.size();
+			dl = dlrxTotal/1000000.0/listOfStreamList.size();			
+		}
 		
 		String dlRateToPrint = convertTo3DigitsAfterPoint(dl);
 		String dlCriteriaToPrint = convertTo3DigitsAfterPoint(dlCriteria);
@@ -1785,7 +1792,7 @@ public class P0 extends TPTBase{
 
 			GeneralUtils.printToConsole("Print Results state: "+printResultsForTest);
 			if (printResultsForTest) {
-				checkTptOverThreshold(debugPrinter, listOfStreamList, passCriteria);
+				checkTptOverThreshold(debugPrinter, listOfStreamList, passCriteria, false);
 				if(flagActive1){
 					report.report("Number of Qci 1 active UEs in NMS status table was 1 during the whole test");
 				}else{

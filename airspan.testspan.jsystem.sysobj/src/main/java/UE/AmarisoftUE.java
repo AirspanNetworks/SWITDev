@@ -54,19 +54,19 @@ public class AmarisoftUE extends UE{
 	@Override
 	public String getBandWidth() {
 		GeneralUtils.printToConsole("AmarisoftUE does not have get Band width method.");
-		return null;
+		return GeneralUtils.ERROR_VALUE+"";
 	}
 
 	@Override
 	public String getUEUlFrequency() {
 		GeneralUtils.printToConsole("AmarisoftUE does not have get UL freq method.");
-		return null;
+		return GeneralUtils.ERROR_VALUE+"";
 	}
 
 	@Override
 	public String getUEDlFrequency() {
 		GeneralUtils.printToConsole("AmarisoftUE does not have get DL freq method.");
-		return null;
+		return GeneralUtils.ERROR_VALUE+"";
 	}
 
 	@Override
@@ -78,7 +78,7 @@ public class AmarisoftUE extends UE{
 	@Override
 	public String getDuplexMode() {
 		GeneralUtils.printToConsole("AmarisoftUE does not have get duplex mode method.");
-		return null;
+		return GeneralUtils.ERROR_VALUE+"";
 	}
 
 	@Override

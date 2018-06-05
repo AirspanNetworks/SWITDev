@@ -66,7 +66,7 @@ public class SetupUtils {
 					}
 				}
 				else
-					temp.add((UE) SysObjUtils.getInstnce().initSystemObject(UE.class, false,staticUesArray[i]));
+					temp.addAll((ArrayList<UE>) SysObjUtils.getInstnce().initSystemObject(UE.class, false,staticUesArray[i]));
 			}
 		}
 		return temp;
@@ -86,7 +86,7 @@ public class SetupUtils {
 					}
 				}
 				else
-					temp.add((UE) SysObjUtils.getInstnce().initSystemObject(UE.class, false,staticUesArray[i]));
+					temp.addAll((ArrayList<UE>) SysObjUtils.getInstnce().initSystemObject(UE.class, false,staticUesArray[i]));
 			}
 		}
 		return temp;
@@ -138,7 +138,7 @@ public class SetupUtils {
 					}
 				}
 				else
-					temp.add((UE) SysObjUtils.getInstnce().initSystemObject(UE.class, false, dynamicUEs[i]));
+					temp.addAll((ArrayList<UE>) SysObjUtils.getInstnce().initSystemObject(UE.class, false, dynamicUEs[i]));
 			}
 		}
 		return temp;

@@ -438,8 +438,9 @@ public class AmariSoftServer extends SystemObjectImpl{
 	}
 	
 	private String getIpAddress(int ueId) {
+		String ueIp = null;
 		try {
-			String ip = null;
+			
 			ObjectMapper mapper = new ObjectMapper();
 			UEAction getUE = new UEAction();
 			getUE.setUeId(ueId);
@@ -451,9 +452,9 @@ public class AmariSoftServer extends SystemObjectImpl{
 				sendMessage(mapper.writeValueAsString(getUE));
 				GeneralUtils.unSafeSleep(500);
 				if (returnValue != null) {
-					ip = returnValue.getUeList().get(0).getIp();
+					ueIp = returnValue.getUeList().get(0).getIp();
 				}
-				if (ip != null) {
+				if (ueIp != null) {
 					break;
 				}
 				GeneralUtils.unSafeSleep(500);
@@ -464,7 +465,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 			e.printStackTrace();
 			return "";
 		}
-		return ip;
+		return ueIp;
 	}
 
 	public boolean uePowerOff(int ueId)

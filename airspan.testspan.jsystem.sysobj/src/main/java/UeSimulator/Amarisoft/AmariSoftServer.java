@@ -451,8 +451,13 @@ public class AmariSoftServer extends SystemObjectImpl{
 				sendMessage(mapper.writeValueAsString(getUE));
 				GeneralUtils.unSafeSleep(100);
 				if (returnValue != null) {
-					ueIp = returnValue.getUeList().get(0).getIp();
-					returnValue = null;
+					if (returnValue.getUeList() != null && returnValue.getUeList().size() > 0) {
+						if (returnValue.getUeList().get(0) != null) {
+							ueIp = returnValue.getUeList().get(0).getIp();
+							returnValue = null;
+						}
+					}
+					
 				}
 				if (ueIp != null) {
 					break;

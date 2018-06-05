@@ -2,7 +2,9 @@ package UeSimulator.Amarisoft;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Set;
 
 import javax.websocket.ClientEndpoint;
 import javax.websocket.CloseReason;
@@ -354,15 +356,22 @@ public class AmariSoftServer extends SystemObjectImpl{
 		
 	}
 
-	public void addUes(int amount, int release, int category)
+	public boolean addUes(int amount, int release, int category)
 	{
+		boolean result = true;
 		for (int i = 0; i < amount; i++) {
-			Integer[] a = (Integer[]) unusedUes.keySet().toArray();
-			addUe(unusedUes.get(a[0]), release, category, a[0]);
+			if (unusedUes.size() <= 0) {
+				return false;
+			}
+			Object[] keys = unusedUes.keySet().toArray();
+			
+			int a = (Integer)keys[0];
+			result = result && addUe(unusedUes.get(a), release, category, a);
 		}
+		return result;
 	}
 	
-	public void addUe(UE ue, int release, int category, int ueId)
+	public boolean addUe(UE ue, int release, int category, int ueId)
 	{
 		ObjectMapper mapper = new ObjectMapper();
 		ArrayList<UeList> ueLists = new ArrayList<UeList>();
@@ -401,7 +410,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 		
 		ueMap.put(ueId,ue);
 		unusedUes.remove(ueId);
-
+		return true;
 	}
 	
 	public boolean uePowerOn(int ueId)

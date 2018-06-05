@@ -167,14 +167,14 @@ public class AmariSoftServer extends SystemObjectImpl{
     
     public boolean startServer(ArrayList<EnodeB> duts){
     	setConfig(duts);
-    	return startServer("automationConfiguration");
+    	return startServer(ueConfigFileName);
     }
     
     public boolean startServer(String configFile){
     	try {   
-    		boolean ans = sendCommands(lteUeTerminal, "/root/ue/lteue /root/ue/config/" + ueConfigFileName,"(ue)");
+    		boolean ans = sendCommands(lteUeTerminal, "/root/ue/lteue /root/ue/config/" + configFile,"(ue)");
     		if (!ans) {
-    			System.out.println("Failed starting server with config file: " + ueConfigFileName);
+    			System.out.println("Failed starting server with config file: " + configFile);
     			return false;
 			}
         	URI endpointURI = new URI("ws://"+ip+":"+port);
@@ -186,7 +186,7 @@ public class AmariSoftServer extends SystemObjectImpl{
             System.out.println(container.getDefaultMaxTextMessageBufferSize());
             startMessageHandler();
         } catch (Exception e) {
-            System.out.println("Failed starting server with config file: " + ueConfigFileName);
+            System.out.println("Failed starting server with config file: " + configFile);
             System.out.println(e.getMessage());
             return false;
         }
@@ -529,7 +529,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 		
 		ueLists.add(ueList);
 		configObject.setUeList(ueLists);
-		setConfigFile("automationConfiguration");
+		setConfigFile(ueConfigFileName);
 		writeConfigFile();
 	}
 

@@ -379,7 +379,7 @@ public class P0 extends TPTBase{
 		qci.add('9');
 		GeneralUtils.printToConsole(dut.getName() + " " + dut.getNetspanName());
 		ueList = getUES(dut);
-		if(ueList.size()<4){
+		if(ueList.size()<2){
 			report.report("Minimum of 4 UEs is needed for test",Reporter.FAIL);
 			reason = "Minimum of 4 UEs is needed for test";
 			return;

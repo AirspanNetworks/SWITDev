@@ -314,7 +314,7 @@ public class AmariSoftServer extends SystemObjectImpl{
      * @param message
      */
     public void sendMessage(String message) {
-        this.userSession.getAsyncRemote().sendText(message);
+    	this.userSession.getAsyncRemote().sendText(message);
     }
 
     /**
@@ -427,6 +427,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 			e.printStackTrace();
 			return false;
 		}		
+		GeneralUtils.unSafeSleep(2000);
 		UE ue = ueMap.get(ueId);
 		if (ue!=null) {
 			String ip = getIpAddress(ueId);
@@ -448,13 +449,14 @@ public class AmariSoftServer extends SystemObjectImpl{
 			long end = t + 20000;
 			while (System.currentTimeMillis() < end) {		
 				sendMessage(mapper.writeValueAsString(getUE));
-					
+				GeneralUtils.unSafeSleep(500);
 				if (returnValue != null) {
 					ip = returnValue.getUeList().get(0).getIp();
 				}
 				if (ip != null) {
 					break;
 				}
+				GeneralUtils.unSafeSleep(500);
 			}
 		} catch (JsonProcessingException e) {
 			System.out.println("Failed UE_GET to ue " + ueId);

@@ -98,6 +98,9 @@ public class P0 extends TPTBase{
 	private String apnEmergencyCall = null;
 	private String defaultApn = null;
 	
+	private String priorityTestFirstQcis = "";
+	private String priorityTestSecondQcis = "";
+	
 	public String getApnEmergencyCall() {
 		return apnEmergencyCall;
 	}
@@ -366,6 +369,8 @@ public class P0 extends TPTBase{
 		setQci1_5PacketSize(82);
 		setQci1LoadInFps(50);
 		setQci5LoadInKbps(20);
+		priorityTestFirstQcis = "9";
+		priorityTestSecondQcis = "1 and 5";
 		
 		testName = "VoLTE_PtP_Call_priority_Over_Data";
 		streamsMode = "PTP";
@@ -374,9 +379,9 @@ public class P0 extends TPTBase{
 		qci.add('9');
 		GeneralUtils.printToConsole(dut.getName() + " " + dut.getNetspanName());
 		ueList = getUES(dut);
-		if(ueList.size()<2){
-			report.report("Minimum of 2 UEs is needed for test",Reporter.FAIL);
-			reason = "Minimum of 2 UEs is needed for test";
+		if(ueList.size()<4){
+			report.report("Minimum of 4 UEs is needed for test",Reporter.FAIL);
+			reason = "Minimum of 4 UEs is needed for test";
 			return;
 		}
 		ueNameListStc = convertUeToNamesList(ueList);
@@ -460,10 +465,10 @@ public class P0 extends TPTBase{
 		}
 		streamsForPriorityTest = null;
 		streamsForPriorityTest = new ArrayList<ArrayList<StreamParams>>();
-		if(!helperStartTrafficAndSamplePriorityOverDataTest(false)){
+		if(!samplePriorityOverDataTest(false)){
 			return true;
 		}
-		enableAditionalStreamsForUEPriorityOverDataTest();
+		enableVolteStreamsForUEPriorityOverDataTest();
 		setLoadPerStreamPriorityOverDataTest();
 		priorityTestFirstResult = getUlDlResultsFromList(streamsForPriorityTest,false);
 		firstResultSizeOfStreams = streamsForPriorityTest.size();
@@ -479,7 +484,7 @@ public class P0 extends TPTBase{
 		wdActiveUesQci1 = new CommandWatchActiveUEsNmsTable(dut,ueNameListStc.size(),'1',true);
 		wd.addCommand(wdActiveUesQci1);		
 		startingTestTime = System.currentTimeMillis();
-		if(!helperStartTrafficAndSamplePriorityOverDataTest(true)){
+		if(!samplePriorityOverDataTest(true)){
 			return true;
 		}
 		priorityTestSecondResult = getUlDlResultsFromList(streamsForPriorityTest,false);
@@ -487,7 +492,7 @@ public class P0 extends TPTBase{
 		return true;
 	}
 	
-	private boolean helperStartTrafficAndSamplePriorityOverDataTest(boolean closeLevel){
+	private boolean samplePriorityOverDataTest(boolean closeLevel){
 		startingTestTime = System.currentTimeMillis();
 		while (System.currentTimeMillis() - startingTestTime <= TEST_TIME_MILLIS) {
 			sampleResultsStatusOk();
@@ -586,7 +591,7 @@ public class P0 extends TPTBase{
 		}
 	}
 
-	private void enableAditionalStreamsForUEPriorityOverDataTest() {
+	private void enableVolteStreamsForUEPriorityOverDataTest() {
 		ArrayList<Character> qci1 = new ArrayList<Character>();
 		qci1.add('1');
 		qci1.add('5');
@@ -1031,38 +1036,21 @@ public class P0 extends TPTBase{
 	}
 	
 	protected void checkPriorytyBeforeAndAfter(){
-		//double firstUl = priorityTestFirstResult.get(0)/1000000.0/priorityTestFirstResult.size();
 		double firstDl = priorityTestFirstResult.get(1)/1000000.0/firstResultSizeOfStreams;
-		
-		//double secondUl = priorityTestSecondResult.get(0)/1000000.0/priorityTestSecondResult.size();
 		double secondDl = priorityTestSecondResult.get(1)/1000000.0/secondResultSizeOfStreams;
 
-		GeneralUtils.startLevel("Check ratios of qci 9 before and after turning on qci 1 and 5");
-		
-		//report.report("Qci 9 average UL before running qci 1 and 5: "+firstUl+" Mbps");
-		//report.report("Qci 9 average UL after running qci 1 and 5: "+secondUl+" Mbps");
-		/*if(!(secondUl<firstUl-1)){
-			report.report("Qci 9 average UL after running qci 1 and 5 is not at least 1M lower", Reporter.FAIL);
-		}else{
-			report.report("Qci 9 average UL after running qci 1 and 5 is at least 1M lower");
-		}
-		if(!(secondUl>=0.9*firstUl)){
-			report.report("Qci 9 average UL after running qci 1 and 5 is not at least 90%", Reporter.FAIL);
-		}else{
-			report.report("Qci 9 average UL after running qci 1 and 5 is at least 90%");
-		}*/
-		
-		report.report("Qci 9 average DL before running qci 1 and 5: "+convertTo3DigitsAfterPoint(firstDl)+" Mbps");
-		report.report("Qci 9 average DL after running qci 1 and 5: "+convertTo3DigitsAfterPoint(secondDl)+" Mbps");
+		GeneralUtils.startLevel("Check ratios of "+priorityTestFirstQcis+" before and after turning on qci "+priorityTestSecondQcis);
+		report.report("Qcis "+priorityTestFirstQcis+" average DL before running qcis "+priorityTestSecondQcis+": "+convertTo3DigitsAfterPoint(firstDl)+" Mbps");
+		report.report("Qcis "+priorityTestFirstQcis+" average DL after running qcis "+priorityTestSecondQcis+": "+convertTo3DigitsAfterPoint(secondDl)+" Mbps");
 		if(!(secondDl<=firstDl-dlCriteriaQcisInList)){
-			report.report("Qci 9 average DL after running qci 1 and 5 is not at least "+convertTo3DigitsAfterPoint(dlCriteriaQcisInList)+" Mbps lower", Reporter.FAIL);
+			report.report("Qcis "+priorityTestFirstQcis+" average DL after running qcis "+priorityTestSecondQcis+" is not at least "+convertTo3DigitsAfterPoint(dlCriteriaQcisInList)+" Mbps lower", Reporter.FAIL);
 		}else{
-			report.report("Qci 9 average DL after running qci 1 and 5 is at least "+convertTo3DigitsAfterPoint(dlCriteriaQcisInList)+" Mbps lower");
+			report.report("Qcis "+priorityTestFirstQcis+" average DL after running qcis "+priorityTestSecondQcis+" is at least "+convertTo3DigitsAfterPoint(dlCriteriaQcisInList)+" Mbps lower");
 		}
 		if(!(secondDl>=0.9*firstDl)){
-			report.report("Qci 9 average DL after running qci 1 and 5 is not at least 90%", Reporter.FAIL);
+			report.report("Qcis "+priorityTestFirstQcis+" average DL after running qcis "+priorityTestSecondQcis+" is not at least 90%", Reporter.FAIL);
 		}else{
-			report.report("Qci 9 average DL after running qci 1 and 5 is at least 90%");
+			report.report("Qcis "+priorityTestFirstQcis+" average DL after running qcis "+priorityTestSecondQcis+" is at least 90%");
 		}
 		GeneralUtils.stopLevel();
 	}
@@ -1294,11 +1282,11 @@ public class P0 extends TPTBase{
 		report.report("number of cells: " + numberOfCellsStr);
 
 		verifyThreshold(passCriteria, uLrxTotalQcisInList, dlrxTotalQcisInList, stringQcisInList(), 
-				dlCriteriaQcisInList, ulCriteriaQcisInList, priorityTest);
+				dlCriteriaQcisInList, ulCriteriaQcisInList, ((priorityTest)?secondResultSizeOfStreams:listOfStreamList.size()));
 		
 		if(udpDataLoad!=0){
 			verifyThreshold(DATA_QCIS_THRESHOLD_PERCENT, uLrxTotalDataQcis, dlrxTotalDataQcis, "data qcis",
-					dlCriteriaDataQcis, ulCriteriaDataQcis, priorityTest);
+					dlCriteriaDataQcis, ulCriteriaDataQcis, listOfStreamList.size());
 		}
 	}
 	
@@ -1312,18 +1300,14 @@ public class P0 extends TPTBase{
 	}
 	
 	private void verifyThreshold(double passCriteria, double uLrxTotal, double dlrxTotal, String qciInfo,
-			double dlCriteria, double ulCriteria, boolean priorityTest){
+			double dlCriteria, double ulCriteria, int sizeOfStreamList){
 		report.report("Threshold for "+qciInfo+": " + passCriteria * 100 + "%");
 		
 		double ul = 0;
 		double dl = 0;
-		if(priorityTest && !qciInfo.contains("data")){
-			ul = uLrxTotal/1000000.0/secondResultSizeOfStreams;
-			dl = dlrxTotal/1000000.0/secondResultSizeOfStreams;
-		}else{
-			ul = uLrxTotal/1000000.0/listOfStreamList.size();
-			dl = dlrxTotal/1000000.0/listOfStreamList.size();			
-		}
+		
+		ul = uLrxTotal/1000000.0/sizeOfStreamList;
+		dl = dlrxTotal/1000000.0/sizeOfStreamList;			
 		
 		String dlRateToPrint = convertTo3DigitsAfterPoint(dl);
 		String dlCriteriaToPrint = convertTo3DigitsAfterPoint(dlCriteria);
@@ -1586,7 +1570,7 @@ public class P0 extends TPTBase{
 		}
 	}
 	
-	private boolean helperStartTrafficRejectTest(boolean turnOnUE,boolean closeLevel){
+	private boolean sampleRejectTest(boolean turnOnUE,boolean closeLevel){
 		boolean turnOn = turnOnUE;
 		while (System.currentTimeMillis() - startingTestTime <= TEST_TIME_MILLIS) {
 			if(turnOn){
@@ -1674,7 +1658,7 @@ public class P0 extends TPTBase{
 		wd.addCommand(wdUeLinkStatus);
 		startingTestTime = System.currentTimeMillis();
 		newUe = null;
-		if(!helperStartTrafficRejectTest(true,false)){
+		if(!sampleRejectTest(true,false)){
 			return true;
 		}
 		if(!peripheralsConfig.checkSingleUEConnectionToNode(newUe, dut)){
@@ -1692,7 +1676,7 @@ public class P0 extends TPTBase{
 		wdActiveUesQci9 = new CommandWatchActiveUEsNmsTable(dut,1,'9',true);
 		wd.addCommand(wdActiveUesQci9);	
 		startingTestTime = System.currentTimeMillis();
-		helperStartTrafficRejectTest(false,true);
+		sampleRejectTest(false,true);
 		return true;
 	}
 	
@@ -1898,7 +1882,7 @@ public class P0 extends TPTBase{
 		wd.addCommand(wdUeLinkStatus);
 		startingTestTime = System.currentTimeMillis();
 		newUe = null;
-		if(!helperStartTrafficRejectTest(false,false)){
+		if(!sampleRejectTest(false,false)){
 			return true;
 		}
 		wd.removeCommand(wdUeLinkStatus);
@@ -1948,7 +1932,7 @@ public class P0 extends TPTBase{
 		wdActiveUesQci1 = new CommandWatchActiveUEsNmsTable(dut,1,'1',false);
 		wd.addCommand(wdActiveUesQci1);
 		startingTestTime = System.currentTimeMillis();
-		helperStartTrafficRejectTest(false,true);
+		sampleRejectTest(false,true);
 		return true;
 	}
 	

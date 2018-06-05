@@ -437,16 +437,18 @@ public class AmariSoftServer extends SystemObjectImpl{
 	}
 	
 	private String getIpAddress(int ueId) {
-		String ip = null;
-		ObjectMapper mapper = new ObjectMapper();
-		UEAction getUE = new UEAction();
-		getUE.setUeId(ueId);
-		getUE.setMessage(Actions.UE_GET);
 		try {
-			sendMessage(mapper.writeValueAsString(getUE));
+			String ip = null;
+			ObjectMapper mapper = new ObjectMapper();
+			UEAction getUE = new UEAction();
+			getUE.setUeId(ueId);
+			
+			getUE.setMessage(Actions.UE_GET);
 			long t= System.currentTimeMillis();
 			long end = t + 20000;
-			while (System.currentTimeMillis() < end) {				
+			while (System.currentTimeMillis() < end) {		
+				sendMessage(mapper.writeValueAsString(getUE));
+					
 				if (returnValue != null) {
 					ip = returnValue.getUeList().get(0).getIp();
 				}

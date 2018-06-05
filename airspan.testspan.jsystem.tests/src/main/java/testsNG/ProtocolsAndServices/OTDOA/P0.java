@@ -512,7 +512,6 @@ public class P0 extends OtdoaBase {
 		}
 	}
 
-	// NOT TESTED YET!
 	@Test
 	@TestProperties(name = "test18 - NMS Radio Configuration 1 TDD Mode FC 2,Negative", returnParam = {
 			"IsTestWasSuccessful" }, paramsExclude = { "IsTestWasSuccessful" })
@@ -532,7 +531,7 @@ public class P0 extends OtdoaBase {
 
 	}
 
-	// NOT TESTED YET!
+	@Test
 	@TestProperties(name = "test19 - NMS Radio Configuration 2 TDD Mode CellBandWitdh 5,Negative", returnParam = {
 			"IsTestWasSuccessful" }, paramsExclude = { "IsTestWasSuccessful" })
 	public void test19_NMS_TDD_config2() {
@@ -550,7 +549,7 @@ public class P0 extends OtdoaBase {
 		}
 	}
 
-	// NOT TESTED YET!
+	@Test
 	@TestProperties(name = "test20 - NMS Radio Configuration 3 TDD Mode FC 2,Negative", returnParam = {
 			"IsTestWasSuccessful" }, paramsExclude = { "IsTestWasSuccessful" })
 	public void test20_NMS_TDD_config3() {

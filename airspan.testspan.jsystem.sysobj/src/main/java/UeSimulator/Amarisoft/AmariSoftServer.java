@@ -2,6 +2,7 @@ package UeSimulator.Amarisoft;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.websocket.ClientEndpoint;
 import javax.websocket.CloseReason;
@@ -25,6 +26,7 @@ import UeSimulator.Amarisoft.JsonObjects.Actions.UEAction;
 import UeSimulator.Amarisoft.JsonObjects.Actions.UEAction.Actions;
 import UeSimulator.Amarisoft.JsonObjects.ConfigFile.*;
 import UeSimulator.Amarisoft.JsonObjects.Status.UeStatus;
+import Utils.GeneralUtils;
 import jsystem.framework.system.SystemManagerImpl;
 import jsystem.framework.system.SystemObjectImpl;
 import systemobject.terminal.SSH;
@@ -55,16 +57,31 @@ public class AmariSoftServer extends SystemObjectImpl{
     private String[] sdrList;
     private String[] imsiStartList;
     private String[] imsiStopList;
-    private ArrayList<UE> ueList;
+    private HashMap<Integer,UE> ueMap;
+    private HashMap<Integer,UE> unusedUes;
+    volatile private UeStatus returnValue;
 
     @Override
 	public void init() throws Exception {
 		super.init();
 		port = 900 + sdrList[0];
     	connect();
-    	ueList = new ArrayList<>();
+    	ueMap = new HashMap<>();
+    	fillUeList();
 	}
 	
+	private void fillUeList() {
+		int ueId = 2;// start at 2 because amarisoft must start with atleast 1 UE.
+		unusedUes = new HashMap<>();
+		for (int i = 0; i < imsiStartList.length; i++) {
+			for (Long j = Long.getLong(imsiStartList[i]); j <=Long.getLong(imsiStopList[i]) ; j++) {
+				AmarisoftUE ue = new AmarisoftUE(ueId, this);
+				unusedUes.put(ueId, ue);
+				ueId++;
+			}
+		}
+	}
+
 	public String getIp() {
 		return ip;
 	}
@@ -137,6 +154,12 @@ public class AmariSoftServer extends SystemObjectImpl{
     public AmariSoftServer() { 
     }
 
+    public boolean startServer(EnodeB dut){
+    	ArrayList<EnodeB> tempEnodebList = new ArrayList<>();
+    	tempEnodebList.add(dut);
+    	return startServer(tempEnodebList);
+    }
+    
     public boolean startServer(ArrayList<EnodeB> duts){
     	setConfig(duts);
     	return startServer("automationConfiguration");
@@ -174,13 +197,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 				// Convert JSON string to Object
 				UeStatus stat = null;
 				try {
-					stat = mapper.readValue(message, UeStatus.class);
-					Double ulRate = stat.getUeList().get(0).getUlBitrate() / 1000;
-					Double dlRate = stat.getUeList().get(0).getDlBitrate() / 1000;
-					String emmState = stat.getUeList().get(0).getEmmState();
-					int ueID = stat.getUeList().get(0).getUeId();
-					System.out.println("UE ID: " + ueID + "\tulRate (kbit): " + ulRate.intValue() + "\tdlRate (kbit): "
-							+ dlRate.intValue() + "\temmState:" + emmState);
+					returnValue = mapper.readValue(message, UeStatus.class);
 
 				} catch (JsonParseException e) {
 					// TODO Auto-generated catch block
@@ -192,7 +209,6 @@ public class AmariSoftServer extends SystemObjectImpl{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
 			}
 		});
 	}
@@ -335,11 +351,15 @@ public class AmariSoftServer extends SystemObjectImpl{
 		
 	}
 
-	public void startIperfServer(int ueId, int port) {
-		sendCommands(sshTerminal, "ip netns exec ue"+ueId+" iperf -s -i 1 -p 500"+port+" -f k &","");		
+	public void addUes(int amount, int release, int category)
+	{
+		for (int i = 0; i < amount; i++) {
+			Integer[] a = (Integer[]) unusedUes.keySet().toArray();
+			addUe(unusedUes.get(a[0]), release, category, a[0]);
+		}
 	}
 	
-	public void AddUe(String imsi, int release, int category, int ueId) throws JsonProcessingException
+	public void addUe(UE ue, int release, int category, int ueId)
 	{
 		ObjectMapper mapper = new ObjectMapper();
 		ArrayList<UeList> ueLists = new ArrayList<UeList>();
@@ -349,7 +369,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 		ueProperties.setForcedCqi(15);
 		ueProperties.setForcedRi(2);
 		ueProperties.setSimAlgo("milenage");
-		ueProperties.setImsi(imsi);
+		ueProperties.setImsi(ue.getImsi());
 		ueProperties.setImeisv("1234567891234567");
 		ueProperties.setK("5C95978B5E89488CB7DB44381E237809");
 		ueProperties.setOp("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
@@ -360,9 +380,25 @@ public class AmariSoftServer extends SystemObjectImpl{
 		UEAction addUE = new UEAction();
 		addUE.setMessage(Actions.UE_ADD);
 		addUE.setUeList(ueLists);
-		String message = mapper.writeValueAsString(addUE);
-		sendMessage(message);		
-		ueList.add(new AmarisoftUE(ueId,this));
+		String message;
+		try {
+			message = mapper.writeValueAsString(addUE);
+			sendMessage(message);	
+		} catch (JsonProcessingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}		
+	
+		try {
+			ue.init();
+		} catch (Exception e) {
+			GeneralUtils.printToConsole("Failed to init ue.");
+			e.printStackTrace();
+		}
+		
+		ueMap.put(ueId,ue);
+		unusedUes.remove(ueId);
+
 	}
 	
 	public boolean uePowerOn(int ueId)
@@ -378,10 +414,43 @@ public class AmariSoftServer extends SystemObjectImpl{
 			System.out.println(e.getMessage());
 			e.printStackTrace();
 			return false;
+		}		
+		UE ue = ueMap.get(ueId);
+		if (ue!=null) {
+			String ip = getIpAddress(ueId);
+			ue.setLanIpAddress(ip);
+			ue.setWanIpAddress(ip);
 		}
 		return true;
 	}
 	
+	private String getIpAddress(int ueId) {
+		String ip = null;
+		ObjectMapper mapper = new ObjectMapper();
+		UEAction getUE = new UEAction();
+		getUE.setUeId(ueId);
+		getUE.setMessage(Actions.UE_GET);
+		try {
+			sendMessage(mapper.writeValueAsString(getUE));
+			long t= System.currentTimeMillis();
+			long end = t + 20000;
+			while (System.currentTimeMillis() < end) {				
+				if (returnValue != null) {
+					ip = returnValue.getUeList().get(0).getIp();
+				}
+				if (ip != null) {
+					break;
+				}
+			}
+		} catch (JsonProcessingException e) {
+			System.out.println("Failed UE_GET to ue " + ueId);
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+			return "";
+		}
+		return ip;
+	}
+
 	public boolean uePowerOff(int ueId)
 	{
 		ObjectMapper mapper = new ObjectMapper();
@@ -452,8 +521,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 		writeConfigFile();
 	}
 
-	
 	public ArrayList<UE> getUeList() {
-		return ueList;
+		return new ArrayList<UE>(ueMap.values());
 	}
 }

@@ -11,6 +11,7 @@ import java.util.concurrent.Executors;
 import Entities.ITrafficGenerator;
 import Entities.LoadParam;
 import Entities.StreamParams;
+import UE.AmarisoftUE;
 import UE.AndroidUE;
 import UE.UE;
 import Utils.GeneralUtils;
@@ -86,7 +87,9 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		if(ues != null){
 			for(UE ue : ues){
 				UEIPerf ueIPerf = null;
-				if(ue instanceof AndroidUE){
+				if(ue instanceof AmarisoftUE){
+					ueIPerf = new AmarisoftIperf((AmarisoftUE)ue, iperfMachineDL, iperfMachineUL, ulPortLoad/ues.size(), dlPortLoad/ues.size(), frameSize, qciList);
+				}else if(ue instanceof AndroidUE){
 					ueIPerf = new AndroidIPerf((AndroidUE)ue, iperfMachineDL, iperfMachineUL, ulPortLoad/ues.size(), dlPortLoad/ues.size(), frameSize, qciList);
 				}else{
 					ueIPerf = new UEIPerf(ue, iperfMachineDL, iperfMachineUL, ulPortLoad/ues.size(), dlPortLoad/ues.size(), frameSize, qciList);

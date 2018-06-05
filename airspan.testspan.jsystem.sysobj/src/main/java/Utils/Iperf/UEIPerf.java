@@ -22,11 +22,11 @@ public class UEIPerf implements Runnable {
 
 	public static final String IPERF_TIME_LIMIT = "9999999";
 
-	private UE ue;
+	protected UE ue;
 
 	protected IPerfMachine iperfMachineDL;
-	protected IPerfMachine iperfMachineUL;
 	
+	protected IPerfMachine iperfMachineUL;
 	protected ArrayList<IPerfStream> ulStreamArrayList;
 	protected ArrayList<IPerfStream> dlStreamArrayList;
 
@@ -157,7 +157,7 @@ public class UEIPerf implements Runnable {
 		runTrafficULClient();
 	}
 
-	public void runTrafficULClient() {
+	protected void runTrafficULClient() {
 		if(iperfMachineUL != null){
 			for(IPerfStream ulIPerfStream : ulStreamArrayList){
 				if(ulIPerfStream.isActive() && !ulIPerfStream.isRunningTraffic()){
@@ -170,7 +170,7 @@ public class UEIPerf implements Runnable {
 		}
 	}
 
-	public void startULListener() {
+	protected void startULListener() {
 		if(iperfMachineDL != null){
 			for(IPerfStream ulIPerfStream : ulStreamArrayList){
 				if(ulIPerfStream.isActive() && !ulIPerfStream.isRunningTraffic()){
@@ -189,7 +189,7 @@ public class UEIPerf implements Runnable {
 		runTrafficDLClient();
 	}
 
-	public void runTrafficDLClient() {
+	protected void runTrafficDLClient() {
 		if(iperfMachineDL != null){
 			for(IPerfStream dlIPerfStream : dlStreamArrayList){
 				if(dlIPerfStream.isActive() && !dlIPerfStream.isRunningTraffic()){
@@ -202,7 +202,7 @@ public class UEIPerf implements Runnable {
 		}
 	}
 
-	public void startDLListener() {
+	protected void startDLListener() {
 		if(iperfMachineUL != null){
 			for(IPerfStream dlIPerfStream : dlStreamArrayList){
 				if(dlIPerfStream.isActive() && !dlIPerfStream.isRunningTraffic()){

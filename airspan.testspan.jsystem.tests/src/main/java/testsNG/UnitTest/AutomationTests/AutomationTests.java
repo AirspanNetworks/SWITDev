@@ -7,8 +7,10 @@ import org.junit.Test;
 
 import EnodeB.EnodeB;
 import EnodeB.Components.EnodeBComponent;
+import UE.UE;
 import UeSimulator.Amarisoft.AmariSoftServer;
 import Utils.GeneralUtils;
+import Utils.SetupUtils;
 import Utils.SysObjUtils;
 import jsystem.framework.ParameterProperties;
 import jsystem.framework.TestProperties;
@@ -64,6 +66,43 @@ public class AutomationTests extends TestspanTest{
 		report.report("Finished no test.");
 		
 	}
+	
+	@Test
+	@TestProperties(name = "amarisoftUeTest", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {"IsTestWasSuccessful" })
+	public void amarisoftUeTest() throws Exception {
+		report.report("Start amarisoftUeTest test.");
+		
+		AmariSoftServer server = AmariSoftServer.getInstance();
+		server.init();
+		server.startServer(dut);
+		server.addUes(15, 13, 6);
+		
+		ArrayList<UE> ues =  SetupUtils.getInstance().getAllUEs();
+		
+		for (UE ue : ues) {
+			ue.start();
+			GeneralUtils.printToConsole("===============================================");
+			GeneralUtils.printToConsole("ue.getImsi: " + ue.getImsi());
+			GeneralUtils.printToConsole("ue.getLanIpAddress: " + ue.getLanIpAddress());
+			GeneralUtils.printToConsole("ue.getWanIpAddress: " + ue.getWanIpAddress());
+			GeneralUtils.printToConsole("ue.getIPerfDlMachine: " + ue.getIPerfDlMachine());
+			GeneralUtils.printToConsole("ue.getIPerfUlMachine: " + ue.getIPerfUlMachine());
+			GeneralUtils.printToConsole("ue.getVendor: " + ue.getVendor());
+			GeneralUtils.printToConsole("ue.getUeCategory: " + ue.getUeCategory());
+			GeneralUtils.printToConsole("ue.getVersion: " + ue.getVersion());
+			GeneralUtils.printToConsole("ue.getBandWidth: " + ue.getBandWidth());
+			GeneralUtils.printToConsole("ue.getUEUlFrequency: " + ue.getUEUlFrequency());
+			GeneralUtils.printToConsole("ue.getUEDlFrequency: " + ue.getUEDlFrequency());
+			GeneralUtils.printToConsole("ue.getUEStatus: " + ue.getUEStatus());
+			GeneralUtils.printToConsole("ue.getDuplexMode: " + ue.getDuplexMode());
+			GeneralUtils.printToConsole("ue.getRSRP1: " + ue.getRSRP(1));
+			GeneralUtils.printToConsole("ue.getPCI: " + ue.getPCI());
+		}
+		
+		report.report("Finished amarisoftUeTest test.");
+		
+	}
+	
 	
 	@Test
 	@TestProperties(name = "logTest", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {"IsTestWasSuccessful" })

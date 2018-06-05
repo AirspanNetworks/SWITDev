@@ -8,7 +8,7 @@ import jsystem.framework.report.Reporter;
 
 public class AmarisoftUE extends UE{
 
-	private int ueId;
+	public int ueId;
 	private AmariSoftServer server;
 	
 	public AmarisoftUE() {

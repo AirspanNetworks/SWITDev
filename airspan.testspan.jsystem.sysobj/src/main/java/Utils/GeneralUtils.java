@@ -482,7 +482,7 @@ public class GeneralUtils {
 	}
 	
 	public enum HtmlFieldColor{
-		WHITE("#ffffff"), GREEN("#70db70"), YELLOW("#ffff00"), RED("#ff5c33"), BLUE("#3366ff"), GRAY("#A9A9A9");
+		WHITE("#ffffff"), GREEN("#70db70"), YELLOW("#ffff00"), RED("#ff5c33"), BLUE("#3366ff"), GRAY("#A9A9A9"), BLACK("#000000");
 		
 		public String value;
 
@@ -490,13 +490,47 @@ public class GeneralUtils {
 			value = v;
 		}
 	};
+	
+	public enum StyleTagName{
+		MARK1, MARK2, MARK3, MARK4, MARK5;
+	};
+	
 	public static class HtmlTable{
+		public static String markLine(StyleTagName styleTagName, String line){
+			String markedLine = "<" + styleTagName + ">" + line + "</" + styleTagName +">";
+			return markedLine;
+		}
 		private Vector<Vector<Pair<HtmlFieldColor, String>>> table;
+		private Vector<Triple<StyleTagName, HtmlFieldColor, HtmlFieldColor>> styles;
 		
 		public HtmlTable(){
 			this.table = new Vector<Vector<Pair<HtmlFieldColor, String>>>();
 			this.table.add(new Vector<Pair<HtmlFieldColor, String>>());//Columns headlines.
 			this.table.get(0).add(new Pair<HtmlFieldColor, String>(HtmlFieldColor.WHITE, ""));//first field empty.
+			
+			this.styles = new Vector<Triple<StyleTagName, HtmlFieldColor, HtmlFieldColor>>();
+		}
+		
+		public Pair<Boolean, String> addStyle(StyleTagName styleTagName, HtmlFieldColor backgroundColor, HtmlFieldColor color){
+			boolean result = true; 
+			String resultMassage = "New Style Added Successfully.";
+			if(!isStyleTagNameAlreadyInUse(styleTagName)){
+				this.styles.addElement(new Triple<StyleTagName, HtmlFieldColor, HtmlFieldColor>(styleTagName, backgroundColor, color));
+			}else{
+				result = false; 
+				resultMassage = "Style Already Added("+styleTagName+").";
+			}
+			return new Pair<Boolean, String>(result, resultMassage);
+		}
+		private boolean isStyleTagNameAlreadyInUse(StyleTagName styleTagName){
+			boolean result = false;
+			for(Triple<StyleTagName, HtmlFieldColor, HtmlFieldColor> style : this.styles){
+				if(style.getLeftElement() == styleTagName){
+					result =  true;
+					break;
+				}
+			}
+			return result;
 		}
 		
 		public void addNewColumn(String columnHeadline){
@@ -524,7 +558,15 @@ public class GeneralUtils {
 		}
 		
 		public void reportTable(String headline){
-			String htmlTable = "<table border='1px solid black'>";
+			String htmlTable = "<style>";
+			for(Triple<StyleTagName, HtmlFieldColor, HtmlFieldColor> style : this.styles){
+				htmlTable += (style.getLeftElement() + "{");
+				htmlTable += ("background-color: " + style.getMiddleElement().value + ";");
+				htmlTable += ("color: " + style.getRightElement().value + ";");
+				htmlTable += "}";
+			}
+			htmlTable += "</style>";
+			htmlTable += "<table border='1px solid black'>";
 			int tableSize = table.size();
 			for(int i = 0; i < tableSize ; i++){
 				htmlTable += "<tr>";

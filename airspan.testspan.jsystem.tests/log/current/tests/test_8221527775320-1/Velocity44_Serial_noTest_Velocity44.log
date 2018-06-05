@@ -1,0 +1,1027 @@
+31/05/2018 17:06:19:691    ::    31/05/2018 14:06:19:007 oam_maint_win_resetStackActionCB():824 <oam:OAM_MAINT_WIN SYSTEM> provision ended
+31/05/2018 17:06:19:691    ::    31/05/2018 14:06:19:007 oam_maint_win_resetStackActionCB():824 <oam:OAM_MAINT_WIN SYSTEM> provision ended
+31/05/2018 17:06:45:743    ::       (ptpd info)     14:06:44.979282  (?)    now in state PTP_SLAVE_UNICAST_REGISTRATION(toUnicastRegistrationState)
+31/05/2018 17:07:40:959    ::       (ptpd info)     14:07:39.979282  (?)    now in state PTP_SLAVE_UNICAST_REGISTRATION(toUnicastRegistrationState)
+31/05/2018 17:08:35:944    ::       (ptpd info)     14:08:34.979347  (?)    now in state PTP_SLAVE_UNICAST_REGISTRATION(toUnicastRegistrationState)
+31/05/2018 17:09:30:779    ::       (ptpd info)     14:09:29.979279  (?)    now in state PTP_SLAVE_UNICAST_REGISTRATION(toUnicastRegistrationState)
+31/05/2018 17:10:25:942    ::       (ptpd info)     14:10:24.979282  (?)    now in state PTP_SLAVE_UNICAST_REGISTRATION(toUnicastRegistrationState)
+31/05/2018 17:11:20:831    ::       (ptpd info)     14:11:19.979282  (?)    now in state PTP_SLAVE_UNICAST_REGISTRATION(toUnicastRegistrationState)
+31/05/2018 17:12:15:778    ::       (ptpd info)     14:12:14.979282  (?)    now in state PTP_SLAVE_UNICAST_REGISTRATION(toUnicastRegistrationState)
+31/05/2018 17:12:23:714    ::    INFO [3] ../../app/xdb/enb/src/db_utils.c(346) xdb_saveAll():need to save /bs/db/loggerThresholds_tl.log fileSize=12288
+31/05/2018 17:13:10:782    ::       (ptpd info)     14:13:09.979282  (?)    now in state PTP_SLAVE_UNICAST_REGISTRATION(toUnicastRegistrationState)
+31/05/2018 17:13:55:861    ::       (ptpd notice)   14:13:55.344132  (?)     going to arm DelayReq timer for the first time, with initial rate: -6
+31/05/2018 17:14:17:267    ::    31/05/2018 14:14:16:294 _tfcsRespIndCb():371 <ptpd:PTPd SYSTEM> Overwrite slew rate ind:
+31/05/2018 17:14:17:267    ::    			status      : 0 [0-Success,1-Fail,2-Unsupport,3-Invalid param,4-Timeout]
+31/05/2018 17:14:17:267    ::    			prevSrlFreq : valid=1 value=30.000000
+31/05/2018 17:14:17:267    ::    			currSrlFreq : valid=1 value=30.000000
+31/05/2018 17:14:17:267    ::    			respSeqNum  : valid=1 value=4
+31/05/2018 17:14:17:267    ::    
+31/05/2018 17:14:17:267    ::    31/05/2018 14:14:16:294 _tfcsRespIndCb():371 <ptpd:PTPd SYSTEM> Overwrite slew rate ind:
+31/05/2018 17:14:17:267    ::    			status      : 0 [0-Success,1-Fail,2-Unsupport,3-Invalid param,4-Timeout]
+31/05/2018 17:14:17:267    ::    			prevSrlFreq : valid=1 value=30.000000
+31/05/2018 17:14:17:267    ::    			currSrlFreq : valid=1 value=30.000000
+31/05/2018 17:14:17:267    ::    			respSeqNum  : valid=1 value=4
+31/05/2018 17:14:40:747    ::    31/05/2018 14:14:40:292 servo_peripherals_update():1380 <ptpd:PTPd SYSTEM> 	PTP Acquiring lock duration was more than 3450 minutes => Reboot device
+31/05/2018 17:14:40:747    ::    
+31/05/2018 17:14:40:747    ::    31/05/2018 14:14:40:292 servo_peripherals_update():1380 <ptpd:PTPd SYSTEM> 	PTP Acquiring lock duration was more than 3450 minutes => Reboot device
+31/05/2018 17:14:46:560    ::      % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+31/05/2018 17:14:46:560    ::                                     Dload  Upload   Total   Spent    Left  Speed
+31/05/2018 17:14:46:560    ::      0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  1012  100   324  100   688   7212  15314 --:--:-- --:--:-- --:--:-- 15636
+31/05/2018 17:14:46:560    ::    Critical_20.20.2.44_31-May-2018_14.14.44-UTC.log was sent via SNMP
+31/05/2018 17:14:47:473    ::    31/05/2018 14:14:46:916 resetWiFiCard():2064 <wifiMngr:WIFI SYSTEM> Reset the WiFi card
+31/05/2018 17:14:47:473    ::    31/05/2018 14:14:46:916 resetWiFiCard():2064 <wifiMngr:WIFI SYSTEM> Reset the WiFi card
+31/05/2018 17:14:47:473    ::    31/05/2018 14:14:46:107 pm_handle_sys_reboot():1636 <prcMngr:PRCMNGR SYSTEM> Delaying reset for:
+31/05/2018 17:14:47:473    ::    31/05/2018 14:14:46:107 pm_handle_sys_reboot():1636 <prcMngr:PRCMNGR SYSTEM> Delaying reset for:
+31/05/2018 17:14:47:473    ::    31/05/2018 14:14:46:107 pm_handle_sys_reboot():1639 <prcMngr:PRCMNGR SYSTEM>  * Core Care
+31/05/2018 17:14:47:473    ::    31/05/2018 14:14:46:107 pm_handle_sys_reboot():1649 <prcMngr:PRCMNGR SYSTEM>  * WiFi
+31/05/2018 17:14:47:473    ::    31/05/2018 14:14:46:107 pm_handle_sys_reboot():1639 <prcMngr:PRCMNGR SYSTEM>  * Core Care
+31/05/2018 17:14:47:473    ::    31/05/2018 14:14:46:932 pm_set_status_led():747 <oam:GENERAL SYSTEM> enb LED is RED at 0.000000Hz (OOS)
+31/05/2018 17:14:47:473    ::    31/05/2018 14:14:46:107 pm_handle_sys_reboot():1649 <prcMngr:PRCMNGR SYSTEM>  * WiFi
+31/05/2018 17:14:47:473    ::    31/05/2018 14:14:46:932 pm_set_status_led():747 <oam:GENERAL SYSTEM> enb LED is RED at 0.000000Hz (OOS)
+31/05/2018 17:14:50:215    ::    /usr/bin/tar: tmp/script/out2.log: Cannot stat: No such file or directory
+31/05/2018 17:14:50:215    ::    /usr/bin/tar: Exiting with failure status due to previous errors
+31/05/2018 17:14:50:215    ::      % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+31/05/2018 17:14:50:215    ::                                     Dload  Upload   Total   Spent    Left  Speed
+31/05/2018 17:14:50:215    ::      0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   473  100   100  100   373   2268   8461 --:--:-- --:--:-- --:--:--  8674
+31/05/2018 17:14:50:215    ::    Script_20.20.2.44_15.15.50.622_31-May-2018_14.14.47-UTC_2.tar.gz was sent via SNMP
+31/05/2018 17:14:51:730    ::      % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+31/05/2018 17:14:51:730    ::                                     Dload  Upload   Total   Spent    Left  Speed
+31/05/2018 17:14:51:730    ::      0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  304k  100   100  100  304k   9093  27.0M --:--:-- --:--:-- --:--:-- 29.7M
+31/05/2018 17:14:51:730    ::    Logger_20.20.2.44_15.15.50.622_31-May-2018_14.14.47-UTC_2.tar.gz was sent via SNMP
+31/05/2018 17:14:51:730    ::    /usr/bin/tar: Removing leading `/' from member names
+31/05/2018 17:14:51:730    ::    /usr/bin/tar: /var/log/relay/*: Cannot stat: No such file or directory
+31/05/2018 17:14:51:730    ::    /usr/bin/tar: Exiting with failure status due to previous errors
+31/05/2018 17:14:51:730    ::      % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+31/05/2018 17:14:51:730    ::                                     Dload  Upload   Total   Spent    Left  Speed
+31/05/2018 17:14:51:730    ::      0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   418  100    80  100   338   1259   5323 --:--:-- --:--:-- --:--:--  5365
+31/05/2018 17:14:51:730    ::    .tar.gz was sent via SNMP
+31/05/2018 17:14:53:879    ::      % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+31/05/2018 17:14:53:879    ::                                     Dload  Upload   Total   Spent    Left  Speed
+31/05/2018 17:14:53:879    ::      0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  166k  100   100  100  166k  10991  17.8M --:--:-- --:--:-- --:--:-- 20.2M
+31/05/2018 17:14:53:879    ::    DataBase_20.20.2.44_15.15.50.622_31-May-2018_14.14.47-UTC_2.tar.gz was sent via SNMP
+31/05/2018 17:14:53:879    ::    /usr/bin/tar: syslog*: Cannot stat: No such file or directory
+31/05/2018 17:14:54:796    ::    /usr/bin/tar: messages: file changed as we read it
+31/05/2018 17:14:55:399    ::    /usr/bin/tar: Exiting with failure status due to previous errors
+31/05/2018 17:14:55:399    ::      % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+31/05/2018 17:14:55:399    ::                                     Dload  Upload   Total   Spent    Left  Speed
+31/05/2018 17:14:55:399    ::      0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  573k  100   100  100  573k   6426  36.0M --:--:-- --:--:-- --:--:-- 37.3M
+31/05/2018 17:14:55:399    ::    Syslog_20.20.2.44_15.15.50.622_31-May-2018_14.14.47-UTC_2.tar.gz was sent via SNMP
+31/05/2018 17:14:55:399    ::    rm: can't remove '/var/log/syslog': No such file or directory
+31/05/2018 17:14:55:399    ::      % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+31/05/2018 17:14:55:399    ::                                     Dload  Upload   Total   Spent    Left  Speed
+31/05/2018 17:14:55:399    ::      0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  6541  100   100  100  6441  22246  1399k --:--:-- --:--:-- --:--:-- 1572k
+31/05/2018 17:14:55:399    ::    Secure_20.20.2.44_15.15.50.622_31-May-2018_14.14.47-UTC_2.tar.gz was sent via SNMP
+31/05/2018 17:14:59:076    ::    31/05/2018 14:14:58:125 pm_handle_sys_reboot():1673 <prcMngr:PRCMNGR SYSTEM> ==== REBOOTING THE SYSTEM, Cause: PTP Acquiring lock timeout ====
+31/05/2018 17:14:59:076    ::    31/05/2018 14:14:58:125 pm_handle_sys_reboot():1673 <prcMngr:PRCMNGR SYSTEM> ==== REBOOTING THE SYSTEM, Cause: PTP Acquiring lock timeout ====
+31/05/2018 17:15:01:813    ::    
+31/05/2018 17:15:01:813    ::    
+31/05/2018 17:15:01:813    ::    
+31/05/2018 17:15:01:813    ::    [31m##################################################
+31/05/2018 17:15:01:813    ::    # Quit Signal Received - Closing All Connections #
+31/05/2018 17:15:01:813    ::    ##################################################[0m 
+31/05/2018 17:15:01:813    ::    
+31/05/2018 17:15:01:813    ::    31/05/2018 14:15:01:427 pm_int_issue_reboot():1239 <prcMngr:PRCMNGR SYSTEM> PTP Acquiring lock timeout
+31/05/2018 17:15:01:813    ::    31/05/2018 14:15:01:428 sysShutdownCB():5327 <enodeb0:APP SYSTEM> sysShutdownCB started
+31/05/2018 17:15:01:813    ::    31/05/2018 14:15:01:427 pm_int_issue_reboot():1239 <prcMngr:PRCMNGR SYSTEM> PTP Acquiring lock timeout
+31/05/2018 17:15:02:114    ::    31/05/2018 14:15:01:428 sysShutdownCB():5327 <enodeb0:APP SYSTEM> sysShutdownCB started
+31/05/2018 17:15:02:114    ::    
+31/05/2018 17:15:02:114    ::    
+31/05/2018 17:15:02:114    ::    *~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
+31/05/2018 17:15:02:114    ::    *~* Quit HANDLER PROCESS /tmp/enodeb.tdd (PID 1605)
+31/05/2018 17:15:02:114    ::    *~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
+31/05/2018 17:15:02:114    ::    Signal sent by process 1605 (/tmp/enodeb.tdd)
+31/05/2018 17:15:02:114    ::    handling SIGQUIT
+31/05/2018 17:15:02:114    ::    
+31/05/2018 17:15:02:114    ::    ../../app/mt/mt_task_mon.c(568) mtCheckActvtsk():mtSendTskKeepAlive failed for 25
+31/05/2018 17:15:02:114    ::    31/05/2018 14:15:01:436 pm_socketClientSigHandler():1282 <enodeb0:PRCMNGR SYSTEM> handling SIGQUIT
+31/05/2018 17:15:02:114    ::    31/05/2018 14:15:01:438 pm_terminateGracefullyIfNeededF():1349 <enodeb0:PRCMNGR SYSTEM> prepare for shutdown (xdb_incomeEventHandler(894))
+31/05/2018 17:15:02:114    ::    31/05/2018 14:15:01:436 pm_socketClientSigHandler():1282 <enodeb0:PRCMNGR SYSTEM> handling SIGQUIT
+31/05/2018 17:15:02:114    ::    31/05/2018 14:15:01:436 mtSendTskKeepAlive():215 <enodeb0:GEN ERROR> SPstTsk failed pTaskInfo->taskEntityId=247
+31/05/2018 17:15:02:114    ::    31/05/2018 14:15:01:436 mtCheckActvtsk():568 <enodeb0:GEN ERROR> mtSendTskKeepAlive failed for 25
+31/05/2018 17:15:02:114    ::    31/05/2018 14:15:01:438 pm_terminateGracefullyIfNeededF():1349 <enodeb0:PRCMNGR SYSTEM> prepare for shutdown (xdb_incomeEventHandler(894))
+31/05/2018 17:15:02:114    ::    31/05/2018 14:15:01:771 pm_terminateGracefullyIfNeededF():1349 <enodeb0:PRCMNGR SYSTEM> prepare for shutdown (xdbConnectToDb(1068))
+31/05/2018 17:15:02:114    ::    31/05/2018 14:15:01:771 pm_terminateGracefullyIfNeededF():1388 <enodeb0:PRCMNGR SYSTEM> already prepared for shutdown (xdbConnectToDb(1068)), wait up to 30 seconds for main thread to complete exiting
+31/05/2018 17:15:02:114    ::    31/05/2018 14:15:01:771 pm_terminateGracefullyIfNeededF():1349 <enodeb0:PRCMNGR SYSTEM> prepare for shutdown (xdbConnectToDb(1068))
+31/05/2018 17:15:02:418    ::    31/05/2018 14:15:01:771 pm_terminateGracefullyIfNeededF():1388 <enodeb0:PRCMNGR SYSTEM> already prepared for shutdown (xdbConnectToDb(1068)), wait up to 30 seconds for main thread to complete exiting
+31/05/2018 17:15:02:418    ::    31/05/2018 14:15:01:997 pm_terminateGracefullyIfNeededF():1349 <enodeb0:PRCMNGR SYSTEM> prepare for shutdown (xdbConnectToDb(1068))
+31/05/2018 17:15:02:418    ::    31/05/2018 14:15:01:997 pm_terminateGracefullyIfNeededF():1388 <enodeb0:PRCMNGR SYSTEM> already prepared for shutdown (xdbConnectToDb(1068)), wait up to 30 seconds for main thread to complete exiting
+31/05/2018 17:15:02:418    ::    31/05/2018 14:15:01:997 pm_terminateGracefullyIfNeededF():1349 <enodeb0:PRCMNGR SYSTEM> prepare for shutdown (xdbConnectToDb(1068))
+31/05/2018 17:15:02:418    ::    31/05/2018 14:15:01:997 pm_terminateGracefullyIfNeededF():1388 <enodeb0:PRCMNGR SYSTEM> already prepared for shutdown (xdbConnectToDb(1068)), wait up to 30 seconds for main thread to complete exiting
+31/05/2018 17:15:03:330    ::    Exiting(xdb_incomeEventHandler(894))
+31/05/2018 17:15:03:330    ::    starting pid 12520, tty '': '/bin/umount -a -r'
+31/05/2018 17:15:03:330    ::    [207133.241539] ch_notify on a closed smd_pkt_dev id:9
+31/05/2018 17:15:03:330    ::    [207133.245371] ch_notify on a closed smd_pkt_dev id:10
+31/05/2018 17:15:03:330    ::    [207133.256810] Restarting system.
+31/05/2018 17:15:03:330    ::    [207133.260063] Failed to disable secure wdog d
+31/05/2018 17:15:03:330    ::    
+31/05/2018 17:15:03:330    ::    SBL1 - UART Initialized.
+31/05/2018 17:15:03:330    ::    Version: @$# 5.0.2.2  Nov 29 2017:17:58:48
+31/05/2018 17:15:03:330    ::    Features: @$# appboot_fix watchdog
+31/05/2018 17:15:03:330    ::    Could not read tca95xx
+31/05/2018 17:15:03:939    ::    Current Bank FR version: 60401
+31/05/2018 17:15:03:939    ::    
+31/05/2018 17:15:03:939    ::    Press ~! combination to enter menu: 
+31/05/2018 17:15:08:204    ::    3210
+31/05/2018 17:15:08:505    ::    Android Bootloader - UART_DM Initialized!!!
+31/05/2018 17:15:08:505    ::    [0] welcome to lk
+31/05/2018 17:15:08:505    ::    
+31/05/2018 17:15:08:505    ::    [0] SCM call: 0x2000601 failed with :fffffffc
+31/05/2018 17:15:08:505    ::    [0] Failed to initialize SCM
+31/05/2018 17:15:08:505    ::    [10] platform_init()
+31/05/2018 17:15:08:505    ::    [20] target_init()
+31/05/2018 17:15:08:505    ::    [30] SDHC Running at 96 MHz
+31/05/2018 17:15:08:505    ::    [50] SDHC Running in HS200 mode
+31/05/2018 17:15:08:505    ::    [80] Done initialization of the card
+31/05/2018 17:15:08:505    ::    [100] Is secureboot enable = [0]
+31/05/2018 17:15:08:505    ::    [120] Neither 'config' nor 'frp' partition found
+31/05/2018 17:15:08:505    ::    [140] Fuses:[150]  NP [160] 
+31/05/2018 17:15:08:840    ::    [160] Unable to locate /bootselect partition
+31/05/2018 17:15:08:840    ::    [180] Booting Linux from partition boot
+31/05/2018 17:15:08:840    ::    [200] Loading (boot) image (22427648): start
+31/05/2018 17:15:09:449    ::    [480] Loading (boot) image (22427648): done
+31/05/2018 17:15:09:449    ::    [500] use_signed_kernel=1, is_unlocked=1, is_tampered=0.
+31/05/2018 17:15:09:449    ::    [550] DTB Total entry: 104, DTB version: 3
+31/05/2018 17:15:09:449    ::    [570] Using DTB entry 0x000000c1/00010000/0x00010108/0 for device 0x000000c1/00010001/0x00010108/0
+31/05/2018 17:15:09:449    ::    [630] cmdline: root=/dev/ram0 rw rdinit=/sbin/init console=ttyHSL0,115200n8 rootfstype=ext4 earlyprintk maxcpus=4 coherent_pool=512K mem=231M@0x0ba00000 mem=12M@0x1E400000 mem=832M@0x4C000000 quiet isolcpus=3 androidboot.emmc=true androidboot.serialno=6e7cedb1 [760] Updating device tree: start
+31/05/2018 17:15:09:449    ::    [780] Updating device tree: done
+31/05/2018 17:15:09:449    ::    [800] booting linux @ 0xba08000, ramdisk @ 0x15500000 (16761789), tags/device tree @ 0x15400000
+31/05/2018 17:15:11:597    ::    [    0.063915] spmi_pmic_arb fc4cf000.qcom,spmi: missing property: qcom,pmic-arb-max-peripherals
+31/05/2018 17:15:11:597    ::    [    0.063942] spmi_pmic_arb fc4cf000.qcom,spmi: PMIC Arb Version-1 0x20000002
+31/05/2018 17:15:11:597    ::    [    0.064099] spmi_pmic_arb fc4cf000.qcom,spmi: missing property: qcom,pmic-arb-max-periph-interrupts
+31/05/2018 17:15:11:597    ::    [    0.076113] invalid MAC address in efuse
+31/05/2018 17:15:11:597    ::    [    0.076149] invalid MAC address in efuse
+31/05/2018 17:15:11:597    ::    [    0.076938] smd_channel_probe_now: allocation table not initialized
+31/05/2018 17:15:11:597    ::    [    0.077099] smd_channel_probe_now: allocation table not initialized
+31/05/2018 17:15:11:597    ::    [    0.077299] smd_channel_probe_now: allocation table not initialized
+31/05/2018 17:15:11:597    ::    [    0.077454] smd_channel_probe_now: allocation table not initialized
+31/05/2018 17:15:11:597    ::    [    0.077608] smd_channel_probe_now: allocation table not initialized
+31/05/2018 17:15:11:597    ::    [    0.089270] Node compatible with 'airspan-reset' was not found
+31/05/2018 17:15:11:597    ::    [    1.462776] IPC_RTR: msm_ipc_router_smd_driver_register Already driver registered IPCRTR
+31/05/2018 17:15:11:597    ::    [    1.462803] IPC_RTR: msm_ipc_router_smd_driver_register Already driver registered IPCRTR
+31/05/2018 17:15:11:597    ::    [    1.462831] IPC_RTR: msm_ipc_router_smd_driver_register Already driver registered IPCRTR
+31/05/2018 17:15:11:597    ::    [    1.462858] IPC_RTR: msm_ipc_router_smd_driver_register Already driver registered IPCRTR
+31/05/2018 17:15:11:597    ::    [    1.465730] msm_serial_hsl_probe: Bus scaling is disabled
+31/05/2018 17:15:11:597    ::    [    1.572199] msm_serial_hsl_probe: Bus scaling is disabled
+31/05/2018 17:15:11:597    ::    [    1.577600] msm_serial_hsl_probe: Bus scaling is disabled
+31/05/2018 17:15:11:597    ::    [    1.592218] diag: In socket_open_server, socket not initialized for MODEM_CNTL
+31/05/2018 17:15:11:597    ::    [    1.595235] diag: In socket_open_server, socket not initialized for MODEM_DATA
+31/05/2018 17:15:11:597    ::    [    1.595985] diag: In socket_open_server, socket not initialized for WCNSS_DCI
+31/05/2018 17:15:11:597    ::    [    1.601230] diag: In socket_open_server, socket not initialized for WCNSS_CNTL
+31/05/2018 17:15:11:597    ::    [    1.601241] diag: In socket_open_server, socket not initialized for WCNSS_DATA
+31/05/2018 17:15:11:597    ::    [    1.602577] diag: In socket_open_server, socket not initialized for SENSORS_DCI
+31/05/2018 17:15:11:597    ::    [    1.604535] diag: In socket_open_server, socket not initialized for LPASS_DATA
+31/05/2018 17:15:11:597    ::    [    1.604572] diag: In socket_open_server, socket not initialized for MODEM_DCI
+31/05/2018 17:15:11:597    ::    [    1.605409] diag: In __diag_cntl_socket_init, cntl socket is not initialized, ret: -97
+31/05/2018 17:15:11:597    ::    [    1.608847] diag: In socket_open_server, socket not initialized for LPASS_DCI
+31/05/2018 17:15:11:597    ::    [    1.612456] diag: In socket_open_server, socket not initialized for SENSORS_DATA
+31/05/2018 17:15:11:597    ::    [    1.613298] diag: In socket_open_server, socket not initialized for SENSORS_CNTL
+31/05/2018 17:15:11:597    ::    [    1.615891] diag: In socket_open_server, socket not initialized for LPASS_CNTL
+31/05/2018 17:15:11:597    ::    [    1.706587] sps: BAM device 0xf9904000 is not registered yet.
+31/05/2018 17:15:11:899    ::    [    1.859511] msm_sharedmem: sharedmem_register_qmi: Creating sharedmem_qmi qmi handle failed
+31/05/2018 17:15:11:899    ::    [    1.925823] devfreq qcom,cpubw.24: Couldn't update frequency transition information.
+31/05/2018 17:15:11:899    ::    failed to open rirom
+31/05/2018 17:15:11:899    ::    starting pid 229, tty '': '/etc/init.d/rcS'
+31/05/2018 17:15:11:899    ::    rcS:::executing /etc/init.d/rcS script
+31/05/2018 17:15:11:899    ::    rcS:::mounting filesystems
+31/05/2018 17:15:11:899    ::    rcS:::generating ld.so.cache
+31/05/2018 17:15:11:899    ::    rcS:::executing /etc/rc.d scripts
+31/05/2018 17:15:11:899    ::    starting udev
+31/05/2018 17:15:11:899    ::    creating static nodes
+31/05/2018 17:15:11:899    ::    starting udevd...done
+31/05/2018 17:15:11:899    ::    [    2.016184] msm_otg f9a55000.usb: reset attempt during PHY suspend
+31/05/2018 17:15:12:200    ::    waiting for devices...[    2.157241] msm_otg f9a55000.usb: PHY suspend failed
+31/05/2018 17:15:12:813    ::    done
+31/05/2018 17:15:12:813    ::    running rc.once.d services...
+31/05/2018 17:15:12:813    ::    mountflash:::Mounting /dev/mmcblk0p14 as /mnt/flash
+31/05/2018 17:15:12:813    ::    mountflash:::Mounting /dev/mmcblk0p15 as /opt
+31/05/2018 17:15:12:813    ::    mountflash:::Creating symbolic links to Airspan s/w and data directories
+31/05/2018 17:15:12:813    ::    mountflash:::Generating ld.so.cache after mounting /opt
+31/05/2018 17:15:12:813    ::    [    2.972397] sps: BAM device 0xf9944000 is not registered yet.
+31/05/2018 17:15:12:813    ::    rcS:::Setting up coredump location in /mnt/flash
+31/05/2018 17:15:13:120    ::    rcS:::Creating /mnt/firmware
+31/05/2018 17:15:13:120    ::    rcS:::Mounting /dev/mmcblk0p1 as /mnt/firmware
+31/05/2018 17:15:13:120    ::    rcS:::Trying ext4 first
+31/05/2018 17:15:13:120    ::    rcS:::/mnt/firmware mounted successfully
+31/05/2018 17:15:13:120    ::    rcS:::Creating /mnt/rfcal
+31/05/2018 17:15:13:120    ::    rcS:::Mounting /dev/mmcblk0p6 as /mnt/rfcal
+31/05/2018 17:15:13:120    ::    rcS:::Successfully mounted /mnt/rfcal
+31/05/2018 17:15:13:120    ::    rcS:::Creating /dev/mqueue
+31/05/2018 17:15:13:120    ::    crond starting
+31/05/2018 17:15:13:120    ::    crond[354]: crond (busybox 1.23.1) started, log level 8
+31/05/2018 17:15:13:120    ::    
+31/05/2018 17:15:13:120    ::    Starting Dropbear SSH server: dropbear.
+31/05/2018 17:15:13:120    ::    Starting telnetd...
+31/05/2018 17:15:13:120    ::    installflash: installing rsyslog config file
+31/05/2018 17:15:13:120    ::    ln: /etc/rsyslog.conf: File exists
+31/05/2018 17:15:13:120    ::    installflash: done executing
+31/05/2018 17:15:13:120    ::    Starting (/opt/qcom/bin/thermal-engine): done.
+31/05/2018 17:15:13:120    ::    overlayroot: Executing
+31/05/2018 17:15:13:120    ::    Removing the existing /root
+31/05/2018 17:15:13:120    ::    Removing the existing /home
+31/05/2018 17:15:13:120    ::    Removing the existing /etc/passwd
+31/05/2018 17:15:13:120    ::    Removing the existing /etc/group
+31/05/2018 17:15:13:120    ::    Removing the existing /etc/shadow
+31/05/2018 17:15:13:120    ::    overlayroot: done executing
+31/05/2018 17:15:13:120    ::    relayOnBoard=0, outPut=0
+31/05/2018 17:15:13:120    ::    Creating Dirs...
+31/05/2018 17:15:13:423    ::    boardType=VEL05-U40-B01DW1
+31/05/2018 17:15:13:423    ::    boardType=VEL05-U40-B01DW1
+31/05/2018 17:15:13:423    ::    boardType=VEL05-U40-B01DW1
+31/05/2018 17:15:13:423    ::    boardType=VEL05-U40-B01DW1
+31/05/2018 17:15:13:723    ::    Verify correct clock source
+31/05/2018 17:15:17:687    ::    checking clock source (cur_primSrc=PTP)
+31/05/2018 17:15:17:687    ::    Verify TX is closed
+31/05/2018 17:15:17:687    ::    create symbolic link /tmp/provisioning.xml
+31/05/2018 17:15:17:989    ::    duplexMode=2
+31/05/2018 17:15:17:989    ::    stop syslogd Shutting down system logger (rsyslogd): no /usr/bin/rsyslogd found; none killed
+31/05/2018 17:15:17:989    ::    
+31/05/2018 17:15:17:989    ::    
+31/05/2018 17:15:17:989    ::    Starting system logger (rsyslogd): 
+31/05/2018 17:15:17:989    ::    Starting OAM Proxy (/opt/qcom/bin/fsmOamProxy): 
+31/05/2018 17:15:17:989    ::    loading modules
+31/05/2018 17:15:17:989    ::    /etc/rc.d/S99saveTraceToTmp: line 9: warning: command substitution: ignored null byte in input
+31/05/2018 17:15:17:989    ::    rcS:::configuring ACPU parameters
+31/05/2018 17:15:17:989    ::    rcS:::Max ACPU scaling freq is 1958400 KHz.
+31/05/2018 17:15:17:989    ::    rcS::Starting pre-fsminit custom initialization
+31/05/2018 17:15:17:989    ::    rcS::Starting fsminitd
+31/05/2018 17:15:17:989    ::    Starting (/local/qcom/bin/fsminit/fsminitd): 
+31/05/2018 17:15:17:989    ::    rcS::Starting custom initialization
+31/05/2018 17:15:17:989    ::    rcS:::DONE Executing /etc/init.d/rcS Script
+31/05/2018 17:15:17:989    ::    starting pid 930, tty '': '/sbin/getty ttyHSL0 115200 vt100'
+31/05/2018 17:15:17:989    ::    ln: /dev/rirom: File exists
+31/05/2018 17:15:18:291    ::    net.ipv6.conf.br0.autoconf = 0
+31/05/2018 17:15:18:291    ::    net.ipv6.conf.eth0.autoconf = 0
+31/05/2018 17:15:18:291    ::    net.ipv6.conf.eth1.autoconf = 0
+31/05/2018 17:15:18:291    ::    net.ipv6.conf.br0.accept_ra = 0
+31/05/2018 17:15:18:291    ::    net.ipv6.conf.eth0.accept_ra = 0
+31/05/2018 17:15:18:291    ::    net.ipv6.conf.eth0.accept_ra = 0
+31/05/2018 17:15:18:291    ::    net.ipv6.conf.default.autoconf = 0
+31/05/2018 17:15:18:291    ::    
+31/05/2018 17:15:18:291    ::    (none) login: Current and stored MAC addresses differ, setting new value 00:a0:0a:1e:32:50
+31/05/2018 17:15:18:291    ::    relayOnBoard=0, outPut=0
+31/05/2018 17:15:18:291    ::    lte-net$v6_str.cfg file exists - continue parse_netcfg.sh interface configuration\n
+31/05/2018 17:15:18:291    ::    <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+31/05/2018 17:15:18:291    ::    ifconfig from lte-net.cfg: management ip  = 20.20.2.44
+31/05/2018 17:15:18:291    ::                               netmask        = 255.255.255.0
+31/05/2018 17:15:18:291    ::                               lte_def_ip_gw  = 20.20.2.254
+31/05/2018 17:15:18:291    ::                               lte_def_gw_mac = 0
+31/05/2018 17:15:18:291    ::                               lte_vlan_id    = 2
+31/05/2018 17:15:18:291    ::                               lte_vlan_tag   = TAGGED
+31/05/2018 17:15:18:291    ::    <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+31/05/2018 17:15:18:291    ::    XDB runtime started
+31/05/2018 17:15:19:201    ::    1 entries updated
+31/05/2018 17:15:19:201    ::    XDB runtime started
+31/05/2018 17:15:19:815    ::    1 entries updated
+31/05/2018 17:15:19:815    ::    XDB runtime started
+31/05/2018 17:15:20:440    ::    1 entries updated
+31/05/2018 17:15:20:740    ::    XDB runtime started
+31/05/2018 17:15:21:352    ::    1 entries updated
+31/05/2018 17:15:21:352    ::    vconfig/ifconfig from lte-net.cfg: vlan_id=2 / ip=20.20.2.44 / net_mask=255.255.255.0 
+31/05/2018 17:15:21:352    ::    route add default gw 20.20.2.254 br0.2
+31/05/2018 17:15:21:352    ::    Kernel IP routing table
+31/05/2018 17:15:21:352    ::    Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+31/05/2018 17:15:22:873    ::    [   12.697547] bus_scale_table is NULL
+31/05/2018 17:15:22:873    ::    [   12.735228] smsm_change_state <SM NO STATE>
+31/05/2018 17:15:22:873    ::    [   12.739338] diag: In diag_send_feature_mask_update, control channel is not open, p: 0, c0c17ab8
+31/05/2018 17:15:22:873    ::    [   12.757554] smsm_change_state <SM NO STATE>
+31/05/2018 17:15:22:873    ::    [   12.773439] smsm_change_state <SM NO STATE>
+31/05/2018 17:15:25:015    ::    [   14.775294] smsm_change_state <SM NO STATE>
+31/05/2018 17:15:41:423    ::    default         20.20.2.254     0.0.0.0         UG    0      0        0 br0.2
+31/05/2018 17:15:41:423    ::    20.20.2.0       *               255.255.255.0   U     0      0        0 br0.2
+31/05/2018 17:15:41:423    ::    boardType=VEL05-U40-B01DW1
+31/05/2018 17:15:41:423    ::    NO DOCSIS INTERFACE SINCE WE'RE NOT 1300!
+31/05/2018 17:15:41:423    ::    not skipping parse_snmp.sh (lte-net.cfg exists)
+31/05/2018 17:15:41:423    ::    relayOnBoard=0, outPut=0
+31/05/2018 17:15:42:946    ::    DEBUG_START! LOG=[/var/log/dropbear.log]
+31/05/2018 17:15:42:946    ::    debugOn= 0
+31/05/2018 17:15:42:946    ::    relayOnBoard=0, outPut=0
+31/05/2018 17:15:42:946    ::    Dropbear PARSE_CFG_FILE = [/bsdata/lte-net.cfg]
+31/05/2018 17:15:46:597    ::    dropbear40: transportIp= 
+31/05/2018 17:15:46:597    ::    Restarting Dropbear SSH server: Stopping Dropbear SSH server: stopped /usr/sbin/dropbear (pid 1291 366)
+31/05/2018 17:15:46:597    ::    dropbear.
+31/05/2018 17:15:46:597    ::    LTE IpV4 = 20.20.2.44
+31/05/2018 17:15:46:597    ::    LTE IpV6 = 
+31/05/2018 17:15:46:597    ::    Run Ssh for lte ( lte,airUnity Internal port )
+31/05/2018 17:15:46:597    ::    start-stop-daemon -S -p /var/run/dropbear.pid                             -x /usr/sbin/dropbear --  -d /mnt/flash/etc/dropbear/dropbear_dss_host_key -r /mnt/flash/etc/dropbear/dropbear_rsa_host_key                              -p 20.20.2.44:22  -I 600 -g
+31/05/2018 17:15:46:597    ::    DROPBEAR running now
+31/05/2018 17:15:46:597    ::    dropbear.
+31/05/2018 17:15:46:597    ::    ./services50.sh: line 9: /sbin/syslogd: No such file or directory
+31/05/2018 17:15:47:201    ::    httpdServer: debugFlag (ipSecKeepStaticIp)=0
+31/05/2018 17:15:48:724    ::    S55httpdServer: transportIpType=1, transportIp=
+31/05/2018 17:15:48:724    ::    start httpd for IPv4
+31/05/2018 17:15:48:724    ::    S55httpdServer: use staticIp: 20.20.2.44
+31/05/2018 17:15:49:334    ::     /bs/web/bin/mini_httpd -C /bs/web/bin/web.conf ...relayOnBoard=0, outPut=0
+31/05/2018 17:15:49:334    ::    stopped telnetd (pid 369)
+31/05/2018 17:15:49:334    ::    
+31/05/2018 17:15:49:334    ::    ##########################################
+31/05/2018 17:15:49:334    ::    #
+31/05/2018 17:15:49:334    ::    # Build Version ........ 15.15.50.622
+31/05/2018 17:15:49:334    ::    #
+31/05/2018 17:15:49:334    ::    #
+31/05/2018 17:15:49:334    ::    ##########################################
+31/05/2018 17:15:49:334    ::    
+31/05/2018 17:15:49:334    ::    Validating Velocity banks:
+31/05/2018 17:15:49:334    ::    Validating current bank....
+31/05/2018 17:15:49:334    ::    ./.checksum does not found.
+31/05/2018 17:15:49:334    ::    ./.file_list does not found.
+31/05/2018 17:15:49:334    ::    validating recovery bank....
+31/05/2018 17:15:49:334    ::    /bs/bin/validate_xlp_banks.sh: line 65: cd: /media/recovery: No such file or directory
+31/05/2018 17:15:49:334    ::    ./.checksum_recovery does not found.
+31/05/2018 17:15:49:334    ::    ./.file_list_recovery does not found.
+31/05/2018 17:15:49:334    ::    Done
+31/05/2018 17:15:49:334    ::    Done! 
+31/05/2018 17:15:49:334    ::    Disabling unused VEL devices
+31/05/2018 17:15:55:105    ::    Activating HW Watchdog
+31/05/2018 17:15:55:105    ::    ### Starting Process Manager
+31/05/2018 17:15:55:105    ::    Reset WiFi card start
+31/05/2018 17:15:55:105    ::    /bs/bin/qpnp_gpio_set.sh 16 0
+31/05/2018 17:15:55:105    ::    XDB runtime started
+31/05/2018 17:15:55:406    ::    INFO ../../app/prcmngr/pm_timers_server.c(403) pm_timerStart():>>
+31/05/2018 17:15:55:406    ::    INFO ../../app/prcmngr/pm_timers_server.c(334) pm_timerStartTask():>>
+31/05/2018 17:15:55:406    ::    INFO ../../app/prcmngr/pm_timers_server.c(419) pm_timerStart():<< rc 0
+31/05/2018 17:15:55:406    ::    INFO ../../app/prcmngr/pm_utils.c(519) pm_readEEInventory():reading EEprom - this might take a moment
+31/05/2018 17:15:55:406    ::    INFO ../../app/prcmngr/pm_socket_server.c(940) pm_SocketServer():listener connection initiated on socket 5
+31/05/2018 17:15:55:406    ::    Invalid data length (255) in eeprom device 1
+31/05/2018 17:15:55:406    ::    Invalid data length (255) in eeprom device 2
+31/05/2018 17:15:55:406    ::    Invalid data length (255) in eeprom device 4
+31/05/2018 17:15:55:406    ::    Invalid data length (255) in eeprom device 5
+31/05/2018 17:15:55:406    ::    Invalid data length (255) in eeprom device 6
+31/05/2018 17:15:55:406    ::    INFO ../../app/prcmngr/pm_utils.c(1096) pm_getProductProfileInfo():reading HW product details
+31/05/2018 17:15:55:406    ::    INFO ../../app/prcmngr/pm_utils.c(1143) pm_getProductProfileInfo():reading HW product details
+31/05/2018 17:15:55:406    ::    INFO ../../app/prcmngr/pm_utils.c(1205) pm_getProductProfileInfo():
+31/05/2018 17:15:55:406    ::    DEBUG DEBUG DEBUG - Read fields:
+31/05/2018 17:15:55:406    ::    product=VEL05-U40-B01DW1
+31/05/2018 17:15:55:406    ::    productPrintName=Velocity
+31/05/2018 17:15:55:406    ::    asMaxBsCmSwType=18
+31/05/2018 17:15:55:406    ::    enodebLedProfile=2
+31/05/2018 17:15:55:406    ::    backHaulLedProfile=0
+31/05/2018 17:15:55:406    ::    waitForRelayRebootType=0
+31/05/2018 17:15:55:406    ::    waitForRelaySelfTest=0
+31/05/2018 17:15:55:406    ::    waitForVendorParams=0
+31/05/2018 17:15:55:406    ::    skipDhcp=0
+31/05/2018 17:15:55:406    ::    performNmsSync=0
+31/05/2018 17:15:55:406    ::    checkPnpPersistency=1
+31/05/2018 17:15:55:406    ::    blockPnp1ppsReports=0
+31/05/2018 17:15:55:406    ::    backhaulType=0
+31/05/2018 17:15:55:406    ::    defaultSyncMode=2
+31/05/2018 17:15:55:406    ::    defaultClockSource=2
+31/05/2018 17:15:55:406    ::    snmpProxy=1
+31/05/2018 17:15:55:406    ::    ptp=1
+31/05/2018 17:15:55:406    ::    backhaulIf=eth1
+31/05/2018 17:15:55:406    ::    bridgeIf=br0
+31/05/2018 17:15:55:406    ::    VCI=00:A0:0A
+31/05/2018 17:15:55:406    ::    rebootForIpChange=0
+31/05/2018 17:15:55:406    ::    tbd1=br0
+31/05/2018 17:15:55:406    ::    mcPhyImagePath=N/A
+31/05/2018 17:15:55:406    ::    scPhyImagePath=N/A
+31/05/2018 17:15:55:406    ::    mcMaxDlDciNum=65535
+31/05/2018 17:15:55:406    ::    scMaxDlDciNum=65535
+31/05/2018 17:15:55:406    ::    mcMaxUePerUlTti=255
+31/05/2018 17:15:55:406    ::    scMaxUePerUlTti=255
+31/05/2018 17:15:55:406    ::    radioDelay=0
+31/05/2018 17:15:55:406    ::    changeSimLink=0
+31/05/2018 17:15:55:406    ::    calTable=5
+31/05/2018 17:15:55:406    ::    catalinaTabNum=0
+31/05/2018 17:15:55:406    ::    enableMeas=0
+31/05/2018 17:15:55:406    ::    INFO ../../app/prcmngr/pm_utils.c(1285) pm_printProductProfileInfo():
+31/05/2018 17:15:55:406    ::    ===============================================
+31/05/2018 17:15:55:406    ::    ==  HwProduct: [VEL05-U40-B01DW1]
+31/05/2018 17:15:55:406    ::    ===============================================
+31/05/2018 17:15:55:406    ::    Band 40	 Frequency: DL 2300000-2380000, UL 2300000-2380000
+31/05/2018 17:15:55:406    ::    Band 0	 Frequency: DL 0-0, UL 0-0
+31/05/2018 17:15:55:406    ::    Band 0	 Frequency: DL 0-0, UL 0-0
+31/05/2018 17:15:55:406    ::    Tx:	 Power=0-2600, Channels=2
+31/05/2018 17:15:55:406    ::    Duplex:  TDD
+31/05/2018 17:15:55:406    ::    Antenna: CONNECTORIZED
+31/05/2018 17:15:55:406    ::    Gps:     No
+31/05/2018 17:15:55:406    ::    ===============================================
+31/05/2018 17:15:55:707    ::    INFO ../../app/prcmngr/pm_monitoring.c(324) pm_create_process_info():Product code at PM VEL05-U40-B01DW1 
+31/05/2018 17:15:55:707    ::    HIGH ../../app/prcmngr/pm_monitoring.c(639) pm_getPid():pm_getPid couldn't open /tmp/pid_list/3.pid
+31/05/2018 17:15:55:707    ::    HIGH ../../app/prcmngr/pm_monitoring.c(639) pm_getPid():pm_getPid couldn't open /tmp/pid_list/4.pid
+31/05/2018 17:15:55:707    ::    HIGH ../../app/prcmngr/pm_monitoring.c(639) pm_getPid():pm_getPid couldn't open /tmp/pid_list/8.pid
+31/05/2018 17:15:55:707    ::    HIGH ../../app/prcmngr/pm_monitoring.c(639) pm_getPid():pm_getPid couldn't open /tmp/pid_list/9.pid
+31/05/2018 17:15:55:707    ::    HIGH ../../app/prcmngr/pm_monitoring.c(639) pm_getPid():pm_getPid couldn't open /tmp/pid_list/10.pid
+31/05/2018 17:15:55:707    ::    HIGH ../../app/prcmngr/pm_monitoring.c(639) pm_getPid():pm_getPid couldn't open /tmp/pid_list/11.pid
+31/05/2018 17:15:55:707    ::    HIGH ../../app/prcmngr/pm_monitoring.c(639) pm_getPid():pm_getPid couldn't open /tmp/pid_list/13.pid
+31/05/2018 17:15:55:707    ::    HIGH ../../app/prcmngr/pm_monitoring.c(639) pm_getPid():pm_getPid couldn't open /tmp/pid_list/17.pid
+31/05/2018 17:15:55:707    ::    HIGH ../../app/prcmngr/pm_monitoring.c(639) pm_getPid():pm_getPid couldn't open /tmp/pid_list/18.pid
+31/05/2018 17:15:55:707    ::    HIGH ../../app/prcmngr/pm_monitoring.c(639) pm_getPid():pm_getPid couldn't open /tmp/pid_list/21.pid
+31/05/2018 17:15:55:707    ::    HIGH ../../app/prcmngr/pm_monitoring.c(639) pm_getPid():pm_getPid couldn't open /tmp/pid_list/22.pid
+31/05/2018 17:15:55:707    ::    HIGH ../../app/prcmngr/pm_monitoring.c(639) pm_getPid():pm_getPid couldn't open /tmp/pid_list/26.pid
+31/05/2018 17:15:55:707    ::    HIGH ../../app/prcmngr/pm_monitoring.c(639) pm_getPid():pm_getPid couldn't open /tmp/pid_list/27.pid
+31/05/2018 17:15:55:707    ::    HIGH ../../app/prcmngr/pm_monitoring.c(639) pm_getPid():pm_getPid couldn't open /tmp/pid_list/29.pid
+31/05/2018 17:15:55:707    ::    ERROR ../../app/prcmngr/pm_stages.c(158) pm_create_stages_info():BhQos (27) is essential and can't be constrained by stage 28 of Twamp (26)
+31/05/2018 17:15:55:707    ::    starting up logger server
+31/05/2018 17:15:55:707    ::    rm: can't remove '/tmp/script': No such file or directory
+31/05/2018 17:15:55:707    ::    ../../app/logger/loggerServer/ISloggerServerInterface.cc:150:loggerServerInit: Not enought Ram space for a logger file
+31/05/2018 17:15:55:707    ::    
+31/05/2018 17:15:55:707    ::    INFO ../../app/prcmngr/pm_socket_server.c(984) pm_SocketServer():new connection initiated on socket 11
+31/05/2018 17:15:56:319    ::    /bs/bin/qpnp_gpio_set.sh 16 1
+31/05/2018 17:15:56:319    ::    /bs/bin/gpio_set.sh 33 1
+31/05/2018 17:15:56:319    ::    Reset WiFi card end
+31/05/2018 17:15:56:319    ::    INFO ../../app/prcmngr/pm_main.c(403) main():logger server is up
+31/05/2018 17:16:00:005    ::    
+31/05/2018 17:16:00:005    ::    Starting ptpd2 daemon with parameters:      	/bs/ptp_daemon	 	-b	 	eth1	 	-k	 	br0	 	-g	 	-C	 	-T	 	3	 
+31/05/2018 17:16:00:005    ::    
+31/05/2018 17:16:00:005    ::    		 timeStampe IF name  :: eth1
+31/05/2018 17:16:00:005    ::    n		 bind IF name  :: br0
+31/05/2018 17:16:00:612    ::    XDB runtime started
+31/05/2018 17:16:01:528    ::    
+31/05/2018 17:16:01:528    ::    ###############################
+31/05/2018 17:16:01:528    ::    #  Starting CMP CLIENT        #
+31/05/2018 17:16:01:528    ::    ###############################
+31/05/2018 17:16:01:528    ::    
+31/05/2018 17:16:01:528    ::    XDB runtime started
+31/05/2018 17:16:07:934    ::    XDB runtime started
+31/05/2018 17:16:07:934    ::    XDB runtime started
+31/05/2018 17:16:08:834    ::    XDB runtime started
+31/05/2018 17:16:08:834    ::    XDB runtime started
+31/05/2018 17:16:08:834    ::    XDB runtime started
+31/05/2018 17:16:08:834    ::    XDB runtime started
+31/05/2018 17:16:09:136    ::    XDB runtime started
+31/05/2018 17:16:09:136    ::    XDB runtime started
+31/05/2018 17:16:09:440    ::    XDB runtime started
+31/05/2018 17:16:09:440    ::    XDB runtime started
+31/05/2018 17:16:10:049    ::    09/01/1970 02:17:29:786 main():689 <ntpClient:NTP SYSTEM> NTP: run is starting...
+31/05/2018 17:16:10:049    ::    09/01/1970 02:17:22:940 ptpdStartup():1634 <ptpd:PTPd SYSTEM> ClockSourceCfg_dbTable  exist (satellitePriority=0)
+31/05/2018 17:16:10:049    ::    09/01/1970 02:17:22:375 main():126 <smonMngr:SMON SYSTEM> SMON: run is starting...
+31/05/2018 17:16:10:049    ::    09/01/1970 02:17:31:749 pm_set_status_led():747 <oam:GENERAL SYSTEM> enb LED is GREEN at 3.000000Hz (LOADING)
+31/05/2018 17:16:10:049    ::    09/01/1970 02:17:22:940 ptpdStartup():1645 <ptpd:PTPd SYSTEM> TfcsManagerConfig_dbTable  exist
+31/05/2018 17:16:10:350    ::    09/01/1970 02:17:22:942 ptpdStartup():1683 <ptpd:PTPd SYSTEM> PTP daemon waiting for oam to configure interface
+31/05/2018 17:16:10:350    ::    XDB runtime started
+31/05/2018 17:16:10:350    ::    XDB runtime started
+31/05/2018 17:16:10:350    ::    init_snmp_tables
+31/05/2018 17:16:10:651    ::    after init_snmp_tables
+31/05/2018 17:16:10:651    ::    logger is active
+31/05/2018 17:16:10:651    ::    duplicate registration: MIB modules sysDescr and sysDescr (oid .1.3.6.1.2.1.1.1).
+31/05/2018 17:16:10:651    ::    duplicate registration: MIB modules sysObjectID and sysObjectID (oid .1.3.6.1.2.1.1.2).
+31/05/2018 17:16:10:651    ::    duplicate registration: MIB modules sysUpTime and sysUpTime (oid .1.3.6.1.2.1.1.3).
+31/05/2018 17:16:10:651    ::    duplicate registration: MIB modules sysContact and sysContact (oid .1.3.6.1.2.1.1.4).
+31/05/2018 17:16:10:651    ::    duplicate registration: MIB modules sysName and sysName (oid .1.3.6.1.2.1.1.5).
+31/05/2018 17:16:10:651    ::    duplicate registration: MIB modules sysLocation and sysLocation (oid .1.3.6.1.2.1.1.6).
+31/05/2018 17:16:10:651    ::    duplicate registration: MIB modules sysServices and sysServices (oid .1.3.6.1.2.1.1.7).
+31/05/2018 17:16:10:651    ::    duplicate registration: MIB modules asMaxCmInventoryTable and asMaxCmInventoryTable (oid .1.3.6.1.4.1.989.1.16.1.2).
+31/05/2018 17:16:10:651    ::    duplicate registration: MIB modules asMaxBsCmSwUpgradeTable and asMaxBsCmSwUpgradeTable (oid .1.3.6.1.4.1.989.1.16.2.1.4.2).
+31/05/2018 17:16:10:651    ::    duplicate registration: MIB modules asLteStatsOnDemandPerQciTable and asLteStatsOnDemandPerQciTable (oid .1.3.6.1.4.1.989.1.20.2.3.9).
+31/05/2018 17:16:10:651    ::    duplicate registration: MIB modules asLteStatsOnDemandTable and asLteStatsOnDemandTable (oid .1.3.6.1.4.1.989.1.20.2.3.17).
+31/05/2018 17:16:10:651    ::    duplicate registration: MIB modules asLteStatsIfControlTable and asLteStatsIfControlTable (oid .1.3.6.1.4.1.989.1.20.2.4.1).
+31/05/2018 17:16:10:651    ::    duplicate registration: MIB modules asLteStkRfStatusTable and asLteStkRfStatusTable (oid .1.3.6.1.4.1.989.1.20.1.5.2).
+31/05/2018 17:16:10:651    ::    duplicate registration: MIB modules asLteStkRfCfgTable and asLteStkRfCfgTable (oid .1.3.6.1.4.1.989.1.20.1.5.1).
+31/05/2018 17:16:10:651    ::    duplicate registration: MIB modules asLteStkStackSecurityCfgTable and asLteStkStackSecurityCfgTable (oid .1.3.6.1.4.1.989.1.20.1.3.81).
+31/05/2018 17:16:10:651    ::    duplicate registration: MIB modules asLteStkCellDicicStatusTable and asLteStkCellDicicStatusTable (oid .1.3.6.1.4.1.989.1.20.1.4.67).
+31/05/2018 17:16:10:651    ::    duplicate registration: MIB modules asLteEnbStatsTable and asLteEnbStatsTable (oid .1.3.6.1.4.1.989.1.20.2.5.2).
+31/05/2018 17:16:10:651    ::    duplicate registration: MIB modules asLteStkBulkStatusTable and asLteStkBulkStatusTable (oid .1.3.6.1.4.1.989.1.20.1.3.98).
+31/05/2018 17:16:10:651    ::    init_snmp_tables
+31/05/2018 17:16:10:651    ::    duplicate registration: MIB modules asLteStkStackCfgTable and asLteStkStackCfgTable (oid .1.3.6.1.4.1.989.1.20.1.3.1).
+31/05/2018 17:16:10:651    ::    duplicate registration: MIB modules asLteStkStackStatusTable and asLteStkStackStatusTable (oid .1.3.6.1.4.1.989.1.20.1.3.2).
+31/05/2018 17:16:10:651    ::    duplicate registration: MIB modules asLteStkMmeCfgTable and asLteStkMmeCfgTable (oid .1.3.6.1.4.1.989.1.20.1.3.3).
+31/05/2018 17:16:10:651    ::    duplicate registration: MIB modules asLteStkSecurityAlgTable and asLteStkSecurityAlgTable (oid .1.3.6.1.4.1.989.1.20.1.3.5).
+31/05/2018 17:16:10:651    ::    duplicate registration: MIB modules asLteStkNetworkCfgTable and asLteStkNetworkCfgTable (oid .1.3.6.1.4.1.989.1.20.1.3.9).
+31/05/2018 17:16:10:651    ::    duplicate registration: MIB modules asLteStkBsStaticIpRouteTable and asLteStkBsStaticIpRouteTable (oid .1.3.6.1.4.1.989.1.20.1.3.10).
+31/05/2018 17:16:10:651    ::    duplicate registration: MIB modules asLteStkPtpMasterCfgTable and asLteStkPtpMasterCfgTable (oid .1.3.6.1.4.1.989.1.20.1.3.11).
+31/05/2018 17:16:10:651    ::    duplicate registration: MIB modules asLteStkPtpStatusTable and asLteStkPtpStatusTable (oid .1.3.6.1.4.1.989.1.20.1.3.12).
+31/05/2018 17:16:10:962    ::    duplicate registration: MIB modules asLteStkGpsDeviceCfgTable and asLteStkGpsDeviceCfgTable (oid .1.3.6.1.4.1.989.1.20.1.3.13).
+31/05/2018 17:16:10:962    ::    duplicate registration: MIB modules asLteStkNetworkServicesCfgTable and asLteStkNetworkServicesCfgTable (oid .1.3.6.1.4.1.989.1.20.1.3.14).
+31/05/2018 17:16:10:962    ::    duplicate registration: MIB modules asLteStkPnpCfgTable and asLteStkPnpCfgTable (oid .1.3.6.1.4.1.989.1.20.1.3.15).
+31/05/2018 17:16:10:962    ::    duplicate registration: MIB modules asLteStkPnpStatusTable and asLteStkPnpStatusTable (oid .1.3.6.1.4.1.989.1.20.1.3.16).
+31/05/2018 17:16:10:962    ::    duplicate registration: MIB modules asLteStkActionTable and asLteStkActionTable (oid .1.3.6.1.4.1.989.1.20.1.3.17).
+31/05/2018 17:16:10:962    ::    duplicate registration: MIB modules asLteStkUlMcsParamsTable and asLteStkUlMcsParamsTable (oid .1.3.6.1.4.1.989.1.20.1.3.18).
+31/05/2018 17:16:10:962    ::    duplicate registration: MIB modules asLteStkRabParamsTable and asLteStkRabParamsTable (oid .1.3.6.1.4.1.989.1.20.1.3.19).
+31/05/2018 17:16:10:962    ::    duplicate registration: MIB modules asLteStkPlmnCfgTable and asLteStkPlmnCfgTable (oid .1.3.6.1.4.1.989.1.20.1.3.20).
+31/05/2018 17:16:10:962    ::    duplicate registration: MIB modules asLteStkS1CfgTable and asLteStkS1CfgTable (oid .1.3.6.1.4.1.989.1.20.1.3.21).
+31/05/2018 17:16:10:962    ::    duplicate registration: MIB modules asLteStkUlPktDataPriorityCfgTable and asLteStkUlPktDataPriorityCfgTable (oid .1.3.6.1.4.1.989.1.20.1.3.22).
+31/05/2018 17:16:10:962    ::    duplicate registration: MIB modules asLteStkCompRprhCfgTable and asLteStkCompRprhCfgTable (oid .1.3.6.1.4.1.989.1.20.1.3.25).
+31/05/2018 17:16:10:962    ::    duplicate registration: MIB modules asLteStkIfStatusTable and asLteStkIfStatusTable (oid .1.3.6.1.4.1.989.1.20.1.3.26).
+31/05/2018 17:16:10:962    ::    duplicate registration: MIB modules asLteStkIpSecCfgTable and asLteStkIpSecCfgTable (oid .1.3.6.1.4.1.989.1.20.1.3.27).
+31/05/2018 17:16:10:962    ::    duplicate registration: MIB modules asLteStkAnrFreqCfgTable and asLteStkAnrFreqCfgTable (oid .1.3.6.1.4.1.989.1.20.1.3.28).
+31/05/2018 17:16:10:962    ::    duplicate registration: MIB modules asLteStkLoggerCfgTable and asLteStkLoggerCfgTable (oid .1.3.6.1.4.1.989.1.20.1.3.29).
+31/05/2018 17:16:10:962    ::    duplicate registration: MIB modules asLteStkVoLteCfgTable and asLteStkVoLteCfgTable (oid .1.3.6.1.4.1.989.1.20.1.3.30).
+31/05/2018 17:16:10:962    ::    duplicate registration: MIB modules asLteStkConfigStatusTable and asLteStkConfigStatusTable (oid .1.3.6.1.4.1.989.1.20.1.3.31).
+31/05/2018 17:16:10:962    ::    duplicate registration: MIB modules asLteStkNodeSoftwareVersionStatusTable and asLteStkNodeSoftwareVersionStatusTable (oid .1.3.6.1.4.1.989.1.20.1.3.32).
+31/05/2018 17:16:10:962    ::    duplicate registration: MIB modules asLteStkS1CfgSgwTable and asLteStkS1CfgSgwTable (oid .1.3.6.1.4.1.989.1.20.1.3.36).
+31/05/2018 17:16:10:962    ::    duplicate registration: MIB modules asLteStkMbmsAdvancedCfgTable and asLteStkMbmsAdvancedCfgTable (oid .1.3.6.1.4.1.989.1.20.1.3.37).
+31/05/2018 17:16:10:962    ::    duplicate registration: MIB modules asLteStkM1MulticastIpsTable and asLteStkM1MulticastIpsTable (oid .1.3.6.1.4.1.989.1.20.1.3.42).
+31/05/2018 17:16:10:962    ::    duplicate registration: MIB modules asLteStkWiFiCfgTable and asLteStkWiFiCfgTable (oid .1.3.6.1.4.1.989.1.20.1.3.43).
+31/05/2018 17:16:10:962    ::    duplicate registration: MIB modules asLteStkWiFiStatusTable and asLteStkWiFiStatusTable (oid .1.3.6.1.4.1.989.1.20.1.3.44).
+31/05/2018 17:16:10:962    ::    duplicate registration: MIB modules asLteStkWiFiCommandTable and asLteStkWiFiCommandTable (oid .1.3.6.1.4.1.989.1.20.1.3.45).
+31/05/2018 17:16:10:962    ::    duplicate registration: MIB modules asLteStkRnUeCfgTable and asLteStkRnUeCfgTable (oid .1.3.6.1.4.1.989.1.20.1.3.46).
+31/05/2018 17:16:10:962    ::    duplicate registration: MIB modules asLteStkRnUeStatusTable and asLteStkRnUeStatusTable (oid .1.3.6.1.4.1.989.1.20.1.3.47).
+31/05/2018 17:16:10:962    ::    duplicate registration: MIB modules asLteStkIpInterfaceCfgTable and asLteStkIpInterfaceCfgTable (oid .1.3.6.1.4.1.989.1.20.1.3.48).
+31/05/2018 17:16:10:962    ::    duplicate registration: MIB modules asLteStkIpInterfaceStatusTable and asLteStkIpInterfaceStatusTable (oid .1.3.6.1.4.1.989.1.20.1.3.49).
+31/05/2018 17:16:10:962    ::    duplicate registration: MIB modules asLteStkX2ResourceStatusTable and asLteStkX2ResourceStatusTable (oid .1.3.6.1.4.1.989.1.20.1.3.50).
+31/05/2018 17:16:11:264    ::    duplicate registration: MIB modules asLteStkIpSecStatusTable and asLteStkIpSecStatusTable (oid .1.3.6.1.4.1.989.1.20.1.3.51).
+31/05/2018 17:16:11:264    ::    duplicate registration: MIB modules asLteStkNghListTable and asLteStkNghListTable (oid .1.3.6.1.4.1.989.1.20.1.3.52).
+31/05/2018 17:16:11:264    ::    duplicate registration: MIB modules asLteStkCmdQNghListTable and asLteStkCmdQNghListTable (oid .1.3.6.1.4.1.989.1.20.1.3.53).
+31/05/2018 17:16:11:264    ::    duplicate registration: MIB modules asLteStkIfCfgTable and asLteStkIfCfgTable (oid .1.3.6.1.4.1.989.1.20.1.3.54).
+31/05/2018 17:16:11:264    ::    duplicate registration: MIB modules asLteStkMmeStatusTable and asLteStkMmeStatusTable (oid .1.3.6.1.4.1.989.1.20.1.3.56).
+31/05/2018 17:16:11:264    ::    duplicate registration: MIB modules asLteStkExternalIpInterfaceStatusTable and asLteStkExternalIpInterfaceStatusTable (oid .1.3.6.1.4.1.989.1.20.1.3.57).
+31/05/2018 17:16:11:264    ::    duplicate registration: MIB modules asLteStkNwElementStatusTable and asLteStkNwElementStatusTable (oid .1.3.6.1.4.1.989.1.20.1.3.58).
+31/05/2018 17:16:11:264    ::    duplicate registration: MIB modules asLteStkSbaCfgTable and asLteStkSbaCfgTable (oid .1.3.6.1.4.1.989.1.20.1.3.59).
+31/05/2018 17:16:11:264    ::    duplicate registration: MIB modules asLteStkCallTraceEnbCfgTable and asLteStkCallTraceEnbCfgTable (oid .1.3.6.1.4.1.989.1.20.1.3.60).
+31/05/2018 17:16:11:264    ::    duplicate registration: MIB modules asLteStkMmeOverloadCfgTable and asLteStkMmeOverloadCfgTable (oid .1.3.6.1.4.1.989.1.20.1.3.61).
+31/05/2018 17:16:11:264    ::    duplicate registration: MIB modules asLteStkStaticNghFreqListTable and asLteStkStaticNghFreqListTable (oid .1.3.6.1.4.1.989.1.20.1.3.62).
+31/05/2018 17:16:11:264    ::    duplicate registration: MIB modules asLteStkIntraEnbLbCfgTable and asLteStkIntraEnbLbCfgTable (oid .1.3.6.1.4.1.989.1.20.1.3.63).
+31/05/2018 17:16:11:264    ::    duplicate registration: MIB modules asLteStkExtPpsCfgTable and asLteStkExtPpsCfgTable (oid .1.3.6.1.4.1.989.1.20.1.3.64).
+31/05/2018 17:16:11:264    ::    duplicate registration: MIB modules asLteStkExtPpsStatusTable and asLteStkExtPpsStatusTable (oid .1.3.6.1.4.1.989.1.20.1.3.65).
+31/05/2018 17:16:11:264    ::    duplicate registration: MIB modules asLteStkEmergencyCallCfgPerEnbTable and asLteStkEmergencyCallCfgPerEnbTable (oid .1.3.6.1.4.1.989.1.20.1.3.66).
+31/05/2018 17:16:11:264    ::    duplicate registration: MIB modules asLteStkRelayRfConditionsCfgTable and asLteStkRelayRfConditionsCfgTable (oid .1.3.6.1.4.1.989.1.20.1.3.67).
+31/05/2018 17:16:11:264    ::    duplicate registration: MIB modules asLteStkRelayRfConditionsStatusTable and asLteStkRelayRfConditionsStatusTable (oid .1.3.6.1.4.1.989.1.20.1.3.68).
+31/05/2018 17:16:11:264    ::    duplicate registration: MIB modules asLteStkDebugFtpServerCfgTable and asLteStkDebugFtpServerCfgTable (oid .1.3.6.1.4.1.989.1.20.1.3.71).
+31/05/2018 17:16:11:264    ::    duplicate registration: MIB modules asLteStkRohcStatusTable and asLteStkRohcStatusTable (oid .1.3.6.1.4.1.989.1.20.1.3.73).
+31/05/2018 17:16:11:264    ::    duplicate registration: MIB modules asLteStkDebugCfgTable and asLteStkDebugCfgTable (oid .1.3.6.1.4.1.989.1.20.1.3.74).
+31/05/2018 17:16:11:264    ::    duplicate registration: MIB modules asLteStkDebugStatusTable and asLteStkDebugStatusTable (oid .1.3.6.1.4.1.989.1.20.1.3.75).
+31/05/2018 17:16:11:264    ::    duplicate registration: MIB modules asLteStkDrxCfgTable and asLteStkDrxCfgTable (oid .1.3.6.1.4.1.989.1.20.1.3.76).
+31/05/2018 17:16:11:264    ::    duplicate registration: MIB modules asLteStkPciRangesForNrtEnbTable and asLteStkPciRangesForNrtEnbTable (oid .1.3.6.1.4.1.989.1.20.1.3.77).
+31/05/2018 17:16:11:264    ::    duplicate registration: MIB modules asLteStkPciRangesHomeEnbTable and asLteStkPciRangesHomeEnbTable (oid .1.3.6.1.4.1.989.1.20.1.3.78).
+31/05/2018 17:16:11:264    ::    duplicate registration: MIB modules asLteStkLowResEventsParamsCfgTable and asLteStkLowResEventsParamsCfgTable (oid .1.3.6.1.4.1.989.1.20.1.3.80).
+31/05/2018 17:16:11:264    ::    duplicate registration: MIB modules asLteStkStackPortSecurityStatusTable and asLteStkStackPortSecurityStatusTable (oid .1.3.6.1.4.1.989.1.20.1.3.82).
+31/05/2018 17:16:11:264    ::    duplicate registration: MIB modules asLteStkTwampCfgTable and asLteStkTwampCfgTable (oid .1.3.6.1.4.1.989.1.20.1.3.85).
+31/05/2018 17:16:11:564    ::    duplicate registration: MIB modules asLteStkTwampReflectorCfgTable and asLteStkTwampReflectorCfgTable (oid .1.3.6.1.4.1.989.1.20.1.3.86).
+31/05/2018 17:16:11:564    ::    duplicate registration: MIB modules asLteStkTwampReflectorStatusTable and asLteStkTwampReflectorStatusTable (oid .1.3.6.1.4.1.989.1.20.1.3.87).
+31/05/2018 17:16:11:564    ::    duplicate registration: MIB modules asLteStkDicicCfgTable and asLteStkDicicCfgTable (oid .1.3.6.1.4.1.989.1.20.1.3.88).
+31/05/2018 17:16:11:564    ::    duplicate registration: MIB modules asLteStkMaintenanceWinCfgTable and asLteStkMaintenanceWinCfgTable (oid .1.3.6.1.4.1.989.1.20.1.3.90).
+31/05/2018 17:16:11:564    ::    duplicate registration: MIB modules asLteStkFullDrbRecommendedCfgTable and asLteStkFullDrbRecommendedCfgTable (oid .1.3.6.1.4.1.989.1.20.1.3.91).
+31/05/2018 17:16:11:564    ::    duplicate registration: MIB modules asLteStkBhQosCfgTable and asLteStkBhQosCfgTable (oid .1.3.6.1.4.1.989.1.20.1.3.92).
+31/05/2018 17:16:11:564    ::    duplicate registration: MIB modules asLteStkBhQosStatusTable and asLteStkBhQosStatusTable (oid .1.3.6.1.4.1.989.1.20.1.3.93).
+31/05/2018 17:16:11:564    ::    duplicate registration: MIB modules asLteStkBhQosServerIPAddressListCfgTable and asLteStkBhQosServerIPAddressListCfgTable (oid .1.3.6.1.4.1.989.1.20.1.3.94).
+31/05/2018 17:16:11:564    ::    duplicate registration: MIB modules asLteStkBhQosServerIPAddressListStatusTable and asLteStkBhQosServerIPAddressListStatusTable (oid .1.3.6.1.4.1.989.1.20.1.3.95).
+31/05/2018 17:16:11:564    ::    duplicate registration: MIB modules asLteStkEtwsLogCfgTable and asLteStkEtwsLogCfgTable (oid .1.3.6.1.4.1.989.1.20.1.3.96).
+31/05/2018 17:16:11:564    ::    duplicate registration: MIB modules asLteStkTwampSenderStatusTable and asLteStkTwampSenderStatusTable (oid .1.3.6.1.4.1.989.1.20.1.3.97).
+31/05/2018 17:16:11:564    ::    duplicate registration: MIB modules asLteStkVisualCfgTable and asLteStkVisualCfgTable (oid .1.3.6.1.4.1.989.1.20.1.3.99).
+31/05/2018 17:16:11:564    ::    duplicate registration: MIB modules asLteStkUtranFreqCfgTable and asLteStkUtranFreqCfgTable (oid .1.3.6.1.4.1.989.1.20.1.3.100).
+31/05/2018 17:16:11:564    ::    duplicate registration: MIB modules asLteStkPscRangesForUtraNrtTable and asLteStkPscRangesForUtraNrtTable (oid .1.3.6.1.4.1.989.1.20.1.3.101).
+31/05/2018 17:16:11:564    ::    duplicate registration: MIB modules asLteStkLedDrvPatternTable and asLteStkLedDrvPatternTable (oid .1.3.6.1.4.1.989.1.20.1.3.102).
+31/05/2018 17:16:11:564    ::    duplicate registration: MIB modules asLteStkSmonThresholdsTable and asLteStkSmonThresholdsTable (oid .1.3.6.1.4.1.989.1.20.1.3.105).
+31/05/2018 17:16:11:564    ::    duplicate registration: MIB modules asLteStkSectorSbaCfgTable and asLteStkSectorSbaCfgTable (oid .1.3.6.1.4.1.989.1.20.1.3.113).
+31/05/2018 17:16:11:564    ::    duplicate registration: MIB modules asLteStkCellCfgTable and asLteStkCellCfgTable (oid .1.3.6.1.4.1.989.1.20.1.4.1).
+31/05/2018 17:16:11:564    ::    duplicate registration: MIB modules asLteStkCellStatusTable and asLteStkCellStatusTable (oid .1.3.6.1.4.1.989.1.20.1.4.2).
+31/05/2018 17:16:11:564    ::    duplicate registration: MIB modules asLteStkCellSib1CfgTable and asLteStkCellSib1CfgTable (oid .1.3.6.1.4.1.989.1.20.1.4.3).
+31/05/2018 17:16:11:564    ::    duplicate registration: MIB modules asLteStkCellSib2CfgTable and asLteStkCellSib2CfgTable (oid .1.3.6.1.4.1.989.1.20.1.4.4).
+31/05/2018 17:16:11:564    ::    duplicate registration: MIB modules asLteStkCellRachCfgTable and asLteStkCellRachCfgTable (oid .1.3.6.1.4.1.989.1.20.1.4.8).
+31/05/2018 17:16:11:564    ::    duplicate registration: MIB modules asLteStkCellDedCfgTable and asLteStkCellDedCfgTable (oid .1.3.6.1.4.1.989.1.20.1.4.9).
+31/05/2018 17:16:11:564    ::    duplicate registration: MIB modules asLteStkMacCfgTable and asLteStkMacCfgTable (oid .1.3.6.1.4.1.989.1.20.1.4.10).
+31/05/2018 17:16:11:564    ::    duplicate registration: MIB modules asLteStkBlackListCfgTable and asLteStkBlackListCfgTable (oid .1.3.6.1.4.1.989.1.20.1.4.12).
+31/05/2018 17:16:11:564    ::    duplicate registration: MIB modules asLteStkReselectionParamsCfgTable and asLteStkReselectionParamsCfgTable (oid .1.3.6.1.4.1.989.1.20.1.4.13).
+31/05/2018 17:16:11:564    ::    duplicate registration: MIB modules asLteStkPucchCfgTable and asLteStkPucchCfgTable (oid .1.3.6.1.4.1.989.1.20.1.4.15).
+31/05/2018 17:16:11:874    ::    duplicate registration: MIB modules asLteStkPuschCfgTable and asLteStkPuschCfgTable (oid .1.3.6.1.4.1.989.1.20.1.4.16).
+31/05/2018 17:16:11:874    ::    duplicate registration: MIB modules asLteStkSonCfgTable and asLteStkSonCfgTable (oid .1.3.6.1.4.1.989.1.20.1.4.17).
+31/05/2018 17:16:11:874    ::    duplicate registration: MIB modules asLteStkCellDlAdaptationTable and asLteStkCellDlAdaptationTable (oid .1.3.6.1.4.1.989.1.20.1.4.18).
+31/05/2018 17:16:11:874    ::    duplicate registration: MIB modules asLteStkSfrCfgTable and asLteStkSfrCfgTable (oid .1.3.6.1.4.1.989.1.20.1.4.19).
+31/05/2018 17:16:11:874    ::    duplicate registration: MIB modules asLteStkIntraReselectionParamsCfgTable and asLteStkIntraReselectionParamsCfgTable (oid .1.3.6.1.4.1.989.1.20.1.4.21).
+31/05/2018 17:16:11:874    ::    duplicate registration: MIB modules asLteStkCellMeasRepCfgTable and asLteStkCellMeasRepCfgTable (oid .1.3.6.1.4.1.989.1.20.1.4.22).
+31/05/2018 17:16:11:874    ::    duplicate registration: MIB modules asLteStkCellAnrCfgTable and asLteStkCellAnrCfgTable (oid .1.3.6.1.4.1.989.1.20.1.4.23).
+31/05/2018 17:16:11:874    ::    duplicate registration: MIB modules asLteStkCellMeasObjCfgTable and asLteStkCellMeasObjCfgTable (oid .1.3.6.1.4.1.989.1.20.1.4.24).
+31/05/2018 17:16:11:874    ::    duplicate registration: MIB modules asLteStkCellMeasQtyCfgTable and asLteStkCellMeasQtyCfgTable (oid .1.3.6.1.4.1.989.1.20.1.4.25).
+31/05/2018 17:16:11:874    ::    duplicate registration: MIB modules asLteStkMbmsCfgTable and asLteStkMbmsCfgTable (oid .1.3.6.1.4.1.989.1.20.1.4.26).
+31/05/2018 17:16:11:874    ::    duplicate registration: MIB modules asLteStkMbmsSfCfgTable and asLteStkMbmsSfCfgTable (oid .1.3.6.1.4.1.989.1.20.1.4.27).
+31/05/2018 17:16:11:874    ::    duplicate registration: MIB modules asLteStkMbmsServiceAreaTable and asLteStkMbmsServiceAreaTable (oid .1.3.6.1.4.1.989.1.20.1.4.28).
+31/05/2018 17:16:11:874    ::    duplicate registration: MIB modules asLteStkMbsfnAreaIdTable and asLteStkMbsfnAreaIdTable (oid .1.3.6.1.4.1.989.1.20.1.4.29).
+31/05/2018 17:16:11:874    ::    duplicate registration: MIB modules asLteStkCellAutoRsiCfgTable and asLteStkCellAutoRsiCfgTable (oid .1.3.6.1.4.1.989.1.20.1.4.30).
+31/05/2018 17:16:11:874    ::    duplicate registration: MIB modules asLteStkCellCsfbTable and asLteStkCellCsfbTable (oid .1.3.6.1.4.1.989.1.20.1.4.31).
+31/05/2018 17:16:11:874    ::    duplicate registration: MIB modules asLteStkCsfbSupportCfgTable and asLteStkCsfbSupportCfgTable (oid .1.3.6.1.4.1.989.1.20.1.4.37).
+31/05/2018 17:16:11:874    ::    duplicate registration: MIB modules asLteStkQosHoTriggerTable and asLteStkQosHoTriggerTable (oid .1.3.6.1.4.1.989.1.20.1.4.38).
+31/05/2018 17:16:11:874    ::    duplicate registration: MIB modules asLteStkQosBasedHoEarfcnTable and asLteStkQosBasedHoEarfcnTable (oid .1.3.6.1.4.1.989.1.20.1.4.40).
+31/05/2018 17:16:11:874    ::    duplicate registration: MIB modules asLteStkeSonStatusTable and asLteStkeSonStatusTable (oid .1.3.6.1.4.1.989.1.20.1.4.43).
+31/05/2018 17:16:11:874    ::    duplicate registration: MIB modules asLteStkCdma2kNghCellCfgTable and asLteStkCdma2kNghCellCfgTable (oid .1.3.6.1.4.1.989.1.20.1.4.44).
+31/05/2018 17:16:11:874    ::    duplicate registration: MIB modules asLteStkCsfbMobilityParamsCfgTable and asLteStkCsfbMobilityParamsCfgTable (oid .1.3.6.1.4.1.989.1.20.1.4.45).
+31/05/2018 17:16:11:874    ::    duplicate registration: MIB modules asLteStkCellSib8CfgTable and asLteStkCellSib8CfgTable (oid .1.3.6.1.4.1.989.1.20.1.4.46).
+31/05/2018 17:16:11:874    ::    duplicate registration: MIB modules asLteStkInterRatReselectionCfgTable and asLteStkInterRatReselectionCfgTable (oid .1.3.6.1.4.1.989.1.20.1.4.47).
+31/05/2018 17:16:12:174    ::    duplicate registration: MIB modules asLteStkUtranReselectionCfgTable and asLteStkUtranReselectionCfgTable (oid .1.3.6.1.4.1.989.1.20.1.4.48).
+31/05/2018 17:16:12:174    ::    duplicate registration: MIB modules asLteStkGeranReselectionCfgTable and asLteStkGeranReselectionCfgTable (oid .1.3.6.1.4.1.989.1.20.1.4.49).
+31/05/2018 17:16:12:174    ::    duplicate registration: MIB modules asLteStkLoadSheddingCfgTable and asLteStkLoadSheddingCfgTable (oid .1.3.6.1.4.1.989.1.20.1.4.50).
+31/05/2018 17:16:12:174    ::    duplicate registration: MIB modules asLteStkCellMobilityCfgTypeTable and asLteStkCellMobilityCfgTypeTable (oid .1.3.6.1.4.1.989.1.20.1.4.51).
+31/05/2018 17:16:12:174    ::    duplicate registration: MIB modules asLteStkCellSrsCfgTable and asLteStkCellSrsCfgTable (oid .1.3.6.1.4.1.989.1.20.1.4.52).
+31/05/2018 17:16:12:174    ::    duplicate registration: MIB modules asLteStkCellHoFreqListTable and asLteStkCellHoFreqListTable (oid .1.3.6.1.4.1.989.1.20.1.4.53).
+31/05/2018 17:16:12:174    ::    duplicate registration: MIB modules asLteStkCellMeasFreqListTable and asLteStkCellMeasFreqListTable (oid .1.3.6.1.4.1.989.1.20.1.4.54).
+31/05/2018 17:16:12:174    ::    duplicate registration: MIB modules asLteStkCellSib15CfgTable and asLteStkCellSib15CfgTable (oid .1.3.6.1.4.1.989.1.20.1.4.55).
+31/05/2018 17:16:12:174    ::    duplicate registration: MIB modules asLteStkCellCallTraceCfgTable and asLteStkCellCallTraceCfgTable (oid .1.3.6.1.4.1.989.1.20.1.4.56).
+31/05/2018 17:16:12:174    ::    duplicate registration: MIB modules asLteStkCellCallTraceStatusTable and asLteStkCellCallTraceStatusTable (oid .1.3.6.1.4.1.989.1.20.1.4.57).
+31/05/2018 17:16:12:174    ::    duplicate registration: MIB modules asLteStkCellPosMeasCfgTable and asLteStkCellPosMeasCfgTable (oid .1.3.6.1.4.1.989.1.20.1.4.58).
+31/05/2018 17:16:12:174    ::    duplicate registration: MIB modules asLteStkCellIntraEnbLbCfgTable and asLteStkCellIntraEnbLbCfgTable (oid .1.3.6.1.4.1.989.1.20.1.4.59).
+31/05/2018 17:16:12:174    ::    duplicate registration: MIB modules asLteStkCellAutoRsiChangedTable and asLteStkCellAutoRsiChangedTable (oid .1.3.6.1.4.1.989.1.20.1.4.60).
+31/05/2018 17:16:12:174    ::    duplicate registration: MIB modules asLteStkCellImmciCfgTable and asLteStkCellImmciCfgTable (oid .1.3.6.1.4.1.989.1.20.1.4.61).
+31/05/2018 17:16:12:174    ::    duplicate registration: MIB modules asLteStkCaCfgTable and asLteStkCaCfgTable (oid .1.3.6.1.4.1.989.1.20.1.4.62).
+31/05/2018 17:16:12:174    ::    duplicate registration: MIB modules asLteStkCellTpmCfgTable and asLteStkCellTpmCfgTable (oid .1.3.6.1.4.1.989.1.20.1.4.63).
+31/05/2018 17:16:12:174    ::    duplicate registration: MIB modules asLteStkCellTpmStatusTable and asLteStkCellTpmStatusTable (oid .1.3.6.1.4.1.989.1.20.1.4.65).
+31/05/2018 17:16:12:174    ::    duplicate registration: MIB modules asLteStkCellDicicCfgTable and asLteStkCellDicicCfgTable (oid .1.3.6.1.4.1.989.1.20.1.4.66).
+31/05/2018 17:16:12:174    ::    duplicate registration: MIB modules asLteStkCellCsfb3gFreqCfgTable and asLteStkCellCsfb3gFreqCfgTable (oid .1.3.6.1.4.1.989.1.20.1.4.68).
+31/05/2018 17:16:12:174    ::    duplicate registration: MIB modules asLteStkCellMaintenanceWinStatusTable and asLteStkCellMaintenanceWinStatusTable (oid .1.3.6.1.4.1.989.1.20.1.4.69).
+31/05/2018 17:16:12:174    ::    duplicate registration: MIB modules asLteStkCellMaintenanceWinCfgTable and asLteStkCellMaintenanceWinCfgTable (oid .1.3.6.1.4.1.989.1.20.1.4.70).
+31/05/2018 17:16:12:174    ::    duplicate registration: MIB modules asLteStkCellOnSubbandsToCeuPaIdxTable and asLteStkCellOnSubbandsToCeuPaIdxTable (oid .1.3.6.1.4.1.989.1.20.1.4.71).
+31/05/2018 17:16:12:174    ::    duplicate registration: MIB modules asLteStkCellInterRatMeasCfgTable and asLteStkCellInterRatMeasCfgTable (oid .1.3.6.1.4.1.989.1.20.1.4.72).
+31/05/2018 17:16:12:174    ::    duplicate registration: MIB modules asLteStkCellInterRatAnrCfgTable and asLteStkCellInterRatAnrCfgTable (oid .1.3.6.1.4.1.989.1.20.1.4.74).
+31/05/2018 17:16:12:174    ::    duplicate registration: MIB modules asLteStkCellUeLinkStatusTable and asLteStkCellUeLinkStatusTable (oid .1.3.6.1.4.1.989.1.20.1.4.75).
+31/05/2018 17:16:12:174    ::    duplicate registration: MIB modules asLteStkCmdQNghListUtraTable and asLteStkCmdQNghListUtraTable (oid .1.3.6.1.4.1.989.1.20.1.4.76).
+31/05/2018 17:16:12:174    ::    duplicate registration: MIB modules asLteStkCellCbrsDomainProxyCfgTable and asLteStkCellCbrsDomainProxyCfgTable (oid .1.3.6.1.4.1.989.1.20.1.4.77).
+31/05/2018 17:16:12:484    ::    duplicate registration: MIB modules asLteStkChannelCfgTable and asLteStkChannelCfgTable (oid .1.3.6.1.4.1.989.1.20.1.6.2).
+31/05/2018 17:16:12:484    ::    duplicate registration: MIB modules asLteStkChannelStatusTable and asLteStkChannelStatusTable (oid .1.3.6.1.4.1.989.1.20.1.6.3).
+31/05/2018 17:16:12:484    ::    duplicate registration: MIB modules asLteStkChannelActionTable and asLteStkChannelActionTable (oid .1.3.6.1.4.1.989.1.20.1.6.4).
+31/05/2018 17:16:12:484    ::    duplicate registration: MIB modules asLteStatsRfMeasTable and asLteStatsRfMeasTable (oid .1.3.6.1.4.1.989.1.20.2.3.12).
+31/05/2018 17:16:12:484    ::    duplicate registration: MIB modules asMaxBsCmGpsTrapStatusTable and asMaxBsCmGpsTrapStatusTable (oid .1.3.6.1.4.1.989.1.16.2.1.2.2).
+31/05/2018 17:16:12:484    ::    duplicate registration: MIB modules asMaxBsCmGpsDeviceStatusTable and asMaxBsCmGpsDeviceStatusTable (oid .1.3.6.1.4.1.989.1.16.2.1.3.3).
+31/05/2018 17:16:12:484    ::    duplicate registration: MIB modules asMaxBsCmGpsDeviceConfigTable and asMaxBsCmGpsDeviceConfigTable (oid .1.3.6.1.4.1.989.1.16.2.1.3.4).
+31/05/2018 17:16:12:484    ::    duplicate registration: MIB modules asMaxCmTemperatureMonitorTable and asMaxCmTemperatureMonitorTable (oid .1.3.6.1.4.1.989.1.16.1.5).
+31/05/2018 17:16:12:484    ::    duplicate registration: MIB modules asMaxCmTrapStatusTable and asMaxCmTrapStatusTable (oid .1.3.6.1.4.1.989.1.16.1.6.2).
+31/05/2018 17:16:12:484    ::    duplicate registration: MIB modules asMaxCmDcVoltageMonitorTable and asMaxCmDcVoltageMonitorTable (oid .1.3.6.1.4.1.989.1.16.1.7).
+31/05/2018 17:16:12:484    ::    duplicate registration: MIB modules asMaxCmPowerMonTable and asMaxCmPowerMonTable (oid .1.3.6.1.4.1.989.1.16.1.8).
+31/05/2018 17:16:12:484    ::    duplicate registration: MIB modules asMaxCmCurrentMonTable and asMaxCmCurrentMonTable (oid .1.3.6.1.4.1.989.1.16.1.9).
+31/05/2018 17:16:12:484    ::    duplicate registration: MIB modules wmanDevCmnSnmpV1V2TrapDestTable and wmanDevCmnSnmpV1V2TrapDestTable (oid .1.0.8802.16.1.1.3.2.1).
+31/05/2018 17:16:12:484    ::    after init_snmp_tables
+31/05/2018 17:16:12:484    ::    INFO ../../app/prcmngr/pm_utils.c(1096) pm_getProductProfileInfo():reading HW product details
+31/05/2018 17:16:12:484    ::    09/01/1970 02:17:32:129 registarSnmpEvents():1045 <snmp:SNMP SYSTEM> registarSnmpEvents
+31/05/2018 17:16:12:484    ::    09/01/1970 02:17:32:130 registarSnmpEvents():1058 <snmp:SNMP SYSTEM> end registarSnmpEvents
+31/05/2018 17:16:12:484    ::    INFO ../../app/prcmngr/pm_utils.c(1143) pm_getProductProfileInfo():reading HW product details
+31/05/2018 17:16:12:484    ::    INFO ../../app/prcmngr/pm_utils.c(1205) pm_getProductProfileInfo():
+31/05/2018 17:16:12:484    ::    DEBUG DEBUG DEBUG - Read fields:
+31/05/2018 17:16:12:484    ::    product=VEL05-U40-B01DW1
+31/05/2018 17:16:12:484    ::    productPrintName=Velocity
+31/05/2018 17:16:12:484    ::    asMaxBsCmSwType=18
+31/05/2018 17:16:12:484    ::    enodebLedProfile=2
+31/05/2018 17:16:12:484    ::    backHaulLedProfile=0
+31/05/2018 17:16:12:484    ::    waitForRelayRebootType=0
+31/05/2018 17:16:12:484    ::    waitForRelaySelfTest=0
+31/05/2018 17:16:12:484    ::    waitForVendorParams=0
+31/05/2018 17:16:12:484    ::    skipDhcp=0
+31/05/2018 17:16:12:484    ::    performNmsSync=0
+31/05/2018 17:16:12:484    ::    checkPnpPersistency=1
+31/05/2018 17:16:12:484    ::    blockPnp1ppsReports=0
+31/05/2018 17:16:12:484    ::    backhaulType=0
+31/05/2018 17:16:12:484    ::    defaultSyncMode=2
+31/05/2018 17:16:12:484    ::    defaultClockSource=2
+31/05/2018 17:16:12:484    ::    snmpProxy=1
+31/05/2018 17:16:12:484    ::    ptp=1
+31/05/2018 17:16:12:484    ::    backhaulIf=eth1
+31/05/2018 17:16:12:484    ::    bridgeIf=br0
+31/05/2018 17:16:12:484    ::    VCI=00:A0:0A
+31/05/2018 17:16:12:484    ::    rebootForIpChange=0
+31/05/2018 17:16:12:484    ::    tbd1=br0
+31/05/2018 17:16:12:484    ::    mcPhyImagePath=N/A
+31/05/2018 17:16:12:484    ::    scPhyImagePath=N/A
+31/05/2018 17:16:12:484    ::    mcMaxDlDciNum=65535
+31/05/2018 17:16:12:484    ::    scMaxDlDciNum=65535
+31/05/2018 17:16:12:484    ::    mcMaxUePerUlTti=255
+31/05/2018 17:16:12:484    ::    scMaxUePerUlTti=255
+31/05/2018 17:16:12:484    ::    radioDelay=0
+31/05/2018 17:16:12:484    ::    changeSimLink=0
+31/05/2018 17:16:12:484    ::    calTable=5
+31/05/2018 17:16:12:484    ::    catalinaTabNum=0
+31/05/2018 17:16:12:484    ::    enableMeas=0
+31/05/2018 17:16:12:484    ::    
+31/05/2018 17:16:12:484    ::    
+31/05/2018 17:16:12:484    ::    #############################################################
+31/05/2018 17:16:12:484    ::    ###      STARTING AIRSPAN ENB - HW TYPE     Velocity      ###
+31/05/2018 17:16:12:484    ::    #############################################################
+31/05/2018 17:16:12:484    ::    
+31/05/2018 17:16:12:484    ::    prcMngr pid=1450
+31/05/2018 17:16:12:484    ::    NET-SNMP version 5.7.1
+31/05/2018 17:16:12:484    ::    09/01/1970 02:17:33:803 registarSnmpEvents():1045 <snmp:SNMP SYSTEM> registarSnmpEvents
+31/05/2018 17:16:12:484    ::    09/01/1970 02:17:33:804 registarSnmpEvents():1058 <snmp:SNMP SYSTEM> end registarSnmpEvents
+31/05/2018 17:16:13:386    ::    09/01/1970 02:17:34:642 sendThread():81 <wifiMngr:WIFI SYSTEM> WiFi Mngr Send starts working
+31/05/2018 17:16:13:386    ::    09/01/1970 02:17:34:642 recvThread():51 <wifiMngr:WIFI SYSTEM> Create WiFi Receive socket AF_PACKET, SOCK_RAW
+31/05/2018 17:16:13:386    ::    09/01/1970 02:17:34:642 recvThread():126 <wifiMngr:WIFI SYSTEM> Bind Receive socket AF_PACKET
+31/05/2018 17:16:13:386    ::    
+31/05/2018 17:16:13:386    ::    09/01/1970 02:17:34:647 tryDetectRebootType():938 <oam:GENERAL SYSTEM> PnP Process was not completed - need to do regular Cold reboot
+31/05/2018 17:16:13:386    ::    09/01/1970 02:17:34:647 handle_sysRunStage():1968 <oam:GENERAL SYSTEM> Check if need to wait for GPS lock
+31/05/2018 17:16:13:386    ::    09/01/1970 02:17:34:647 handle_sysRunStage():2004 <oam:GENERAL SYSTEM> HW isn't support GPS, not waiting for lock
+31/05/2018 17:16:13:386    ::    09/01/1970 02:17:34:654 isWarmRebootPnP():1154 <oam:GENERAL SYSTEM> Reboot type - Cold
+31/05/2018 17:16:13:386    ::    
+31/05/2018 17:16:13:386    ::    
+31/05/2018 17:16:13:386    ::    		logLevel         INFO
+31/05/2018 17:16:13:386    ::    		srcSwitch        false
+31/05/2018 17:16:13:386    ::    		primSrc          PTP
+31/05/2018 17:16:13:386    ::    		freqErrLimit     250
+31/05/2018 17:16:13:386    ::    		timeErrLimit     65535
+31/05/2018 17:16:13:386    ::    		ftr1             30
+31/05/2018 17:16:13:386    ::    		ftr2             3
+31/05/2018 17:16:13:386    ::    		ttr1             999
+31/05/2018 17:16:13:386    ::    		srl              30
+31/05/2018 17:16:13:386    ::    		gpsLeapSeconds   36
+31/05/2018 17:16:13:386    ::    		resyncSrl        30
+31/05/2018 17:16:13:989    ::    09/01/1970 02:17:35:642 initSendSocket():2594 <wifiMngr:WIFI SYSTEM> Create WiFi Send socket AF_PACKET, SOCK_RAW
+31/05/2018 17:16:13:989    ::    09/01/1970 02:17:35:642 resetWiFiCard():2064 <wifiMngr:WIFI SYSTEM> Reset the WiFi card
+31/05/2018 17:16:13:989    ::    09/01/1970 02:17:35:646 pm_set_status_led():747 <oam:GENERAL SYSTEM> enb LED is RED at 0.000000Hz (OOS)
+31/05/2018 17:16:15:503    ::    09/01/1970 02:17:36:689 initSendSocket():2594 <wifiMngr:WIFI SYSTEM> Create WiFi Send socket AF_PACKET, SOCK_RAW
+31/05/2018 17:16:15:503    ::    09/01/1970 02:17:36:691 pm_set_status_led():747 <oam:GENERAL SYSTEM> enb LED is RED at 0.000000Hz (OOS)
+31/05/2018 17:16:19:175    ::    31/05/2018 14:16:18:373 main():1979 <extPps:PRCMNGR SYSTEM> EXT PPS: run is starting...
+31/05/2018 17:16:19:790    ::    (none) login: 
+31/05/2018 17:16:19:790    ::    (none) login: 
+31/05/2018 17:16:19:790    ::    (none) login: 
+31/05/2018 17:16:20:397    ::    (none) login: 
+31/05/2018 17:16:20:397    ::    (none) login: 
+31/05/2018 17:16:20:397    ::    (none) login: 
+31/05/2018 17:16:20:397    ::    (none) login: 
+31/05/2018 17:16:20:397    ::    (none) login: 
+31/05/2018 17:16:20:397    ::    (none) login: 
+31/05/2018 17:16:21:003    ::    (none) login: 
+31/05/2018 17:16:21:003    ::    (none) login: 
+31/05/2018 17:16:21:003    ::    (none) login: 
+31/05/2018 17:16:21:003    ::    (none) login: 
+31/05/2018 17:16:21:304    ::    (none) login: 
+31/05/2018 17:16:21:304    ::    (none) login: 
+31/05/2018 17:16:22:205    ::    (none) login: su -
+31/05/2018 17:16:22:514    ::    Password: 
+31/05/2018 17:16:23:133    ::    /bs/lteCli
+31/05/2018 17:16:24:962    ::    31/05/2018 14:16:24:593 oam_configManagementNetwork():2860 <oam:NETWORKING SYSTEM> MANAGEMENT.ipAddress.type= 1, address= 20.20.2.44
+31/05/2018 17:16:24:962    ::    31/05/2018 14:16:24:593 oam_configManagementNetwork():2866 <oam:NETWORKING SYSTEM> static IP file: /bsdata/lte-netV6.cfg not exists
+31/05/2018 17:16:24:962    ::    
+31/05/2018 17:16:24:962    ::    31/05/2018 14:16:24:594 oam_configManagementNetwork():3014 <oam:NETWORKING SYSTEM> oam_configManagementNetwork: for i in `seq 0 7`; do /sbin/vconfig set_egress_map br0.2 $i 2 ; done
+31/05/2018 17:16:27:397    ::    Login incorrect
+31/05/2018 17:16:27:397    ::    process '/sbin/getty ttyHSL0 11520eduling for restart.
+31/05/2018 17:16:27:397    ::    starting pid 1744, tty '': '/sbin/getty ttyHSL0 115200 vt100'
+31/05/2018 17:16:27:397    ::    
+31/05/2018 17:16:27:397    ::    (none) login: 
+31/05/2018 17:16:27:397    ::    (none) login: 
+31/05/2018 17:16:28:298    ::    (none) login: 
+31/05/2018 17:16:28:298    ::    (none) login: 
+31/05/2018 17:16:28:601    ::    (none) login: su -
+31/05/2018 17:16:29:203    ::    Password: 
+31/05/2018 17:16:30:123    ::    /bs/lteCli
+31/05/2018 17:16:34:086    ::    Login incorrect
+31/05/2018 17:16:34:086    ::    process '/sbin/getty ttyHSL0 11520cheduling for restart.
+31/05/2018 17:16:34:086    ::    starting pid 1757, tty '': '/sbin/getty ttyHSL0 115200 vt100'
+31/05/2018 17:16:34:397    ::    (none) login: 
+31/05/2018 17:16:34:397    ::    (none) login: 
+31/05/2018 17:16:41:676    ::    (none) login: 31/05/2018 14:16:40:667 oam_syncSecGwInfo():2180 <oam:PNP SYSTEM> servingSegwAddress is IPv4 ()
+31/05/2018 17:16:42:324    ::    find: /mnt/flash/halt_event/*: No such file or directory
+31/05/2018 17:16:42:324    ::    31/05/2018 14:16:41:103 oam_configManagementNetwork():2860 <oam:NETWORKING SYSTEM> MANAGEMENT.ipAddress.type= 1, address= 20.20.2.44
+31/05/2018 17:16:42:324    ::    31/05/2018 14:16:41:103 oam_configManagementNetwork():2866 <oam:NETWORKING SYSTEM> static IP file: /bsdata/lte-netV6.cfg not exists
+31/05/2018 17:16:42:324    ::    
+31/05/2018 17:16:42:324    ::    31/05/2018 14:16:41:103 oam_configManagementNetwork():3014 <oam:NETWORKING SYSTEM> oam_configManagementNetwork: for i in `seq 0 7`; do /sbin/vconfig set_egress_map br0.2 $i 2 ; done
+31/05/2018 17:16:42:324    ::    
+31/05/2018 17:16:42:324    ::    31/05/2018 14:16:41:164 oam_configNetwork():4907 <oam:NETWORKING SYSTEM> 
+31/05/2018 17:16:42:324    ::    OAM network: actual IP Configuration:
+31/05/2018 17:16:42:324    ::    PtpIpAddr:       20.20.6.44
+31/05/2018 17:16:42:324    ::    PtpIpV6Addr:     0:0:0:0:0:0:0:0
+31/05/2018 17:16:42:324    ::    SonIpAddr:       20.20.2.44
+31/05/2018 17:16:42:324    ::    SonIpV6Addr:     0:0:0:0:0:0:0:0
+31/05/2018 17:16:42:324    ::    M1IpAddr:       20.20.2.44
+31/05/2018 17:16:42:324    ::    M1IpV6Addr:     0:0:0:0:0:0:0:0
+31/05/2018 17:16:42:324    ::    M2IpAddr:       20.20.2.44
+31/05/2018 17:16:42:324    ::    m2IpV6Addr:     0:0:0:0:0:0:0:0
+31/05/2018 17:16:42:324    ::    S1ControlIpAddr:   20.20.118.2
+31/05/2018 17:16:42:324    ::    S1ControlIpV6Addr: 0:0:0:0:0:0:0:0
+31/05/2018 17:16:42:324    ::    ControlIpAddr:   20.20.118.2
+31/05/2018 17:16:42:324    ::    ControlIpV6Addr: 0:0:0:0:0:0:0:0
+31/05/2018 17:16:42:324    ::    S1DataIpAddr:      20.20.218.2
+31/05/2018 17:16:42:324    ::    S1DataIpV6Addr:    0:0:0:0:0:0:0:0
+31/05/2018 17:16:42:324    ::    x2DataIpAddr:      20.20.218.2
+31/05/2018 17:16:42:324    ::    x2DataIpV6Addr:    0:0:0:0:0:0:0:0
+31/05/2018 17:16:42:324    ::    callTraceIpAddr:       20.20.2.44
+31/05/2018 17:16:42:324    ::    callTraceIpV6Addr:     0:0:0:0:0:0:0:0
+31/05/2018 17:16:42:324    ::    DefaultIpAddr:   20.20.2.44
+31/05/2018 17:16:42:324    ::    DefaultIpV6Addr: 0:0:0:0:0:0:0:0
+31/05/2018 17:16:42:324    ::    
+31/05/2018 17:16:42:324    ::    
+31/05/2018 17:16:42:324    ::    31/05/2018 14:16:41:164 oam_configNetwork():4937 <oam:NETWORKING SYSTEM> S1 Control Interface CFG: dbIpInterfacesStatus.ipAddress 20.20.118.2:IPv4
+31/05/2018 17:16:42:324    ::    31/05/2018 14:16:41:164 oam_setControlIpAddr():1968 <oam:NETWORKING SYSTEM> /sbin/vconfig add br0 118
+31/05/2018 17:16:42:324    ::    
+31/05/2018 17:16:42:324    ::    31/05/2018 14:16:41:176 oam_setControlIpAddr():1979 <oam:NETWORKING SYSTEM> for i in `seq 0 7`; do /sbin/vconfig set_egress_map br0.118 $i $i; done
+31/05/2018 17:16:42:324    ::    
+31/05/2018 17:16:42:324    ::    31/05/2018 14:16:41:213 oam_setControlIpAddr():2015 <oam:NETWORKING SYSTEM> /sbin/ifconfig br0.118 20.20.118.2 netmask 255.255.255.0 up
+31/05/2018 17:16:42:324    ::    
+31/05/2018 17:16:42:324    ::    31/05/2018 14:16:41:224 oam_configNetwork():5005 <oam:NETWORKING SYSTEM> X2_CONTROL Interface CFG: dbIpInterfacesStatus.ipAddress.address=20.20.118.2
+31/05/2018 17:16:42:324    ::    31/05/2018 14:16:41:224 oam_configNetwork():5026 <oam:NETWORKING SYSTEM> oam_configNetwork: /sbin/vconfig set_egress_map br0.2 7 7 
+31/05/2018 17:16:42:324    ::    
+31/05/2018 17:16:42:324    ::    31/05/2018 14:16:41:234 oam_configNetwork():5079 <oam:NETWORKING SYSTEM> S1 Data Interface CFG:dbIpInterfacesStatus.ipAddress.address=20.20.218.2
+31/05/2018 17:16:42:324    ::    31/05/2018 14:16:41:234 oam_setDataIpAddr():2120 <oam:NETWORKING SYSTEM> /sbin/vconfig add br0 218
+31/05/2018 17:16:42:324    ::    
+31/05/2018 17:16:42:324    ::    31/05/2018 14:16:41:244 oam_setDataIpAddr():2134 <oam:NETWORKING SYSTEM> for i in `seq 0 7`; do /sbin/vconfig set_egress_map br0.218 $i $i ; done
+31/05/2018 17:16:42:324    ::    
+31/05/2018 17:16:42:324    ::    31/05/2018 14:16:41:279 oam_setDataIpAddr():2180 <oam:NETWORKING SYSTEM> /sbin/ifconfig br0.218 20.20.218.2 netmask 255.255.255.0 up
+31/05/2018 17:16:42:324    ::    
+31/05/2018 17:16:42:324    ::    31/05/2018 14:16:41:290 oam_configNetwork():5144 <oam:NETWORKING SYSTEM> X2 DATA Interface CFG:dbIpInterfacesStatus.ipAddress.address=20.20.218.2
+31/05/2018 17:16:42:324    ::    31/05/2018 14:16:41:290 oam_configNetwork():5197 <oam:NETWORKING SYSTEM> PTP Interface CFG: dbIpInterfacesStatus.ipAddress.address=20.20.6.44
+31/05/2018 17:16:42:324    ::    31/05/2018 14:16:41:290 oam_setPtpIpAddr():2507 <oam:NETWORKING SYSTEM> /sbin/vconfig add br0 6
+31/05/2018 17:16:42:324    ::    
+31/05/2018 17:16:42:324    ::    31/05/2018 14:16:41:372 oam_setPtpIpAddr():2550 <oam:NETWORKING SYSTEM> /sbin/ifconfig br0.6 20.20.6.44 netmask 255.255.255.0 up
+31/05/2018 17:16:42:324    ::    
+31/05/2018 17:16:42:324    ::    31/05/2018 14:16:41:382 oam_configNetwork():5559 <oam:NETWORKING SYSTEM> SON Interface CFG: dbIpInterfacesStatus.ipAddress.address=20.20.2.44
+31/05/2018 17:16:42:324    ::    31/05/2018 14:16:41:382 oam_configNetwork():5653 <oam:NETWORKING SYSTEM> oam_configNetwork: /sbin/vconfig set_egress_map br0.2 7 7 
+31/05/2018 17:16:42:324    ::    
+31/05/2018 17:16:42:324    ::    31/05/2018 14:16:41:392 oam_configNetwork():5683 <oam:NETWORKING SYSTEM> M1 Interface CFG: dbIpInterfacesStatus.ipAddress.address =20.20.2.44/24
+31/05/2018 17:16:42:324    ::    31/05/2018 14:16:41:392 oam_configNetwork():5772 <oam:NETWORKING SYSTEM> M2 Interface CFG: dbIpInterfacesStatus.ipAddress.address =20.20.2.44/24
+31/05/2018 17:16:42:324    ::    31/05/2018 14:16:41:392 oam_configNetwork():5871 <oam:NETWORKING SYSTEM> Call Trace Interface CFG: dbIpInterfacesStatus.ipAddress.address=20.20.2.44
+31/05/2018 17:16:42:324    ::    31/05/2018 14:16:41:394 oam_configStaticRoute():6233 <oam:NETWORKING SYSTEM> /sbin/route add -net 20.0.0.0 netmask 255.255.255.0 gw 20.20.6.254
+31/05/2018 17:16:42:625    ::    31/05/2018 14:16:41:404 oam_configStaticRoute():6233 <oam:NETWORKING SYSTEM> /sbin/route add -net 172.23.52.0 netmask 255.255.255.0 gw 20.20.118.254
+31/05/2018 17:16:42:625    ::    31/05/2018 14:16:41:414 oam_configStaticRoute():6233 <oam:NETWORKING SYSTEM> /sbin/route add -net 172.23.22.0 netmask 255.255.255.0 gw 20.20.218.254
+31/05/2018 17:16:42:925    ::    sh: pgrep: not found
+31/05/2018 17:16:42:925    ::       (ptpd info)     14:16:42.150522  (?)    Info:    No ptpd2 daemons detected in parallel (as expected)
+31/05/2018 17:16:42:925    ::    sh: pgrep: not found
+31/05/2018 17:16:42:925    ::       (ptpd info)     14:16:42.164714  (?)    Info:    No ntpd daemons detected in parallel (as expected)
+31/05/2018 17:16:42:925    ::       (ptpd info)     14:16:42.164924  (?)    Corrections P.I is disabled!
+31/05/2018 17:16:42:925    ::       (ptpd info)     14:16:42.166183  (?)   Active phase correction for algo set to 1 (as for TDD)
+31/05/2018 17:16:42:925    ::       (ptpd info)     14:16:42.166229  (?)    Info:    Startup finished sucessfully ( Kalman filter algo version )
+31/05/2018 17:16:45:049    ::    
+31/05/2018 17:16:45:049    ::    (none) login: 
+31/05/2018 17:16:45:350    ::    (none) login: su -
+31/05/2018 17:16:45:963    ::    Password: 
+31/05/2018 17:16:46:874    ::    /bs/lteCli
+31/05/2018 17:16:49:609    ::    
+31/05/2018 17:16:49:609    ::    		Rate is 8192
+31/05/2018 17:16:49:609    ::       (ptpd info)     14:16:48.733067  (?)    now in state PTP_SLAVE_UNICAST_REGISTRATION(toUnicastRegistrationState)
+31/05/2018 17:16:49:609    ::    31/05/2018 14:16:42:133 ptpdStartup():1729 <ptpd:PTPd SYSTEM> ipaddr: 20.20.6.44
+31/05/2018 17:16:49:609    ::    
+31/05/2018 17:16:49:609    ::    31/05/2018 14:16:42:133 ptpdStartup():1730 <ptpd:PTPd SYSTEM> netmask: 255.255.255.0
+31/05/2018 17:16:49:609    ::    
+31/05/2018 17:16:49:609    ::    31/05/2018 14:16:42:133 ptpdStartup():1731 <ptpd:PTPd SYSTEM> vid: 6
+31/05/2018 17:16:49:609    ::    
+31/05/2018 17:16:49:609    ::    31/05/2018 14:16:42:133 ptpdStartup():1732 <ptpd:PTPd SYSTEM> priority: 6
+31/05/2018 17:16:49:609    ::    
+31/05/2018 17:16:49:609    ::    31/05/2018 14:16:42:133 ptpdStartup():1734 <ptpd:PTPd SYSTEM> req rate: -6
+31/05/2018 17:16:49:609    ::    
+31/05/2018 17:16:49:609    ::    31/05/2018 14:16:42:133 ptpdStartup():1735 <ptpd:PTPd SYSTEM> sync rate: -6
+31/05/2018 17:16:49:609    ::    
+31/05/2018 17:16:49:609    ::    31/05/2018 14:16:42:133 ptpdStartup():1736 <ptpd:PTPd SYSTEM> announce rate: 0
+31/05/2018 17:16:49:609    ::    
+31/05/2018 17:16:49:609    ::    31/05/2018 14:16:42:133 ptpdStartup():1737 <ptpd:PTPd SYSTEM> lease duration: 300
+31/05/2018 17:16:49:609    ::    
+31/05/2018 17:16:49:609    ::    31/05/2018 14:16:42:133 ptpdStartup():1738 <ptpd:PTPd SYSTEM> Primary master addr: 20.0.0.200
+31/05/2018 17:16:49:609    ::    
+31/05/2018 17:16:49:609    ::    31/05/2018 14:16:42:133 ptpdStartup():1739 <ptpd:PTPd SYSTEM> Secondary master addr: 0.0.0.0
+31/05/2018 17:16:49:609    ::    
+31/05/2018 17:16:49:609    ::    31/05/2018 14:16:42:135 ptpdStartup():1963 <ptpd:PTPd SYSTEM> Unicast mode
+31/05/2018 17:16:49:609    ::    
+31/05/2018 17:16:49:609    ::    31/05/2018 14:16:48:783 initSendSocket():2594 <wifiMngr:WIFI SYSTEM> Create WiFi Send socket AF_PACKET, SOCK_RAW
+31/05/2018 17:16:49:609    ::       (ptpd notice)   14:16:49.199869  (?)     going to arm DelayReq timer for the first time, with initial rate: 0
+31/05/2018 17:16:51:440    ::    Login incorrect
+31/05/2018 17:16:51:440    ::    process '/sbin/getty ttyHSL0 1152,ZY]Z$K.W,.]HhW,.]Z$ZYL9, tty '': '/sbin/getty ttyHSL0 115200 vt100'
+31/05/2018 17:16:51:741    ::    (none) login: 
+31/05/2018 17:16:51:741    ::    (none) login: 
+31/05/2018 17:16:51:741    ::    (none) login: 
+31/05/2018 17:16:51:741    ::    (none) login: 
+31/05/2018 17:16:52:967    ::    (none) login: su -
+31/05/2018 17:16:52:967    ::    Password: 
+31/05/2018 17:16:53:571    ::    /bs/lteCli
+31/05/2018 17:16:57:831    ::    Login incorrect
+31/05/2018 17:16:57:831    ::    process '/sbin/getty ttyHSL0 11520,ZY]Z$K.W,.]HhW,.]Z$ZYLN, tty '': '/sbin/getty ttyHSL0 115200 vt100'
+31/05/2018 17:16:58:137    ::    (none) login: 
+31/05/2018 17:16:58:137    ::    (none) login: 
+31/05/2018 17:17:03:900    ::    (none) login: route: SIOCADDRT: File exists
+31/05/2018 17:17:03:900    ::    route: SIOCADDRT: File exists
+31/05/2018 17:17:03:900    ::    route: SIOCADDRT: File exists
+31/05/2018 17:17:03:900    ::    31/05/2018 14:17:03:243 pm_set_status_led():747 <oam:GENERAL SYSTEM> enb LED is RED at 0.000000Hz (OOS)
+31/05/2018 17:17:03:900    ::    31/05/2018 14:17:03:246 oam_configStaticRoute():6233 <oam:NETWORKING SYSTEM> /sbin/route add -net 20.0.0.0 netmask 255.255.255.0 gw 20.20.6.254
+31/05/2018 17:17:03:900    ::    31/05/2018 14:17:03:256 oam_configStaticRoute():6233 <oam:NETWORKING SYSTEM> /sbin/route add -net 172.23.52.0 netmask 255.255.255.0 gw 20.20.118.254
+31/05/2018 17:17:03:900    ::    31/05/2018 14:17:03:267 oam_configStaticRoute():6233 <oam:NETWORKING SYSTEM> /sbin/route add -net 172.23.22.0 netmask 255.255.255.0 gw 20.20.218.254
+31/05/2018 17:17:05:424    ::    Init Memory Region 0:
+31/05/2018 17:17:05:424    ::    Initialized Bucket 0: 220000	 blks, of 128	 Bytes
+31/05/2018 17:17:05:424    ::    Initialized Bucket 1: 50000	 blks, of 256	 Bytes
+31/05/2018 17:17:05:424    ::    Initialized Bucket 2: 20000	 blks, of 512	 Bytes
+31/05/2018 17:17:05:424    ::    Initialized Bucket 3: 30000	 blks, of 1024	 Bytes
+31/05/2018 17:17:05:424    ::    Initialized Bucket 4: 2500	 blks, of 2048	 Bytes
+31/05/2018 17:17:05:724    ::    Initialized Bucket 5: 55000	 blks, of 2240	 Bytes
+31/05/2018 17:17:05:724    ::    Initialized Bucket 6: 8000	 blks, of 4096	 Bytes
+31/05/2018 17:17:05:724    ::    Initialized Bucket 7: 2000	 blks, of 8192	 Bytes
+31/05/2018 17:17:05:724    ::    Initialized Bucket 8: 250	 blks, of 16384	 Bytes
+31/05/2018 17:17:05:724    ::    [  115.750693] remap_fifo_mem: Allocated paddr=20000000 vaddr=db000000 len=8000000n
+31/05/2018 17:17:05:724    ::    [  115.758733] ipc_buf_free:137: illegal prio = 1 or cpuid 176
+31/05/2018 17:17:05:724    ::    send buffer size = 163840
+31/05/2018 17:17:05:724    ::    set send buffer size to 524288
+31/05/2018 17:17:05:724    ::    recv buffer size = 2457600
+31/05/2018 17:17:05:724    ::    set recv buffer size to 524288
+31/05/2018 17:17:05:724    ::    requested local ID = 0xffffffff; assigned local ID = 0x80
+31/05/2018 17:17:05:724    ::    31/05/2018 14:17:05:240 ssdInitTxComm():566 <enodeb0:MT SYSTEM> #        L3 APP IS RUNNING            #
+31/05/2018 17:17:05:724    ::    31/05/2018 14:17:05:271 smWrReadConfigParams():10425 <enodeb0:SM SYSTEM> static IP file: /bsdata/lte-netV6.cfg not exists
+31/05/2018 17:17:05:724    ::    
+31/05/2018 17:17:05:724    ::    31/05/2018 14:17:05:271 smWrReadConfigParams():10447 <enodeb0:SM SYSTEM> static IP file: /tmp/lte-net.cfg not exists
+31/05/2018 17:17:05:724    ::    
+31/05/2018 17:17:05:724    ::    31/05/2018 14:17:05:273 smWrReadConfigParams():11484 <enodeb0:SM SYSTEM> 
+31/05/2018 17:17:05:724    ::    eNodeB IP Configuration:
+31/05/2018 17:17:05:724    ::    S1 Control IPv4:   20.20.118.2
+31/05/2018 17:17:05:724    ::    S1 Data IPv4:         20.20.218.2
+31/05/2018 17:17:06:034    ::    x2 Control IPv4:         20.20.118.2
+31/05/2018 17:17:06:034    ::    X2 Data IPV4:   20.20.218.2
+31/05/2018 17:17:06:034    ::    PTP  IP:   20.20.6.44
+31/05/2018 17:17:06:034    ::    
+31/05/2018 17:17:06:034    ::    31/05/2018 14:17:05:295 smWrReadConfigParams():12778 <enodeb0:SM SYSTEM> [32m 
+31/05/2018 17:17:06:034    ::    Base ver.:	official_15_15_50_622
+31/05/2018 17:17:06:034    ::    Comp. time:	May  8 2018 15:06:30
+31/05/2018 17:17:06:034    ::    BASEPATH:	/home/build/branches/sr15.50/target/build_14_15_50_622
+31/05/2018 17:17:06:034    ::    HOSTNAME:	asil-vmswbuild2
+31/05/2018 17:17:06:034    ::    USER:		root
+31/05/2018 17:17:06:034    ::    Mode:		RELEASE
+31/05/2018 17:17:06:034    ::     [0m
+31/05/2018 17:17:06:034    ::    31/05/2018 14:17:05:295 smWrReadConfigParams():12782 <enodeb0:SM SYSTEM> [32m PHY version: SCLTE.V3.FR6_4.RC1 Bld:CL_117326_CRM_64101_M6_I
+31/05/2018 17:17:06:034    ::     [0m
+31/05/2018 17:17:06:034    ::    31/05/2018 14:17:05:295 smWrReadConfigParams():12786 <enodeb0:SM SYSTEM> [32m Chip type: FSM9910 [0m
+31/05/2018 17:17:06:034    ::    31/05/2018 14:17:05:308 smWrReadConfigParams():13269 <enodeb0:SM SYSTEM> Reading wr_cfg.txt file...
+31/05/2018 17:17:06:034    ::    31/05/2018 14:17:05:313 smWrReadConfigParams():14281 <enodeb0:SM SYSTEM> Read wr_cfg.txt file complete successfully
+31/05/2018 17:17:06:034    ::    31/05/2018 14:17:05:328 CheckTheEnbId():1024 <enodeb0:APP SYSTEM> attempt to reboot ? 20244==2147483647?
+31/05/2018 17:17:06:034    ::    31/05/2018 14:17:05:329 __swWrReadConfig_eu_cell_cell_cfg():8146 <enodeb0:APP SYSTEM> WI-MAX COEXISTENCE DISABELED, maxUlMcsSrs 22
+31/05/2018 17:17:06:034    ::    31/05/2018 14:17:05:383 __wr_smm_init_eu_cell_print_cell_info():10446 <enodeb0:APP SYSTEM> 
+31/05/2018 17:17:06:034    ::    [32mENB RUNNING IN TDD MODE
+31/05/2018 17:17:06:034    ::    BAND 40
+31/05/2018 17:17:06:034    ::    BW: 20[MHz]
+31/05/2018 17:17:06:034    ::    FREQ: 2330000[KHz]
+31/05/2018 17:17:06:034    ::    EARFCN: 38950
+31/05/2018 17:17:06:034    ::    FRAME CONFIG: 1
+31/05/2018 17:17:06:034    ::    ENB ID: 20244
+31/05/2018 17:17:06:034    ::    ENB PCI: 44
+31/05/2018 17:17:06:034    ::    CELL IDX: 0[0m
+31/05/2018 17:17:06:651    ::    Shutting down system logger (rsyslogd): stopped /usr/bin/rsyslogd (pid 897)
+31/05/2018 17:17:06:651    ::    
+31/05/2018 17:17:06:651    ::    stop syslogd Shutting down system logger (rsyslogd): no /usr/bin/rsyslogd found; none killed
+31/05/2018 17:17:06:651    ::    
+31/05/2018 17:17:06:651    ::    
+31/05/2018 17:17:06:651    ::    Starting system logger (rsyslogd): 
+31/05/2018 17:17:13:978    ::    Accepting OAM requests from batch file...
+31/05/2018 17:17:13:978    ::    RecordID: 0x15010001
+31/05/2018 17:17:13:978    ::    RequestType: Set
+31/05/2018 17:17:13:978    ::    RequestOpType: Set
+31/05/2018 17:17:13:978    ::    RequestData:
+31/05/2018 17:17:13:978    ::    <?xml version="1.0"?>
+31/05/2018 17:17:13:978    ::    <record>
+31/05/2018 17:17:13:978    ::        <field name="startMode" value="MANUAL"/>
+31/05/2018 17:17:13:978    ::        <field name="forwardAddr" value="127.0.0.1"/>
+31/05/2018 17:17:13:978    ::        <field name="forwardPort" value="65535"/>
+31/05/2018 17:17:13:978    ::        <field name="messagePoolSize" value="20000"/>
+31/05/2018 17:17:13:978    ::    </record>
+31/05/2018 17:17:13:978    ::    Result: Success
+31/05/2018 17:17:13:978    ::    Apply Action: no-action-required
+31/05/2018 17:17:13:978    ::    
+31/05/2018 17:17:13:978    ::    RecordID: 0x15010003
+31/05/2018 17:17:13:978    ::    RequestType: Set
+31/05/2018 17:17:13:978    ::    RequestOpType: Action
+31/05/2018 17:17:13:978    ::    RequestData:
+31/05/2018 17:17:13:978    ::    <?xml version="1.0"?>
+31/05/2018 17:17:13:978    ::    <record>
+31/05/2018 17:17:13:978    ::        <field name="startStopForwarding" value="STOP"/>
+31/05/2018 17:17:13:978    ::    </record>
+31/05/2018 17:17:13:978    ::    Result: No-Change
+31/05/2018 17:17:13:978    ::    Error: There is no active session.
+31/05/2018 17:17:13:978    ::    Apply Action: no-action-required
+31/05/2018 17:17:13:978    ::    
+31/05/2018 17:17:13:978    ::    RecordID: 0x12010008
+31/05/2018 17:17:13:978    ::    RequestType: Set
+31/05/2018 17:17:13:978    ::    RequestOpType: Set
+31/05/2018 17:17:13:978    ::    RequestData:
+31/05/2018 17:17:13:978    ::    <?xml version="1.0"?>
+31/05/2018 17:17:13:978    ::    <record>
+31/05/2018 17:17:13:978    ::        <field name="FAPI_E_PARAM_REQ" value="false"/>
+31/05/2018 17:17:13:978    ::        <field name="FAPI_E_PARAM_RSP" value="false"/>
+31/05/2018 17:17:13:978    ::        <field name="FAPI_E_CONFIG_REQ" value="false"/>
+31/05/2018 17:17:13:978    ::        <field name="FAPI_E_CONFIG_RSP" value="false"/>
+31/05/2018 17:17:13:978    ::        <field name="FAPI_E_START_REQ" value="false"/>
+31/05/2018 17:17:13:978    ::        <field name="FAPI_E_STOP_REQ" value="false"/>
+31/05/2018 17:17:13:978    ::        <field name="FAPI_E_STOP_IND" value="false"/>
+31/05/2018 17:17:13:978    ::        <field name="FAPI_E_UE_CONFIG_REQ" value="false"/>
+31/05/2018 17:17:13:978    ::        <field name="FAPI_E_UE_CONFIG_RSP" value="false"/>
+31/05/2018 17:17:13:978    ::        <field name="FAPI_E_ERROR_IND" value="false"/>
+31/05/2018 17:17:13:978    ::        <field name="FAPI_E_UE_RELEASE_REQ" value="false"/>
+31/05/2018 17:17:13:978    ::        <field name="FAPI_E_UE_RELEASE_RSP" value="false"/>
+31/05/2018 17:17:13:978    ::        <field name="FAPI_E_DL_CONFIG_[  123.744198] smd_pkt_write: Not enough space in smd_pkt_dev id:9
+31/05/2018 17:17:13:978    ::    REQ" value="false"/>
+31/05/2018 17:17:13:978    ::        <field name="FAPI_E_UL_CONFIG_REQ" val[  123.755655] smd_pkt_write: Not enough space in smd_pkt_dev id:9
+31/05/2018 17:17:13:978    ::    ue="false"/>
+31/05/2018 17:17:13:978    ::        <field name="FAPI_E_SF_IND" value="false"/>
+31/05/2018 17:17:13:978    ::     [  123.767225] smd_pkt_write: Not enough space in smd_pkt_dev id:9
+31/05/2018 17:17:13:978    ::       <field name="FAPI_E_HI_DCI0_REQ" value="false"/>
+31/05/2018 17:17:13:978    ::        <field name="FAPI_E_TX_REQ" value="false"/>
+31/05/2018 17:17:13:978    ::        <field name="FAPI_E_HARQ_IND" value="false"/>
+31/05/2018 17:17:13:978    ::        <field name="FAPI_E_CRC_IND" value="false"/>
+31/05/2018 17:17:13:978    ::        <field name="FAPI_E_RX_ULSCH_IND" value="false"/>
+31/05/2018 17:17:13:978    ::        <field name="FAPI_E_RACH_IND" value="false"/>
+31/05/2018 17:17:13:978    ::        <field name="FAPI_E_SRS_IND" value="false"/>
+31/05/2018 17:17:13:978    ::        <field name="FAPI_E_RX_SR_IND" value="false"/>
+31/05/2018 17:17:13:978    ::        <field name="FAPI_E_RX_CQI_IND" value="false"/>
+31/05/2018 17:17:13:978    ::        <field name="FAPI_E_RX_VSM_MEAS_IND" value="false"/>
+31/05/2018 17:17:13:978    ::        <field name="FAPI_E_RX_VSM_NI_IND" value="false"/>
+31/05/2018 17:17:13:978    ::        <field name="FAPI_E_VSM_CFG_REPORT" value="false"/>
+31/05/2018 17:17:13:978    ::        <field name="FAPI_E_PHY_INFRA_CFG_REQ" value="false"/>    
+31/05/2018 17:17:13:978    ::    </record>
+31/05/2018 17:17:13:978    ::    Result: Success
+31/05/2018 17:17:13:978    ::    Apply Action: no-action-required
+31/05/2018 17:17:13:978    ::    
+31/05/2018 17:17:13:978    ::    31/05/2018 14:17:13:205 getCntResAddr():71 <enodeb0:APP SYSTEM> XLP clock initiated. xlpCntResAddr=0xb6f00000, mfd=33 map=0xb6f00000
+31/05/2018 17:17:13:978    ::    31/05/2018 14:17:13:206 initEthernetCountersCmd():853 <enodeb0:APP SYSTEM> Product Type Velocity, backhaulIf eth1.
+31/05/2018 17:17:16:729    ::    31/05/2018 14:17:15:766 pm_set_status_led():747 <oam:GENERAL SYSTEM> enb LED is RED at 0.000000Hz (OOS)
+31/05/2018 17:17:17:640    ::    31/05/2018 14:17:17:048 _tfcsRespIndCb():371 <ptpd:PTPd SYSTEM> Overwrite slew rate ind:
+31/05/2018 17:17:17:640    ::    			status      : 0 [0-Success,1-Fail,2-Unsupport,3-Invalid param,4-Timeout]
+31/05/2018 17:17:17:640    ::    			prevSrlFreq : valid=1 value=30.000000
+31/05/2018 17:17:17:640    ::    			currSrlFreq : valid=1 value=30.000000
+31/05/2018 17:17:17:640    ::    			respSeqNum  : valid=1 value=5
+31/05/2018 17:17:26:822    ::    debug:	 ../../app/cpm/enbapp/wr_smm_init_merged.c(3611) registerDscpSignalingValueChangeEvent(): registerDscpSignalingValueChangeEvent : SAC 331/05/2018 14:17:26:250 <enodeb0:APP SYSTEM> TTI=1025:255 <no str>(9639) EMBMS : isEmbmsEnable0 
+31/05/2018 17:17:26:822    ::    31/05/2018 14:17:26:288 setVlReadyFlag():2821 <enodeb0:GEN SYSTEM> Received vlReady Status TRUE
+31/05/2018 17:19:35:623    ::    31/05/2018 14:19:35:055 preStateOrStateFlagsChanged():16059 <enodeb0:APP SYSTEM> [32mSET CELL 0 AS IN SERVICE - PTP LOCKED[0m
+31/05/2018 17:19:35:623    ::    31/05/2018 14:19:35:067 pm_set_status_led():747 <oam:GENERAL SYSTEM> enb LED is GREEN at 3.000000Hz (LOADING)
+31/05/2018 17:19:35:623    ::    31/05/2018 14:19:35:147 pm_set_status_led():747 <oam:GENERAL SYSTEM> enb LED is GREEN at 3.000000Hz (LOADING)
+31/05/2018 17:19:49:316    ::    31/05/2018 14:19:48:312 <enodeb0:MT SYSTEM> TTI=0:00 <no str>######################################
+31/05/2018 17:19:49:316    ::    31/05/2018 14:19:48:312 <enodeb0:MT SYSTEM> TTI=0:00 <no str>             ALL RUNNING             #
+31/05/2018 17:19:49:316    ::    31/05/2018 14:19:48:312 <enodeb0:MT SYSTEM> TTI=0:00 <no str>######################################
+31/05/2018 17:19:49:316    ::    
+31/05/2018 17:19:49:316    ::    
+31/05/2018 17:19:49:316    ::    
+31/05/2018 17:19:49:316    ::    31/05/2018 14:19:48:312 <enodeb0:YS SYSTEM> TTI=0:00 First TTIInd=(183,4)CPU_SPPED=787MHz
+31/05/2018 17:19:49:316    ::    31/05/2018 14:17:26:280 <enodeb0:MT SYSTEM> 
+31/05/2018 17:19:49:316    ::    
+31/05/2018 17:19:49:316    ::    31/05/2018 14:17:26:273 <enodeb0:MT SYSTEM> vlDumpHeaps(227): Heaps usage
+31/05/2018 17:19:49:316    ::    31/05/2018 14:17:26:273 <enodeb0:MT SYSTEM> TCM_HEAP             space     119172 (0x0001D184) maxBk     119172 (0x0001D184) numBk  1
+31/05/2018 17:19:49:316    ::    31/05/2018 14:17:26:272 <enodeb0:MT SYSTEM> EXT_HEAP             space   85173004 (0x0513A30C) maxBk   85173004 (0x0513A30C) numBk  1
+31/05/2018 17:19:49:316    ::    31/05/2018 14:17:26:272 <enodeb0:MT SYSTEM> EXT_WT_HEAP          space    1048564 (0x000FFFF4) maxBk    1048564 (0x000FFFF4) numBk  1
+31/05/2018 17:19:49:316    ::    31/05/2018 14:19:48:317 pm_set_status_led():747 <oam:GENERAL SYSTEM> enb LED is BLUE at 0.000000Hz (NORMAL)
+31/05/2018 17:19:49:316    ::    31/05/2018 14:17:26:272 <enodeb0:MT SYSTEM> TEST_HEAP            space    1048564 (0x000FFFF4) maxBk    1048564 (0x000FFFF4) numBk  1
+31/05/2018 17:19:49:316    ::    31/05/2018 14:17:26:271 <enodeb0:MT SYSTEM> EXT_NC_HEAP          space    1048564 (0x000FFFF4) maxBk    1048564 (0x000FFFF4) numBk  1
+31/05/2018 17:19:49:316    ::    31/05/2018 14:17:26:271 <enodeb0:MT SYSTEM> DATA_HEAP            space   83886068 (0x04FFFFF4) maxBk   83886068 (0x04FFFFF4) numBk  1
+31/05/2018 17:19:49:316    ::    31/05/2018 14:17:26:271 <enodeb0:MT SYSTEM> DATA2_HEAP           space     491004 (0x00077DFC) maxBk     491004 (0x00077DFC) numBk  1
+31/05/2018 17:19:49:316    ::    31/05/2018 14:17:26:267 <enodeb0:MT SYSTEM> INTER_CORE_DATA_HEAP space     524276 (0x0007FFF4) maxBk     524276 (0x0007FFF4) numBk  1
+31/05/2018 17:19:49:316    ::    31/05/2018 14:17:26:266 <enodeb0:MT SYSTEM> 

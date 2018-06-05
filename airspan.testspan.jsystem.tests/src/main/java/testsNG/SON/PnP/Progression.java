@@ -21,6 +21,7 @@ import Utils.GeneralUtils;
 import Utils.GeneralUtils.HtmlFieldColor;
 import Utils.GeneralUtils.HtmlTable;
 import Utils.GeneralUtils.RebootType;
+import Utils.GeneralUtils.StyleTagName;
 import Utils.Pair;
 import Utils.SetupUtils;
 import Utils.SysObjUtils;
@@ -115,7 +116,9 @@ public class Progression extends TestspanTest{
 			}
 		}
 		htmlTable = new HtmlTable();
-		
+		htmlTable.addStyle(StyleTagName.MARK1, HtmlFieldColor.GREEN, HtmlFieldColor.BLACK);
+		htmlTable.addStyle(StyleTagName.MARK2, HtmlFieldColor.YELLOW, HtmlFieldColor.BLUE);
+		htmlTable.addStyle(StyleTagName.MARK3, HtmlFieldColor.RED, HtmlFieldColor.BLACK);
 		//startParallelCommands(dut);
 	}
 
@@ -732,21 +735,24 @@ public class Progression extends TestspanTest{
 		GeneralUtils.printToConsole("stageExpectedDuration="+stageExpectedDuration);
 		GeneralUtils.printToConsole("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 		String stageTimeStr = "--:--:--";
-		HtmlFieldColor severity = HtmlFieldColor.WHITE;
+		String stageTimestampStr = "";
+		String stageDurationStr = "";
 		Interval stageDurationInterval = null;
+		Interval stageTimestampInterval = null;
 		try{
 			long usingStageFinishedTimeInMiliForGuaranteeLegalInterval = previousStageFinishedTimeInMili < stageFinishedTimeInMili ? stageFinishedTimeInMili : previousStageFinishedTimeInMili + 2000;
 			stageDurationInterval = new Interval(previousStageFinishedTimeInMili, usingStageFinishedTimeInMiliForGuaranteeLegalInterval);
-			Interval stageTimestampInterval = new Interval(rebootTimeInMili, usingStageFinishedTimeInMiliForGuaranteeLegalInterval);
+			stageTimestampInterval = new Interval(rebootTimeInMili, usingStageFinishedTimeInMiliForGuaranteeLegalInterval);
 			Duration stageDurationDuration = stageDurationInterval.toDuration();
 			Duration stageTimestampDuration = stageTimestampInterval.toDuration();
-			stageTimeStr = "Timestamp: "+twoCharacter(stageTimestampDuration.getStandardHours()) + ":" 
+			stageTimestampStr = "Timestamp: "+twoCharacter(stageTimestampDuration.getStandardHours()) + ":" 
 												+ twoCharacter(stageTimestampDuration.getStandardMinutes()%60) + ":" 
-												+ twoCharacter(stageTimestampDuration.getStandardSeconds()%60) 
-												+ "<br />"
-												+ "Duration: "+twoCharacter(stageDurationDuration.getStandardHours()) + ":" 
+												+ twoCharacter(stageTimestampDuration.getStandardSeconds()%60);
+												//+ "<br />"
+			stageDurationStr = "Duration: "+twoCharacter(stageDurationDuration.getStandardHours()) + ":" 
 												+ twoCharacter(stageDurationDuration.getStandardMinutes()%60) + ":" 
 												+ twoCharacter(stageDurationDuration.getStandardSeconds()%60);
+			stageTimeStr = stageTimestampStr + "<br />" + stageDurationStr;
 		}catch(Exception e){
 			e.printStackTrace();
 			GeneralUtils.printToConsole("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
@@ -759,17 +765,31 @@ public class Progression extends TestspanTest{
 			GeneralUtils.printToConsole("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 		}
 		
-		severity = HtmlFieldColor.GREEN;
+		HtmlFieldColor severity = HtmlFieldColor.WHITE;
 		if(isStageCompleted == false){
 			severity = HtmlFieldColor.GRAY;
 			stageTimeStr = "Didn't detect stage completed, theoretical times only: " + stageTimeStr;
 		}else if(stageDurationInterval == null){
 			severity = HtmlFieldColor.GRAY;
 			stageTimeStr = "Bad Interval, " + stageTimeStr;
-		}else if(stageDurationInterval.toDurationMillis() > ((long)(stageExpectedDuration * 1.5))){
-			severity = HtmlFieldColor.RED;
-		}else if(stageDurationInterval.toDurationMillis() > ((long)(stageExpectedDuration * 1.25))){
-			severity = HtmlFieldColor.YELLOW;
+		}else {
+			String markedStageTimestampStr = stageTimestampStr;
+			if(stageTimestampInterval.toDurationMillis() > WAIT_FOR_ALL_RUNNING_TIME){
+				markedStageTimestampStr = HtmlTable.markLine(StyleTagName.MARK3, stageTimestampStr);
+			}else{
+				markedStageTimestampStr = HtmlTable.markLine(StyleTagName.MARK1, stageTimestampStr);
+			}
+			
+			String markedStageDurationStr = stageDurationStr;
+			if(stageDurationInterval.toDurationMillis() > ((long)(stageExpectedDuration * 1.5))){
+				markedStageDurationStr = HtmlTable.markLine(StyleTagName.MARK3, stageDurationStr);
+			}else if(stageDurationInterval.toDurationMillis() > ((long)(stageExpectedDuration * 1.25))){
+				markedStageDurationStr = HtmlTable.markLine(StyleTagName.MARK2, stageDurationStr);
+			}else{
+				markedStageDurationStr = HtmlTable.markLine(StyleTagName.MARK1, stageDurationStr);
+			}
+			
+			stageTimeStr = markedStageTimestampStr + "<br />" + markedStageDurationStr;
 		}
 	
 		htmlTable.addField(severity, stageTimeStr);

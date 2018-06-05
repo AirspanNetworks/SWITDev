@@ -57,7 +57,7 @@ public class SetupUtils {
 		String[] staticUesArray = TestConfig.getInstace().getStaticUEs();
  		if (staticUesArray != null) {
  			for (int i = 0; i < staticUesArray.length; i++) {
-				if (staticUesArray[i].toLowerCase().equals(AmariSoftServer.amarisoftIdentifier)) {
+				if (staticUesArray[i].toLowerCase().trim().equals(AmariSoftServer.amarisoftIdentifier)) {
 					try {
 						AmariSoftServer uesim = AmariSoftServer.getInstance();
 						temp.addAll(uesim.getUeList());
@@ -77,7 +77,7 @@ public class SetupUtils {
 		String[] staticUesArray = enb.getStaticUes();		
  		if (staticUesArray != null) {
  			for (int i = 0; i < staticUesArray.length; i++) {
-				if (staticUesArray[i].toLowerCase().equals(AmariSoftServer.amarisoftIdentifier)) {
+				if (staticUesArray[i].toLowerCase().trim().equals(AmariSoftServer.amarisoftIdentifier)) {
 					try {
 						AmariSoftServer uesim = AmariSoftServer.getInstance();
 						temp.addAll(uesim.getUeList());
@@ -121,7 +121,7 @@ public class SetupUtils {
 		String[] dynamicUEs = TestConfig.getInstace().getDynamicUEs();
 		if (dynamicUEs != null) {
 			for (int i = 0; i < dynamicUEs.length; i++) {
-				if (dynamicUEs[i].toLowerCase().equals("uesimulator")) {
+				if (dynamicUEs[i].toLowerCase().trim().equals("uesimulator")) {
 					UESimulator uesim;
 					try {
 						uesim = UESimulator.getInstance();
@@ -129,7 +129,7 @@ public class SetupUtils {
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-				} else if(dynamicUEs[i].toLowerCase().equals(AmariSoftServer.amarisoftIdentifier)){
+				} else if(dynamicUEs[i].toLowerCase().trim().equals(AmariSoftServer.amarisoftIdentifier)){
 					try {
 						AmariSoftServer uesim = AmariSoftServer.getInstance();
 						temp.addAll(uesim.getUeList());

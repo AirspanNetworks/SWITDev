@@ -118,6 +118,34 @@ public class P0 extends TestspanTest {
 			
 	}
 	
+	@Test
+	@TestProperties(name = "AC_Barring_TC_1", returnParam = {"IsTestWasSuccessful" }, paramsExclude = { "IsTestWasSuccessful"})
+	public void AC_Barring_TC_1() {
+		boolean isUEConneted = false;
+		int numOfCells = dut.getNumberOfCells();
+		int cellBarredFromMib;
+		GeneralUtils.startLevel("Start traffic");
+		try {
+			traffic = Traffic.getInstance(SetupUtils.getInstance().getAllUEs());
+			traffic.startTraffic();
+		} catch (Exception e) {
+			report.report("Couldn't start traffic", Reporter.WARNING);
+			e.printStackTrace();
+		}
+		GeneralUtils.stopLevel();
+		report.report("Changing the cell barred value to CELL BARRED");
+		CellBarringPolicyParameters cb = new CellBarringPolicyParameters();
+		cb.cellBarringPolicy = CellBarringPolicies.AC_BARRING;
+		for (int i = 1; i <= numOfCells; i++) {
+			dut.setCellContextNumber(i);
+			enbConfig.setAccessClassBarring(dut, cb);
+		}
+		
+		GeneralUtils.unSafeSleep(10000);
+		//need to check the message with DM toll
+			
+	}
+	
 	@ParameterProperties(description = "First DUT")
 	public void setDUT1(String dut) {
 		GeneralUtils.printToConsole("Load DUT1" + dut);

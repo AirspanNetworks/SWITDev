@@ -80,8 +80,8 @@ public class AutomationTests extends TestspanTest{
 		
 		for (UE ue : ues) {
 			try {
-				ue.start();
 				GeneralUtils.printToConsole("===============================================");
+				ue.start();
 				GeneralUtils.printToConsole("ue.getImsi: " + ue.getImsi());
 				GeneralUtils.printToConsole("ue.getLanIpAddress: " + ue.getLanIpAddress());
 				GeneralUtils.printToConsole("ue.getWanIpAddress: " + ue.getWanIpAddress());

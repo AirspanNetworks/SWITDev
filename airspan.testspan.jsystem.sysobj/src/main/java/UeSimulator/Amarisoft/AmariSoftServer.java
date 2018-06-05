@@ -314,7 +314,12 @@ public class AmariSoftServer extends SystemObjectImpl{
      * @param message
      */
     public void sendMessage(String message) {
-    	this.userSession.getAsyncRemote().sendText(message);
+    	try {
+			this.userSession.getBasicRemote().sendText(message);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
     /**

@@ -26,10 +26,10 @@ public class AutomationTests extends TestspanTest{
 
 	@Override
 	public void init() throws Exception {
-		report.report("Init!");
-		enbInTest = new ArrayList<EnodeB>();
-		enbInTest.add(dut);
-		super.init();
+		//report.report("Init!");
+		//enbInTest = new ArrayList<EnodeB>();
+		//enbInTest.add(dut);
+		//super.init();
 	}
 	
 	@Test
@@ -73,7 +73,7 @@ public class AutomationTests extends TestspanTest{
 		report.report("Start amarisoftUeTest test.");
 		
 		AmariSoftServer server = AmariSoftServer.getInstance();
-		server.startServer(dut);
+		server.startServer("automationConfigFile");
 		server.addUes(15, 13, 6);
 		
 		ArrayList<UE> ues =  SetupUtils.getInstance().getAllUEs();
@@ -184,8 +184,8 @@ public class AutomationTests extends TestspanTest{
 	
 	@ParameterProperties(description = "Name of Enb")
 	public void setDUT(String dut) {
-		ArrayList<EnodeB> temp=(ArrayList<EnodeB>)SysObjUtils.getInstnce().initSystemObject(EnodeB.class,false,dut);
-		this.dut = temp.get(0);
+		//ArrayList<EnodeB> temp=(ArrayList<EnodeB>)SysObjUtils.getInstnce().initSystemObject(EnodeB.class,false,dut);
+		//this.dut = temp.get(0);
 	}
 	
 	@Test

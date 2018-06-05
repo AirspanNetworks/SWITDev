@@ -73,7 +73,6 @@ public class AutomationTests extends TestspanTest{
 		report.report("Start amarisoftUeTest test.");
 		
 		AmariSoftServer server = AmariSoftServer.getInstance();
-		server.init();
 		server.startServer(dut);
 		server.addUes(15, 13, 6);
 		

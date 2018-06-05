@@ -74,8 +74,11 @@ public class AmariSoftServer extends SystemObjectImpl{
 		int ueId = 2;// start at 2 because amarisoft must start with atleast 1 UE.
 		unusedUes = new HashMap<>();
 		for (int i = 0; i < imsiStartList.length; i++) {
-			for (Long j = Long.getLong(imsiStartList[i]); j <=Long.getLong(imsiStopList[i]) ; j++) {
+			Long startImsi = new Long(imsiStartList[i]);
+			Long stopImsi = new Long(imsiStopList[i]);
+			for (Long imsi = startImsi; imsi <= stopImsi ; imsi++) {
 				AmarisoftUE ue = new AmarisoftUE(ueId, this);
+				ue.setImsi(imsi+"");
 				unusedUes.put(ueId, ue);
 				ueId++;
 			}

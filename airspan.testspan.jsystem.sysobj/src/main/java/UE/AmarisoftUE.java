@@ -47,7 +47,7 @@ public class AmarisoftUE extends UE{
 
 	@Override
 	public String getVersion() {
-		GeneralUtils.printToConsole("AmarisoftUE does not have reboot method.");
+		GeneralUtils.printToConsole("AmarisoftUE does not have getVersion method.");
 		return GeneralUtils.ERROR_VALUE+"";
 	}
 

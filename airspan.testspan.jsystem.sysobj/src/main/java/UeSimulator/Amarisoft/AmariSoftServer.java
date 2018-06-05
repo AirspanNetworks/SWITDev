@@ -436,10 +436,9 @@ public class AmariSoftServer extends SystemObjectImpl{
 		return true;
 	}
 	
-	private String getIpAddress(int ueId) {
+	synchronized private String getIpAddress(int ueId) {
 		String ueIp = null;
-		try {
-			
+		try {			
 			ObjectMapper mapper = new ObjectMapper();
 			UEAction getUE = new UEAction();
 			getUE.setUeId(ueId);
@@ -447,26 +446,28 @@ public class AmariSoftServer extends SystemObjectImpl{
 			getUE.setMessage(Actions.UE_GET);
 			long t= System.currentTimeMillis();
 			long end = t + 10000;
-			while (System.currentTimeMillis() < end) {		
+			while (System.currentTimeMillis() < end) {
+				GeneralUtils.printToConsole("sending get_ue" + ueId);
 				sendMessage(mapper.writeValueAsString(getUE));
 				GeneralUtils.unSafeSleep(100);
 				if (returnValue != null) {
 					if (returnValue.getUeList() != null && returnValue.getUeList().size() > 0) {
 						if (returnValue.getUeList().get(0) != null) {
 							ueIp = returnValue.getUeList().get(0).getIp();
-							returnValue = null;
+							GeneralUtils.printToConsole("Found IP" + ueIp);
 						}
 					}
-					
+					returnValue = null;
 				}
 				if (ueIp != null) {
+					GeneralUtils.printToConsole("Found IP, exiting while");
 					break;
 				}
 				GeneralUtils.unSafeSleep(500);
 			}
 		} catch (Exception e) {
-			System.out.println("Failed UE_GET to ue " + ueId);
-			System.out.println(e.getMessage());
+			GeneralUtils.printToConsole("Failed UE_GET to ue " + ueId);
+			GeneralUtils.printToConsole(e.getMessage());
 			e.printStackTrace();
 			return "";
 		}

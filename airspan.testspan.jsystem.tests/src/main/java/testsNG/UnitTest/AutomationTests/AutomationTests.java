@@ -26,10 +26,10 @@ public class AutomationTests extends TestspanTest{
 
 	@Override
 	public void init() throws Exception {
-		report.report("Init!");
-		enbInTest = new ArrayList<EnodeB>();
-		enbInTest.add(dut);
-		super.init();
+		//report.report("Init!");
+		//enbInTest = new ArrayList<EnodeB>();
+		//enbInTest.add(dut);
+		//super.init();
 	}
 	
 	@Test
@@ -185,8 +185,8 @@ public class AutomationTests extends TestspanTest{
 	
 	@ParameterProperties(description = "Name of Enb")
 	public void setDUT(String dut) {
-		ArrayList<EnodeB> temp=(ArrayList<EnodeB>)SysObjUtils.getInstnce().initSystemObject(EnodeB.class,false,dut);
-		this.dut = temp.get(0);
+		//ArrayList<EnodeB> temp=(ArrayList<EnodeB>)SysObjUtils.getInstnce().initSystemObject(EnodeB.class,false,dut);
+		//this.dut = temp.get(0);
 	}
 	
 	@Test
@@ -196,10 +196,10 @@ public class AutomationTests extends TestspanTest{
 		
 		AmariSoftServer as = AmariSoftServer.getInstance();
 		GeneralUtils.printToConsole("getImsiStartList: " + as.getImsiStartList());
+		GeneralUtils.printToConsole("getImsiStopList: " + as.getImsiStopList());
 		GeneralUtils.printToConsole("getPassword: " + as.getPassword());
 		GeneralUtils.printToConsole("getRxgain: " + as.getRxgain());
 		GeneralUtils.printToConsole("getTxgain: " + as.getTxgain());
-		GeneralUtils.printToConsole("getImsiStopList: " + as.getImsiStopList());
 		GeneralUtils.printToConsole("getIp: " + as.getIp());
 		GeneralUtils.printToConsole("getusername: " + as.getusername());
 		

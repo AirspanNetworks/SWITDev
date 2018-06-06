@@ -44,6 +44,8 @@ public class AmariSoftServer extends SystemObjectImpl{
 
 	public static String amarisoftIdentifier = "amarisoft";
 	
+    private static Object waitLock = new Object();
+
 	private Terminal sshTerminal;
 	private Terminal lteUeTerminal;
 	private String ip;
@@ -61,7 +63,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     private String[] imsiStopList;
     private HashMap<Integer,UE> ueMap;
     private HashMap<Integer,UE> unusedUes;
-    volatile private UeStatus returnValue;
+    volatile private Object returnValue;
 
     @Override
 	public void init() throws Exception {
@@ -196,23 +198,25 @@ public class AmariSoftServer extends SystemObjectImpl{
 	private void startMessageHandler() {
 		addMessageHandler(new AmariSoftServer.MessageHandler() {
 			public void handleMessage(String message) {
-				System.out.println("Message recieved: " + message);
-				ObjectMapper mapper = new ObjectMapper();
-
-				// Convert JSON string to Object
-				UeStatus stat = null;
-				try {
-					returnValue = mapper.readValue(message, UeStatus.class);
-
-				} catch (JsonParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (JsonMappingException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				synchronized (waitLock) {
+					System.out.println("Message recieved: " + message);
+					ObjectMapper mapper = new ObjectMapper();
+	
+					// Convert JSON string to Object
+					UeStatus stat = null;
+					try {
+						returnValue = mapper.readValue(message, UeStatus.class);
+						waitLock.notify();
+					} catch (JsonParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (JsonMappingException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			}
 		});
@@ -344,6 +348,22 @@ public class AmariSoftServer extends SystemObjectImpl{
 		}
 	}
 
+    synchronized private Object sendSynchronizedMessage(String message)
+	{
+    	
+		synchronized (waitLock) {
+			sendMessage(message);
+
+			try {
+				waitLock.wait();
+			} catch (InterruptedException e) {
+			}
+		}
+		Object ans = returnValue;
+		returnValue = null;
+		return ans;
+	}
+    
 	public void setConfigFile(String fileName) {
 		ueConfigFileName = fileName;
 	}
@@ -453,22 +473,21 @@ public class AmariSoftServer extends SystemObjectImpl{
 			long end = t + 10000;
 			while (System.currentTimeMillis() < end) {
 				GeneralUtils.printToConsole("sending get_ue" + ueId);
-				sendMessage(mapper.writeValueAsString(getUE));
-				GeneralUtils.unSafeSleep(100);
-				if (returnValue != null) {
-					if (returnValue.getUeList() != null && returnValue.getUeList().size() > 0) {
-						if (returnValue.getUeList().get(0) != null) {
-							ueIp = returnValue.getUeList().get(0).getIp();
+				Object ans = sendSynchronizedMessage(mapper.writeValueAsString(getUE));
+				UeStatus ueStatus = (UeStatus)ans;
+				if (ueStatus != null) {
+					if (ueStatus.getUeList() != null && ueStatus.getUeList().size() > 0) {
+						if (ueStatus.getUeList().get(0) != null) {
+							ueIp = ueStatus.getUeList().get(0).getIp();
 							GeneralUtils.printToConsole("Found IP" + ueIp);
 						}
 					}
-					returnValue = null;
 				}
 				if (ueIp != null) {
 					GeneralUtils.printToConsole("Found IP, exiting while");
 					break;
 				}
-				GeneralUtils.unSafeSleep(500);
+				GeneralUtils.unSafeSleep(100);
 			}
 		} catch (Exception e) {
 			GeneralUtils.printToConsole("Failed UE_GET to ue " + ueId);

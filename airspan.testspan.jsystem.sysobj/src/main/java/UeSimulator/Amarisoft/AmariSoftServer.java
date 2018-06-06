@@ -421,7 +421,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 		String message;
 		try {
 			message = mapper.writeValueAsString(addUE);
-			sendMessage(message);	
+			sendSynchronizedMessage(message);	
 		} catch (JsonProcessingException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -451,7 +451,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 		getUE.setUeId(ueId);
 		getUE.setMessage(Actions.POWER_ON);
 		try {
-			sendMessage(mapper.writeValueAsString(getUE));
+			sendSynchronizedMessage(mapper.writeValueAsString(getUE));
 		} catch (JsonProcessingException e) {
 			System.out.println("Failed uePowerOn to ue " + ueId);
 			System.out.println(e.getMessage());
@@ -513,7 +513,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 		getUE.setUeId(ueId);
 		getUE.setMessage(Actions.POWER_OFF);
 		try {
-			sendMessage(mapper.writeValueAsString(getUE));
+			sendSynchronizedMessage(mapper.writeValueAsString(getUE));
 		} catch (JsonProcessingException e) {
 			System.out.println("Failed uePowerOff to ue " + ueId);
 			System.out.println(e.getMessage());

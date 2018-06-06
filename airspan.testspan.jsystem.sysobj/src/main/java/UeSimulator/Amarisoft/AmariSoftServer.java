@@ -287,7 +287,7 @@ public class AmariSoftServer extends SystemObjectImpl{
      */
     @OnClose
     public void onClose(Session userSession, CloseReason reason) throws IOException {
-        System.out.println("closing websocket");
+        System.out.println("closing websocket: " + reason.toString());
         this.userSession.close();
         this.userSession = null;
     }

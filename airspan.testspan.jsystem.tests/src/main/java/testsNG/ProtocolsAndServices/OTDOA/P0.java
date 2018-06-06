@@ -532,7 +532,7 @@ public class P0 extends OtdoaBase {
 
 	}
 
-	//@Test
+	@Test
 	@TestProperties(name = "test19 - NMS Radio Configuration 2 TDD Mode CellBandWitdh 5,Negative", returnParam = {
 			"IsTestWasSuccessful" }, paramsExclude = { "IsTestWasSuccessful" })
 	public void test19_NMS_TDD_config2() {

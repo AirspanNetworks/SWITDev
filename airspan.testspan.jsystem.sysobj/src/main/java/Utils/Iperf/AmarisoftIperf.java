@@ -3,6 +3,7 @@ package Utils.Iperf;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import Entities.ITrafficGenerator.TransmitDirection;
 import UE.AmarisoftUE;
 import Utils.GeneralUtils;
 
@@ -11,6 +12,20 @@ public class AmarisoftIperf extends UEIPerf{
 	public AmarisoftIperf(AmarisoftUE ue, IPerfMachine iperfMachineDL, IPerfMachine iperfMachineUL, double ulLoad, double dlLoad,
 			Integer frameSize, ArrayList<Character> qciList) throws IOException, InterruptedException {
 		super(ue, iperfMachineDL, iperfMachineUL, ulLoad, dlLoad, frameSize, qciList);
+		ulStreamArrayList = new ArrayList<>();
+		dlStreamArrayList = new ArrayList<>();
+		for(Character qciChar : qciList){
+			int qciInt = Integer.valueOf(qciChar)-Integer.valueOf('0');
+			boolean state = qciInt == 9? true : false;
+			String ueNumber = GeneralUtils.removeNonDigitsFromString(this.ue.getName());
+			try {
+				ulStreamArrayList.add(new IPerfStream(TransmitDirection.UL, ueNumber, qciInt, this.ue.getIPerfDlMachine(), this.ue.getWanIpAddress(), state, ulLoad/qciList.size(), frameSize));
+				dlStreamArrayList.add(new IPerfStream(TransmitDirection.DL, ueNumber, qciInt, this.ue.getWanIpAddress(), this.ue.getIPerfDlMachine(), state, dlLoad/qciList.size(), frameSize));
+			} catch (Exception e) {
+				GeneralUtils.printToConsole(e.getMessage());
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Override

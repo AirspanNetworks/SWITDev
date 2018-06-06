@@ -30,11 +30,11 @@ public class UEIPerf implements Runnable {
 	protected ArrayList<IPerfStream> ulStreamArrayList;
 	protected ArrayList<IPerfStream> dlStreamArrayList;
 
-	private double ulUeLoad;
-	private double dlUeLoad;
-	private Integer frameSize;
-	private Protocol protocol;
-	private long lastSampleTime;
+	protected double ulUeLoad;
+	protected double dlUeLoad;
+	protected Integer frameSize;
+	protected Protocol protocol;
+	protected long lastSampleTime;
 
 	public UEIPerf(UE ue, IPerfMachine iperfMachineDL, IPerfMachine iperfMachineUL, double ulLoad,
 			double dlLoad, Integer frameSize, ArrayList<Character> qciList) throws IOException, InterruptedException {

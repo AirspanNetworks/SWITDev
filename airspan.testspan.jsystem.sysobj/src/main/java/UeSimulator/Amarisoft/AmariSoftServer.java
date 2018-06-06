@@ -461,6 +461,8 @@ public class AmariSoftServer extends SystemObjectImpl{
 			String ip = getIpAddress(ueId);
 			ue.setLanIpAddress(ip);
 			ue.setWanIpAddress(ip);
+			ue.setIPerfDlMachine("91.99.1.240");
+			ue.setIPerfUlMachine(ip);
 		}
 		return true;
 	}

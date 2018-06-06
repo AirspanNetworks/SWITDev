@@ -439,6 +439,11 @@ public class AmariSoftServer extends SystemObjectImpl{
 	
 	public boolean uePowerOn(int ueId)
 	{
+		UE ue = ueMap.get(ueId);
+		if (ue == null) {
+			GeneralUtils.printToConsole("Cant turn on Ueid " + ueId + " because it does not exist on the simulator.");
+			return false;
+		}
 		ObjectMapper mapper = new ObjectMapper();
 		UEAction getUE = new UEAction();
 		getUE.setUeId(ueId);
@@ -451,8 +456,8 @@ public class AmariSoftServer extends SystemObjectImpl{
 			e.printStackTrace();
 			return false;
 		}		
-		UE ue = ueMap.get(ueId);
-		if (ue!=null) {
+				
+		if (ue.getLanIpAddress() == null) {
 			String ip = getIpAddress(ueId);
 			ue.setLanIpAddress(ip);
 			ue.setWanIpAddress(ip);

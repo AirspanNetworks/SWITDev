@@ -519,7 +519,8 @@ public class P0 extends OtdoaBase {
 		if (!validateTestMode(dut, "TDD")) {
 			return;
 		}
-
+		reportConfiguration(true, 1000, true, "3,9", PRSBandWidthEnum.FIFTEEN,
+				PRSPeriodiclyEnum.SIX_HUNDRED_FORTY, 400, 3000, PRSMutingPeriodiclyEnum.FOUR, "1100", false, 2, null);
 		// ECID,timer,otdoa,subframes,bandWidth ,prs Periodicity ,offSet, power,Muting
 		// Periodicity ,pattern,isFDD,FrameConfig
 		if (!setRadioWithNetspan(dut, true, 1000, true, "3,9", PRSBandWidthEnum.FIFTEEN,
@@ -539,6 +540,8 @@ public class P0 extends OtdoaBase {
 			return;
 		}
 
+		reportConfiguration(true, 1000, true, "8,9", PRSBandWidthEnum.FIFTY,
+				PRSPeriodiclyEnum.SIX_HUNDRED_FORTY, 400, 3000, PRSMutingPeriodiclyEnum.FOUR, "1100", false, 2, "5");
 		// ECID,timer,otdoa,subframes,bandWidth ,prs Periodicity ,offSet, power,Muting
 		// Periodicity ,pattern,isFDD,FrameConfig
 		if (!setRadioWithNetspan(dut, true, 1000, true, "8,9", PRSBandWidthEnum.FIFTY,
@@ -557,6 +560,9 @@ public class P0 extends OtdoaBase {
 			return;
 		}
 
+		reportConfiguration(true, 1000, true, "8,9", PRSBandWidthEnum.HUNDRED,
+				PRSPeriodiclyEnum.SIX_HUNDRED_FORTY, 400, 3000, PRSMutingPeriodiclyEnum.FOUR, "11100", false, 2,
+				null);
 		// ECID,timer,otdoa,subframes,bandWidth ,prs Periodicity ,offSet, power,Muting
 		// Periodicity ,pattern,isFDD,FrameConfig
 		if (!setRadioWithNetspan(dut, true, 1000, true, "8,9", PRSBandWidthEnum.HUNDRED,

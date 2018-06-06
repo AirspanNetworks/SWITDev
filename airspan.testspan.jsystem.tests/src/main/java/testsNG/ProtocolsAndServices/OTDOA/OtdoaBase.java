@@ -116,7 +116,7 @@ public class OtdoaBase extends TestspanTest{
 	
 	protected void reportConfiguration(boolean ecid,Integer ecidTimer, boolean otdoa,String subFrames, PRSBandWidthEnum prsBW,
 			PRSPeriodiclyEnum prsPeriodicity, Integer prsOffSet,Integer prsPowerOffset, PRSMutingPeriodiclyEnum prsMutingPeri, String prsMutingPattern,Boolean isFDD,Integer frameConfig,String cellBandWidth) {
-		GeneralUtils.startLevel("Configuraion of test to clone radio profile");
+		GeneralUtils.startLevel("Configuration of test to clone radio profile");
 		report.report("E-CID mode: "+(ecid?"Enabled":"Disabled"));
 		report.report("E-CID procedure Timer: "+ecidTimer);			
 		report.report("OTDOA mode: "+(otdoa?"Enabled":"Disabled"));

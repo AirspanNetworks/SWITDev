@@ -353,7 +353,6 @@ public class AmariSoftServer extends SystemObjectImpl{
     	
 		synchronized (waitLock) {
 			sendMessage(message);
-
 			try {
 				waitLock.wait();
 			} catch (InterruptedException e) {

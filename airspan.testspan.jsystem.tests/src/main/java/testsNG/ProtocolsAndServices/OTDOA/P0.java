@@ -541,7 +541,7 @@ public class P0 extends OtdoaBase {
 
 		// ECID,timer,otdoa,subframes,bandWidth ,prs Periodicity ,offSet, power,Muting
 		// Periodicity ,pattern,isFDD,FrameConfig
-		if (!setRadioWithNetspan(dut, true, 1000, true, "8,9", PRSBandWidthEnum.FIFTEEN,
+		if (!setRadioWithNetspan(dut, true, 1000, true, "8,9", PRSBandWidthEnum.FIFTY,
 				PRSPeriodiclyEnum.SIX_HUNDRED_FORTY, 400, 3000, PRSMutingPeriodiclyEnum.FOUR, "1100", false, 2, "5")) {
 			report.report("netspan Could not Clone Profile as expected!");
 		} else {

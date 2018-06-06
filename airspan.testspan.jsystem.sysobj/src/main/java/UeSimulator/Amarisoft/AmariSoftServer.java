@@ -29,6 +29,7 @@ import UeSimulator.Amarisoft.JsonObjects.Actions.UEAction.Actions;
 import UeSimulator.Amarisoft.JsonObjects.ConfigFile.*;
 import UeSimulator.Amarisoft.JsonObjects.Status.UeStatus;
 import Utils.GeneralUtils;
+import jsystem.framework.report.Reporter;
 import jsystem.framework.system.SystemManagerImpl;
 import jsystem.framework.system.SystemObjectImpl;
 import systemobject.terminal.SSH;
@@ -385,6 +386,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 		boolean result = true;
 		for (int i = 0; i < amount; i++) {
 			if (unusedUes.size() <= 0) {
+				report.report("Failed adding UE to simulator. " + i + " UEs were added out of " + amount + " requsted.", Reporter.WARNING);
 				return false;
 			}
 			Object[] keys = unusedUes.keySet().toArray();

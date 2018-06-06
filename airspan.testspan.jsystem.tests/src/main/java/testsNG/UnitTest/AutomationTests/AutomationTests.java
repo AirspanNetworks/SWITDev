@@ -26,10 +26,10 @@ public class AutomationTests extends TestspanTest{
 
 	@Override
 	public void init() throws Exception {
-		//report.report("Init!");
-		//enbInTest = new ArrayList<EnodeB>();
-		//enbInTest.add(dut);
-		//super.init();
+		report.report("Init!");
+		enbInTest = new ArrayList<EnodeB>();
+		enbInTest.add(dut);
+		super.init();
 	}
 	
 	@Test
@@ -74,7 +74,7 @@ public class AutomationTests extends TestspanTest{
 		
 		AmariSoftServer server = AmariSoftServer.getInstance();
 		server.startServer("automationConfigFile");
-		server.addUes(30, 13, 4);
+		server.addUes(256, 13, 4);
 		
 		ArrayList<UE> ues =  SetupUtils.getInstance().getAllUEs();
 		
@@ -97,10 +97,23 @@ public class AutomationTests extends TestspanTest{
 				GeneralUtils.printToConsole("ue.getDuplexMode: " + ue.getDuplexMode());
 				GeneralUtils.printToConsole("ue.getRSRP1: " + ue.getRSRP(1));
 				GeneralUtils.printToConsole("ue.getPCI: " + ue.getPCI());
+				GeneralUtils.printToConsole("===============================================");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
+		commands();
+		long t= System.currentTimeMillis();
+		long end = t + 12 * 60 * 60 * 1000;
+		while (System.currentTimeMillis() < end) {
+			for (int i = 0; i < ues.size(); i++) {
+				ues.get(i).stop();
+			}
+			for (int i = 0; i < ues.size(); i++) {
+				ues.get(i).start();
+			}		
+		}
+		stopCommandsAndAttachFiles();
 		
 		report.report("Finished amarisoftUeTest test.");
 		
@@ -188,8 +201,8 @@ public class AutomationTests extends TestspanTest{
 	
 	@ParameterProperties(description = "Name of Enb")
 	public void setDUT(String dut) {
-		//ArrayList<EnodeB> temp=(ArrayList<EnodeB>)SysObjUtils.getInstnce().initSystemObject(EnodeB.class,false,dut);
-		//this.dut = temp.get(0);
+		ArrayList<EnodeB> temp=(ArrayList<EnodeB>)SysObjUtils.getInstnce().initSystemObject(EnodeB.class,false,dut);
+		this.dut = temp.get(0);
 	}
 	
 	@Test

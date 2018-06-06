@@ -297,7 +297,7 @@ public class OtdoaBase extends TestspanTest{
 		}
 		
 		if(!result){
-			report.report("node is not configured with the right duplex for the Test,  Ending Test!");
+			report.report("node is not configured with the right duplex for the Test, Ending Test!",Reporter.FAIL);
 		}
 		return result;
 	}

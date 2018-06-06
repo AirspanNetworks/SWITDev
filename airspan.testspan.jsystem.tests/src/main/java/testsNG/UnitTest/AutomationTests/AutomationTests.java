@@ -74,7 +74,7 @@ public class AutomationTests extends TestspanTest{
 		
 		AmariSoftServer server = AmariSoftServer.getInstance();
 		server.startServer("automationConfigFile");
-		server.addUes(256, 13, 4);
+		server.addUes(255, 13, 4);
 		
 		ArrayList<UE> ues =  SetupUtils.getInstance().getAllUEs();
 		
@@ -109,9 +109,11 @@ public class AutomationTests extends TestspanTest{
 			for (int i = 0; i < ues.size(); i++) {
 				ues.get(i).stop();
 			}
+			GeneralUtils.unSafeSleep(20000);
 			for (int i = 0; i < ues.size(); i++) {
 				ues.get(i).start();
-			}		
+			}
+			GeneralUtils.unSafeSleep(20000);
 		}
 		stopCommandsAndAttachFiles();
 		

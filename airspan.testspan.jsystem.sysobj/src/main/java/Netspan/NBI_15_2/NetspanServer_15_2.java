@@ -4261,7 +4261,7 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
 
 	@Override
 	public boolean resetNode(String nodeName, RebootType rebootType) {
-		report.report("forcedResetNode method is not implemented for this netspan(15_2)!", Reporter.WARNING);
+		report.report("resetNode method is not implemented for this netspan(15_2)!", Reporter.WARNING);
 		return false;
 	}
 

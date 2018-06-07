@@ -102,20 +102,20 @@ public class AutomationTests extends TestspanTest{
 				e.printStackTrace();
 			}
 		}
-		commands();
-		long t= System.currentTimeMillis();
-		long end = t + 12 * 60 * 60 * 1000;
-		while (System.currentTimeMillis() < end) {
-			for (int i = 0; i < ues.size(); i++) {
-				ues.get(i).stop();
-			}
-			GeneralUtils.unSafeSleep(20000);
-			for (int i = 0; i < ues.size(); i++) {
-				ues.get(i).start();
-			}
-			GeneralUtils.unSafeSleep(20000);
-		}
-		stopCommandsAndAttachFiles();
+//		commands();
+//		long t= System.currentTimeMillis();
+//		long end = t + 12 * 60 * 60 * 1000;
+//		while (System.currentTimeMillis() < end) {
+//			for (int i = 0; i < ues.size(); i++) {
+//				ues.get(i).stop();
+//			}
+//			GeneralUtils.unSafeSleep(20000);
+//			for (int i = 0; i < ues.size(); i++) {
+//				ues.get(i).start();
+//			}
+//			GeneralUtils.unSafeSleep(20000);
+//		}
+//		stopCommandsAndAttachFiles();
 		
 		report.report("Finished amarisoftUeTest test.");
 		

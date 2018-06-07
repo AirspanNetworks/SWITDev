@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
@@ -28,6 +29,7 @@ import UE.UE;
 import UeSimulator.Amarisoft.JsonObjects.Actions.UEAction;
 import UeSimulator.Amarisoft.JsonObjects.Actions.UEAction.Actions;
 import UeSimulator.Amarisoft.JsonObjects.ConfigFile.*;
+import UeSimulator.Amarisoft.JsonObjects.Status.UeAdd;
 import UeSimulator.Amarisoft.JsonObjects.Status.UeStatus;
 import Utils.GeneralUtils;
 import jsystem.framework.report.Reporter;
@@ -428,7 +430,6 @@ public class AmariSoftServer extends SystemObjectImpl{
 	
 	public boolean addUe(UE ue, int release, int category, int ueId)
 	{
-		ObjectMapper mapper = new ObjectMapper();
 		ArrayList<UeList> ueLists = new ArrayList<UeList>();
 		UeList ueProperties = new UeList();
 		ueProperties.setAsRelease(release);
@@ -447,11 +448,21 @@ public class AmariSoftServer extends SystemObjectImpl{
 		UEAction addUE = new UEAction();
 		addUE.setMessage(Actions.UE_ADD);
 		addUE.setUeList(ueLists);
-		String message;
 		try {
-			message = mapper.writeValueAsString(addUE);
-			sendSynchronizedMessage(message);	
-		} catch (JsonProcessingException e1) {
+			ObjectMapper mapper = new ObjectMapper();
+			String message = mapper.writeValueAsString(addUE);
+			Object ans = sendSynchronizedMessage(message);
+			UeAdd ueAdd = (UeAdd)ans;
+			List<String> info = ueAdd.getInfo();
+			if (info.size() == 0) {
+				GeneralUtils.printToConsole("Ue " + ueId + " added to simulator.");
+			}
+			else
+			{
+				GeneralUtils.printToConsole("Failed adding Ue " + ueId + " to simulator, reason: " + info.get(0));
+				return false;
+			}
+		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}		

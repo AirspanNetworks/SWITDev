@@ -448,6 +448,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 		UeList ueProperties = new UeList();
 		ueProperties.setAsRelease(release);
 		ueProperties.setUeCategory(category);
+		ue.setUeCategory(category);
 		ueProperties.setForcedCqi(15);
 		ueProperties.setForcedRi(2);
 		ueProperties.setSimAlgo("milenage");

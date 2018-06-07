@@ -19,6 +19,7 @@ import EnodeB.EnodeB;
 import Entities.ITrafficGenerator.Protocol;
 import Entities.ITrafficGenerator.TransmitDirection;
 import UE.UE;
+import UeSimulator.Amarisoft.AmariSoftServer;
 import Utils.GeneralUtils;
 import Utils.SysObjUtils;
 
@@ -217,7 +218,21 @@ public class TrafficAction extends Action {
 	
 	@ParameterProperties(description = "UEs")
 	public void setUEs(String ues) {
-		this.ues = (ArrayList<UE>) SysObjUtils.getInstnce().initSystemObject(UE.class, false, ues.split(","));			
+		ArrayList<UE> tempUes = new ArrayList<>();
+		String[] ueArray = ues.split(",");
+		for (int i = 0; i < ueArray.length; i++) {					
+			if(ueArray[i].toLowerCase().trim().equals(AmariSoftServer.amarisoftIdentifier)){
+				try {
+					AmariSoftServer uesim = AmariSoftServer.getInstance();
+					tempUes.addAll(uesim.getUeList());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}	
+			}
+			else
+				tempUes.addAll((ArrayList<UE>) SysObjUtils.getInstnce().initSystemObject(UE.class, false, ueArray[i]));
+		}
+		this.ues = (ArrayList<UE>) tempUes.clone();	
 	}
 
 	@Test // 1
@@ -262,7 +277,16 @@ public class TrafficAction extends Action {
 			return;
 		}
 		if(ues == null){
-			report.report("No UEs were configured", Reporter.FAIL);
+			report.report("No UEs were configured", Reporter.WARNING);
+
+			AmariSoftServer uesim;
+			try {
+				uesim = AmariSoftServer.getInstance();
+				ues = uesim.getUeList();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			return;
 		}
 		if(qci == null){

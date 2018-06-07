@@ -74,7 +74,7 @@ public class AutomationTests extends TestspanTest{
 		
 		AmariSoftServer server = AmariSoftServer.getInstance();
 		server.startServer(dut);
-		server.addUes(10, 13, 6);
+		server.addUes(50, 13, 6);
 		
 		ArrayList<UE> ues =  SetupUtils.getInstance().getAllUEs();
 		
@@ -129,7 +129,7 @@ public class AutomationTests extends TestspanTest{
 		
 		
 		commands();
-		GeneralUtils.unSafeSleep(3*24*60*60*1000);
+		GeneralUtils.unSafeSleep(2*30*60*60*1000);
 		stopCommandsAndAttachFiles();
 		
 		report.report("Finished logTest test.");

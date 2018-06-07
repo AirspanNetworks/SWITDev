@@ -74,7 +74,7 @@ public class AutomationTests extends TestspanTest{
 		
 		AmariSoftServer server = AmariSoftServer.getInstance();
 		server.startServer(dut);
-		server.addUes(255, 13, 6);
+		server.addUes(10, 13, 6);
 		
 		ArrayList<UE> ues =  SetupUtils.getInstance().getAllUEs();
 		

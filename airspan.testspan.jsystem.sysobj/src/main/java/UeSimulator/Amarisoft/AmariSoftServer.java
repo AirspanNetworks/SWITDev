@@ -163,7 +163,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 		ArrayList<String> ips = new ArrayList<>();
 		String[] rawDlMachineNetworks = dlMachineNetworks.split(",");
 		for (int i = 0; i < rawDlMachineNetworks.length; i++) {
-			String[] dlMachineNetwork = rawDlMachineNetworks[i].split(".");
+			String[] dlMachineNetwork = rawDlMachineNetworks[i].split("\\.");
 			String network = String.join(".", Arrays.copyOf(dlMachineNetwork, dlMachineNetwork.length - 1));
 
 			String range = dlMachineNetwork[3];

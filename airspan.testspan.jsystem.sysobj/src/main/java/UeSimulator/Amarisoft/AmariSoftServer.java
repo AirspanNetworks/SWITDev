@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import java.util.Stack;
 
 import javax.websocket.ClientEndpoint;
@@ -233,22 +232,34 @@ public class AmariSoftServer extends SystemObjectImpl{
 				synchronized (waitLock) {
 					System.out.println("Message recieved: " + message);
 					ObjectMapper mapper = new ObjectMapper();
-	
+
 					// Convert JSON string to Object
 					UeStatus stat = null;
-					try {
-						returnValue = mapper.readValue(message, UeStatus.class);
-						waitLock.notify();
-					} catch (JsonParseException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (JsonMappingException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+					if (message.contains("\"message\":\"ue_get\"")) {
+						try {
+							returnValue = mapper.readValue(message, UeStatus.class);
+						} catch (JsonParseException e) {
+							e.printStackTrace();
+						} catch (JsonMappingException e) {
+							e.printStackTrace();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
 					}
+
+					if (message.contains("\"message\":\"ue_add\"")) {
+						try {
+							returnValue = mapper.readValue(message, UeAdd.class);
+						} catch (JsonParseException e) {
+							e.printStackTrace();
+						} catch (JsonMappingException e) {
+							e.printStackTrace();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+					waitLock.notify();
+
 				}
 			}
 		});
@@ -382,16 +393,17 @@ public class AmariSoftServer extends SystemObjectImpl{
 
     synchronized private Object sendSynchronizedMessage(String message)
 	{
-    	
+    	Object ans;
 		synchronized (waitLock) {
 			sendMessage(message);
 			try {
 				waitLock.wait();
 			} catch (InterruptedException e) {
 			}
+			ans = returnValue;
+			returnValue = null;
 		}
-		Object ans = returnValue;
-		returnValue = null;
+		
 		return ans;
 	}
     

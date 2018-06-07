@@ -62,6 +62,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     private String[] sdrList;
     private String[] imsiStartList;
     private String[] imsiStopList;
+    private String[] dlMachineNetworks;
     private HashMap<Integer,UE> ueMap;
     private HashMap<Integer,UE> unusedUes;
     volatile private Object returnValue;
@@ -152,6 +153,32 @@ public class AmariSoftServer extends SystemObjectImpl{
 
 	public void setImsiStopList(String imsiStopList) {
 		this.imsiStopList = imsiStopList.split(",");
+	} 
+    
+	public String[] getDlMachineNetworks() {
+		return dlMachineNetworks;
+	}
+
+	public void setDlMachineNetworks(String dlMachineNetworks) {
+		ArrayList<String> ips = new ArrayList<>();
+		String[] rawDlMachineNetworks = dlMachineNetworks.split(",");
+		for (int i = 0; i < rawDlMachineNetworks.length; i++) {
+			String network = String.join(".", Arrays.copyOf(rawDlMachineNetworks, rawDlMachineNetworks.length - 1));
+
+			String range = rawDlMachineNetworks[i].split(".")[rawDlMachineNetworks.length-1];
+			if (range.contains("-")) {
+				int rangeStart = Integer.parseInt(range.split("-")[0]);
+				int rangeStop = Integer.parseInt(range.split("-")[1]);
+				for (int j = rangeStart; j <= rangeStop; j++) {
+					ips.add(network + "." + j);
+				}
+			}
+			else
+				ips.add(network + "." + range);			
+		}
+		
+		
+		this.dlMachineNetworks = (String[]) ips.toArray();
 	} 
     
 	public static AmariSoftServer getInstance() throws Exception {

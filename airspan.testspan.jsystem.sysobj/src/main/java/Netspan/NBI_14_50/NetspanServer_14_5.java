@@ -2970,13 +2970,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 	}
 
 	@Override
-	public boolean forcedResetNode(String nodeName, RebootType rebootType) {
-		report.report("forcedResetNode method is not implemented for this netspan(14_5)!", Reporter.WARNING);
-		return false;
-	}
-
-	@Override
-	public boolean resetNode(String nodeName) {
+	public boolean resetNode(String nodeName, RebootType rebootType) {
 		report.report("resetNode method is not implemented for this netspan(14_5)!", Reporter.WARNING);
 		return false;
 	}

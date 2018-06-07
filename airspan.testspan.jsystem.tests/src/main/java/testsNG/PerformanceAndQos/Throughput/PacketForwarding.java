@@ -84,7 +84,7 @@ public class PacketForwarding extends TPTBase {
 
 	@Test
 	@TestProperties(name = "Stream_1Mbps_DL_Packets_In_both_AM_and_UM_ERABs_and_perform_multiple_X2_HOs", returnParam = {
-			"IsTestWasSuccessful" }, paramsExclude = { "IsTestWasSuccessful" })
+			"IsTestWasSuccessful" }, paramsInclude = {"DUT", "DUT2"})
 	public void stream1MDLPacketsInBothAMAndUMERABsAndPerformMultipleX2HOs() {
 		String hoCounterString = "HoX2IntraFreqInCompSuccRnlRadioRsn";
 		neighborsUtils.addNeighbor(dut, dut2, HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC,
@@ -98,7 +98,7 @@ public class PacketForwarding extends TPTBase {
 
 	@Test
 	@TestProperties(name = "Stream_1Mbps_DL_Packets_In_both_AM_and_UM_ERABs_and_perform_multiple_S1_HOs", returnParam = {
-			"IsTestWasSuccessful" }, paramsExclude = { "IsTestWasSuccessful" })
+			"IsTestWasSuccessful" }, paramsInclude = {"DUT", "DUT2"})
 	public void stream1MDLPacketsInBothAMAndUMERABsAndPerformMultipleS1HOs() {
 		String hoCounterString = "HoS1IntraFreqInCompSuccRnlRadioRsn";
 		neighborsUtils.addNeighbor(dut, dut2, HoControlStateTypes.ALLOWED, X2ControlStateTypes.NOT_ALLOWED,
@@ -112,7 +112,7 @@ public class PacketForwarding extends TPTBase {
 
 	@Test
 	@TestProperties(name = "Stream_10Mbps_DL_Packets_In_both_AM_and_UM_ERABs_and_perform_multiple_X2_HOs", returnParam = {
-			"IsTestWasSuccessful" }, paramsExclude = { "IsTestWasSuccessful" })
+			"IsTestWasSuccessful" }, paramsInclude = {"DUT", "DUT2"})
 	public void stream10MDLPacketsInBothAMAndUMERABsAndPerformMultipleX2HOs() {
 		String hoCounterString = "HoX2IntraFreqInCompSuccRnlRadioRsn";
 		neighborsUtils.addNeighbor(dut, dut2, HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC,
@@ -126,7 +126,7 @@ public class PacketForwarding extends TPTBase {
 
 	@Test
 	@TestProperties(name = "Stream_10Mbps_DL_Packets_In_both_AM_and_UM_ERABs_and_perform_multiple_S1_HOs", returnParam = {
-			"IsTestWasSuccessful" }, paramsExclude = { "IsTestWasSuccessful" })
+			"IsTestWasSuccessful" }, paramsInclude = {"DUT", "DUT2"})
 	public void stream10MDLPacketsInBothAMAndUMERABsAndPerformMultipleS1HOs() {
 		String hoCounterString = "HoS1IntraFreqInCompSuccRnlRadioRsn";
 		neighborsUtils.addNeighbor(dut, dut2, HoControlStateTypes.ALLOWED, X2ControlStateTypes.NOT_ALLOWED,
@@ -140,7 +140,7 @@ public class PacketForwarding extends TPTBase {
 
 	@Test
 	@TestProperties(name = "Stream_35Mbps_DL_Packets_In_both_AM_and_UM_ERABs_and_perform_multiple_X2_HOs", returnParam = {
-			"IsTestWasSuccessful" }, paramsExclude = { "IsTestWasSuccessful" })
+			"IsTestWasSuccessful" }, paramsInclude = {"DUT", "DUT2"})
 	public void stream35MDLPacketsInBothAMAndUMERABsAndPerformMultipleX2HOs() {
 		String hoCounterString = "HoX2IntraFreqInCompSuccRnlRadioRsn";
 		neighborsUtils.addNeighbor(dut, dut2, HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC,
@@ -154,7 +154,7 @@ public class PacketForwarding extends TPTBase {
 
 	@Test
 	@TestProperties(name = "Stream_35Mbps_DL_Packets_In_both_AM_and_UM_ERABs_and_perform_multiple_S1_HOs", returnParam = {
-			"IsTestWasSuccessful" }, paramsExclude = { "IsTestWasSuccessful" })
+			"IsTestWasSuccessful" }, paramsInclude = {"DUT", "DUT2"})
 	public void stream35MDLPacketsInBothAMAndUMERABsAndPerformMultipleS1HOs() {
 		String hoCounterString = "HoS1IntraFreqInCompSuccRnlRadioRsn";
 		neighborsUtils.addNeighbor(dut, dut2, HoControlStateTypes.ALLOWED, X2ControlStateTypes.NOT_ALLOWED,
@@ -168,7 +168,7 @@ public class PacketForwarding extends TPTBase {
 
 	// @Test
 	@TestProperties(name = "Stream_1M_DL_packets_in_both_AM_and_UM_ERABs_and_perform_multiple_X2_HOs_Intra_Enb_Multi_Cell", returnParam = {
-			"IsTestWasSuccessful" }, paramsExclude = { "IsTestWasSuccessful" })
+			"IsTestWasSuccessful" }, paramsInclude = {"DUT", "DUT2"})
 	public void stream1MDLpacketsInBothAMandUMERABsAndPerformMultipleX2HOsIntraEnbMultiCell() {
 	}
 

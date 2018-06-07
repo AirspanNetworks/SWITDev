@@ -558,8 +558,5 @@ public abstract class NetspanServer extends SystemObjectImpl {
 
 	public abstract int getNumberOfActiveCellsForNode(EnodeB node);
 
-	public abstract boolean forcedResetNode(String nodeName, RebootType rebootType);
-	
-	public abstract boolean resetNode(String nodeName);
-	
+	public abstract boolean resetNode(String nodeName, RebootType rebootType);	
 }

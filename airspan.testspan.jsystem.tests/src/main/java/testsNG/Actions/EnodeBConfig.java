@@ -1935,21 +1935,22 @@ public class EnodeBConfig {
 	 * false: granularity period is NOT the input wanted.
 	 */
 	public boolean setGranularityPeriod(EnodeB enodeB, int value){
+		boolean actionSet = true;
 		GeneralUtils.startLevel("Setting granularity period to "+value+" minutes for enodeb "+enodeB.getNetspanName());
 		if(enodeB.getGranularityPeriod()!=value){
 			if(enodeB.setGranularityPeriod(value)){
 				report.report("Succeeded to set granularity period");
-				GeneralUtils.stopLevel();
-				return true;
+				actionSet = true;
 			}else{
 				report.report("Failed to set granularity period");
-				return false;
+				actionSet = false;
 			}
 		}else{
 			report.report("Granularity period was already "+value+" minutes. No need to change");
+			actionSet = true;
 		}
 		GeneralUtils.stopLevel();
-		return true;
+		return actionSet;
 	}
 	
 	public void waitGranularityPeriodTime(EnodeB enb){
@@ -2033,7 +2034,7 @@ public class EnodeBConfig {
 		node.setExpectBooting(expectingBoot);
 		
 		try {
-			rebooted = NetspanServer.getInstance().resetNode(node.getNetspanName());
+			rebooted = NetspanServer.getInstance().resetNode(node.getNetspanName(),rebootType);
 		} catch (Exception e) {
 			report.report("Failed to reset Node Via Netspan", Reporter.WARNING);
 			e.printStackTrace();

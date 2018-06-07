@@ -44,27 +44,8 @@ public class AirUnity extends EnodeBWithDonor{
 	}
 
 	@Override
-	protected boolean rebootExecution(RebootType rebootType) {
-		boolean rebooted = false;
-		long timeout = 1000 * 60 * 5;
-		setExpectBooting(true);
-		
-		try {
-			rebooted = NetspanServer.getInstance().forcedResetNode(getNetspanName(), rebootType);
-		} catch (Exception e) {
-			report.report("Failed to reset Node Via Netspan", Reporter.WARNING);
-			e.printStackTrace();
-		}
-		
-		rebooted = rebooted && waitForReboot(timeout);
-		setExpectBooting(false);
-		
-		if (rebooted){			
-			report.report("Node " + this.getNetspanName() + " has been rebooted via Relay.");
-		}else{
-			report.report("The Enodeb " + this.getName() + " failed to reboot!", Reporter.WARNING);
-		}
-		
-		return rebooted;
+	protected boolean rebootExecutionViaSnmp(RebootType rebootType) {
+		report.report("Can't reboot AirUnity via snmp",Reporter.WARNING);
+		return false;
 	}
 }

@@ -2034,7 +2034,7 @@ public class EnodeBConfig {
 		node.setExpectBooting(expectingBoot);
 		
 		try {
-			rebooted = NetspanServer.getInstance().resetNode(node.getNetspanName());
+			rebooted = NetspanServer.getInstance().resetNode(node.getNetspanName(),rebootType);
 		} catch (Exception e) {
 			report.report("Failed to reset Node Via Netspan", Reporter.WARNING);
 			e.printStackTrace();

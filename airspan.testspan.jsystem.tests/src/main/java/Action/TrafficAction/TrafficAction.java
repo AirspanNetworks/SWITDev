@@ -229,8 +229,14 @@ public class TrafficAction extends Action {
 					e.printStackTrace();
 				}	
 			}
-			else
-				tempUes.addAll((ArrayList<UE>) SysObjUtils.getInstnce().initSystemObject(UE.class, false, ueArray[i]));
+			else{
+				try {
+					tempUes.addAll((ArrayList<UE>) SysObjUtils.getInstnce().initSystemObject(UE.class, false, ueArray[i]));			
+				} catch (Exception e) {
+					report.report("Failed init object " + ueArray[i]);
+					e.printStackTrace();
+				}
+			}
 		}
 		this.ues = (ArrayList<UE>) tempUes.clone();	
 	}

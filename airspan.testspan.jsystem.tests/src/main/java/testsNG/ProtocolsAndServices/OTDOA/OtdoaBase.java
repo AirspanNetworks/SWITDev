@@ -13,7 +13,6 @@ import IPG.IPG;
 import Netspan.EnbProfiles;
 import Netspan.NetspanServer;
 import Netspan.API.Enums.EnbStates;
-import Netspan.NBI_14_0.API.Lte.EnbConfigGet;
 import Netspan.Profiles.NetworkParameters;
 import Netspan.Profiles.RadioParameters;
 import Netspan.Profiles.RadioParameters.PRSBandWidthEnum;
@@ -263,7 +262,7 @@ public class OtdoaBase extends TestspanTest{
 					break;
 				}
 				default:{
-					report.report("wrong value for prePeriodicity : "+prsPeriodicity,Reporter.WARNING);
+					report.report("Wrong value for prePeriodicity: "+prsPeriodicity,Reporter.WARNING);
 					break;
 				}				
 			}
@@ -271,14 +270,14 @@ public class OtdoaBase extends TestspanTest{
 		
 		if(prsOffSet != null){
 			if(prsCfgIndex == 0){
-				report.report("prs Index error Value!");
+				report.report("PRS Index error Value!");
 				result &= false;
 			}else{
 				if((prsCfgIndexSnmp == prsCfgIndex + 1) || (prsCfgIndexSnmp == prsCfgIndex - 1) || (prsCfgIndexSnmp.equals(prsCfgIndex))){
-					report.report("Prs Index value is as expected");
+					report.report("PRS Index value is as expected");
 					result &= true;
 				}else {
-					report.report("Prs Index is not as expected value -  snmp Current Value : "+prsCfgIndexSnmp+"\n wanted Value : "+prsCfgIndex);
+					report.report("PRS Index is not as expected value -  snmp Current Value : "+prsCfgIndexSnmp+"\n wanted Value : "+prsCfgIndex);
 					result &= false;
 				}
 			}
@@ -317,7 +316,7 @@ public class OtdoaBase extends TestspanTest{
 		}
 		
 		if(!result){
-			report.report("node is not configured with the right duplex for the Test, Ending Test!",Reporter.FAIL);
+			report.report("Node is not configured with the right duplex for the Test, Ending Test!",Reporter.FAIL);
 		}
 		return result;
 	}
@@ -341,7 +340,7 @@ public class OtdoaBase extends TestspanTest{
 		scriptParmas.put("fakeIP",ipg.getFakeIP());
 		scriptParmas.put("realMME",ipg.getRealMME());
 		scriptParmas.put("s1Ip",dut.getS1IpAddress());
-		report.report("connecting IPG and Running Script");
+		report.report("Connecting IPG and Running Script");
 		ipg.connectIPG();
 		
 		//run script.
@@ -503,40 +502,40 @@ public class OtdoaBase extends TestspanTest{
 		report.report("Pci:"+pci);
 		
 		result &= (tac!=null);
-		report.report("tac:"+tac);
+		report.report("Tac:"+tac);
 		
 		result &= (earfcn!=null);
-		report.report("earfcn:"+earfcn);
+		report.report("Earfcn:"+earfcn);
 		
 		result &= (bandwidth!=null);
-		report.report("bandwidth:"+bandwidth);
+		report.report("Bandwidth:"+bandwidth);
 		
 		result &= (prsCfgIdx!=null);
-		report.report("prsCfgIdx:"+prsCfgIdx);
+		report.report("PrsCfgIdx:"+prsCfgIdx);
 		
 		result &= (cpLength!=null);
-		report.report("cpLength:"+cpLength);
+		report.report("CpLength:"+cpLength);
 		
 		result &= (numOfDlFrames!=null);
-		report.report("numOfDlFrames:"+numOfDlFrames);
+		report.report("NumOfDlFrames:"+numOfDlFrames);
 		
 		result &= (numOfAntennaPorts!=null);
-		report.report("numOfAntennaPorts:"+numOfAntennaPorts);
+		report.report("NumOfAntennaPorts:"+numOfAntennaPorts);
 		
 		result &= (sfnInitTime!=null);
-		report.report("sfnInitTime:"+sfnInitTime);
+		report.report("SfnInitTime:"+sfnInitTime);
 		
 		result &= (latitude!=null);
-		report.report("latitude:"+latitude);
+		report.report("Latitude:"+latitude);
 		
 		result &= (longitude!=null);
-		report.report("longitude:"+longitude);
+		report.report("Longitude:"+longitude);
 		
 		result &= (altitude!=null);
-		report.report("altitude:"+altitude);
+		report.report("Altitude:"+altitude);
 		
 		result &= (bitStr!=null);
-		report.report("bitStr:"+bitStr);
+		report.report("BitStr:"+bitStr);
 		
 		GeneralUtils.stopLevel();
 		return result;
@@ -556,21 +555,21 @@ public class OtdoaBase extends TestspanTest{
 		boolean counterIsZero = false;
 		boolean result = false;
 		int i=0;
-		GeneralUtils.startLevel("reseting counters");
+		GeneralUtils.startLevel("Resetting counters");
 		while(!counterIsZero){
-			report.report("Reseting counter "+counterName);
+			report.report("Resetting counter "+counterName);
 			dut.resetCounter(null, null, null);
 			enodeBConfig.waitGranularityPeriodTime(dut);
-			report.report("checking if counter - "+counterName+"="+0);
+			report.report("Checking if counter - "+counterName+"="+0);
 			
 			if(validateCounterEquals(counterName,0)){
 				result = true;
 				counterIsZero = true;
 			}else{
 				i++;
-				report.report("counter wasnt 0 trying again");
+				report.report("Counter wasn't 0. Retrying");
 				if(i>=2){
-					report.report("counter is not being reset! test going with a warning",Reporter.WARNING);
+					report.report("Counter has not been reset! Test going with a warning",Reporter.WARNING);
 					result = false;
 					counterIsZero = true;
 				}
@@ -653,7 +652,7 @@ public class OtdoaBase extends TestspanTest{
 		try{
 			HashMap <String,Variable> a = dut.getUEShowLinkTable();
 			if(a.isEmpty()) {
-				report.report("no UEs shown in 'ue show link' table");
+				report.report("No UEs shown in 'ue show link' table");
 			}
 			for(String key : a.keySet()){
 				if(key.contains("1.3.6.1.4.1.989.1.20.1.4.75.1.1.0")){

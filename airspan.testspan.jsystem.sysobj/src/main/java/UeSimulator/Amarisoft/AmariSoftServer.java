@@ -426,6 +426,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 
 	public boolean addUes(int amount, int release, int category)
 	{
+		GeneralUtils.startLevel("Adding " + amount + " UEs to Amarisoft simulator.");
 		boolean result = true;
 		for (int i = 0; i < amount; i++) {
 			if (unusedUes.size() <= 0) {
@@ -437,6 +438,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 			int a = (Integer)keys[0];
 			result = result && addUe(unusedUes.get(a), release, category, a);
 		}
+		GeneralUtils.stopLevel();
 		return result;
 	}
 	
@@ -467,11 +469,11 @@ public class AmariSoftServer extends SystemObjectImpl{
 			UeAdd ueAdd = (UeAdd)ans;
 			List<String> info = ueAdd.getInfo();
 			if (info.size() == 0) {
-				GeneralUtils.printToConsole("Ue " + ueId + " added to simulator.");
+				report.report("Ue " + ueId + " added to simulator.");
 			}
 			else
 			{
-				GeneralUtils.printToConsole("Failed adding Ue " + ueId + " to simulator, reason: " + info.get(0));
+				report.report("Failed adding Ue " + ueId + " to simulator, reason: " + info.get(0), Reporter.WARNING);
 				return false;
 			}
 		} catch (Exception e1) {
@@ -589,13 +591,16 @@ public class AmariSoftServer extends SystemObjectImpl{
 			cell.setNAntennaDl(2);
 			cell.setNAntennaUl(1);
 			cell.setGlobalTimingAdvance(2);
+			GeneralUtils.printToConsole("Adding cell with earfcn: " + earfcnList.get(i) + " to run on sdr " + sdrList[i]);
 			cells.add(cell);
 			rfDriver += "dev"+i+"=/dev/sdr"+sdrList[i]+",";
 		}
 		int ind = rfDriver.lastIndexOf(",");
+		System.out.println("rfDriver String before: " + rfDriver);		
 		if( ind>=0 )
 			rfDriver = new StringBuilder(rfDriver).replace(ind, ind+1,"").toString();
-		System.out.println("rfDriver String: " + rfDriver);
+		System.out.println("rfDriver String after: " + rfDriver);
+
 		configObject.setBandwidth(duts.get(0).getBandwidth().getBw());
 		configObject.setCells(cells);
 		configObject.setTxGain(txgain);

@@ -125,8 +125,12 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 	
 	public void stopTraffic() throws Exception{
 		for(UEIPerf ueIPerf : allUEsIPerfList){
-			ueIPerf.stopTraffic();
+			if (ueIPerf instanceof AndroidIPerf) {				
+				ueIPerf.stopTraffic();
+			}
 		}
+		iperfMachineDL.stopIPerf();
+		iperfMachineUL.stopIPerf();
 		Disconnect();
 	}
 

@@ -559,14 +559,10 @@ public class AmariSoftServer extends SystemObjectImpl{
 		configObject.setComAddr("0.0.0.0:"+port);
 		ArrayList<Cell> cells = new ArrayList<Cell>();
 		String rfDriver = "";
+		ArrayList<Integer> earfcnList = getEarfcnList(duts);
 		for (int i = 0; i < sdrList.length; i++) {
 			Cell cell = new Cell();
-			int earfcn;
-			if (duts.size() > i) 
-				earfcn = duts.get(i).getEarfcn();			
-			else
-				earfcn = duts.get(duts.size()-1).getEarfcn();
-			cell.setDlEarfcn(earfcn);
+			cell.setDlEarfcn(earfcnList.get(i));
 			cell.setNAntennaDl(2);
 			cell.setNAntennaUl(1);
 			cell.setGlobalTimingAdvance(2);
@@ -603,6 +599,20 @@ public class AmariSoftServer extends SystemObjectImpl{
 		configObject.setUeList(ueLists);
 		setConfigFile(ueConfigFileName);
 		writeConfigFile();
+	}
+
+	private ArrayList<Integer> getEarfcnList(ArrayList<EnodeB> duts) {
+		ArrayList<Integer> earfcns = new ArrayList<>();
+		for (EnodeB enodeB : duts) {
+			int numOfCells = enodeB.getNumberOfActiveCells();
+			for (int j = 1; j <= numOfCells; j++) {
+				enodeB.setCellContextNumber(j);
+				earfcns.add(enodeB.getEarfcn());
+			}
+			enodeB.setCellContextNumber(1);
+		}
+		
+		return earfcns;
 	}
 
 	public ArrayList<UE> getUeList() {

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.Stack;
 
 import javax.websocket.ClientEndpoint;
 import javax.websocket.CloseReason;
@@ -62,7 +63,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     private String[] sdrList;
     private String[] imsiStartList;
     private String[] imsiStopList;
-    private String[] dlMachineNetworks;
+    private Stack<String> dlMachineNetworks;
     private HashMap<Integer,UE> ueMap;
     private HashMap<Integer,UE> unusedUes;
     volatile private Object returnValue;
@@ -155,12 +156,12 @@ public class AmariSoftServer extends SystemObjectImpl{
 		this.imsiStopList = imsiStopList.split(",");
 	} 
     
-	public String[] getDlMachineNetworks() {
+	public Stack<String> getDlMachineNetworks() {
 		return dlMachineNetworks;
 	}
 
 	public void setDlMachineNetworks(String dlMachineNetworks) {
-		ArrayList<String> ips = new ArrayList<>();
+		Stack<String> ips = new Stack<>();
 		String[] rawDlMachineNetworks = dlMachineNetworks.split(",");
 		for (int i = 0; i < rawDlMachineNetworks.length; i++) {
 			String[] dlMachineNetwork = rawDlMachineNetworks[i].split("\\.");
@@ -179,7 +180,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 		}
 		
 		
-		this.dlMachineNetworks = (String[]) ips.toArray();
+		this.dlMachineNetworks = ips;
 	} 
     
 	public static AmariSoftServer getInstance() throws Exception {
@@ -491,7 +492,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 			String ip = getIpAddress(ueId);
 			ue.setLanIpAddress(ip);
 			ue.setWanIpAddress(ip);
-			ue.setIPerfDlMachine("91.99.1.240");
+			ue.setIPerfDlMachine(dlMachineNetworks.pop());
 			ue.setIPerfUlMachine(ip);
 		}
 		return true;

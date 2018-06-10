@@ -69,7 +69,6 @@ public class EstablishmentBase extends TestspanTest{
 	}
 
 	private void initParallelCommands() {
-		commandList.add("ue show link");
 		commandList.add("ue show rate");
 		commandList.add("rlc show amdlstats");
 		commandList.add("qci show rate");

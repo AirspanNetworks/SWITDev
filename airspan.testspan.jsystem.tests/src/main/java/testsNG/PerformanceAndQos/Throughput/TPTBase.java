@@ -373,7 +373,6 @@ public class TPTBase extends TestspanTest {
 	 *         root folder
 	 */
 	protected void syncGeneralCommands() {
-		commandList.add("ue show link");
 		commandList.add("ue show rate");
 		commandList.add("rlc show amdlstats");
 		commandList.add("qci show rate");

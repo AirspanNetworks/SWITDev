@@ -1123,7 +1123,6 @@ public class Progression extends TestspanTest{
 		List<String> donorCommandList = new ArrayList<String>();
 		donorCommandList.add("cell show operationalStatus");
 		donorCommandList.add("system show compilationtime");
-		donorCommandList.add("ue show link");
 		
 		try {
 			syncCommands = new ParallelCommandsThread(commandList, eNodeB, donorCommandList, null);

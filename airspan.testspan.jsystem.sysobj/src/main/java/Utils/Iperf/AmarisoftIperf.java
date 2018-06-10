@@ -20,7 +20,7 @@ public class AmarisoftIperf extends UEIPerf{
 			String ueNumber = GeneralUtils.removeNonDigitsFromString(this.ue.getName());
 			try {
 				ulStreamArrayList.add(new IPerfStream(TransmitDirection.UL, ueNumber, qciInt, this.ue.getIPerfDlMachine(), this.ue.getIPerfDlMachine(), state, ulLoad/qciList.size(), frameSize));
-				dlStreamArrayList.add(new IPerfStream(TransmitDirection.DL, ueNumber, qciInt, this.ue.getWanIpAddress(),  this.ue.getWanIpAddress(), state, dlLoad/qciList.size(), frameSize));
+				dlStreamArrayList.add(new AmarisoftIPerfStream(TransmitDirection.DL, ueNumber, qciInt, this.ue.getWanIpAddress(),  this.ue.getWanIpAddress(), state, dlLoad/qciList.size(), frameSize));
 			} catch (Exception e) {
 				GeneralUtils.printToConsole(e.getMessage());
 				e.printStackTrace();

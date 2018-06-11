@@ -426,9 +426,10 @@ public class AmariSoftServer extends SystemObjectImpl{
 							if (logLine == null || logLine.length() == 0) {
 								continue;
 							}
-							writer.append(logLine);
+							writer.append(logLine + "\n");
 						}
 						writer.close();
+						GeneralUtils.unSafeSleep(50);
 					} catch (IOException e) {
 						e.printStackTrace();
 					}

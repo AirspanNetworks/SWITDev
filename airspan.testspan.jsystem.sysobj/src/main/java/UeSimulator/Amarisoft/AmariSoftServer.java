@@ -26,8 +26,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import EnodeB.EnodeB;
-import EnodeB.Components.EnodeBComponent;
-import Netspan.NetspanServer;
 import UE.AmarisoftUE;
 import UE.UE;
 import UeSimulator.Amarisoft.JsonObjects.Actions.UEAction;
@@ -36,9 +34,7 @@ import UeSimulator.Amarisoft.JsonObjects.ConfigFile.*;
 import UeSimulator.Amarisoft.JsonObjects.Status.UeAdd;
 import UeSimulator.Amarisoft.JsonObjects.Status.UeStatus;
 import Utils.GeneralUtils;
-import Utils.PingUtils;
 import Utils.TerminalUtils;
-import Utils.Snmp.MibReader;
 import jsystem.framework.report.Reporter;
 import jsystem.framework.system.SystemManagerImpl;
 import jsystem.framework.system.SystemObjectImpl;
@@ -91,6 +87,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 		port = 900 + sdrList[0];
     	connect();
     	ueMap = new HashMap<>();
+    	sdrCellsMap = new HashMap<>();
     	fillUeList();
 	}
 	

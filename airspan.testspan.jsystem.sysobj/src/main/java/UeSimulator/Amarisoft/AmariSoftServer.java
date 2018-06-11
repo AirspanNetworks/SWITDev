@@ -286,7 +286,6 @@ public class AmariSoftServer extends SystemObjectImpl{
 	public boolean sendCommands(String cmd, String response) {
 		String privateBuffer = "";
 		String ans = "";
-		cliBuffer = "";
 		waitForResponse = true;
 		sendRawCommand(cmd);
 		long startTime = System.currentTimeMillis(); // fetch starting time
@@ -463,6 +462,8 @@ public class AmariSoftServer extends SystemObjectImpl{
 			if (waitForResponse) {
 				cliBuffer += buffer;				
 			}
+			else
+				cliBuffer = "";
 		}
 	}
     

@@ -79,7 +79,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 
 	private Thread loggerBufferThread;
 
-	private String logFileName;
+	private String logFileName = "AmarisoftLog";
 
     @Override
 	public void init() throws Exception {

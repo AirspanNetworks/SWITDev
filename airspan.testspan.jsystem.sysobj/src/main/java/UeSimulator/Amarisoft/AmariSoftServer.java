@@ -222,23 +222,19 @@ public class AmariSoftServer extends SystemObjectImpl{
     
     public boolean startServer(String configFile){
     	try {   
-    		boolean ans = sendCommands("/root/ue/lteue /root/ue/config/" + configFile,"(ue)");
+    		boolean ans = sendCommands("/root/ue/lteue /root/ue/config/" + configFile,"sample_rate=");
     		if (!ans) {
-    			System.out.println("Failed starting server with config file: " + configFile);
+    			GeneralUtils.printToConsole("Failed starting server with config file: " + configFile);
     			return false;
 			}
     		
         	URI endpointURI = new URI("ws://"+ip+":"+port);
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             container.connectToServer(this, endpointURI);
-            System.out.println(container.getDefaultAsyncSendTimeout());
-            System.out.println(container.getDefaultMaxBinaryMessageBufferSize());
-            System.out.println(container.getDefaultMaxSessionIdleTimeout());
-            System.out.println(container.getDefaultMaxTextMessageBufferSize());
             startMessageHandler();
         } catch (Exception e) {
-            System.out.println("Failed starting server with config file: " + configFile);
-            System.out.println(e.getMessage());
+        	GeneralUtils.printToConsole("Failed starting server with config file: " + configFile);
+        	e.printStackTrace();
             return false;
         }
     	return true;

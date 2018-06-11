@@ -73,7 +73,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     private HashMap<String, Integer> sdrCellsMap;
     volatile private Object returnValue;
 
-	private String loggerBuffer;
+	private String loggerBuffer="";
 
 	private boolean connected = false;
 

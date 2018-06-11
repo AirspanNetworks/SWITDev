@@ -1,8 +1,11 @@
 package UeSimulator.Amarisoft;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
@@ -23,6 +26,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import EnodeB.EnodeB;
+import EnodeB.Components.EnodeBComponent;
+import Netspan.NetspanServer;
 import UE.AmarisoftUE;
 import UE.UE;
 import UeSimulator.Amarisoft.JsonObjects.Actions.UEAction;
@@ -31,6 +36,9 @@ import UeSimulator.Amarisoft.JsonObjects.ConfigFile.*;
 import UeSimulator.Amarisoft.JsonObjects.Status.UeAdd;
 import UeSimulator.Amarisoft.JsonObjects.Status.UeStatus;
 import Utils.GeneralUtils;
+import Utils.PingUtils;
+import Utils.TerminalUtils;
+import Utils.Snmp.MibReader;
 import jsystem.framework.report.Reporter;
 import jsystem.framework.system.SystemManagerImpl;
 import jsystem.framework.system.SystemObjectImpl;
@@ -49,7 +57,6 @@ public class AmariSoftServer extends SystemObjectImpl{
 	
     private static Object waitLock = new Object();
 
-	private Terminal sshTerminal;
 	private Terminal lteUeTerminal;
 	private String ip;
 	private String port;
@@ -67,7 +74,16 @@ public class AmariSoftServer extends SystemObjectImpl{
     private Stack<String> dlMachineNetworks;
     private HashMap<Integer,UE> ueMap;
     private HashMap<Integer,UE> unusedUes;
+    private HashMap<String, Integer> sdrCellsMap;
     volatile private Object returnValue;
+
+	private String loggerBuffer;
+
+	private boolean connected = false;
+
+	private Thread loggerBufferThread;
+
+	private String logFileName;
 
     @Override
 	public void init() throws Exception {
@@ -210,6 +226,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     			System.out.println("Failed starting server with config file: " + configFile);
     			return false;
 			}
+    		
         	URI endpointURI = new URI("ws://"+ip+":"+port);
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             container.connectToServer(this, endpointURI);
@@ -234,7 +251,6 @@ public class AmariSoftServer extends SystemObjectImpl{
 					ObjectMapper mapper = new ObjectMapper();
 
 					// Convert JSON string to Object
-					UeStatus stat = null;
 					if (message.contains("\"message\":\"ue_get\"")) {
 						try {
 							returnValue = mapper.readValue(message, UeStatus.class);
@@ -276,16 +292,10 @@ public class AmariSoftServer extends SystemObjectImpl{
 		sendRawCommand(terminal, cmd);
 		long startTime = System.currentTimeMillis(); // fetch starting time
 		while ((System.currentTimeMillis() - startTime) < 3000) {
-			try {
-				Thread.sleep(200);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			GeneralUtils.unSafeSleep(200);
 			try {
 				privateBuffer += terminal.readInputBuffer();
 			} catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			ans += privateBuffer;
@@ -364,7 +374,6 @@ public class AmariSoftServer extends SystemObjectImpl{
     	try {
 			this.userSession.getBasicRemote().sendText(message);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     }
@@ -380,17 +389,96 @@ public class AmariSoftServer extends SystemObjectImpl{
     }
 
     private void connect() { 
-		this.sshTerminal = new SSH(ip, userName, password);
 		this.lteUeTerminal = new SSH(ip, userName, password);
 		try {
-			this.sshTerminal.connect();
 			this.lteUeTerminal.connect();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		connected = true;
+		startLogger();
+	}
+    
+    public String[] processLines(String log) {	
+		if (!log.trim().isEmpty()) {
+			String[] lines = log.split("\n");
+			Calendar receivedDate = Calendar.getInstance();
+			String timestamp =  String.format("%02d/%02d/%04d %02d:%02d:%02d:%03d    ::    ", receivedDate.get(Calendar.DAY_OF_MONTH), receivedDate.get(Calendar.MONTH) + 1 /*because January=0*/, 
+					receivedDate.get(Calendar.YEAR), receivedDate.get(Calendar.HOUR_OF_DAY), 
+		            receivedDate.get(Calendar.MINUTE),receivedDate.get(Calendar.SECOND), 
+					receivedDate.get(Calendar.MILLISECOND));
+			for (int i = 0; i < lines.length; i++) {
+				lines[i] = timestamp + lines[i];
+			}
+			return lines;
+		}
+			
+		return new String[0];
 	}
 
+	private void startLogger() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				while (connected) {
+					try {
+						String[] lines = processLines(getLoggerBuffer());
+						BufferedWriter writer = new BufferedWriter(new FileWriter(logFileName, true));
+						for (String logLine : lines) {
+							if (logLine == null || logLine.length() == 0) {
+								continue;
+							}
+							writer.append(logLine);
+						}
+						writer.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}, "Amarisoft log thread").start();
+
+	}
+
+	private synchronized void readInputBuffer() {
+		String privateBuffer = "";
+		try {
+			if (connected )
+				privateBuffer += lteUeTerminal.readInputBuffer().replaceAll("\r", "");
+			else
+				return;
+		} catch (Exception e) {
+			GeneralUtils.printToConsole("Failed to read from buffer " + e.getMessage());
+			return;
+		}
+
+		privateBuffer = privateBuffer.replaceAll("[^[^\\p{Print}]\t\n]", "");
+		int lastIndx = privateBuffer.lastIndexOf("\n");
+		if (lastIndx > -1) {
+			String buffer = privateBuffer.substring(0, lastIndx + 1);
+			loggerBuffer +=buffer;
+		}
+	}
+    
+    public String getLoggerBuffer() {
+		// To avoid the synchronized method readInputBuffer() - use a thread
+		// that will call it and wait for it instead.
+		if (connected && (loggerBufferThread == null || !loggerBufferThread.isAlive())) {
+			loggerBufferThread = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					readInputBuffer();
+				}
+			}, getName() + " log buffer thread");
+			loggerBufferThread.start();
+		}
+
+		String buffer = loggerBuffer;
+		loggerBuffer = "";
+		return TerminalUtils.filterVT100(buffer);
+	}
+
+    
     synchronized private Object sendSynchronizedMessage(String message)
 	{
     	Object ans;
@@ -417,14 +505,34 @@ public class AmariSoftServer extends SystemObjectImpl{
     	try {    		
 			String stat = mapper.writeValueAsString(configObject);
 			String newStat = stat.replace("\"", "\\\"");
-			sendCommands(sshTerminal ,"echo \"" + newStat + "\" > /root/ue/config/" + ueConfigFileName,"");
+			sendCommands(lteUeTerminal ,"echo \"" + newStat + "\" > /root/ue/config/" + ueConfigFileName,"");
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
 		
 	}
+	
+	private Integer getCellId(EnodeB enodeB, int cellId) {
+		Integer ans = sdrCellsMap.get(enodeB.getName() + "_" + cellId);
+		if (ans == null) {
+			GeneralUtils.printToConsole(enodeB.getName() + " with cellID " + cellId + " not found");
+			return 0;
+		}
+		return ans;
+	}
+	
+	public boolean addUes(int amount, int release, int category, EnodeB enodeB, int cellId)
+	{
+		int amarisoftCellId = getCellId(enodeB, cellId);
+		return addUes(amount, release, category, amarisoftCellId);
+	}
 
 	public boolean addUes(int amount, int release, int category)
+	{
+		return addUes(amount, release, category, 0);
+	}
+
+	public boolean addUes(int amount, int release, int category, int cellId)
 	{
 		GeneralUtils.startLevel("Adding " + amount + " UEs to Amarisoft simulator.");
 		boolean result = true;
@@ -435,18 +543,19 @@ public class AmariSoftServer extends SystemObjectImpl{
 			}
 			Object[] keys = unusedUes.keySet().toArray();
 			
-			int a = (Integer)keys[0];
-			result = result && addUe(unusedUes.get(a), release, category, a);
+			int ueId = (Integer)keys[0];
+			result = result && addUe(unusedUes.get(ueId), release, category, ueId, cellId);
 		}
 		GeneralUtils.stopLevel();
 		return result;
 	}
 	
-	public boolean addUe(UE ue, int release, int category, int ueId)
+	public boolean addUe(UE ue, int release, int category, int ueId, int cellId)
 	{
 		ArrayList<UeList> ueLists = new ArrayList<UeList>();
 		UeList ueProperties = new UeList();
 		ueProperties.setAsRelease(release);
+		ueProperties.setCellIndex(cellId);
 		ueProperties.setUeCategory(category);
 		ue.setUeCategory(category);
 		ueProperties.setForcedCqi(15);
@@ -478,7 +587,6 @@ public class AmariSoftServer extends SystemObjectImpl{
 				return false;
 			}
 		} catch (Exception e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}		
 	
@@ -622,7 +730,6 @@ public class AmariSoftServer extends SystemObjectImpl{
 		ueList.setK("5C95978B5E89488CB7DB44381E237809");
 		ueList.setOp("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
 		ueList.setTunSetupScript("ue-ifup");
-		AmarisoftUE ue= new AmarisoftUE(1, this);
 		
 		ueLists.add(ueList);
 		configObject.setUeList(ueLists);
@@ -632,11 +739,14 @@ public class AmariSoftServer extends SystemObjectImpl{
 
 	private ArrayList<Integer> getEarfcnList(ArrayList<EnodeB> duts) {
 		ArrayList<Integer> earfcns = new ArrayList<>();
+		int cellNum = 0;
 		for (EnodeB enodeB : duts) {
 			int numOfCells = enodeB.getNumberOfActiveCells();
 			for (int j = 1; j <= numOfCells; j++) {
 				enodeB.setCellContextNumber(j);
 				earfcns.add(enodeB.getEarfcn());
+				sdrCellsMap.put(enodeB.getName() + "_" + j, cellNum);
+				cellNum++;
 			}
 			enodeB.setCellContextNumber(1);
 		}

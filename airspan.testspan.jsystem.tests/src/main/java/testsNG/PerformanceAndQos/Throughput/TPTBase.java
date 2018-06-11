@@ -276,7 +276,7 @@ public class TPTBase extends TestspanTest {
 					GeneralUtils.stopAllLevels(); 
 				}
 			} catch (Exception e) {
-				report.report("Stopping Parallel Commands From Java Exception");
+				report.report("Stopping Parallel Commands From Java Exception" + e.getMessage());				
 				testIsNotDoneStatus = false;
 				resetTestBol = false;
 				exceptionThrown = true;

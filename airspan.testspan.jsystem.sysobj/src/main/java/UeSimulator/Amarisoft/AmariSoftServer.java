@@ -81,6 +81,10 @@ public class AmariSoftServer extends SystemObjectImpl{
 
 	private String logFileName = "AmarisoftLog";
 
+	private String cliBuffer = "";
+
+	private boolean waitForResponse = false;
+
     @Override
 	public void init() throws Exception {
 		super.init();
@@ -218,7 +222,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     
     public boolean startServer(String configFile){
     	try {   
-    		boolean ans = sendCommands(lteUeTerminal, "/root/ue/lteue /root/ue/config/" + configFile,"(ue)");
+    		boolean ans = sendCommands("/root/ue/lteue /root/ue/config/" + configFile,"(ue)");
     		if (!ans) {
     			System.out.println("Failed starting server with config file: " + configFile);
     			return false;
@@ -283,32 +287,36 @@ public class AmariSoftServer extends SystemObjectImpl{
 		
 	}
 
-	public boolean sendCommands(Terminal terminal, String cmd, String response) {
+	public boolean sendCommands(String cmd, String response) {
 		String privateBuffer = "";
 		String ans = "";
-		sendRawCommand(terminal, cmd);
+		cliBuffer = "";
+		waitForResponse = true;
+		sendRawCommand(cmd);
 		long startTime = System.currentTimeMillis(); // fetch starting time
 		while ((System.currentTimeMillis() - startTime) < 3000) {
 			GeneralUtils.unSafeSleep(200);
 			try {
-				privateBuffer += terminal.readInputBuffer();
+				privateBuffer += cliBuffer;
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
 			ans += privateBuffer;
-			if (ans.contains(response))
+			if (ans.contains(response)){
+				waitForResponse = false;
 				return true;			
+			}
 		}
-
+		waitForResponse = false;
 		return false;
 	}
 		
-	public void sendRawCommand(Terminal terminal, String command){
-		if (terminal == null) {
+	public void sendRawCommand(String command){
+		if (lteUeTerminal == null) {
 			return;
 		}
 		try {
-			terminal.sendString(command + "\n", false);
+			lteUeTerminal.sendString(command + "\n", false);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
@@ -456,6 +464,9 @@ public class AmariSoftServer extends SystemObjectImpl{
 		if (lastIndx > -1) {
 			String buffer = privateBuffer.substring(0, lastIndx + 1);
 			loggerBuffer +=buffer;
+			if (waitForResponse) {
+				cliBuffer += buffer;				
+			}
 		}
 	}
     
@@ -504,7 +515,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     	try {    		
 			String stat = mapper.writeValueAsString(configObject);
 			String newStat = stat.replace("\"", "\\\"");
-			sendCommands(lteUeTerminal ,"echo \"" + newStat + "\" > /root/ue/config/" + ueConfigFileName,"");
+			sendCommands("echo \"" + newStat + "\" > /root/ue/config/" + ueConfigFileName,"");
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}

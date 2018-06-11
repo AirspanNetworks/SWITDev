@@ -417,6 +417,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
+				GeneralUtils.printToConsole("Starting amarisoft log to file: " + logFileName);
 				while (connected) {
 					try {
 						String[] lines = processLines(getLoggerBuffer());

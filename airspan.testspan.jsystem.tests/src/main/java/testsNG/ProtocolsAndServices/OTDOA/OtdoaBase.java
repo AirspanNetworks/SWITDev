@@ -597,7 +597,7 @@ public class OtdoaBase extends TestspanTest{
 	}
 	
 	protected boolean checkCounter(String counterName, int value){
-		int waitingPeriodTime = dut.getGranularityPeriod()-2;
+		int waitingPeriodTime = dut.getGranularityPeriod();
 		if(waitingPeriodTime<0){
 			waitingPeriodTime = 0;
 		}

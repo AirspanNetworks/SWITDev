@@ -99,7 +99,7 @@ public class P0 extends TestspanTest {
 	private int total_attCounter;
 	private double total_HO_Success_rate_out_of_attempts;
 	private double theoreticalAttempts;
-	private final int numOfMaxRetries = 2; 
+	private final int numOfMaxRetries = 1; 
 	
 	private String reasons[];
 
@@ -514,12 +514,12 @@ public class P0 extends TestspanTest {
 			return ;
 		}
 		boolean action = false;
-		boolean failedTwice = false;
+		boolean failedNumOfMaxRetries = false;
 		for (int i = 1; i <= numOfMaxRetries; i++) {
 			report.report("Run number " + i);
 			if (!preTest(hoControl, x2Control, hoType, hoEventType, i-1)) {
-				if (i == 2) {
-					failedTwice = true;
+				if (i == numOfMaxRetries) {
+					failedNumOfMaxRetries = true;
 				} else {
 					report.report("Hand over test failed - retrying", Reporter.WARNING);
 					restartCommandsThread();
@@ -530,8 +530,8 @@ public class P0 extends TestspanTest {
 			action = HoLongTest(i-1);
 			setReason(i-1);
 			if (!action) {
-				if (i == 2) {
-					failedTwice = true;
+				if (i == numOfMaxRetries) {
+					failedNumOfMaxRetries = true;
 				} else {
 					report.report("Hand over test failed - retrying", Reporter.WARNING);
 					restartCommandsThread();
@@ -543,8 +543,8 @@ public class P0 extends TestspanTest {
 		if(reason == ""){
 			reason = reasons[numOfMaxRetries-1];
 		}
-		if(failedTwice){
-			report.report("Retried 2 times - Failure reason: "+reason, Reporter.FAIL);
+		if(failedNumOfMaxRetries){
+			report.report("Tried "+numOfMaxRetries+" times - Failure reason: "+reason, Reporter.FAIL);
 		}
 	}
 	
@@ -761,7 +761,7 @@ public class P0 extends TestspanTest {
 
 	private void setReason(int numTry){
 		if(numTry==numOfMaxRetries-1 && reasons[numTry]==""){
-			reasons[numTry] = "Pass on second try";
+			reasons[numTry] = "Pass on try #" +(numTry+1);
 		}
 		reason = reasons[numTry];
 	}

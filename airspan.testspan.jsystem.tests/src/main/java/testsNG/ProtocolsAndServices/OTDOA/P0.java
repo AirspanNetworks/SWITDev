@@ -256,8 +256,10 @@ public class P0 extends OtdoaBase {
 
 		trig = "0"; // -> start in the trigger CLI Command
 		resetCounter("OtdoaRrcConnectionReconfigStart");
-		String cliAnswer = dut.lteCli(otdoaCommand());
-		GeneralUtils.printToConsole(otdoaCommand() + " command Answer: \n" + cliAnswer);
+		String command = otdoaCommand();
+		report.report("Sending command: "+command);
+		String cliAnswer = dut.lteCli(command);
+		GeneralUtils.printToConsole(command + " command Answer: \n" + cliAnswer);
 		checkCounter("OtdoaRrcConnectionReconfigStart", 1);
 		peripheralsConfig.changeEnbState(dut2, EnbStates.IN_SERVICE);
 	}
@@ -302,8 +304,10 @@ public class P0 extends OtdoaBase {
 
 		trig = "1"; // -> start in the trigger CLI Command
 		resetCounter("OtdoaRrcConnectionReconfigStop");
-		String cliAnswer = dut.lteCli(otdoaCommand());
-		GeneralUtils.printToConsole(otdoaCommand() + " command Answer: \n" + cliAnswer);
+		String command = otdoaCommand();
+		report.report("Sending command: "+command);
+		String cliAnswer = dut.lteCli(command);
+		GeneralUtils.printToConsole(command + " command Answer: \n" + cliAnswer);
 		checkCounter("OtdoaRrcConnectionReconfigStop", 1);
 		peripheralsConfig.changeEnbState(dut2, EnbStates.IN_SERVICE);
 	}

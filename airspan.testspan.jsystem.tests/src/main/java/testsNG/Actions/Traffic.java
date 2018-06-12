@@ -1002,12 +1002,12 @@ public class Traffic {
 	public Boolean checkForHalt(long TEST_STREAM_HALT_PARAM, ArrayList<StreamParams> streams) throws IOException {
 		// sum every Streams from fsResults and Compare them to Calculator
 		// check if the rx equals to the calculator
-		for (StreamParams stream : streams) {
-			if (stream.getRxRate() < TEST_STREAM_HALT_PARAM) {
-				report.report("Stream Halt on : "+stream.getName());
-				return true;
-			}
-		}
+//		for (StreamParams stream : streams) {
+//			if (stream.getRxRate() < TEST_STREAM_HALT_PARAM) {
+//				report.report("Stream Halt on : "+stream.getName());
+//				return true;
+//			}
+//		}
 		return false;
 	}
 

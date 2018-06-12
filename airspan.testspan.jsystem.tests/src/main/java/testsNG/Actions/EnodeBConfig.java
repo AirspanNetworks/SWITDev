@@ -9,6 +9,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.python.modules.thread;
+
 import EnodeB.EnodeB;
 import EnodeB.Ninja;
 import Netspan.EnbProfiles;
@@ -1771,6 +1773,10 @@ public class EnodeBConfig {
 					report.report("Disable Dynamic CFI Successfully");
 					report.report("Rebooting Node after Disabling Dynamic CFI");
 					dut.reboot();
+					//Heng - dont worry about the wait this is a safe switch to wait for reboot 
+					//the wair for allrunnig itself will take 5 minutes so this wait will not affect runtime
+					//but will help up to make the code simplier and not wait for reboot event at this point
+					GeneralUtils.unSafeSleep(2*60*1000);
 					dut.waitForAllRunning(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);
 				}else{
 					report.report("Could not Disable Dynamic CFI",Reporter.WARNING);

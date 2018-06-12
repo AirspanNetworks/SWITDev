@@ -230,7 +230,7 @@ public class TestspanTest extends SystemTestCase4 {
 				System.out.print("Set debug FTP server.");
 
 				String oid = MibReader.getInstance().resolveByName("asLteStkDebugFtpServerCfgFtpServerIp");
-				eNodeB.lteCli("db set debugFtpServer [1] ftpAddress.type="+debugFtpServer.addressType+" [1]");
+				eNodeB.lteCli("db set debugFtpServer ftpAddress.type="+debugFtpServer.addressType+" [1]");
 				if (debugFtpServer.addressType.equals("1")) 					
 					eNodeB.snmpSet(oid, debugFtpServer.getDebugFtpServerIP());			
 				else{					
@@ -239,7 +239,7 @@ public class TestspanTest extends SystemTestCase4 {
 				
 				oid = MibReader.getInstance().resolveByName("asLteStkDebugFtpServerCfgFtpAddress");
 
-				eNodeB.lteCli("db set debugFtpServer [1] ftpAddress.address="+debugFtpServer.getDebugFtpServerIP()+" [1]");
+				eNodeB.lteCli("db set debugFtpServer ftpAddress.address="+debugFtpServer.getDebugFtpServerIP()+" [1]");
 				//byte[] ipAddr = InetAddressesHelper.ipStringToBytes(debugFtpServer.getDebugFtpServerIP());
 				//eNodeB.snmpSet(oid, ipAddr);
 

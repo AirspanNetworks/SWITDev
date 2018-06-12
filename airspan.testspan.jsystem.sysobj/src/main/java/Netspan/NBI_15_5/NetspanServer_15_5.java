@@ -2377,39 +2377,18 @@ public class NetspanServer_15_5 extends NetspanServer_15_2 implements Netspan_15
 	}
 	
 	@Override
-	public boolean forcedResetNode(String nodeName, RebootType rebootType) {
+	public boolean resetNode(String nodeName, RebootType rebootType) {
 		List<String> nodeList = new ArrayList<String>();
 		nodeList.add(nodeName);
 		boolean rebooted = false;
 		Netspan.NBI_15_5.Inventory.NodeActionResult result = null;
 		if(rebootType == RebootType.WARM_REBOOT){
-			result = soapHelper_15_5.getInventorySoap().nodeResetForced(nodeList, null, true, credentialsInventory);
+			result = soapHelper_15_5.getInventorySoap().nodeReset(nodeList, null, true, credentialsInventory);
 		}else if(rebootType == RebootType.COLD_REBOOT){
 			result = soapHelper_15_5.getInventorySoap().nodeResetForcedCold(nodeList, null, credentialsInventory);
 		}else{
-			rebooted = super.forcedResetNode(nodeName, rebootType);
+			rebooted = super.resetNode(nodeName, rebootType);
 		}
-		
-		if(result != null){
-			if (result.getErrorCode() != Netspan.NBI_15_5.Inventory.ErrorCodes.OK) {
-				report.report("Failed to Reset Node via Netspan  : " + result.getErrorString(), Reporter.WARNING);
-				rebooted = false;
-			}else{
-				rebooted = true;
-			}
-		}
-		
-		return rebooted;
-	}
-	
-	@Override
-	public boolean resetNode(String nodeName) {
-		List<String> nodeList = new ArrayList<String>();
-		nodeList.add(nodeName);
-		boolean rebooted = false;
-		Netspan.NBI_15_5.Inventory.NodeActionResult result = null;
-		result = soapHelper_15_5.getInventorySoap().nodeReset(nodeList, null, false, credentialsInventory);
-		
 		if(result != null){
 			if (result.getErrorCode() != Netspan.NBI_15_5.Inventory.ErrorCodes.OK) {
 				report.report("Failed to Reset Node via Netspan  : " + result.getErrorString(), Reporter.WARNING);

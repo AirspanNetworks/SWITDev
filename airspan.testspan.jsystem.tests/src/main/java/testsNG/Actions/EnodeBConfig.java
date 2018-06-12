@@ -9,6 +9,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.python.modules.thread;
+
 import EnodeB.EnodeB;
 import EnodeB.Ninja;
 import Netspan.EnbProfiles;
@@ -1771,6 +1773,10 @@ public class EnodeBConfig {
 					report.report("Disable Dynamic CFI Successfully");
 					report.report("Rebooting Node after Disabling Dynamic CFI");
 					dut.reboot();
+					//Heng - dont worry about the wait this is a safe switch to wait for reboot 
+					//the wair for allrunnig itself will take 5 minutes so this wait will not affect runtime
+					//but will help up to make the code simplier and not wait for reboot event at this point
+					GeneralUtils.unSafeSleep(2*60*1000);
 					dut.waitForAllRunning(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);
 				}else{
 					report.report("Could not Disable Dynamic CFI",Reporter.WARNING);
@@ -1935,21 +1941,22 @@ public class EnodeBConfig {
 	 * false: granularity period is NOT the input wanted.
 	 */
 	public boolean setGranularityPeriod(EnodeB enodeB, int value){
+		boolean actionSet = true;
 		GeneralUtils.startLevel("Setting granularity period to "+value+" minutes for enodeb "+enodeB.getNetspanName());
 		if(enodeB.getGranularityPeriod()!=value){
 			if(enodeB.setGranularityPeriod(value)){
 				report.report("Succeeded to set granularity period");
-				GeneralUtils.stopLevel();
-				return true;
+				actionSet = true;
 			}else{
 				report.report("Failed to set granularity period");
-				return false;
+				actionSet = false;
 			}
 		}else{
 			report.report("Granularity period was already "+value+" minutes. No need to change");
+			actionSet = true;
 		}
 		GeneralUtils.stopLevel();
-		return true;
+		return actionSet;
 	}
 	
 	public void waitGranularityPeriodTime(EnodeB enb){
@@ -2033,7 +2040,7 @@ public class EnodeBConfig {
 		node.setExpectBooting(expectingBoot);
 		
 		try {
-			rebooted = NetspanServer.getInstance().resetNode(node.getNetspanName());
+			rebooted = NetspanServer.getInstance().resetNode(node.getNetspanName(),rebootType);
 		} catch (Exception e) {
 			report.report("Failed to reset Node Via Netspan", Reporter.WARNING);
 			e.printStackTrace();

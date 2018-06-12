@@ -89,13 +89,19 @@ public class PeripheralsConfig {
 
 	public boolean setAPN(ArrayList<UE> ueList, String apnName){
 		boolean action = true;
+		boolean actionToReturn = true;
 		for (UE ue : ueList) {
+			action = true;
 			action &= ue.setAPN(apnName);
+			if(!action){
+				report.report("Failed to set apn to UE "+ue.getName(),Reporter.WARNING);
+			}
 			action &= ue.stop();
 			GeneralUtils.unSafeSleep(5000);
 			action &= ue.start();
+			actionToReturn &= action;
 		}
-		return action;
+		return actionToReturn;
 	}
 
 	/**

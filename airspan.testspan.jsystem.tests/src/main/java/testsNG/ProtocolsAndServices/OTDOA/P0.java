@@ -512,14 +512,15 @@ public class P0 extends OtdoaBase {
 		}
 	}
 
-	// NOT TESTED YET!
+	@Test
 	@TestProperties(name = "test18 - NMS Radio Configuration 1 TDD Mode FC 2,Negative", returnParam = {
 			"IsTestWasSuccessful" }, paramsExclude = { "IsTestWasSuccessful" })
 	public void test18_NMS_TDD_config2() {
 		if (!validateTestMode(dut, "TDD")) {
 			return;
 		}
-
+		reportConfiguration(true, 1000, true, "3,9", PRSBandWidthEnum.FIFTEEN,
+				PRSPeriodiclyEnum.SIX_HUNDRED_FORTY, 400, 3000, PRSMutingPeriodiclyEnum.FOUR, "1100", false, 2, null);
 		// ECID,timer,otdoa,subframes,bandWidth ,prs Periodicity ,offSet, power,Muting
 		// Periodicity ,pattern,isFDD,FrameConfig
 		if (!setRadioWithNetspan(dut, true, 1000, true, "3,9", PRSBandWidthEnum.FIFTEEN,
@@ -531,7 +532,7 @@ public class P0 extends OtdoaBase {
 
 	}
 
-	// NOT TESTED YET!
+	@Test
 	@TestProperties(name = "test19 - NMS Radio Configuration 2 TDD Mode CellBandWitdh 5,Negative", returnParam = {
 			"IsTestWasSuccessful" }, paramsExclude = { "IsTestWasSuccessful" })
 	public void test19_NMS_TDD_config2() {
@@ -539,9 +540,11 @@ public class P0 extends OtdoaBase {
 			return;
 		}
 
+		reportConfiguration(true, 1000, true, "8,9", PRSBandWidthEnum.FIFTY,
+				PRSPeriodiclyEnum.SIX_HUNDRED_FORTY, 400, 3000, PRSMutingPeriodiclyEnum.FOUR, "1100", false, 2, "5");
 		// ECID,timer,otdoa,subframes,bandWidth ,prs Periodicity ,offSet, power,Muting
 		// Periodicity ,pattern,isFDD,FrameConfig
-		if (!setRadioWithNetspan(dut, true, 1000, true, "8,9", PRSBandWidthEnum.FIFTEEN,
+		if (!setRadioWithNetspan(dut, true, 1000, true, "8,9", PRSBandWidthEnum.FIFTY,
 				PRSPeriodiclyEnum.SIX_HUNDRED_FORTY, 400, 3000, PRSMutingPeriodiclyEnum.FOUR, "1100", false, 2, "5")) {
 			report.report("netspan Could not Clone Profile as expected!");
 		} else {
@@ -549,7 +552,7 @@ public class P0 extends OtdoaBase {
 		}
 	}
 
-	// NOT TESTED YET!
+	@Test
 	@TestProperties(name = "test20 - NMS Radio Configuration 3 TDD Mode FC 2,Negative", returnParam = {
 			"IsTestWasSuccessful" }, paramsExclude = { "IsTestWasSuccessful" })
 	public void test20_NMS_TDD_config3() {
@@ -557,6 +560,9 @@ public class P0 extends OtdoaBase {
 			return;
 		}
 
+		reportConfiguration(true, 1000, true, "8,9", PRSBandWidthEnum.HUNDRED,
+				PRSPeriodiclyEnum.SIX_HUNDRED_FORTY, 400, 3000, PRSMutingPeriodiclyEnum.FOUR, "11100", false, 2,
+				null);
 		// ECID,timer,otdoa,subframes,bandWidth ,prs Periodicity ,offSet, power,Muting
 		// Periodicity ,pattern,isFDD,FrameConfig
 		if (!setRadioWithNetspan(dut, true, 1000, true, "8,9", PRSBandWidthEnum.HUNDRED,

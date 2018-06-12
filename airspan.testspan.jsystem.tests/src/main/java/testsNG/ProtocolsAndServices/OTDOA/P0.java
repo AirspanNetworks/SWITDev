@@ -7,6 +7,7 @@ import Netspan.Profiles.RadioParameters.PRSBandWidthEnum;
 import Netspan.Profiles.RadioParameters.PRSMutingPeriodiclyEnum;
 import Netspan.Profiles.RadioParameters.PRSPeriodiclyEnum;
 import Utils.GeneralUtils;
+import Utils.SetupUtils;
 import Utils.GeneralUtils.CellIndex;
 import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
@@ -245,6 +246,8 @@ public class P0 extends OtdoaBase {
 		verifyOTDOASnmp(CellIndex.FORTY, firstCellOtdoa, CellIndex.FORTY_ONE, secondCellOtdoa);
 
 		startTraffic();
+		peripheralsConfig.stopUEs(SetupUtils.getInstance().getAllUEs());
+		peripheralsConfig.startUEs(SetupUtils.getInstance().getAllUEs());
 		getSingleUERNTI();
 		if (rnti.equals("defaultValue")) {
 			report.report("could not get rnti - fail test", Reporter.FAIL);
@@ -289,6 +292,8 @@ public class P0 extends OtdoaBase {
 		verifyOTDOASnmp(CellIndex.FORTY, firstCellOtdoa, CellIndex.FORTY_ONE, secondCellOtdoa);
 
 		startTraffic();
+		peripheralsConfig.stopUEs(SetupUtils.getInstance().getAllUEs());
+		peripheralsConfig.startUEs(SetupUtils.getInstance().getAllUEs());
 		getSingleUERNTI();
 		if (rnti.equals("defaultValue")) {
 			report.report("could not get rnti from snmp - fail test", Reporter.FAIL);

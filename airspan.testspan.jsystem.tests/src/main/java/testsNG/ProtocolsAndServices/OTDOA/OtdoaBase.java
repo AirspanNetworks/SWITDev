@@ -542,13 +542,14 @@ public class OtdoaBase extends TestspanTest{
 	}
 	
 	protected void startTraffic(){
-		report.report("Start traffic");
+		GeneralUtils.startLevel("Start traffic");
 		try {
 			traffic.startTraffic();
 		} catch (Exception e) {
 			e.printStackTrace();
 			report.report("Failed to start traffic",Reporter.WARNING);
 		}
+		GeneralUtils.stopLevel();
 	}
 	
  	protected boolean resetCounter(String counterName){

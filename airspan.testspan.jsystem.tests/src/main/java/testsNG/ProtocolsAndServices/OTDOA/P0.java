@@ -220,13 +220,13 @@ public class P0 extends OtdoaBase {
 	@TestProperties(name = "ue meas Cli Command and Verify Counter - OtdoaRrcConnectionReconfigStart", returnParam = {
 			"IsTestWasSuccessful" }, paramsExclude = { "IsTestWasSuccessful" })
 	public void ue_meas_Cli_Command_and_Verify_Counter_OtdoaRrcConnectionReconfigStart() {
-		boolean ipgEnable = true;
+		//boolean ipgEnable = true;
 		Boolean firstCellOtdoa = true;
 		Boolean secondCellOtdoa = null;
 		peripheralsConfig.changeEnbState(dut2, EnbStates.OUT_OF_SERVICE);
 		// All Types of EnodeB -> change network profile to 2 MMEs.
-		preTestIPGTests(ipgEnable);
-		setNetworkWithNetspan(dut);
+		//preTestIPGTests(ipgEnable);
+		//setNetworkWithNetspan(dut);
 
 		// Disable both Cells OTDOA feature.
 		if (enodeBConfig.getNumberOfActiveCells(dut) > 1) {
@@ -241,7 +241,7 @@ public class P0 extends OtdoaBase {
 				PRSPeriodiclyEnum.THREE_HUNDRED_TWENTY, 0, 9000, PRSMutingPeriodiclyEnum.SIXTEE, "1111111111111111",
 				null, null, null);
 
-		rebootNode(dut);
+		//rebootNode(dut);
 		verifyOTDOASnmp(CellIndex.FORTY, firstCellOtdoa, CellIndex.FORTY_ONE, secondCellOtdoa);
 
 		startTraffic();
@@ -263,14 +263,14 @@ public class P0 extends OtdoaBase {
 	@TestProperties(name = "ue meas Cli Command and Verify Counter - OtdoaRrcConnectionReconfigStop", returnParam = {
 			"IsTestWasSuccessful" }, paramsExclude = { "IsTestWasSuccessful" })
 	public void ue_meas_Cli_Command_and_Verify_Counter_OtdoaRrcConnectionReconfigStop() {
-		boolean ipgEnable = true;
+		//boolean ipgEnable = true;
 		Boolean firstCellOtdoa = true;
 		Boolean secondCellOtdoa = null;
 		peripheralsConfig.changeEnbState(dut2, EnbStates.OUT_OF_SERVICE);
 
 		// All Types of EnodeB -> change network profile to 2 MMEs.
-		preTestIPGTests(ipgEnable);
-		setNetworkWithNetspan(dut);
+		//preTestIPGTests(ipgEnable);
+		//setNetworkWithNetspan(dut);
 
 		// Disable both Cells OTDOA feature.
 		if (enodeBConfig.getNumberOfActiveCells(dut) > 1) {
@@ -285,7 +285,7 @@ public class P0 extends OtdoaBase {
 				PRSPeriodiclyEnum.THREE_HUNDRED_TWENTY, 0, 9000, PRSMutingPeriodiclyEnum.SIXTEE, "1111111111111111",
 				null, null, null);
 
-		rebootNode(dut);
+		//rebootNode(dut);
 		verifyOTDOASnmp(CellIndex.FORTY, firstCellOtdoa, CellIndex.FORTY_ONE, secondCellOtdoa);
 
 		startTraffic();

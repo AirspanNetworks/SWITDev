@@ -13,7 +13,6 @@ import UE.UE;
 import Utils.GeneralUtils;
 import Utils.SetupUtils;
 import Utils.SysObjUtils;
-import Utils.Snmp.MibReader;
 import jsystem.framework.ParameterProperties;
 import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;

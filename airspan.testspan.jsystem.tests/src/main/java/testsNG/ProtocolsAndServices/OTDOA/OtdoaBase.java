@@ -601,7 +601,7 @@ public class OtdoaBase extends TestspanTest{
 		if(waitingPeriodTime<0){
 			waitingPeriodTime = 0;
 		}
-		GeneralUtils.printToConsole("Waiting "+waitingPeriodTime+" minutes");
+		report.report("Waiting "+waitingPeriodTime+" minutes for counter to update");
 		GeneralUtils.unSafeSleep(waitingPeriodTime*60*1000);
 		boolean result = false;
 		if(validateCounterEquals(counterName, value)){

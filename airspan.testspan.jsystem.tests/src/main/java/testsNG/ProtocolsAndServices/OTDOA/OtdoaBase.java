@@ -701,7 +701,8 @@ public class OtdoaBase extends TestspanTest{
 	@Override
 	public void end(){
 		GeneralUtils.startLevel("End Test Configurations");
-		
+		report.report("Stop traffic");
+		traffic.stopTraffic();
 		if(networkChanged){
 			GeneralUtils.startLevel("Revert to default Network profile to profile name : "+dut.getDefaultNetspanProfiles().getNetwork());
 			enodeBConfig.revertToDefaultProfile(dut, EnbProfiles.Network_Profile);

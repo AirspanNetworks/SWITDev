@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
+import DMTool.DMtool;
 import EPC.EPC;
 import EnodeB.EnodeB;
 import Netspan.API.Enums.CellBarringPolicies;
@@ -29,6 +30,7 @@ public class P0 extends TestspanTest {
 	EPC epc;
 	ArrayList<UE> UEList = new ArrayList<>();
 	private Traffic traffic;
+	 private DMtool dm;
 	
 	@Override
 	public void init() throws Exception {
@@ -41,6 +43,10 @@ public class P0 extends TestspanTest {
 		epc = EPC.getInstance();
 		UEList = SetupUtils.getInstance().getAllUEs();
 		report.stopLevel();
+		dm = new DMtool();
+		dm.setUeIP("192.168.58.120");
+		dm.setPORT(4280);
+		dm.init();
 	}
 	
 	@Test

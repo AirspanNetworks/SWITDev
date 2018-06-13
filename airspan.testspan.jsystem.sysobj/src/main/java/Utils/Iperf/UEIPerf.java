@@ -154,7 +154,6 @@ public class UEIPerf implements Runnable {
 		/**It is critical to start to listen before transmitting traffic for TCP Packets!!!
 		   without it - it won't work! **/
 		startULListener();
-		GeneralUtils.unSafeSleep(2000);
 		runTrafficULClient();
 	}
 
@@ -187,7 +186,6 @@ public class UEIPerf implements Runnable {
 		/**It is critical to start to listen before transmitting traffic for TCP Packets!!!
 		   without it - it won't work! **/
 		startDLListener();
-		GeneralUtils.unSafeSleep(2000);
 		runTrafficDLClient();
 	}
 

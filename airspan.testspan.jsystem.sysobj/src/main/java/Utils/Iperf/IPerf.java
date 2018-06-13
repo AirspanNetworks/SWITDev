@@ -116,11 +116,11 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		}	
 		
 		GeneralUtils.unSafeSleep(10000);
-		iperfMachineDL.sendCommand("./serverSide");
-		iperfMachineUL.sendCommand("./serverSide");
+		iperfMachineDL.sendCommand("./"+IPerfMachine.serverSideCommandsFile);
+		iperfMachineUL.sendCommand("./"+IPerfMachine.serverSideCommandsFile);
 		GeneralUtils.unSafeSleep(3000);
-		iperfMachineDL.sendCommand("./clientSide");
-		iperfMachineUL.sendCommand("./clientSide");
+		iperfMachineDL.sendCommand("./"+IPerfMachine.clientSideCommandsFile);
+		iperfMachineUL.sendCommand("./"+IPerfMachine.clientSideCommandsFile);
 		GeneralUtils.unSafeSleep(30000);
 	}
 	
@@ -523,6 +523,16 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		return resultFiles;
 	}
 
+	@Override
+	public ArrayList<File> getCommandFiles() {
+		ArrayList<File> resultFiles = new ArrayList<File>();
+		resultFiles.add(iperfMachineDL.getServerFile());
+		resultFiles.add(iperfMachineDL.getClientFile());
+		resultFiles.add(iperfMachineUL.getServerFile());
+		resultFiles.add(iperfMachineUL.getClientFile());
+		return resultFiles;
+	}
+	
 	@Override
 	public ArrayList<File> getTransmitOutputFiles() {
 		ArrayList<File> resultFiles = new ArrayList<File>();

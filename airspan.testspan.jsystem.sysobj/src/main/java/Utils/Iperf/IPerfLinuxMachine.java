@@ -64,7 +64,7 @@ public class IPerfLinuxMachine extends IPerfMachine{
 
 	@Override
 	public boolean startIPerfTraffic(String clientCommand, String clientOutputFileName){
-		String linuxClientCommand = "echo 'nohup iperf " + clientCommand + " &> "+ preAddressTpFile + clientOutputFileName +" &' >> clientSide";
+		String linuxClientCommand = "echo 'nohup iperf " + clientCommand + " &> "+ preAddressTpFile + clientOutputFileName +" &' >> " + clientSideCommandsFile;
 		return sendCommand(linuxClientCommand).getElement0();
 	}
 
@@ -72,9 +72,9 @@ public class IPerfLinuxMachine extends IPerfMachine{
 	public boolean startIPerfListener(Integer numberOfParallelIPerfStreams, String serverCommand, String tpFileName){
 		String linuxServerCommand = "";
 		if(numberOfParallelIPerfStreams != null && numberOfParallelIPerfStreams > 1){
-			linuxServerCommand = "echo 'nohup iperf " + serverCommand + " | grep SUM --line-buffered &> " + preAddressTpFile + tpFileName + " &' >> serverSide";
+			linuxServerCommand = "echo 'nohup iperf " + serverCommand + " | grep SUM --line-buffered &> " + preAddressTpFile + tpFileName + " &' >> " + serverSideCommandsFile;
 		}else{
-			linuxServerCommand = "echo 'nohup iperf " + serverCommand + " &> " + preAddressTpFile + tpFileName + " &' >> serverSide";
+			linuxServerCommand = "echo 'nohup iperf " + serverCommand + " &> " + preAddressTpFile + tpFileName + " &' >> " + serverSideCommandsFile;
 		}
 		return sendCommand(linuxServerCommand).getElement0();
 	}

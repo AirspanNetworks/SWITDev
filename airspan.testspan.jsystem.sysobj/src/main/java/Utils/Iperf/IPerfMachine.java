@@ -12,6 +12,9 @@ import jsystem.framework.system.SystemObjectImpl;
 public abstract class IPerfMachine extends SystemObjectImpl{
 	private static int minNumberOfSamples = 1;
 	private static int numberOfLinesForSample = minNumberOfSamples * 3;
+	public static String clientSideCommandsFile = "";
+	public static String serverSideCommandsFile = "";
+	
 	protected String preAddressTpFile;
 	protected String hostname;
 	protected String username;
@@ -151,5 +154,15 @@ public abstract class IPerfMachine extends SystemObjectImpl{
 		GeneralUtils.printToConsole("lastIntervalUsedForCurrentSample="+lastEndOfIntervalUsedForCurrentSample+" From " + tpFileName);
 		Pair<Double, ArrayList<Long>> sample = new Pair<Double, ArrayList<Long>>(lastEndOfIntervalUsedForCurrentSample, rxCounterList);
 		return sample;
+	}
+
+	public File getServerFile() {
+		File resultFile = getFile(serverSideCommandsFile);
+		return resultFile;
+	}
+
+	public File getClientFile() {
+		File resultFile = getFile(clientSideCommandsFile);
+		return resultFile;
 	}
 }

@@ -9,6 +9,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import UE.AmarisoftUE;
+import UE.UE;
 import UeSimulator.Amarisoft.JsonObjects.Actions.UEAction;
 import UeSimulator.Amarisoft.JsonObjects.Actions.UEAction.Actions;
 import UeSimulator.Amarisoft.JsonObjects.ConfigFile.Cell;
@@ -97,21 +99,18 @@ public class Program {
 		});
 		String imsi = "20001000100";
 		int imsiEnd = 8300;
-		//clientEndPoint.AddUe(imsi + (imsiEnd ),13,6,2);
-//		for (int i = 2; i <= 100; i++) {			
-//			AddUe(imsi + (imsiEnd + i),13,6,i);
-//			sleep(100);
-//		}
-//		imsiEnd = 9000;
-//		for (int i = 2; i <= 157; i++) {			
-//			AddUe(imsi + (imsiEnd + i),13,6,99 + i);
-//			sleep(100);
-//		}
-		for (int i = 1; i <= 64; i++) {				
-			clientEndPoint.uePowerOff(i);
+		UE ue = new AmarisoftUE();
+		for (int i = 2; i <= 21; i++) {			
+			ue.setImsi(imsi + (imsiEnd +i ));
+			clientEndPoint.addUe(ue, 13,6,i,0);
 			sleep(100);
-		}	
-		sleep(10000);
+		}
+		//imsiEnd = 9000;
+		for (int i = 22; i <= 41; i++) {		
+			ue.setImsi(imsi + (imsiEnd + i));
+			clientEndPoint.addUe(ue, 13,6,i,1);
+			sleep(100);
+		}
 		for (int i = 1; i <= 64; i++) {				
 			clientEndPoint.uePowerOn(i);
 			sleep(100);

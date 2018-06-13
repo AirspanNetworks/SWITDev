@@ -106,9 +106,10 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		Connect();
 		ExecutorService exe =  Executors.newFixedThreadPool(allUEsIPerfList.size());
 		for(UEIPerf ueIPerf : allUEsIPerfList){
-			exe.execute(ueIPerf);
+			ueIPerf.run();
+			//exe.execute(ueIPerf);
 		}
-		GeneralUtils.unSafeSleep(30000);
+		GeneralUtils.unSafeSleep(60000);
 	}
 	
 	public void startTrafficDL() throws Exception{

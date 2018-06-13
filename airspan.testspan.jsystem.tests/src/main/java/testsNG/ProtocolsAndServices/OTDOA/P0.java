@@ -225,9 +225,6 @@ public class P0 extends OtdoaBase {
 		Boolean firstCellOtdoa = true;
 		Boolean secondCellOtdoa = null;
 		peripheralsConfig.changeEnbState(dut2, EnbStates.OUT_OF_SERVICE);
-		// All Types of EnodeB -> change network profile to 2 MMEs.
-		//preTestIPGTests(ipgEnable);
-		//setNetworkWithNetspan(dut);
 
 		// Disable both Cells OTDOA feature.
 		if (enodeBConfig.getNumberOfActiveCells(dut) > 1) {
@@ -272,10 +269,6 @@ public class P0 extends OtdoaBase {
 		Boolean firstCellOtdoa = true;
 		Boolean secondCellOtdoa = null;
 		peripheralsConfig.changeEnbState(dut2, EnbStates.OUT_OF_SERVICE);
-
-		// All Types of EnodeB -> change network profile to 2 MMEs.
-		//preTestIPGTests(ipgEnable);
-		//setNetworkWithNetspan(dut);
 
 		// Disable both Cells OTDOA feature.
 		if (enodeBConfig.getNumberOfActiveCells(dut) > 1) {

@@ -105,11 +105,24 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 	public void startTraffic() throws Exception{
 		Connect();
 		ExecutorService exe =  Executors.newFixedThreadPool(allUEsIPerfList.size());
+		
+		iperfMachineDL.sendCommand("echo '' > serverSide ; chmod +x serverSide");
+		iperfMachineDL.sendCommand("echo '' > clientSide ; chmod +x clientSide");
+		iperfMachineUL.sendCommand("echo '' > serverSide ; chmod +x serverSide");
+		iperfMachineUL.sendCommand("echo '' > clientSide ; chmod +x clientSide");
+		
 		for(UEIPerf ueIPerf : allUEsIPerfList){
 			ueIPerf.run();
 			//exe.execute(ueIPerf);
-		}
-		GeneralUtils.unSafeSleep(60000);
+		}	
+		
+		GeneralUtils.unSafeSleep(3000);
+		iperfMachineDL.sendCommand("./serverSide");
+		iperfMachineUL.sendCommand("./serverSide");
+		GeneralUtils.unSafeSleep(3000);
+		iperfMachineDL.sendCommand("./clientSide");
+		iperfMachineUL.sendCommand("./clientSide");
+		GeneralUtils.unSafeSleep(30000);
 	}
 	
 	public void startTrafficDL() throws Exception{

@@ -775,6 +775,8 @@ public class P0 extends TPTBase {
 			report.report("no suitable UES - Failing and Ending Test",Reporter.FAIL);
 			return;
 		}
+		peripheralsConfig.stopUEs(ueList);
+		
 		ueNameListStc = convertUeToNamesList(ueList);
 		GeneralUtils.printToConsole(ueNameListStc.size());
 		this.protocol = protocol;

@@ -606,10 +606,10 @@ public class OtdoaBase extends TestspanTest{
 		GeneralUtils.unSafeSleep(waitingPeriodTime*60*1000);
 		boolean result = false;
 		if(validateCounterEquals(counterName, value)){
-			report.report("Counter : "+counterName+", equals "+value+" as expected");
+			report.report("Counter: "+counterName+", equals "+value+" as expected");
 			result = true;
 		}else{
-			report.report("Counter : "+counterName+" have a different expected value",Reporter.FAIL);
+			report.report("Counter: "+counterName+" has a different expected value",Reporter.FAIL);
 		}
 		return result;
 	}

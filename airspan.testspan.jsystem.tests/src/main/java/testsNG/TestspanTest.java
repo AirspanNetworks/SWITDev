@@ -59,6 +59,8 @@ public class TestspanTest extends SystemTestCase4 {
 	private String afterTest = "AfterTest";
 	private Boolean gotDBFiles = false;
 	private ArrayList<CommandMemoryCPU> cpuCommands = new ArrayList<CommandMemoryCPU>();
+	private ArrayList<CommandWatchInService> inserviceCommands = new ArrayList<CommandWatchInService>();
+
 	private HashMap<String, ArrayList<String>> filesFromDBPerNode = new HashMap<String, ArrayList<String>>();
 	protected String myVersion = "";
 	/** The Constant SYSOBJ_STRING_DELIMITER. */
@@ -169,6 +171,7 @@ public class TestspanTest extends SystemTestCase4 {
 			CommandWatchInService commandInService = new CommandWatchInService(eNodeB);
 			commandInService.name = eNodeB.getName() + "_commandInService";
 			wd.addCommand(commandInService);
+			inserviceCommands.add(commandInService);
 			// command CPU and Memory
 			CommandMemoryCPU cpuCommand = new CommandMemoryCPU(eNodeB);
 			cpuCommands.add(cpuCommand);
@@ -827,6 +830,18 @@ public class TestspanTest extends SystemTestCase4 {
 			GeneralUtils.stopLevel();
 		}
 		GeneralUtils.stopLevel();
+	}
+	
+	protected void changeCPUWDStatus(boolean enabled) {
+		for(CommandMemoryCPU cmd : cpuCommands) {
+			cmd.setEnabled(enabled);	
+		}
+	}
+	
+	protected void changeInServiceWDStatus(boolean enabled) {
+		for(CommandWatchInService cmd : inserviceCommands) {
+			cmd.setEnabled(enabled);	
+		}
 	}
 
 }

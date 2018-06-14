@@ -995,12 +995,15 @@ public abstract class EnodeB extends SystemObjectImpl {
 	}
 
 	public boolean isInService() {
-		return isInService(40);
+		boolean res = false;
+		res = this.XLP.getServiceState() == EnbStates.IN_SERVICE;
+		return res;
 	}
 
 	public boolean isInService(int cellIndex) {
 		boolean res = false;
-		res = this.XLP.getServiceState() == EnbStates.IN_SERVICE;
+		String ans = this.XLP.getCellServiceState(cellIndex);
+		res = (ans!=null && ans.equals("1"));
 		return res;
 	}
 

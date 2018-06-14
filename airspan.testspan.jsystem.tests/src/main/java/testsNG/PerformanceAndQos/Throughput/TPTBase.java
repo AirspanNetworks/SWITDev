@@ -823,7 +823,8 @@ public class TPTBase extends TestspanTest {
 			resetDueToMultiHaltStreams = true;
 			exceptionThrown = true;
 		} finally {
-			GeneralUtils.stopLevel();
+			if (this.protocol != Protocol.UDP) 
+				GeneralUtils.stopLevel();
 		}
 		// check if more then 30% of streams are halted
 		addSamplesToListOfStreamList(sampleArrayList);

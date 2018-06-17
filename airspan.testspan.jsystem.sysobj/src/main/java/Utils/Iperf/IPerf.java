@@ -107,22 +107,26 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 	public void startTraffic() throws Exception {
 		Connect();
 		ExecutorService exe = Executors.newFixedThreadPool(allUEsIPerfList.size());
-
-		iperfMachineDL.sendCommand("echo '' > UL" + serverSideCommandsFile + " ; chmod +x UL" + serverSideCommandsFile);
-		iperfMachineDL.sendCommand("echo '' > DL" + clientSideCommandsFile + " ; chmod +x DL" + clientSideCommandsFile);
-		iperfMachineUL.sendCommand("echo '' > DL" + serverSideCommandsFile + " ; chmod +x DL" + serverSideCommandsFile);
-		iperfMachineUL.sendCommand("echo '' > UL" + clientSideCommandsFile + " ; chmod +x UL" + clientSideCommandsFile);
+		String ulServerCommandsFile = iperfMachineDL.preAddressTpFile +" UL "+ serverSideCommandsFile;
+		String dlclientCommandsFile = iperfMachineDL.preAddressTpFile +" DL "+ clientSideCommandsFile;
+		String dlServerCommandsFile = iperfMachineUL.preAddressTpFile +" DL "+ serverSideCommandsFile;
+		String ulclientCommandsFile = iperfMachineUL.preAddressTpFile +" UL "+ clientSideCommandsFile;
+		
+		iperfMachineDL.sendCommand("echo '' > " + ulServerCommandsFile + " ; chmod +x " + ulServerCommandsFile);
+		iperfMachineDL.sendCommand("echo '' > " + dlclientCommandsFile + " ; chmod +x " + dlclientCommandsFile);
+		iperfMachineUL.sendCommand("echo '' > " + dlServerCommandsFile + " ; chmod +x " + dlServerCommandsFile);
+		iperfMachineUL.sendCommand("echo '' > " + ulclientCommandsFile + " ; chmod +x " + ulclientCommandsFile);
 
 		for (UEIPerf ueIPerf : allUEsIPerfList) {
 			exe.execute(ueIPerf);
 		}
 
 		GeneralUtils.unSafeSleep(10000);
-		iperfMachineDL.sendCommand("./UL" + serverSideCommandsFile);
-		iperfMachineUL.sendCommand("./DL" + serverSideCommandsFile);
+		iperfMachineDL.sendCommand("./" + ulServerCommandsFile);
+		iperfMachineUL.sendCommand("./" + dlServerCommandsFile);
 		GeneralUtils.unSafeSleep(3000);
-		iperfMachineDL.sendCommand("./DL" + clientSideCommandsFile);
-		iperfMachineUL.sendCommand("./UL" + clientSideCommandsFile);
+		iperfMachineDL.sendCommand("./" + dlclientCommandsFile);
+		iperfMachineUL.sendCommand("./" + ulclientCommandsFile);
 		GeneralUtils.unSafeSleep(30000);
 	}
 

@@ -191,6 +191,9 @@ public class Progression extends TestspanTest{
 	
 	private void testOutOfServiceInServiceExpectedBehavior(EnodeB eNodeB, CellIndex oosCellIndex, CellIndex isCellIndex) {
 		int cells = enodeBConfig.getNumberOfActiveCells(eNodeB);
+		synchronized (eNodeB.inServiceStateLock){
+			eNodeB.expecteInServiceState = false;
+		}
 		if(cells > 1 || oosCellIndex == CellIndex.FORTY){
 			report.report("Set Cell "+(oosCellIndex.value%40)+" to Out Of Service.");
 			eNodeB.setServiceState(oosCellIndex, 0);
@@ -210,6 +213,9 @@ public class Progression extends TestspanTest{
 		if(cells > 1 || oosCellIndex == CellIndex.FORTY){
 			report.report("Post Test: Set Cell "+(oosCellIndex.value%40)+" to In Service.");
 			eNodeB.setServiceState(oosCellIndex, 1);
+		}
+		synchronized (eNodeB.inServiceStateLock){
+			eNodeB.expecteInServiceState = true;
 		}
 	}
 	

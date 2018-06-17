@@ -118,7 +118,8 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		iperfMachineUL.sendCommand("echo '' > " + ulclientCommandsFile + " ; chmod +x " + ulclientCommandsFile);
 
 		for (UEIPerf ueIPerf : allUEsIPerfList) {
-			exe.execute(ueIPerf);
+			//exe.execute(ueIPerf);
+			ueIPerf.run();
 		}
 
 		GeneralUtils.unSafeSleep(10000);

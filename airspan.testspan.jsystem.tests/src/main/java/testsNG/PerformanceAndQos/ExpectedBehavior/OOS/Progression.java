@@ -34,6 +34,7 @@ public class Progression extends TestspanTest{
 	private EnodeB neighbor;
 	private EnodeBConfig enodeBConfig;
 	private ArrayList<Pair<UE, DMtool>> ueDmLists;
+	private PeripheralsConfig peripheralsConfig;
 
 	/********************************* INFRA *********************************/
 	
@@ -46,6 +47,7 @@ public class Progression extends TestspanTest{
 		}
 		super.init();
 		enodeBConfig = EnodeBConfig.getInstance();
+		peripheralsConfig = PeripheralsConfig.getInstance();
 		for(EnodeB enb : enbInSetup){
 			if(!enbInTest.contains(enb)){
 				enb.setServiceState(GeneralUtils.CellIndex.ENB, 0);
@@ -61,6 +63,7 @@ public class Progression extends TestspanTest{
 		}
 		GeneralUtils.unSafeSleep(5000);
 		GeneralUtils.startLevel("UEs Measurements Status.");
+		stopAndSatrtUEs();
 		for(Pair<UE, DMtool> p : ueDmLists){
 			p.getElement1().setUeIP(p.getElement0().getLanIpAddress());
 			p.getElement1().setPORT(p.getElement0().getDMToolPort());
@@ -296,7 +299,7 @@ public class Progression extends TestspanTest{
 			report.report("****CELL "+(oosCellIndex.value%40)+" SERVICE STATE = 1 ****", Reporter.FAIL);
 			reason = "SERVICE STATE = 1.";
 		}
-		
+		stopAndSatrtUEs();
 		if(areThereIsAnyUeConnected(eNodeB.getPci(oosCellIndex.value))){
 			report.report("One or more UEs are connected to Cell " + (oosCellIndex.value%40), Reporter.FAIL);
 			reason += "One or more UEs are connected.";
@@ -314,7 +317,7 @@ public class Progression extends TestspanTest{
 			report.report("****CELL "+(isCellIndex.value%40)+" SERVICE STATE = 0 ****", Reporter.FAIL);
 			reason = "SERVICE STATE = 0.";
 		}
-		
+		stopAndSatrtUEs();
 		if(areThereIsAnyUeConnected(eNodeB.getPci(isCellIndex.value))){
 			report.report("One or more UEs are connected to Cell " + (isCellIndex.value%40));
 		}else{
@@ -322,6 +325,12 @@ public class Progression extends TestspanTest{
 			reason += "No UEs connected.";
 		}
 		GeneralUtils.stopLevel();
+	}
+	
+	private void stopAndSatrtUEs(){
+		ArrayList<UE> ues = SetupUtils.getInstance().getallUEsPerEnodeb(dut);
+		peripheralsConfig.stopUEs(ues);
+		peripheralsConfig.startUEs(ues);
 	}
 	
 	private boolean areThereIsAnyUeConnected(int pci){

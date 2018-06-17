@@ -1088,6 +1088,7 @@ public class TPTBase extends TestspanTest {
 		StreamList TablePrinter = new StreamList();
 		ArrayList<String> headLines = new ArrayList<String>();
 		headLines.add("L1bitRate[Mbit/s]");
+		GeneralUtils.startLevel("Per Stream Tables");
 		for (ArrayList<StreamParams> streams : listOfStreamList) {
 			for (StreamParams stream : streams) {
 				ArrayList<String> valuesList = new ArrayList<String>();
@@ -1099,6 +1100,7 @@ public class TPTBase extends TestspanTest {
 		for (StreamParams stream : listOfStreamList.get(0)) {
 			report.reportHtml(stream.getName(), TablePrinter.printTablesHtmlForStream(stream.getName()), true);
 		}
+		GeneralUtils.stopLevel();
 	}
 
 	/**

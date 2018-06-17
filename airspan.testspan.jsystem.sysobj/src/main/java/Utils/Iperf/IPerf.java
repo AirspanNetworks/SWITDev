@@ -103,31 +103,31 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		}
 		updateConfigFile();
 	}
-	
-	public void startTraffic() throws Exception{
+
+	public void startTraffic() throws Exception {
 		Connect();
-		ExecutorService exe =  Executors.newFixedThreadPool(allUEsIPerfList.size());
-		
-		iperfMachineDL.sendCommand("echo '' > serverSide ; chmod +x serverSide");
-		iperfMachineDL.sendCommand("echo '' > clientSide ; chmod +x clientSide");
-		iperfMachineUL.sendCommand("echo '' > serverSide ; chmod +x serverSide");
-		iperfMachineUL.sendCommand("echo '' > clientSide ; chmod +x clientSide");
-		
-		for(UEIPerf ueIPerf : allUEsIPerfList){
+		ExecutorService exe = Executors.newFixedThreadPool(allUEsIPerfList.size());
+
+		iperfMachineDL.sendCommand("echo '' > DL" + serverSideCommandsFile + " ; chmod +x DL" + serverSideCommandsFile);
+		iperfMachineDL.sendCommand("echo '' > DL" + clientSideCommandsFile + " ; chmod +x DL" + clientSideCommandsFile);
+		iperfMachineUL.sendCommand("echo '' > UL" + serverSideCommandsFile + " ; chmod +x UL" + serverSideCommandsFile);
+		iperfMachineUL.sendCommand("echo '' > UL" + clientSideCommandsFile + " ; chmod +x UL" + clientSideCommandsFile);
+
+		for (UEIPerf ueIPerf : allUEsIPerfList) {
 			exe.execute(ueIPerf);
-		}	
-		
+		}
+
 		GeneralUtils.unSafeSleep(10000);
-		iperfMachineDL.sendCommand("./"+serverSideCommandsFile);
-		iperfMachineUL.sendCommand("./"+serverSideCommandsFile);
+		iperfMachineDL.sendCommand("./DL" + serverSideCommandsFile);
+		iperfMachineUL.sendCommand("./UL" + serverSideCommandsFile);
 		GeneralUtils.unSafeSleep(3000);
-		iperfMachineDL.sendCommand("./"+clientSideCommandsFile);
-		iperfMachineUL.sendCommand("./"+clientSideCommandsFile);
+		iperfMachineDL.sendCommand("./DL" + clientSideCommandsFile);
+		iperfMachineUL.sendCommand("./UL" + clientSideCommandsFile);
 		GeneralUtils.unSafeSleep(30000);
 	}
-	
-	public void startTrafficDL() throws Exception{
-		for(UEIPerf ueIPerf : allUEsIPerfList){
+
+	public void startTrafficDL() throws Exception {
+		for (UEIPerf ueIPerf : allUEsIPerfList) {
 			ueIPerf.runTrafficDL();
 		}
 	}

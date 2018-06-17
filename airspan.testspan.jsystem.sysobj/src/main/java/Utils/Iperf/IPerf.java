@@ -108,9 +108,9 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		Connect();
 		ExecutorService exe = Executors.newFixedThreadPool(allUEsIPerfList.size());
 
-		iperfMachineDL.sendCommand("echo '' > DL" + serverSideCommandsFile + " ; chmod +x DL" + serverSideCommandsFile);
+		iperfMachineDL.sendCommand("echo '' > UL" + serverSideCommandsFile + " ; chmod +x UL" + serverSideCommandsFile);
 		iperfMachineDL.sendCommand("echo '' > DL" + clientSideCommandsFile + " ; chmod +x DL" + clientSideCommandsFile);
-		iperfMachineUL.sendCommand("echo '' > UL" + serverSideCommandsFile + " ; chmod +x UL" + serverSideCommandsFile);
+		iperfMachineUL.sendCommand("echo '' > DL" + serverSideCommandsFile + " ; chmod +x DL" + serverSideCommandsFile);
 		iperfMachineUL.sendCommand("echo '' > UL" + clientSideCommandsFile + " ; chmod +x UL" + clientSideCommandsFile);
 
 		for (UEIPerf ueIPerf : allUEsIPerfList) {
@@ -118,8 +118,8 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		}
 
 		GeneralUtils.unSafeSleep(10000);
-		iperfMachineDL.sendCommand("./DL" + serverSideCommandsFile);
-		iperfMachineUL.sendCommand("./UL" + serverSideCommandsFile);
+		iperfMachineDL.sendCommand("./UL" + serverSideCommandsFile);
+		iperfMachineUL.sendCommand("./DL" + serverSideCommandsFile);
 		GeneralUtils.unSafeSleep(3000);
 		iperfMachineDL.sendCommand("./DL" + clientSideCommandsFile);
 		iperfMachineUL.sendCommand("./UL" + clientSideCommandsFile);

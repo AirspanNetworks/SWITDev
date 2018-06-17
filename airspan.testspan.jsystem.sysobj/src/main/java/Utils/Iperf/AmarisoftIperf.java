@@ -33,7 +33,7 @@ public class AmarisoftIperf extends UEIPerf{
 		if(iperfMachineUL != null){
 			for(IPerfStream ulIPerfStream : ulStreamArrayList){
 				if(ulIPerfStream.isActive() && !ulIPerfStream.isRunningTraffic()){
-					String linuxClientCommand = "echo 'ip netns exec ue"+((AmarisoftUE)ue).ueId+" nohup iperf " + ulIPerfStream.getIperfClientCommand() + " &> "+ iperfMachineUL.getPreAddressTpFile() + ulIPerfStream.getClientOutputFileName() +" &' >> clientSide";
+					String linuxClientCommand = "echo 'ip netns exec ue"+((AmarisoftUE)ue).ueId+" nohup iperf " + ulIPerfStream.getIperfClientCommand() + " &> "+ iperfMachineUL.getPreAddressTpFile() + ulIPerfStream.getClientOutputFileName() +" &' >> " + iperfMachineUL.getPreAddressTpFile() + IPerfMachine.clientSideCommandsFile;
 					iperfMachineUL.sendCommand(linuxClientCommand).getElement0();
 					ulIPerfStream.setRunningTraffic(true);
 				}
@@ -77,9 +77,9 @@ public class AmarisoftIperf extends UEIPerf{
 				if(dlIPerfStream.isActive() && !dlIPerfStream.isRunningTraffic()){
 					String linuxServerCommand = "";
 					if(dlIPerfStream.getNumberOfParallelIPerfStreams() != null && dlIPerfStream.getNumberOfParallelIPerfStreams() > 1){
-						linuxServerCommand = "echo 'ip netns exec ue"+((AmarisoftUE)ue).ueId+" nohup iperf " + dlIPerfStream.getIperfServerCommand() + " | grep SUM --line-buffered &> " +  iperfMachineUL.getPreAddressTpFile() + dlIPerfStream.getTpFileName() + " &' >> serverSide";
+						linuxServerCommand = "echo 'ip netns exec ue"+((AmarisoftUE)ue).ueId+" nohup iperf " + dlIPerfStream.getIperfServerCommand() + " | grep SUM --line-buffered &> " +  iperfMachineUL.getPreAddressTpFile() + dlIPerfStream.getTpFileName() + " &' >> " + iperfMachineUL.getPreAddressTpFile() + IPerfMachine.serverSideCommandsFile;
 					}else{
-						linuxServerCommand = "echo 'ip netns exec ue"+((AmarisoftUE)ue).ueId+" nohup iperf " + dlIPerfStream.getIperfServerCommand() + " &> " +  iperfMachineUL.getPreAddressTpFile() + dlIPerfStream.getTpFileName() + " &' >> serverSide";
+						linuxServerCommand = "echo 'ip netns exec ue"+((AmarisoftUE)ue).ueId+" nohup iperf " + dlIPerfStream.getIperfServerCommand() + " &> " +  iperfMachineUL.getPreAddressTpFile() + dlIPerfStream.getTpFileName() + " &' >> " + iperfMachineUL.getPreAddressTpFile() + IPerfMachine.serverSideCommandsFile;
 					}
 					iperfMachineUL.sendCommand(linuxServerCommand).getElement0();
 				}

@@ -65,7 +65,7 @@ public class IPerfLinuxMachine extends IPerfMachine{
 
 	@Override
 	public boolean startIPerfTraffic(String clientCommand, String clientOutputFileName, TransmitDirection transmitDirection){
-		String linuxClientCommand = "echo 'nohup iperf " + clientCommand + " &> "+ preAddressTpFile + clientOutputFileName +" &' >> " + preAddressTpFile + IPerf.clientSideCommandsFile;
+		String linuxClientCommand = "echo 'nohup iperf " + clientCommand + " &> "+ preAddressTpFile + clientOutputFileName +" &' >> " + preAddressTpFile + transmitDirection + IPerf.clientSideCommandsFile;
 		return sendCommand(linuxClientCommand).getElement0();
 	}
 

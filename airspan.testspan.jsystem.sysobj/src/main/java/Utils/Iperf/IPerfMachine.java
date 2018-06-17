@@ -12,8 +12,8 @@ import jsystem.framework.system.SystemObjectImpl;
 public abstract class IPerfMachine extends SystemObjectImpl{
 	private static int minNumberOfSamples = 1;
 	private static int numberOfLinesForSample = minNumberOfSamples * 3;
-	public static String clientSideCommandsFile = "";
-	public static String serverSideCommandsFile = "";
+	public static String clientSideCommandsFile = "clientSide";
+	public static String serverSideCommandsFile = "serverSide";
 	
 	protected String preAddressTpFile;
 	protected String hostname;

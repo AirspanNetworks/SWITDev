@@ -1746,7 +1746,7 @@ public class Traffic {
 		if(generatorType == TrafficGeneratorType.ITraffic){
 			ArrayList<File> commandFiles = trafficGenerator.getCommandFiles();
 			if (!commandFiles.isEmpty()) {
-				GeneralUtils.startLevel("Result Files.");
+				GeneralUtils.startLevel("Command Files.");
 				for (File commandFile : commandFiles) {
 					File toUpload = new File(tryNumber + commandFile.getName());
 					commandFile.renameTo(toUpload);

@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 
+import Entities.ITrafficGenerator.TransmitDirection;
 import Utils.GeneralUtils;
 import Utils.Pair;
 import Utils.SSHConnector;
@@ -63,18 +64,18 @@ public class IPerfLinuxMachine extends IPerfMachine{
 	}
 
 	@Override
-	public boolean startIPerfTraffic(String clientCommand, String clientOutputFileName){
-		String linuxClientCommand = "echo 'nohup iperf " + clientCommand + " &> "+ preAddressTpFile + clientOutputFileName +" &' >> " + preAddressTpFile + clientSideCommandsFile;
+	public boolean startIPerfTraffic(String clientCommand, String clientOutputFileName, TransmitDirection transmitDirection){
+		String linuxClientCommand = "echo 'nohup iperf " + clientCommand + " &> "+ preAddressTpFile + clientOutputFileName +" &' >> " + preAddressTpFile + IPerf.clientSideCommandsFile;
 		return sendCommand(linuxClientCommand).getElement0();
 	}
 
 	@Override
-	public boolean startIPerfListener(Integer numberOfParallelIPerfStreams, String serverCommand, String tpFileName){
+	public boolean startIPerfListener(Integer numberOfParallelIPerfStreams, String serverCommand, String tpFileName, TransmitDirection transmitDirection){
 		String linuxServerCommand = "";
 		if(numberOfParallelIPerfStreams != null && numberOfParallelIPerfStreams > 1){
-			linuxServerCommand = "echo 'nohup iperf " + serverCommand + " | grep SUM --line-buffered &> " + preAddressTpFile + tpFileName + " &' >> " + preAddressTpFile + serverSideCommandsFile;
+			linuxServerCommand = "echo 'nohup iperf " + serverCommand + " | grep SUM --line-buffered &> " + preAddressTpFile + tpFileName + " &' >> " + preAddressTpFile + transmitDirection + IPerf.serverSideCommandsFile;
 		}else{
-			linuxServerCommand = "echo 'nohup iperf " + serverCommand + " &> " + preAddressTpFile + tpFileName + " &' >> " + preAddressTpFile + serverSideCommandsFile;
+			linuxServerCommand = "echo 'nohup iperf " + serverCommand + " &> " + preAddressTpFile + tpFileName + " &' >> " + preAddressTpFile + transmitDirection + IPerf.serverSideCommandsFile;
 		}
 		return sendCommand(linuxServerCommand).getElement0();
 	}

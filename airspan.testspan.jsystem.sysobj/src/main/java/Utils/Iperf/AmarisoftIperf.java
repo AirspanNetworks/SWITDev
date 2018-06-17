@@ -33,40 +33,13 @@ public class AmarisoftIperf extends UEIPerf{
 		if(iperfMachineUL != null){
 			for(IPerfStream ulIPerfStream : ulStreamArrayList){
 				if(ulIPerfStream.isActive() && !ulIPerfStream.isRunningTraffic()){
-					String linuxClientCommand = "echo 'ip netns exec ue"+((AmarisoftUE)ue).ueId+" nohup iperf " + ulIPerfStream.getIperfClientCommand() + " &> "+ iperfMachineUL.getPreAddressTpFile() + ulIPerfStream.getClientOutputFileName() +" &' >> " + iperfMachineUL.getPreAddressTpFile() + IPerfMachine.clientSideCommandsFile;
+					String linuxClientCommand = "echo 'ip netns exec ue"+((AmarisoftUE)ue).ueId+" nohup iperf " + ulIPerfStream.getIperfClientCommand() + " &> "+ iperfMachineUL.getPreAddressTpFile() + ulIPerfStream.getClientOutputFileName() +" &' >> " + iperfMachineUL.getPreAddressTpFile() + "UL" + IPerf.clientSideCommandsFile;
 					iperfMachineUL.sendCommand(linuxClientCommand).getElement0();
 					ulIPerfStream.setRunningTraffic(true);
 				}
 			}
 		}else{
 			GeneralUtils.printToConsole("UL IPerf Machine equals NULL.");
-		}
-	}
-	
-	@Override
-	protected void startULListener() { // dont change
-		if(iperfMachineDL != null){
-			for(IPerfStream ulIPerfStream : ulStreamArrayList){
-				if(ulIPerfStream.isActive() && !ulIPerfStream.isRunningTraffic()){
-					iperfMachineDL.startIPerfListener(ulIPerfStream.getNumberOfParallelIPerfStreams(), ulIPerfStream.getIperfServerCommand(), ulIPerfStream.getTpFileName());
-				}
-			}
-		}else{
-			GeneralUtils.printToConsole("DL IPerf Machine equals NULL.");
-		}
-	}
-	
-	@Override
-	protected void runTrafficDLClient() { // dont change
-		if(iperfMachineDL != null){
-			for(IPerfStream dlIPerfStream : dlStreamArrayList){
-				if(dlIPerfStream.isActive() && !dlIPerfStream.isRunningTraffic()){
-					iperfMachineDL.startIPerfTraffic(dlIPerfStream.getIperfClientCommand(), dlIPerfStream.getClientOutputFileName());
-					dlIPerfStream.setRunningTraffic(true);
-				}
-			}
-		}else{
-			GeneralUtils.printToConsole("DL IPerf Machine equals NULL.");
 		}
 	}
 
@@ -77,9 +50,9 @@ public class AmarisoftIperf extends UEIPerf{
 				if(dlIPerfStream.isActive() && !dlIPerfStream.isRunningTraffic()){
 					String linuxServerCommand = "";
 					if(dlIPerfStream.getNumberOfParallelIPerfStreams() != null && dlIPerfStream.getNumberOfParallelIPerfStreams() > 1){
-						linuxServerCommand = "echo 'ip netns exec ue"+((AmarisoftUE)ue).ueId+" nohup iperf " + dlIPerfStream.getIperfServerCommand() + " | grep SUM --line-buffered &> " +  iperfMachineUL.getPreAddressTpFile() + dlIPerfStream.getTpFileName() + " &' >> " + iperfMachineUL.getPreAddressTpFile() + IPerfMachine.serverSideCommandsFile;
+						linuxServerCommand = "echo 'ip netns exec ue"+((AmarisoftUE)ue).ueId+" nohup iperf " + dlIPerfStream.getIperfServerCommand() + " | grep SUM --line-buffered &> " +  iperfMachineUL.getPreAddressTpFile() + dlIPerfStream.getTpFileName() + " &' >> " + iperfMachineUL.getPreAddressTpFile() + "DL" + IPerf.serverSideCommandsFile;
 					}else{
-						linuxServerCommand = "echo 'ip netns exec ue"+((AmarisoftUE)ue).ueId+" nohup iperf " + dlIPerfStream.getIperfServerCommand() + " &> " +  iperfMachineUL.getPreAddressTpFile() + dlIPerfStream.getTpFileName() + " &' >> " + iperfMachineUL.getPreAddressTpFile() + IPerfMachine.serverSideCommandsFile;
+						linuxServerCommand = "echo 'ip netns exec ue"+((AmarisoftUE)ue).ueId+" nohup iperf " + dlIPerfStream.getIperfServerCommand() + " &> " +  iperfMachineUL.getPreAddressTpFile() + dlIPerfStream.getTpFileName() + " &' >> " + iperfMachineUL.getPreAddressTpFile() + "DL" + IPerf.serverSideCommandsFile;
 					}
 					iperfMachineUL.sendCommand(linuxServerCommand).getElement0();
 				}

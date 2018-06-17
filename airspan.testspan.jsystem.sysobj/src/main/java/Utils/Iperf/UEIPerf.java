@@ -161,7 +161,7 @@ public class UEIPerf implements Runnable {
 		if(iperfMachineUL != null){
 			for(IPerfStream ulIPerfStream : ulStreamArrayList){
 				if(ulIPerfStream.isActive() && !ulIPerfStream.isRunningTraffic()){
-					iperfMachineUL.startIPerfTraffic(ulIPerfStream.getIperfClientCommand(), ulIPerfStream.getClientOutputFileName());
+					iperfMachineUL.startIPerfTraffic(ulIPerfStream.getIperfClientCommand(), ulIPerfStream.getClientOutputFileName(), TransmitDirection.UL);
 					ulIPerfStream.setRunningTraffic(true);
 				}
 			}
@@ -174,7 +174,7 @@ public class UEIPerf implements Runnable {
 		if(iperfMachineDL != null){
 			for(IPerfStream ulIPerfStream : ulStreamArrayList){
 				if(ulIPerfStream.isActive() && !ulIPerfStream.isRunningTraffic()){
-					iperfMachineDL.startIPerfListener(ulIPerfStream.getNumberOfParallelIPerfStreams(), ulIPerfStream.getIperfServerCommand(), ulIPerfStream.getTpFileName());
+					iperfMachineDL.startIPerfListener(ulIPerfStream.getNumberOfParallelIPerfStreams(), ulIPerfStream.getIperfServerCommand(), ulIPerfStream.getTpFileName(), TransmitDirection.UL);
 				}
 			}
 		}else{
@@ -193,7 +193,7 @@ public class UEIPerf implements Runnable {
 		if(iperfMachineDL != null){
 			for(IPerfStream dlIPerfStream : dlStreamArrayList){
 				if(dlIPerfStream.isActive() && !dlIPerfStream.isRunningTraffic()){
-					iperfMachineDL.startIPerfTraffic(dlIPerfStream.getIperfClientCommand(), dlIPerfStream.getClientOutputFileName());
+					iperfMachineDL.startIPerfTraffic(dlIPerfStream.getIperfClientCommand(), dlIPerfStream.getClientOutputFileName(), TransmitDirection.DL);
 					dlIPerfStream.setRunningTraffic(true);
 				}
 			}
@@ -206,7 +206,7 @@ public class UEIPerf implements Runnable {
 		if(iperfMachineUL != null){
 			for(IPerfStream dlIPerfStream : dlStreamArrayList){
 				if(dlIPerfStream.isActive() && !dlIPerfStream.isRunningTraffic()){
-					iperfMachineUL.startIPerfListener(dlIPerfStream.getNumberOfParallelIPerfStreams(), dlIPerfStream.getIperfServerCommand(), dlIPerfStream.getTpFileName());
+					iperfMachineUL.startIPerfListener(dlIPerfStream.getNumberOfParallelIPerfStreams(), dlIPerfStream.getIperfServerCommand(), dlIPerfStream.getTpFileName(), TransmitDirection.DL);
 				}
 			}
 		}else{

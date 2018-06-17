@@ -28,6 +28,8 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 	 * 
 	 * @author Avichai Yefet
 	 */
+	public static String clientSideCommandsFile = "clientSide.txt";
+	public static String serverSideCommandsFile = "serverSide.txt";
 	
 	private double ulPortLoad = 10;
 	private double dlPortLoad = 70;
@@ -116,11 +118,11 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		}	
 		
 		GeneralUtils.unSafeSleep(10000);
-		iperfMachineDL.sendCommand("./"+IPerfMachine.serverSideCommandsFile);
-		iperfMachineUL.sendCommand("./"+IPerfMachine.serverSideCommandsFile);
+		iperfMachineDL.sendCommand("./"+serverSideCommandsFile);
+		iperfMachineUL.sendCommand("./"+serverSideCommandsFile);
 		GeneralUtils.unSafeSleep(3000);
-		iperfMachineDL.sendCommand("./"+IPerfMachine.clientSideCommandsFile);
-		iperfMachineUL.sendCommand("./"+IPerfMachine.clientSideCommandsFile);
+		iperfMachineDL.sendCommand("./"+clientSideCommandsFile);
+		iperfMachineUL.sendCommand("./"+clientSideCommandsFile);
 		GeneralUtils.unSafeSleep(30000);
 	}
 	
@@ -526,10 +528,10 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 	@Override
 	public ArrayList<File> getCommandFiles() {
 		ArrayList<File> resultFiles = new ArrayList<File>();
-		resultFiles.add(iperfMachineDL.getServerFile());
-		resultFiles.add(iperfMachineDL.getClientFile());
-		resultFiles.add(iperfMachineUL.getServerFile());
-		resultFiles.add(iperfMachineUL.getClientFile());
+		resultFiles.add(iperfMachineDL.getFile("DL" + serverSideCommandsFile));
+		resultFiles.add(iperfMachineDL.getFile("DL" + clientSideCommandsFile));
+		resultFiles.add(iperfMachineUL.getFile("UL" + serverSideCommandsFile));
+		resultFiles.add(iperfMachineUL.getFile("UL" + clientSideCommandsFile));
 		return resultFiles;
 	}
 	

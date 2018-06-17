@@ -107,10 +107,10 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 	public void startTraffic() throws Exception {
 		Connect();
 		ExecutorService exe = Executors.newFixedThreadPool(allUEsIPerfList.size());
-		String ulServerCommandsFile = iperfMachineDL.preAddressTpFile +" UL "+ serverSideCommandsFile;
-		String dlclientCommandsFile = iperfMachineDL.preAddressTpFile +" DL "+ clientSideCommandsFile;
-		String dlServerCommandsFile = iperfMachineUL.preAddressTpFile +" DL "+ serverSideCommandsFile;
-		String ulclientCommandsFile = iperfMachineUL.preAddressTpFile +" UL "+ clientSideCommandsFile;
+		String ulServerCommandsFile = iperfMachineDL.preAddressTpFile +"UL"+ serverSideCommandsFile;
+		String dlclientCommandsFile = iperfMachineDL.preAddressTpFile +"DL"+ clientSideCommandsFile;
+		String dlServerCommandsFile = iperfMachineUL.preAddressTpFile +"DL"+ serverSideCommandsFile;
+		String ulclientCommandsFile = iperfMachineUL.preAddressTpFile +"UL"+ clientSideCommandsFile;
 		
 		iperfMachineDL.sendCommand("echo '' > " + ulServerCommandsFile + " ; chmod +x " + ulServerCommandsFile);
 		iperfMachineDL.sendCommand("echo '' > " + dlclientCommandsFile + " ; chmod +x " + dlclientCommandsFile);
@@ -532,9 +532,9 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 	@Override
 	public ArrayList<File> getCommandFiles() {
 		ArrayList<File> resultFiles = new ArrayList<File>();
-		resultFiles.add(iperfMachineDL.getFile("DL" + serverSideCommandsFile));
+		resultFiles.add(iperfMachineDL.getFile("UL" + serverSideCommandsFile));
 		resultFiles.add(iperfMachineDL.getFile("DL" + clientSideCommandsFile));
-		resultFiles.add(iperfMachineUL.getFile("UL" + serverSideCommandsFile));
+		resultFiles.add(iperfMachineUL.getFile("DL" + serverSideCommandsFile));
 		resultFiles.add(iperfMachineUL.getFile("UL" + clientSideCommandsFile));
 		return resultFiles;
 	}

@@ -47,8 +47,8 @@ public class AmarisoftUE extends UE{
 
 	@Override
 	public String getVersion() {
-		GeneralUtils.printToConsole("AmarisoftUE does not have getVersion method.");
-		return GeneralUtils.ERROR_VALUE+"";
+		String ans = server.getVersion();
+		return ans;
 	}
 
 	@Override
@@ -71,8 +71,8 @@ public class AmarisoftUE extends UE{
 
 	@Override
 	public String getUEStatus() {
-		GeneralUtils.printToConsole("AmarisoftUE does not have reboot method.");
-		return GeneralUtils.ERROR_VALUE+"";
+		String ans = server.getUeStatus(ueId);
+		return ans;
 	}
 
 	@Override
@@ -83,8 +83,8 @@ public class AmarisoftUE extends UE{
 
 	@Override
 	public int getRSRP(int index) {
-		GeneralUtils.printToConsole("AmarisoftUE does not have getRSRP method.");
-		return GeneralUtils.ERROR_VALUE;		
+		Double ans = server.getUeRsrp(ueId);
+		return ans.intValue();		
 	}
 	
 	@Override

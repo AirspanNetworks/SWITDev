@@ -45,13 +45,17 @@ public class Program {
 //			e2.printStackTrace();
 //		} // start server
 		//clientEndPoint = new AmariSoftServer("192.168.58.91", "9002", "root", "SWITswit");
-
 		//clientEndPoint.setConfig();
 		//clientEndPoint.setConfigFile("1UE_CA_UDP_SWIT24");
 		try
 		{
 		//clientEndPoint.startServer();
+			AmariSoftServer a = new AmariSoftServer();
+			a.easyInit();
+			a.startServer("automationConfigFile");
+			a.getConfig();
 		
+
 		
 		//sleep(20000);
 		//clientEndPoint.startIperfServer(1, 9);
@@ -68,53 +72,53 @@ public class Program {
 //		}
 
 		// add listener
-		clientEndPoint.addMessageHandler(new AmariSoftServer.MessageHandler() {
-			public void handleMessage(String message) {
-				System.out.println("Message recieved: " + message);
-				ObjectMapper mapper = new ObjectMapper();
-
-				// Convert JSON string to Object
-				UeStatus stat = null;
-				try {
-					stat = mapper.readValue(message, UeStatus.class);
-					Double ulRate = stat.getUeList().get(0).getUlBitrate() / 1000;
-					Double dlRate = stat.getUeList().get(0).getDlBitrate() / 1000;
-					String emmState = stat.getUeList().get(0).getEmmState();
-					int ueID = stat.getUeList().get(0).getUeId();
-					System.out.println("UE ID: " + ueID + "\tulRate (kbit): " + ulRate.intValue() + "\tdlRate (kbit): "
-							+ dlRate.intValue() + "\temmState:" + emmState);
-
-				} catch (JsonParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (JsonMappingException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-			}
-		});
-		String imsi = "20001000100";
-		int imsiEnd = 8300;
-		UE ue = new AmarisoftUE();
-		for (int i = 2; i <= 21; i++) {			
-			ue.setImsi(imsi + (imsiEnd +i ));
-			clientEndPoint.addUe(ue, 13,6,i,0);
-			sleep(100);
-		}
-		//imsiEnd = 9000;
-		for (int i = 22; i <= 41; i++) {		
-			ue.setImsi(imsi + (imsiEnd + i));
-			clientEndPoint.addUe(ue, 13,6,i,1);
-			sleep(100);
-		}
-		for (int i = 1; i <= 64; i++) {				
-			clientEndPoint.uePowerOn(i);
-			sleep(100);
-		}	
+//		clientEndPoint.addMessageHandler(new AmariSoftServer.MessageHandler() {
+//			public void handleMessage(String message) {
+//				System.out.println("Message recieved: " + message);
+//				ObjectMapper mapper = new ObjectMapper();
+//
+//				// Convert JSON string to Object
+//				UeStatus stat = null;
+//				try {
+//					stat = mapper.readValue(message, UeStatus.class);
+//					Double ulRate = stat.getUeList().get(0).getUlBitrate() / 1000;
+//					Double dlRate = stat.getUeList().get(0).getDlBitrate() / 1000;
+//					String emmState = stat.getUeList().get(0).getEmmState();
+//					int ueID = stat.getUeList().get(0).getUeId();
+//					System.out.println("UE ID: " + ueID + "\tulRate (kbit): " + ulRate.intValue() + "\tdlRate (kbit): "
+//							+ dlRate.intValue() + "\temmState:" + emmState);
+//
+//				} catch (JsonParseException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				} catch (JsonMappingException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				} catch (IOException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//
+//			}
+//		});
+//		String imsi = "20001000100";
+//		int imsiEnd = 8300;
+//		UE ue = new AmarisoftUE();
+//		for (int i = 2; i <= 21; i++) {			
+//			ue.setImsi(imsi + (imsiEnd +i ));
+//			clientEndPoint.addUe(ue, 13,6,i,0);
+//			sleep(100);
+//		}
+//		//imsiEnd = 9000;
+//		for (int i = 22; i <= 41; i++) {		
+//			ue.setImsi(imsi + (imsiEnd + i));
+//			clientEndPoint.addUe(ue, 13,6,i,1);
+//			sleep(100);
+//		}
+//		for (int i = 1; i <= 64; i++) {				
+//			clientEndPoint.uePowerOn(i);
+//			sleep(100);
+//		}	
 //		while (true){
 //			try {
 //				workUes(clientEndPoint);

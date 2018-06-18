@@ -32,6 +32,7 @@ import UE.UE;
 import UeSimulator.Amarisoft.JsonObjects.Actions.UEAction;
 import UeSimulator.Amarisoft.JsonObjects.Actions.UEAction.Actions;
 import UeSimulator.Amarisoft.JsonObjects.ConfigFile.*;
+import UeSimulator.Amarisoft.JsonObjects.Status.Config;
 import UeSimulator.Amarisoft.JsonObjects.Status.UeAdd;
 import UeSimulator.Amarisoft.JsonObjects.Status.UeStatus;
 import Utils.GeneralUtils;
@@ -90,6 +91,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 
 	private boolean waitForResponse = false;
 	private boolean saveLogFile;
+	private boolean running = false;
 
     @Override
 	public void init() throws Exception {
@@ -100,6 +102,16 @@ public class AmariSoftServer extends SystemObjectImpl{
     	sdrCellsMap = new HashMap<>();
     	fillUeList();
 	}
+    
+    public void easyInit()
+    {
+    	ip="192.168.58.91";
+    	userName="root";
+    	password = "SWITswit";
+    	port="9000";
+    	connect();
+    	
+    }
 	
 	private void fillUeList() {
 		int ueId = 2;// start at 2 because amarisoft must start with atleast 1 UE.
@@ -238,6 +250,7 @@ public class AmariSoftServer extends SystemObjectImpl{
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             container.connectToServer(this, endpointURI);
             startMessageHandler();
+            running  = true;
         } catch (Exception e) {
         	GeneralUtils.printToConsole("Failed starting server with config file: " + configFile);
         	e.printStackTrace();
@@ -269,6 +282,18 @@ public class AmariSoftServer extends SystemObjectImpl{
 					if (message.contains("\"message\":\"ue_add\"")) {
 						try {
 							returnValue = mapper.readValue(message, UeAdd.class);
+						} catch (JsonParseException e) {
+							e.printStackTrace();
+						} catch (JsonMappingException e) {
+							e.printStackTrace();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+					
+					if (message.contains("\"message\":\"config_get\"")) {
+						try {
+							returnValue = mapper.readValue(message, Config.class);////Object??
 						} catch (JsonParseException e) {
 							e.printStackTrace();
 						} catch (JsonMappingException e) {
@@ -423,7 +448,9 @@ public class AmariSoftServer extends SystemObjectImpl{
 	}
 
 	public void startLogger() {	
-		saveLogFile = connected;
+		if (!saveLogFile) {
+			saveLogFile = connected;			
+		}
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -660,41 +687,68 @@ public class AmariSoftServer extends SystemObjectImpl{
 			ue.setIPerfUlMachine(ip);
 		}
 		return true;
+	}	
+
+	public Config getConfig() {
+		Config config = null;
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			UEAction getConfig = new UEAction();
+
+			getConfig.setMessage(Actions.CONFIG_GET);
+			GeneralUtils.printToConsole("sending config_ue");
+
+			Object ans = sendSynchronizedMessage(mapper.writeValueAsString(getConfig));
+
+			config = (Config) ans;
+		} catch (JsonProcessingException e) {
+			GeneralUtils.printToConsole("Failed config_ue");
+			e.printStackTrace();
+		}
+		return config;
+
 	}
 	
-	synchronized private String getIpAddress(int ueId) {
-		String ueIp = null;
-		try {			
+	private UeStatus getUeInfo(int ueId) {
+		UeStatus ueStatus = null;
+		try {
 			ObjectMapper mapper = new ObjectMapper();
 			UEAction getUE = new UEAction();
 			getUE.setUeId(ueId);
-			
+
 			getUE.setMessage(Actions.UE_GET);
-			long t= System.currentTimeMillis();
-			long end = t + 10000;
-			while (System.currentTimeMillis() < end) {
-				GeneralUtils.printToConsole("sending get_ue" + ueId);
-				Object ans = sendSynchronizedMessage(mapper.writeValueAsString(getUE));
-				UeStatus ueStatus = (UeStatus)ans;
-				if (ueStatus != null) {
-					if (ueStatus.getUeList() != null && ueStatus.getUeList().size() > 0) {
-						if (ueStatus.getUeList().get(0) != null) {
-							ueIp = ueStatus.getUeList().get(0).getIp();
-							GeneralUtils.printToConsole("Found IP" + ueIp);
-						}
+			GeneralUtils.printToConsole("sending get_ue" + ueId);
+
+			Object ans = sendSynchronizedMessage(mapper.writeValueAsString(getUE));
+
+			ueStatus = (UeStatus) ans;
+		} catch (JsonProcessingException e) {
+			GeneralUtils.printToConsole("Failed get_ue" + ueId);
+			e.printStackTrace();
+		}
+		return ueStatus;
+
+	}
+
+	synchronized private String getIpAddress(int ueId) {
+		String ueIp = null;
+		long t = System.currentTimeMillis();
+		long end = t + 10000;
+		while (System.currentTimeMillis() < end) {
+			UeStatus ueStatus = getUeInfo(ueId);
+			if (ueStatus != null) {
+				if (ueStatus.getUeList() != null && ueStatus.getUeList().size() > 0) {
+					if (ueStatus.getUeList().get(0) != null) {
+						ueIp = ueStatus.getUeList().get(0).getIp();
+						GeneralUtils.printToConsole("Found IP" + ueIp);
 					}
 				}
-				if (ueIp != null) {
-					GeneralUtils.printToConsole("Found IP, exiting while");
-					break;
-				}
-				GeneralUtils.unSafeSleep(100);
 			}
-		} catch (Exception e) {
-			GeneralUtils.printToConsole("Failed UE_GET to ue " + ueId);
-			GeneralUtils.printToConsole(e.getMessage());
-			e.printStackTrace();
-			return "";
+			if (ueIp != null) {
+				GeneralUtils.printToConsole("Found IP, exiting while");
+				break;
+			}
+			GeneralUtils.unSafeSleep(100);
 		}
 		return ueIp;
 	}
@@ -708,8 +762,8 @@ public class AmariSoftServer extends SystemObjectImpl{
 		try {
 			sendSynchronizedMessage(mapper.writeValueAsString(getUE));
 		} catch (JsonProcessingException e) {
-			System.out.println("Failed uePowerOff to ue " + ueId);
-			System.out.println(e.getMessage());
+			GeneralUtils.printToConsole("Failed uePowerOff to ue " + ueId);
+			GeneralUtils.printToConsole(e.getMessage());
 			e.printStackTrace();
 			return false;
 		}
@@ -786,5 +840,62 @@ public class AmariSoftServer extends SystemObjectImpl{
 
 	public ArrayList<UE> getUeList() {
 		return new ArrayList<UE>(ueMap.values());
+	}
+
+	public String getUeStatus(int ueId) {
+		String status = GeneralUtils.ERROR_VALUE + "";
+		UeStatus ueStatus = getUeInfo(ueId);
+		if (ueStatus != null) {
+			if (ueStatus.getUeList() != null && ueStatus.getUeList().size() > 0) {
+				if (ueStatus.getUeList().get(0) != null) {
+					status = ueStatus.getUeList().get(0).getRrcState();
+					GeneralUtils.printToConsole("Found status" + status);
+				}
+			}
+		}
+		return status;
+	}
+	
+	public Double getUeRsrp(int ueId) {
+		Double ans = (double) GeneralUtils.ERROR_VALUE;
+		UeStatus ueStatus = getUeInfo(ueId);
+		if (ueStatus != null) {
+			if (ueStatus.getUeList() != null && ueStatus.getUeList().size() > 0) {
+				if (ueStatus.getUeList().get(0) != null) {
+					ans = ueStatus.getUeList().get(0).getRsrp();
+					GeneralUtils.printToConsole("Found RSRP" + ans);
+				}
+			}
+		}
+		return ans;
+	}
+	
+	public Double getUeUlFreq(int ueId) {
+		Double ans = (double) GeneralUtils.ERROR_VALUE;
+		UeStatus ueStatus = getUeInfo(ueId);
+		if (ueStatus != null) {
+			if (ueStatus.getUeList() != null && ueStatus.getUeList().size() > 0) {
+				if (ueStatus.getUeList().get(0) != null) {
+					ans = ueStatus.getUeList().get(0).getRsrp();
+					GeneralUtils.printToConsole("Found RSRP" + ans);
+				}
+			}
+		}
+		return ans;
+	}
+
+	public String getVersion() {
+		String ans = GeneralUtils.ERROR_VALUE+"";
+		Config config = getConfig();
+		if (config != null) {
+			if (config.getVersion() != null) {				
+				ans = config.getVersion();
+			}
+		}
+		return ans;
+	}
+
+	public boolean isRunning() {
+		return running;
 	}
 }

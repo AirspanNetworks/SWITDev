@@ -63,7 +63,7 @@ public class Progression extends TestspanTest{
 		}
 		GeneralUtils.unSafeSleep(5000);
 		GeneralUtils.startLevel("UEs Measurements Status.");
-		stopAndSatrtUEs();
+		stopAndStartUEs();
 		for(Pair<UE, DMtool> p : ueDmLists){
 			p.getElement1().setUeIP(p.getElement0().getLanIpAddress());
 			p.getElement1().setPORT(p.getElement0().getDMToolPort());
@@ -283,7 +283,7 @@ public class Progression extends TestspanTest{
 		report.report("Adding neighbor with the same PCI to cause Collision, PCI = " + neighborPci);
 		if(!ngh.addNeighbor(eNodeB, neighbor, HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC, HandoverType.TRIGGER_X_2, true, "0")){report.report("Faild to add neighbor.", Reporter.WARNING);}
 		
-		report.report("Waiting PCI COLLISION DETECTION TIMER will expire (100 Sec)");
+		report.report("Waiting PCI COLLISION DETECTION TIMER will expire ("+PCI_COLLISION_DETECTION_TIMER/1000+" Sec)");
 		GeneralUtils.unSafeSleep(PCI_COLLISION_DETECTION_TIMER);
 		
 		GeneralUtils.stopLevel();
@@ -299,7 +299,7 @@ public class Progression extends TestspanTest{
 			report.report("****CELL "+(oosCellIndex.value%40)+" SERVICE STATE = 1 ****", Reporter.FAIL);
 			reason = "SERVICE STATE = 1.";
 		}
-		stopAndSatrtUEs();
+		stopAndStartUEs();
 		if(areThereIsAnyUeConnected(eNodeB.getPci(oosCellIndex.value))){
 			report.report("One or more UEs are connected to Cell " + (oosCellIndex.value%40), Reporter.FAIL);
 			reason += "One or more UEs are connected.";
@@ -317,7 +317,7 @@ public class Progression extends TestspanTest{
 			report.report("****CELL "+(isCellIndex.value%40)+" SERVICE STATE = 0 ****", Reporter.FAIL);
 			reason = "SERVICE STATE = 0.";
 		}
-		stopAndSatrtUEs();
+		stopAndStartUEs();
 		if(areThereIsAnyUeConnected(eNodeB.getPci(isCellIndex.value))){
 			report.report("One or more UEs are connected to Cell " + (isCellIndex.value%40));
 		}else{
@@ -327,7 +327,7 @@ public class Progression extends TestspanTest{
 		GeneralUtils.stopLevel();
 	}
 	
-	private void stopAndSatrtUEs(){
+	private void stopAndStartUEs(){
 		ArrayList<UE> ues = SetupUtils.getInstance().getallUEsPerEnodeb(dut);
 		peripheralsConfig.stopUEs(ues);
 		peripheralsConfig.startUEs(ues);

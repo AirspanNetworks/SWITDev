@@ -1,5 +1,6 @@
 package UeSimulator.Amarisoft;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
@@ -35,9 +36,12 @@ import UeSimulator.Amarisoft.JsonObjects.Status.UeAdd;
 import UeSimulator.Amarisoft.JsonObjects.Status.UeStatus;
 import Utils.GeneralUtils;
 import Utils.TerminalUtils;
+import jsystem.framework.report.ListenerstManager;
 import jsystem.framework.report.Reporter;
+import jsystem.framework.report.ReporterHelper;
 import jsystem.framework.system.SystemManagerImpl;
 import jsystem.framework.system.SystemObjectImpl;
+import jsystem.utils.FileUtils;
 import systemobject.terminal.SSH;
 import systemobject.terminal.Terminal;
 
@@ -50,7 +54,8 @@ import systemobject.terminal.Terminal;
 public class AmariSoftServer extends SystemObjectImpl{
 
 	public static String amarisoftIdentifier = "amarisoft";
-	
+	private Reporter report = ListenerstManager.getInstance();
+
     private static Object waitLock = new Object();
 
 	private Terminal lteUeTerminal;
@@ -84,6 +89,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 	private String cliBuffer = "";
 
 	private boolean waitForResponse = false;
+	private boolean saveLogFile;
 
     @Override
 	public void init() throws Exception {
@@ -416,12 +422,13 @@ public class AmariSoftServer extends SystemObjectImpl{
 		return new String[0];
 	}
 
-	private void startLogger() {
+	public void startLogger() {	
+		saveLogFile = connected;
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				GeneralUtils.printToConsole("Starting amarisoft log to file: " + logFileName);
-				while (connected) {
+				while (saveLogFile) {
 					try {
 						String[] lines = processLines(getLoggerBuffer());
 						BufferedWriter writer = new BufferedWriter(new FileWriter(logFileName, true));
@@ -439,6 +446,22 @@ public class AmariSoftServer extends SystemObjectImpl{
 				}
 			}
 		}, "Amarisoft log thread").start();
+	}
+	
+	public void closeLog(){
+		copyLogToCurrentTest();
+		saveLogFile=false;
+		GeneralUtils.unSafeSleep(200);
+		FileUtils.deleteFile(logFileName);
+	}
+	
+	public void copyLogToCurrentTest(){
+		try {
+			File logFile =  new File(logFileName);
+			ReporterHelper.copyFileToReporterAndAddLink(report, logFile, logFile.getName());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 	}
 

@@ -264,7 +264,7 @@ public class Progression extends TestspanTest{
 		eNodeB.setExpectBooting(true);
 		enodeBConfig.cloneAndSetSonProfileViaNetspan(eNodeB, eNodeB.getDefaultNetspanProfiles().getSON(), sp);
 		int timeoutCounter = 0;
-		while(eNodeB.isAllRunning() && timeoutCounter < 60){
+		while(eNodeB.isInService() && timeoutCounter < 60){
 			GeneralUtils.unSafeSleep(1000);
 			timeoutCounter++;
 		}

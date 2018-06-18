@@ -2383,7 +2383,7 @@ public class NetspanServer_15_5 extends NetspanServer_15_2 implements Netspan_15
 		boolean rebooted = false;
 		Netspan.NBI_15_5.Inventory.NodeActionResult result = null;
 		if(rebootType == RebootType.WARM_REBOOT){
-			result = soapHelper_15_5.getInventorySoap().nodeReset(nodeList, null, true, credentialsInventory);
+			result = soapHelper_15_5.getInventorySoap().nodeReset(nodeList, null, false, credentialsInventory);
 		}else if(rebootType == RebootType.COLD_REBOOT){
 			result = soapHelper_15_5.getInventorySoap().nodeResetForcedCold(nodeList, null, credentialsInventory);
 		}else{

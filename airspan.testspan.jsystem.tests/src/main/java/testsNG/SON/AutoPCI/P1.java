@@ -205,8 +205,8 @@ public class P1 extends AutoPCIBase {
 	public void verifyOosBehaviorAfterPciCollisionAndNoAvailablePciInTheRange() {
 		Progression prog = new Progression();
 		if (enodeBConfig.getNumberOfActiveCells(dut) > 1) {
-			prog.initDmToolAndcheckUEsConnection(dut);
 			prog.initObjects();
+			prog.initDmToolAndcheckUEsConnection(dut);
 			Neighbors ngh = Neighbors.getInstance();
 			
 			Pair<EnodeB,CellIndex> result = prog.casuePciCollisionWithOneOfTheCellsByAutoPci(dut, true); 

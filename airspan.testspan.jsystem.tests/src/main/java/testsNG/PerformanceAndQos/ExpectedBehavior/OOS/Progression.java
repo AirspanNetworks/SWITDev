@@ -149,13 +149,6 @@ public class Progression extends TestspanTest{
 		}
 	}
 
-	/**
-	 * OOS Expected - Simulate a collision with one of the cells and no available PCI in the range
-	 */
-	@Test
-	@TestProperties(name = "Simulate AutoPci collision and no available PCI in the range - OOS Expected on one of the cells.", 
-	returnParam = { "IsTestWasSuccessful" }, 
-	paramsExclude = {"IsTestWasSuccessful"})
 	public void verifyOosBehaviorAfterPciCollisionAndNoAvailablePciInTheRange(){
 		if(enodeBConfig.getNumberOfActiveCells(dut) > 1){
 			Neighbors ngh = Neighbors.getInstance();

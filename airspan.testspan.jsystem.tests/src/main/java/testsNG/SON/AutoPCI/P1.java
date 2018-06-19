@@ -11,6 +11,7 @@ import Netspan.API.Lte.SONStatus;
 import Utils.GeneralUtils;
 import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
+import testsNG.PerformanceAndQos.ExpectedBehavior.OOS.Progression;
 
 public class P1 extends AutoPCIBase {
 
@@ -184,5 +185,26 @@ public class P1 extends AutoPCIBase {
 	@TestProperties(name = "Verify_Auto_PCI_Functionality_As_Auto_RSI_And_ANR_Are_Enabled", returnParam = {
 			"IsTestWasSuccessful" }, paramsExclude = { "IsTestWasSuccessful" })
 	public void verifyAutoPciFunctionalityAsAutoRsiAndAnrAreEnabled() {
+	}
+	
+	/**
+	 * OOS Expected - Simulate a collision with one of the cells and no available PCI in the range
+	 */
+	@Test
+	@TestProperties(name = "Simulate AutoPci collision and no available PCI in the range - OOS Expected on one of the cells.", 
+	returnParam = { "IsTestWasSuccessful" }, 
+	paramsInclude = {"DUT"})
+	public void verifyOosBehaviorAfterPciCollisionAndNoAvailablePciInTheRange(){
+		Progression prog = new Progression();
+		prog.setDUT(dut.getNetspanName());
+		try {
+			prog.init();
+		} catch (Exception e) {
+			report.report("Failed to init test", Reporter.FAIL);
+			e.printStackTrace();
+			return;
+		}
+		prog.verifyOosBehaviorAfterPciCollisionAndNoAvailablePciInTheRange();
+		prog.end();
 	}
 }

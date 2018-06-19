@@ -205,6 +205,6 @@ public class P1 extends AutoPCIBase {
 			return;
 		}
 		prog.verifyOosBehaviorAfterPciCollisionAndNoAvailablePciInTheRange();
-		prog.end();
+		prog.closeDmTools();
 	}
 }

@@ -88,11 +88,15 @@ public class Progression extends TestspanTest{
 		GeneralUtils.stopLevel();
 	}
 
-	@Override
-	public void end(){
+	public void closeDmTools(){
 		for(Pair<UE, DMtool> p : ueDmLists){
 			p.getElement1().close();
 		}
+	}
+	
+	@Override
+	public void end(){
+		closeDmTools();
 		for(EnodeB enb : enbInSetup){
 			if(enb != dut){
 				enb.setServiceState(GeneralUtils.CellIndex.ENB, 1);

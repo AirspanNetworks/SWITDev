@@ -212,7 +212,6 @@ public class P0 extends TestspanTest{
 			e.printStackTrace();
 		}
 		ArrayList<String> commands = new ArrayList<>();
-		commands.add("ue show link");
 		commands.add("ue show rate");
 		commands.add("System show memory");
 		commands.add("System show error");

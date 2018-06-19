@@ -22,19 +22,19 @@ public class UEIPerf implements Runnable {
 
 	public static final String IPERF_TIME_LIMIT = "9999999";
 
-	private UE ue;
+	protected UE ue;
 
 	protected IPerfMachine iperfMachineDL;
-	protected IPerfMachine iperfMachineUL;
 	
+	protected IPerfMachine iperfMachineUL;
 	protected ArrayList<IPerfStream> ulStreamArrayList;
 	protected ArrayList<IPerfStream> dlStreamArrayList;
 
-	private double ulUeLoad;
-	private double dlUeLoad;
-	private Integer frameSize;
-	private Protocol protocol;
-	private long lastSampleTime;
+	protected double ulUeLoad;
+	protected double dlUeLoad;
+	protected Integer frameSize;
+	protected Protocol protocol;
+	protected long lastSampleTime;
 
 	public UEIPerf(UE ue, IPerfMachine iperfMachineDL, IPerfMachine iperfMachineUL, double ulLoad,
 			double dlLoad, Integer frameSize, ArrayList<Character> qciList) throws IOException, InterruptedException {
@@ -157,11 +157,11 @@ public class UEIPerf implements Runnable {
 		runTrafficULClient();
 	}
 
-	public void runTrafficULClient() {
+	protected void runTrafficULClient() {
 		if(iperfMachineUL != null){
 			for(IPerfStream ulIPerfStream : ulStreamArrayList){
 				if(ulIPerfStream.isActive() && !ulIPerfStream.isRunningTraffic()){
-					iperfMachineUL.startIPerfTraffic(ulIPerfStream.getIperfClientCommand(), ulIPerfStream.getClientOutputFileName());
+					iperfMachineUL.startIPerfTraffic(ulIPerfStream.getIperfClientCommand(), ulIPerfStream.getClientOutputFileName(), TransmitDirection.UL);
 					ulIPerfStream.setRunningTraffic(true);
 				}
 			}
@@ -170,11 +170,11 @@ public class UEIPerf implements Runnable {
 		}
 	}
 
-	public void startULListener() {
+	protected void startULListener() {
 		if(iperfMachineDL != null){
 			for(IPerfStream ulIPerfStream : ulStreamArrayList){
 				if(ulIPerfStream.isActive() && !ulIPerfStream.isRunningTraffic()){
-					iperfMachineDL.startIPerfListener(ulIPerfStream.getNumberOfParallelIPerfStreams(), ulIPerfStream.getIperfServerCommand(), ulIPerfStream.getTpFileName());
+					iperfMachineDL.startIPerfListener(ulIPerfStream.getNumberOfParallelIPerfStreams(), ulIPerfStream.getIperfServerCommand(), ulIPerfStream.getTpFileName(), TransmitDirection.UL);
 				}
 			}
 		}else{
@@ -189,11 +189,11 @@ public class UEIPerf implements Runnable {
 		runTrafficDLClient();
 	}
 
-	public void runTrafficDLClient() {
+	protected void runTrafficDLClient() {
 		if(iperfMachineDL != null){
 			for(IPerfStream dlIPerfStream : dlStreamArrayList){
 				if(dlIPerfStream.isActive() && !dlIPerfStream.isRunningTraffic()){
-					iperfMachineDL.startIPerfTraffic(dlIPerfStream.getIperfClientCommand(), dlIPerfStream.getClientOutputFileName());
+					iperfMachineDL.startIPerfTraffic(dlIPerfStream.getIperfClientCommand(), dlIPerfStream.getClientOutputFileName(), TransmitDirection.DL);
 					dlIPerfStream.setRunningTraffic(true);
 				}
 			}
@@ -202,11 +202,11 @@ public class UEIPerf implements Runnable {
 		}
 	}
 
-	public void startDLListener() {
+	protected void startDLListener() {
 		if(iperfMachineUL != null){
 			for(IPerfStream dlIPerfStream : dlStreamArrayList){
 				if(dlIPerfStream.isActive() && !dlIPerfStream.isRunningTraffic()){
-					iperfMachineUL.startIPerfListener(dlIPerfStream.getNumberOfParallelIPerfStreams(), dlIPerfStream.getIperfServerCommand(), dlIPerfStream.getTpFileName());
+					iperfMachineUL.startIPerfListener(dlIPerfStream.getNumberOfParallelIPerfStreams(), dlIPerfStream.getIperfServerCommand(), dlIPerfStream.getTpFileName(), TransmitDirection.DL);
 				}
 			}
 		}else{

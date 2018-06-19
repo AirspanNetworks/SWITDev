@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import Entities.ITrafficGenerator.TransmitDirection;
 import Utils.GeneralUtils;
 import Utils.Pair;
 import jsystem.framework.system.SystemObjectImpl;
@@ -12,6 +13,7 @@ import jsystem.framework.system.SystemObjectImpl;
 public abstract class IPerfMachine extends SystemObjectImpl{
 	private static int minNumberOfSamples = 1;
 	private static int numberOfLinesForSample = minNumberOfSamples * 3;
+	
 	protected String preAddressTpFile;
 	protected String hostname;
 	protected String username;
@@ -30,8 +32,8 @@ public abstract class IPerfMachine extends SystemObjectImpl{
 	}
 
 	public abstract Pair<Boolean,String> sendCommand(String command);
-	public abstract boolean startIPerfTraffic(String clientCommand, String tpFileName);
-	public abstract boolean startIPerfListener(Integer numberOfParallelIPerfStreams, String serverCommand, String tpFileName);
+	public abstract boolean startIPerfTraffic(String clientCommand, String tpFileName, TransmitDirection transmitDirection);
+	public abstract boolean startIPerfListener(Integer numberOfParallelIPerfStreams, String serverCommand, String tpFileName, TransmitDirection transmitDirection);
 	public abstract String getStrCounters(String tpCountersFileNames);
 	public abstract File getFile(String fileName);
 	public abstract boolean stopIPerf();

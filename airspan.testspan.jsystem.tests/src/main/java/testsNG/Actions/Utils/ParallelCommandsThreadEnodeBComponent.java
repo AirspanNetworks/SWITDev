@@ -86,7 +86,8 @@ public class ParallelCommandsThreadEnodeBComponent extends Thread{
 					if (cmd.equals("ue show rate")) {
 						response = "Cell Total";
 					}else if (cmd.contains("ue show link")) {
-						response = "Legend:";
+						report.report("Ue show link should not be used in parallel commands!", Reporter.WARNING);
+						continue;
 					}
 					ans = enb.sendCommandsOnSession(enb.getParallelCommandsPrompt(), cmd, response);
 					String javaTime = DateTime.now().toString("yyyy-MM-dd HH:mm:ss.SSS");

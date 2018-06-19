@@ -752,7 +752,7 @@ public class P0 extends TPTBase {
 		ArrayList<Character> qciList = new ArrayList<Character>();
 		qciList.add('9');
 		isCaTest = true;
-		templateTPTest("TPT_PtMP_TCP_Qci9", true, "PTMP", null, qciList, 1, Protocol.TCP, null, null);
+		templateTPTest("TPT_PtMP_TCP_Qci9", true, "PTMP", null, qciList, 0, Protocol.TCP, null, null);
 	}
 	
 	private void templateTPTest(String testName, boolean isQci9, String streamsMode, Integer packetSize, ArrayList<Character> qciList, 
@@ -775,6 +775,8 @@ public class P0 extends TPTBase {
 			report.report("no suitable UES - Failing and Ending Test",Reporter.FAIL);
 			return;
 		}
+		peripheralsConfig.stopUEs(ueList);
+		
 		ueNameListStc = convertUeToNamesList(ueList);
 		GeneralUtils.printToConsole(ueNameListStc.size());
 		this.protocol = protocol;

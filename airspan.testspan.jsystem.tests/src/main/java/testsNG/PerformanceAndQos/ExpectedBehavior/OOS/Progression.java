@@ -45,12 +45,12 @@ public class Progression extends TestspanTest{
 	
 	@Override
 	public void init() throws Exception {
+		enbInTest = new ArrayList<>();
+		enbInTest.add(dut);
+		if(neighbor != null){
+			enbInTest.add(neighbor);
+		}
 		if(superInit){
-			enbInTest = new ArrayList<>();
-			enbInTest.add(dut);
-			if(neighbor != null){
-				enbInTest.add(neighbor);
-			}
 			super.init();			
 		}
 		enodeBConfig = EnodeBConfig.getInstance();

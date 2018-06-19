@@ -35,11 +35,6 @@ public class Progression extends TestspanTest{
 	private EnodeBConfig enodeBConfig;
 	private ArrayList<Pair<UE, DMtool>> ueDmLists;
 	private PeripheralsConfig peripheralsConfig;
-	private boolean superInit = true;
-
-	public void setSuperInit(boolean superInit) {
-		this.superInit = superInit;
-	}
 
 	/********************************* INFRA *********************************/
 	
@@ -50,9 +45,8 @@ public class Progression extends TestspanTest{
 		if(neighbor != null){
 			enbInTest.add(neighbor);
 		}
-		if(superInit){
-			super.init();			
-		}
+		super.init();			
+		
 		enodeBConfig = EnodeBConfig.getInstance();
 		peripheralsConfig = PeripheralsConfig.getInstance();
 		for(EnodeB enb : enbInSetup){

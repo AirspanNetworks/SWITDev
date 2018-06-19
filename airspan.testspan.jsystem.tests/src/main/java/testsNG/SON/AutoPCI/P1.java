@@ -198,14 +198,11 @@ public class P1 extends AutoPCIBase {
 		Progression prog = new Progression();
 		prog.setDUT(dut.getName());
 		try {
-			prog.setSuperInit(false);
 			prog.init();
 		} catch (Exception e) {
 			report.report("Failed to init test", Reporter.FAIL);
 			e.printStackTrace();
 			return;
-		}finally{
-			prog.setSuperInit(true);
 		}
 		prog.verifyOosBehaviorAfterPciCollisionAndNoAvailablePciInTheRange();
 		prog.closeDmTools();

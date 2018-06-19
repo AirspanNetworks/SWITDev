@@ -56,7 +56,7 @@ public class Progression extends TestspanTest{
 		AttenuatorSet attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet("rudat_set");
 		report.report("set the attenuators default value : 0 [dB]\n");
 		PeripheralsConfig.getInstance().setAttenuatorSetValue(attenuatorSetUnderTest, 0);
-		initDmToolAndcheckUEsConnection();
+		initDmToolAndcheckUEsConnection(dut);
 		GeneralUtils.stopLevel();
 	}
 
@@ -65,15 +65,15 @@ public class Progression extends TestspanTest{
 		peripheralsConfig = PeripheralsConfig.getInstance();
 	}
 	
-	public void initDmToolAndcheckUEsConnection(){
+	public void initDmToolAndcheckUEsConnection(EnodeB enodeb){
 		ueDmLists = new ArrayList<>();
-		ArrayList<UE> ues = SetupUtils.getInstance().getallUEsPerEnodeb(dut);
+		ArrayList<UE> ues = SetupUtils.getInstance().getallUEsPerEnodeb(enodeb);
 		for(UE ue : ues){
 			ueDmLists.add(new Pair<UE, DMtool>(ue, new DMtool()));
 		}
 		GeneralUtils.unSafeSleep(5000);
 		GeneralUtils.startLevel("UEs Measurements Status.");
-		peripheralsConfig.stopStartUes(SetupUtils.getInstance().getallUEsPerEnodeb(dut));
+		peripheralsConfig.stopStartUes(ues);
 		for(Pair<UE, DMtool> p : ueDmLists){
 			p.getElement1().setUeIP(p.getElement0().getLanIpAddress());
 			p.getElement1().setPORT(p.getElement0().getDMToolPort());
@@ -202,12 +202,12 @@ public class Progression extends TestspanTest{
 		int neighborPci = 0;
 		int neighborEarfcn = 0;
 		if(is3rdPartyNeighborNeeded){
-			neighbor = ngh.adding3rdPartyNeighbor(dut, dut.getName()+"_3rdPartyNeighbor", "123.45.67." + dut.getPci(),dut.getPci(), 123400 + (dut.getPci() + 1), dut.getEarfcn());
+			neighbor = ngh.adding3rdPartyNeighbor(eNodeB, eNodeB.getName()+"_3rdPartyNeighbor", "123.45.67." + eNodeB.getPci(),eNodeB.getPci(), 123400 + (eNodeB.getPci() + 1), eNodeB.getEarfcn());
 			if(neighbor == null){
 				return null;
 			}
-			neighborPci = dut.getPci();
-			neighborEarfcn = dut.getEarfcn();
+			neighborPci = eNodeB.getPci();
+			neighborEarfcn = eNodeB.getEarfcn();
 		}else{
 			neighbor.setServiceState(GeneralUtils.CellIndex.ENB, 1);
 			neighborPci = neighbor.getPci();
@@ -273,7 +273,7 @@ public class Progression extends TestspanTest{
 			report.report("****CELL "+(oosCellIndex.value%40)+" SERVICE STATE = 1 ****", Reporter.FAIL);
 			reason = "SERVICE STATE = 1.";
 		}
-		peripheralsConfig.stopStartUes(SetupUtils.getInstance().getallUEsPerEnodeb(dut));
+		peripheralsConfig.stopStartUes(SetupUtils.getInstance().getallUEsPerEnodeb(eNodeB));
 		if(areThereIsAnyUeConnected(eNodeB.getPci(oosCellIndex.value))){
 			report.report("One or more UEs are connected to Cell " + (oosCellIndex.value%40), Reporter.FAIL);
 			reason += "One or more UEs are connected.";
@@ -291,7 +291,7 @@ public class Progression extends TestspanTest{
 			report.report("****CELL "+(isCellIndex.value%40)+" SERVICE STATE = 0 ****", Reporter.FAIL);
 			reason = "SERVICE STATE = 0.";
 		}
-		peripheralsConfig.stopStartUes(SetupUtils.getInstance().getallUEsPerEnodeb(dut));
+		peripheralsConfig.stopStartUes(SetupUtils.getInstance().getallUEsPerEnodeb(eNodeB));
 		if(areThereIsAnyUeConnected(eNodeB.getPci(isCellIndex.value))){
 			report.report("One or more UEs are connected to Cell " + (isCellIndex.value%40));
 		}else{

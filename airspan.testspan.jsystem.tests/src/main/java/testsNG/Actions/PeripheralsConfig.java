@@ -669,6 +669,12 @@ public class PeripheralsConfig {
 		return res;
 	}
 
+	
+	public void stopStartUes(ArrayList<UE> ueList){
+		stopUEs(ueList);
+		startUEs(ueList);
+	}
+	
 	public boolean moveAtt(AttenuatorSet attenuatorSetUnderTest, int from, int to) {
 		int multi = 1;
 		int attenuatorsCurrentValue = from;

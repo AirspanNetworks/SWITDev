@@ -10,6 +10,7 @@ import Netspan.API.Enums.EnabledDisabledStates;
 import Netspan.API.Lte.RFStatus;
 import Netspan.API.Lte.SONStatus;
 import Utils.GeneralUtils;
+import Utils.Pair;
 import Utils.GeneralUtils.CellIndex;
 import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
@@ -204,33 +205,34 @@ public class P1 extends AutoPCIBase {
 	public void verifyOosBehaviorAfterPciCollisionAndNoAvailablePciInTheRange() {
 		Progression prog = new Progression();
 		if (enodeBConfig.getNumberOfActiveCells(dut) > 1) {
+			prog.initDmToolAndcheckUEsConnection();
+			prog.initObjects();
 			Neighbors ngh = Neighbors.getInstance();
-			boolean is3rdPartyNeighborNeeded = false;
-			if (neighbor == null) {
-				is3rdPartyNeighborNeeded = true;
-			}
-			CellIndex collisionCellIndex = prog.casuePciCollisionWithOneOfTheCellsByAutoPci(dut, is3rdPartyNeighborNeeded);
-			if (collisionCellIndex == null) {
+			
+			Pair<EnodeB,CellIndex> result = prog.casuePciCollisionWithOneOfTheCellsByAutoPci(dut, true); 
+			if(result == null){
 				report.report("Could not Create 3rd party neighbor", Reporter.FAIL);
 				return;
 			}
+			CellIndex collisionCellIndex = result.getElement1();
+			EnodeB neighbor = result.getElement0();
 			prog.checkForOutOfServiceBehavior(dut, collisionCellIndex);
 
 			// if(dut.getNumberOfActiveCells() > 1){ //for supporting single cell too - if
 			// in the future we will need to.
 			CellIndex otherCellIndex = collisionCellIndex == CellIndex.FORTY ? CellIndex.FORTY_ONE : CellIndex.FORTY;
 			prog.checkForInServiceBehavior(dut, otherCellIndex);
-			// }
-			enodeBConfig.setProfile(dut, EnbProfiles.Son_Profile, dut.defaultNetspanProfiles.getSON());
-			enodeBConfig.deleteClonedProfiles();
+			prog.closeDmTools();
 			if (netspanServer != null && !netspanServer.deleteNeighbor(dut, neighbor)) {
 				report.report("Delete Neighbor " + neighbor.getNetspanName() + " with netspan failed",
 						Reporter.WARNING);
 			}
+			ngh.delete3rdParty(neighbor.getNetspanName());
+			// }
+			enodeBConfig.setProfile(dut, EnbProfiles.Son_Profile, dut.defaultNetspanProfiles.getSON());
+			enodeBConfig.deleteClonedProfiles();
 			dut.reboot();
-			if (is3rdPartyNeighborNeeded) {
-				ngh.delete3rdParty(neighbor.getNetspanName());
-			}
+			
 			report.report("Waiting For All Running.");
 			dut.waitForAllRunning(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);
 		} else {
@@ -238,6 +240,5 @@ public class P1 extends AutoPCIBase {
 					Reporter.WARNING);
 		}
 
-		prog.closeDmTools();
 	}
 }

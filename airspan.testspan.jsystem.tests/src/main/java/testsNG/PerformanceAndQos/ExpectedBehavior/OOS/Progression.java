@@ -57,7 +57,6 @@ public class Progression extends TestspanTest{
 		report.report("set the attenuators default value : 0 [dB]\n");
 		PeripheralsConfig.getInstance().setAttenuatorSetValue(attenuatorSetUnderTest, 0);
 		initDmToolAndcheckUEsConnection(dut);
-		GeneralUtils.stopLevel();
 	}
 
 	public void initObjects(){
@@ -95,6 +94,7 @@ public class Progression extends TestspanTest{
 			printMeasReport(p.getElement0().getName(), measReport);
 			p.getElement1().close();
 		}
+		GeneralUtils.stopLevel();
 	}
 	
 	public void closeDmTools(){

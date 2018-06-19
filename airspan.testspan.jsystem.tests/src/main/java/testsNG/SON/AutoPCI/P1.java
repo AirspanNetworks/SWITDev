@@ -196,7 +196,7 @@ public class P1 extends AutoPCIBase {
 	paramsInclude = {"DUT"})
 	public void verifyOosBehaviorAfterPciCollisionAndNoAvailablePciInTheRange(){
 		Progression prog = new Progression();
-		prog.setDUT(dut.getNetspanName());
+		prog.setDUT(dut.getName());
 		try {
 			prog.init();
 		} catch (Exception e) {

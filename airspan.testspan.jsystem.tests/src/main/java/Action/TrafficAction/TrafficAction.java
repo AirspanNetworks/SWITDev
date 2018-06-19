@@ -284,15 +284,6 @@ public class TrafficAction extends Action {
 		}
 		if(ues == null){
 			report.report("No UEs were configured", Reporter.WARNING);
-
-			AmariSoftServer uesim;
-			try {
-				uesim = AmariSoftServer.getInstance();
-				ues = uesim.getUeList();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			return;
 		}
 		if(qci == null){

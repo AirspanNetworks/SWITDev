@@ -51,18 +51,18 @@ public class UeSimulatorActions extends Action {
 		boolean flag = false;
 		try {
 			report.report("Adding " + numUes + " UEs, release " + release + ", category " + category);
-			AmariSoftServer a = AmariSoftServer.getInstance();
+			AmariSoftServer amariSoftServer = AmariSoftServer.getInstance();
 
-			if (!a.isRunning()) {
+			if (!amariSoftServer.isRunning()) {
 				report.report("Simulator is not working, cant add UEs", Reporter.WARNING);
 			}
 			else{
 				if (dut == null) {
 					report.report("No DUT provided, attaching UE to first available Cell.");
-					flag = a.addUes(numUes, release, category);
+					flag = amariSoftServer.addUes(numUes, release, category);
 				} else {
 					report.report("Attaching UE to " + dut.getName() + " cell " + cellId);
-					flag = a.addUes(numUes, release, category, dut, cellId);
+					flag = amariSoftServer.addUes(numUes, release, category, dut, cellId);
 				}
 			}
 		} catch (Exception e) {
@@ -95,8 +95,8 @@ public class UeSimulatorActions extends Action {
 				}
 			}
 			report.report("There are " + sdrCounter + " Cells in the enodeBs given, so " + sdrCounter + " are requiered.");
-			AmariSoftServer a = AmariSoftServer.getInstance();
-			a.startServer(duts);
+			AmariSoftServer amariSoftServer = AmariSoftServer.getInstance();
+			amariSoftServer.startServer(duts);
 		} catch (Exception e) {
 			report.report("Error starting UE simulator: " + e.getMessage(), Reporter.WARNING);
 			e.printStackTrace();

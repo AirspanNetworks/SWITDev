@@ -761,7 +761,7 @@ public class P0 extends TestspanTest {
 
 	private void setReason(int numTry){
 		if(numTry==numOfMaxRetries-1 && reasons[numTry]==""){
-			reasons[numTry] = "Pass on try #" +(numTry+1);
+			reasons[numTry] = "Pass on try: " +(numTry+1);
 		}
 		reason = reasons[numTry];
 	}

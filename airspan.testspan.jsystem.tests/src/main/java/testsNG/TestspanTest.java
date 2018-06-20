@@ -25,6 +25,7 @@ import Netspan.NetspanServer;
 import Netspan.API.Enums.EnbStates;
 import Netspan.API.Lte.AlarmInfo;
 import TestingServices.TestConfig;
+import UeSimulator.Amarisoft.AmariSoftServer;
 import Utils.DebugFtpServer;
 import Utils.GeneralUtils;
 import Utils.InetAddressesHelper;
@@ -107,6 +108,10 @@ public class TestspanTest extends SystemTestCase4 {
 		TunnelManager.seteNodeBInTestList(enbInTest);
 		TunnelManager.failedTestIfNoTriesLeftForAnyDut();
 		GeneralUtils.startLevel("Initialize Components");
+		
+		//if ue simulator is connected, start log.
+		AmariSoftServer.getInstance().startLogger();
+		
 		testStats = new HashMap<String, Integer>();
 		if (enbInTest == null)
 			throw new Exception("must set enbInTest!!!!!!");
@@ -251,7 +256,7 @@ public class TestspanTest extends SystemTestCase4 {
 
 				oid = MibReader.getInstance().resolveByName("asLteStkDebugFtpServerCfgFtpPassword");
 				eNodeB.snmpSet(oid, debugFtpServer.getDebugFtpServerPassword());
-
+				eNodeB.lteCli("db get debugFtpServer");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -439,6 +444,12 @@ public class TestspanTest extends SystemTestCase4 {
 			report.setContainerProperties(0, "LogCounter", logCounter);
 		}
 
+		//if ue simulator is connected, close log.
+		try {
+			AmariSoftServer.getInstance().closeLog();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		GeneralUtils.printToConsole(ScenarioUtils.getInstance().getMemoryConsumption());
 	}
 

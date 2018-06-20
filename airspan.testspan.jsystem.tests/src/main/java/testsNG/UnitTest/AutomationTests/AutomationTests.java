@@ -7,8 +7,10 @@ import org.junit.Test;
 
 import EnodeB.EnodeB;
 import EnodeB.Components.EnodeBComponent;
+import UE.UE;
 import UeSimulator.Amarisoft.AmariSoftServer;
 import Utils.GeneralUtils;
+import Utils.SetupUtils;
 import Utils.SysObjUtils;
 import jsystem.framework.ParameterProperties;
 import jsystem.framework.TestProperties;
@@ -66,13 +68,70 @@ public class AutomationTests extends TestspanTest{
 	}
 	
 	@Test
+	@TestProperties(name = "amarisoftUeTest", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {"IsTestWasSuccessful" })
+	public void amarisoftUeTest() throws Exception {
+		report.report("Start amarisoftUeTest test.");
+		
+		AmariSoftServer server = AmariSoftServer.getInstance();
+		if (!server.startServer(dut))
+			server.startServer(dut);
+		server.addUes(125, 13, 6 , 0);
+		server.addUes(125, 13, 6 , 1);
+		
+		ArrayList<UE> ues =  SetupUtils.getInstance().getAllUEs();
+		
+		for (UE ue : ues) {
+			try {
+				GeneralUtils.printToConsole("===============================================");
+				ue.start();
+				GeneralUtils.printToConsole("ue.getImsi: " + ue.getImsi());
+				GeneralUtils.printToConsole("ue.getLanIpAddress: " + ue.getLanIpAddress());
+				GeneralUtils.printToConsole("ue.getWanIpAddress: " + ue.getWanIpAddress());
+				GeneralUtils.printToConsole("ue.getIPerfDlMachine: " + ue.getIPerfDlMachine());
+				GeneralUtils.printToConsole("ue.getIPerfUlMachine: " + ue.getIPerfUlMachine());
+				GeneralUtils.printToConsole("ue.getVendor: " + ue.getVendor());
+				GeneralUtils.printToConsole("ue.getUeCategory: " + ue.getUeCategory());
+				GeneralUtils.printToConsole("ue.getVersion: " + ue.getVersion());
+				GeneralUtils.printToConsole("ue.getBandWidth: " + ue.getBandWidth());
+				GeneralUtils.printToConsole("ue.getUEUlFrequency: " + ue.getUEUlFrequency());
+				GeneralUtils.printToConsole("ue.getUEDlFrequency: " + ue.getUEDlFrequency());
+				GeneralUtils.printToConsole("ue.getUEStatus: " + ue.getUEStatus());
+				GeneralUtils.printToConsole("ue.getDuplexMode: " + ue.getDuplexMode());
+				GeneralUtils.printToConsole("ue.getRSRP1: " + ue.getRSRP(1));
+				GeneralUtils.printToConsole("ue.getPCI: " + ue.getPCI());
+				GeneralUtils.printToConsole("===============================================");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+//		commands();
+//		long t= System.currentTimeMillis();
+//		long end = t + 12 * 60 * 60 * 1000;
+//		while (System.currentTimeMillis() < end) {
+//			for (int i = 0; i < ues.size(); i++) {
+//				ues.get(i).stop();
+//			}
+//			GeneralUtils.unSafeSleep(20000);
+//			for (int i = 0; i < ues.size(); i++) {
+//				ues.get(i).start();
+//			}
+//			GeneralUtils.unSafeSleep(20000);
+//		}
+//		stopCommandsAndAttachFiles();
+		
+		report.report("Finished amarisoftUeTest test.");
+		
+	}
+	
+	
+	@Test
 	@TestProperties(name = "logTest", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {"IsTestWasSuccessful" })
 	public void logTest() throws Exception {
 		report.report("Start logTest test.");
 		
 		
 		commands();
-		GeneralUtils.unSafeSleep(12*60*60*1000);
+		GeneralUtils.unSafeSleep(2*30*60*60*1000);
 		stopCommandsAndAttachFiles();
 		
 		report.report("Finished logTest test.");
@@ -82,7 +141,6 @@ public class AutomationTests extends TestspanTest{
 	public void commands() {
 
 		ArrayList<String> commands = new ArrayList<>();
-		commands.add("ue show link");
 		commands.add("system show memory");
 		commands.add("system show memdbg bucket=0 leaks=10");
 		commands.add("system show memdbg bucket=1 leaks=10");
@@ -158,10 +216,10 @@ public class AutomationTests extends TestspanTest{
 		
 		AmariSoftServer as = AmariSoftServer.getInstance();
 		GeneralUtils.printToConsole("getImsiStartList: " + as.getImsiStartList());
+		GeneralUtils.printToConsole("getImsiStopList: " + as.getImsiStopList());
 		GeneralUtils.printToConsole("getPassword: " + as.getPassword());
 		GeneralUtils.printToConsole("getRxgain: " + as.getRxgain());
 		GeneralUtils.printToConsole("getTxgain: " + as.getTxgain());
-		GeneralUtils.printToConsole("getImsiStopList: " + as.getImsiStopList());
 		GeneralUtils.printToConsole("getIp: " + as.getIp());
 		GeneralUtils.printToConsole("getusername: " + as.getusername());
 		

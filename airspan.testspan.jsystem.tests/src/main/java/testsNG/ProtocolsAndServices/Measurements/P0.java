@@ -141,7 +141,6 @@ public class P0 extends TestspanTest{
 		allArrayUEs = SetupUtils.getInstance().getAllUEs();
 		
 		ArrayList<String> commands = new ArrayList<>();
-		commands.add("ue show link");
 		commands.add("ue show rate");
 		commands.add("db get PTPStatus");
 		commandsThreadDut1 = new ParallelCommandsThread(commands, dutInTest, null, null);

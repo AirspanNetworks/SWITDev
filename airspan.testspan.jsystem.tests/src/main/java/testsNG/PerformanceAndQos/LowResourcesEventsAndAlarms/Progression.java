@@ -236,7 +236,6 @@ public class Progression extends TestspanTest{
 	 */
 	private void syncGeneralCommands() {
 		report.report("Starting parallel commands");
-		commandList.add("ue show link");
 		commandList.add("ue show rate");
 		commandList.add("rlc show amdlstats");
 		commandList.add("db get trapGlobal");

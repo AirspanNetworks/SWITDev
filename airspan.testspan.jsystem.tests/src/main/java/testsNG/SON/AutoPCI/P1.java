@@ -209,13 +209,12 @@ public class P1 extends AutoPCIBase {
 			prog.initDmToolAndcheckUEsConnection(dut);
 			Neighbors ngh = Neighbors.getInstance();
 			
-			Pair<EnodeB,CellIndex> result = prog.casuePciCollisionWithOneOfTheCellsByAutoPci(dut, true); 
-			if(result == null){
+			CellIndex collisionCellIndex = casuePciCollisionWithOneOfTheCellsByAutoPci(dut); 
+			if(collisionCellIndex == null){
 				report.report("Could not Create 3rd party neighbor", Reporter.FAIL);
 				return;
 			}
-			CellIndex collisionCellIndex = result.getElement1();
-			EnodeB neighbor = result.getElement0();
+			
 			prog.checkForOutOfServiceBehavior(dut, collisionCellIndex);
 
 			// if(dut.getNumberOfActiveCells() > 1){ //for supporting single cell too - if

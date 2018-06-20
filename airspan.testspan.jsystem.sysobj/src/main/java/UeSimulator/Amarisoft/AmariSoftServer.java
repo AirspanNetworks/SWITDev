@@ -226,7 +226,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 
     public boolean stopServer(){
 		if (running)
-			if (sendCommands("quit", "#")) {
+			if (sendCommands("quit\n\n", "#")) {
 				running = false;
 				return true;
 			} else {

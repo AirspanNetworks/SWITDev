@@ -115,6 +115,7 @@ public class UeSimulatorActions extends Action {
 		try {
 			report.report("Stopping UE simulator:");
 			AmariSoftServer amariSoftServer = AmariSoftServer.getInstance();
+			amariSoftServer.startLogger();
 			if(amariSoftServer.stopServer()){
 				report.report("UE simulator stopped");
 			}
@@ -125,6 +126,8 @@ public class UeSimulatorActions extends Action {
 				else
 					report.report("UE simulator is stopped");
 			}
+			amariSoftServer.closeLog();
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

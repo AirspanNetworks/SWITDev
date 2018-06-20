@@ -619,6 +619,7 @@ public class AutoPCIBase extends TestspanTest {
 		neighbor = ngh.adding3rdPartyNeighbor(eNodeB, eNodeB.getName()+"_3rdPartyNeighbor", "123.45.67." + eNodeB.getPci(),eNodeB.getPci(), 123400 + (eNodeB.getPci() + 1), eNodeB.getEarfcn());
 		if(neighbor == null){
 			report.report("Failed to Create 3rd party neighbor", Reporter.FAIL);
+			GeneralUtils.stopLevel();
 			return null;
 		}
 		neighborPci = eNodeB.getPci();
@@ -671,6 +672,7 @@ public class AutoPCIBase extends TestspanTest {
 		if(!ngh.addNeighbor(eNodeB, neighbor, HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC, HandoverType.TRIGGER_X_2, true, "0")){
 			report.report("Failed to add neighbor.", Reporter.FAIL);
 			ngh.delete3rdParty(neighbor.getNetspanName());
+			GeneralUtils.stopLevel();
 			return null;
 		}
 		

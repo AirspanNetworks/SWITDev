@@ -97,7 +97,27 @@ public class UeSimulatorActions extends Action {
 	
 	@ParameterProperties(description = "Name of UEs from the SUT")
 	public void setUEs(String ues) {
-		this.ues = (ArrayList<UE>) SysObjUtils.getInstnce().initSystemObject(UE.class, false, ues.split(","));
+		ArrayList<UE> tempUes = new ArrayList<>();
+		String[] ueArray = ues.split(",");
+		for (int i = 0; i < ueArray.length; i++) {					
+			if(ueArray[i].toLowerCase().trim().equals(AmariSoftServer.amarisoftIdentifier)){
+				try {
+					AmariSoftServer uesim = AmariSoftServer.getInstance();
+					tempUes.addAll(uesim.getUeList());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}	
+			}
+			else{
+				try {
+					tempUes.addAll((ArrayList<UE>) SysObjUtils.getInstnce().initSystemObject(UE.class, false, ueArray[i]));			
+				} catch (Exception e) {
+					report.report("Failed init object " + ueArray[i]);
+					e.printStackTrace();
+				}
+			}
+		}
+		this.ues = (ArrayList<UE>) tempUes.clone();	
 	}
 	
 	@Test											

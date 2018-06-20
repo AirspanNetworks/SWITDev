@@ -76,32 +76,33 @@ public class AutomationTests extends TestspanTest{
 		report.report("Start amarisoftUeTest test.");
 		
 		ArrayList<UE> ues =  SetupUtils.getInstance().getAllUEs();
-		
+		GeneralUtils.startLevel("All UEs information");
 		for (UE ue : ues) {
 			try {
-				GeneralUtils.printToConsole("===============================================");
+				GeneralUtils.startLevel(ue.getName());
 				ue.start();
-				GeneralUtils.printToConsole("ue.getImsi: " + ue.getImsi());
-				GeneralUtils.printToConsole("ue.getLanIpAddress: " + ue.getLanIpAddress());
-				GeneralUtils.printToConsole("ue.getWanIpAddress: " + ue.getWanIpAddress());
-				GeneralUtils.printToConsole("ue.getIPerfDlMachine: " + ue.getIPerfDlMachine());
-				GeneralUtils.printToConsole("ue.getIPerfUlMachine: " + ue.getIPerfUlMachine());
-				GeneralUtils.printToConsole("ue.getVendor: " + ue.getVendor());
-				GeneralUtils.printToConsole("ue.getUeCategory: " + ue.getUeCategory());
-				GeneralUtils.printToConsole("ue.getVersion: " + ue.getVersion());
-				GeneralUtils.printToConsole("ue.getBandWidth: " + ue.getBandWidth());
-				GeneralUtils.printToConsole("ue.getUEUlFrequency: " + ue.getUEUlFrequency());
-				GeneralUtils.printToConsole("ue.getUEDlFrequency: " + ue.getUEDlFrequency());
-				GeneralUtils.printToConsole("ue.getUEStatus: " + ue.getUEStatus());
-				GeneralUtils.printToConsole("ue.getDuplexMode: " + ue.getDuplexMode());
-				GeneralUtils.printToConsole("ue.getRSRP1: " + ue.getRSRP(1));
-				GeneralUtils.printToConsole("ue.getPCI: " + ue.getPCI());
-				GeneralUtils.printToConsole("===============================================");
+				report.report("ue.getImsi: " + ue.getImsi());
+				report.report("ue.getLanIpAddress: " + ue.getLanIpAddress());
+				report.report("ue.getWanIpAddress: " + ue.getWanIpAddress());
+				report.report("ue.getIPerfDlMachine: " + ue.getIPerfDlMachine());
+				report.report("ue.getIPerfUlMachine: " + ue.getIPerfUlMachine());
+				report.report("ue.getVendor: " + ue.getVendor());
+				report.report("ue.getUeCategory: " + ue.getUeCategory());
+				report.report("ue.getVersion: " + ue.getVersion());
+				report.report("ue.getBandWidth: " + ue.getBandWidth());
+				report.report("ue.getUEUlFrequency: " + ue.getUEUlFrequency());
+				report.report("ue.getUEDlFrequency: " + ue.getUEDlFrequency());
+				report.report("ue.getUEStatus: " + ue.getUEStatus());
+				report.report("ue.getDuplexMode: " + ue.getDuplexMode());
+				report.report("ue.getRSRP1: " + ue.getRSRP(1));
+				report.report("ue.getPCI: " + ue.getPCI());
+				GeneralUtils.stopLevel();
 			} catch (Exception e) {
+				GeneralUtils.stopLevel();
 				e.printStackTrace();
 			}
 		}
-		
+		GeneralUtils.stopLevel();
 		report.report("Finished amarisoftUeTest test.");
 		
 	}

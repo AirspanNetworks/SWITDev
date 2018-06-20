@@ -110,6 +110,28 @@ public class UeSimulatorActions extends Action {
 	}
 	
 	@Test											
+	@TestProperties(name = "stop UE Simulator", returnParam = "LastStatus", paramsInclude = { })
+	public void stopUeSimulator() {
+		try {
+			report.report("Stopping UE simulator:");
+			AmariSoftServer amariSoftServer = AmariSoftServer.getInstance();
+			if(amariSoftServer.stopServer()){
+				report.report("UE simulator stopped");
+			}
+			else{
+				report.report("UE simulator stop command failed", Reporter.WARNING);
+				if (amariSoftServer.isRunning()) 
+					report.report("UE simulator is still running", Reporter.FAIL);
+				else
+					report.report("UE simulator is stopped");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	@Test											
 	@TestProperties(name = "start UE Simulator", returnParam = "LastStatus", paramsInclude = { "DUTs" })
 	public void startUeSimulator() {
 		try {

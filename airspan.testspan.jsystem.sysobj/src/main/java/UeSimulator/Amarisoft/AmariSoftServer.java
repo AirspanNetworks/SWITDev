@@ -80,17 +80,13 @@ public class AmariSoftServer extends SystemObjectImpl{
     volatile private Object returnValue;
 
 	private String loggerBuffer="";
-
-	private boolean connected = false;
-
+	private String cliBuffer = "";
 	private Thread loggerBufferThread;
-
 	private String logFileName = "AmarisoftLog";
 
-	private String cliBuffer = "";
-
 	private boolean waitForResponse = false;
-	private boolean saveLogFile;
+	private boolean connected = false;
+	private boolean saveLogFile = false;
 	private boolean running = false;
 
     @Override
@@ -98,6 +94,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 		super.init();
 		port = 900 + sdrList[0];
     	connect();
+
     	ueMap = new HashMap<>();
     	sdrCellsMap = new HashMap<>();
     	fillUeList();
@@ -227,6 +224,17 @@ public class AmariSoftServer extends SystemObjectImpl{
     public AmariSoftServer() { 
     }
 
+    public boolean stopServer(){
+    	if (sendCommands("quit","#")){
+    		running = false;
+    		return true;
+    	}
+    	else{
+    		report.report("Closing server failed.",Reporter.WARNING);
+    		return false;
+    	}
+    }
+    
     public boolean startServer(EnodeB dut){
     	ArrayList<EnodeB> tempEnodebList = new ArrayList<>();
     	tempEnodebList.add(dut);
@@ -317,6 +325,10 @@ public class AmariSoftServer extends SystemObjectImpl{
 	public boolean sendCommands(String cmd, String response) {
 		String privateBuffer = "";
 		String ans = "";
+		if (!connected) {
+			report.report("Attempted to send command \"" + cmd +"\" to machine that is not connected.", Reporter.WARNING);
+			return false;
+		}
 		waitForResponse = true;
 		sendRawCommand(cmd);
 		long startTime = System.currentTimeMillis(); // fetch starting time
@@ -371,6 +383,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     @OnClose
     public void onClose(Session userSession, CloseReason reason) throws IOException {
         System.out.println("closing websocket: " + reason.toString());
+        running = false;
         this.userSession.close();
         this.userSession = null;
     }
@@ -448,13 +461,19 @@ public class AmariSoftServer extends SystemObjectImpl{
 	}
 
 	public void startLogger() {	
-		if (!saveLogFile) {
-			saveLogFile = connected;			
+		if (!connected) {
+			GeneralUtils.printToConsole("Cant start amarisoft log file when not connected.");
+			return;
+		}
+		if (saveLogFile) {
+			GeneralUtils.printToConsole("Cant start amarisoft log file logging is already running.");
+			return;
 		}
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				GeneralUtils.printToConsole("Starting amarisoft log to file: " + logFileName);
+				saveLogFile = true;
 				while (saveLogFile) {
 					try {
 						String[] lines = processLines(getLoggerBuffer());
@@ -517,7 +536,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 		}
 	}
     
-    public String getLoggerBuffer() {
+    private String getLoggerBuffer() {
 		// To avoid the synchronized method readInputBuffer() - use a thread
 		// that will call it and wait for it instead.
 		if (connected && (loggerBufferThread == null || !loggerBufferThread.isAlive())) {
@@ -534,11 +553,14 @@ public class AmariSoftServer extends SystemObjectImpl{
 		loggerBuffer = "";
 		return TerminalUtils.filterVT100(buffer);
 	}
-
     
     synchronized private Object sendSynchronizedMessage(String message)
 	{
     	Object ans;
+    	if (!running) {
+			report.report("attpempted to send message \"" + message + "\" to amarisoft server that is not running." , Reporter.WARNING);
+			return null;
+		}
 		synchronized (waitLock) {
 			sendMessage(message);
 			try {
@@ -552,11 +574,11 @@ public class AmariSoftServer extends SystemObjectImpl{
 		return ans;
 	}
     
-	public void setConfigFile(String fileName) {
+	private void setConfigFile(String fileName) {
 		ueConfigFileName = fileName;
 	}
 	
-	public void writeConfigFile() {
+	private void writeConfigFile() {
 		ObjectMapper mapper = new ObjectMapper();
     	mapper.configure(SerializationFeature.INDENT_OUTPUT, false);
     	try {    		
@@ -770,7 +792,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 		return true;
 	}
 	
-	public void setConfig(ArrayList<EnodeB> duts) {
+	private void setConfig(ArrayList<EnodeB> duts) {
 		configObject = new ConfigObject();
 		configObject.setLogOptions("all.level=none,all.max_size=0");
 		configObject.setLogFilename("/tmp/ue0.log");

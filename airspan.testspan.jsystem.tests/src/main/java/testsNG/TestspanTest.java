@@ -110,7 +110,9 @@ public class TestspanTest extends SystemTestCase4 {
 		GeneralUtils.startLevel("Initialize Components");
 		
 		//if ue simulator is connected, start log.
-		AmariSoftServer.getInstance().startLogger();
+		if (AmariSoftServer.getInstance() != null) {			
+			AmariSoftServer.getInstance().startLogger();
+		}
 		
 		testStats = new HashMap<String, Integer>();
 		if (enbInTest == null)
@@ -446,7 +448,9 @@ public class TestspanTest extends SystemTestCase4 {
 
 		//if ue simulator is connected, close log.
 		try {
-			AmariSoftServer.getInstance().closeLog();
+			if (AmariSoftServer.getInstance() != null) {	
+				AmariSoftServer.getInstance().closeLog();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

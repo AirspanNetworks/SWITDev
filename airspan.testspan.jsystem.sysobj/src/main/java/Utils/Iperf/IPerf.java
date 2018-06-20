@@ -11,6 +11,7 @@ import java.util.concurrent.Executors;
 import Entities.ITrafficGenerator;
 import Entities.LoadParam;
 import Entities.StreamParams;
+import UE.AmarisoftUE;
 import UE.AndroidUE;
 import UE.UE;
 import Utils.GeneralUtils;
@@ -27,6 +28,8 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 	 * 
 	 * @author Avichai Yefet
 	 */
+	public static String clientSideCommandsFile = "clientSide.txt";
+	public static String serverSideCommandsFile = "serverSide.txt";
 	
 	private double ulPortLoad = 10;
 	private double dlPortLoad = 70;
@@ -86,7 +89,9 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		if(ues != null){
 			for(UE ue : ues){
 				UEIPerf ueIPerf = null;
-				if(ue instanceof AndroidUE){
+				if(ue instanceof AmarisoftUE){
+					ueIPerf = new AmarisoftIperf((AmarisoftUE)ue, iperfMachineDL, iperfMachineUL, ulPortLoad/ues.size(), dlPortLoad/ues.size(), frameSize, qciList);
+				}else if(ue instanceof AndroidUE){
 					ueIPerf = new AndroidIPerf((AndroidUE)ue, iperfMachineDL, iperfMachineUL, ulPortLoad/ues.size(), dlPortLoad/ues.size(), frameSize, qciList);
 				}else{
 					ueIPerf = new UEIPerf(ue, iperfMachineDL, iperfMachineUL, ulPortLoad/ues.size(), dlPortLoad/ues.size(), frameSize, qciList);
@@ -98,18 +103,35 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		}
 		updateConfigFile();
 	}
-	
-	public void startTraffic() throws Exception{
+
+	public void startTraffic() throws Exception {
 		Connect();
-		ExecutorService exe =  Executors.newFixedThreadPool(allUEsIPerfList.size());
-		for(UEIPerf ueIPerf : allUEsIPerfList){
+		ExecutorService exe = Executors.newFixedThreadPool(allUEsIPerfList.size());
+		String ulServerCommandsFile = iperfMachineDL.preAddressTpFile +"UL"+ serverSideCommandsFile;
+		String dlclientCommandsFile = iperfMachineDL.preAddressTpFile +"DL"+ clientSideCommandsFile;
+		String dlServerCommandsFile = iperfMachineUL.preAddressTpFile +"DL"+ serverSideCommandsFile;
+		String ulclientCommandsFile = iperfMachineUL.preAddressTpFile +"UL"+ clientSideCommandsFile;
+		
+		iperfMachineDL.sendCommand("echo '' > " + ulServerCommandsFile + " ; chmod +x " + ulServerCommandsFile);
+		iperfMachineDL.sendCommand("echo '' > " + dlclientCommandsFile + " ; chmod +x " + dlclientCommandsFile);
+		iperfMachineUL.sendCommand("echo '' > " + dlServerCommandsFile + " ; chmod +x " + dlServerCommandsFile);
+		iperfMachineUL.sendCommand("echo '' > " + ulclientCommandsFile + " ; chmod +x " + ulclientCommandsFile);
+
+		for (UEIPerf ueIPerf : allUEsIPerfList) {
 			exe.execute(ueIPerf);
 		}
+		
+		GeneralUtils.unSafeSleep(10000);
+		iperfMachineDL.sendCommand(ulServerCommandsFile);
+		iperfMachineUL.sendCommand(dlServerCommandsFile);
+		GeneralUtils.unSafeSleep(3000);
+		iperfMachineDL.sendCommand(dlclientCommandsFile);
+		iperfMachineUL.sendCommand(ulclientCommandsFile);
 		GeneralUtils.unSafeSleep(30000);
 	}
-	
-	public void startTrafficDL() throws Exception{
-		for(UEIPerf ueIPerf : allUEsIPerfList){
+
+	public void startTrafficDL() throws Exception {
+		for (UEIPerf ueIPerf : allUEsIPerfList) {
 			ueIPerf.runTrafficDL();
 		}
 	}
@@ -122,8 +144,12 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 	
 	public void stopTraffic() throws Exception{
 		for(UEIPerf ueIPerf : allUEsIPerfList){
-			ueIPerf.stopTraffic();
+			if (ueIPerf instanceof AndroidIPerf) {				
+				ueIPerf.stopTraffic();
+			}
 		}
+		iperfMachineDL.stopIPerf();
+		iperfMachineUL.stopIPerf();
 		Disconnect();
 	}
 
@@ -503,6 +529,16 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		return resultFiles;
 	}
 
+	@Override
+	public ArrayList<File> getCommandFiles() {
+		ArrayList<File> resultFiles = new ArrayList<File>();
+		resultFiles.add(iperfMachineDL.getFile("UL" + serverSideCommandsFile));
+		resultFiles.add(iperfMachineDL.getFile("DL" + clientSideCommandsFile));
+		resultFiles.add(iperfMachineUL.getFile("DL" + serverSideCommandsFile));
+		resultFiles.add(iperfMachineUL.getFile("UL" + clientSideCommandsFile));
+		return resultFiles;
+	}
+	
 	@Override
 	public ArrayList<File> getTransmitOutputFiles() {
 		ArrayList<File> resultFiles = new ArrayList<File>();

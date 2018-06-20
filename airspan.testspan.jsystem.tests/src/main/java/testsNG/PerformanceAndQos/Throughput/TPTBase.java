@@ -276,7 +276,7 @@ public class TPTBase extends TestspanTest {
 					GeneralUtils.stopAllLevels();
 				}
 			} catch (Exception e) {
-				report.report("Stopping Parallel Commands From Java Exception");
+				report.report("Stopping Parallel Commands From Java Exception" + e.getMessage());				
 				testIsNotDoneStatus = false;
 				resetTestBol = false;
 				exceptionThrown = true;
@@ -373,7 +373,6 @@ public class TPTBase extends TestspanTest {
 	 *         root folder
 	 */
 	protected void syncGeneralCommands() {
-		commandList.add("ue show link");
 		commandList.add("ue show rate");
 		commandList.add("rlc show amdlstats");
 		commandList.add("qci show rate");
@@ -1104,6 +1103,7 @@ public class TPTBase extends TestspanTest {
 		StreamList TablePrinter = new StreamList();
 		ArrayList<String> headLines = new ArrayList<String>();
 		headLines.add("L1bitRate[Mbit/s]");
+		GeneralUtils.startLevel("Per Stream Tables");
 		for (ArrayList<StreamParams> streams : listOfStreamList) {
 			for (StreamParams stream : streams) {
 				ArrayList<String> valuesList = new ArrayList<String>();
@@ -1115,6 +1115,7 @@ public class TPTBase extends TestspanTest {
 		for (StreamParams stream : listOfStreamList.get(0)) {
 			report.reportHtml(stream.getName(), TablePrinter.printTablesHtmlForStream(stream.getName()), true);
 		}
+		GeneralUtils.stopLevel();
 	}
 
 	/**

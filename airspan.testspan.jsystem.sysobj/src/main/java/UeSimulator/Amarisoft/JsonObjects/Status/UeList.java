@@ -18,6 +18,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "timing_advance",
     "rnti",
     "power_on",
+    "ip",
     "dl_bitrate",
     "ul_bitrate",
     "dl_rx_count",
@@ -47,6 +48,8 @@ public class UeList {
     private Integer rnti;
     @JsonProperty("power_on")
     private Boolean powerOn;
+    @JsonProperty("ip")
+	private String ip;
     @JsonProperty("dl_bitrate")
     private Double dlBitrate;
     @JsonProperty("ul_bitrate")
@@ -138,6 +141,16 @@ public class UeList {
         this.powerOn = powerOn;
     }
 
+    @JsonProperty("ip")
+    public String getIp() {
+        return ip;
+    }
+
+    @JsonProperty("ip")
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+    
     @JsonProperty("dl_bitrate")
     public Double getDlBitrate() {
         return dlBitrate;

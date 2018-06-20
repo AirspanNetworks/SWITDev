@@ -21,7 +21,8 @@ public class UEAction {
 		POWER_ON("power_on"),
 		POWER_OFF("power_off"),
 		UE_GET("ue_get"),
-		UE_ADD("ue_add")
+		UE_ADD("ue_add"),
+		CONFIG_GET("config_get")
 	    ;
 
 	    private final String text;

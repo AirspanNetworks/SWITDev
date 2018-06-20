@@ -39,7 +39,7 @@ public class P0 extends AutoPCIBase {
 			report.report(dut.getNetspanName() + " Wait for all running and in service (TimeOut=15 Minutes)");
 			dut.waitForAllRunningAndInService(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);	
 		}else{
-			report.report("eNB should not reboot");
+			report.report("eNB should not reboot. Wait up to 40 seconds to verify");
 			dut.setExpectBooting(true);
 			if(dut.waitForReboot(40*1000)){
 				report.report("EnodeB was rebooted - not expected",Reporter.FAIL);

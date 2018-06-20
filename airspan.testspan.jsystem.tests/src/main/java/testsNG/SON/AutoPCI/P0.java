@@ -6,6 +6,7 @@ import java.util.List;
 import org.junit.Test;
 
 import EnodeB.EnodeB;
+import EnodeB.EnodeB.Architecture;
 import Netspan.API.Lte.EventInfo;
 import Netspan.API.Lte.SONStatus;
 import Utils.GeneralUtils;
@@ -14,21 +15,42 @@ import jsystem.framework.report.Reporter;
 
 public class P0 extends AutoPCIBase {
 	
+	int threshold = 16;
+	
+	protected boolean shouldReboot(){
+		int version = Integer.valueOf(dut.getEnodeBversion().split("_")[0]);
+		boolean shouldReboot = version<threshold || dut.getArchitecture()==Architecture.XLP;
+		return shouldReboot;
+	}
+	
 	@Test // 1
 	@TestProperties(name = "Allocation_Algorithm_Without_Neighbor_Configuration", returnParam = {
 			"IsTestWasSuccessful" }, paramsExclude = { "IsTestWasSuccessful" })
 	public void allocationAlgorithmWithoutNeighborConfiguration() {
 		configureAutoPciToEnableViaNms(pciStart, pciEnd);
+		if(shouldReboot()){
+			report.report("eNB should reboot once");
 
-		report.report("eNB should reboot once");
+			dut.setExpectBooting(true);
 
-		dut.setExpectBooting(true);
+			report.report("Wait 1 minute");
+			GeneralUtils.unSafeSleep(1000 * 60);
 
-		report.report("Wait 1 minute");
-		GeneralUtils.unSafeSleep(1000 * 60);
+			report.report(dut.getNetspanName() + " Wait for all running and in service (TimeOut=15 Minutes)");
+			dut.waitForAllRunningAndInService(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);	
+		}else{
+			report.report("eNB should not reboot");
+			dut.setExpectBooting(true);
+			if(dut.waitForReboot(40*1000)){
+				report.report("EnodeB was rebooted - not expected",Reporter.FAIL);
+				dut.waitForAllRunningAndInService(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);
+			}else{
+				report.report("EnodeB was not rebooted - as expected");
+			}
+			dut.setExpectBooting(false);
+		}
 
-		report.report(dut.getNetspanName() + " Wait for all running and in service (TimeOut=15 Minutes)");
-		dut.waitForAllRunningAndInService(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);
+		
 		enodeBConfig.printEnodebState(dut, true);
 
 		report.reportHtml("db get AutoPciCell", dut.lteCli("db get AutoPciCell"), true);

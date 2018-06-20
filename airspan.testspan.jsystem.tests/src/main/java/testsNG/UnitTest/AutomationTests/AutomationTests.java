@@ -28,7 +28,10 @@ public class AutomationTests extends TestspanTest{
 	public void init() throws Exception {
 		report.report("Init!");
 		enbInTest = new ArrayList<EnodeB>();
-		enbInTest.add(dut);
+		if (dut != null) {
+			
+			enbInTest.add(dut);
+		}
 		super.init();
 	}
 	
@@ -68,15 +71,9 @@ public class AutomationTests extends TestspanTest{
 	}
 	
 	@Test
-	@TestProperties(name = "amarisoftUeTest", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {"IsTestWasSuccessful" })
+	@TestProperties(name = "amarisoftUeTest", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {"IsTestWasSuccessful", "DUT" })
 	public void amarisoftUeTest() throws Exception {
 		report.report("Start amarisoftUeTest test.");
-		
-		AmariSoftServer server = AmariSoftServer.getInstance();
-		if (!server.startServer(dut))
-			server.startServer(dut);
-		server.addUes(125, 13, 6 , 0);
-		server.addUes(125, 13, 6 , 1);
 		
 		ArrayList<UE> ues =  SetupUtils.getInstance().getAllUEs();
 		
@@ -104,20 +101,6 @@ public class AutomationTests extends TestspanTest{
 				e.printStackTrace();
 			}
 		}
-//		commands();
-//		long t= System.currentTimeMillis();
-//		long end = t + 12 * 60 * 60 * 1000;
-//		while (System.currentTimeMillis() < end) {
-//			for (int i = 0; i < ues.size(); i++) {
-//				ues.get(i).stop();
-//			}
-//			GeneralUtils.unSafeSleep(20000);
-//			for (int i = 0; i < ues.size(); i++) {
-//				ues.get(i).start();
-//			}
-//			GeneralUtils.unSafeSleep(20000);
-//		}
-//		stopCommandsAndAttachFiles();
 		
 		report.report("Finished amarisoftUeTest test.");
 		

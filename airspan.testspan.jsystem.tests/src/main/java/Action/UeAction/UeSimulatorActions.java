@@ -25,6 +25,38 @@ public class UeSimulatorActions extends Action {
 	private int category = 4;
 	private int cellId = 0;
 
+	@ParameterProperties(description = "number of UEs to add, default = 1")
+	public void setNumUes(String numUes) {
+		try {
+			this.numUes = Integer.valueOf(numUes);
+		} catch (Exception e) {
+		}
+	}
+	
+	@ParameterProperties(description = "3GPP release, default = 13")
+	public void setRelease(String release) {
+		try {
+			this.release = Integer.valueOf(release);
+		} catch (Exception e) {
+		}
+	}
+	
+	@ParameterProperties(description = "LTE category of the UEs, default = 4")
+	public void setCategory(String category) {
+		try {
+			this.category = Integer.valueOf(category);
+		} catch (Exception e) {
+		}
+	}
+	
+	@ParameterProperties(description = "cellId in the enodeb to connect to, default = 0")
+	public void setCellId(String cellId) {
+		try {
+			this.cellId = Integer.valueOf(cellId);
+		} catch (Exception e) {
+		}
+	}
+	
 	@ParameterProperties(description = "Name of ENBs from the SUT")
 	public void setDUTs(String duts) {
 		ArrayList<EnodeB> temp = (ArrayList<EnodeB>) SysObjUtils.getInstnce().initSystemObject(EnodeB.class, false,
@@ -46,7 +78,7 @@ public class UeSimulatorActions extends Action {
 	
 	@Test											
 	@TestProperties(name = "Add UEs", returnParam = "LastStatus", paramsInclude = { "NumUes", "release", "category",
-			"dut", "cellId" })
+			"DUT", "cellId" })
 	public void AddUes() {
 		boolean flag = false;
 		try {
@@ -78,7 +110,7 @@ public class UeSimulatorActions extends Action {
 	}
 	
 	@Test											
-	@TestProperties(name = "start UE Simulator", returnParam = "LastStatus", paramsInclude = { "duts" })
+	@TestProperties(name = "start UE Simulator", returnParam = "LastStatus", paramsInclude = { "DUTs" })
 	public void startUeSimulator() {
 		try {
 			if (duts == null) {

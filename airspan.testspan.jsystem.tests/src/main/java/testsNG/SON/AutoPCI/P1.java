@@ -209,9 +209,8 @@ public class P1 extends AutoPCIBase {
 			prog.initDmToolAndcheckUEsConnection(dut);
 			Neighbors ngh = Neighbors.getInstance();
 			
-			CellIndex collisionCellIndex = casuePciCollisionWithOneOfTheCellsByAutoPci(dut); 
+			CellIndex collisionCellIndex = causePciCollisionWithOneOfTheCellsByAutoPci(dut); 
 			if(collisionCellIndex == null){
-				report.report("Could not Create 3rd party neighbor", Reporter.FAIL);
 				return;
 			}
 			

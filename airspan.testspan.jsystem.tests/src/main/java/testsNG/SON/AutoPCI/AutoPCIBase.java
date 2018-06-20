@@ -610,7 +610,7 @@ public class AutoPCIBase extends TestspanTest {
 		pciEnd = generatePciEnd(309);
 	}
 	
-	public CellIndex casuePciCollisionWithOneOfTheCellsByAutoPci(EnodeB eNodeB){
+	public CellIndex causePciCollisionWithOneOfTheCellsByAutoPci(EnodeB eNodeB){
 		Neighbors ngh = Neighbors.getInstance();
 		GeneralUtils.startLevel("Causing PCI Collision with one of the cells.");
 		int neighborPci = 0;
@@ -618,13 +618,16 @@ public class AutoPCIBase extends TestspanTest {
 			
 		neighbor = ngh.adding3rdPartyNeighbor(eNodeB, eNodeB.getName()+"_3rdPartyNeighbor", "123.45.67." + eNodeB.getPci(),eNodeB.getPci(), 123400 + (eNodeB.getPci() + 1), eNodeB.getEarfcn());
 		if(neighbor == null){
+			report.report("Failed to Create 3rd party neighbor", Reporter.FAIL);
 			return null;
 		}
 		neighborPci = eNodeB.getPci();
 		neighborEarfcn = eNodeB.getEarfcn();
 		
 		report.report("Deleting all neighbors.");
-		if(!ngh.deleteAllNeighbors(eNodeB)){report.report("Faild to delete all neighbors.", Reporter.WARNING);}
+		if(!ngh.deleteAllNeighbors(eNodeB)){
+			report.report("Faild to delete all neighbors.", Reporter.WARNING);
+		}
 		
 		SonParameters sp = new SonParameters();
 		sp.setSonCommissioning(true);
@@ -665,7 +668,11 @@ public class AutoPCIBase extends TestspanTest {
 		}
 		
 		report.report("Adding neighbor with the same PCI to cause Collision, PCI = " + neighborPci);
-		if(!ngh.addNeighbor(eNodeB, neighbor, HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC, HandoverType.TRIGGER_X_2, true, "0")){report.report("Faild to add neighbor.", Reporter.WARNING);}
+		if(!ngh.addNeighbor(eNodeB, neighbor, HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC, HandoverType.TRIGGER_X_2, true, "0")){
+			report.report("Failed to add neighbor.", Reporter.FAIL);
+			ngh.delete3rdParty(neighbor.getNetspanName());
+			return null;
+		}
 		
 		report.report("Waiting PCI COLLISION DETECTION TIMER will expire ("+PCI_COLLISION_DETECTION_TIMER/1000+" Sec)");
 		GeneralUtils.unSafeSleep(PCI_COLLISION_DETECTION_TIMER);

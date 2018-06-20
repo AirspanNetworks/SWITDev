@@ -1,20 +1,19 @@
 package Action.UeAction;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.junit.Test;
 
 import Action.Action;
 import EnodeB.EnodeB;
-import UE.GemtekUE;
 import UE.UE;
 import UeSimulator.Amarisoft.AmariSoftServer;
-import Utils.GeneralUtils;
 import Utils.SysObjUtils;
 import jsystem.framework.ParameterProperties;
 import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
-import testsNG.Actions.PeripheralsConfig;
+import jsystem.framework.scenario.Parameter;
 
 public class UeSimulatorActions extends Action {
 	protected EnodeB dut;
@@ -24,7 +23,32 @@ public class UeSimulatorActions extends Action {
 	private int release = 13;
 	private int category = 4;
 	private int cellId = 0;
-
+	private int ueId;
+	private String IMSI;
+	private SelectionMethod selectionMethod = SelectionMethod.IMSI;
+	
+	public enum SelectionMethod{
+		IMSI, UEID, UENAME;
+	}
+	
+	@ParameterProperties(description = "UE Selection Method")
+	public void setSelectionMethod(SelectionMethod selectionMethod) {
+			this.selectionMethod = selectionMethod;
+	}	
+	
+	@ParameterProperties(description = "UeId")
+	public void setUeId(String ueId) {
+		try {
+			this.ueId = Integer.valueOf(ueId);
+		} catch (Exception e) {
+		}
+	}
+	
+	@ParameterProperties(description = "IMSI")
+	public void setIMSI(String IMSI) {
+		this.IMSI = IMSI;
+	}
+	
 	@ParameterProperties(description = "number of UEs to add, default = 1")
 	public void setNumUes(String numUes) {
 		try {
@@ -164,6 +188,110 @@ public class UeSimulatorActions extends Action {
 	@TestProperties(name = "start UE Simulator with File", returnParam = "LastStatus", paramsInclude = { "configFileName" })
 	public void startUeSimulatorWithFile() {
 		
+	}
+	
+	@Test											
+	@TestProperties(name = "start UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = { "UeId", "IMSI", "UEs", "selectionMethod" })
+	public void startUes() {
+		boolean res = true;
+
+		try {
+			AmariSoftServer amariSoftServer = AmariSoftServer.getInstance();
+			int id;
+			switch (selectionMethod) {
+			case IMSI:
+				id = amariSoftServer.getUeId(IMSI);
+				res = amariSoftServer.uePowerOn(id);
+				break;
+
+			case UEID:
+				res = amariSoftServer.uePowerOn(ueId);
+				break;
+
+			case UENAME:
+				for (UE ue : ues) {
+					res &= ue.start();
+				}				
+				break;
+			}
+		} catch (Exception e) {
+			res = false;
+			report.report("Error trying to start UEs: " + e.getMessage(), Reporter.WARNING);
+			e.printStackTrace();
+		}
+		
+		if (res == false) {
+			report.report("start UEs Failed", Reporter.FAIL);
+		} else {
+			report.report("start UEs Succeeded");
+		}
+	}
+
+	@Test											
+	@TestProperties(name = "stop UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = { "UeId", "IMSI", "UEs", "selectionMethod" })
+	public void stopUes() {
+		boolean res = true;
+
+		try {
+			AmariSoftServer amariSoftServer = AmariSoftServer.getInstance();
+			int id;
+			switch (selectionMethod) {
+			case IMSI:
+				id = amariSoftServer.getUeId(IMSI);
+				res = amariSoftServer.uePowerOff(id);
+				break;
+
+			case UEID:
+				res = amariSoftServer.uePowerOff(ueId);
+				break;
+
+			case UENAME:
+				for (UE ue : ues) {
+					res &= ue.stop();
+				}				
+				break;
+			}
+		} catch (Exception e) {
+			res = false;
+			report.report("Error trying to stop UEs: " + e.getMessage(), Reporter.WARNING);
+			e.printStackTrace();
+		}
+		
+		if (res == false) {
+			report.report("stop UEs Failed", Reporter.FAIL);
+		} else {
+			report.report("stop UEs Succeeded");
+		}
+	}
+	
+	@Override
+	public void handleUIEvent(HashMap<String, Parameter> map, String methodName) throws Exception {
+
+		if (methodName.equals("startUes") || methodName.equals("stopUes")) {
+			handleUIEventGetCounterValue(map, methodName);
+		}
+	}
+	
+	private void handleUIEventGetCounterValue(HashMap<String, Parameter> map, String methodName) {
+		map.get("UeId").setVisible(false);
+		map.get("IMSI").setVisible(false);
+		map.get("UEs").setVisible(false);
+		
+		Parameter selectMethod = map.get("SelectionMethod");
+
+		switch (SelectionMethod.valueOf(selectMethod.getValue().toString())) {
+		case IMSI:
+			map.get("IMSI").setVisible(true);
+			break;
+
+		case UEID:
+			map.get("UeId").setVisible(true);
+			break;
+
+		case UENAME:
+			map.get("UEs").setVisible(true);
+			break;
+		}
 	}
 	
 }

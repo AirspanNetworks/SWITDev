@@ -9,6 +9,9 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Stack;
 
 import javax.websocket.ClientEndpoint;
@@ -54,6 +57,7 @@ import systemobject.terminal.Terminal;
 @ClientEndpoint
 public class AmariSoftServer extends SystemObjectImpl{
 
+	private static AmariSoftServer instance;
 	public static String amarisoftIdentifier = "amarisoft";
 	private Reporter report = ListenerstManager.getInstance();
 
@@ -217,8 +221,13 @@ public class AmariSoftServer extends SystemObjectImpl{
 	} 
     
 	public static AmariSoftServer getInstance() throws Exception {
-		AmariSoftServer ns = (AmariSoftServer) SystemManagerImpl.getInstance().getSystemObject("amariSoftServer");
-		return ns;
+		try {
+			if (instance == null) {				
+				instance = (AmariSoftServer) SystemManagerImpl.getInstance().getSystemObject("amariSoftServer");
+			}
+		} catch (Exception e) {
+		}
+		return instance;
 	}
 	
     public AmariSoftServer() { 
@@ -922,5 +931,15 @@ public class AmariSoftServer extends SystemObjectImpl{
 
 	public boolean isRunning() {
 		return running;
+	}
+
+	public int getUeId(String IMSI) {
+		for (Entry<Integer, UE> entry : ueMap.entrySet()) {
+			if (entry.getValue().getImsi().equals(IMSI)) {
+				return entry.getKey();
+			}
+		}
+		GeneralUtils.printToConsole("Could not find UE with IMSI: " + IMSI);
+		return 0;
 	}
 }

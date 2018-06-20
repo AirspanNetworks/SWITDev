@@ -96,6 +96,7 @@ public class AutomationTests extends TestspanTest{
 				report.report("ue.getDuplexMode: " + ue.getDuplexMode());
 				report.report("ue.getRSRP1: " + ue.getRSRP(1));
 				report.report("ue.getPCI: " + ue.getPCI());
+				ue.stop();
 				GeneralUtils.stopLevel();
 			} catch (Exception e) {
 				GeneralUtils.stopLevel();

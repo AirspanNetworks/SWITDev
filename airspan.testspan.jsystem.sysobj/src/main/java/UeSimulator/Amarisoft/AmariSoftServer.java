@@ -225,14 +225,16 @@ public class AmariSoftServer extends SystemObjectImpl{
     }
 
     public boolean stopServer(){
-    	if (sendCommands("quit","#")){
-    		running = false;
-    		return true;
-    	}
-    	else{
-    		report.report("Closing server failed.",Reporter.WARNING);
-    		return false;
-    	}
+		if (running)
+			if (sendCommands("quit", "#")) {
+				running = false;
+				return true;
+			} else {
+				report.report("Closing server failed.", Reporter.WARNING);
+				return false;
+			}
+		
+		return true;
     }
     
     public boolean startServer(EnodeB dut){

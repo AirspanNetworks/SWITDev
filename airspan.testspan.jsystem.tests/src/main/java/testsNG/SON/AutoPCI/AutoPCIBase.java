@@ -5,8 +5,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.sun.jna.platform.win32.ShellAPI.SHFILEOPSTRUCT;
+
 import Attenuators.AttenuatorSet;
 import EnodeB.EnodeB;
+import EnodeB.EnodeB.Architecture;
 import Netspan.EnbProfiles;
 import Netspan.NetspanServer;
 import Netspan.API.Enums.EnabledDisabledStates;
@@ -70,6 +73,7 @@ public class AutoPCIBase extends TestspanTest {
 	private Date endDate;
 	protected int pciStart;
 	protected int pciEnd;
+	protected final int threshold = 16;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -682,5 +686,11 @@ public class AutoPCIBase extends TestspanTest {
 		GeneralUtils.stopLevel();
 		
 		return collisionCellIndex;
+	}
+	
+	protected boolean shouldReboot(){
+		int version = Integer.valueOf(dut.getEnodeBversion().split("_")[0]);
+		boolean shouldReboot = version<threshold || dut.getArchitecture()==Architecture.XLP;
+		return shouldReboot;
 	}
 }

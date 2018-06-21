@@ -6,7 +6,6 @@ import java.util.List;
 import org.junit.Test;
 
 import EnodeB.EnodeB;
-import EnodeB.EnodeB.Architecture;
 import Netspan.API.Lte.EventInfo;
 import Netspan.API.Lte.SONStatus;
 import Utils.GeneralUtils;
@@ -14,14 +13,6 @@ import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
 
 public class P0 extends AutoPCIBase {
-	
-	int threshold = 16;
-	
-	protected boolean shouldReboot(){
-		int version = Integer.valueOf(dut.getEnodeBversion().split("_")[0]);
-		boolean shouldReboot = version<threshold || dut.getArchitecture()==Architecture.XLP;
-		return shouldReboot;
-	}
 	
 	@Test // 1
 	@TestProperties(name = "Allocation_Algorithm_Without_Neighbor_Configuration", returnParam = {

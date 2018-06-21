@@ -9,9 +9,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Stack;
 
 import javax.websocket.ClientEndpoint;
@@ -35,7 +33,9 @@ import UE.UE;
 import UeSimulator.Amarisoft.JsonObjects.Actions.UEAction;
 import UeSimulator.Amarisoft.JsonObjects.Actions.UEAction.Actions;
 import UeSimulator.Amarisoft.JsonObjects.ConfigFile.*;
-import UeSimulator.Amarisoft.JsonObjects.Status.Config;
+import UeSimulator.Amarisoft.JsonObjects.Status.CellStatus;
+import UeSimulator.Amarisoft.JsonObjects.Status.CellsWrapper;
+import UeSimulator.Amarisoft.JsonObjects.Status.ConfigGet;
 import UeSimulator.Amarisoft.JsonObjects.Status.UeAdd;
 import UeSimulator.Amarisoft.JsonObjects.Status.UeStatus;
 import Utils.GeneralUtils;
@@ -312,7 +312,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 					
 					if (message.contains("\"message\":\"config_get\"")) {
 						try {
-							returnValue = mapper.readValue(message, Config.class);////Object??
+							returnValue = mapper.readValue(message, ConfigGet.class);////Object??
 						} catch (JsonParseException e) {
 							e.printStackTrace();
 						} catch (JsonMappingException e) {
@@ -723,8 +723,8 @@ public class AmariSoftServer extends SystemObjectImpl{
 		return true;
 	}	
 
-	public Config getConfig() {
-		Config config = null;
+	public ConfigGet getConfig() {
+		ConfigGet config = null;
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			UEAction getConfig = new UEAction();
@@ -734,13 +734,59 @@ public class AmariSoftServer extends SystemObjectImpl{
 
 			Object ans = sendSynchronizedMessage(mapper.writeValueAsString(getConfig));
 
-			config = (Config) ans;
+			config = (ConfigGet) ans;
 		} catch (JsonProcessingException e) {
 			GeneralUtils.printToConsole("Failed config_ue");
 			e.printStackTrace();
 		}
 		return config;
 
+	}
+
+	private CellStatus getCellsStatus(int cellIndex) {
+		ArrayList<CellStatus> cells = getCellsStatus();
+		CellStatus cell = null;
+		if (cells.size() < cellIndex) {
+			GeneralUtils.printToConsole("Cell " + cellIndex + " does not exist!");
+			return null;
+		}
+		try {
+			cell = cells.get(cellIndex);
+		} catch (Exception e) {
+			GeneralUtils.printToConsole("Failed getting cellStatus!");
+		}
+		return cell;
+	}
+	
+	public ArrayList<CellStatus> getCellsStatus() {
+		ConfigGet s = getConfig();
+		CellsWrapper cellWrapper = s.getCells();
+		ArrayList<CellStatus> cells = new ArrayList<>();
+		if (cellWrapper.getCell0() != null) {
+			cells.add(cellWrapper.getCell0());
+		}
+		if (cellWrapper.getCell1() != null) {
+			cells.add(cellWrapper.getCell1());
+		}
+		if (cellWrapper.getCell2() != null) {
+			cells.add(cellWrapper.getCell2());
+		}
+		if (cellWrapper.getCell3() != null) {
+			cells.add(cellWrapper.getCell3());
+		}
+	
+		for (CellStatus cellStatus : cells) {
+			System.out.println(cellStatus.getDlEarfcn());
+			System.out.println(cellStatus.getMode());
+			System.out.println(cellStatus.getNRbDl());
+			System.out.println(cellStatus.getNRbUl());
+			System.out.println(cellStatus.getPci());
+			System.out.println(cellStatus.getSpConfig());
+			System.out.println(cellStatus.getUl_earfcnn());
+			System.out.println(cellStatus.getUldlConfig());
+		}
+		
+		return cells;	
 	}
 	
 	private UeStatus getUeInfo(int ueId) {
@@ -920,7 +966,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 
 	public String getVersion() {
 		String ans = GeneralUtils.ERROR_VALUE+"";
-		Config config = getConfig();
+		ConfigGet config = getConfig();
 		if (config != null) {
 			if (config.getVersion() != null) {				
 				ans = config.getVersion();
@@ -942,4 +988,68 @@ public class AmariSoftServer extends SystemObjectImpl{
 		GeneralUtils.printToConsole("Could not find UE with IMSI: " + IMSI);
 		return 0;
 	}
+
+	private int getUeConnectedCellIndex(int ueId) {
+		int ans = GeneralUtils.ERROR_VALUE;
+		UeStatus ueStatus = getUeInfo(ueId);
+		if (ueStatus != null) {
+			if (ueStatus.getUeList() != null && ueStatus.getUeList().size() > 0) {
+				if (ueStatus.getUeList().get(0) != null) {
+					ans = ueStatus.getUeList().get(0).getCellId();
+					GeneralUtils.printToConsole("Found cellIndex" + ans);
+					return ans;
+				}
+			}
+		}
+		GeneralUtils.printToConsole("Cant find cellID for UE " + ueId);
+		
+		return GeneralUtils.ERROR_VALUE;
+	}
+	
+	public int getUeConnectedPCI(int ueId) {
+		int cellIndex = getUeConnectedCellIndex(ueId);		
+		CellStatus cell = getCellsStatus(cellIndex);
+		if (cell == null) {
+			return GeneralUtils.ERROR_VALUE;
+		}
+		return cell.getPci();
+	}
+
+	public String getUeConnectedDuplexMode(int ueId) {
+		int cellIndex = getUeConnectedCellIndex(ueId);		
+		CellStatus cell = getCellsStatus(cellIndex);
+		if (cell == null) {
+			return GeneralUtils.ERROR_VALUE + "";
+		}
+		return cell.getMode();
+	}
+
+	public int getUeUlEarfcn(int ueId) {
+		int cellIndex = getUeConnectedCellIndex(ueId);		
+		CellStatus cell = getCellsStatus(cellIndex);
+		if (cell == null) {
+			return GeneralUtils.ERROR_VALUE;
+		}
+		return cell.getDlEarfcn();
+	}
+
+	public int getUeDlEarfcn(int ueId) {
+		int cellIndex = getUeConnectedCellIndex(ueId);		
+		CellStatus cell = getCellsStatus(cellIndex);
+		if (cell == null) {
+			return GeneralUtils.ERROR_VALUE;
+		}
+		return cell.getDlEarfcn();
+	}
+
+	public int getUeNumOfrb(int ueId) {
+		int cellIndex = getUeConnectedCellIndex(ueId);		
+		CellStatus cell = getCellsStatus(cellIndex);
+		if (cell == null) {
+			return GeneralUtils.ERROR_VALUE;
+		}
+		return cell.getNRbDl();
+	}
+
+	
 }

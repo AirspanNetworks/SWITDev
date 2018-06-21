@@ -273,16 +273,29 @@ public class P0 extends AutoPCIBase {
 	public void changeFromStaticToAutoPciValueOutsideTheRange() {
 		startTrafficAndCheckIfUEConnected();
 
+		dut.setExpectBooting(true);
 		configureAutoPciToEnableViaNms(pciStart, pciEnd);
 
-		dut.setExpectBooting(true);
-		report.report("Configuring Auto PCI cause with outside range, the eNB make reboot");
+		if(shouldReboot()){
+			report.report("Configuring Auto PCI cause with outside range, the eNB make reboot");
 
-		report.report("Wait 1 minute");
-		GeneralUtils.unSafeSleep(1000 * 60);
+			report.report("Wait 1 minute");
+			GeneralUtils.unSafeSleep(1000 * 60);
 
-		report.report(dut.getNetspanName() + " Wait for all running and in service (TimeOut=15 Minutes)");
-		dut.waitForAllRunningAndInService(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);
+			report.report(dut.getNetspanName() + " Wait for all running and in service (TimeOut=15 Minutes)");
+			dut.waitForAllRunningAndInService(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);	
+		}else{
+			report.report("eNB should not reboot. Wait up to 40 seconds to verify");
+			dut.setExpectBooting(true);
+			if(dut.waitForReboot(40*1000)){
+				report.report("EnodeB was rebooted - not expected",Reporter.FAIL);
+				dut.waitForAllRunningAndInService(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);
+			}else{
+				report.report("EnodeB was not rebooted - as expected");
+			}
+			dut.setExpectBooting(false);
+		}
+
 		enodeBConfig.printEnodebState(dut, true);
 
 		report.reportHtml("db get AutoPciCell", dut.lteCli("db get AutoPciCell"), true);

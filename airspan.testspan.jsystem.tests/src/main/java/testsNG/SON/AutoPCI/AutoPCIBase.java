@@ -229,8 +229,8 @@ public class AutoPCIBase extends TestspanTest {
 			report.report(dut.getNetspanName() + " wait for all running and in service (TimeOut="
 					+ (EnodeB.WAIT_FOR_ALL_RUNNING_TIME / 1000.0 / 60.0) + " Minutes)");
 			dut.waitForAllRunningAndInService(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);
-			dut.setExpectBooting(false);
 		}
+		dut.setExpectBooting(false);
 		enodeBConfig.printEnodebState(dut, true);
 		GeneralUtils.stopLevel();
 

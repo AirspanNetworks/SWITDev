@@ -148,7 +148,7 @@ public class P0 extends TestspanTest {
 		attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(attenuatorSetName);
 		attenuatorMin = attenuatorSetUnderTest.getMinAttenuation();
 		attenuatorMax = attenuatorSetUnderTest.getMaxAttenuation();
-		reasons = new String[numOfMaxRetries];
+		reasons = new String[numOfMaxRetries + 1];
 		for(int i=0;i<numOfMaxRetries;i++){
 			reasons[i] = "";
 		}

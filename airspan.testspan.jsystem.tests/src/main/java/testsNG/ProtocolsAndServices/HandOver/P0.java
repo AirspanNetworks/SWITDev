@@ -149,7 +149,7 @@ public class P0 extends TestspanTest {
 		attenuatorMin = attenuatorSetUnderTest.getMinAttenuation();
 		attenuatorMax = attenuatorSetUnderTest.getMaxAttenuation();
 		reasons = new String[numOfMaxRetries + 1];
-		for(int i=0;i<numOfMaxRetries;i++){
+		for(int i=0;i<=numOfMaxRetries;i++){
 			reasons[i] = "";
 		}
 		commands();
@@ -730,7 +730,7 @@ public class P0 extends TestspanTest {
 
 	public void performHoUpto2Times(HoControlStateTypes HOControlTypes, X2ControlStateTypes X2Types,
 			HandoverType HOType, ConnectedModeEventTypes hoEventType) {
-		for (int i = 1; i <= 2; i++) {
+		for (int i = 1; i <= 1; i++) {
 			report.report("Run number " + i);
 			if (!preTest(HOControlTypes, X2Types, HOType, hoEventType, i-1)) {
 				if (i == 2) {
@@ -744,7 +744,7 @@ public class P0 extends TestspanTest {
 			boolean action = performHO(i-1);
 			setReason(i-1);
 			if (!action) {
-				if (i == 2) {
+				if (i == 1) {
 					report.report("Retried 2 times - Failure reason: "+reason, Reporter.FAIL);
 				} else{
 					report.report("Hand over test failed - retrying again", Reporter.WARNING);

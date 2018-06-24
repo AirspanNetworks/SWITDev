@@ -145,10 +145,16 @@ public class P0 extends AutoPCIBase {
 		startTrafficAndCheckIfUEConnected();
 
 		configureAutoPciToEnableViaNms(pciStart, pciEnd);
-		report.report("No reboot issue (because free PCI of range is = static PCI)");
-
-		report.report("Wait 30 seconds");
-		GeneralUtils.unSafeSleep(1000 * 30);
+		
+		report.report("eNB should not reboot. Wait up to 20 seconds to verify");
+		dut.setExpectBooting(true);
+		if(dut.waitForReboot(20*1000)){
+			report.report("EnodeB was rebooted - not expected",Reporter.FAIL);
+			dut.waitForAllRunningAndInService(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);
+		}else{
+			report.report("EnodeB was not rebooted - as expected");
+		}
+		dut.setExpectBooting(false);
 
 		enodeBConfig.printEnodebState(dut, true);
 

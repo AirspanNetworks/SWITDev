@@ -22,7 +22,7 @@ public class UeSimulatorActions extends Action {
 	private int numUes = 1;
 	private int release = 13;
 	private int category = 4;
-	private int cellId = 0;
+	private int cellId = 1;
 	private int ueId;
 	private String IMSI;
 	private SelectionMethod selectionMethod = SelectionMethod.IMSI;
@@ -73,7 +73,7 @@ public class UeSimulatorActions extends Action {
 		}
 	}
 	
-	@ParameterProperties(description = "cellId in the enodeb to connect to, default = 0")
+	@ParameterProperties(description = "cellId (1/2) in the enodeb to connect to, default = 1")
 	public void setCellId(String cellId) {
 		try {
 			this.cellId = Integer.valueOf(cellId);

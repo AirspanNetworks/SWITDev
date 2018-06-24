@@ -140,40 +140,6 @@ public class GemtekUE extends UE {
 	
 	/**
 	 * @author Shahaf Shuhamy ,last update : 31/10/16
-	 * @return DL frequency
-	 */
-	public String getUEDlFrequency(){
-		String oid = MibReader.getInstance().resolveByName("pmpDevCpeLteDlFrequency");
-		String result = null;
-		String returnString = null;
-		result = snmp.get(oid);
-		int frequency = Integer.valueOf(result);
-		if(frequency /1000 > 1000){
-		returnString = String.valueOf(frequency/1000);
-		return returnString;
-		}
-		return result;
-	}
-	
-	/**
-	 * @author Shahaf Shuhamy ,last update : 31/10/16
-	 * @return UL frequency / 1000
-	 */
-	public String getUEUlFrequency(){
-		String oid = MibReader.getInstance().resolveByName("pmpDevCpeLteUlFrequency");
-		String result = null;
-		String returnString = null;
-		result = snmp.get(oid);
-		int frequency = Integer.valueOf(result);
-		if(frequency /1000 > 1000){
-		returnString = String.valueOf(frequency/1000);
-		return returnString;
-		}
-		return result;
-	}
-	
-	/**
-	 * @author Shahaf Shuhamy ,last update : 31/10/16
 	 * @return bandwidth /1000
 	 */
 	public String getBandWidth(){

@@ -60,18 +60,6 @@ public class AmarisoftUE extends UE{
 	}
 
 	@Override
-	public String getUEUlFrequency() {
-		int ans = server.getUeUlEarfcn(ueId);
-		return ans+"";
-	}
-
-	@Override
-	public String getUEDlFrequency() {
-		int ans = server.getUeDlEarfcn(ueId);
-		return ans+"";
-	}
-
-	@Override
 	public String getUEStatus() {
 		String ans = server.getUeStatus(ueId);
 		return ans;

@@ -86,18 +86,6 @@ public class GemtekB7 extends UE{
 	}
 
 	@Override
-	public String getUEUlFrequency() {
-		GeneralUtils.printToConsole("GEMTEK Band 7 UE does not have get UL freq method.");
-		return null;
-	}
-
-	@Override
-	public String getUEDlFrequency() {
-		GeneralUtils.printToConsole("GEMTEK Band 7 UE does not have get DL freq method.");
-		return null;
-	}
-
-	@Override
 	public String getUEStatus() {
 		String oid = MibReader.getInstance().resolveByName("upTimeGB7");
 		String upTime = null;

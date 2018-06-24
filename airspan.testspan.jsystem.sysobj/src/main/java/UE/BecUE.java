@@ -95,18 +95,6 @@ public class BecUE extends UE {
 	}
 
 	@Override
-	public String getUEDlFrequency(){
-		report.report("Could not perform getUEDlFrequency method, BecUE does not support SNMP",Reporter.WARNING);
-		return GeneralUtils.ERROR_VALUE + "";
-	}
-
-	@Override
-	public String getUEUlFrequency(){
-		report.report("Could not perform getUEUlFrequency method, BecUE does not support SNMP",Reporter.WARNING);
-		return GeneralUtils.ERROR_VALUE + "";
-	}
-
-	@Override
 	public String getBandWidth(){
 		report.report("Could not perform getBandWidth method, BecUE does not support SNMP",Reporter.WARNING);
 		return GeneralUtils.ERROR_VALUE + "";

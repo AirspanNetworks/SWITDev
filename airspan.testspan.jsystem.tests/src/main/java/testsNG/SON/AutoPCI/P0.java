@@ -200,8 +200,8 @@ public class P0 extends AutoPCIBase {
 			GeneralUtils.stopLevel();
 		}
 
-		report.report("Wait 120 seconds");
-		GeneralUtils.unSafeSleep(1000 * 120);
+		report.report("Wait 90 seconds");
+		GeneralUtils.unSafeSleep(1000 * 90);
 		
 		to = new Date();
 		timeEvents = alarmsAndEvents.getEventsNodeByDateRange(dut, from, to);
@@ -216,11 +216,24 @@ public class P0 extends AutoPCIBase {
 			}
 			GeneralUtils.stopLevel();
 		}
-		report.report("Wait 3 minutes to enodeb to reboot");
-		GeneralUtils.unSafeSleep(3*60*1000);
-		report.report("Wait for all running of enodeb");
-		dut.waitForAllRunningAndInService(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);
-		report.report("Enodeb reached all running and in service");
+		
+		if(shouldReboot()){
+			report.report("Wait 3 minutes to enodeb to reboot");
+			GeneralUtils.unSafeSleep(3*60*1000);
+			report.report("Wait for all running of enodeb");
+			dut.waitForAllRunningAndInService(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);
+			report.report("Enodeb reached all running and in service");	
+		}else{
+			report.report("eNB should not reboot. Wait up to 40 seconds to verify");
+			dut.setExpectBooting(true);
+			if(dut.waitForReboot(40*1000)){
+				report.report("EnodeB was rebooted - not expected",Reporter.FAIL);
+				dut.waitForAllRunningAndInService(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);
+			}else{
+				report.report("EnodeB was not rebooted - as expected");
+			}
+			dut.setExpectBooting(false);
+		}
 		
 		report.reportHtml("cell show autoPCI list=1", dut.lteCli("cell show autoPCI list=1"), true);
 		

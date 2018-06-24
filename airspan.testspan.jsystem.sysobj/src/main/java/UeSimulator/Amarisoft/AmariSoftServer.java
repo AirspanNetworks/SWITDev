@@ -995,7 +995,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 		if (ueStatus != null) {
 			if (ueStatus.getUeList() != null && ueStatus.getUeList().size() > 0) {
 				if (ueStatus.getUeList().get(0) != null) {
-					ans = ueStatus.getUeList().get(0).getCellId();
+					ans = ueStatus.getUeList().get(0).getCellIndex();
 					GeneralUtils.printToConsole("Found cellIndex" + ans);
 					return ans;
 				}

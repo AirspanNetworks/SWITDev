@@ -135,7 +135,7 @@ public class UeList {
     }
     
     @JsonProperty("cell_index")
-    public Integer geCellIndex() {
+    public Integer getCellIndex() {
         return cell_index;
     }
 

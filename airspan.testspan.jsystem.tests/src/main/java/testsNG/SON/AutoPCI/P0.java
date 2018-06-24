@@ -19,7 +19,7 @@ public class P0 extends AutoPCIBase {
 			"IsTestWasSuccessful" }, paramsExclude = { "IsTestWasSuccessful" })
 	public void allocationAlgorithmWithoutNeighborConfiguration() {
 		configureAutoPciToEnableViaNms(pciStart, pciEnd);
-		if(shouldReboot()){
+		if(shouldReboot){
 			report.report("eNB should reboot once");
 
 			dut.setExpectBooting(true);
@@ -217,7 +217,7 @@ public class P0 extends AutoPCIBase {
 			GeneralUtils.stopLevel();
 		}
 		
-		if(shouldReboot()){
+		if(shouldReboot){
 			report.report("Wait 3 minutes to enodeb to reboot");
 			GeneralUtils.unSafeSleep(3*60*1000);
 			report.report("Wait for all running of enodeb");
@@ -313,7 +313,7 @@ public class P0 extends AutoPCIBase {
 		dut.setExpectBooting(true);
 		configureAutoPciToEnableViaNms(pciStart, pciEnd);
 
-		if(shouldReboot()){
+		if(shouldReboot){
 			report.report("Configuring Auto PCI cause with outside range, the eNB make reboot");
 
 			report.report("Wait 1 minute");

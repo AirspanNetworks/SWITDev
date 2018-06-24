@@ -74,6 +74,7 @@ public class AutoPCIBase extends TestspanTest {
 	protected int pciStart;
 	protected int pciEnd;
 	protected final int threshold = 16;
+	protected boolean shouldReboot = false;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -153,6 +154,7 @@ public class AutoPCIBase extends TestspanTest {
 		if (startSONStatus == null || !startSONStatus.pciStatus.equals("Manual")) {
 			org.junit.Assume.assumeTrue(false);
 		}
+		shouldReboot = shouldReboot();
 	}
 
 	protected void changeEnodeBPciAndReboot() {
@@ -161,7 +163,11 @@ public class AutoPCIBase extends TestspanTest {
 		boolean result = enodeBConfig.changeEnbCellPci(dut, pciStart);
 		if (result) {
 			report.report("Changing cell pci worked - rebooting");
-			dut.reboot();
+			if(shouldReboot){
+				dut.reboot();
+			}else{
+				GeneralUtils.unSafeSleep(20*1000);
+			}
 			dut.waitForAllRunningAndInService(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);
 		} else {
 			report.report("Failed to change pci in enodeb", Reporter.WARNING);
@@ -223,11 +229,15 @@ public class AutoPCIBase extends TestspanTest {
 				report.report("Reverting " + dut.getName() + " Cell #" + dut.getCellContextID()
 						+ " to default PCI number: " + initStatusPhysicalCellId);
 				enodeBConfig.changeEnbCellPci(dut, initStatusPhysicalCellId);
-				dut.reboot();
+				if(shouldReboot){
+					dut.reboot();
+				}
 			}
-			GeneralUtils.unSafeSleep(30 * 1000);
-			report.report(dut.getNetspanName() + " wait for all running and in service (TimeOut="
-					+ (EnodeB.WAIT_FOR_ALL_RUNNING_TIME / 1000.0 / 60.0) + " Minutes)");
+			GeneralUtils.unSafeSleep(20 * 1000);
+			if(shouldReboot){
+				report.report(dut.getNetspanName() + " wait for all running and in service (TimeOut="
+						+ (EnodeB.WAIT_FOR_ALL_RUNNING_TIME / 1000.0 / 60.0) + " Minutes)");
+			}
 			dut.waitForAllRunningAndInService(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);
 		}
 		dut.setExpectBooting(false);

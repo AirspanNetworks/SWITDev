@@ -158,14 +158,16 @@ public class AutoPCIBase extends TestspanTest {
 	}
 
 	protected void changeEnodeBPciAndReboot() {
-		GeneralUtils.startLevel("Change enodeB pci and reboot");
+		GeneralUtils.startLevel("Change enodeB pci and reboot (if needed)");
 		GeneralUtils.startLevel("Setting Cell ID " + dut.getCellContextID() + ": PCI=" + pciStart);
 		boolean result = enodeBConfig.changeEnbCellPci(dut, pciStart);
 		if (result) {
-			report.report("Changing cell pci worked - rebooting");
+			report.report("Changing cell pci worked");
 			if(shouldReboot){
+				report.report("Rebooting");
 				dut.reboot();
 			}else{
+				report.report("Changing cell pci on the fly - no rebooting");
 				GeneralUtils.unSafeSleep(20*1000);
 			}
 			dut.waitForAllRunningAndInService(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);

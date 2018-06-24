@@ -134,12 +134,12 @@ public class UeList {
         this.rnti = rnti;
     }
     
-    @JsonProperty("rnti")
+    @JsonProperty("cell_index")
     public Integer geCellIndex() {
         return cell_index;
     }
 
-    @JsonProperty("rnti")
+    @JsonProperty("cell_index")
     public void setCellIndex(Integer cell_index) {
         this.cell_index = cell_index;
     }

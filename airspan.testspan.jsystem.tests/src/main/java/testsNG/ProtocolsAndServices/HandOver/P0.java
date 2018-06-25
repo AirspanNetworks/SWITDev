@@ -47,8 +47,8 @@ public class P0 extends TestspanTest {
 
 	private static final int LONG_TEST_DURATION = 600000;  // 10 minutes
 	private static final int STABILITY_TEST_DURATION = 14400000;  // 4 hours
-	private static int ATT_SLEEP = 500;
-	private static final int ATT_STEP = 2;
+	private int ATT_STEP_TIME = 500;
+	private int ATT_STEP = 2;
 	private static final float WARNING_LEVEL = 0.9f;
 	private static final float PASS_LEVEL = 0.98f;
 
@@ -148,6 +148,10 @@ public class P0 extends TestspanTest {
 		attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(attenuatorSetName);
 		attenuatorMin = attenuatorSetUnderTest.getMinAttenuation();
 		attenuatorMax = attenuatorSetUnderTest.getMaxAttenuation();
+		ATT_STEP_TIME = attenuatorSetUnderTest.getStepTime();
+		ATT_STEP = attenuatorSetUnderTest.getAttenuationStep();
+		report.report("Using attenuator step time: "+ATT_STEP_TIME);
+		report.report("Using attenuator step: "+ATT_STEP);
 		reasons = new String[numOfMaxRetries + 1];
 		for(int i=0;i<=numOfMaxRetries;i++){
 			reasons[i] = "";
@@ -948,8 +952,8 @@ public class P0 extends TestspanTest {
 			attenuatorsCurrentValue += (ATT_STEP * multi);
 			long afterAtt = System.currentTimeMillis();
 			long diff = afterAtt - beforeAtt;
-			if (diff < ATT_SLEEP)
-				GeneralUtils.unSafeSleep(ATT_SLEEP - diff);
+			if (diff < ATT_STEP_TIME)
+				GeneralUtils.unSafeSleep(ATT_STEP_TIME - diff);
 		}
 	}
 
@@ -958,7 +962,7 @@ public class P0 extends TestspanTest {
 
 		GeneralUtils.startLevel("Results");
 		report.report("Attenuator step: " + ATT_STEP);
-		report.report("Attenuator timing: " + ATT_SLEEP + "ms");
+		report.report("Attenuator timing: " + ATT_STEP_TIME + "ms");
 		report.report("Attenuation boundaries: " + attenuatorMin + "-" + attenuatorMax);
 		report.report("Number of dynamic UE's: " + numberOfDynamicUES);
 		report.report("Number of expected HO's: " + counter * numberOfDynamicUES);

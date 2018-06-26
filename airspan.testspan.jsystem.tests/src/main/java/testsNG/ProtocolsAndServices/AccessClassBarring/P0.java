@@ -41,6 +41,7 @@ public class P0 extends TestspanTest {
 		evt = new EvtLis();
 		enbInTest = new ArrayList<EnodeB>();
 		enbInTest.add(dut);
+		enbInTest.add(dut2);
 		report.startLevel("Test Init");
 		super.init();
 		peripheralsConfig = PeripheralsConfig.getInstance();
@@ -137,11 +138,14 @@ public class P0 extends TestspanTest {
 				if (epc.checkUEConnectedToNode(ue, enb)) {
 					choosenUE = ue;
 					choosenEnodeB = enb;
+					break;
 				}
 			}
+			if (choosenEnodeB!=null && choosenUE != null)
+				break;
 		}
 		if (choosenUE == null || choosenEnodeB == null) {
-			report.report("There is no ues connected to enodeBs");
+			report.report("There is no ues connected to enodeBs", Reporter.FAIL);
 			return;
 		}
 		int numOfCells = choosenEnodeB.getNumberOfCells();

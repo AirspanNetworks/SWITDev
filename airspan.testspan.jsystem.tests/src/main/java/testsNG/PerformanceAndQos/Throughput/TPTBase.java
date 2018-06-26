@@ -768,7 +768,6 @@ public class TPTBase extends TestspanTest {
 			sampleArrayList = samplePortsAndStreamsFromSTC();
 			// Check Traffic Halt only for non UDP tests
 			if (this.protocol != Protocol.TCP) {
-				GeneralUtils.startLevel("Checking for HaltStream");
 				if (trafficSTC.checkForHalt(HALT_STREAM_PARAM, streams)) {
 
 					report.report("found halt streams", Reporter.WARNING);
@@ -810,8 +809,6 @@ public class TPTBase extends TestspanTest {
 						}
 						resetDueToMultiHaltStreams = true;
 					}
-				} else {
-					report.report("no Halt Stream");
 				}
 			}
 
@@ -821,10 +818,7 @@ public class TPTBase extends TestspanTest {
 			report.report("Error during test", Reporter.FAIL);
 			resetDueToMultiHaltStreams = true;
 			exceptionThrown = true;
-		} finally {
-			if (this.protocol != Protocol.TCP) 
-				GeneralUtils.stopLevel();
-		}
+		} 
 		// check if more then 30% of streams are halted
 		addSamplesToListOfStreamList(sampleArrayList);
 		streams = null;

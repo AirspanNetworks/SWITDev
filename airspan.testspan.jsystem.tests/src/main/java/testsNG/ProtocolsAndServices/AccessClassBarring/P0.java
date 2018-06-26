@@ -1,10 +1,13 @@
 package testsNG.ProtocolsAndServices.AccessClassBarring;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.junit.Test;
 
 import DMTool.DMtool;
+import DMTool.Evt;
+import DMTool.EvtClient;
 import EPC.EPC;
 import EnodeB.EnodeB;
 import Netspan.API.Enums.CellBarringPolicies;
@@ -23,16 +26,19 @@ import testsNG.Actions.Traffic;
 
 
 public class P0 extends TestspanTest {
-	EnodeB dut;
-	PeripheralsConfig peripheralsConfig;
-	EnodeBConfig enbConfig;
-	EPC epc;
-	ArrayList<UE> UEList = new ArrayList<>();
+	private EnodeB dut;
+	private EnodeB dut2;
+	private PeripheralsConfig peripheralsConfig;
+	private EnodeBConfig enbConfig;
+	private EPC epc;
+	private ArrayList<UE> UEList = new ArrayList<>();
 	private Traffic traffic;
-	 private DMtool dm;
+	private DMtool dm;
+	private EvtLis evt;
 	
 	@Override
 	public void init() throws Exception {
+		evt = new EvtLis();
 		enbInTest = new ArrayList<EnodeB>();
 		enbInTest.add(dut);
 		report.startLevel("Test Init");
@@ -42,10 +48,7 @@ public class P0 extends TestspanTest {
 		epc = EPC.getInstance();
 		UEList = SetupUtils.getInstance().getAllUEs();
 		report.stopLevel();
-		dm = new DMtool();
-		dm.setUeIP("192.168.58.120");
-		dm.setPORT(4280);
-		dm.init();
+		
 	}
 	
 	@Test
@@ -126,29 +129,74 @@ public class P0 extends TestspanTest {
 	@Test
 	@TestProperties(name = "AC_Barring_TC_1", returnParam = {"IsTestWasSuccessful" }, paramsExclude = { "IsTestWasSuccessful"})
 	public void AC_Barring_TC_1() {
-		boolean isUEConneted = false;
-		int numOfCells = dut.getNumberOfCells();
-		int cellBarredFromMib;
-		GeneralUtils.startLevel("Start traffic");
+		report.report("AC_Barring_TC_1");
+		UE choosenUE = null;
+		EnodeB choosenEnodeB = null;
+		for (UE ue : SetupUtils.getInstance().getAllUEs()) {
+			for (EnodeB enb : enbInTest) {
+				if (epc.checkUEConnectedToNode(ue, enb)) {
+					choosenUE = ue;
+					choosenEnodeB = enb;
+				}
+			}
+		}
+		if (choosenUE == null || choosenEnodeB == null) {
+			report.report("There is no ues connected to enodeBs");
+			return;
+		}
+		int numOfCells = choosenEnodeB.getNumberOfCells();
+		dm = new DMtool();
+		dm.setUeIP(choosenUE.getLanIpAddress());
+		dm.setPORT(choosenUE.getDMToolPort());
+		try {
+			dm.init();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		/*GeneralUtils.startLevel("Start traffic");
 		try {
 			traffic = Traffic.getInstance(SetupUtils.getInstance().getAllUEs());
 			traffic.startTraffic();
 		} catch (Exception e) {
 			report.report("Couldn't start traffic", Reporter.WARNING);
 			e.printStackTrace();
-		}
+		}*/
 		GeneralUtils.stopLevel();
-		report.report("Changing the cell barred value to CELL BARRED");
+		evt.resetEventHappened();
+		report.report("Changing the cell barred value to CELL BARRED with emergancy");
 		CellBarringPolicyParameters cb = new CellBarringPolicyParameters();
 		cb.cellBarringPolicy = CellBarringPolicies.AC_BARRING;
+		cb.IsAccessClassBarred = true;
+		cb.IsEmergencyAccessBarred = true;
+		cb.IsSignalingAccessBarred = false;
+		cb.IsDataAccessBarred = false;
 		for (int i = 1; i <= numOfCells; i++) {
 			dut.setCellContextNumber(i);
 			enbConfig.setAccessClassBarring(dut, cb);
 		}
+		GeneralUtils.unSafeSleep(5000);
 		
-		GeneralUtils.unSafeSleep(10000);
-		//need to check the message with DM toll
-			
+		report.report("Changing the cell barred value to CELL BARRED without emergancy");
+		evt.resetEventHappened();
+		cb = new CellBarringPolicyParameters();
+		cb.cellBarringPolicy = CellBarringPolicies.AC_BARRING;
+		cb.IsAccessClassBarred = true;
+		cb.IsEmergencyAccessBarred = false;
+		cb.IsSignalingAccessBarred = false;
+		cb.IsDataAccessBarred = false;
+		for (int i = 1; i <= numOfCells; i++) {
+			dut.setCellContextNumber(i);
+			enbConfig.setAccessClassBarring(dut, cb);
+		}
+		GeneralUtils.unSafeSleep(5000);
+		
+		if (evt.eventHappened) {
+			report.report("ue got the event as expected");
+		}
+		else 
+			report.report("ue didnt get the event", Reporter.FAIL);
+		
 	}
 	
 	@Test
@@ -188,5 +236,44 @@ public class P0 extends TestspanTest {
 		GeneralUtils.printToConsole("Load DUT1" + dut);
 		this.dut = (EnodeB) SysObjUtils.getInstnce().initSystemObject(EnodeB.class, false, dut).get(0);
 		GeneralUtils.printToConsole("DUT loaded" + this.dut.getNetspanName());
+	}
+	
+	@ParameterProperties(description = "Second DUT")
+	public void setDUT2(String dut2) {
+		GeneralUtils.printToConsole("Load DUT1" + dut);
+		this.dut2 = (EnodeB) SysObjUtils.getInstnce().initSystemObject(EnodeB.class, false, dut2).get(0);
+		GeneralUtils.printToConsole("DUT loaded" + this.dut.getNetspanName());
+	}
+	
+	public class EvtLis extends EvtClient{
+		boolean eventHappened = false;
+		@Override
+		public void Evt(short[] payload, long evtSeqNumber) {
+			// this is repesents hex to short of the RRC payload
+			// (10001212556f182004330e4681000002008857d915448c000380) in the TP
+ 			short[] expected = new short[] { 16, 0, 18, 18, 85, 111, 24, 32, 4, 51, 14, 70, -127, 0, 0, 2, 0, -120, 87, -39,
+					21, 68, -116, 0, 3, -128 };
+			short[] actual = Arrays.copyOfRange(payload, 288, 314);
+			for (int i =0; i< actual.length; i++) {
+				String hex = Integer.toHexString(actual[i] & 0x00ff);
+			    System.out.print(hex + " ");
+			}
+			System.out.println("");
+			if (Arrays.equals(expected, actual)) {
+				int x = 1;
+				System.out.println("BOOOOOOMMMM");
+				eventHappened = true;
+			}
+		}
+		
+		public boolean getEventstatus() {
+			
+			return eventHappened;
+		}
+		
+		public void resetEventHappened() {
+			this.eventHappened = false;
+			
+		}
 	}
 }

@@ -13,9 +13,12 @@
 /EmergencyCalls.xml
 /Regression_test_Alex.properties
 /Regression_test_Alex.xml
+<<<<<<< HEAD
 /FullSanityNoUpgrade.properties
 /FullSanityNoUpgrade.xml
 /TestOOS_Gaby.properties
 /TestOOS_Gaby.xml
+=======
+>>>>>>> refs/heads/Oren
 /amarisoft.properties
 /amarisoft.xml

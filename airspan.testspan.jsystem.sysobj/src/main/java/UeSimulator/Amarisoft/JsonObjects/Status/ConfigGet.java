@@ -2,7 +2,6 @@
 package UeSimulator.Amarisoft.JsonObjects.Status;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
@@ -11,14 +10,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-import UeSimulator.Amarisoft.JsonObjects.ConfigFile.Cell;
-
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
     "message",
     "ue_add"
 })
-public class Config {
+public class ConfigGet {
 
     @JsonProperty("message")
     private String message;
@@ -28,8 +25,8 @@ public class Config {
     private Double time;
     @JsonProperty("type")
     private String type;
-   // @JsonProperty("cells")
-   // private List<Cell> cells = null;
+    @JsonProperty("cells")
+    private CellsWrapper cells = null;
     
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
@@ -72,6 +69,16 @@ public class Config {
     @JsonProperty("type")
     public void setType(String type) {
         this.type = type;
+    }
+    
+    @JsonProperty("cells")
+    public CellsWrapper getCells() {
+        return cells;
+    }
+
+    @JsonProperty("cells")
+    public void setCells(CellsWrapper cells) {
+        this.cells = cells;
     }
 
     @JsonAnyGetter

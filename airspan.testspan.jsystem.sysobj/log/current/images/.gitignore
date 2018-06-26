@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /close.png
 /jsystem_ico.gif
 /loading.gif
@@ -17,3 +18,24 @@
 /tsuiteok.gif
 /tsuiterun.gif
 /tsuiteWarning.gif
+=======
+/tsuiteerror.gif
+/tsuitefail.gif
+/tsuiteok.gif
+/tsuiterun.gif
+/tsuiteWarning.gif
+/close.png
+/jsystem_ico.gif
+/loading.gif
+/machine.png
+/next.png
+/prev.png
+/sort_asc.png
+/sort_both.png
+/sort_desc.png
+/testerr.gif
+/testfail.gif
+/testok.gif
+/testrun.gif
+/testwarning.gif
+>>>>>>> refs/heads/Oren

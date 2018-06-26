@@ -90,8 +90,6 @@ public class AutomationTests extends TestspanTest{
 				report.report("ue.getUeCategory: " + ue.getUeCategory());
 				report.report("ue.getVersion: " + ue.getVersion());
 				report.report("ue.getBandWidth: " + ue.getBandWidth());
-				report.report("ue.getUEUlFrequency: " + ue.getUEUlFrequency());
-				report.report("ue.getUEDlFrequency: " + ue.getUEDlFrequency());
 				report.report("ue.getUEStatus: " + ue.getUEStatus());
 				report.report("ue.getDuplexMode: " + ue.getDuplexMode());
 				report.report("ue.getRSRP1: " + ue.getRSRP(1));

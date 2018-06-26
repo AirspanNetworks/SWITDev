@@ -2,9 +2,6 @@ package UE;
 
 import UeSimulator.Amarisoft.AmariSoftServer;
 import Utils.GeneralUtils;
-import Utils.Snmp.MibReader;
-import Utils.Snmp.SNMP;
-import jsystem.framework.report.Reporter;
 
 public class AmarisoftUE extends UE{
 
@@ -53,20 +50,13 @@ public class AmarisoftUE extends UE{
 
 	@Override
 	public String getBandWidth() {
-		GeneralUtils.printToConsole("AmarisoftUE does not have get Band width method.");
-		return GeneralUtils.ERROR_VALUE+"";
-	}
-
-	@Override
-	public String getUEUlFrequency() {
-		GeneralUtils.printToConsole("AmarisoftUE does not have get UL freq method.");
-		return GeneralUtils.ERROR_VALUE+"";
-	}
-
-	@Override
-	public String getUEDlFrequency() {
-		GeneralUtils.printToConsole("AmarisoftUE does not have get DL freq method.");
-		return GeneralUtils.ERROR_VALUE+"";
+		String ans = "";
+		int numOfRbs = server.getUeNumOfrb(ueId);
+		if (numOfRbs == 6) 
+			return "1.4";		
+		else
+			ans = (numOfRbs/5) + "";
+		return ans;
 	}
 
 	@Override
@@ -77,8 +67,8 @@ public class AmarisoftUE extends UE{
 
 	@Override
 	public String getDuplexMode() {
-		GeneralUtils.printToConsole("AmarisoftUE does not have get duplex mode method.");
-		return GeneralUtils.ERROR_VALUE+"";
+		String ans = server.getUeConnectedDuplexMode(ueId);
+		return ans;	
 	}
 
 	@Override
@@ -89,8 +79,8 @@ public class AmarisoftUE extends UE{
 	
 	@Override
 	public int getPCI() {
-		GeneralUtils.printToConsole("AmarisoftUE does not have getPCI method.");
-		return GeneralUtils.ERROR_VALUE;
+		int ans = server.getUeConnectedPCI(ueId);
+		return ans;	
 		
 	}
 	

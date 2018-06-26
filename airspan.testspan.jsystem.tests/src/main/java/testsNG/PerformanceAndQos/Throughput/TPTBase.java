@@ -495,7 +495,15 @@ public class TPTBase extends TestspanTest {
 			return false;
 		}
 		startingTestTime = System.currentTimeMillis();
+		long resetCounters = startingTestTime;
+
 		while (System.currentTimeMillis() - startingTestTime <= TEST_TIME_MILLIS) {
+			if(System.currentTimeMillis()-resetCounters>=30*60*1000){
+				resetCounters = System.currentTimeMillis();
+				double temp = Math.floor(((System.currentTimeMillis() - startingTestTime)/ 1000 / 60.0)*100);
+				double tempDouble = temp/100.0;
+				report.report("Time elapsed: " + tempDouble + " minutes.");
+			}
 			sampleResultsStatusOk();
 
 			if (restartTime) {
@@ -766,14 +774,17 @@ public class TPTBase extends TestspanTest {
 		ArrayList<ArrayList<StreamParams>> sampleArrayList = null;
 		try {
 			sampleArrayList = samplePortsAndStreamsFromSTC();
-			// Check Traffic Halt only for non UDP tests
-			if (this.protocol != Protocol.TCP) {
-				if (trafficSTC.checkForHalt(HALT_STREAM_PARAM, streams)) {
-
+		} catch (Exception e) {
+		}
+		// Check Traffic Halt only for non UDP tests
+		if (this.protocol != Protocol.TCP) {
+			if (trafficSTC.checkForHalt(HALT_STREAM_PARAM, streams)) {
+				try {
+					GeneralUtils.startLevel("Traffic halt found");
 					report.report("found halt streams", Reporter.WARNING);
 					trafficSTC.takeActionAfterFoundHaltStream();
 					report.report("waiting 20 seconds");
-					Thread.sleep(20 * 1000);
+					GeneralUtils.unSafeSleep(20 * 1000);
 
 					streams = null;
 					streams = new ArrayList<StreamParams>();
@@ -782,7 +793,6 @@ public class TPTBase extends TestspanTest {
 					// restartTime = true;
 
 					if (trafficSTC.checkForHalt(HALT_STREAM_PARAM, streams)) {
-
 						haltedStreams = trafficSTC.checkStreamsForHalter(HALT_STREAM_PARAM, streams);
 						reportForHalted(haltedStreams);
 						report.report("Those Streams Are in Halt Status: " + printStreamName(haltedStreams));
@@ -792,7 +802,8 @@ public class TPTBase extends TestspanTest {
 						boolean uesThreashold = getNumberOfUEs(haltedStreams) <= totalUESPercent;
 						if (uesThreashold) {
 							report.report("disabling halted Streams since they are less than 30%.");
-							// Total UEs are over than 3 OR if Test take off less than 2 UEs.
+							// Total UEs are over than 3 OR if Test take off
+							// less than 2 UEs.
 							GeneralUtils.printToConsole("Total number of UEs in Setup : " + ueList.size());
 							GeneralUtils.printToConsole("Number of UEs in Test Currently : " + ueNameListStc.size());
 							if (ueNameListStc.size() > 3 && ueList.size() - ueNameListStc.size() < 2) {
@@ -809,16 +820,19 @@ public class TPTBase extends TestspanTest {
 						}
 						resetDueToMultiHaltStreams = true;
 					}
+
+				} catch (Exception e) {
+					report.report("interrupted in SamepleResultsStatusOk method in Traffic Class -" + e.getMessage());
+					e.printStackTrace();
+					report.report("Error during test", Reporter.FAIL);
+					resetDueToMultiHaltStreams = true;
+					exceptionThrown = true;
+				}finally{
+					GeneralUtils.stopLevel();
 				}
 			}
-
-		} catch (Exception e) {
-			report.report("interrupted in SamepleResultsStatusOk method in Traffic Class -" + e.getMessage());
-			e.printStackTrace();
-			report.report("Error during test", Reporter.FAIL);
-			resetDueToMultiHaltStreams = true;
-			exceptionThrown = true;
-		} 
+			
+		}
 		// check if more then 30% of streams are halted
 		addSamplesToListOfStreamList(sampleArrayList);
 		streams = null;

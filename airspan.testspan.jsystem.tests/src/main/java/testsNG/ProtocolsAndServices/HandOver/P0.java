@@ -150,8 +150,6 @@ public class P0 extends TestspanTest {
 		attenuatorMax = attenuatorSetUnderTest.getMaxAttenuation();
 		ATT_STEP_TIME = attenuatorSetUnderTest.getStepTime();
 		ATT_STEP = attenuatorSetUnderTest.getAttenuationStep();
-		report.report("Using attenuator step time: "+ATT_STEP_TIME);
-		report.report("Using attenuator step: "+ATT_STEP);
 		reasons = new String[numOfMaxRetries + 1];
 		for(int i=0;i<=numOfMaxRetries;i++){
 			reasons[i] = "";

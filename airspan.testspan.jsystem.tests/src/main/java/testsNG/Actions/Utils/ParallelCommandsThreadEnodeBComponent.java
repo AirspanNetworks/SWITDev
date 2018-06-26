@@ -25,6 +25,7 @@ public class ParallelCommandsThreadEnodeBComponent extends Thread{
 	private int interval = 1;
 	private PrintStream ps;
 	private Reporter report = ListenerstManager.getInstance();
+	private boolean printWarning = true;
 	
 	public ParallelCommandsThreadEnodeBComponent(List<String> cmdSet, EnodeB enb, String componentName, int interval) throws IOException {
 		this.cmdSet = cmdSet;
@@ -86,7 +87,10 @@ public class ParallelCommandsThreadEnodeBComponent extends Thread{
 					if (cmd.equals("ue show rate")) {
 						response = "Cell Total";
 					}else if (cmd.contains("ue show link")) {
-						report.report("Ue show link should not be used in parallel commands!", Reporter.WARNING);
+						if(printWarning){
+							report.report("Ue show link should not be used in parallel commands!", Reporter.WARNING);
+							printWarning = false;
+						}
 						continue;
 					}
 					ans = enb.sendCommandsOnSession(enb.getParallelCommandsPrompt(), cmd, response);

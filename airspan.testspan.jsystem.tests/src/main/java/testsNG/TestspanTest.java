@@ -349,6 +349,13 @@ public class TestspanTest extends SystemTestCase4 {
 				report.report(eNodeB.getName() + "'s Alarms list is empty");
 
 			report.addProperty(eNodeB.getNetspanName() + "_Version", eNodeB.getRunningVersion());
+			ArrayList<String> fileNameList = null;
+			if ((fileNameList = filesFromDBPerNode.get(eNodeB.getName())) != null) {
+				if (!fileNameList.isEmpty()) {
+					getDBFiles(eNodeB, afterTest);
+					compareDBs(eNodeB);
+				}
+			}
 			Logger[] loggers = eNodeB.getLoggers();
 			log.info(String.format("Closing log files for test for eNondeB %s", eNodeB.getName()));
 
@@ -404,13 +411,7 @@ public class TestspanTest extends SystemTestCase4 {
 
 			// data base compare
 			eNodeB.loggerUploadAll();
-			ArrayList<String> fileNameList = null;
-			if ((fileNameList = filesFromDBPerNode.get(eNodeB.getName())) != null) {
-				if (!fileNameList.isEmpty()) {
-					getDBFiles(eNodeB, afterTest);
-					compareDBs(eNodeB);
-				}
-			}
+			
 		}
 
 		if (isCoreOccurDuringTest) {

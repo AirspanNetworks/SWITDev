@@ -178,18 +178,6 @@ final String HTTP_PREFIX = "http://";
 	}
 
 	@Override
-	public String getUEUlFrequency() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getUEDlFrequency() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public String getUEStatus() {
 		// TODO Auto-generated method stub
 		return null;

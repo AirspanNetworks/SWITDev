@@ -16,6 +16,9 @@ import UeSimulator.Amarisoft.JsonObjects.Actions.UEAction.Actions;
 import UeSimulator.Amarisoft.JsonObjects.ConfigFile.Cell;
 import UeSimulator.Amarisoft.JsonObjects.ConfigFile.SimEvent;
 import UeSimulator.Amarisoft.JsonObjects.ConfigFile.UeList;
+import UeSimulator.Amarisoft.JsonObjects.Status.CellStatus;
+import UeSimulator.Amarisoft.JsonObjects.Status.CellsWrapper;
+import UeSimulator.Amarisoft.JsonObjects.Status.ConfigGet;
 import UeSimulator.Amarisoft.JsonObjects.Status.UeStatus;
 import jsystem.framework.GeneralEnums;
 import systemobject.terminal.SSH;
@@ -53,9 +56,32 @@ public class Program {
 			AmariSoftServer a = new AmariSoftServer();
 			a.easyInit();
 			a.startServer("automationConfigFile");
-			a.getConfig();
-		
-
+			ConfigGet s = a.getConfig();
+			CellsWrapper cellWrapper = s.getCells();
+			ArrayList<CellStatus> cells = new ArrayList<>();
+			if (cellWrapper.getCell0() != null) {
+				cells.add(cellWrapper.getCell0());
+			}
+			if (cellWrapper.getCell1() != null) {
+				cells.add(cellWrapper.getCell1());
+			}
+			if (cellWrapper.getCell2() != null) {
+				cells.add(cellWrapper.getCell2());
+			}
+			if (cellWrapper.getCell3() != null) {
+				cells.add(cellWrapper.getCell3());
+			}
+			
+			for (CellStatus cellStatus : cells) {
+				System.out.println(cellStatus.getDlEarfcn());
+				System.out.println(cellStatus.getMode());
+				System.out.println(cellStatus.getNRbDl());
+				System.out.println(cellStatus.getNRbUl());
+				System.out.println(cellStatus.getPci());
+				System.out.println(cellStatus.getSpConfig());
+				System.out.println(cellStatus.getUl_earfcnn());
+				System.out.println(cellStatus.getUldlConfig());
+			}
 		
 		//sleep(20000);
 		//clientEndPoint.startIperfServer(1, 9);
@@ -136,9 +162,6 @@ public class Program {
 		catch (Exception e) {
 			System.out.println("Error: " + e.getMessage());
 		} 
-		finally {
-			clientEndPoint.closeSocket();
-		}
 	}
 
 	private static void workUes(AmariSoftServer clientEndPoint) throws JsonProcessingException {

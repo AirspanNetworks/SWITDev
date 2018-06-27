@@ -147,18 +147,6 @@ public class AndroidUE extends UE {
 	}
 
 	@Override
-	public String getUEDlFrequency() {
-		report.report("Could not perform getUEDlFrequency method, AndroidUe does not support SNMP", Reporter.WARNING);
-		return GeneralUtils.ERROR_VALUE + "";
-	}
-
-	@Override
-	public String getUEUlFrequency() {
-		report.report("Could not perform getUEUlFrequency method, AndroidUe does not support SNMP", Reporter.WARNING);
-		return GeneralUtils.ERROR_VALUE + "";
-	}
-
-	@Override
 	public String getBandWidth() {
 		report.report("Could not perform getBandWidth method, AndroidUe does not support SNMP", Reporter.WARNING);
 		return GeneralUtils.ERROR_VALUE + "";

@@ -133,7 +133,7 @@ public class MoxaCom extends SystemObjectImpl {
 			String buffer = "";
 			DateTime target = DateTime.now().plus(timeout);
 			while (result.isEmpty() || (!result.isEmpty() && !buffer.isEmpty())) {
-				Thread.sleep(DEFAULT_TIMEOUT);
+				GeneralUtils.unSafeSleep(DEFAULT_TIMEOUT);
 				buffer = serial.readInputBuffer();
 				result += buffer.trim();
 				if (timeout > 0 && !DateTime.now().isBefore(target)) {
@@ -142,7 +142,8 @@ public class MoxaCom extends SystemObjectImpl {
 				}
 			}
 		} catch (Exception e) {
-			report.report("Failed connection with serial " + comName, Reporter.WARNING);
+			GeneralUtils.printToConsole("Failed connection with serial " + comName);
+			GeneralUtils.unSafeSleep(1000);
 		}
 		return result;
 	}

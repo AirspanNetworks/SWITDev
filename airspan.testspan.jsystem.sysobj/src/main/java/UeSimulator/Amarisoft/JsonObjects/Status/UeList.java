@@ -17,6 +17,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "category",
     "timing_advance",
     "rnti",
+    "cell_index",
     "power_on",
     "ip",
     "dl_bitrate",
@@ -46,6 +47,8 @@ public class UeList {
     private Integer timingAdvance;
     @JsonProperty("rnti")
     private Integer rnti;
+    @JsonProperty("cell_index")
+    private Integer cell_index;
     @JsonProperty("power_on")
     private Boolean powerOn;
     @JsonProperty("ip")
@@ -129,6 +132,16 @@ public class UeList {
     @JsonProperty("rnti")
     public void setRnti(Integer rnti) {
         this.rnti = rnti;
+    }
+    
+    @JsonProperty("cell_index")
+    public Integer getCellIndex() {
+        return cell_index;
+    }
+
+    @JsonProperty("cell_index")
+    public void setCellIndex(Integer cell_index) {
+        this.cell_index = cell_index;
     }
 
     @JsonProperty("power_on")

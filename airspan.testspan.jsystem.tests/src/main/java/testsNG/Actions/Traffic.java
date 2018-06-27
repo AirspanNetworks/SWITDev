@@ -999,7 +999,7 @@ public class Traffic {
 	 * @throws IOException
 	 * 
 	 */
-	public Boolean checkForHalt(long TEST_STREAM_HALT_PARAM, ArrayList<StreamParams> streams) throws IOException {
+	public Boolean checkForHalt(long TEST_STREAM_HALT_PARAM, ArrayList<StreamParams> streams) {
 		// sum every Streams from fsResults and Compare them to Calculator
 		// check if the rx equals to the calculator
 		for (StreamParams stream : streams) {

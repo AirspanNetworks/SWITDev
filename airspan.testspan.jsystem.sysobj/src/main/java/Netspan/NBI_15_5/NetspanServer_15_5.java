@@ -100,6 +100,7 @@ import Netspan.NBI_15_5.Software.Credentials;
 import Netspan.NBI_15_5.Software.SoftwareStatusGet;
 import Netspan.NBI_15_5.Software.SoftwareStatusGetWs;
 import Netspan.NBI_15_5.Software.SwFileInfoWs;
+import Netspan.NBI_15_5.Software.SwImageWs;
 import Netspan.API.Enums.ImageType;
 import Netspan.API.Enums.NetworkElementStatus;
 import Netspan.NBI_15_5.Status.LteAnrStatusWs;
@@ -2251,9 +2252,9 @@ public class NetspanServer_15_5 extends NetspanServer_15_2 implements Netspan_15
 		}
 	}
 	
-	private Netspan.NBI_15_5.Software.SwImageWs createSoftwareImageObject(EnodeBUpgradeImage upgradeImage) {
+	private SwImageWs createSoftwareImageObject(EnodeBUpgradeImage upgradeImage) {
 
-		Netspan.NBI_15_5.Software.SwImageWs softwareImage = new Netspan.NBI_15_5.Software.SwImageWs();
+		SwImageWs softwareImage = new SwImageWs();
 
 		if (upgradeImage.getName() != null) {
 			softwareImage.setName(upgradeImage.getName());

@@ -240,10 +240,6 @@ public abstract class UE extends SystemObjectImpl {
 
 	public abstract String getBandWidth() ;
 	
-	public abstract String getUEUlFrequency() ;
-	
-	public abstract String getUEDlFrequency() ;
-	
 	public abstract String getUEStatus() ;
 
 	public abstract String getDuplexMode() ;

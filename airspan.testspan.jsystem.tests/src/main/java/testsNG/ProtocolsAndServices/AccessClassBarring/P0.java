@@ -150,6 +150,7 @@ public class P0 extends TestspanTest {
 			report.report("There is no ues connected to enodeBs", Reporter.FAIL);
 			return;
 		}
+		choosenUE.reboot();
 		int numOfCells = choosenEnodeB.getNumberOfCells();
 		dm = new DMtool();
 		dm.setUeIP(choosenUE.getLanIpAddress());

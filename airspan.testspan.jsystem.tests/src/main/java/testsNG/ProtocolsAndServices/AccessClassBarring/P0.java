@@ -265,7 +265,7 @@ public class P0 extends TestspanTest {
 			short[] actual = Arrays.copyOfRange(payload, 288, 314);
 			for (int i =0; i< actual.length; i++) {
 				String hex = Integer.toHexString(actual[i] & 0x00ff);
-			    System.out.print(hex + " ");
+			    report.report(hex + " ");
 			}
 			System.out.println("");
 			if (Arrays.equals(expected, actual)) {

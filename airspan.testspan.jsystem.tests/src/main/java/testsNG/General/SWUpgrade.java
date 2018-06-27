@@ -194,8 +194,7 @@ public class SWUpgrade extends TestspanTest {
         	String imageName = targetVer + "_" + server.getUpgradeServerProtocolType().toString() + "_Automation_" + hardwareCategory;
 			imageNames.put(enodeB.getName(), imageName);
 			String buildName  = (enodeB.getArchitecture() == EnodeB.Architecture.FSM)? softwareUtiles.getFSMBuild() : softwareUtiles.getXLPBuild();
-			String imageType = enodeB.getImageType().value();
-
+			String imageType = netspanServer.getSoftwareStatus(enodeB.getNetspanName(), null).ImageType;
 			softwareUtiles.createUpgradeImage(server, buildName, imageName, targetVer, hardwareCategory, imageType);
 
 			GeneralUtils.stopLevel();

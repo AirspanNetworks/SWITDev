@@ -1000,6 +1000,7 @@ public class TPTBase extends TestspanTest {
 		printDLandULAverageTableAndCounters();
 		terminateWatchDog();
 		// stop traffic
+		report.report("Stop traffic");
 		trafficSTC.stopTraffic();
 
 		// Do after Test Things

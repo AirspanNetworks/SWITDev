@@ -167,8 +167,8 @@ public class P0 extends TestspanTest {
 		} catch (Exception e) {
 			report.report("Couldn't start traffic", Reporter.WARNING);
 			e.printStackTrace();
-		}*/
-		GeneralUtils.stopLevel();
+		}
+		GeneralUtils.stopLevel();*/
 		evt.resetEventHappened();
 		report.report("Changing the cell barred value to CELL BARRED with emergancy");
 		CellBarringPolicyParameters cb = new CellBarringPolicyParameters();

@@ -214,7 +214,7 @@ public class P0 extends TestspanTest {
 		boolean isUEConneted = false;
 		int numOfCells = dut.getNumberOfCells();
 		int cellBarredFromMib;
-		GeneralUtils.startLevel("Start traffic");
+		/*GeneralUtils.startLevel("Start traffic");
 		try {
 			traffic = Traffic.getInstance(SetupUtils.getInstance().getAllUEs());
 			traffic.startTraffic();
@@ -222,7 +222,7 @@ public class P0 extends TestspanTest {
 			report.report("Couldn't start traffic", Reporter.WARNING);
 			e.printStackTrace();
 		}
-		GeneralUtils.stopLevel();
+		GeneralUtils.stopLevel();*/
 		report.report("Changing the cell barred value to CELL BARRED");
 		CellBarringPolicyParameters cb = new CellBarringPolicyParameters();
 		cb.cellBarringPolicy = CellBarringPolicies.AC_BARRING;

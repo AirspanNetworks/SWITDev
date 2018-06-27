@@ -138,6 +138,8 @@ public class P0 extends TestspanTest {
 				if (epc.checkUEConnectedToNode(ue, enb)) {
 					choosenUE = ue;
 					choosenEnodeB = enb;
+					report.report("choosen UE: "  + choosenUE.getName());
+					report.report("choosen EnodeB: " + choosenEnodeB.getName());
 					break;
 				}
 			}

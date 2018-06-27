@@ -96,6 +96,10 @@ import Netspan.NBI_15_5.Lte.WsResponse;
 import Netspan.NBI_15_5.Server.FileServerProtocolType;
 import Netspan.NBI_15_5.Server.FileServerResponse;
 import Netspan.NBI_15_5.Server.FileServerWs;
+import Netspan.NBI_15_5.Software.Credentials;
+import Netspan.NBI_15_5.Software.SoftwareStatusGet;
+import Netspan.NBI_15_5.Software.SoftwareStatusGetWs;
+import Netspan.NBI_15_5.Software.SwFileInfoWs;
 import Netspan.API.Enums.ImageType;
 import Netspan.API.Enums.NetworkElementStatus;
 import Netspan.NBI_15_5.Status.LteAnrStatusWs;
@@ -2229,6 +2233,7 @@ public class NetspanServer_15_5 extends NetspanServer_15_2 implements Netspan_15
 	
 	@Override
 	public boolean createSoftwareImage(EnodeBUpgradeImage upgradeImage) {
+		
 		Netspan.NBI_15_5.Software.SwImageWs softwareImage = createSoftwareImageObject(upgradeImage);
 		Netspan.NBI_15_5.Software.SwFileInfoWs softwareFileInfo = createFileInfoObject(upgradeImage);
 		List<Netspan.NBI_15_5.Software.SwFileInfoWs> fileList = softwareImage.getSoftwareFileInfo();
@@ -2244,7 +2249,6 @@ public class NetspanServer_15_5 extends NetspanServer_15_2 implements Netspan_15
 			soapHelper_15_5.endSoftwareSoap();
 			return true;
 		}
-
 	}
 	
 	private Netspan.NBI_15_5.Software.SwImageWs createSoftwareImageObject(EnodeBUpgradeImage upgradeImage) {
@@ -2265,8 +2269,8 @@ public class NetspanServer_15_5 extends NetspanServer_15_2 implements Netspan_15
 
 	}
 
-	private Netspan.NBI_15_5.Software.SwFileInfoWs createFileInfoObject(EnodeBUpgradeImage upgradeImage) {
-		Netspan.NBI_15_5.Software.SwFileInfoWs softwareFileInfo = new Netspan.NBI_15_5.Software.SwFileInfoWs();
+	private SwFileInfoWs createFileInfoObject(EnodeBUpgradeImage upgradeImage) {
+		SwFileInfoWs softwareFileInfo = new SwFileInfoWs();
 		Netspan.NBI_15_5.Software.ObjectFactory objectFactory = new Netspan.NBI_15_5.Software.ObjectFactory();
 
 		if (upgradeImage.getImageType() != null) {

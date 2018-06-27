@@ -11,11 +11,20 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import EnodeB.EnodeB;
+import EnodeB.EnodeBUpgradeImage;
+import EnodeB.EnodeBUpgradeServer;
 import Netspan.API.Enums.CategoriesLte;
 import Netspan.API.Enums.EnabledDisabledStates;
+import Netspan.API.Enums.ImageType;
 import Netspan.API.Enums.NodeManagementModeType;
 import Netspan.API.Enums.PrimaryClockSourceEnum;
+import Netspan.API.Enums.ServerProtocolType;
 import Netspan.API.Lte.EventInfo;
+import Netspan.API.Software.SoftwareStatus;
+import Netspan.NBI_16_0.Software.NodeSoftwareStatus;
+import Netspan.NBI_16_0.Software.SoftwareStatusGetWs;
+import Netspan.NBI_16_0.Software.SwFileInfoWs;
+import Netspan.NBI_16_0.Software.SwImageWs;
 import Netspan.NBI_15_5.NetspanServer_15_5;
 import Netspan.NBI_16_0.FaultManagement.Event;
 import Netspan.NBI_16_0.FaultManagement.EventResultList;
@@ -118,6 +127,101 @@ public class NetspanServer_16_0 extends NetspanServer_15_5 implements Netspan_16
 			return null;
 		}
 		return null;
+	}
+	
+	@Override
+	public boolean createSoftwareImage(EnodeBUpgradeImage upgradeImage) {
+		
+		Netspan.NBI_16_0.Software.SwImageWs softwareImage = createSoftwareImageObject(upgradeImage);
+		Netspan.NBI_16_0.Software.SwFileInfoWs softwareFileInfo = createFileInfoObject(upgradeImage);
+		List<Netspan.NBI_16_0.Software.SwFileInfoWs> fileList = softwareImage.getSoftwareFileInfo();
+		fileList.add(softwareFileInfo);
+
+		Netspan.NBI_16_0.Software.SwImageResponse result = soapHelper_16_0
+				.getSoftwareSoap().softwareImageCreate(softwareImage, credentialsSoftware);
+		if (result.getErrorCode() != Netspan.NBI_16_0.Software.ErrorCodes.OK) {
+			report.report("softwareServerCreate via Netspan Failed : " + result.getErrorString(), Reporter.WARNING);
+			soapHelper_16_0.endSoftwareSoap();
+			return false;
+		} else {
+			soapHelper_16_0.endSoftwareSoap();
+			return true;
+		}
+	}
+	
+	private SwImageWs createSoftwareImageObject(EnodeBUpgradeImage upgradeImage) {
+
+		SwImageWs softwareImage = new SwImageWs();
+
+		if (upgradeImage.getName() != null) {
+			softwareImage.setName(upgradeImage.getName());
+		}
+		if (upgradeImage.getHardwareCategory() != null) {
+			softwareImage.setHardwareCategory(upgradeImage.getHardwareCategory());
+		}
+		if (upgradeImage.getUpgradeServerName() != null) {
+			softwareImage.setSoftwareServer(upgradeImage.getUpgradeServerName());
+		}
+
+		return softwareImage;
+
+	}
+	
+	private SwFileInfoWs createFileInfoObject(EnodeBUpgradeImage upgradeImage) {
+		SwFileInfoWs softwareFileInfo = new SwFileInfoWs();
+		Netspan.NBI_16_0.Software.ObjectFactory objectFactory = new Netspan.NBI_16_0.Software.ObjectFactory();
+		if (upgradeImage.getImageType() != null) {
+			softwareFileInfo.setImageType(objectFactory.createSwFileInfoWsImageType(ImageType.fromValue(upgradeImage.getImageType())));
+		}else {
+			softwareFileInfo.setImageType(objectFactory.createSwFileInfoWsImageType(ImageType.fromValue("LTE")));
+		}
+
+		if (upgradeImage.getBuildPath() != null) {
+			ServerProtocolType protocolType = upgradeImage.getProtocolType();		
+			if(protocolType == null){
+				String softwareImageName = upgradeImage.getName();
+				EnodeBUpgradeImage currentsoftwareImage = getSoftwareImage(softwareImageName);
+				String upgradeServerName = currentsoftwareImage.getUpgradeServerName();
+				EnodeBUpgradeServer currentUpgradeServer = getSoftwareServer(upgradeServerName);
+				protocolType = currentUpgradeServer.getUpgradeServerProtocolType();
+			}
+			softwareFileInfo.setFileNameWithPath(upgradeImage.getBuildPath());
+		}
+		
+		if (upgradeImage.getVersion() != null) {
+			softwareFileInfo.setVersion(upgradeImage.getVersion());
+		}
+		return softwareFileInfo;
+	}
+	
+	@Override
+	public SoftwareStatus getSoftwareStatus(String nodeName, ImageType imageType) {
+		List<java.lang.String> enbList = new ArrayList<java.lang.String>();
+		enbList.add(nodeName);
+		SoftwareStatusGetWs result = soapHelper_16_0.getSoftwareSoap().softwareStatusGet(enbList, credentialsSoftware);
+		if (result.getErrorCode() != Netspan.NBI_16_0.Software.ErrorCodes.OK) {
+			report.report("softwareStatusGet via Netspan Failed : " + result.getErrorString(), Reporter.WARNING);
+			soapHelper_15_2.endSoftwareSoap();
+			return null;
+		} else {
+			SoftwareStatus newsoftwareStatus = null;
+			int numberOfSoftwareStatus = result.getNodeSoftwareStatus().get(0).getSoftwareStatus().size();
+			for(int i = 0; i < numberOfSoftwareStatus; i++){
+				NodeSoftwareStatus softwareStatus = result.getNodeSoftwareStatus().get(0).getSoftwareStatus().get(i);
+				if((numberOfSoftwareStatus == 1) || (imageType == null) || imageType.value().equals(softwareStatus.getImageType())){
+					newsoftwareStatus = new SoftwareStatus();
+					newsoftwareStatus.ImageType = softwareStatus.getImageType() == "Combined LTE + Relay" ? ImageType.COMBINED_LTE_RELAY.value() : softwareStatus.getImageType();
+					newsoftwareStatus.RunningVersion = softwareStatus.getRunningVersion();
+					newsoftwareStatus.StandbyVersion = softwareStatus.getStandbyVersion();
+					newsoftwareStatus.LastRequested = softwareStatus.getLastRequested();
+					newsoftwareStatus.NmsStatus = softwareStatus.getNmsState();
+					newsoftwareStatus.NodeState = softwareStatus.getNodeState();
+					break;
+				}
+			}
+			soapHelper_15_2.endSoftwareSoap();
+			return newsoftwareStatus;
+		}
 	}
 	
 	/**

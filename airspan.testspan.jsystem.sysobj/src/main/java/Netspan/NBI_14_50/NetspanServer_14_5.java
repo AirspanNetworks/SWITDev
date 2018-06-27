@@ -2980,4 +2980,10 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 		report.report("setEnbAccessClassBarring method is not implemented for this netspan(14_5)!", Reporter.WARNING);
 		return false;
 	}
+
+	@Override
+	public String getImageType(String nodeName) {
+		report.report("getImageType method is not implemented for this netspan(14_5)!", Reporter.WARNING);
+		return null;
+	}
 }

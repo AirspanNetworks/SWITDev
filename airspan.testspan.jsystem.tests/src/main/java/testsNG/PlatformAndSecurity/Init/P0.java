@@ -173,14 +173,15 @@ public class P0 extends TestspanTest {
 		
 		imageName = targetVer+"_"+server.getUpgradeServerProtocolType().toString()+"_Automation";
 		HardwareCategory hardwareCategory = config.getHardwareCategory(dut);
-		String imageType = dut.getImageType().value();
+		String imageType = netspanServer.getImageType(dut.getNetspanName()); 
+				//dut.getImageType().value();
 		ispassed = softwareUtiles.createUpgradeImage(server, buildName, imageName, targetVer, hardwareCategory, imageType);
 		if (!ispassed){
 			report.report("Couldnlt create upgrade image in netspan", Reporter.FAIL);
 			return;
 		}
 			
-			GeneralUtils.startLevel("Downloading file");
+		GeneralUtils.startLevel("Downloading file");
 		
 		ispassed = softwareUtiles.softwareConfigSet(dut.getNetspanName(), RequestType.DOWNLOAD, imageName);
 		

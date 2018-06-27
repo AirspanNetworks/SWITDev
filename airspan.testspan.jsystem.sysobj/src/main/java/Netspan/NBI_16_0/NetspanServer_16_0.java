@@ -148,7 +148,7 @@ public class NetspanServer_16_0 extends NetspanServer_15_5 implements Netspan_16
 		EnbRadioProfile profileresult = netspanResult.getRadioProfileResult().get(0).getRadioProfile();
 		CategoriesLte category = profileresult.getHardwareCategory().getValue();
 		HardwareCategory hardwareCategory = LTECategoriesToHardwareCategory(category);
-		soapHelper_15_2.endSoftwareSoap();
+		soapHelper_16_0.endSoftwareSoap();
 		return hardwareCategory;
 	}
 	
@@ -233,7 +233,7 @@ public class NetspanServer_16_0 extends NetspanServer_15_5 implements Netspan_16
 				NodeSoftwareStatus softwareStatus = result.getNodeSoftwareStatus().get(0).getSoftwareStatus().get(i);
 				if((numberOfSoftwareStatus == 1) || (imageType == null) || imageType.value().equals(softwareStatus.getImageType())){
 					newsoftwareStatus = new SoftwareStatus();
-					newsoftwareStatus.ImageType = softwareStatus.getImageType() == "Combined LTE + Relay" ? ImageType.COMBINED_LTE_RELAY.value() : softwareStatus.getImageType();
+					newsoftwareStatus.ImageType = softwareStatus.getImageType().equals("Combined LTE + Relay") ? ImageType.COMBINED_LTE_RELAY.value() : softwareStatus.getImageType();
 					newsoftwareStatus.RunningVersion = softwareStatus.getRunningVersion();
 					newsoftwareStatus.StandbyVersion = softwareStatus.getStandbyVersion();
 					newsoftwareStatus.LastRequested = softwareStatus.getLastRequested();

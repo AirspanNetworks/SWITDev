@@ -349,6 +349,13 @@ public class TestspanTest extends SystemTestCase4 {
 				report.report(eNodeB.getName() + "'s Alarms list is empty");
 
 			report.addProperty(eNodeB.getNetspanName() + "_Version", eNodeB.getRunningVersion());
+			ArrayList<String> fileNameList = null;
+			if ((fileNameList = filesFromDBPerNode.get(eNodeB.getName())) != null) {
+				if (!fileNameList.isEmpty()) {
+					getDBFiles(eNodeB, afterTest);
+					compareDBs(eNodeB);
+				}
+			}
 			Logger[] loggers = eNodeB.getLoggers();
 			log.info(String.format("Closing log files for test for eNondeB %s", eNodeB.getName()));
 
@@ -404,13 +411,7 @@ public class TestspanTest extends SystemTestCase4 {
 
 			// data base compare
 			eNodeB.loggerUploadAll();
-			ArrayList<String> fileNameList = null;
-			if ((fileNameList = filesFromDBPerNode.get(eNodeB.getName())) != null) {
-				if (!fileNameList.isEmpty()) {
-					getDBFiles(eNodeB, afterTest);
-					compareDBs(eNodeB);
-				}
-			}
+			
 		}
 
 		if (isCoreOccurDuringTest) {
@@ -683,10 +684,11 @@ public class TestspanTest extends SystemTestCase4 {
 	 */
 	private String getFileNamesFromNode(EnodeB dut) {
 		String result = dut.shell("chmod 777 /bs/db");
-		GeneralUtils.printToConsole(result);
+		GeneralUtils.printToConsole("chmod 777 /bs/db response: "+result);
 		String cdCommand = dut.shell("cd /bs/db");
-		GeneralUtils.printToConsole(cdCommand);
+		GeneralUtils.printToConsole("cd /bs/db response: "+cdCommand);
 		String lsResult = dut.shell("ls -1a >> files");
+		GeneralUtils.printToConsole("ls -1a >> files response: "+lsResult);
 		if (lsResult.contains("not found")) {
 			return null;
 		}

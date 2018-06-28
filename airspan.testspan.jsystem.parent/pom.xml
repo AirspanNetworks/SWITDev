@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>airspan.testspan.jsystem</groupId>
 	<artifactId>airspan.testspan.jsystem.parent</artifactId>
-	<version>1.21.31</version> 
+	<version>1.21.32</version> 
 	<packaging>pom</packaging>
 	<properties>
 		<jsystem.version>6.1.06-beta1</jsystem.version>

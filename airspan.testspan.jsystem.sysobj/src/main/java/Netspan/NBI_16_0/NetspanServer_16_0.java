@@ -132,6 +132,27 @@ public class NetspanServer_16_0 extends NetspanServer_15_5 implements Netspan_16
 	}
 	
 	@Override
+	public String getCurrentRadioProfileName(EnodeB enb) {
+		int cell = enb.getCellContextID();
+		String radioProfileName = this.getCurrentRadioProfileName(enb, cell);
+		return radioProfileName;
+	}
+	
+	private String getCurrentRadioProfileName(EnodeB enb, int cellNumber) {
+		EnbDetailsGet nodeConfig = getNodeConfig(enb);
+		if(nodeConfig != null){
+			for (LteCellGetWs cell : nodeConfig.getLteCell()) {
+				int tempCellNumber = Integer.valueOf(cell.getCellNumber().getValue());
+				if (tempCellNumber == cellNumber){
+					GeneralUtils.printToConsole("Radio Profile From Netspan: "+ cell.getRadioProfile()+" for cell : "+cell.getCellNumber().getValue());
+					return cell.getRadioProfile();
+				}
+			}			
+		}
+		return null;
+	}
+	
+	@Override
 	public HardwareCategory getHardwareCategory(EnodeB node) {
 		String enbRadioProfileName = this.getCurrentRadioProfileName(node);
 		LteRadioProfileGetResult netspanResult = null;

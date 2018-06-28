@@ -163,6 +163,12 @@ public class P0 extends TestspanTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		try {
+			report.report(dm.cli("showPlmn"));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		/*GeneralUtils.startLevel("Start traffic");
 		try {
 			traffic = Traffic.getInstance(SetupUtils.getInstance().getAllUEs());

@@ -152,6 +152,7 @@ public class P0 extends TestspanTest {
 		}
 		int numOfCells = choosenEnodeB.getNumberOfCells();
 		dm = new DMtool();
+		dm.addlistenertoEvents(evt);
 		dm.setUeIP(choosenUE.getLanIpAddress());
 		report.report("UE IP: " + choosenUE.getLanIpAddress() );
 		dm.setPORT(choosenUE.getDMToolPort());

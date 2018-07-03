@@ -282,6 +282,7 @@ public class P0 extends TestspanTest {
 			for (int i =0; i< actual.length; i++) {
 				String hex = Integer.toHexString(actual[i] & 0x00ff);
 				alert += hex + " ";
+				System.out.print(hex +" ");
 			}
 			report.report(alert);
 			if (Arrays.equals(expected, actual)) {

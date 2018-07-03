@@ -43,6 +43,13 @@ public class P0 extends TestspanTest {
 		enbInTest.add(dut);
 		enbInTest.add(dut2);
 		report.startLevel("Test Init");
+		///////////////////////////////////////////////HENNNNNNNNNNNNNNNNNNNNNNNNNNNN
+		//dm = new DMtool();
+		//dm.setUeIP("192.168.58.225");
+		//dm.setPORT(37772);
+		//dm.addlistenertoEvents(evt);
+		//dm.init();	
+		///////////////////////////////////////////////HENNNNNNNNNNNNNNNNNNNNNNNNNNNN
 		super.init();
 		peripheralsConfig = PeripheralsConfig.getInstance();
 		enbConfig = EnodeBConfig.getInstance();
@@ -131,6 +138,7 @@ public class P0 extends TestspanTest {
 	@TestProperties(name = "AC_Barring_TC_1", returnParam = {"IsTestWasSuccessful" }, paramsExclude = { "IsTestWasSuccessful"})
 	public void AC_Barring_TC_1() {
 		report.report("AC_Barring_TC_1");
+
 		UE choosenUE = null;
 		EnodeB choosenEnodeB = null;
 		for (UE ue : SetupUtils.getInstance().getAllUEs()) {
@@ -152,17 +160,18 @@ public class P0 extends TestspanTest {
 		}
 		int numOfCells = choosenEnodeB.getNumberOfCells();
 		dm = new DMtool();
-		dm.addlistenertoEvents(evt);
 		dm.setUeIP(choosenUE.getLanIpAddress());
 		report.report("UE IP: " + choosenUE.getLanIpAddress() );
 		dm.setPORT(choosenUE.getDMToolPort());
 		report.report("UE Port: " + choosenUE.getDMToolPort());
+		dm.addlistenertoEvents(evt);
 		try {
 			dm.init();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 		try {
 			report.report(dm.cli("showPlmn"));
 		} catch (Exception e) {
@@ -183,14 +192,14 @@ public class P0 extends TestspanTest {
 		CellBarringPolicyParameters cb = new CellBarringPolicyParameters();
 		cb.cellBarringPolicy = CellBarringPolicies.AC_BARRING;
 		cb.IsAccessClassBarred = true;
-		cb.IsEmergencyAccessBarred = true;
-		cb.IsSignalingAccessBarred = false;
+		cb.IsEmergencyAccessBarred = false;
+		cb.IsSignalingAccessBarred = true;
 		cb.IsDataAccessBarred = false;
 		for (int i = 1; i <= numOfCells; i++) {
-			dut.setCellContextNumber(i);
-			enbConfig.setAccessClassBarring(dut, cb);
+			choosenEnodeB.setCellContextNumber(i);
+			enbConfig.setAccessClassBarring(choosenEnodeB, cb);
 		}
-		GeneralUtils.unSafeSleep(5000);
+		GeneralUtils.unSafeSleep(10000);
 		
 		report.report("Changing the cell barred value to CELL BARRED without emergancy");
 		evt.resetEventHappened();
@@ -201,10 +210,10 @@ public class P0 extends TestspanTest {
 		cb.IsSignalingAccessBarred = false;
 		cb.IsDataAccessBarred = false;
 		for (int i = 1; i <= numOfCells; i++) {
-			dut.setCellContextNumber(i);
-			enbConfig.setAccessClassBarring(dut, cb);
+			choosenEnodeB.setCellContextNumber(i);
+			enbConfig.setAccessClassBarring(choosenEnodeB, cb);
 		}
-		GeneralUtils.unSafeSleep(5000);
+		GeneralUtils.unSafeSleep(30000);
 		
 		if (evt.eventHappened) {
 			report.report("ue got the event as expected");
@@ -269,11 +278,12 @@ public class P0 extends TestspanTest {
  			short[] expected = new short[] { 16, 0, 18, 18, 85, 111, 24, 32, 4, 51, 14, 70, -127, 0, 0, 2, 0, -120, 87, -39,
 					21, 68, -116, 0, 3, -128 };
 			short[] actual = Arrays.copyOfRange(payload, 288, 314);
+			String alert = "";
 			for (int i =0; i< actual.length; i++) {
 				String hex = Integer.toHexString(actual[i] & 0x00ff);
-			    report.report(hex + " ");
+				alert += hex + " ";
 			}
-			System.out.println("");
+			report.report(alert);
 			if (Arrays.equals(expected, actual)) {
 				int x = 1;
 				System.out.println("BOOOOOOMMMM");

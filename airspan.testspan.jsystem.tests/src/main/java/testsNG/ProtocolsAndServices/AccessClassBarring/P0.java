@@ -11,6 +11,7 @@ import DMTool.EvtClient;
 import EPC.EPC;
 import EnodeB.EnodeB;
 import Netspan.API.Enums.CellBarringPolicies;
+import Netspan.API.Enums.EnbStates;
 import Netspan.Profiles.CellBarringPolicyParameters;
 import UE.UE;
 import Utils.GeneralUtils;
@@ -140,25 +141,18 @@ public class P0 extends TestspanTest {
 		report.report("AC_Barring_TC_1");
 
 		UE choosenUE = null;
-		EnodeB choosenEnodeB = null;
+		peripheralsConfig.changeEnbState(dut2, EnbStates.OUT_OF_SERVICE);
 		for (UE ue : SetupUtils.getInstance().getAllUEs()) {
-			for (EnodeB enb : enbInTest) {
-				if (epc.checkUEConnectedToNode(ue, enb)) {
-					choosenUE = ue;
-					choosenEnodeB = enb;
-					report.report("choosen UE: "  + choosenUE.getName());
-					report.report("choosen EnodeB: " + choosenEnodeB.getName());
-					break;
-				}
-			}
-			if (choosenEnodeB!=null && choosenUE != null)
+			if (epc.checkUEConnectedToNode(ue, dut)) {
+				choosenUE = ue;
+				report.report("choosen UE: "  + choosenUE.getName());
 				break;
+				}
 		}
-		if (choosenUE == null || choosenEnodeB == null) {
+		if (choosenUE == null) {
 			report.report("There is no ues connected to enodeBs", Reporter.FAIL);
 			return;
 		}
-		int numOfCells = choosenEnodeB.getNumberOfCells();
 		dm = new DMtool();
 		dm.setUeIP(choosenUE.getLanIpAddress());
 		report.report("UE IP: " + choosenUE.getLanIpAddress() );
@@ -195,9 +189,9 @@ public class P0 extends TestspanTest {
 		cb.IsEmergencyAccessBarred = false;
 		cb.IsSignalingAccessBarred = true;
 		cb.IsDataAccessBarred = false;
-		for (int i = 1; i <= numOfCells; i++) {
-			choosenEnodeB.setCellContextNumber(i);
-			enbConfig.setAccessClassBarring(choosenEnodeB, cb);
+		for (int i = 1; i <= dut.getNumberOfCells(); i++) {
+			dut.setCellContextNumber(i);
+			enbConfig.setAccessClassBarring(dut, cb);
 		}
 		GeneralUtils.unSafeSleep(10000);
 		
@@ -209,9 +203,9 @@ public class P0 extends TestspanTest {
 		cb.IsEmergencyAccessBarred = false;
 		cb.IsSignalingAccessBarred = false;
 		cb.IsDataAccessBarred = false;
-		for (int i = 1; i <= numOfCells; i++) {
-			choosenEnodeB.setCellContextNumber(i);
-			enbConfig.setAccessClassBarring(choosenEnodeB, cb);
+		for (int i = 1; i <= dut.getNumberOfCells(); i++) {
+			dut.setCellContextNumber(i);
+			enbConfig.setAccessClassBarring(dut, cb);
 		}
 		GeneralUtils.unSafeSleep(30000);
 		

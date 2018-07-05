@@ -142,6 +142,15 @@ public class P0 extends TestspanTest {
 
 		UE choosenUE = null;
 		peripheralsConfig.changeEnbState(dut2, EnbStates.OUT_OF_SERVICE);
+		GeneralUtils.startLevel("Start traffic");
+		try {
+			traffic = Traffic.getInstance(SetupUtils.getInstance().getAllUEs());
+			traffic.startTraffic();
+		} catch (Exception e) {
+			report.report("Couldn't start traffic", Reporter.WARNING);
+			e.printStackTrace();
+		}
+		GeneralUtils.stopLevel();
 		for (UE ue : SetupUtils.getInstance().getAllUEs()) {
 			if (epc.checkUEConnectedToNode(ue, dut)) {
 				choosenUE = ue;
@@ -153,15 +162,7 @@ public class P0 extends TestspanTest {
 			report.report("There is no ues connected to enodeBs", Reporter.FAIL);
 			return;
 		}
-		GeneralUtils.startLevel("Start traffic");
-		try {
-			traffic = Traffic.getInstance(SetupUtils.getInstance().getAllUEs());
-			traffic.startTraffic();
-		} catch (Exception e) {
-			report.report("Couldn't start traffic", Reporter.WARNING);
-			e.printStackTrace();
-		}
-		GeneralUtils.stopLevel();
+
 		dm = new DMtool();
 		dm.setUeIP(choosenUE.getLanIpAddress());
 		report.report("UE IP: " + choosenUE.getLanIpAddress() );

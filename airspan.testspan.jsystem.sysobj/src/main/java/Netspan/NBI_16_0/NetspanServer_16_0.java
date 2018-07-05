@@ -15,12 +15,14 @@ import EnodeB.EnodeBUpgradeImage;
 import EnodeB.EnodeBUpgradeServer;
 import Netspan.API.Enums.CategoriesLte;
 import Netspan.API.Enums.EnabledDisabledStates;
+import Netspan.API.Enums.HardwareCategory;
 import Netspan.API.Enums.ImageType;
 import Netspan.API.Enums.NodeManagementModeType;
 import Netspan.API.Enums.PrimaryClockSourceEnum;
 import Netspan.API.Enums.ServerProtocolType;
 import Netspan.API.Lte.EventInfo;
 import Netspan.API.Software.SoftwareStatus;
+import Netspan.NBI_16_0.Lte.LteRadioProfileGetResult;
 import Netspan.NBI_16_0.Software.NodeSoftwareStatus;
 import Netspan.NBI_16_0.Software.SoftwareStatusGetWs;
 import Netspan.NBI_16_0.Software.SwFileInfoWs;
@@ -130,6 +132,48 @@ public class NetspanServer_16_0 extends NetspanServer_15_5 implements Netspan_16
 	}
 	
 	@Override
+	public String getCurrentRadioProfileName(EnodeB enb) {
+		int cell = enb.getCellContextID();
+		String radioProfileName = this.getCurrentRadioProfileName(enb, cell);
+		return radioProfileName;
+	}
+	
+	private String getCurrentRadioProfileName(EnodeB enb, int cellNumber) {
+		EnbDetailsGet nodeConfig = getNodeConfig(enb);
+		if(nodeConfig != null){
+			for (LteCellGetWs cell : nodeConfig.getLteCell()) {
+				int tempCellNumber = Integer.valueOf(cell.getCellNumber().getValue());
+				if (tempCellNumber == cellNumber){
+					GeneralUtils.printToConsole("Radio Profile From Netspan: "+ cell.getRadioProfile()+" for cell : "+cell.getCellNumber().getValue());
+					return cell.getRadioProfile();
+				}
+			}			
+		}
+		return null;
+	}
+	
+	@Override
+	public HardwareCategory getHardwareCategory(EnodeB node) {
+		String enbRadioProfileName = this.getCurrentRadioProfileName(node);
+		LteRadioProfileGetResult netspanResult = null;
+		List<java.lang.String> enbList = new ArrayList<java.lang.String>();
+		enbList.add(enbRadioProfileName);
+		netspanResult = soapHelper_16_0.getLteSoap().radioProfileGet(enbList, null,	credentialsLte);
+		if (netspanResult.getErrorCode() != Netspan.NBI_16_0.Lte.ErrorCodes.OK) {
+			report.report("getHardwareCategory via Netspan Failed : " + netspanResult.getErrorString(),
+					Reporter.WARNING);
+			soapHelper_16_0.endSoftwareSoap();
+			return null;
+		}
+
+		EnbRadioProfile profileresult = netspanResult.getRadioProfileResult().get(0).getRadioProfile();
+		CategoriesLte category = profileresult.getHardwareCategory().getValue();
+		HardwareCategory hardwareCategory = LTECategoriesToHardwareCategory(category);
+		soapHelper_16_0.endSoftwareSoap();
+		return hardwareCategory;
+	}
+	
+	@Override
 	public boolean createSoftwareImage(EnodeBUpgradeImage upgradeImage) {
 		
 		Netspan.NBI_16_0.Software.SwImageWs softwareImage = createSoftwareImageObject(upgradeImage);
@@ -210,7 +254,7 @@ public class NetspanServer_16_0 extends NetspanServer_15_5 implements Netspan_16
 				NodeSoftwareStatus softwareStatus = result.getNodeSoftwareStatus().get(0).getSoftwareStatus().get(i);
 				if((numberOfSoftwareStatus == 1) || (imageType == null) || imageType.value().equals(softwareStatus.getImageType())){
 					newsoftwareStatus = new SoftwareStatus();
-					newsoftwareStatus.ImageType = softwareStatus.getImageType() == "Combined LTE + Relay" ? ImageType.COMBINED_LTE_RELAY.value() : softwareStatus.getImageType();
+					newsoftwareStatus.ImageType = softwareStatus.getImageType().equals("Combined LTE + Relay") ? ImageType.COMBINED_LTE_RELAY.value() : softwareStatus.getImageType();
 					newsoftwareStatus.RunningVersion = softwareStatus.getRunningVersion();
 					newsoftwareStatus.StandbyVersion = softwareStatus.getStandbyVersion();
 					newsoftwareStatus.LastRequested = softwareStatus.getLastRequested();

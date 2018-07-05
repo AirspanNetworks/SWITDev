@@ -153,6 +153,15 @@ public class P0 extends TestspanTest {
 			report.report("There is no ues connected to enodeBs", Reporter.FAIL);
 			return;
 		}
+		GeneralUtils.startLevel("Start traffic");
+		try {
+			traffic = Traffic.getInstance(SetupUtils.getInstance().getAllUEs());
+			traffic.startTraffic();
+		} catch (Exception e) {
+			report.report("Couldn't start traffic", Reporter.WARNING);
+			e.printStackTrace();
+		}
+		GeneralUtils.stopLevel();
 		dm = new DMtool();
 		dm.setUeIP(choosenUE.getLanIpAddress());
 		report.report("UE IP: " + choosenUE.getLanIpAddress() );
@@ -172,15 +181,7 @@ public class P0 extends TestspanTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		/*GeneralUtils.startLevel("Start traffic");
-		try {
-			traffic = Traffic.getInstance(SetupUtils.getInstance().getAllUEs());
-			traffic.startTraffic();
-		} catch (Exception e) {
-			report.report("Couldn't start traffic", Reporter.WARNING);
-			e.printStackTrace();
-		}
-		GeneralUtils.stopLevel();*/
+		
 		evt.resetEventHappened();
 		report.report("Changing the cell barred value to CELL BARRED with emergancy");
 		CellBarringPolicyParameters cb = new CellBarringPolicyParameters();

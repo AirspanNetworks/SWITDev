@@ -174,7 +174,6 @@ public class P0 extends TestspanTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 		try {
 			report.report(dm.cli("showPlmn"));
 		} catch (Exception e) {

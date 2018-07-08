@@ -262,12 +262,12 @@ public class P0 extends TestspanTest {
 			// (10001212556f182004330e4681000002008857d915448c000380) in the TP
  			short[] expected = new short[] { 16, 0, 18, 18, 85, 111, 24, 32, 4, 51, 14, 70, -127, 0, 0, 2, 0, -120, 87, -39,
 					21, 68, -116, 0, 3, -128 };
- 			String actualStr = "";
+ 			String expectedStr = "";
  			for(int j = 0; j<expected.length; j++) {
- 				String actHex = Integer.toHexString(expected[j]);
- 				actualStr += actHex +"";
+ 				String expHex = Integer.toHexString(expected[j] & 0x00ff);
+ 				expectedStr += expHex +" ";
  			}
- 			report.report(actualStr);
+ 			report.report(expectedStr);
 			short[] actual = Arrays.copyOfRange(payload, 288, 314);
 			String alert = "";
 			for (int i =0; i< actual.length; i++) {
@@ -277,8 +277,8 @@ public class P0 extends TestspanTest {
 			
 			
 			report.report(alert);
-			if (Arrays.equals(expected, actual)) {
-				int x = 1;
+			if (expectedStr.equals(alert)) {
+			//if (Arrays.equals(expectedStr, alert)) {
 				System.out.println("BOOOOOOMMMM");
 				eventHappened = true;
 			}

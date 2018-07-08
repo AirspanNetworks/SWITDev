@@ -28,7 +28,6 @@ import testsNG.Actions.Traffic;
 
 public class P0 extends TestspanTest {
 	private EnodeB dut;
-	private EnodeB dut2;
 	private PeripheralsConfig peripheralsConfig;
 	private EnodeBConfig enbConfig;
 	private EPC epc;
@@ -42,7 +41,6 @@ public class P0 extends TestspanTest {
 		evt = new EvtLis();
 		enbInTest = new ArrayList<EnodeB>();
 		enbInTest.add(dut);
-		enbInTest.add(dut2);
 		report.startLevel("Test Init");
 		///////////////////////////////////////////////HENNNNNNNNNNNNNNNNNNNNNNNNNNNN
 		//dm = new DMtool();
@@ -141,7 +139,6 @@ public class P0 extends TestspanTest {
 		report.report("AC_Barring_TC_1");
 
 		UE choosenUE = null;
-		peripheralsConfig.changeEnbState(dut2, EnbStates.OUT_OF_SERVICE);
 		GeneralUtils.startLevel("Start traffic");
 		try {
 			traffic = Traffic.getInstance(SetupUtils.getInstance().getAllUEs());
@@ -216,6 +213,10 @@ public class P0 extends TestspanTest {
 		else 
 			report.report("ue didnt get the event", Reporter.FAIL);
 		
+		dm.close();
+		dm = null;
+		traffic.stopTraffic();
+		
 	}
 	
 	@Test
@@ -254,13 +255,6 @@ public class P0 extends TestspanTest {
 	public void setDUT1(String dut) {
 		GeneralUtils.printToConsole("Load DUT1" + dut);
 		this.dut = (EnodeB) SysObjUtils.getInstnce().initSystemObject(EnodeB.class, false, dut).get(0);
-		GeneralUtils.printToConsole("DUT loaded" + this.dut.getNetspanName());
-	}
-	
-	@ParameterProperties(description = "Second DUT")
-	public void setDUT2(String dut2) {
-		GeneralUtils.printToConsole("Load DUT1" + dut);
-		this.dut2 = (EnodeB) SysObjUtils.getInstnce().initSystemObject(EnodeB.class, false, dut2).get(0);
 		GeneralUtils.printToConsole("DUT loaded" + this.dut.getNetspanName());
 	}
 	

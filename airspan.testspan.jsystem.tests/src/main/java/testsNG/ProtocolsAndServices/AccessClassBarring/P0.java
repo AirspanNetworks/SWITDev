@@ -267,16 +267,14 @@ public class P0 extends TestspanTest {
  				String expHex = Integer.toHexString(expected[j] & 0x00ff);
  				expectedStr += expHex +" ";
  			}
- 			report.report(expectedStr);
+ 			report.report("expected: " + expectedStr);
 			short[] actual = Arrays.copyOfRange(payload, 288, 314);
 			String alert = "";
 			for (int i =0; i< actual.length; i++) {
 				String hex = Integer.toHexString(actual[i] & 0x00ff);
 				alert += hex + " ";
 			}
-			
-			
-			report.report(alert);
+			report.report("actual: " + alert);
 			if (expectedStr.equals(alert)) {
 			//if (Arrays.equals(expectedStr, alert)) {
 				System.out.println("BOOOOOOMMMM");

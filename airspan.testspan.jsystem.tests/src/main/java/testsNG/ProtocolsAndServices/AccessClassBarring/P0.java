@@ -142,7 +142,7 @@ public class P0 extends TestspanTest {
 
 		UE choosenUE = null;
 		peripheralsConfig.changeEnbState(dut2, EnbStates.OUT_OF_SERVICE);
-		GeneralUtils.startLevel("Start traffic");
+		/*GeneralUtils.startLevel("Start traffic");
 		try {
 			traffic = Traffic.getInstance(SetupUtils.getInstance().getAllUEs());
 			traffic.startTraffic();
@@ -150,7 +150,7 @@ public class P0 extends TestspanTest {
 			report.report("Couldn't start traffic", Reporter.WARNING);
 			e.printStackTrace();
 		}
-		GeneralUtils.stopLevel();
+		GeneralUtils.stopLevel();*/
 		for (UE ue : SetupUtils.getInstance().getAllUEs()) {
 			if (epc.checkUEConnectedToNode(ue, dut)) {
 				choosenUE = ue;
@@ -272,13 +272,20 @@ public class P0 extends TestspanTest {
 			// (10001212556f182004330e4681000002008857d915448c000380) in the TP
  			short[] expected = new short[] { 16, 0, 18, 18, 85, 111, 24, 32, 4, 51, 14, 70, -127, 0, 0, 2, 0, -120, 87, -39,
 					21, 68, -116, 0, 3, -128 };
+ 			String actualStr = "";
+ 			for(int j = 0; j<expected.length; j++) {
+ 				String actHex = Integer.toHexString(expected[j]);
+ 				actualStr += actHex +"";
+ 			}
+ 			report.report(actualStr);
 			short[] actual = Arrays.copyOfRange(payload, 288, 314);
 			String alert = "";
 			for (int i =0; i< actual.length; i++) {
 				String hex = Integer.toHexString(actual[i] & 0x00ff);
 				alert += hex + " ";
-				System.out.print(hex +" ");
 			}
+			
+			
 			report.report(alert);
 			if (Arrays.equals(expected, actual)) {
 				int x = 1;

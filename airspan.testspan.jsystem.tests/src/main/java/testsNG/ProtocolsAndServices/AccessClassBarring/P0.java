@@ -1,5 +1,7 @@
 package testsNG.ProtocolsAndServices.AccessClassBarring;
 
+import static org.junit.Assert.assertArrayEquals;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -262,20 +264,23 @@ public class P0 extends TestspanTest {
 			// (10001212556f182004330e4681000002008857d915448c000380) in the TP
  			short[] expected = new short[] { 16, 0, 18, 18, 85, 111, 24, 32, 4, 51, 14, 70, -127, 0, 0, 2, 0, -120, 87, -39,
 					21, 68, -116, 0, 3, -128 };
+ 			
  			String expectedStr = "";
  			for(int j = 0; j<expected.length; j++) {
- 				String expHex = Integer.toHexString(expected[j] & 0x00ff);
- 				expectedStr += expHex +" ";
+ 				//String expHex = Integer.toHexString(expected[j] & 0x00ff);
+ 				//expectedStr += expHex +" ";
+ 				expectedStr += expected[j] + " ";
  			}
  			report.report("expected: " + expectedStr);
 			short[] actual = Arrays.copyOfRange(payload, 288, 314);
 			String alert = "";
 			for (int i =0; i< actual.length; i++) {
-				String hex = Integer.toHexString(actual[i] & 0x00ff);
-				alert += hex + " ";
+				//String hex = Integer.toHexString(actual[i] & 0x00ff);
+				//alert += hex + " ";
+				alert += actual[i] + " ";
 			}
 			report.report("actual: " + alert);
-			if (expectedStr.equals(alert)) {
+			if (Arrays.equals(expected, actual)) {
 			//if (Arrays.equals(expectedStr, alert)) {
 				System.out.println("BOOOOOOMMMM");
 				eventHappened = true;

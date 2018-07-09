@@ -215,7 +215,8 @@ public class P0 extends TestspanTest {
 		else 
 			report.report("ue didnt get the event", Reporter.FAIL);
 		dm.close();
-		traffic.stopTraffic();
+		dm = null;
+		//traffic.stopTraffic();
 	}
 	
 

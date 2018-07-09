@@ -214,9 +214,12 @@ public class P0 extends TestspanTest {
 		}
 		else 
 			report.report("ue didnt get the event", Reporter.FAIL);
-		
+		dm.close();
+		dm = null;
+		traffic.stopTraffic();
 	}
 	
+
 	@Test
 	@TestProperties(name = "AC_Barring_TC_2", returnParam = {"IsTestWasSuccessful" }, paramsExclude = { "IsTestWasSuccessful"})
 	public void AC_Barring_TC_2() {

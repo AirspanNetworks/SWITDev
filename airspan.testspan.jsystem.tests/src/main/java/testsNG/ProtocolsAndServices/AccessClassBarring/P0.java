@@ -194,7 +194,7 @@ public class P0 extends TestspanTest {
 			dut.setCellContextNumber(i);
 			enbConfig.setAccessClassBarring(dut, cb);
 		}
-		GeneralUtils.unSafeSleep(10000);
+		GeneralUtils.unSafeSleep(120000);
 		
 		report.report("Changing the cell barred value to CELL BARRED without emergancy");
 		evt.resetEventHappened();
@@ -208,7 +208,7 @@ public class P0 extends TestspanTest {
 			dut.setCellContextNumber(i);
 			enbConfig.setAccessClassBarring(dut, cb);
 		}
-		GeneralUtils.unSafeSleep(30000);
+		GeneralUtils.unSafeSleep(120000);
 		
 		if (evt.eventHappened) {
 			report.report("ue got the event as expected");

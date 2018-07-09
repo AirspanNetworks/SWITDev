@@ -500,7 +500,7 @@ public class P0 extends TestspanTest{
 		report.reportHtml("db get anrcfg", dutInTest.lteCli("db get anrcfg"), true);
 		
 		GeneralUtils.startLevel("Clone and set mobility profile");
-		if(!setTBGEnable(false)){
+		if(!setTBGDisable()){
 			report.report("Failed to clone and set mobility profile",Reporter.FAIL);
 			reason = "Failed to clone and set mobility profile";
 			GeneralUtils.stopLevel();

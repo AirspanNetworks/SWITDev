@@ -168,6 +168,7 @@ public class P0 extends TestspanTest {
 		dm.setPORT(choosenUE.getDMToolPort());
 		report.report("UE Port: " + choosenUE.getDMToolPort());
 		dm.addlistenertoEvents(evt);
+		GeneralUtils.unSafeSleep(5000);
 		try {
 			dm.init();
 		} catch (Exception e) {

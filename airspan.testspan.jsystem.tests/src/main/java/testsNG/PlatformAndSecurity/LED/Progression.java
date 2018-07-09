@@ -270,6 +270,7 @@ public class Progression extends TestspanTest{
 		commandList = new ArrayList<String>();
 		commandList.add("led show state");
 		commandList.add("db get ipsecstatus");
+		commandList.add("ue show link");
 		commandList.add("ue show rate");
 		commandList.add("db get PTPStatus");
 		

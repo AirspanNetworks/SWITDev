@@ -210,6 +210,18 @@ public class P0 extends TestspanTest {
 		}
 		GeneralUtils.unSafeSleep(120000);
 		
+		cb = new CellBarringPolicyParameters();
+		cb.cellBarringPolicy = CellBarringPolicies.AC_BARRING;
+		cb.IsAccessClassBarred = true;
+		cb.IsEmergencyAccessBarred = false;
+		cb.IsSignalingAccessBarred = true;
+		cb.IsDataAccessBarred = false;
+		for (int i = 1; i <= dut.getNumberOfCells(); i++) {
+			dut.setCellContextNumber(i);
+			enbConfig.setAccessClassBarring(dut, cb);
+		}
+		GeneralUtils.unSafeSleep(120000);
+		
 		if (evt.eventHappened) {
 			report.report("ue got the event as expected");
 		}

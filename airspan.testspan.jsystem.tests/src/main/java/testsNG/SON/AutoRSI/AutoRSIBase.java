@@ -369,6 +369,7 @@ public class AutoRSIBase extends TestspanTest {
 			peripheralsConfig.rebootUEs(testUEs);
 			reason = peripheralsConfig.checkUesConnection(dut, testUEs, Reporter.WARNING);
 		}
+		report.reportHtml("ue show link", dut.lteCli("ue show link"), true);
 		report.reportHtml("ue show rate", dut.lteCli("ue show rate"), true);
 		return reason.isEmpty();
 	}

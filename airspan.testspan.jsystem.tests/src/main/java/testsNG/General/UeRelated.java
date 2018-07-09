@@ -59,6 +59,7 @@ public class UeRelated extends TestspanTest {
 		super.init();
 		setDNUTs();
 		ArrayList<String> commands = new ArrayList<>();
+		commands.add("ue show link");
 		commands.add("ue show rate");
 		commands.add("rlc show amdlstats");
 		commands.add("system show error");

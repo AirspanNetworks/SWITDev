@@ -47,8 +47,8 @@ public class P0 extends TestspanTest {
 
 	private static final int LONG_TEST_DURATION = 600000;  // 10 minutes
 	private static final int STABILITY_TEST_DURATION = 14400000;  // 4 hours
-	private static int ATT_SLEEP = 500;
-	private static final int ATT_STEP = 2;
+	private int ATT_STEP_TIME = 500;
+	private int ATT_STEP = 2;
 	private static final float WARNING_LEVEL = 0.9f;
 	private static final float PASS_LEVEL = 0.98f;
 
@@ -99,7 +99,7 @@ public class P0 extends TestspanTest {
 	private int total_attCounter;
 	private double total_HO_Success_rate_out_of_attempts;
 	private double theoreticalAttempts;
-	private final int numOfMaxRetries = 2; 
+	private final int numOfMaxRetries = 1; 
 	
 	private String reasons[];
 
@@ -148,8 +148,10 @@ public class P0 extends TestspanTest {
 		attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(attenuatorSetName);
 		attenuatorMin = attenuatorSetUnderTest.getMinAttenuation();
 		attenuatorMax = attenuatorSetUnderTest.getMaxAttenuation();
-		reasons = new String[numOfMaxRetries];
-		for(int i=0;i<numOfMaxRetries;i++){
+		ATT_STEP_TIME = attenuatorSetUnderTest.getStepTime();
+		ATT_STEP = attenuatorSetUnderTest.getAttenuationStep();
+		reasons = new String[numOfMaxRetries + 1];
+		for(int i=0;i<=numOfMaxRetries;i++){
 			reasons[i] = "";
 		}
 		commands();
@@ -514,12 +516,12 @@ public class P0 extends TestspanTest {
 			return ;
 		}
 		boolean action = false;
-		boolean failedTwice = false;
+		boolean failedNumOfMaxRetries = false;
 		for (int i = 1; i <= numOfMaxRetries; i++) {
 			report.report("Run number " + i);
 			if (!preTest(hoControl, x2Control, hoType, hoEventType, i-1)) {
-				if (i == 2) {
-					failedTwice = true;
+				if (i == numOfMaxRetries) {
+					failedNumOfMaxRetries = true;
 				} else {
 					report.report("Hand over test failed - retrying", Reporter.WARNING);
 					restartCommandsThread();
@@ -530,8 +532,8 @@ public class P0 extends TestspanTest {
 			action = HoLongTest(i-1);
 			setReason(i-1);
 			if (!action) {
-				if (i == 2) {
-					failedTwice = true;
+				if (i == numOfMaxRetries) {
+					failedNumOfMaxRetries = true;
 				} else {
 					report.report("Hand over test failed - retrying", Reporter.WARNING);
 					restartCommandsThread();
@@ -543,8 +545,8 @@ public class P0 extends TestspanTest {
 		if(reason == ""){
 			reason = reasons[numOfMaxRetries-1];
 		}
-		if(failedTwice){
-			report.report("Retried 2 times - Failure reason: "+reason, Reporter.FAIL);
+		if(failedNumOfMaxRetries){
+			report.report("Tried "+numOfMaxRetries+" times - Failure reason: "+reason, Reporter.FAIL);
 		}
 	}
 	
@@ -730,7 +732,7 @@ public class P0 extends TestspanTest {
 
 	public void performHoUpto2Times(HoControlStateTypes HOControlTypes, X2ControlStateTypes X2Types,
 			HandoverType HOType, ConnectedModeEventTypes hoEventType) {
-		for (int i = 1; i <= 2; i++) {
+		for (int i = 1; i <= 1; i++) {
 			report.report("Run number " + i);
 			if (!preTest(HOControlTypes, X2Types, HOType, hoEventType, i-1)) {
 				if (i == 2) {
@@ -744,7 +746,7 @@ public class P0 extends TestspanTest {
 			boolean action = performHO(i-1);
 			setReason(i-1);
 			if (!action) {
-				if (i == 2) {
+				if (i == 1) {
 					report.report("Retried 2 times - Failure reason: "+reason, Reporter.FAIL);
 				} else{
 					report.report("Hand over test failed - retrying again", Reporter.WARNING);
@@ -761,7 +763,7 @@ public class P0 extends TestspanTest {
 
 	private void setReason(int numTry){
 		if(numTry==numOfMaxRetries-1 && reasons[numTry]==""){
-			reasons[numTry] = "Pass on second try";
+			reasons[numTry] = "Pass on try: " +(numTry+1);
 		}
 		reason = reasons[numTry];
 	}
@@ -948,8 +950,8 @@ public class P0 extends TestspanTest {
 			attenuatorsCurrentValue += (ATT_STEP * multi);
 			long afterAtt = System.currentTimeMillis();
 			long diff = afterAtt - beforeAtt;
-			if (diff < ATT_SLEEP)
-				GeneralUtils.unSafeSleep(ATT_SLEEP - diff);
+			if (diff < ATT_STEP_TIME)
+				GeneralUtils.unSafeSleep(ATT_STEP_TIME - diff);
 		}
 	}
 
@@ -958,7 +960,7 @@ public class P0 extends TestspanTest {
 
 		GeneralUtils.startLevel("Results");
 		report.report("Attenuator step: " + ATT_STEP);
-		report.report("Attenuator timing: " + ATT_SLEEP + "ms");
+		report.report("Attenuator timing: " + ATT_STEP_TIME + "ms");
 		report.report("Attenuation boundaries: " + attenuatorMin + "-" + attenuatorMax);
 		report.report("Number of dynamic UE's: " + numberOfDynamicUES);
 		report.report("Number of expected HO's: " + counter * numberOfDynamicUES);

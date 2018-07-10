@@ -999,7 +999,7 @@ public class Traffic {
 	 * @throws IOException
 	 * 
 	 */
-	public Boolean checkForHalt(long TEST_STREAM_HALT_PARAM, ArrayList<StreamParams> streams) throws IOException {
+	public Boolean checkForHalt(long TEST_STREAM_HALT_PARAM, ArrayList<StreamParams> streams) {
 		// sum every Streams from fsResults and Compare them to Calculator
 		// check if the rx equals to the calculator
 		for (StreamParams stream : streams) {
@@ -1744,8 +1744,23 @@ public class Traffic {
 
 	public void addResultFilesToReport(String tryNumber) {
 		if(generatorType == TrafficGeneratorType.ITraffic){
+			ArrayList<File> commandFiles = trafficGenerator.getCommandFiles();
+			if (!commandFiles.isEmpty()) {
+				GeneralUtils.startLevel("Command Files.");
+				for (File commandFile : commandFiles) {
+					File toUpload = new File(tryNumber + commandFile.getName());
+					commandFile.renameTo(toUpload);
+					try {
+						ReporterHelper.copyFileToReporterAndAddLink(report, toUpload, toUpload.getName());
+					} catch (Exception e) {
+						GeneralUtils.printToConsole("FAIL to upload TP commands File: " + commandFile.getName());
+						e.printStackTrace();
+					}
+				}
+				GeneralUtils.stopLevel();
+			}
 			ArrayList<File> resultFiles = trafficGenerator.getResultFiles();
-			if(!resultFiles.isEmpty()){
+			if (!resultFiles.isEmpty()){
 				GeneralUtils.startLevel("Result Files.");
 				for(File resultFile : resultFiles){
 					File toUpload = new File(tryNumber + resultFile.getName());

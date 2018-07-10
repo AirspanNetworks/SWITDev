@@ -71,6 +71,8 @@ public class ScpClient extends SystemObjectImpl {
 		} catch (Exception e) {
 			report.report("Can't get scp file");
 			e.printStackTrace();
+			GeneralUtils.printToConsole("scpClient.getFiles - e.getMessage(): "+e.getMessage());
+			GeneralUtils.printToConsole("scpClient.getFiles - e.getCause(): "+e.getCause());
 			result = false;
 		}
 		disconnect();

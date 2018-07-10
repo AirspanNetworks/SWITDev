@@ -34,6 +34,7 @@ public class Progression extends TestspanTest{
 	private EnodeB neighbor;
 	private EnodeBConfig enodeBConfig;
 	private ArrayList<Pair<UE, DMtool>> ueDmLists;
+	private PeripheralsConfig peripheralsConfig;
 
 	/********************************* INFRA *********************************/
 	
@@ -44,8 +45,9 @@ public class Progression extends TestspanTest{
 		if(neighbor != null){
 			enbInTest.add(neighbor);
 		}
-		super.init();
-		enodeBConfig = EnodeBConfig.getInstance();
+		super.init();			
+		
+		initObjects();
 		for(EnodeB enb : enbInSetup){
 			if(!enbInTest.contains(enb)){
 				enb.setServiceState(GeneralUtils.CellIndex.ENB, 0);
@@ -54,13 +56,23 @@ public class Progression extends TestspanTest{
 		AttenuatorSet attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet("rudat_set");
 		report.report("set the attenuators default value : 0 [dB]\n");
 		PeripheralsConfig.getInstance().setAttenuatorSetValue(attenuatorSetUnderTest, 0);
+		initDmToolAndcheckUEsConnection(dut);
+	}
+
+	public void initObjects(){
+		enodeBConfig = EnodeBConfig.getInstance();
+		peripheralsConfig = PeripheralsConfig.getInstance();
+	}
+	
+	public void initDmToolAndcheckUEsConnection(EnodeB enodeb){
 		ueDmLists = new ArrayList<>();
-		ArrayList<UE> ues = SetupUtils.getInstance().getallUEsPerEnodeb(dut);
+		ArrayList<UE> ues = SetupUtils.getInstance().getallUEsPerEnodeb(enodeb);
 		for(UE ue : ues){
 			ueDmLists.add(new Pair<UE, DMtool>(ue, new DMtool()));
 		}
 		GeneralUtils.unSafeSleep(5000);
 		GeneralUtils.startLevel("UEs Measurements Status.");
+		peripheralsConfig.stopStartUes(ues);
 		for(Pair<UE, DMtool> p : ueDmLists){
 			p.getElement1().setUeIP(p.getElement0().getLanIpAddress());
 			p.getElement1().setPORT(p.getElement0().getDMToolPort());
@@ -84,12 +96,16 @@ public class Progression extends TestspanTest{
 		}
 		GeneralUtils.stopLevel();
 	}
-
-	@Override
-	public void end(){
+	
+	public void closeDmTools(){
 		for(Pair<UE, DMtool> p : ueDmLists){
 			p.getElement1().close();
 		}
+	}
+	
+	@Override
+	public void end(){
+		closeDmTools();
 		for(EnodeB enb : enbInSetup){
 			if(enb != dut){
 				enb.setServiceState(GeneralUtils.CellIndex.ENB, 1);
@@ -146,51 +162,15 @@ public class Progression extends TestspanTest{
 		}
 	}
 
-	/**
-	 * OOS Expected - Simulate a collision with one of the cells and no available PCI in the range
-	 */
-	@Test
-	@TestProperties(name = "Simulate AutoPci collision and no available PCI in the range - OOS Expected on one of the cells.", 
-	returnParam = { "IsTestWasSuccessful" }, 
-	paramsExclude = {"IsTestWasSuccessful"})
-	public void verifyOosBehaviorAfterPciCollisionAndNoAvailablePciInTheRange(){
-		if(enodeBConfig.getNumberOfActiveCells(dut) > 1){
-			Neighbors ngh = Neighbors.getInstance();
-			boolean is3rdPartyNeighborNeeded = false;
-			if(neighbor == null){
-				is3rdPartyNeighborNeeded = true;
-			}
-			CellIndex collisionCellIndex = casuePciCollisionWithOneOfTheCellsByAutoPci(dut, is3rdPartyNeighborNeeded);
-			if(collisionCellIndex == null){
-				report.report("Could not Create 3rd party neighbor",Reporter.FAIL);
-				return;
-			}
-			checkForOutOfServiceBehavior(dut, collisionCellIndex);
-			
-			//if(dut.getNumberOfActiveCells() > 1){ //for supporting single cell too - if in the future we will need to. 
-				CellIndex otherCellIndex = collisionCellIndex == CellIndex.FORTY? CellIndex.FORTY_ONE : CellIndex.FORTY;
-				checkForInServiceBehavior(dut, otherCellIndex);
-			//}
-			enodeBConfig.setProfile(dut, EnbProfiles.Son_Profile, dut.defaultNetspanProfiles.getSON());
-			enodeBConfig.deleteClonedProfiles();
-			if (netspanServer != null && !netspanServer.deleteNeighbor(dut, neighbor)) {
-				report.report("Delete Neighbor " + neighbor.getNetspanName() + " with netspan failed", Reporter.WARNING);
-			}
-			dut.reboot();
-			if(is3rdPartyNeighborNeeded){
-				ngh.delete3rdParty(neighbor.getNetspanName());
-			}
-			report.report("Waiting For All Running.");
-			dut.waitForAllRunning(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);
-		}else{
-			report.report("TEST for MC eNodeB, but NumberOfActiveCells=" + enodeBConfig.getNumberOfActiveCells(dut), Reporter.WARNING);
-		}
-	}	
+	
 	
 	/********************************* HELPER ********************************/
 	
 	private void testOutOfServiceInServiceExpectedBehavior(EnodeB eNodeB, CellIndex oosCellIndex, CellIndex isCellIndex) {
 		int cells = enodeBConfig.getNumberOfActiveCells(eNodeB);
+		synchronized (eNodeB.inServiceStateLock){
+			eNodeB.expecteInServiceState = false;
+		}
 		if(cells > 1 || oosCellIndex == CellIndex.FORTY){
 			report.report("Set Cell "+(oosCellIndex.value%40)+" to Out Of Service.");
 			eNodeB.setServiceState(oosCellIndex, 0);
@@ -211,78 +191,12 @@ public class Progression extends TestspanTest{
 			report.report("Post Test: Set Cell "+(oosCellIndex.value%40)+" to In Service.");
 			eNodeB.setServiceState(oosCellIndex, 1);
 		}
+		synchronized (eNodeB.inServiceStateLock){
+			eNodeB.expecteInServiceState = true;
+		}
 	}
 	
-	private CellIndex casuePciCollisionWithOneOfTheCellsByAutoPci(EnodeB eNodeB, boolean is3rdPartyNeighborNeeded){
-		Neighbors ngh = Neighbors.getInstance();
-		GeneralUtils.startLevel("Causing PCI Collision with one of the cells.");
-		int neighborPci = 0;
-		int neighborEarfcn = 0;
-		if(is3rdPartyNeighborNeeded){
-			neighbor = ngh.adding3rdPartyNeighbor(dut, dut.getName()+"_3rdPartyNeighbor", "123.45.67." + dut.getPci(),dut.getPci(), 123400 + (dut.getPci() + 1), dut.getEarfcn());
-			if(neighbor == null){
-				return null;
-			}
-			neighborPci = dut.getPci();
-			neighborEarfcn = dut.getEarfcn();
-		}else{
-			neighbor.setServiceState(GeneralUtils.CellIndex.ENB, 1);
-			neighborPci = neighbor.getPci();
-			neighborEarfcn = neighbor.getEarfcn();
-		}
-		report.report("Deleting all neighbors.");
-		if(!ngh.deleteAllNeighbors(eNodeB)){report.report("Faild to delete all neighbors.", Reporter.WARNING);}
-		
-		SonParameters sp = new SonParameters();
-		sp.setSonCommissioning(true);
-		sp.setAutoPCIEnabled(true);
-		sp.setPciCollisionHandling(SonParameters.PciHandling.Deferred);
-		sp.setPciConfusionHandling(SonParameters.PciHandling.Deferred);
-		sp.setPciPolicyViolationHandling(SonParameters.PciHandling.Deferred);
-		List<Pair<Integer, Integer>> ranges = new ArrayList<Pair<Integer, Integer>>();
-		Pair<Integer, Integer> p = new Pair<Integer, Integer>(neighborPci, neighborPci);
-		ranges.add(p);
-		sp.setRangesList(ranges);
-		
-		GeneralUtils.startLevel("Enabling AutoPCI for causing collision");
-		report.report("set Son Commissioning to true.");
-		report.report("set AutoPCIEnabled to true.");
-		report.report("set Pci Collision Handling to Deferred.");
-		report.report("set Pci Confusion Handling to Deferred.");
-		report.report("set Pci Policy Violation Handling to Deferred.");
-		report.report("Ranges: PCI Start = "+neighborPci+" PCI End = "+neighborPci);
-		GeneralUtils.stopLevel();
-		eNodeB.setExpectBooting(true);
-		enodeBConfig.cloneAndSetSonProfileViaNetspan(eNodeB, eNodeB.getDefaultNetspanProfiles().getSON(), sp);
-		int timeoutCounter = 0;
-		while(eNodeB.isAllRunning() && timeoutCounter < 60){
-			GeneralUtils.unSafeSleep(1000);
-			timeoutCounter++;
-		}
-		report.report("WAIT FOR ALL RUNNING.");
-		eNodeB.waitForAllRunningAndInService(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);
-		
-		CellIndex collisionCellIndex = CellIndex.FORTY;
-		if(enodeBConfig.getPciFromAutoPciCell(eNodeB,40) == neighborPci && eNodeB.getEarfcn() == neighborEarfcn){
-			collisionCellIndex = CellIndex.FORTY;
-		}else if(enodeBConfig.getPciFromAutoPciCell(eNodeB,41) == neighborPci && eNodeB.getEarfcn() == neighborEarfcn) {
-			collisionCellIndex = CellIndex.FORTY_ONE;
-		}else{
-			report.report("Both Cells did not update to the neighbor PCI " + neighborPci, Reporter.WARNING);
-		}
-		
-		report.report("Adding neighbor with the same PCI to cause Collision, PCI = " + neighborPci);
-		if(!ngh.addNeighbor(eNodeB, neighbor, HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC, HandoverType.TRIGGER_X_2, true, "0")){report.report("Faild to add neighbor.", Reporter.WARNING);}
-		
-		report.report("Waiting PCI COLLISION DETECTION TIMER will expire (100 Sec)");
-		GeneralUtils.unSafeSleep(PCI_COLLISION_DETECTION_TIMER);
-		
-		GeneralUtils.stopLevel();
-		
-		return collisionCellIndex;
-	}
-	
-	private void checkForOutOfServiceBehavior(EnodeB eNodeB, CellIndex oosCellIndex){
+	public void checkForOutOfServiceBehavior(EnodeB eNodeB, CellIndex oosCellIndex){
 		GeneralUtils.startLevel("Check for Out Of Service behavior for Cell "+ (oosCellIndex.value%40));
 		if(eNodeB.isInService(oosCellIndex.value) == false){
 			report.report("****CELL "+(oosCellIndex.value%40)+" SERVICE STATE = 0 ****");
@@ -290,7 +204,7 @@ public class Progression extends TestspanTest{
 			report.report("****CELL "+(oosCellIndex.value%40)+" SERVICE STATE = 1 ****", Reporter.FAIL);
 			reason = "SERVICE STATE = 1.";
 		}
-		
+		peripheralsConfig.stopStartUes(SetupUtils.getInstance().getallUEsPerEnodeb(eNodeB));
 		if(areThereIsAnyUeConnected(eNodeB.getPci(oosCellIndex.value))){
 			report.report("One or more UEs are connected to Cell " + (oosCellIndex.value%40), Reporter.FAIL);
 			reason += "One or more UEs are connected.";
@@ -300,7 +214,7 @@ public class Progression extends TestspanTest{
 		GeneralUtils.stopLevel();
 	}
 	
-	private void checkForInServiceBehavior(EnodeB eNodeB, CellIndex isCellIndex){
+	public void checkForInServiceBehavior(EnodeB eNodeB, CellIndex isCellIndex){
 		GeneralUtils.startLevel("Check for In Service behavior for cell "+ (isCellIndex.value%40));
 		if(eNodeB.isInService(isCellIndex.value) == true){
 			report.report("****CELL "+(isCellIndex.value%40)+" SERVICE STATE = 1 ****");
@@ -308,7 +222,7 @@ public class Progression extends TestspanTest{
 			report.report("****CELL "+(isCellIndex.value%40)+" SERVICE STATE = 0 ****", Reporter.FAIL);
 			reason = "SERVICE STATE = 0.";
 		}
-		
+		peripheralsConfig.stopStartUes(SetupUtils.getInstance().getallUEsPerEnodeb(eNodeB));
 		if(areThereIsAnyUeConnected(eNodeB.getPci(isCellIndex.value))){
 			report.report("One or more UEs are connected to Cell " + (isCellIndex.value%40));
 		}else{
@@ -317,6 +231,7 @@ public class Progression extends TestspanTest{
 		}
 		GeneralUtils.stopLevel();
 	}
+
 	
 	private boolean areThereIsAnyUeConnected(int pci){
 		boolean hasAnyUeConnected = false;

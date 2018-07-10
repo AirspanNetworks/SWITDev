@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
     "as_release",
+    "cell_index",
     "ue_category",
     "sim_algo",
     "half_duplex",
@@ -31,6 +32,8 @@ public class UeList {
     private Integer ueId;
     @JsonProperty("as_release")
     private Integer asRelease;
+    @JsonProperty("cell_index")
+    private Integer cellIndex;
     @JsonProperty("ue_category")
     private Integer ueCategory;
     @JsonProperty("sim_algo")
@@ -75,6 +78,16 @@ public class UeList {
     @JsonProperty("as_release")
     public void setAsRelease(Integer asRelease) {
         this.asRelease = asRelease;
+    }
+    
+    @JsonProperty("cell_index")
+    public Integer getCellIndex() {
+        return cellIndex;
+    }
+
+    @JsonProperty("cell_index")
+    public void setCellIndex(Integer cellIndex) {
+        this.cellIndex = cellIndex;
     }
 
     @JsonProperty("ue_category")

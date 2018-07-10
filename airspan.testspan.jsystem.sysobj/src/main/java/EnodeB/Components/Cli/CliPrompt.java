@@ -96,7 +96,7 @@ public class CliPrompt{
 			sendCommand(command);
 			getBuffer();
 			if (response != "" && response!=null) {
-				long endTimeMillis = System.currentTimeMillis() + 5 * 1000;
+				long endTimeMillis = System.currentTimeMillis() + 10 * 1000;
 				boolean responseFound = false;
 				while(!responseFound){
 					if (buffer.contains(response)) {

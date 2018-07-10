@@ -120,9 +120,9 @@ public class P0 extends TestspanTest {
 		tcpLogger = false;
 		report.stopLevel();
 		commands = new ArrayList<>();
+		commands.add("ue show link");
 		commands.add("ue show ratedl");		
 		commands.add("ue show rateul");
-		commands.add("ue show link");
 		commands.add("qci show rate");
 		commands.add("ue show qos");
 		commands.add("ue show rate lc=2");

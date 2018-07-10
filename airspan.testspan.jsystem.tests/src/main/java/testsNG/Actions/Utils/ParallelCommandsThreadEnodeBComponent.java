@@ -25,6 +25,7 @@ public class ParallelCommandsThreadEnodeBComponent extends Thread{
 	private int interval = 1;
 	private PrintStream ps;
 	private Reporter report = ListenerstManager.getInstance();
+	private boolean printWarning = true;
 	
 	public ParallelCommandsThreadEnodeBComponent(List<String> cmdSet, EnodeB enb, String componentName, int interval) throws IOException {
 		this.cmdSet = cmdSet;

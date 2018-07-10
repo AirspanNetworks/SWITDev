@@ -14,8 +14,8 @@ public class AttenuatorSet extends SystemObjectImpl {
 	protected int maxAttenuation;
 	protected int minAttenuation;
 	protected int defaultValueAttenuation;
-	protected int stepTime;
-	protected int attenuationStep;
+	protected int stepTime = 500;
+	protected int attenuationStep = 2;
 
 	public static AttenuatorSet getAttenuatorSet(String attenuatorSetName)
 	{
@@ -120,7 +120,4 @@ public class AttenuatorSet extends SystemObjectImpl {
 	public void setAttenuationStep(int attenuationStep) {
 		this.attenuationStep = attenuationStep;
 	}
-	
-	
-
 }

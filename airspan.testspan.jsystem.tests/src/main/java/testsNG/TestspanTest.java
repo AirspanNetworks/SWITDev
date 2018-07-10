@@ -25,6 +25,7 @@ import Netspan.NetspanServer;
 import Netspan.API.Enums.EnbStates;
 import Netspan.API.Lte.AlarmInfo;
 import TestingServices.TestConfig;
+import UeSimulator.Amarisoft.AmariSoftServer;
 import Utils.DebugFtpServer;
 import Utils.GeneralUtils;
 import Utils.InetAddressesHelper;
@@ -59,6 +60,8 @@ public class TestspanTest extends SystemTestCase4 {
 	private String afterTest = "AfterTest";
 	private Boolean gotDBFiles = false;
 	private ArrayList<CommandMemoryCPU> cpuCommands = new ArrayList<CommandMemoryCPU>();
+	private ArrayList<CommandWatchInService> inserviceCommands = new ArrayList<CommandWatchInService>();
+
 	private HashMap<String, ArrayList<String>> filesFromDBPerNode = new HashMap<String, ArrayList<String>>();
 	protected String myVersion = "";
 	/** The Constant SYSOBJ_STRING_DELIMITER. */
@@ -105,6 +108,12 @@ public class TestspanTest extends SystemTestCase4 {
 		TunnelManager.seteNodeBInTestList(enbInTest);
 		TunnelManager.failedTestIfNoTriesLeftForAnyDut();
 		GeneralUtils.startLevel("Initialize Components");
+		
+		//if ue simulator is connected, start log.
+		if (AmariSoftServer.getInstance() != null) {			
+			AmariSoftServer.getInstance().startLogger();
+		}
+		
 		testStats = new HashMap<String, Integer>();
 		if (enbInTest == null)
 			throw new Exception("must set enbInTest!!!!!!");
@@ -169,6 +178,7 @@ public class TestspanTest extends SystemTestCase4 {
 			CommandWatchInService commandInService = new CommandWatchInService(eNodeB);
 			commandInService.name = eNodeB.getName() + "_commandInService";
 			wd.addCommand(commandInService);
+			inserviceCommands.add(commandInService);
 			// command CPU and Memory
 			CommandMemoryCPU cpuCommand = new CommandMemoryCPU(eNodeB);
 			cpuCommands.add(cpuCommand);
@@ -228,7 +238,7 @@ public class TestspanTest extends SystemTestCase4 {
 		for (EnodeB eNodeB : enbInSetup) {
 			try {
 				System.out.print("Set debug FTP server.");
-
+				eNodeB.lteCli("db add debugftpserver [1]");
 				String oid = MibReader.getInstance().resolveByName("asLteStkDebugFtpServerCfgFtpServerIp");
 				eNodeB.lteCli("db set debugFtpServer ftpAddress.type="+debugFtpServer.addressType+" [1]");
 				if (debugFtpServer.addressType.equals("1")) 					
@@ -248,7 +258,7 @@ public class TestspanTest extends SystemTestCase4 {
 
 				oid = MibReader.getInstance().resolveByName("asLteStkDebugFtpServerCfgFtpPassword");
 				eNodeB.snmpSet(oid, debugFtpServer.getDebugFtpServerPassword());
-
+				eNodeB.lteCli("db get debugFtpServer");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -339,6 +349,13 @@ public class TestspanTest extends SystemTestCase4 {
 				report.report(eNodeB.getName() + "'s Alarms list is empty");
 
 			report.addProperty(eNodeB.getNetspanName() + "_Version", eNodeB.getRunningVersion());
+			ArrayList<String> fileNameList = null;
+			if ((fileNameList = filesFromDBPerNode.get(eNodeB.getName())) != null) {
+				if (!fileNameList.isEmpty()) {
+					getDBFiles(eNodeB, afterTest);
+					compareDBs(eNodeB);
+				}
+			}
 			Logger[] loggers = eNodeB.getLoggers();
 			log.info(String.format("Closing log files for test for eNondeB %s", eNodeB.getName()));
 
@@ -394,13 +411,7 @@ public class TestspanTest extends SystemTestCase4 {
 
 			// data base compare
 			eNodeB.loggerUploadAll();
-			ArrayList<String> fileNameList = null;
-			if ((fileNameList = filesFromDBPerNode.get(eNodeB.getName())) != null) {
-				if (!fileNameList.isEmpty()) {
-					getDBFiles(eNodeB, afterTest);
-					compareDBs(eNodeB);
-				}
-			}
+			
 		}
 
 		if (isCoreOccurDuringTest) {
@@ -436,6 +447,14 @@ public class TestspanTest extends SystemTestCase4 {
 			report.setContainerProperties(0, "LogCounter", logCounter);
 		}
 
+		//if ue simulator is connected, close log.
+		try {
+			if (AmariSoftServer.getInstance() != null) {	
+				AmariSoftServer.getInstance().closeLog();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		GeneralUtils.printToConsole(ScenarioUtils.getInstance().getMemoryConsumption());
 	}
 
@@ -665,10 +684,11 @@ public class TestspanTest extends SystemTestCase4 {
 	 */
 	private String getFileNamesFromNode(EnodeB dut) {
 		String result = dut.shell("chmod 777 /bs/db");
-		GeneralUtils.printToConsole(result);
+		GeneralUtils.printToConsole("chmod 777 /bs/db response: "+result);
 		String cdCommand = dut.shell("cd /bs/db");
-		GeneralUtils.printToConsole(cdCommand);
+		GeneralUtils.printToConsole("cd /bs/db response: "+cdCommand);
 		String lsResult = dut.shell("ls -1a >> files");
+		GeneralUtils.printToConsole("ls -1a >> files response: "+lsResult);
 		if (lsResult.contains("not found")) {
 			return null;
 		}
@@ -827,6 +847,18 @@ public class TestspanTest extends SystemTestCase4 {
 			GeneralUtils.stopLevel();
 		}
 		GeneralUtils.stopLevel();
+	}
+	
+	protected void changeCPUWDStatus(boolean enabled) {
+		for(CommandMemoryCPU cmd : cpuCommands) {
+			cmd.setEnabled(enabled);	
+		}
+	}
+	
+	protected void changeInServiceWDStatus(boolean enabled) {
+		for(CommandWatchInService cmd : inserviceCommands) {
+			cmd.setEnabled(enabled);	
+		}
 	}
 
 }

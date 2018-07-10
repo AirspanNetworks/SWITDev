@@ -2,13 +2,10 @@ package UE;
 
 import UeSimulator.Amarisoft.AmariSoftServer;
 import Utils.GeneralUtils;
-import Utils.Snmp.MibReader;
-import Utils.Snmp.SNMP;
-import jsystem.framework.report.Reporter;
 
 public class AmarisoftUE extends UE{
 
-	private int ueId;
+	public int ueId;
 	private AmariSoftServer server;
 	
 	public AmarisoftUE() {
@@ -19,6 +16,7 @@ public class AmarisoftUE extends UE{
 		this();
 		this.ueId = ueId;
 		this.server = server;
+		setName("AmarisoftUE" + (10000 + ueId));
 	}
 	
 	@Override
@@ -28,69 +26,61 @@ public class AmarisoftUE extends UE{
 
 	@Override
 	public boolean start() {
-		GeneralUtils.printToConsole("AmarisoftUE does not have start method.");
-		return false;
+		return server.uePowerOn(ueId);
 	}
 
 	@Override
 	public boolean reboot() {
-		GeneralUtils.printToConsole("AmarisoftUE does not have reboot method.");
-		boolean flag = false;
+		boolean flag = server.uePowerOff(ueId);
+		GeneralUtils.unSafeSleep(2000);
+		flag = flag && server.uePowerOn(ueId);
 		return flag;
 	}
 
 	@Override
 	public boolean stop() {
-		GeneralUtils.printToConsole("AmarisoftUE does not have stop method.");
-		return false;
+		return server.uePowerOff(ueId);
 	}
 
 	@Override
 	public String getVersion() {
-		GeneralUtils.printToConsole("AmarisoftUE does not have reboot method.");
-		return GeneralUtils.ERROR_VALUE+"";
+		String ans = server.getVersion();
+		return ans;
 	}
 
 	@Override
 	public String getBandWidth() {
-		GeneralUtils.printToConsole("AmarisoftUE does not have get Band width method.");
-		return null;
-	}
-
-	@Override
-	public String getUEUlFrequency() {
-		GeneralUtils.printToConsole("AmarisoftUE does not have get UL freq method.");
-		return null;
-	}
-
-	@Override
-	public String getUEDlFrequency() {
-		GeneralUtils.printToConsole("AmarisoftUE does not have get DL freq method.");
-		return null;
+		String ans = "";
+		int numOfRbs = server.getUeNumOfrb(ueId);
+		if (numOfRbs == 6) 
+			return "1.4";		
+		else
+			ans = (numOfRbs/5) + "";
+		return ans;
 	}
 
 	@Override
 	public String getUEStatus() {
-		GeneralUtils.printToConsole("AmarisoftUE does not have reboot method.");
-		return GeneralUtils.ERROR_VALUE+"";
+		String ans = server.getUeStatus(ueId);
+		return ans;
 	}
 
 	@Override
 	public String getDuplexMode() {
-		GeneralUtils.printToConsole("AmarisoftUE does not have get duplex mode method.");
-		return null;
+		String ans = server.getUeConnectedDuplexMode(ueId);
+		return ans;	
 	}
 
 	@Override
 	public int getRSRP(int index) {
-		GeneralUtils.printToConsole("AmarisoftUE does not have getRSRP method.");
-		return GeneralUtils.ERROR_VALUE;		
+		Double ans = server.getUeRsrp(ueId);
+		return ans.intValue();		
 	}
 	
 	@Override
 	public int getPCI() {
-		GeneralUtils.printToConsole("AmarisoftUE does not have getPCI method.");
-		return GeneralUtils.ERROR_VALUE;
+		int ans = server.getUeConnectedPCI(ueId);
+		return ans;	
 		
 	}
 	

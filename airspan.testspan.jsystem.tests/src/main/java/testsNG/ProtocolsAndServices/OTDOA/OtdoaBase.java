@@ -542,13 +542,14 @@ public class OtdoaBase extends TestspanTest{
 	}
 	
 	protected void startTraffic(){
-		report.report("Start traffic");
+		GeneralUtils.startLevel("Start traffic");
 		try {
 			traffic.startTraffic();
 		} catch (Exception e) {
 			e.printStackTrace();
 			report.report("Failed to start traffic",Reporter.WARNING);
 		}
+		GeneralUtils.stopLevel();
 	}
 	
  	protected boolean resetCounter(String counterName){
@@ -597,18 +598,18 @@ public class OtdoaBase extends TestspanTest{
 	}
 	
 	protected boolean checkCounter(String counterName, int value){
-		int waitingPeriodTime = dut.getGranularityPeriod()-2;
+		int waitingPeriodTime = dut.getGranularityPeriod();
 		if(waitingPeriodTime<0){
 			waitingPeriodTime = 0;
 		}
-		GeneralUtils.printToConsole("Waiting "+waitingPeriodTime+" minutes");
+		report.report("Waiting "+waitingPeriodTime+" minutes for counter to update");
 		GeneralUtils.unSafeSleep(waitingPeriodTime*60*1000);
 		boolean result = false;
 		if(validateCounterEquals(counterName, value)){
-			report.report("Counter : "+counterName+", equals "+value+" as expected");
+			report.report("Counter: "+counterName+", equals "+value+" as expected");
 			result = true;
 		}else{
-			report.report("Counter : "+counterName+" have a different expected value",Reporter.FAIL);
+			report.report("Counter: "+counterName+" has a different expected value",Reporter.FAIL);
 		}
 		return result;
 	}
@@ -701,7 +702,8 @@ public class OtdoaBase extends TestspanTest{
 	@Override
 	public void end(){
 		GeneralUtils.startLevel("End Test Configurations");
-		
+		report.report("Stop traffic");
+		traffic.stopTraffic();
 		if(networkChanged){
 			GeneralUtils.startLevel("Revert to default Network profile to profile name : "+dut.getDefaultNetspanProfiles().getNetwork());
 			enodeBConfig.revertToDefaultProfile(dut, EnbProfiles.Network_Profile);

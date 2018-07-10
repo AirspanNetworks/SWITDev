@@ -1,5 +1,6 @@
 package Utils.Iperf;
 
+import Entities.ITrafficGenerator.TransmitDirection;
 import Utils.GeneralUtils;
 import Utils.Pair;
 
@@ -30,14 +31,14 @@ public abstract class IPerfWindowsMachine extends IPerfMachine{
 	}
 
 	@Override
-	public boolean startIPerfTraffic(String clientCommand, String tpFileName){
+	public boolean startIPerfTraffic(String clientCommand, String tpFileName, TransmitDirection transmitDirection){
 		clientCommand = "iperf " + clientCommand;
 		sendCommand(clientCommand);
 		return true;
 	}
 	
 	@Override
-	public boolean startIPerfListener(Integer numberOfParallelIPerfStreams, String serverCommand, String tpFileName) {
+	public boolean startIPerfListener(Integer numberOfParallelIPerfStreams, String serverCommand, String tpFileName, TransmitDirection transmitDirection) {
 		lastReadedLine = "";
 		serverCommand = "iperf " + serverCommand;
 		String windowsServerCommand = serverCommand + " > " + preAddressTpFile + tpFileName;

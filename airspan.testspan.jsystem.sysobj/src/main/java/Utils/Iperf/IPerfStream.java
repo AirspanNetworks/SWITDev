@@ -14,27 +14,27 @@ import Entities.ITrafficGenerator.Protocol;
  *
  */
 public class IPerfStream {
-	private Double windowSizeInKbits = null; //The eNodeB suppose to set the window size to 2Mb.
-	private Integer numberOfParallelIPerfStreams = null;
-	private Integer frameSize = null;
+	protected Double windowSizeInKbits = null; //The eNodeB suppose to set the window size to 2Mb.
+	protected Integer numberOfParallelIPerfStreams = null;
+	protected Integer frameSize = null;
 	
-	private final String streamName;
-	private final TransmitDirection transmitDirection;
-	private final String ueNumber;
-	private final int qci;
-	private final String destIpAddress;
-	private final String tpFileName;
-	private final String clientOutputFileName;
-	private final String srcIpAddress;
+	protected String streamName;
+	protected TransmitDirection transmitDirection;
+	protected String ueNumber;
+	protected int qci;
+	protected String destIpAddress;
+	protected String tpFileName;
+	protected String clientOutputFileName;
+	protected String srcIpAddress;
 	
-	private boolean isActive;
-	private double streamLoad;
-	private String iperfClientCommand;
-	private String iperfServerCommand;
-	private ArrayList<Long> countersInBits;
-	private Protocol protocol;
-	private Double lastIntervalUsedForLastSample;
-	private boolean isRunningTraffic; 
+	protected boolean isActive;
+	protected double streamLoad;
+	protected String iperfClientCommand;
+	protected String iperfServerCommand;
+	protected ArrayList<Long> countersInBits;
+	protected Protocol protocol;
+	protected Double lastIntervalUsedForLastSample;
+	protected boolean isRunningTraffic; 
 
 	public IPerfStream(TransmitDirection transmitDirection, String ueNumber, int qci, String destIpAddress, String srcIpAddress, boolean state, double streamLoad, Integer frameSize) throws Exception {
 		if(transmitDirection == TransmitDirection.BOTH){

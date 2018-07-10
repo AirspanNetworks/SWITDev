@@ -7,6 +7,7 @@ import Netspan.Profiles.RadioParameters.PRSBandWidthEnum;
 import Netspan.Profiles.RadioParameters.PRSMutingPeriodiclyEnum;
 import Netspan.Profiles.RadioParameters.PRSPeriodiclyEnum;
 import Utils.GeneralUtils;
+import Utils.SetupUtils;
 import Utils.GeneralUtils.CellIndex;
 import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
@@ -220,13 +221,10 @@ public class P0 extends OtdoaBase {
 	@TestProperties(name = "ue meas Cli Command and Verify Counter - OtdoaRrcConnectionReconfigStart", returnParam = {
 			"IsTestWasSuccessful" }, paramsExclude = { "IsTestWasSuccessful" })
 	public void ue_meas_Cli_Command_and_Verify_Counter_OtdoaRrcConnectionReconfigStart() {
-		boolean ipgEnable = true;
+		//boolean ipgEnable = true;
 		Boolean firstCellOtdoa = true;
 		Boolean secondCellOtdoa = null;
 		peripheralsConfig.changeEnbState(dut2, EnbStates.OUT_OF_SERVICE);
-		// All Types of EnodeB -> change network profile to 2 MMEs.
-		preTestIPGTests(ipgEnable);
-		setNetworkWithNetspan(dut);
 
 		// Disable both Cells OTDOA feature.
 		if (enodeBConfig.getNumberOfActiveCells(dut) > 1) {
@@ -241,10 +239,12 @@ public class P0 extends OtdoaBase {
 				PRSPeriodiclyEnum.THREE_HUNDRED_TWENTY, 0, 9000, PRSMutingPeriodiclyEnum.SIXTEE, "1111111111111111",
 				null, null, null);
 
-		rebootNode(dut);
+		//rebootNode(dut);
 		verifyOTDOASnmp(CellIndex.FORTY, firstCellOtdoa, CellIndex.FORTY_ONE, secondCellOtdoa);
 
 		startTraffic();
+		peripheralsConfig.stopUEs(SetupUtils.getInstance().getAllUEs());
+		peripheralsConfig.startUEs(SetupUtils.getInstance().getAllUEs());
 		getSingleUERNTI();
 		if (rnti.equals("defaultValue")) {
 			report.report("could not get rnti - fail test", Reporter.FAIL);
@@ -253,8 +253,10 @@ public class P0 extends OtdoaBase {
 
 		trig = "0"; // -> start in the trigger CLI Command
 		resetCounter("OtdoaRrcConnectionReconfigStart");
-		String cliAnswer = dut.lteCli(otdoaCommand());
-		GeneralUtils.printToConsole(otdoaCommand() + " command Answer: \n" + cliAnswer);
+		String command = otdoaCommand();
+		report.report("Sending command: "+command);
+		String cliAnswer = dut.lteCli(command);
+		GeneralUtils.printToConsole(command + " command Answer: \n" + cliAnswer);
 		checkCounter("OtdoaRrcConnectionReconfigStart", 1);
 		peripheralsConfig.changeEnbState(dut2, EnbStates.IN_SERVICE);
 	}
@@ -263,14 +265,10 @@ public class P0 extends OtdoaBase {
 	@TestProperties(name = "ue meas Cli Command and Verify Counter - OtdoaRrcConnectionReconfigStop", returnParam = {
 			"IsTestWasSuccessful" }, paramsExclude = { "IsTestWasSuccessful" })
 	public void ue_meas_Cli_Command_and_Verify_Counter_OtdoaRrcConnectionReconfigStop() {
-		boolean ipgEnable = true;
+		//boolean ipgEnable = true;
 		Boolean firstCellOtdoa = true;
 		Boolean secondCellOtdoa = null;
 		peripheralsConfig.changeEnbState(dut2, EnbStates.OUT_OF_SERVICE);
-
-		// All Types of EnodeB -> change network profile to 2 MMEs.
-		preTestIPGTests(ipgEnable);
-		setNetworkWithNetspan(dut);
 
 		// Disable both Cells OTDOA feature.
 		if (enodeBConfig.getNumberOfActiveCells(dut) > 1) {
@@ -285,10 +283,12 @@ public class P0 extends OtdoaBase {
 				PRSPeriodiclyEnum.THREE_HUNDRED_TWENTY, 0, 9000, PRSMutingPeriodiclyEnum.SIXTEE, "1111111111111111",
 				null, null, null);
 
-		rebootNode(dut);
+		//rebootNode(dut);
 		verifyOTDOASnmp(CellIndex.FORTY, firstCellOtdoa, CellIndex.FORTY_ONE, secondCellOtdoa);
 
 		startTraffic();
+		peripheralsConfig.stopUEs(SetupUtils.getInstance().getAllUEs());
+		peripheralsConfig.startUEs(SetupUtils.getInstance().getAllUEs());
 		getSingleUERNTI();
 		if (rnti.equals("defaultValue")) {
 			report.report("could not get rnti from snmp - fail test", Reporter.FAIL);
@@ -297,8 +297,10 @@ public class P0 extends OtdoaBase {
 
 		trig = "1"; // -> start in the trigger CLI Command
 		resetCounter("OtdoaRrcConnectionReconfigStop");
-		String cliAnswer = dut.lteCli(otdoaCommand());
-		GeneralUtils.printToConsole(otdoaCommand() + " command Answer: \n" + cliAnswer);
+		String command = otdoaCommand();
+		report.report("Sending command: "+command);
+		String cliAnswer = dut.lteCli(command);
+		GeneralUtils.printToConsole(command + " command Answer: \n" + cliAnswer);
 		checkCounter("OtdoaRrcConnectionReconfigStop", 1);
 		peripheralsConfig.changeEnbState(dut2, EnbStates.IN_SERVICE);
 	}

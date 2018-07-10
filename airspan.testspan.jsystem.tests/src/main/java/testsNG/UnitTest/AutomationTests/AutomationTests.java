@@ -7,8 +7,10 @@ import org.junit.Test;
 
 import EnodeB.EnodeB;
 import EnodeB.Components.EnodeBComponent;
+import UE.UE;
 import UeSimulator.Amarisoft.AmariSoftServer;
 import Utils.GeneralUtils;
+import Utils.SetupUtils;
 import Utils.SysObjUtils;
 import jsystem.framework.ParameterProperties;
 import jsystem.framework.TestProperties;
@@ -26,7 +28,10 @@ public class AutomationTests extends TestspanTest{
 	public void init() throws Exception {
 		report.report("Init!");
 		enbInTest = new ArrayList<EnodeB>();
-		enbInTest.add(dut);
+		if (dut != null) {
+			
+			enbInTest.add(dut);
+		}
 		super.init();
 	}
 	
@@ -66,13 +71,50 @@ public class AutomationTests extends TestspanTest{
 	}
 	
 	@Test
+	@TestProperties(name = "amarisoftUeTest", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {"IsTestWasSuccessful", "DUT" })
+	public void amarisoftUeTest() throws Exception {
+		report.report("Start amarisoftUeTest test.");
+		
+		ArrayList<UE> ues =  SetupUtils.getInstance().getAllUEs();
+		GeneralUtils.startLevel("All UEs information");
+		for (UE ue : ues) {
+			try {
+				GeneralUtils.startLevel(ue.getName());
+				ue.start();
+				report.report("ue.getImsi: " + ue.getImsi());
+				report.report("ue.getLanIpAddress: " + ue.getLanIpAddress());
+				report.report("ue.getWanIpAddress: " + ue.getWanIpAddress());
+				report.report("ue.getIPerfDlMachine: " + ue.getIPerfDlMachine());
+				report.report("ue.getIPerfUlMachine: " + ue.getIPerfUlMachine());
+				report.report("ue.getVendor: " + ue.getVendor());
+				report.report("ue.getUeCategory: " + ue.getUeCategory());
+				report.report("ue.getVersion: " + ue.getVersion());
+				report.report("ue.getBandWidth: " + ue.getBandWidth());
+				report.report("ue.getUEStatus: " + ue.getUEStatus());
+				report.report("ue.getDuplexMode: " + ue.getDuplexMode());
+				report.report("ue.getRSRP1: " + ue.getRSRP(1));
+				report.report("ue.getPCI: " + ue.getPCI());
+				ue.stop();
+				GeneralUtils.stopLevel();
+			} catch (Exception e) {
+				GeneralUtils.stopLevel();
+				e.printStackTrace();
+			}
+		}
+		GeneralUtils.stopLevel();
+		report.report("Finished amarisoftUeTest test.");
+		
+	}
+	
+	
+	@Test
 	@TestProperties(name = "logTest", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {"IsTestWasSuccessful" })
 	public void logTest() throws Exception {
 		report.report("Start logTest test.");
 		
 		
 		commands();
-		GeneralUtils.unSafeSleep(12*60*60*1000);
+		GeneralUtils.unSafeSleep(2*30*60*60*1000);
 		stopCommandsAndAttachFiles();
 		
 		report.report("Finished logTest test.");
@@ -82,7 +124,6 @@ public class AutomationTests extends TestspanTest{
 	public void commands() {
 
 		ArrayList<String> commands = new ArrayList<>();
-		commands.add("ue show link");
 		commands.add("system show memory");
 		commands.add("system show memdbg bucket=0 leaks=10");
 		commands.add("system show memdbg bucket=1 leaks=10");
@@ -158,10 +199,10 @@ public class AutomationTests extends TestspanTest{
 		
 		AmariSoftServer as = AmariSoftServer.getInstance();
 		GeneralUtils.printToConsole("getImsiStartList: " + as.getImsiStartList());
+		GeneralUtils.printToConsole("getImsiStopList: " + as.getImsiStopList());
 		GeneralUtils.printToConsole("getPassword: " + as.getPassword());
 		GeneralUtils.printToConsole("getRxgain: " + as.getRxgain());
 		GeneralUtils.printToConsole("getTxgain: " + as.getTxgain());
-		GeneralUtils.printToConsole("getImsiStopList: " + as.getImsiStopList());
 		GeneralUtils.printToConsole("getIp: " + as.getIp());
 		GeneralUtils.printToConsole("getusername: " + as.getusername());
 		

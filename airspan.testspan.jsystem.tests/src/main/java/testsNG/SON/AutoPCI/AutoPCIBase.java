@@ -5,8 +5,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.sun.jna.platform.win32.ShellAPI.SHFILEOPSTRUCT;
+
 import Attenuators.AttenuatorSet;
 import EnodeB.EnodeB;
+import EnodeB.EnodeB.Architecture;
 import Netspan.EnbProfiles;
 import Netspan.NetspanServer;
 import Netspan.API.Enums.EnabledDisabledStates;
@@ -28,6 +31,7 @@ import Utils.GeneralUtils;
 import Utils.Pair;
 import Utils.SetupUtils;
 import Utils.SysObjUtils;
+import Utils.GeneralUtils.CellIndex;
 import Utils.Snmp.MibReader;
 import jsystem.framework.ParameterProperties;
 import jsystem.framework.report.Reporter;
@@ -41,6 +45,8 @@ import testsNG.Actions.Traffic;
 
 public class AutoPCIBase extends TestspanTest {
 	protected EnodeB dut;
+	protected EnodeB neighbor;
+	protected static final int PCI_COLLISION_DETECTION_TIMER = 2 * 60 * 1000;
 	protected EnodeBConfig enodeBConfig;
 	protected NetspanServer netspan;
 	protected PeripheralsConfig peripheralsConfig;
@@ -67,6 +73,8 @@ public class AutoPCIBase extends TestspanTest {
 	private Date endDate;
 	protected int pciStart;
 	protected int pciEnd;
+	protected final int threshold = 16;
+	protected boolean shouldReboot = false;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -146,15 +154,22 @@ public class AutoPCIBase extends TestspanTest {
 		if (startSONStatus == null || !startSONStatus.pciStatus.equals("Manual")) {
 			org.junit.Assume.assumeTrue(false);
 		}
+		shouldReboot = shouldReboot();
 	}
 
 	protected void changeEnodeBPciAndReboot() {
-		GeneralUtils.startLevel("Change enodeB pci and reboot");
+		GeneralUtils.startLevel("Change enodeB pci and reboot (if needed)");
 		GeneralUtils.startLevel("Setting Cell ID " + dut.getCellContextID() + ": PCI=" + pciStart);
 		boolean result = enodeBConfig.changeEnbCellPci(dut, pciStart);
 		if (result) {
-			report.report("Changing cell pci worked - rebooting");
-			dut.reboot();
+			report.report("Changing cell pci worked");
+			if(shouldReboot){
+				report.report("Rebooting");
+				dut.reboot();
+			}else{
+				report.report("Changing cell pci on the fly - no rebooting");
+				GeneralUtils.unSafeSleep(20*1000);
+			}
 			dut.waitForAllRunningAndInService(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);
 		} else {
 			report.report("Failed to change pci in enodeb", Reporter.WARNING);
@@ -216,14 +231,18 @@ public class AutoPCIBase extends TestspanTest {
 				report.report("Reverting " + dut.getName() + " Cell #" + dut.getCellContextID()
 						+ " to default PCI number: " + initStatusPhysicalCellId);
 				enodeBConfig.changeEnbCellPci(dut, initStatusPhysicalCellId);
-				dut.reboot();
+				if(shouldReboot){
+					dut.reboot();
+				}
 			}
-			GeneralUtils.unSafeSleep(30 * 1000);
-			report.report(dut.getNetspanName() + " wait for all running and in service (TimeOut="
-					+ (EnodeB.WAIT_FOR_ALL_RUNNING_TIME / 1000.0 / 60.0) + " Minutes)");
+			GeneralUtils.unSafeSleep(20 * 1000);
+			if(shouldReboot){
+				report.report(dut.getNetspanName() + " wait for all running and in service (TimeOut="
+						+ (EnodeB.WAIT_FOR_ALL_RUNNING_TIME / 1000.0 / 60.0) + " Minutes)");
+			}
 			dut.waitForAllRunningAndInService(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);
-			dut.setExpectBooting(false);
 		}
+		dut.setExpectBooting(false);
 		enodeBConfig.printEnodebState(dut, true);
 		GeneralUtils.stopLevel();
 
@@ -605,5 +624,85 @@ public class AutoPCIBase extends TestspanTest {
 	private void generatePciStartAndEnd() {
 		pciStart = generatePciStart(300);
 		pciEnd = generatePciEnd(309);
+	}
+	
+	public CellIndex causePciCollisionWithOneOfTheCellsByAutoPci(EnodeB eNodeB){
+		Neighbors ngh = Neighbors.getInstance();
+		GeneralUtils.startLevel("Causing PCI Collision with one of the cells.");
+		int neighborPci = 0;
+		int neighborEarfcn = 0;
+			
+		neighbor = ngh.adding3rdPartyNeighbor(eNodeB, eNodeB.getName()+"_3rdPartyNeighbor", "123.45.67." + eNodeB.getPci(),eNodeB.getPci(), 123400 + (eNodeB.getPci() + 1), eNodeB.getEarfcn());
+		if(neighbor == null){
+			report.report("Failed to Create 3rd party neighbor", Reporter.FAIL);
+			GeneralUtils.stopLevel();
+			return null;
+		}
+		neighborPci = eNodeB.getPci();
+		neighborEarfcn = eNodeB.getEarfcn();
+		
+		report.report("Deleting all neighbors.");
+		if(!ngh.deleteAllNeighbors(eNodeB)){
+			report.report("Faild to delete all neighbors.", Reporter.WARNING);
+		}
+		
+		SonParameters sp = new SonParameters();
+		sp.setSonCommissioning(true);
+		sp.setAutoPCIEnabled(true);
+		sp.setPciCollisionHandling(SonParameters.PciHandling.Deferred);
+		sp.setPciConfusionHandling(SonParameters.PciHandling.Deferred);
+		sp.setPciPolicyViolationHandling(SonParameters.PciHandling.Deferred);
+		List<Pair<Integer, Integer>> ranges = new ArrayList<Pair<Integer, Integer>>();
+		Pair<Integer, Integer> p = new Pair<Integer, Integer>(neighborPci, neighborPci);
+		ranges.add(p);
+		sp.setRangesList(ranges);
+		
+		GeneralUtils.startLevel("Enabling AutoPCI for causing collision");
+		report.report("set Son Commissioning to true.");
+		report.report("set AutoPCIEnabled to true.");
+		report.report("set Pci Collision Handling to Deferred.");
+		report.report("set Pci Confusion Handling to Deferred.");
+		report.report("set Pci Policy Violation Handling to Deferred.");
+		report.report("Ranges: PCI Start = "+neighborPci+" PCI End = "+neighborPci);
+		GeneralUtils.stopLevel();
+		eNodeB.setExpectBooting(true);
+		enodeBConfig.cloneAndSetSonProfileViaNetspan(eNodeB, eNodeB.getDefaultNetspanProfiles().getSON(), sp);
+		int timeoutCounter = 0;
+		while(eNodeB.isInService() && timeoutCounter < 60){
+			GeneralUtils.unSafeSleep(1000);
+			timeoutCounter++;
+		}
+		report.report("WAIT FOR ALL RUNNING.");
+		eNodeB.waitForAllRunningAndInService(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);
+		
+		CellIndex collisionCellIndex = CellIndex.FORTY;
+		if(enodeBConfig.getPciFromAutoPciCell(eNodeB,40) == neighborPci && eNodeB.getEarfcn() == neighborEarfcn){
+			collisionCellIndex = CellIndex.FORTY;
+		}else if(enodeBConfig.getPciFromAutoPciCell(eNodeB,41) == neighborPci && eNodeB.getEarfcn() == neighborEarfcn) {
+			collisionCellIndex = CellIndex.FORTY_ONE;
+		}else{
+			report.report("Both Cells did not update to the neighbor PCI " + neighborPci, Reporter.WARNING);
+		}
+		
+		report.report("Adding neighbor with the same PCI to cause Collision, PCI = " + neighborPci);
+		if(!ngh.addNeighbor(eNodeB, neighbor, HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC, HandoverType.TRIGGER_X_2, true, "0")){
+			report.report("Failed to add neighbor.", Reporter.FAIL);
+			ngh.delete3rdParty(neighbor.getNetspanName());
+			GeneralUtils.stopLevel();
+			return null;
+		}
+		
+		report.report("Waiting PCI COLLISION DETECTION TIMER will expire ("+PCI_COLLISION_DETECTION_TIMER/1000+" Sec)");
+		GeneralUtils.unSafeSleep(PCI_COLLISION_DETECTION_TIMER);
+		
+		GeneralUtils.stopLevel();
+		
+		return collisionCellIndex;
+	}
+	
+	protected boolean shouldReboot(){
+		int version = Integer.valueOf(dut.getEnodeBversion().split("_")[0]);
+		boolean shouldReboot = version<threshold || dut.getArchitecture()==Architecture.XLP;
+		return shouldReboot;
 	}
 }

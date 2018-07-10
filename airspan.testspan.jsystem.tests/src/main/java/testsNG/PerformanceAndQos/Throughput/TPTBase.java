@@ -48,20 +48,19 @@ import testsNG.Actions.TrafficCapacity;
 import testsNG.Actions.Utils.CalculatorMap;
 import testsNG.Actions.Utils.ParallelCommandsThread;
 
-
 public class TPTBase extends TestspanTest {
 
 	public int Load_UL;
- 	public int Load_DL;
- 	public double Expected_UL;
- 	public double Expected_DL;
- 	public int RunTime;
- 	private boolean use_Load_UL = false;
- 	private boolean use_Load_DL = false;
- 	private boolean use_Expected_UL = false;
- 	private boolean use_Expected_DL = false;
- 	private boolean use_Runtime = false;
- 	
+	public int Load_DL;
+	public double Expected_UL;
+	public double Expected_DL;
+	public int RunTime;
+	private boolean use_Load_UL = false;
+	private boolean use_Load_DL = false;
+	private boolean use_Expected_UL = false;
+	private boolean use_Expected_DL = false;
+	private boolean use_Runtime = false;
+
 	public final static String[] debugCommands = { "a", "b" };
 	public Long TEST_TIME_MILLIS = new Long(2 * 60 * 1000);
 	public Long TEST_TIME_SHORT = new Long(2 * 60 * 1000);
@@ -83,7 +82,7 @@ public class TPTBase extends TestspanTest {
 	protected ArrayList<StreamParams> haltedStreamsInLastSample = new ArrayList<StreamParams>();
 	protected HashMap<String, StreamParams> haltedStreamsInTest = new HashMap<String, StreamParams>();
 	protected List<String> commandList = new ArrayList<String>();
-	protected ArrayList<Pair<UE,Integer>> SUTUECellList; 
+	protected ArrayList<Pair<UE, Integer>> SUTUECellList;
 	protected ArrayList<UE> ueList;
 	protected ArrayList<String> ueNameListStc;
 	protected PeripheralsConfig peripheralsConfig;
@@ -119,10 +118,10 @@ public class TPTBase extends TestspanTest {
 	protected boolean runWithDynamicCFI = false;
 	protected Protocol protocol;
 	protected Long startingTestTime;
-	
+
 	@Override
 	public void init() throws Exception {
-		if(enbInTest == null) {
+		if (enbInTest == null) {
 			enbInTest = new ArrayList<EnodeB>();
 		}
 		enbInTest.add(dut);
@@ -150,21 +149,21 @@ public class TPTBase extends TestspanTest {
 	protected void watchDogInit() {
 		try {
 			wd = WatchDogManager.getInstance();
-			//DLULwd = new commandWatchDLAndUL(dut);
-			//wd.addCommand(DLULwd);
+			// DLULwd = new commandWatchDLAndUL(dut);
+			// wd.addCommand(DLULwd);
 		} catch (Exception e) {
 			e.printStackTrace();
 			report.report("Could not Init DL and UL command", Reporter.WARNING);
 			wd = null;
 			return;
 		}
-		
+
 	}
 
 	/**
 	 * method is changing all Nodes to Out of Service except the first one. in
-	 * Addition getting radio profile and purifying the Calculator according to
-	 * the current test running.
+	 * Addition getting radio profile and purifying the Calculator according to the
+	 * current test running.
 	 * 
 	 * @author Shahaf Shuhamy
 	 */
@@ -191,17 +190,17 @@ public class TPTBase extends TestspanTest {
 
 	private void printTestParmas() {
 		GeneralUtils.startLevel("Test Parameters");
-		if(this.use_Load_UL == true){
-			report.report("load up link : "+this.Load_UL+"%");
+		if (this.use_Load_UL == true) {
+			report.report("load up link : " + this.Load_UL + "%");
 		}
-		if(this.use_Load_DL == true){
-			report.report("load down link : "+this.Load_DL+"%");
+		if (this.use_Load_DL == true) {
+			report.report("load down link : " + this.Load_DL + "%");
 		}
-		if(this.use_Expected_UL == true){
-			report.report("expected Up Link : "+this.Expected_UL+"%");
-		}			
-		if(this.use_Expected_DL == true){
-			report.report("expected Down Link : "+this.Expected_DL+"%");
+		if (this.use_Expected_UL == true) {
+			report.report("expected Up Link : " + this.Expected_UL + "%");
+		}
+		if (this.use_Expected_DL == true) {
+			report.report("expected Down Link : " + this.Expected_DL + "%");
 		}
 		GeneralUtils.stopLevel();
 	}
@@ -219,9 +218,9 @@ public class TPTBase extends TestspanTest {
 		toOOS.remove(dut);
 		for (EnodeB enb : toOOS) {
 			if (!peripheralsConfig.changeEnbState(enb, EnbStates.OUT_OF_SERVICE)) {
-				report.report("failed to set enodeB "+enb.getNetspanName()+" out of service",Reporter.WARNING);
-			}else{
-				report.report("EnodeB "+enb.getNetspanName()+" was set out of service");
+				report.report("failed to set enodeB " + enb.getNetspanName() + " out of service", Reporter.WARNING);
+			} else {
+				report.report("EnodeB " + enb.getNetspanName() + " was set out of service");
 			}
 		}
 		GeneralUtils.stopLevel();
@@ -266,6 +265,7 @@ public class TPTBase extends TestspanTest {
 	 * @author Shahaf Shuhamy
 	 */
 	protected void TestProcess() {
+		changeCPUWDStatus(false);
 		while (testIsNotDoneStatus) {
 			resetParams();
 			try {
@@ -273,32 +273,32 @@ public class TPTBase extends TestspanTest {
 					testIsNotDoneStatus = false;
 					resetTestBol = false;
 					exceptionThrown = true;
-					GeneralUtils.stopAllLevels(); 
+					GeneralUtils.stopAllLevels();
 				}
 			} catch (Exception e) {
-				report.report("Stopping Parallel Commands From Java Exception");
+				report.report("Stopping Parallel Commands From Java Exception" + e.getMessage());				
 				testIsNotDoneStatus = false;
 				resetTestBol = false;
 				exceptionThrown = true;
 				reason = "network connection Error";
 				report.report(e.getMessage() + " caused Test to stop", Reporter.FAIL);
 				e.printStackTrace();
-				GeneralUtils.stopAllLevels(); 
+				GeneralUtils.stopAllLevels();
 			}
 			if (resetTestBol) {
 				numberOfResets++;
-				if(syncCommands != null){
+				if (syncCommands != null) {
 					report.report("Stopping Parallel Commands");
 					syncCommands.stopCommands();
 				}
 				makeThreadObjectFinish();
-				if(syncCommands != null){
+				if (syncCommands != null) {
 					report.report("Commands File Path: " + syncCommands.getFile());
 				}
 				testIsNotDoneStatus = true;
 				// stop level
 				try {
-					if(syncCommands != null){
+					if (syncCommands != null) {
 						syncCommands.moveFileToReporterAndAddLink();
 					}
 					report.report("Stopping Traffic");
@@ -321,7 +321,7 @@ public class TPTBase extends TestspanTest {
 			reason = "Test Was Restarted Too many Times due to Traffic halt";
 		}
 		try {
-			if(syncCommands != null){
+			if (syncCommands != null) {
 				syncCommands.stopCommands();
 			}
 		} catch (Exception e1) {
@@ -329,24 +329,24 @@ public class TPTBase extends TestspanTest {
 		}
 		makeThreadObjectFinish();
 		try {
-			if(syncCommands != null){
+			if (syncCommands != null) {
 				syncCommands.moveFileToReporterAndAddLink();
 			}
 		} catch (Exception e) {
 			report.report("Exception in ReporterHelper.copyFileToReporterAndAddLink could not attach Command File");
 			e.printStackTrace();
 		}
+		changeCPUWDStatus(true);
 	}
 
 	/**
-	 * make Thread of commands to end his process in order to continue the
-	 * program.
+	 * make Thread of commands to end his process in order to continue the program.
 	 * 
 	 * @author Shahaf Shuhamy
 	 */
 	protected void makeThreadObjectFinish() {
 		try {
-			if(syncCommands != null){
+			if (syncCommands != null) {
 				syncCommands.join();
 			}
 		} catch (Exception e1) {
@@ -355,8 +355,8 @@ public class TPTBase extends TestspanTest {
 	}
 
 	/**
-	 * restarting number of recovery try streams Array list restart list of
-	 * streams for future use restarting
+	 * restarting number of recovery try streams Array list restart list of streams
+	 * for future use restarting
 	 * 
 	 * @author Shahaf Shuhamy
 	 */
@@ -395,23 +395,23 @@ public class TPTBase extends TestspanTest {
 				}
 			}
 		}
-		if(syncCommands != null){
+		if (syncCommands != null) {
 			report.report("Starting parallel commands");
 			syncCommands.start();
 		}
 	}
 
-	protected boolean startTrafficInTest() throws Exception{
-		
+	protected boolean startTrafficInTest() throws Exception {
+
 		resetTestBol = false;
 		trafficSTC.setactiveStreamsArray(stringArrayStreamNames);
-		
+
 		// init and start traffic
-		if(!trafficSTC.initTrafficWithNoStartTraffic(TrafficCapacity.FULLTPT)){
-			report.report("start Traffic failed",Reporter.FAIL);
+		if (!trafficSTC.initTrafficWithNoStartTraffic(TrafficCapacity.FULLTPT)) {
+			report.report("start Traffic failed", Reporter.FAIL);
 			throw new Exception("start Traffic Failed from stc class");
 		}
-		
+
 		GeneralUtils.startLevel("Disable un-needed streams");
 		trafficSTC.disableUnneededStreams(ueNameListStc, qci);
 		// if the last ue deleted and there is nothing to check!
@@ -421,20 +421,20 @@ public class TPTBase extends TestspanTest {
 			throw new Exception("No UES in Test");
 		}
 		GeneralUtils.stopLevel();
-		
+
 		GeneralUtils.startLevel("Turning on ues in setup");
 		peripheralsConfig.startUEsOnlySnmp(SetupUtils.getInstance().getAllUEs());
 		GeneralUtils.stopLevel();
-		
+
 		GeneralUtils.startLevel("Disable un-needed UEs");
-		disableUEsNotInTest(ueNameListStc,SetupUtils.getInstance().getAllUEs());
+		disableUEsNotInTest(ueNameListStc, SetupUtils.getInstance().getAllUEs());
 		GeneralUtils.stopLevel();
 
 		// init number fo parallel streams
 		GeneralUtils.startLevel("init parallel streams");
 		trafficSTC.initNumberParallelStreams(numberParallelStreams, streams);
 		GeneralUtils.stopLevel();
-		
+
 		// init window size
 		GeneralUtils.startLevel("init window size");
 		trafficSTC.initWindowSize(windowSizeInKbits, streams);
@@ -444,38 +444,38 @@ public class TPTBase extends TestspanTest {
 		GeneralUtils.startLevel("init Frame Size and taking off un-needed streams");
 		trafficSTC.initFrameSize(packetSize, streams);
 		GeneralUtils.stopLevel();
-		
-		
+
 		// init Protocol
-		GeneralUtils.startLevel("init Protocol ("+this.protocol+")");
-		if(!trafficSTC.initProtocol(this.protocol)){
+		GeneralUtils.startLevel("init Protocol (" + this.protocol + ")");
+		if (!trafficSTC.initProtocol(this.protocol)) {
 			reason = "Cant set traffic protocol.";
 			report.report("Cant start traffic. protocol not supported.", Reporter.WARNING);
 			GeneralUtils.stopLevel();
 			return false;
 		}
 		GeneralUtils.stopLevel();
-		
+
 		GeneralUtils.startLevel("setting port load according to Radio profile");
 		portsLoadPair = calculateAndConfigPortLoads();
-		GeneralUtils.stopLevel();	
-		
+		GeneralUtils.stopLevel();
+
 		// Save Configurate File and ReStarting Traffic
 		report.report("Save Config File and Start Traffic");
 		uploadConfigFileToReport();
 		trafficSTC.saveConfigFileAndStart();
-		
-		if(!peripheralsConfig.checkIfAllUEsAreConnectedToNode(ueList, dut)){
-			report.report("test will go on with a warning about UES",Reporter.WARNING);
+
+		if (!peripheralsConfig.checkIfAllUEsAreConnectedToNode(ueList, dut)) {
+			report.report("test will go on with a warning about UES", Reporter.WARNING);
 			reason = "UE not connected to DUT";
 		}
-		
-		if(ueList.get(0) instanceof VirtualUE){
+
+		if (ueList.get(0) instanceof VirtualUE) {
 			UESimulator uesim = UESimulator.getInstance();
 			uesim.start();
 			checkForARP();
 		}
-		report.report("Starting TPT-"+streamsMode+" with "+ueNameListStc.size() +" UEs, for "+SoftwareUtiles.milisToFormat(TEST_TIME_MILLIS));
+		report.report("Starting TPT-" + streamsMode + " with " + ueNameListStc.size() + " UEs, for "
+				+ SoftwareUtiles.milisToFormat(TEST_TIME_MILLIS));
 		GeneralUtils.startLevel("Sampling Results each second");
 		// loop for time of TEST_TIME
 		syncGeneralCommands();
@@ -484,19 +484,27 @@ public class TPTBase extends TestspanTest {
 		GeneralUtils.unSafeSleep(1000 * 20);
 		return true;
 	}
-	
+
 	/**
-	 * @author Shahaf Shuhamy start traffic init frame size save configurate
-	 *         file and starting traffic all over again then starting a loop for
-	 *         1 minute : sampling and checking if sample is ok
+	 * @author Shahaf Shuhamy start traffic init frame size save configurate file
+	 *         and starting traffic all over again then starting a loop for 1 minute
+	 *         : sampling and checking if sample is ok
 	 * @throws IOException
 	 */
 	protected boolean startTrafficAndSample() throws Exception {
-		if(!startTrafficInTest()){			
+		if (!startTrafficInTest()) {
 			return false;
 		}
 		startingTestTime = System.currentTimeMillis();
+		long resetCounters = startingTestTime;
+
 		while (System.currentTimeMillis() - startingTestTime <= TEST_TIME_MILLIS) {
+			if(System.currentTimeMillis()-resetCounters>=30*60*1000){
+				resetCounters = System.currentTimeMillis();
+				double temp = Math.floor(((System.currentTimeMillis() - startingTestTime)/ 1000 / 60.0)*100);
+				double tempDouble = temp/100.0;
+				report.report("Time elapsed: " + tempDouble + " minutes.");
+			}
 			sampleResultsStatusOk();
 
 			if (restartTime) {
@@ -505,11 +513,11 @@ public class TPTBase extends TestspanTest {
 
 			// if exception thrown = Connection closed -> stop test!
 			if (exceptionThrown) {
-				if(reason == ""){
+				if (reason == "") {
 					reason = "TRAFFIC ERROR";
 				}
-				
-				report.report("Performance Error in Test! ,reason: "+reason);
+
+				report.report("Performance Error in Test! ,reason: " + reason);
 				break;
 			}
 			try {
@@ -520,18 +528,18 @@ public class TPTBase extends TestspanTest {
 				e.printStackTrace();
 			}
 
-			if(resetUEs){
+			if (resetUEs) {
 				resetUEs = false;
 				resetTestBol = true;
 				report.report("Resetting UES");
-				if(ueList.get(0) instanceof VirtualUE){
+				if (ueList.get(0) instanceof VirtualUE) {
 					UESimulator uesim = UESimulator.getInstance();
 					uesim.stop();
-				}else{
+				} else {
 					rebootUEs(ueList);
 				}
 			}
-			
+
 			if (resetDueToMultiHaltStreams) {
 				// more than 30% of the streams are in halt mode!
 				resetDueToMultiHaltStreams = false;
@@ -549,23 +557,22 @@ public class TPTBase extends TestspanTest {
 			}
 		}
 		GeneralUtils.stopLevel();
-		
-		if(ueList.get(0) instanceof VirtualUE){ 
+
+		if (ueList.get(0) instanceof VirtualUE) {
 			UESimulator uesim = UESimulator.getInstance();
 			uesim.stop();
 		}
-		
+
 		testIsNotDoneStatus = false;
 		return true;
 	}
 
-
 	/**
 	 * according to radio profile, calculate port load and set it.
 	 */
-	private Pair<Double,Double> calculateAndConfigPortLoads() {
+	private Pair<Double, Double> calculateAndConfigPortLoads() {
 		CalculatorMap calc = new CalculatorMap();
-		
+
 		Pair<Double, Double> trafficValuPair;
 		try {
 			trafficValuPair = calc.getDLandULconfiguration(radioParams);
@@ -573,11 +580,11 @@ public class TPTBase extends TestspanTest {
 			trafficValuPair = null;
 			e.printStackTrace();
 		}
-		
-		if(dut instanceof Ninja)
+
+		if (dut instanceof Ninja)
 			trafficValuPair = ConvertToNinjaValues(trafficValuPair);
-			
-		if(trafficValuPair != null){
+
+		if (trafficValuPair != null) {
 			trafficValuPair = calculateTrafficLoadAccordingToMultiCell(trafficValuPair);
 			trafficSTC.trafficLoadSet(trafficValuPair);
 		}
@@ -585,8 +592,9 @@ public class TPTBase extends TestspanTest {
 	}
 
 	private Pair<Double, Double> ConvertToNinjaValues(Pair<Double, Double> trafficValuPair) {
-		
-		Pair<Double, Double> pair = new Pair<Double, Double>(trafficValuPair.getElement0() * 0.95 / 1.1, trafficValuPair.getElement1() * 0.61 / 1.1);
+
+		Pair<Double, Double> pair = new Pair<Double, Double>(trafficValuPair.getElement0() * 0.95 / 1.1,
+				trafficValuPair.getElement1() * 0.61 / 1.1);
 		return pair;
 	}
 
@@ -613,31 +621,32 @@ public class TPTBase extends TestspanTest {
 			}
 		}
 
-		if(ueMap.isEmpty()){
+		if (ueMap.isEmpty()) {
 			GeneralUtils.printToConsole("all UEs are in start for this setup");
 		}
-		
+
 		// stop all UEs in Map
 		for (String ue : ueMap.keySet()) {
-			GeneralUtils.printToConsole("ue to stop : ue"+ue);
-			if(!ueMap.get(ue).stop()){
-				report.report("UE "+ue +" did not stopped!",Reporter.WARNING);
-			}else{
-				report.report("UE "+ue +" has stopped!");
+			GeneralUtils.printToConsole("ue to stop : ue" + ue);
+			if (!ueMap.get(ue).stop()) {
+				report.report("UE " + ue + " did not stopped!", Reporter.WARNING);
+			} else {
+				report.report("UE " + ue + " has stopped!");
 			}
 		}
-		
 
 	}
 
 	/**
-	 * return a pair of values where the first represents DownLoad and the 2nd Upload.
+	 * return a pair of values where the first represents DownLoad and the 2nd
+	 * Upload.
+	 * 
 	 * @param trafficValuPair
 	 * @return
 	 */
 	private Pair<Double, Double> calculateTrafficLoadAccordingToMultiCell(Pair<Double, Double> trafficValuPair) {
-		//in case SNMP fail in 2nd time - test can go wrong.
-		if(cellNumber != 2) {
+		// in case SNMP fail in 2nd time - test can go wrong.
+		if (cellNumber != 2) {
 			cellNumber = enbConfig.getNumberOfActiveCells(dut);
 		}
 		double cellNumDoubl = Double.valueOf(cellNumber);
@@ -646,54 +655,61 @@ public class TPTBase extends TestspanTest {
 		Double ulParamModifier = 1.0;
 		Double dlParamModifier = 1.0;
 		retValues = Pair.createPair(trafficValuPair.getElement0(), trafficValuPair.getElement1());
-		if(this.use_Load_DL && this.use_Load_UL){
-			ulParamModifier = this.Load_UL/100.0;
-			dlParamModifier = this.Load_DL/100.0;
-			
+		if (this.use_Load_DL && this.use_Load_UL) {
+			ulParamModifier = this.Load_UL / 100.0;
+			dlParamModifier = this.Load_DL / 100.0;
+
 			String[] dlul = getCalculatorPassCriteria(radioParams);
 			double calcPassCritDL = Double.parseDouble(dlul[0]);
 			double calcPassCritUL = Double.parseDouble(dlul[1]);
-			
-			//get Custom Calculator loads 
-			report.report("using custom loads -> getting calculator values => DL : "+calcPassCritDL+", UL : "+calcPassCritUL);
+
+			// get Custom Calculator loads
+			report.report("using custom loads -> getting calculator values => DL : " + calcPassCritDL + ", UL : "
+					+ calcPassCritUL);
 			retValues = Pair.createPair(calcPassCritDL, calcPassCritUL);
-			//multiple with custom Loads From JSystem
-			retValues = Pair.createPair(retValues.getElement0() * dlParamModifier, retValues.getElement1() * ulParamModifier);
-			report.report("After Multiple with Custom Modifiers => DL : "+String.format("%.2f",retValues.getElement0())+", UL : "+String.format("%.2f",retValues.getElement1()));
+			// multiple with custom Loads From JSystem
+			retValues = Pair.createPair(retValues.getElement0() * dlParamModifier,
+					retValues.getElement1() * ulParamModifier);
+			report.report(
+					"After Multiple with Custom Modifiers => DL : " + String.format("%.2f", retValues.getElement0())
+							+ ", UL : " + String.format("%.2f", retValues.getElement1()));
 			report.report("checking if CA test and PTP test");
-			if(!streamsMode.equals("PTP")){
-				retValues = Pair.createPair(retValues.getElement0() * cellNumber, retValues.getElement1() * cellNumber);				
-			}
-			else {
-				if(isCaTest){				
-					retValues = Pair.createPair(retValues.getElement0() * cellNumber, retValues.getElement1());					
+			if (!streamsMode.equals("PTP")) {
+				retValues = Pair.createPair(retValues.getElement0() * cellNumber, retValues.getElement1() * cellNumber);
+			} else {
+				if (isCaTest) {
+					retValues = Pair.createPair(retValues.getElement0() * cellNumber, retValues.getElement1());
 				}
 			}
-			report.report("After checking for CA PTP test => DL : "+String.format("%.2f",retValues.getElement0())+", UL : "+String.format("%.2f",retValues.getElement1()));
-			
-		}else{
-			report.report("using Auto Generated loads => DL : "+retValues.getElement0()+", UL : "+retValues.getElement1());			
+			report.report("After checking for CA PTP test => DL : " + String.format("%.2f", retValues.getElement0())
+					+ ", UL : " + String.format("%.2f", retValues.getElement1()));
+
+		} else {
+			report.report("using Auto Generated loads => DL : " + retValues.getElement0() + ", UL : "
+					+ retValues.getElement1());
 			report.report("checking if CA test and PTP test");
-			if(!streamsMode.equals("PTP")){
-				if(cellNumDoubl > 1){ //multiple with MC WA
+			if (!streamsMode.equals("PTP")) {
+				if (cellNumDoubl > 1) { // multiple with MC WA
 					multiCellWA = 1.33;
 				}
 				retValues = multipleValuesByCellNumbers(retValues, cellNumDoubl * multiCellWA);
-			}
-			else {
+			} else {
 				if (isCaTest) {
-					retValues = Pair.createPair(retValues.getElement0() * cellNumDoubl , retValues.getElement1());
-					
+					retValues = Pair.createPair(retValues.getElement0() * cellNumDoubl, retValues.getElement1());
+
 				}
 			}
-			report.report("after checking for CA PTP test => DL : "+retValues.getElement0()+", UL : "+retValues.getElement1());
+			report.report("after checking for CA PTP test => DL : " + retValues.getElement0() + ", UL : "
+					+ retValues.getElement1());
 		}
 		return retValues;
 	}
-	
-	private Pair<Double,Double> multipleValuesByCellNumbers(Pair<Double,Double> values, Double numberOfCells){
-		Pair <Double,Double> retValues = Pair.createPair(values.getElement0() * numberOfCells, values.getElement1() * numberOfCells);
-		report.report("loads multiple the number of cells per cell => DL : "+retValues.getElement0()+", UL : "+retValues.getElement1());
+
+	private Pair<Double, Double> multipleValuesByCellNumbers(Pair<Double, Double> values, Double numberOfCells) {
+		Pair<Double, Double> retValues = Pair.createPair(values.getElement0() * numberOfCells,
+				values.getElement1() * numberOfCells);
+		report.report("loads multiple the number of cells per cell => DL : " + retValues.getElement0() + ", UL : "
+				+ retValues.getElement1());
 		return retValues;
 	}
 
@@ -708,8 +724,8 @@ public class TPTBase extends TestspanTest {
 	}
 
 	/**
-	 * sends ARP in STC - real method is "startArpNd(boolean for exception
-	 * result, portNames as String)
+	 * sends ARP in STC - real method is "startArpNd(boolean for exception result,
+	 * portNames as String)
 	 * 
 	 * @author Shahaf Shuhamy
 	 */
@@ -747,9 +763,9 @@ public class TPTBase extends TestspanTest {
 	}
 
 	/**
-	 * @author Shahaf Shuhamy sample statistics according to port sample
-	 *         statistics according to stream checking for halt stream if halt
-	 *         stream -> check which one
+	 * @author Shahaf Shuhamy sample statistics according to port sample statistics
+	 *         according to stream checking for halt stream if halt stream -> check
+	 *         which one
 	 * @param startingTestTime
 	 * @return
 	 */
@@ -759,68 +775,73 @@ public class TPTBase extends TestspanTest {
 		ArrayList<ArrayList<StreamParams>> sampleArrayList = null;
 		try {
 			sampleArrayList = samplePortsAndStreamsFromSTC();
-			GeneralUtils.startLevel("Checking for HaltStream");
-			if (trafficSTC.checkForHalt(HALT_STREAM_PARAM, streams)) {
-
-				report.report("found halt streams", Reporter.WARNING);
-				trafficSTC.takeActionAfterFoundHaltStream();
-				report.report("waiting 20 seconds");
-				Thread.sleep(20 * 1000);
-
-				streams = null;
-				streams = new ArrayList<StreamParams>();
-				report.report("last sample was 0 - Re Sample one more time");
-				samplePortsAndStreamsFromSTC();
-				//restartTime = true;
-
-				if (trafficSTC.checkForHalt(HALT_STREAM_PARAM, streams)) {
-
-					haltedStreams = trafficSTC.checkStreamsForHalter(HALT_STREAM_PARAM, streams);
-					reportForHalted(haltedStreams);
-					report.report("Those Streams Are in Halt Status: " + printStreamName(haltedStreams));
-
-					//number of halted UEs is grater than Test Threshold.
-					double totalUESPercent = ueList.size() * PRECENT_OF_UE_RESET / 100;
-					boolean uesThreashold = getNumberOfUEs(haltedStreams) <= totalUESPercent;
-					if (uesThreashold) {
-						report.report("disabling halted Streams since they are less than 30%.");
-							// Total UEs are over than 3 OR if Test take off less than 2 UEs.
-						GeneralUtils.printToConsole("Total number of UEs in Setup : "+ueList.size());
-						GeneralUtils.printToConsole("Number of UEs in Test Currently : "+ueNameListStc.size());
-							if( ueNameListStc.size() > 3  && ueList.size() - ueNameListStc.size() < 2) { 	
-								checkUEsRelationsWithStreams(haltedStreams);
-							}else{
-							report.report("Test UEs number is not enough For Throughtput! - Failing Test",Reporter.FAIL);	
-							exceptionThrown = true;
-							return;
-						}
-						
-					}else{
-						resetUEs = true;
-					}
-					resetDueToMultiHaltStreams = true;
-				}
-			} else {
-				report.report("no Halt Stream");
-			}
-
 		} catch (Exception e) {
-			report.report("interrupted in SamepleResultsStatusOk method in Traffic Class -" + e.getMessage());
-			e.printStackTrace();
-			report.report("Error during test", Reporter.FAIL);
-			resetDueToMultiHaltStreams = true;
-			exceptionThrown = true;
-		} finally {
-			GeneralUtils.stopLevel();
+		}
+		// Check Traffic Halt only for non UDP tests
+		if (this.protocol != Protocol.TCP) {
+			if (trafficSTC.checkForHalt(HALT_STREAM_PARAM, streams)) {
+				try {
+					GeneralUtils.startLevel("Traffic halt found");
+					report.report("found halt streams", Reporter.WARNING);
+					trafficSTC.takeActionAfterFoundHaltStream();
+					report.report("waiting 20 seconds");
+					GeneralUtils.unSafeSleep(20 * 1000);
+
+					streams = null;
+					streams = new ArrayList<StreamParams>();
+					report.report("last sample was 0 - Re Sample one more time");
+					samplePortsAndStreamsFromSTC();
+					// restartTime = true;
+
+					if (trafficSTC.checkForHalt(HALT_STREAM_PARAM, streams)) {
+						haltedStreams = trafficSTC.checkStreamsForHalter(HALT_STREAM_PARAM, streams);
+						reportForHalted(haltedStreams);
+						report.report("Those Streams Are in Halt Status: " + printStreamName(haltedStreams));
+
+						// number of halted UEs is grater than Test Threshold.
+						double totalUESPercent = ueList.size() * PRECENT_OF_UE_RESET / 100;
+						boolean uesThreashold = getNumberOfUEs(haltedStreams) <= totalUESPercent;
+						if (uesThreashold) {
+							report.report("disabling halted Streams since they are less than 30%.");
+							// Total UEs are over than 3 OR if Test take off
+							// less than 2 UEs.
+							GeneralUtils.printToConsole("Total number of UEs in Setup : " + ueList.size());
+							GeneralUtils.printToConsole("Number of UEs in Test Currently : " + ueNameListStc.size());
+							if (ueNameListStc.size() > 3 && ueList.size() - ueNameListStc.size() < 2) {
+								checkUEsRelationsWithStreams(haltedStreams);
+							} else {
+								report.report("Test UEs number is not enough For Throughtput! - Failing Test",
+										Reporter.FAIL);
+								exceptionThrown = true;
+								return;
+							}
+
+						} else {
+							resetUEs = true;
+						}
+						resetDueToMultiHaltStreams = true;
+					}
+
+				} catch (Exception e) {
+					report.report("interrupted in SamepleResultsStatusOk method in Traffic Class -" + e.getMessage());
+					e.printStackTrace();
+					report.report("Error during test", Reporter.FAIL);
+					resetDueToMultiHaltStreams = true;
+					exceptionThrown = true;
+				}finally{
+					GeneralUtils.stopLevel();
+				}
+			}
+			
 		}
 		// check if more then 30% of streams are halted
 		addSamplesToListOfStreamList(sampleArrayList);
 		streams = null;
 		streams = new ArrayList<StreamParams>();
 	}
-	
-	protected void addSamplesToListOfStreamList(ArrayList<ArrayList<StreamParams>> sampleArrayList){
-		for(ArrayList<StreamParams> sample : sampleArrayList){
+
+	protected void addSamplesToListOfStreamList(ArrayList<ArrayList<StreamParams>> sampleArrayList) {
+		for (ArrayList<StreamParams> sample : sampleArrayList) {
 			this.listOfStreamList.add(sample);
 		}
 	}
@@ -872,8 +893,8 @@ public class TPTBase extends TestspanTest {
 	}
 
 	/**
-	 * traverse halted streams list, extracting UE name :"UEx" updating ues in
-	 * test Ue list.
+	 * traverse halted streams list, extracting UE name :"UEx" updating ues in test
+	 * Ue list.
 	 * 
 	 * @author Shahaf Shuhamy
 	 * @param haltedStreams
@@ -906,7 +927,7 @@ public class TPTBase extends TestspanTest {
 
 	/**
 	 * @author Shahaf Shuhamy sample ports and streams to "streams" list
-	 * @return 
+	 * @return
 	 * @throws Exception
 	 */
 	protected ArrayList<ArrayList<StreamParams>> samplePortsAndStreamsFromSTC() throws Exception {
@@ -915,8 +936,8 @@ public class TPTBase extends TestspanTest {
 	}
 
 	/**
-	 * @author Shahaf Shuhamy checking if there are Streams with 0 Sample in
-	 *         order to re-Sample.
+	 * @author Shahaf Shuhamy checking if there are Streams with 0 Sample in order
+	 *         to re-Sample.
 	 * @param streams2
 	 * @return
 	 */
@@ -930,8 +951,8 @@ public class TPTBase extends TestspanTest {
 	}
 
 	/**
-	 * @author Shahaf Shuhamy checking if the streamHalted param is in a group
-	 *         of more then 30% then sum of all streams.
+	 * @author Shahaf Shuhamy checking if the streamHalted param is in a group of
+	 *         more then 30% then sum of all streams.
 	 * @param ArrayList<StreamParams>
 	 *            haltedStreams
 	 * @param StreamParams
@@ -965,8 +986,8 @@ public class TPTBase extends TestspanTest {
 	}
 
 	/**
-	 * @author Shahaf Shuhamy checking the stream halt Threashold according to
-	 *         the List
+	 * @author Shahaf Shuhamy checking the stream halt Threashold according to the
+	 *         List
 	 * @param haltedStreams
 	 * @return
 	 */
@@ -978,9 +999,9 @@ public class TPTBase extends TestspanTest {
 	}
 
 	/**
-	 * @author Shahaf Shuhamy prints port tabels with StreamList Class print
-	 *         tables per stream with StreamList Class print Debug Stream Tables
-	 *         with StreamList Class Comparing results to calculator file.
+	 * @author Shahaf Shuhamy prints port tabels with StreamList Class print tables
+	 *         per stream with StreamList Class print Debug Stream Tables with
+	 *         StreamList Class Comparing results to calculator file.
 	 * @param passCriteria
 	 */
 	protected void AfterTest(double passCriteria) {
@@ -988,6 +1009,7 @@ public class TPTBase extends TestspanTest {
 		printDLandULAverageTableAndCounters();
 		terminateWatchDog();
 		// stop traffic
+		report.report("Stop traffic");
 		trafficSTC.stopTraffic();
 
 		// Do after Test Things
@@ -1000,7 +1022,7 @@ public class TPTBase extends TestspanTest {
 			printPerStreamTables(listOfStreamList);
 
 			try {
-				GeneralUtils.printToConsole("print Results state : "+printResultsForTest);
+				GeneralUtils.printToConsole("print Results state : " + printResultsForTest);
 				if (printResultsForTest) {
 					compareWithCalculator(debugPrinter, listOfStreamList, passCriteria);
 				}
@@ -1008,28 +1030,30 @@ public class TPTBase extends TestspanTest {
 				e.printStackTrace();
 				report.report("Failed to get Pass criteria Values", Reporter.FAIL);
 			}
-			
+
 		}
 		trafficSTC.addResultFilesToReport("");
 	}
 
-	private void printDLandULCounters(List<Integer> ulConters,List<Integer> dlCounters) {
+	private void printDLandULCounters(List<Integer> ulConters, List<Integer> dlCounters) {
 		int averageDlCounter = 0;
 		int averageUlCounter = 0;
 		averageUlCounter = getAverageFromSingleList(ulConters);
 		averageDlCounter = getAverageFromSingleList(dlCounters);
-		if((averageDlCounter > 3)|| (averageUlCounter > 5)){
-			report.report("DownLink PER : "+averageDlCounter+", UpLink CRC : "+averageUlCounter,Reporter.WARNING);
-		}else{
-			report.report("DownLink PER : "+averageDlCounter+", UpLink CRC : "+averageUlCounter);
+		if ((averageDlCounter > 3) || (averageUlCounter > 5)) {
+			report.report("DownLink PER : " + averageDlCounter + ", UpLink CRC : " + averageUlCounter,
+					Reporter.WARNING);
+		} else {
+			report.report("DownLink PER : " + averageDlCounter + ", UpLink CRC : " + averageUlCounter);
 		}
 	}
-	
-	private int getAverageFromSingleList(List<Integer> list){
+
+	private int getAverageFromSingleList(List<Integer> list) {
 		int sum = 0;
-		if (list.size() == 0 ) return 0;
+		if (list.size() == 0)
+			return 0;
 		GeneralUtils.printAList(list);
-		for(Integer singleNumber : list){
+		for (Integer singleNumber : list) {
 			sum += singleNumber;
 		}
 		return sum / list.size();
@@ -1038,11 +1062,11 @@ public class TPTBase extends TestspanTest {
 	protected void setAllUEsToStart() {
 		report.report("starting all UES");
 		ArrayList<UE> allUEs = SetupUtils.getInstance().getAllUEs();
-		for(UE ue : allUEs){
+		for (UE ue : allUEs) {
 			ue.start();
 		}
 	}
-	
+
 	private void validateRadioProfile() {
 		try {
 			radioParams.getCalculatorString(streamsMode);
@@ -1089,6 +1113,7 @@ public class TPTBase extends TestspanTest {
 		StreamList TablePrinter = new StreamList();
 		ArrayList<String> headLines = new ArrayList<String>();
 		headLines.add("L1bitRate[Mbit/s]");
+		GeneralUtils.startLevel("Per Stream Tables");
 		for (ArrayList<StreamParams> streams : listOfStreamList) {
 			for (StreamParams stream : streams) {
 				ArrayList<String> valuesList = new ArrayList<String>();
@@ -1100,6 +1125,7 @@ public class TPTBase extends TestspanTest {
 		for (StreamParams stream : listOfStreamList.get(0)) {
 			report.reportHtml(stream.getName(), TablePrinter.printTablesHtmlForStream(stream.getName()), true);
 		}
+		GeneralUtils.stopLevel();
 	}
 
 	/**
@@ -1119,33 +1145,35 @@ public class TPTBase extends TestspanTest {
 		compareResultsWithCalculator(debugPrinter, listUlAndDl.get(0), listUlAndDl.get(1), passCriteria);
 	}
 
-//	private double passCriteriaGet(){
-//		TestConfig tc = TestConfig.getInstace();
-//		String passCri = tc.getpassCriteriaTPT();
-//		GeneralUtils.printToConsole("trying to parse criteria value from SUT: "+passCri+" to Double Value");
-//		try{
-//			Double doubleValue = Double.parseDouble(passCri);
-//			if(doubleValue >=1 && doubleValue <= 100){
-//				doubleValue /= 100.0;
-//				return doubleValue;
-//			}
-//			
-//			if((doubleValue > 100) || (doubleValue == 0)){
-//				report.report("SUT passCriteria value is not legal - insert a number between 1-100, using default Test Value");
-//				return 0;
-//			}
-//			
-//			return doubleValue;
-//		}catch(Exception e){
-//			GeneralUtils.printToConsole("Can not parse value to Double - return 0");
-//			return 0;
-//		}
-//	}
-	
+	// private double passCriteriaGet(){
+	// TestConfig tc = TestConfig.getInstace();
+	// String passCri = tc.getpassCriteriaTPT();
+	// GeneralUtils.printToConsole("trying to parse criteria value from SUT:
+	// "+passCri+" to Double Value");
+	// try{
+	// Double doubleValue = Double.parseDouble(passCri);
+	// if(doubleValue >=1 && doubleValue <= 100){
+	// doubleValue /= 100.0;
+	// return doubleValue;
+	// }
+	//
+	// if((doubleValue > 100) || (doubleValue == 0)){
+	// report.report("SUT passCriteria value is not legal - insert a number between
+	// 1-100, using default Test Value");
+	// return 0;
+	// }
+	//
+	// return doubleValue;
+	// }catch(Exception e){
+	// GeneralUtils.printToConsole("Can not parse value to Double - return 0");
+	// return 0;
+	// }
+	// }
+
 	/**
-	 * @author Shahaf Shuhamy creating a file to send to CalculatorMesurments
-	 *         Class creating object from CalculatorMesurments class comparing
-	 *         results and printing Test Results to reporter.
+	 * @author Shahaf Shuhamy creating a file to send to CalculatorMesurments Class
+	 *         creating object from CalculatorMesurments class comparing results and
+	 *         printing Test Results to reporter.
 	 * @param debugPrinter
 	 * @param uLrxTotal
 	 * @param dlrxTotal
@@ -1162,24 +1190,24 @@ public class TPTBase extends TestspanTest {
 		String[] dlul = getCalculatorPassCriteria(radioParams);
 		double dl = Double.parseDouble(dlul[0]);
 		double ul = Double.parseDouble(dlul[1]);
-		
-		if (dut instanceof Ninja)
-		{
+
+		if (dut instanceof Ninja) {
 			passCriteria = 0.95;
 			dl = portsLoadPair.getElement0();
 			ul = portsLoadPair.getElement1();
 		}
-		
-		if(this.protocol == Protocol.TCP){
-			dl = 0.9*dl;
-			ul = 0.9*ul;			
+
+		if (this.protocol == Protocol.TCP) {
+			dl = 0.9 * dl;
+			ul = 0.9 * ul;
 		}
-		
-//		Double passCeriteriaCandidate = passCriteriaGet();//TestConfig criteria parameter overload ALL passCriterias
-//		if(passCeriteriaCandidate != 0){
-//			passCriteria = passCeriteriaCandidate;
-//			GeneralUtils.printToConsole("OverAll pass criteria : "+passCriteria);
-//		}
+
+		// Double passCeriteriaCandidate = passCriteriaGet();//TestConfig criteria
+		// parameter overload ALL passCriterias
+		// if(passCeriteriaCandidate != 0){
+		// passCriteria = passCeriteriaCandidate;
+		// GeneralUtils.printToConsole("OverAll pass criteria : "+passCriteria);
+		// }
 
 		int numberOfCells = enbConfig.getNumberOfActiveCells(dut);
 		printPortSummeryBeforeTestEnds(debugPrinter, uLrxTotal, dlrxTotal);
@@ -1190,37 +1218,34 @@ public class TPTBase extends TestspanTest {
 		double ulPassCriteria = ul;
 		double dlPassCriteria = dl;
 		numberOfCellsStr = String.valueOf(numberOfCells);
-		
+
 		if (!streamsMode.equals("PTP")) {
-			dlPassCriteria = dl  * numberOfCells;
-			ulPassCriteria = ul  * numberOfCells;
-		}		
-		
+			dlPassCriteria = dl * numberOfCells;
+			ulPassCriteria = ul * numberOfCells;
+		}
+
 		if (isCaTest) {
-			if(streamsMode.equals("PTP")){
-				dlPassCriteria = dl  * numberOfCells;
+			if (streamsMode.equals("PTP")) {
+				dlPassCriteria = dl * numberOfCells;
 			}
 			numberOfCellsStr = "CA";
 		}
-		
-		if (use_Expected_DL){
-			dlPassCriteria = modifyAndPortLinkAndPrint(dlPassCriteria,portsLoadPair.getElement0(),this.Expected_DL);
-		}
-		else{
- 			dlPassCriteria *= passCriteria;
- 			report.report("DL Threshold : " + passCriteria * 100 + "%");
 
+		if (use_Expected_DL) {
+			dlPassCriteria = modifyAndPortLinkAndPrint(dlPassCriteria, portsLoadPair.getElement0(), this.Expected_DL);
+		} else {
+			dlPassCriteria *= passCriteria;
+			report.report("DL Threshold : " + passCriteria * 100 + "%");
 
 		}
- 		if (use_Expected_UL){
- 			ulPassCriteria = modifyAndPortLinkAndPrint(ulPassCriteria,portsLoadPair.getElement1(),this.Expected_UL);
- 		}
- 		else{
- 			ulPassCriteria *= passCriteria;
- 			report.report("UL Threshold : " + passCriteria * 100 + "%");
- 		}
- 		
- 		//print results
+		if (use_Expected_UL) {
+			ulPassCriteria = modifyAndPortLinkAndPrint(ulPassCriteria, portsLoadPair.getElement1(), this.Expected_UL);
+		} else {
+			ulPassCriteria *= passCriteria;
+			report.report("UL Threshold : " + passCriteria * 100 + "%");
+		}
+
+		// print results
 		String upRate = String.format("%.2f", ul_Divided_With_Number_Of_Streams);
 		String calcUpRate = String.format("%.2f", ulPassCriteria);
 		String downRate = String.format("%.2f", dl_Divided_With_Number_Of_Streams);
@@ -1233,23 +1258,27 @@ public class TPTBase extends TestspanTest {
 				String.valueOf(ul_Divided_With_Number_Of_Streams));
 
 		if (ul_Divided_With_Number_Of_Streams < ulPassCriteria) {
-			report.report("UL : Expected: "+ calcUpRate+"[Mbps] , Actual : "+longToString3DigitFormat(uLrxTotal / listOfStreamList.size()) +"[Mbps]", Reporter.FAIL);
+			report.report("UL : Expected: " + calcUpRate + "[Mbps] , Actual : "
+					+ longToString3DigitFormat(uLrxTotal / listOfStreamList.size()) + "[Mbps]", Reporter.FAIL);
 		} else {
-			report.report("UL : Expected: "+ calcUpRate+"[Mbps] , Actual : "+longToString3DigitFormat(uLrxTotal / listOfStreamList.size()) +"[Mbps]");
+			report.report("UL : Expected: " + calcUpRate + "[Mbps] , Actual : "
+					+ longToString3DigitFormat(uLrxTotal / listOfStreamList.size()) + "[Mbps]");
 		}
 
 		if (dl_Divided_With_Number_Of_Streams < dlPassCriteria) {
-			report.report("DL : Expected: "+calcDownRate+"[Mbps], Actual : "+longToString3DigitFormat(dlrxTotal / listOfStreamList.size())+"[Mbps]", Reporter.FAIL);
+			report.report("DL : Expected: " + calcDownRate + "[Mbps], Actual : "
+					+ longToString3DigitFormat(dlrxTotal / listOfStreamList.size()) + "[Mbps]", Reporter.FAIL);
 		} else {
-			report.report("DL : Expected: "+calcDownRate+"[Mbps], Actual : "+longToString3DigitFormat(dlrxTotal / listOfStreamList.size())+"[Mbps]");
+			report.report("DL : Expected: " + calcDownRate + "[Mbps], Actual : "
+					+ longToString3DigitFormat(dlrxTotal / listOfStreamList.size()) + "[Mbps]");
 		}
 		reason = "Exp - UL: " + calcUpRate + "Mbps" + " DL: " + calcDownRate + "Mbps<br>";
 		reason += "Act - UL: " + upRate + "Mbps" + " DL: " + downRate + "Mbps";
-		
-		createHTMLTableWithResults(ul_Divided_With_Number_Of_Streams,ulPassCriteria,dl_Divided_With_Number_Of_Streams,dlPassCriteria,portsLoadPair.getElement0(),portsLoadPair.getElement1());
+
+		createHTMLTableWithResults(ul_Divided_With_Number_Of_Streams, ulPassCriteria, dl_Divided_With_Number_Of_Streams,
+				dlPassCriteria, portsLoadPair.getElement0(), portsLoadPair.getElement1());
 	}
 
-	
 	private String[] getCalculatorPassCriteria(RadioParameters radioParams) {
 		String calculatorStringKey = ParseRadioProfileToString(radioParams);
 		if (calculatorStringKey == null) {
@@ -1257,78 +1286,82 @@ public class TPTBase extends TestspanTest {
 		}
 		CalculatorMap calcMap = new CalculatorMap();
 		String dl_ul = calcMap.getPassCriteria(calculatorStringKey);
-		return dl_ul.split("_"); 
-}
+		return dl_ul.split("_");
+	}
 
-	private void createHTMLTableWithResults(Double actualUl,Double expectedUL ,Double actualDl,Double expectedDL, Double injectedDL, Double injectedUL) {
+	private void createHTMLTableWithResults(Double actualUl, Double expectedUL, Double actualDl, Double expectedDL,
+			Double injectedDL, Double injectedUL) {
 		ArrayList<String> results = new ArrayList<String>();
 		results.add("Injected [Mbps]");
 		results.add("Pass Criteria");
 		results.add("Actual");
-		
+
 		results.add("UL");
-		results.add(String.format("%.2f",injectedUL));
-		results.add(String.format("%.2f",expectedUL));
-		results.add(String.format("%.2f",actualUl));
-		
+		results.add(String.format("%.2f", injectedUL));
+		results.add(String.format("%.2f", expectedUL));
+		results.add(String.format("%.2f", actualUl));
+
 		results.add("DL");
-		results.add(String.format("%.2f",injectedDL));
-		results.add(String.format("%.2f",expectedDL));
-		results.add(String.format("%.2f",actualDl));
-		
+		results.add(String.format("%.2f", injectedDL));
+		results.add(String.format("%.2f", expectedDL));
+		results.add(String.format("%.2f", actualDl));
+
 		GeneralUtils.HtmlTable table = new HtmlTable();
-		//Head Line
+		// Head Line
 		table.addNewColumn(results.get(0));
 		table.addNewColumn(results.get(1));
 		table.addNewColumn(results.get(2));
-		//2nd Line
+		// 2nd Line
 		table.addNewRow(results.get(3));
-		table.addField(HtmlFieldColor.WHITE,results.get(4));
+		table.addField(HtmlFieldColor.WHITE, results.get(4));
 		table.addField(HtmlFieldColor.WHITE, results.get(5));
 		HtmlFieldColor line2Result = HtmlFieldColor.WHITE;
-		if(actualUl >= expectedUL){
+		if (actualUl >= expectedUL) {
 			line2Result = HtmlFieldColor.GREEN;
-		}else{
+		} else {
 			line2Result = HtmlFieldColor.RED;
 		}
 		table.addField(line2Result, results.get(6));
-		//3rd Line
+		// 3rd Line
 		table.addNewRow(results.get(7));
-		table.addField(HtmlFieldColor.WHITE,results.get(8));
+		table.addField(HtmlFieldColor.WHITE, results.get(8));
 		table.addField(HtmlFieldColor.WHITE, results.get(9));
 		HtmlFieldColor line3Result = HtmlFieldColor.WHITE;
-		if(actualDl >= expectedDL){
+		if (actualDl >= expectedDL) {
 			line3Result = HtmlFieldColor.GREEN;
-		}else{
+		} else {
 			line3Result = HtmlFieldColor.RED;
 		}
 		table.addField(line3Result, results.get(10));
 		table.reportTable("");
 	}
 
-	private double modifyAndPortLinkAndPrint(double calculatorPassWithSysModi,double systemLoadWithModifications,double expectedPassCriteriaPercent) {
+	private double modifyAndPortLinkAndPrint(double calculatorPassWithSysModi, double systemLoadWithModifications,
+			double expectedPassCriteriaPercent) {
 		Double systemLoadWithCustomPercent = 0.0;
 		Double result = 0.0;
-		String calculationOne = "System Current Load For port : "+String.format("%.2f",systemLoadWithModifications);
-		systemLoadWithCustomPercent = systemLoadWithModifications * (expectedPassCriteriaPercent/100.0);
-		String calculationTwo = "System load * custom JSystem Parameter = "+String.format("%.2f",systemLoadWithCustomPercent);
+		String calculationOne = "System Current Load For port : " + String.format("%.2f", systemLoadWithModifications);
+		systemLoadWithCustomPercent = systemLoadWithModifications * (expectedPassCriteriaPercent / 100.0);
+		String calculationTwo = "System load * custom JSystem Parameter = "
+				+ String.format("%.2f", systemLoadWithCustomPercent);
 		String conclusion;
-		
+
 		result = systemLoadWithCustomPercent;
-		conclusion = "Pass Criteria : "+String.format("%.2f",systemLoadWithCustomPercent);
-		if(systemLoadWithCustomPercent >= calculatorPassWithSysModi){
-			conclusion = "System Load : "+String.format("%.2f",systemLoadWithCustomPercent) +" , Maximum Capacity : "+String.format("%.2f",systemLoadWithModifications) +" => Pass Criteria will be : "+
-					String.format("%.2f",calculatorPassWithSysModi);
+		conclusion = "Pass Criteria : " + String.format("%.2f", systemLoadWithCustomPercent);
+		if (systemLoadWithCustomPercent >= calculatorPassWithSysModi) {
+			conclusion = "System Load : " + String.format("%.2f", systemLoadWithCustomPercent)
+					+ " , Maximum Capacity : " + String.format("%.2f", systemLoadWithModifications)
+					+ " => Pass Criteria will be : " + String.format("%.2f", calculatorPassWithSysModi);
 			result = calculatorPassWithSysModi;
 		}
-		
+
 		GeneralUtils.startLevel(conclusion);
 		report.report(calculationOne);
 		report.report(calculationTwo);
 		GeneralUtils.stopLevel();
-		
+
 		return result;
-		
+
 	}
 
 	protected String ParseRadioProfileToString(RadioParameters radioParams2) {
@@ -1340,8 +1373,8 @@ public class TPTBase extends TestspanTest {
 	}
 
 	/**
-	 * @author Shahaf Shuhamy printing a simple table with the Test Summary
-	 *         Results of Rx Ul and DL
+	 * @author Shahaf Shuhamy printing a simple table with the Test Summary Results
+	 *         of Rx Ul and DL
 	 * @param debugPrinter
 	 * @param ulrxTotal
 	 * @param dlrxTotal
@@ -1378,10 +1411,10 @@ public class TPTBase extends TestspanTest {
 
 	/**
 	 * @author Moran Goldenberg
-	 * @param temp 
+	 * @param temp
 	 */
-	protected void printDLandULAverageTableAndCounters(){
-		if(DLULwd == null){
+	protected void printDLandULAverageTableAndCounters() {
+		if (DLULwd == null) {
 			report.report("no Table for UL and DL avrage counters.");
 			return;
 		}
@@ -1395,44 +1428,42 @@ public class TPTBase extends TestspanTest {
 		int percent = 0;
 		for (String sample : DLULwd.getDlCounterSum().keySet()) {
 			HtmlFieldColor color = HtmlFieldColor.WHITE;
-			if (DLULwd.getDlCounters().get(sample) != null){
-				percent = (DLULwd.getDlCounters().get(sample)*100)/DLULwd.getGeneralCounter();
-				if (percent > 50){
+			if (DLULwd.getDlCounters().get(sample) != null) {
+				percent = (DLULwd.getDlCounters().get(sample) * 100) / DLULwd.getGeneralCounter();
+				if (percent > 50) {
 					htmlTable.addNewRow(sample);
-					if (DLULwd.getDlCounterSum().get(sample) != null || DLULwd.getDlCounterSum().get(sample) != 0 ){
-						result = DLULwd.getDlCounterSum().get(sample)/DLULwd.getDlCounters().get(sample);
+					if (DLULwd.getDlCounterSum().get(sample) != null || DLULwd.getDlCounterSum().get(sample) != 0) {
+						result = DLULwd.getDlCounterSum().get(sample) / DLULwd.getDlCounters().get(sample);
 						dlCounters.add(result);
-						value = ""+ result;
-					}
-					else 
+						value = "" + result;
+					} else
 						value = "-999";
 				}
 
-			}
-			else 
+			} else
 				value = "-999";
 			htmlTable.addField(color, value);
 			color = HtmlFieldColor.WHITE;
-			if (DLULwd.getUlCounters().get(sample) != null){
-				percent = (DLULwd.getUlCounters().get(sample)*100)/DLULwd.getGeneralCounter();
-				if (percent > 50){
-					if (DLULwd.getUlCounterSum().get(sample) != null){
-						result = DLULwd.getUlCounterSum().get(sample)/DLULwd.getUlCounters().get(sample);
+			if (DLULwd.getUlCounters().get(sample) != null) {
+				percent = (DLULwd.getUlCounters().get(sample) * 100) / DLULwd.getGeneralCounter();
+				if (percent > 50) {
+					if (DLULwd.getUlCounterSum().get(sample) != null) {
+						result = DLULwd.getUlCounterSum().get(sample) / DLULwd.getUlCounters().get(sample);
 						value = "" + result;
 						ulCounters.add(result);
-					}	
-					else 
-						value = "-999";;
+					} else
+						value = "-999";
+					;
 				}
-			}
-			else 
+			} else
 				value = "-999";
 			htmlTable.addField(color, value);
 			color = HtmlFieldColor.WHITE;
 		}
 		htmlTable.reportTable("DL PER and UL CRC Average Table");
-		printDLandULCounters(ulCounters,dlCounters);
+		printDLandULCounters(ulCounters, dlCounters);
 	}
+
 	/**
 	 * @author Moran Goldenberg
 	 */
@@ -1444,7 +1475,7 @@ public class TPTBase extends TestspanTest {
 		wd.removeCommand(DLULwd);
 		wd.shutDown();
 	}
-	
+
 	/**
 	 * Summering the ArrayList to get Long Minimum and maximum Values
 	 * 
@@ -1517,7 +1548,7 @@ public class TPTBase extends TestspanTest {
 		}
 		try {
 			GraphAdder.AddGraph(String.format("%s %s", testName, dut.getNetspanName()), "Time Stamp / Sec", "RX / Mb",
-					ulRx, dlRx, Time, isQci9,true);
+					ulRx, dlRx, Time, isQci9, true);
 			isQci9 = false;
 		} catch (IOException e) {
 			GeneralUtils.printToConsole(e.getMessage());
@@ -1574,8 +1605,8 @@ public class TPTBase extends TestspanTest {
 	}
 
 	/**
-	 * formatting long type number to #.## string number after dividing in
-	 * 1000000.0 to get double value.
+	 * formatting long type number to #.## string number after dividing in 1000000.0
+	 * to get double value.
 	 * 
 	 * @author Shahaf Shuhamy
 	 * @param number
@@ -1634,16 +1665,16 @@ public class TPTBase extends TestspanTest {
 	 * @throws Exception
 	 */
 
-	public ArrayList<UE> getUES(EnodeB enb, int count){
+	public ArrayList<UE> getUES(EnodeB enb, int count) {
 		ArrayList<UE> tempUes = SetupUtils.getInstance().getallUEsPerEnodeb(dut);
-		ArrayList<UE> cat6UES = (ArrayList<UE>) tempUes.stream().filter(ue -> ue.getUeCategory() == 6).collect(Collectors.toList());
-		ArrayList<UE> cat4UES = (ArrayList<UE>) tempUes.stream().filter(ue -> ue.getUeCategory() == 4).collect(Collectors.toList());
-		
+		ArrayList<UE> cat6UES = (ArrayList<UE>) tempUes.stream().filter(ue -> ue.getUeCategory() == 6)
+				.collect(Collectors.toList());
+		ArrayList<UE> cat4UES = (ArrayList<UE>) tempUes.stream().filter(ue -> ue.getUeCategory() == 4)
+				.collect(Collectors.toList());
+
 		if (isCaTest) {
 			return (ArrayList<UE>) cat6UES.stream().limit(count).collect(Collectors.toList());
-		}
-		else
-		{			
+		} else {
 			if (cat4UES.size() >= count) {
 				return (ArrayList<UE>) cat4UES.stream().limit(count).collect(Collectors.toList());
 			}
@@ -1655,58 +1686,58 @@ public class TPTBase extends TestspanTest {
 		}
 	}
 
-	public ArrayList<UE> getUES(EnodeB enb){
-		if (isCaTest) 
-			return SetupUtils.getInstance().getCat6UEsPerEnodeB(dut);		
+	public ArrayList<UE> getUES(EnodeB enb) {
+		if (isCaTest)
+			return SetupUtils.getInstance().getCat6UEsPerEnodeB(dut);
 		else
 			return SetupUtils.getInstance().getallUEsPerEnodeb(dut);
-		}
-	
+	}
+
 	@ParameterProperties(description = "load in precent from the calculator value")
- 	public void setLoad_UL(String load_UL) {
- 		use_Load_UL = !load_UL.trim().equals("");
- 		if(use_Load_UL) {
- 			this.Load_UL = Integer.valueOf(load_UL);
- 		}
- 	}
-	
- 	@ParameterProperties(description = "load in precent from the calculator value")
- 	public void setLoad_DL(String load_DL) {
- 		use_Load_DL = !load_DL.trim().equals("");
- 		if(use_Load_DL) {
- 			this.Load_DL = Integer.valueOf(load_DL);
- 		}
- 	}
- 	
- 	@ParameterProperties(description = "Expected value in precent from the calculator value")
- 	public void setExpected_UL(String expected_UL) {
- 		use_Expected_UL = !expected_UL.trim().equals("");
- 		if(use_Expected_UL) {
- 			this.Expected_UL = Double.valueOf(expected_UL);
- 		}
- 	}
- 	
- 	@ParameterProperties(description = "Expected value in precent from the calculator value")
- 	public void setExpected_DL(String expected_DL) {
- 		use_Expected_DL = !expected_DL.trim().equals("");
- 		if(use_Expected_DL) {
- 			this.Expected_DL = Double.valueOf(expected_DL);
- 		}
- 	}
- 	
- 	@ParameterProperties(description = "Test runtime in minutes")
- 	public void setRunTime(String runTime) {
- 		use_Runtime = !runTime.trim().equals("");
- 		if(use_Runtime) {
- 			this.RunTime = Integer.valueOf(runTime);
- 		}
- 	}
- 	
- 	protected long setTime(long defaultTime) {
- 		long time = defaultTime;
- 		if(use_Runtime) {
- 			time = RunTime * 60 * 1000;
- 		}
- 		return time;
- 	}
+	public void setLoad_UL(String load_UL) {
+		use_Load_UL = !load_UL.trim().equals("");
+		if (use_Load_UL) {
+			this.Load_UL = Integer.valueOf(load_UL);
+		}
+	}
+
+	@ParameterProperties(description = "load in precent from the calculator value")
+	public void setLoad_DL(String load_DL) {
+		use_Load_DL = !load_DL.trim().equals("");
+		if (use_Load_DL) {
+			this.Load_DL = Integer.valueOf(load_DL);
+		}
+	}
+
+	@ParameterProperties(description = "Expected value in precent from the calculator value")
+	public void setExpected_UL(String expected_UL) {
+		use_Expected_UL = !expected_UL.trim().equals("");
+		if (use_Expected_UL) {
+			this.Expected_UL = Double.valueOf(expected_UL);
+		}
+	}
+
+	@ParameterProperties(description = "Expected value in precent from the calculator value")
+	public void setExpected_DL(String expected_DL) {
+		use_Expected_DL = !expected_DL.trim().equals("");
+		if (use_Expected_DL) {
+			this.Expected_DL = Double.valueOf(expected_DL);
+		}
+	}
+
+	@ParameterProperties(description = "Test runtime in minutes")
+	public void setRunTime(String runTime) {
+		use_Runtime = !runTime.trim().equals("");
+		if (use_Runtime) {
+			this.RunTime = Integer.valueOf(runTime);
+		}
+	}
+
+	protected long setTime(long defaultTime) {
+		long time = defaultTime;
+		if (use_Runtime) {
+			time = RunTime * 60 * 1000;
+		}
+		return time;
+	}
 }

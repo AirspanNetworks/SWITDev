@@ -5,15 +5,51 @@
 	<parent>
 		<groupId>airspan.testspan.jsystem</groupId>
 		<artifactId>airspan.testspan.jsystem.parent</artifactId>
-		<version>1.21.9</version>
+		<version>1.21.36</version>
 		<relativePath>../airspan.testspan.jsystem.parent</relativePath>
 	</parent>
 
 	<dependencies>
+	<!-- javaX websocket start here -->
 		<dependency>
 			<groupId>javax.websocket</groupId>
 			<artifactId>javax.websocket-client-api</artifactId>
 			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.tyrus</groupId>
+			<artifactId>tyrus-client</artifactId>
+			<version>1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.tyrus</groupId>
+			<artifactId>tyrus-container-grizzly</artifactId>
+			<version>1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.json</groupId>
+			<artifactId>javax.json-api</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish</groupId>
+			<artifactId>javax.json</artifactId>
+			<version>1.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>2.9.4</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+			<version>2.9.4</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.9.4</version>
 		</dependency>
 		<!-- agend start here -->
 		<dependency>

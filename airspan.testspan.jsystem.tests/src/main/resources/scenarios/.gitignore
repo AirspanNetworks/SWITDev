@@ -1,0 +1,24 @@
+/default.properties
+/default.xml
+/OrenTest.properties
+/OrenTest.xml
+/Oren.properties
+/Oren.xml
+/TestVolte.properties
+/TestVolte.xml
+/TestOtdoa_Gaby.properties
+/TestOtdoa_Gaby.xml
+/RegressionP1OneSide_16_0.properties
+/RegressionP1OneSide_16_0.xml
+/EmergencyCalls.xml
+/Regression_test_Alex.properties
+/Regression_test_Alex.xml
+<<<<<<< HEAD
+/FullSanityNoUpgrade.properties
+/FullSanityNoUpgrade.xml
+/TestOOS_Gaby.properties
+/TestOOS_Gaby.xml
+=======
+>>>>>>> refs/heads/Oren
+/amarisoft.properties
+/amarisoft.xml

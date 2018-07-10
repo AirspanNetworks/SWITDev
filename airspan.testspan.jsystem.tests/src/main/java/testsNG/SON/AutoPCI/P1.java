@@ -5,12 +5,17 @@ import java.util.List;
 import org.junit.Test;
 
 import EnodeB.EnodeB;
+import Netspan.EnbProfiles;
 import Netspan.API.Enums.EnabledDisabledStates;
 import Netspan.API.Lte.RFStatus;
 import Netspan.API.Lte.SONStatus;
 import Utils.GeneralUtils;
+import Utils.Pair;
+import Utils.GeneralUtils.CellIndex;
 import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
+import testsNG.Actions.Neighbors;
+import testsNG.PerformanceAndQos.ExpectedBehavior.OOS.Progression;
 
 public class P1 extends AutoPCIBase {
 
@@ -87,11 +92,13 @@ public class P1 extends AutoPCIBase {
 		int interEarfcn = testConfig.getInterEarfcn();
 		int defaultEarfcn = testConfig.getDefaultEarfcn();
 		if (dut.getEarfcn() != interEarfcn) {
-			report.report(dut.getName() + " Earfcn is different from expected " + interEarfcn + ". stop test", Reporter.FAIL);
+			report.report(dut.getName() + " Earfcn is different from expected " + interEarfcn + ". stop test",
+					Reporter.FAIL);
 			return;
 		}
 		changeTxPowerViaNms(14);
-		configureInitListSizeOnEnbAdvancedConfigurationProfile(START_POWER_ADVANCED_PROFILE, 1, 20, 100, EnabledDisabledStates.ENABLED, 2);
+		configureInitListSizeOnEnbAdvancedConfigurationProfile(START_POWER_ADVANCED_PROFILE, 1, 20, 100,
+				EnabledDisabledStates.ENABLED, 2);
 
 		configureOnlyANRtoEnableViaNms(interEarfcn, defaultEarfcn);
 
@@ -112,14 +119,13 @@ public class P1 extends AutoPCIBase {
 		readerSONStatus = status.getSONStatus(dut);
 		printSONStatus(readerSONStatus, "Automatic");
 		boolean equalsPciStart = readerSONStatus.PCICells.get(0).physicalCellId.equals(pciStart);
-		boolean equalsPciStartPlus1 = readerSONStatus.PCICells.get(0).physicalCellId.equals(pciStart+1);
-		
+		boolean equalsPciStartPlus1 = readerSONStatus.PCICells.get(0).physicalCellId.equals(pciStart + 1);
+
 		if (equalsPciStart || equalsPciStartPlus1) {
-			report.report("PCI: " + readerSONStatus.PCICells.get(0).physicalCellId + ", as expected.");			
-		}
-		else {
-			report.report("PCI: " + readerSONStatus.PCICells.get(0).physicalCellId + "(Should be "+pciStart+" or "+(pciStart+1)+")",
-					Reporter.FAIL);
+			report.report("PCI: " + readerSONStatus.PCICells.get(0).physicalCellId + ", as expected.");
+		} else {
+			report.report("PCI: " + readerSONStatus.PCICells.get(0).physicalCellId + "(Should be " + pciStart + " or "
+					+ (pciStart + 1) + ")", Reporter.FAIL);
 			reason = "Enb did not get PCI from Initial Pci List Size";
 		}
 
@@ -127,7 +133,8 @@ public class P1 extends AutoPCIBase {
 
 		waitForGetTxPowerFromNetspan(10 * 1000 * 60);
 
-		GeneralUtils.startLevel("Verify Tx power is starting from 'low power' and every interval Tx is raising by a step");
+		GeneralUtils
+				.startLevel("Verify Tx power is starting from 'low power' and every interval Tx is raising by a step");
 		long timeOut = (15 * 1000 * 60);
 		long startTime = System.currentTimeMillis();
 		int txPowerIndex = 2;
@@ -161,8 +168,10 @@ public class P1 extends AutoPCIBase {
 
 		readerSONStatus = status.getSONStatus(dut);
 		printSONStatus(readerSONStatus, "Automatic");
-		if (readerSONStatus.PCICells.get(0).physicalCellId != pciStart+2) {
-			report.report("PCI: " + readerSONStatus.PCICells.get(0).physicalCellId + "(Should be "+(pciStart+2)+")", Reporter.FAIL);
+		if (readerSONStatus.PCICells.get(0).physicalCellId != pciStart + 2) {
+			report.report(
+					"PCI: " + readerSONStatus.PCICells.get(0).physicalCellId + "(Should be " + (pciStart + 2) + ")",
+					Reporter.FAIL);
 			reason = "Enb did not end with a right PCI number";
 		}
 
@@ -184,5 +193,50 @@ public class P1 extends AutoPCIBase {
 	@TestProperties(name = "Verify_Auto_PCI_Functionality_As_Auto_RSI_And_ANR_Are_Enabled", returnParam = {
 			"IsTestWasSuccessful" }, paramsExclude = { "IsTestWasSuccessful" })
 	public void verifyAutoPciFunctionalityAsAutoRsiAndAnrAreEnabled() {
+	}
+
+	/**
+	 * OOS Expected - Simulate a collision with one of the cells and no available
+	 * PCI in the range
+	 */
+	@Test
+	@TestProperties(name = "Simulate AutoPci collision and no available PCI in the range - OOS Expected on one of the cells.", returnParam = {
+			"IsTestWasSuccessful" }, paramsInclude = { "DUT" })
+	public void verifyOosBehaviorAfterPciCollisionAndNoAvailablePciInTheRange() {
+		Progression prog = new Progression();
+		if (enodeBConfig.getNumberOfActiveCells(dut) > 1) {
+			prog.initObjects();
+			prog.initDmToolAndcheckUEsConnection(dut);
+			Neighbors ngh = Neighbors.getInstance();
+			
+			CellIndex collisionCellIndex = causePciCollisionWithOneOfTheCellsByAutoPci(dut); 
+			if(collisionCellIndex == null){
+				return;
+			}
+			
+			prog.checkForOutOfServiceBehavior(dut, collisionCellIndex);
+
+			// if(dut.getNumberOfActiveCells() > 1){ //for supporting single cell too - if
+			// in the future we will need to.
+			CellIndex otherCellIndex = collisionCellIndex == CellIndex.FORTY ? CellIndex.FORTY_ONE : CellIndex.FORTY;
+			prog.checkForInServiceBehavior(dut, otherCellIndex);
+			prog.closeDmTools();
+			if (netspanServer != null && !netspanServer.deleteNeighbor(dut, neighbor)) {
+				report.report("Delete Neighbor " + neighbor.getNetspanName() + " with netspan failed",
+						Reporter.WARNING);
+			}
+			ngh.delete3rdParty(neighbor.getNetspanName());
+			// }
+			enodeBConfig.setProfile(dut, EnbProfiles.Son_Profile, dut.defaultNetspanProfiles.getSON());
+			enodeBConfig.deleteClonedProfiles();
+			dut.reboot();
+			
+			report.report("Waiting For All Running.");
+			dut.waitForAllRunning(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);
+		} else {
+			report.report("TEST for MC eNodeB, but NumberOfActiveCells=" + enodeBConfig.getNumberOfActiveCells(dut),
+					Reporter.WARNING);
+		}
+
 	}
 }

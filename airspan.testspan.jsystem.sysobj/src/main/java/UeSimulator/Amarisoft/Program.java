@@ -9,11 +9,16 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import UE.AmarisoftUE;
+import UE.UE;
 import UeSimulator.Amarisoft.JsonObjects.Actions.UEAction;
 import UeSimulator.Amarisoft.JsonObjects.Actions.UEAction.Actions;
 import UeSimulator.Amarisoft.JsonObjects.ConfigFile.Cell;
 import UeSimulator.Amarisoft.JsonObjects.ConfigFile.SimEvent;
 import UeSimulator.Amarisoft.JsonObjects.ConfigFile.UeList;
+import UeSimulator.Amarisoft.JsonObjects.Status.CellStatus;
+import UeSimulator.Amarisoft.JsonObjects.Status.CellsWrapper;
+import UeSimulator.Amarisoft.JsonObjects.Status.ConfigGet;
 import UeSimulator.Amarisoft.JsonObjects.Status.UeStatus;
 import jsystem.framework.GeneralEnums;
 import systemobject.terminal.SSH;
@@ -43,13 +48,40 @@ public class Program {
 //			e2.printStackTrace();
 //		} // start server
 		//clientEndPoint = new AmariSoftServer("192.168.58.91", "9002", "root", "SWITswit");
-
 		//clientEndPoint.setConfig();
 		//clientEndPoint.setConfigFile("1UE_CA_UDP_SWIT24");
 		try
 		{
 		//clientEndPoint.startServer();
-		
+			AmariSoftServer a = new AmariSoftServer();
+			a.easyInit();
+			a.startServer("automationConfigFile");
+			ConfigGet s = a.getConfig();
+			CellsWrapper cellWrapper = s.getCells();
+			ArrayList<CellStatus> cells = new ArrayList<>();
+			if (cellWrapper.getCell0() != null) {
+				cells.add(cellWrapper.getCell0());
+			}
+			if (cellWrapper.getCell1() != null) {
+				cells.add(cellWrapper.getCell1());
+			}
+			if (cellWrapper.getCell2() != null) {
+				cells.add(cellWrapper.getCell2());
+			}
+			if (cellWrapper.getCell3() != null) {
+				cells.add(cellWrapper.getCell3());
+			}
+			
+			for (CellStatus cellStatus : cells) {
+				System.out.println(cellStatus.getDlEarfcn());
+				System.out.println(cellStatus.getMode());
+				System.out.println(cellStatus.getNRbDl());
+				System.out.println(cellStatus.getNRbUl());
+				System.out.println(cellStatus.getPci());
+				System.out.println(cellStatus.getSpConfig());
+				System.out.println(cellStatus.getUl_earfcnn());
+				System.out.println(cellStatus.getUldlConfig());
+			}
 		
 		//sleep(20000);
 		//clientEndPoint.startIperfServer(1, 9);
@@ -66,56 +98,53 @@ public class Program {
 //		}
 
 		// add listener
-		clientEndPoint.addMessageHandler(new AmariSoftServer.MessageHandler() {
-			public void handleMessage(String message) {
-				System.out.println("Message recieved: " + message);
-				ObjectMapper mapper = new ObjectMapper();
-
-				// Convert JSON string to Object
-				UeStatus stat = null;
-				try {
-					stat = mapper.readValue(message, UeStatus.class);
-					Double ulRate = stat.getUeList().get(0).getUlBitrate() / 1000;
-					Double dlRate = stat.getUeList().get(0).getDlBitrate() / 1000;
-					String emmState = stat.getUeList().get(0).getEmmState();
-					int ueID = stat.getUeList().get(0).getUeId();
-					System.out.println("UE ID: " + ueID + "\tulRate (kbit): " + ulRate.intValue() + "\tdlRate (kbit): "
-							+ dlRate.intValue() + "\temmState:" + emmState);
-
-				} catch (JsonParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (JsonMappingException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-			}
-		});
-		String imsi = "20001000100";
-		int imsiEnd = 8300;
-		//clientEndPoint.AddUe(imsi + (imsiEnd ),13,6,2);
-//		for (int i = 2; i <= 100; i++) {			
-//			AddUe(imsi + (imsiEnd + i),13,6,i);
+//		clientEndPoint.addMessageHandler(new AmariSoftServer.MessageHandler() {
+//			public void handleMessage(String message) {
+//				System.out.println("Message recieved: " + message);
+//				ObjectMapper mapper = new ObjectMapper();
+//
+//				// Convert JSON string to Object
+//				UeStatus stat = null;
+//				try {
+//					stat = mapper.readValue(message, UeStatus.class);
+//					Double ulRate = stat.getUeList().get(0).getUlBitrate() / 1000;
+//					Double dlRate = stat.getUeList().get(0).getDlBitrate() / 1000;
+//					String emmState = stat.getUeList().get(0).getEmmState();
+//					int ueID = stat.getUeList().get(0).getUeId();
+//					System.out.println("UE ID: " + ueID + "\tulRate (kbit): " + ulRate.intValue() + "\tdlRate (kbit): "
+//							+ dlRate.intValue() + "\temmState:" + emmState);
+//
+//				} catch (JsonParseException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				} catch (JsonMappingException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				} catch (IOException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//
+//			}
+//		});
+//		String imsi = "20001000100";
+//		int imsiEnd = 8300;
+//		UE ue = new AmarisoftUE();
+//		for (int i = 2; i <= 21; i++) {			
+//			ue.setImsi(imsi + (imsiEnd +i ));
+//			clientEndPoint.addUe(ue, 13,6,i,0);
 //			sleep(100);
 //		}
-//		imsiEnd = 9000;
-//		for (int i = 2; i <= 157; i++) {			
-//			AddUe(imsi + (imsiEnd + i),13,6,99 + i);
+//		//imsiEnd = 9000;
+//		for (int i = 22; i <= 41; i++) {		
+//			ue.setImsi(imsi + (imsiEnd + i));
+//			clientEndPoint.addUe(ue, 13,6,i,1);
 //			sleep(100);
 //		}
-		for (int i = 1; i <= 64; i++) {				
-			clientEndPoint.uePowerOff(i);
-			sleep(100);
-		}	
-		sleep(10000);
-		for (int i = 1; i <= 64; i++) {				
-			clientEndPoint.uePowerOn(i);
-			sleep(100);
-		}	
+//		for (int i = 1; i <= 64; i++) {				
+//			clientEndPoint.uePowerOn(i);
+//			sleep(100);
+//		}	
 //		while (true){
 //			try {
 //				workUes(clientEndPoint);
@@ -133,9 +162,6 @@ public class Program {
 		catch (Exception e) {
 			System.out.println("Error: " + e.getMessage());
 		} 
-		finally {
-			clientEndPoint.closeSocket();
-		}
 	}
 
 	private static void workUes(AmariSoftServer clientEndPoint) throws JsonProcessingException {

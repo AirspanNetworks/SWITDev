@@ -154,6 +154,33 @@ public class UeSimulatorActions extends Action {
 	}
 	
 	@Test											
+	@TestProperties(name = "Delete UEs", returnParam = "LastStatus", paramsInclude = { "cellId", "NumUes"})
+	public void DeleteUes() {
+		boolean flag = false;
+		try {
+			report.report("Deleting " + numUes + " UEs, starting from UE: " + cellId);
+			AmariSoftServer amariSoftServer = AmariSoftServer.getInstance();
+
+			if (!amariSoftServer.isRunning()) {
+				report.report("Simulator is not working, cant delete UEs", Reporter.WARNING);
+			}
+			else{
+				flag = amariSoftServer.deleteUes(numUes, cellId);
+			}
+		} catch (Exception e) {
+			report.report("Error deleting Ues: " + e.getMessage(), Reporter.WARNING);
+			e.printStackTrace();
+		}
+
+		if (flag == false) {
+			report.report("Delete UEs Failed", Reporter.FAIL);
+		} else {
+			report.report("Delete UEs Succeeded");
+		}
+	}
+	
+	
+	@Test											
 	@TestProperties(name = "stop UE Simulator", returnParam = "LastStatus", paramsInclude = { })
 	public void stopUeSimulator() {
 		try {

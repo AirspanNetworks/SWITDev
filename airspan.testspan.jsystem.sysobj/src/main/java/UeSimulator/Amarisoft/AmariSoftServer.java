@@ -109,7 +109,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     	ip="192.168.58.91";
     	userName="root";
     	password = "SWITswit";
-    	port="9000";
+    	port="9002";
     	connect();
     	
     }
@@ -692,7 +692,40 @@ public class AmariSoftServer extends SystemObjectImpl{
 		unusedUes.remove(ueId);
 		return true;
 	}
-	
+	public boolean deleteUE(int ueId)
+	{
+		ObjectMapper mapper = new ObjectMapper();
+		UEAction getUE = new UEAction();
+		getUE.setUeId(ueId);
+		getUE.setMessage(Actions.UE_DELETE);
+		try {
+			sendSynchronizedMessage(mapper.writeValueAsString(getUE));
+		} catch (JsonProcessingException e) {
+			GeneralUtils.printToConsole("Failed to delete ue: " + ueId);
+			GeneralUtils.printToConsole(e.getMessage());
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	public boolean deleteUes(int amount, int cellId)
+	{
+		GeneralUtils.startLevel("deleting " + amount + " UEs from Amarisoft simulator.");
+		boolean result = true;
+		for (int i = 0; i < amount; i++) {
+			/*f (ueMap.size() <= 0) {
+				report.report("Failed deleting UE from simulator. " + i + " UEs were deleted out of " + amount + " requsted.", Reporter.WARNING);
+				return false;
+			}*/
+			//Object[] keys = unusedUes.keySet().toArray();
+			
+			//int ueId = (Integer)keys[0];
+			report.report("Deleting UE : " + cellId+i);
+			result = result && deleteUE(cellId + i);
+		}
+		GeneralUtils.stopLevel();
+		return result;
+	}
 	public boolean uePowerOn(int ueId)
 	{
 		UE ue = ueMap.get(ueId);

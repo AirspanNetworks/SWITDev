@@ -110,6 +110,7 @@ import Netspan.NBI_15_5.Status.LteIpThroughputGetResult;
 import Netspan.NBI_15_5.Status.LteIpThroughputQciWs;
 import Netspan.NBI_15_5.Status.LteSonAnrGetResult;
 import Netspan.NBI_15_5.Status.LteSonDynamicIcicUnmanagedInterferenceGetResult;
+import Netspan.NBI_15_5.Status.LteUeGetResult;
 import Netspan.NBI_15_5.Status.NodeGpsGetResult;
 import Netspan.NBI_15_5.Status.NodeStatusResultValues;
 import Netspan.Profiles.AccessBarringAdvanced;
@@ -2404,5 +2405,20 @@ public class NetspanServer_15_5 extends NetspanServer_15_2 implements Netspan_15
 		}
 		
 		return rebooted;
+	}
+	
+	@Override
+	public int getMaxUeSupported(EnodeB enb) {
+		int maxUeSupported = 0;
+		try{
+			LteUeGetResult result = soapHelper_15_5.getStatusSoap().enbConnectedUeStatusGet(enb.getNetspanName(),credentialsStatus);
+			if(result != null){			
+				maxUeSupported = result.getCell().get(0).getActualMaxUeSupported().getValue();
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		if(maxUeSupported <= 0){report.report("Failed to get Actual Max UE Supported Cell 1", Reporter.WARNING);}
+		return maxUeSupported;
 	}
 }

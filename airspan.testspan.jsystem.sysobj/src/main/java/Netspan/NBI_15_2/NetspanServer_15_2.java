@@ -4280,4 +4280,10 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
 		report.report("getImageType method is not implemented for this netspan(15_2)!");
 		return null;
 	}
+	
+	@Override
+	public int getMaxUeSupported(EnodeB enb) {
+		report.report("getMaxUeSupported method is not implemented for this netspan(15_2)!", Reporter.WARNING);
+		return 0;
+	}
 }

@@ -561,4 +561,6 @@ public abstract class NetspanServer extends SystemObjectImpl {
 	public abstract boolean resetNode(String nodeName, RebootType rebootType);
 
 	public abstract String getImageType(String nodeName);
+	
+	public abstract int getMaxUeSupported(EnodeB enb);
 }

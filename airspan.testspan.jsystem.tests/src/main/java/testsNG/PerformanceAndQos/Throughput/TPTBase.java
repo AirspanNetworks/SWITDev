@@ -30,6 +30,7 @@ import Utils.GeneralUtils;
 import Utils.GeneralUtils.HtmlFieldColor;
 import Utils.GeneralUtils.HtmlTable;
 import Utils.LteThroughputCalculator;
+import Utils.LteThroughputCalculator.ConfigurationEnum;
 import Utils.Pair;
 import Utils.SetupUtils;
 import Utils.StreamList;
@@ -1294,6 +1295,8 @@ public class TPTBase extends TestspanTest {
 			}
 			CalculatorMap calcMap = new CalculatorMap();
 			dl_ul = calcMap.getPassCriteria(calculatorStringKey);
+		}else{
+			report.report("Received pass criteria from new TPT calculator: "+dl_ul);
 		}
 		return dl_ul.split("_");
 	}

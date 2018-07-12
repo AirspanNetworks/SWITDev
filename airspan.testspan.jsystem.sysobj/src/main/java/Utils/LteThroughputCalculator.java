@@ -331,69 +331,32 @@ public class LteThroughputCalculator {
 	public String getPassCriteriaFromXmlLteThroughputCalculator(ChannelBandwidthEnum channelBandwidthEnum, DuplexEnum duplexEnum, FrameSplitEnum frameSplitEnum, 
 			SpecialSubframeEnum specialSubframeEnum, MultiplexingEnum multiplexingEnum, ConfigurationEnum configurationEnum, CfiEnum cfiEnum, MaxSupportedUEsEnum maxSupportedUEsEnum) throws Exception{
 		String dl_ul = null;
-		
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder builder = factory.newDocumentBuilder();
-		Document doc = builder.parse("resources/StaticXmlLteThroughputCalculatorGeneratedByAutomation.xml");
-		doc.getDocumentElement().normalize();
-		XPathFactory xPathfactory = XPathFactory.newInstance();
-		XPath xpath = xPathfactory.newXPath();
-		
-		String dlPassCriteriaXmlPath = generateXPathExpression(channelBandwidthEnum, duplexEnum, frameSplitEnum, specialSubframeEnum, multiplexingEnum, configurationEnum, cfiEnum, maxSupportedUEsEnum, TransmitDirectionEnum.DL);
-		String ulPassCriteriaXmlPath = generateXPathExpression(channelBandwidthEnum, duplexEnum, frameSplitEnum, specialSubframeEnum, multiplexingEnum, configurationEnum, cfiEnum, maxSupportedUEsEnum, TransmitDirectionEnum.UL);
+		try{
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			Document doc = builder.parse("resources/StaticXmlLteThroughputCalculatorGeneratedByAutomation.xml");
+			doc.getDocumentElement().normalize();
+			XPathFactory xPathfactory = XPathFactory.newInstance();
+			XPath xpath = xPathfactory.newXPath();
+			
+			String dlPassCriteriaXmlPath = generateXPathExpression(channelBandwidthEnum, duplexEnum, frameSplitEnum, specialSubframeEnum, multiplexingEnum, configurationEnum, cfiEnum, maxSupportedUEsEnum, TransmitDirectionEnum.DL);
+			String ulPassCriteriaXmlPath = generateXPathExpression(channelBandwidthEnum, duplexEnum, frameSplitEnum, specialSubframeEnum, multiplexingEnum, configurationEnum, cfiEnum, maxSupportedUEsEnum, TransmitDirectionEnum.UL);
 
-		XPathExpression findDL = xpath.compile(dlPassCriteriaXmlPath);
-		XPathExpression findUL = xpath.compile(ulPassCriteriaXmlPath);
-        
-		Double dl = (Double)findDL.evaluate(doc, XPathConstants.NUMBER);
-		Double ul = (Double)findUL.evaluate(doc, XPathConstants.NUMBER);
-		
-       /* XPathExpression findDL = xpExpression.compile(dlPassCriteriaXmlPath);
-        
-        XPathExpression findUL = xpExpression.compile(ulPassCriteriaXmlPath);*/
-
-		if(dl != null && ul != null && dl > 0 && ul > 0){
-			dl_ul = dl + "_" + ul;
-		}
-		
-		return dl_ul;
-		
-		/*try{
-			/*System.setProperty("javax.xml.xpath.XPathFactory:"+
-	                NamespaceConstant.OBJECT_MODEL_SAXON,
-	                "net.sf.saxon.xpath.XPathFactoryImpl");
-	
-	        XPathFactory xpFactory = XPathFactory.
-	                newInstance(NamespaceConstant.OBJECT_MODEL_SAXON);*/
-	        //XPath xpExpression = XPathFactory.newInstance().newXPath();
-	        //System.err.println("Loaded XPath Provider " + xpExpression.getClass().getName());
-	
-	        // Build the source document.
-	        /*InputSource inputSrc = new InputSource(new File("resources/XmlLteThroughputCalculator2222.xml").toURL().toString());
-	        SAXSource saxSrc = new SAXSource(inputSrc);
-	        Configuration config = XPathFactory.newInstance().getConfiguration();
-	        TreeInfo treeInfo = config.buildDocumentTree(saxSrc);
-	        // End Saxon specific code
-	        /////////////////////////////////////////////
-	
-	        String dlPassCriteriaXmlPath = generateXPathExpression(channelBandwidthEnum, duplexEnum, frameSplitEnum, specialSubframeEnum, multiplexingEnum, configurationEnum, cfiEnum, maxSupportedUEsEnum, TransmitDirectionEnum.DL);
-	        String ulPassCriteriaXmlPath = generateXPathExpression(channelBandwidthEnum, duplexEnum, frameSplitEnum, specialSubframeEnum, multiplexingEnum, configurationEnum, cfiEnum, maxSupportedUEsEnum, TransmitDirectionEnum.UL);
+			XPathExpression findDL = xpath.compile(dlPassCriteriaXmlPath);
+			XPathExpression findUL = xpath.compile(ulPassCriteriaXmlPath);
 	        
-	        XPathExpression findDL = xpExpression.compile(dlPassCriteriaXmlPath);
-	        Double dl = (Double)findDL.evaluate(treeInfo, XPathConstants.NUMBER);
-	        
-	        XPathExpression findUL = xpExpression.compile(ulPassCriteriaXmlPath);
-	        Double ul = (Double)findUL.evaluate(treeInfo, XPathConstants.NUMBER);
-	
+			Double dl = (Double)findDL.evaluate(doc, XPathConstants.NUMBER);
+			Double ul = (Double)findUL.evaluate(doc, XPathConstants.NUMBER);
+			
 			if(dl != null && ul != null && dl > 0 && ul > 0){
 				dl_ul = dl + "_" + ul;
 			}
 		}catch(Exception e){
 			e.printStackTrace();
-		}*/
-		
-		
+		}
+		return dl_ul;
 	}
+	
 	public String getPassCriteriaFromStaticLteThroughputCalculator(RadioParameters radioParams, ConfigurationEnum configuration,
 			int maxSupportedUEs, String multiplexing) {
 		String dl_ul = null;

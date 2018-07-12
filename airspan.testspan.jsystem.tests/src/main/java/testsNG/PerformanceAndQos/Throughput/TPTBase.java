@@ -1288,15 +1288,13 @@ public class TPTBase extends TestspanTest {
 			dl_ul = LteThroughputCalculator.getInstance().getPassCriteriaFromStaticLteThroughputCalculator(radioParams, ConfigurationEnum.USER, maxUeSupported, streamsMode);
 		}
 		if(dl_ul == null){
-			report.report("Failed to get Pass Criteria from LteThroughputCalculator.xlsx file, getting Pass Criteria form static chart.", Reporter.WARNING);
+			report.report("Failed to get Pass Criteria from StaticXmlLteThroughputCalculatorGeneratedByAutomation.xlsx file, getting Pass Criteria from static chart.", Reporter.WARNING);
 			String calculatorStringKey = ParseRadioProfileToString(radioParams);
 			if (calculatorStringKey == null) {
 				report.report("calculator key value is empty - fail test", Reporter.FAIL);
 			}
 			CalculatorMap calcMap = new CalculatorMap();
 			dl_ul = calcMap.getPassCriteria(calculatorStringKey);
-		}else{
-			report.report("Received pass criteria from new TPT calculator: "+dl_ul);
 		}
 		return dl_ul.split("_");
 	}

@@ -347,8 +347,8 @@ public class LteThroughputCalculator {
 	        
 			Double dl = (Double)findDL.evaluate(doc, XPathConstants.NUMBER);
 			Double ul = (Double)findUL.evaluate(doc, XPathConstants.NUMBER);
-			GeneralUtils.printToConsole("Value of element "+findDL+": "+dl);
-			GeneralUtils.printToConsole("Value of element "+findUL+": "+ul);
+			GeneralUtils.printToConsole("Value of element "+dlPassCriteriaXmlPath+": "+dl);
+			GeneralUtils.printToConsole("Value of element "+ulPassCriteriaXmlPath+": "+ul);
 			if(dl != null && ul != null && dl > 0 && ul > 0){
 				dl_ul = dl + "_" + ul;
 			}

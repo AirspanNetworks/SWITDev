@@ -1187,7 +1187,7 @@ public class TPTBase extends TestspanTest {
 			double passCriteria) throws IOException, InvalidFormatException {
 
 		if (runWithDynamicCFI)
-			radioParams.setCfi("2");
+			radioParams.setCfi("1");
 		String numberOfCellsStr = "1";
 		String[] dlul = getCalculatorPassCriteria(radioParams);
 		double dl = Double.parseDouble(dlul[0]);

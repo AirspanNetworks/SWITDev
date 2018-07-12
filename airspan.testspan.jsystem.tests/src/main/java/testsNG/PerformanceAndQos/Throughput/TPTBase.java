@@ -29,6 +29,7 @@ import UE.VirtualUE;
 import Utils.GeneralUtils;
 import Utils.GeneralUtils.HtmlFieldColor;
 import Utils.GeneralUtils.HtmlTable;
+import Utils.LteThroughputCalculator;
 import Utils.Pair;
 import Utils.SetupUtils;
 import Utils.StreamList;
@@ -1280,12 +1281,20 @@ public class TPTBase extends TestspanTest {
 	}
 
 	private String[] getCalculatorPassCriteria(RadioParameters radioParams) {
-		String calculatorStringKey = ParseRadioProfileToString(radioParams);
-		if (calculatorStringKey == null) {
-			report.report("calculator key value is empty - fail test", Reporter.FAIL);
+		String dl_ul = null;
+		int maxUeSupported = netspanServer.getMaxUeSupported(dut);
+		if(maxUeSupported > 0){
+			dl_ul = LteThroughputCalculator.getInstance().getPassCriteriaFromStaticLteThroughputCalculator(radioParams, ConfigurationEnum.USER, maxUeSupported, streamsMode);
 		}
-		CalculatorMap calcMap = new CalculatorMap();
-		String dl_ul = calcMap.getPassCriteria(calculatorStringKey);
+		if(dl_ul == null){
+			report.report("Failed to get Pass Criteria from LteThroughputCalculator.xlsx file, getting Pass Criteria form static chart.", Reporter.WARNING);
+			String calculatorStringKey = ParseRadioProfileToString(radioParams);
+			if (calculatorStringKey == null) {
+				report.report("calculator key value is empty - fail test", Reporter.FAIL);
+			}
+			CalculatorMap calcMap = new CalculatorMap();
+			dl_ul = calcMap.getPassCriteria(calculatorStringKey);
+		}
 		return dl_ul.split("_");
 	}
 

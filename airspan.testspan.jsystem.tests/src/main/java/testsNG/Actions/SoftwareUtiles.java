@@ -118,15 +118,25 @@ public class SoftwareUtiles {
             for (File file : files) {
                 GeneralUtils.printToConsole("Checking File:" + file.toString());
                 if (file.getName().contains("fsm")){
-                	if(file.getName().contains("swu")) {
-	                    FSMBuild = file.getName();
-	                    flagFSM = false;
-	                } else if (file.getName().contains("enc") && flagFSM) {
-	                    FSMBuild = file.getName();
-	                	flagFSM = false;	                	
-	                } else if (file.getName().contains("tar.gz") && flagFSM) {
-	                    FSMBuild = file.getName();
-	                }
+                	if(file.getName().contains("fsmv4")){
+                		if (file.getName().contains("enc") && flagFSM) {
+		                    FSMBuild = file.getName();
+		                	flagFSM = false;           	
+		                } else if (file.getName().contains("tar.gz") && flagFSM) {
+		                    FSMBuild = file.getName();
+		                }
+                	}
+                	else{
+	                	if(file.getName().contains("swu")) {
+		                    FSMBuild = file.getName();
+		                    flagFSM = false;
+		                } else if (file.getName().contains("enc") && flagFSM) {
+		                    FSMBuild = file.getName();
+		                	flagFSM = false;           	
+		                } else if (file.getName().contains("tar.gz") && flagFSM) {
+		                    FSMBuild = file.getName();
+		                }
+                	}
                 }else if (file.getName().contains("enodeb")) {
                 	if(file.getName().contains("swu")) {
 	                    XLPBuild = file.getName();
@@ -169,6 +179,13 @@ public class SoftwareUtiles {
 					break;
 				case FSM:
 					if(file.getName().contains("fsm") && file.getName().contains(fileType)){
+						FSMBuild = file.getName();
+						report.report("FSM Build Name is:" + FSMBuild);
+						return true;
+					}
+					break;
+				case FSMv4:
+					if(file.getName().contains("fsmv4") && file.getName().contains(fileType)){
 						FSMBuild = file.getName();
 						report.report("FSM Build Name is:" + FSMBuild);
 						return true;
@@ -477,7 +494,7 @@ public class SoftwareUtiles {
         	
             File destFile;
             File sourceFile;
-            if (component == EnodeB.Architecture.FSM) {
+            if (component == EnodeB.Architecture.FSM || component == EnodeB.Architecture.FSMv4) {
                 destFile = new File(destServer.getPath().toString() + File.separator + FSMBuild);
                 sourceFile = new File(sourceServer.getPath().toString() + File.separator + FSMBuild);
             }else{

@@ -24,11 +24,12 @@ public class UeSimulatorActions extends Action {
 	private int category = 4;
 	private int cellId = 1;
 	private int ueId;
+	private int amount;
 	private String IMSI;
 	private SelectionMethod selectionMethod = SelectionMethod.IMSI;
 	
 	public enum SelectionMethod{
-		IMSI, UEID, UENAME;
+		IMSI, UEID, UENAME, AMOUNT, GROUPNAME;
 	}
 	
 	@ParameterProperties(description = "UE Selection Method")
@@ -153,6 +154,46 @@ public class UeSimulatorActions extends Action {
 		}
 	}
 	
+	@Test											
+	@TestProperties(name = "delete UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = { "UeId", "IMSI", "UEs", "selectionMethod", "amount", "group name" })
+	public void deleteUes() {
+		boolean res = true;
+
+		try {
+			AmariSoftServer amariSoftServer = AmariSoftServer.getInstance();
+			int id;
+			switch (selectionMethod) {
+			case IMSI:
+				id = amariSoftServer.getUeId(IMSI);
+				res = amariSoftServer.uePowerOn(id);
+				break;
+
+			case UEID:
+				res = amariSoftServer.uePowerOn(ueId);
+				break;
+
+			case UENAME:
+				for (UE ue : ues) {
+					res &= ue.start();
+				}	
+			case AMOUNT:
+				amariSoftServer.deleteUes(amount);
+			/*case GROUPNAME:
+				amariSoftServer.deleteUes(groupName);*/
+				break;
+			}
+		} catch (Exception e) {
+			res = false;
+			report.report("Error trying to start UEs: " + e.getMessage(), Reporter.WARNING);
+			e.printStackTrace();
+		}
+		
+		if (res == false) {
+			report.report("start UEs Failed", Reporter.FAIL);
+		} else {
+			report.report("start UEs Succeeded");
+		}
+	}
 	@Test											
 	@TestProperties(name = "Delete UEs", returnParam = "LastStatus", paramsInclude = { "cellId", "NumUes"})
 	public void DeleteUes() {

@@ -116,6 +116,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 	
 	private void fillUeList() {
 		int ueId = 2;// start at 2 because amarisoft must start with atleast 1 UE.
+		String groupName;
 		unusedUes = new HashMap<>();
 		for (int i = 0; i < imsiStartList.length; i++) {
 			Long startImsi = new Long(imsiStartList[i]);
@@ -713,19 +714,55 @@ public class AmariSoftServer extends SystemObjectImpl{
 		GeneralUtils.startLevel("deleting " + amount + " UEs from Amarisoft simulator.");
 		boolean result = true;
 		for (int i = 0; i < amount; i++) {
-			/*f (ueMap.size() <= 0) {
+			 if(ueMap.size() <= 0) {
 				report.report("Failed deleting UE from simulator. " + i + " UEs were deleted out of " + amount + " requsted.", Reporter.WARNING);
 				return false;
-			}*/
+			}
 			//Object[] keys = unusedUes.keySet().toArray();
 			
 			//int ueId = (Integer)keys[0];
 			report.report("Deleting UE : " + cellId+i);
-			result = result && deleteUE(cellId + i);
+			boolean deleteUEResult = deleteUE(cellId + i);
+			if (deleteUEResult) {
+				ueMap.remove(cellId + i);
+				AmarisoftUE ue = new AmarisoftUE(cellId + i, this);
+				unusedUes.put(cellId + i, ue);
+				unusedUes.put(cellId + i, ue);
+			}
+			result = result && deleteUEResult;
 		}
 		GeneralUtils.stopLevel();
 		return result;
 	}
+	
+	public boolean deleteUes(int amount)
+	{
+		GeneralUtils.startLevel("deleting " + amount + " UEs from Amarisoft simulator.");
+		boolean result = true;
+		int deletedAmount = 0;
+		for(Integer ueNum: ueMap.keySet()) {
+			if (deletedAmount < amount) {
+				if (ueMap.containsKey(ueNum)) {
+					if (deleteUE(ueNum)) {
+						deletedAmount++;
+						ueMap.remove(ueNum);
+						AmarisoftUE ue = new AmarisoftUE(ueNum, this);
+						unusedUes.put(ueNum, ue);
+					}
+					else {
+						report.report("UE :" + ueMap.get(ueNum).getImsi() + " haven't been deleted from ue simulator");
+						result = false;
+					}
+				}
+			}
+			else {
+				break;
+			}
+		}
+		GeneralUtils.stopLevel();
+		return result;
+	}
+	
 	public boolean uePowerOn(int ueId)
 	{
 		UE ue = ueMap.get(ueId);

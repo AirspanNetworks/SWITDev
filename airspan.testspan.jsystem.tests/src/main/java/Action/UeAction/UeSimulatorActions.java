@@ -181,6 +181,8 @@ public class UeSimulatorActions extends Action {
 			/*case GROUPNAME:
 				amariSoftServer.deleteUes(groupName);*/
 				break;
+			default:
+				break;
 			}
 		} catch (Exception e) {
 			res = false;
@@ -355,7 +357,7 @@ public class UeSimulatorActions extends Action {
 	@Override
 	public void handleUIEvent(HashMap<String, Parameter> map, String methodName) throws Exception {
 
-		if (methodName.equals("startUes") || methodName.equals("stopUes")) {
+		if (methodName.equals("startUes") || methodName.equals("stopUes") || methodName.equals("deleteUes")) {
 			handleUIEventGetCounterValue(map, methodName);
 		}
 	}
@@ -364,6 +366,7 @@ public class UeSimulatorActions extends Action {
 		map.get("UeId").setVisible(false);
 		map.get("IMSI").setVisible(false);
 		map.get("UEs").setVisible(false);
+		map.get("Amount").setVisible(false);
 		
 		Parameter selectMethod = map.get("SelectionMethod");
 
@@ -379,7 +382,10 @@ public class UeSimulatorActions extends Action {
 		case UENAME:
 			map.get("UEs").setVisible(true);
 			break;
+		case AMOUNT:
+			map.get("Amount").setVisible(true);
 		}
+		
 	}
 	
 }

@@ -611,10 +611,17 @@ public class TPTBase extends TestspanTest {
 		}
 		if(dl_ul != null){
 			String[] toReturn = dl_ul.split("_");
-			Pair<Double,Double> response = Pair.createPair(Double.valueOf(toReturn[0])*1.1, Double.valueOf(toReturn[1])*1.1);
+			Double dl = Double.valueOf(toReturn[0])*1.1;
+			Double ul = Double.valueOf(toReturn[1])*1.1;
+			Pair<Double,Double> response = Pair.createPair(doubleTo2DigitsAfterPoint(dl), doubleTo2DigitsAfterPoint(ul));
 			return response;
 		}
 		return null;
+	}
+	
+	private Double doubleTo2DigitsAfterPoint(Double doub){
+		String toRet = new DecimalFormat("##.###").format(doub);
+		return Double.valueOf(toRet);
 	}
 	
 	private Pair<Double, Double> ConvertToNinjaValues(Pair<Double, Double> trafficValuPair) {

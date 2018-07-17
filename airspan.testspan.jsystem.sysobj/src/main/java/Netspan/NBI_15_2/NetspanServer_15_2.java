@@ -3832,6 +3832,9 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
 		case "AirVelocity":
 			hardwareCategory = HardwareCategory.AIR_VELOCITY;
 			break;
+		case "AirVelocityFemto":
+			hardwareCategory = HardwareCategory.AIR_VELOCITY_FEMTO;
+			break;
 		case "AirUnity":
 			hardwareCategory = HardwareCategory.AIR_UNITY;
 			break;

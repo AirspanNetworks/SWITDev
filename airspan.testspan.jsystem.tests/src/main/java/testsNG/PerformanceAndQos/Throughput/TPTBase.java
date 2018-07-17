@@ -620,7 +620,7 @@ public class TPTBase extends TestspanTest {
 	}
 	
 	private Double doubleTo2DigitsAfterPoint(Double doub){
-		String toRet = new DecimalFormat("##.###").format(doub);
+		String toRet = String.format("%.2f",doub);
 		return Double.valueOf(toRet);
 	}
 	

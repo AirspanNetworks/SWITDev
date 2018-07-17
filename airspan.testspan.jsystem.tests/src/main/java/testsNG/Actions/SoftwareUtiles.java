@@ -42,6 +42,7 @@ public class SoftwareUtiles {
      * the version that needs to be copied
      **/
     private String FSMBuild = "";
+    private String FSMv4Build = "";
     private String XLPBuild = "";
     /**
      * the source of the copy
@@ -113,17 +114,18 @@ public class SoftwareUtiles {
     public boolean setBuildFiles() {
         boolean flagXLP = true;
         boolean flagFSM = true;
+        boolean flagFSMv4 = true;
         try {
             File[] files = sourceServer.listFiles();
             for (File file : files) {
                 GeneralUtils.printToConsole("Checking File:" + file.toString());
                 if (file.getName().contains("fsm")){
                 	if(file.getName().contains("fsmv4")){
-                		if (file.getName().contains("enc") && flagFSM) {
-		                    FSMBuild = file.getName();
-		                	flagFSM = false;           	
-		                } else if (file.getName().contains("tar.gz") && flagFSM) {
-		                    FSMBuild = file.getName();
+                		if (file.getName().contains("enc") && flagFSMv4) {
+		                    FSMv4Build = file.getName();
+		                	flagFSMv4 = false;           	
+		                } else if (file.getName().contains("tar.gz") && flagFSMv4) {
+		                    FSMv4Build = file.getName();
 		                }
                 	}
                 	else{
@@ -149,12 +151,13 @@ public class SoftwareUtiles {
                 }
             }
             report.report("FSM Build Name is:" + FSMBuild);
+            report.report("FSMv4 Build Name is:" + FSMv4Build);
             report.report("XLP Build Name is:" + XLPBuild);
         } catch (Exception e) {
         	report.report("The Path provided does not contain the relevant files", Reporter.WARNING);
             reason = Pair.createPair("The Path provided does not contain the relevant files", Reporter.WARNING);
         }
-        return !(FSMBuild.equals("") && XLPBuild.equals(""));
+        return !(FSMBuild.equals("") && FSMv4Build.equals("") && XLPBuild.equals(""));
     }
     
     /**

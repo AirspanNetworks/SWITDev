@@ -750,7 +750,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 						deletedAmount++;
 						ueMap.remove(ueNum);
 						AmarisoftUE ue = new AmarisoftUE(ueNum, this);
-						report.report("UE : " + ueNum + " ( " + ue.getLanIpAddress() + " ) was deleted");
+						report.report("UE : " + ueNum + " ( " + ue.getImsi() + " ) was deleted");
 						unusedUes.put(ueNum, ue);
 					}
 					else {

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Stack;
@@ -98,7 +99,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 		super.init();
 		port = 900 + sdrList[0];
     	connect();
-
+    	
     	ueMap = new HashMap<>();
     	sdrCellsMap = new HashMap<>();
     	fillUeList();
@@ -740,19 +741,24 @@ public class AmariSoftServer extends SystemObjectImpl{
 		GeneralUtils.startLevel("deleting " + amount + " UEs from Amarisoft simulator.");
 		boolean result = true;
 		int deletedAmount = 0;
-		for(Integer ueNum: ueMap.keySet()) {
+		Iterator key = ueMap.keySet().iterator();
+		int ueNum = ueMap.entrySet().iterator().next().getKey();
+		while(key.hasNext()) {
 			if (deletedAmount < amount) {
 				if (ueMap.containsKey(ueNum)) {
 					if (deleteUE(ueNum)) {
 						deletedAmount++;
 						ueMap.remove(ueNum);
 						AmarisoftUE ue = new AmarisoftUE(ueNum, this);
+						report.report("UE : " + ueNum + " ( " + ue.getLanIpAddress() + " ) was deleted");
 						unusedUes.put(ueNum, ue);
 					}
 					else {
 						report.report("UE :" + ueMap.get(ueNum).getImsi() + " haven't been deleted from ue simulator");
 						result = false;
+						
 					}
+					ueNum++;
 				}
 			}
 			else {

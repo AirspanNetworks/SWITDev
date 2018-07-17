@@ -55,8 +55,11 @@ public class Program {
 		//clientEndPoint.startServer();
 			AmariSoftServer a = new AmariSoftServer();
 			a.easyInit();
-			a.startServer("automationConfigFile");
-			ConfigGet s = a.getConfig();
+			a.startServer("128UE_SC_SWIT24");
+			a.deleteUes(2);
+			a.stopServer();
+			//a.startServer("automationConfigFile");
+			/*ConfigGet s = a.getConfig();
 			CellsWrapper cellWrapper = s.getCells();
 			ArrayList<CellStatus> cells = new ArrayList<>();
 			if (cellWrapper.getCell0() != null) {
@@ -81,7 +84,7 @@ public class Program {
 				System.out.println(cellStatus.getSpConfig());
 				System.out.println(cellStatus.getUl_earfcnn());
 				System.out.println(cellStatus.getUldlConfig());
-			}
+			}*/
 		
 		//sleep(20000);
 		//clientEndPoint.startIperfServer(1, 9);

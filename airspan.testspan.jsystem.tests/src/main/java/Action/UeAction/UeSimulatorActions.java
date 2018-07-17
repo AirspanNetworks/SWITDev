@@ -24,12 +24,11 @@ public class UeSimulatorActions extends Action {
 	private int category = 4;
 	private int cellId = 1;
 	private int ueId;
-	private int amount;
 	private String IMSI;
 	private SelectionMethod selectionMethod = SelectionMethod.IMSI;
 	
 	public enum SelectionMethod{
-		IMSI, UEID, UENAME, AMOUNT, GROUPNAME;
+		IMSI, UEID, UENAME, AMOUNT;
 	}
 	
 	@ParameterProperties(description = "UE Selection Method")
@@ -50,7 +49,7 @@ public class UeSimulatorActions extends Action {
 		this.IMSI = IMSI;
 	}
 	
-	@ParameterProperties(description = "number of UEs to add, default = 1")
+	@ParameterProperties(description = "number of UEs to add/delete, default = 1")
 	public void setNumUes(String numUes) {
 		try {
 			this.numUes = Integer.valueOf(numUes);
@@ -155,7 +154,7 @@ public class UeSimulatorActions extends Action {
 	}
 	
 	@Test											
-	@TestProperties(name = "delete UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = { "UeId", "IMSI", "UEs", "selectionMethod", "amount", "group name" })
+	@TestProperties(name = "delete UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = { "UeId", "IMSI", "UEs", "selectionMethod", "NumUes"})
 	public void deleteUes() {
 		boolean res = true;
 
@@ -176,39 +175,39 @@ public class UeSimulatorActions extends Action {
 				for (UE ue : ues) {
 					res &= ue.start();
 				}	
-			case AMOUNT:
-				amariSoftServer.deleteUes(amount);
-			/*case GROUPNAME:
-				amariSoftServer.deleteUes(groupName);*/
 				break;
+			case AMOUNT:
+				amariSoftServer.deleteUes(numUes);
+				break;
+			//case GROUPNAME:
+				//amariSoftServer.deleteUes(groupName);
+				//break;
 			default:
 				break;
 			}
 		} catch (Exception e) {
 			res = false;
-			report.report("Error trying to start UEs: " + e.getMessage(), Reporter.WARNING);
+			report.report("Error trying to delete UEs: " + e.getMessage(), Reporter.WARNING);
 			e.printStackTrace();
 		}
 		
 		if (res == false) {
-			report.report("start UEs Failed", Reporter.FAIL);
+			report.report("delete UEs Failed", Reporter.FAIL);
 		} else {
-			report.report("start UEs Succeeded");
+			report.report("delete UEs Succeeded");
 		}
 	}
-	@Test											
-	@TestProperties(name = "Delete UEs", returnParam = "LastStatus", paramsInclude = { "cellId", "NumUes"})
-	public void DeleteUes() {
+
+	private void deleteUes(int amount) {
 		boolean flag = false;
 		try {
-			report.report("Deleting " + numUes + " UEs, starting from UE: " + cellId);
 			AmariSoftServer amariSoftServer = AmariSoftServer.getInstance();
 
 			if (!amariSoftServer.isRunning()) {
 				report.report("Simulator is not working, cant delete UEs", Reporter.WARNING);
 			}
 			else{
-				flag = amariSoftServer.deleteUes(numUes, cellId);
+				flag = amariSoftServer.deleteUes(amount);
 			}
 		} catch (Exception e) {
 			report.report("Error deleting Ues: " + e.getMessage(), Reporter.WARNING);
@@ -357,8 +356,11 @@ public class UeSimulatorActions extends Action {
 	@Override
 	public void handleUIEvent(HashMap<String, Parameter> map, String methodName) throws Exception {
 
-		if (methodName.equals("startUes") || methodName.equals("stopUes") || methodName.equals("deleteUes")) {
+		if (methodName.equals("startUes") || methodName.equals("stopUes")) {
 			handleUIEventGetCounterValue(map, methodName);
+		}
+		if (methodName.equals("deleteUes")) {
+			handleUIEventDeleteFunc(map, methodName);
 		}
 	}
 	
@@ -366,7 +368,31 @@ public class UeSimulatorActions extends Action {
 		map.get("UeId").setVisible(false);
 		map.get("IMSI").setVisible(false);
 		map.get("UEs").setVisible(false);
-		map.get("Amount").setVisible(false);
+		
+		Parameter selectMethod = map.get("SelectionMethod");
+
+		switch (SelectionMethod.valueOf(selectMethod.getValue().toString())) {
+		case IMSI:
+			map.get("IMSI").setVisible(true);
+			break;
+
+		case UEID:
+			map.get("UeId").setVisible(true);
+			break;
+
+		case UENAME:
+			map.get("UEs").setVisible(true);
+			break;
+		default:
+			break;
+		}
+		
+	}
+	private void handleUIEventDeleteFunc(HashMap<String, Parameter> map, String methodName) {
+		map.get("UeId").setVisible(false);
+		map.get("IMSI").setVisible(false);
+		map.get("UEs").setVisible(false);
+		map.get("NumUes").setVisible(false);
 		
 		Parameter selectMethod = map.get("SelectionMethod");
 
@@ -383,7 +409,7 @@ public class UeSimulatorActions extends Action {
 			map.get("UEs").setVisible(true);
 			break;
 		case AMOUNT:
-			map.get("Amount").setVisible(true);
+			map.get("NumUes").setVisible(true);
 		}
 		
 	}

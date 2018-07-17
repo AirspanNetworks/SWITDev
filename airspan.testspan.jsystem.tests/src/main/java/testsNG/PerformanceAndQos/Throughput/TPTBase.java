@@ -238,6 +238,12 @@ public class TPTBase extends TestspanTest {
 		GeneralUtils.startLevel("Radio Parameters Initialize:");
 		try {
 			radioParams = enbConfig.getRadioProfile(dut);
+			if (runWithDynamicCFI){
+				radioParams.setCfi("1");
+				report.report("Running with Dynamic CFI");
+			}
+			int maxUeSupported = netspanServer.getMaxUeSupported(dut);
+			report.report("Number of max UE supported according to netspan: "+maxUeSupported);
 			GeneralUtils.printToConsole(radioParams.getCalculatorString(streamsMode));
 		} catch (Exception e) {
 			report.report("Error: " + e.getMessage());
@@ -576,14 +582,17 @@ public class TPTBase extends TestspanTest {
 		CalculatorMap calc = new CalculatorMap();
 
 		Pair<Double, Double> trafficValuPair;
-		try {
-			trafficValuPair = calc.getDLandULconfiguration(radioParams);
-		} catch (Exception e) {
-			trafficValuPair = null;
-			e.printStackTrace();
+		trafficValuPair = getLoadsFromXml(radioParams);
+		if(trafficValuPair == null){
+			try {
+				trafficValuPair = calc.getDLandULconfiguration(radioParams);
+			} catch (Exception e) {
+				trafficValuPair = null;
+				e.printStackTrace();
+			}			
 		}
 
-		if (dut instanceof Ninja)
+		if (dut instanceof Ninja && trafficValuPair != null)
 			trafficValuPair = ConvertToNinjaValues(trafficValuPair);
 
 		if (trafficValuPair != null) {
@@ -593,6 +602,21 @@ public class TPTBase extends TestspanTest {
 		return trafficValuPair;
 	}
 
+	private Pair<Double,Double> getLoadsFromXml(RadioParameters radio){
+		String dl_ul = null;
+		int maxUeSupported = netspanServer.getMaxUeSupported(dut);
+		
+		if(maxUeSupported > 0){
+			dl_ul = LteThroughputCalculator.getInstance().getPassCriteriaFromStaticLteThroughputCalculator(radioParams, ConfigurationEnum.USER, maxUeSupported, streamsMode);
+		}
+		if(dl_ul != null){
+			String[] toReturn = dl_ul.split("_");
+			Pair<Double,Double> response = Pair.createPair(Double.valueOf(toReturn[0])*1.1, Double.valueOf(toReturn[1])*1.1);
+			return response;
+		}
+		return null;
+	}
+	
 	private Pair<Double, Double> ConvertToNinjaValues(Pair<Double, Double> trafficValuPair) {
 
 		Pair<Double, Double> pair = new Pair<Double, Double>(trafficValuPair.getElement0() * 0.95 / 1.1,

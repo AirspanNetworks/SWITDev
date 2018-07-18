@@ -1112,17 +1112,17 @@ public class SoftwareUtiles {
 				}
 
 				String fsmBuild = "";
-				if (fsmBuildFileName != null) {
+				if (fsmBuildFileName != null && !fsmBuildFileName.equals("")) {
 					fsmBuild = fsmBuildFileName.substring(fsmBuildFileName.indexOf(".") + 1);
 					fsmBuild = fsmBuild.substring(0, fsmBuild.indexOf("."));
 				}
 				String fsmv4Build = "";
-				if (fsmv4BuildFileName != null) {
+				if (fsmv4BuildFileName != null && !fsmv4BuildFileName.equals("")) {
 					fsmv4Build = fsmv4BuildFileName.substring(fsmv4BuildFileName.indexOf(".") + 1);
 					fsmv4Build = fsmv4Build.substring(0, fsmv4Build.indexOf("."));
 				}
 				String xlpBuild = "";
-				if (xlpBuildFileName != null) {
+				if (xlpBuildFileName != null && !xlpBuildFileName.equals("")) {
 					xlpBuild = xlpBuildFileName.substring(xlpBuildFileName.indexOf(".") + 1);
 					xlpBuild = xlpBuild.substring(0, xlpBuild.indexOf("."));
 				}

@@ -114,6 +114,7 @@ public class CustomerCLI extends TestspanTest{
 			buffer = sendCommand("show banks\n");
 			ssh.disconnect();
 			report.report("checking if ' # Welcome to Airspan CLI # ' is in CLI.");
+			reportMultiLineMessage(buffer);
 			return buffer.contains("# Welcome to Airspan CLI #");	
 		}catch(Exception e) {
 			e.printStackTrace();

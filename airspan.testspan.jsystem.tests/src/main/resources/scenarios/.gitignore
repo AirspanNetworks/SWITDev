@@ -34,3 +34,7 @@
 /TestScpFail.xml
 /TestTptCliTime_Gaby.properties
 /TestTptCliTime_Gaby.xml
+/Regression_P0_15_50.properties
+/Regression_P0_15_50.xml
+/Regression_WO_FC_P0_15_50_noSW.properties
+/Regression_WO_FC_P0_15_50_noSW.xml

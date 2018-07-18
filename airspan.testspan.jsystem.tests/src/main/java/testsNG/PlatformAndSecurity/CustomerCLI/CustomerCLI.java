@@ -174,7 +174,7 @@ public class CustomerCLI extends TestspanTest{
 		String result="";
 		try {
 		ssh.sendString(command, true);
-		GeneralUtils.unSafeSleep(2*1000);
+		GeneralUtils.unSafeSleep(1*1000);
 		result = ssh.readInputBuffer();
 		}catch(Exception e) {
 			e.printStackTrace();

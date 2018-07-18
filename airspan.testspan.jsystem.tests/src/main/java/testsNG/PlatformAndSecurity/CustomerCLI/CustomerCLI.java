@@ -149,9 +149,17 @@ public class CustomerCLI extends TestspanTest{
 			ssh.connect();
 			result = sendCommand(command);
 			result = cutResponseWithFilter(result,">>");
-			String debugResult = result.substring(0,123);
+			int len = result.length();
+			String debugResult = "";
 			
-			GeneralUtils.startLevel("response : "+debugResult+".....");
+			if(len>124){
+				debugResult = result.substring(0,123);
+				GeneralUtils.startLevel("response: "+debugResult+".....");
+			}else{
+				debugResult = result;
+				GeneralUtils.startLevel("response: "+debugResult);
+			}
+			
 			reportMultiLineMessage(result);
 			GeneralUtils.stopLevel();
 			

@@ -178,12 +178,13 @@ public class TPTBase extends TestspanTest {
 			report.report("There is no attenuator set ");
 		}
 		changeOtherENBsToOOS();
-		getRadioProfile();
 
 		if (runWithDynamicCFI)
 			enbConfig.enableDynamicCFI(this.dut);
 		else
 			enbConfig.disableDynamicCFI(this.dut);
+		
+		getRadioProfile();
 
 		printResultsForTest = true;
 		resetTestBol = false;

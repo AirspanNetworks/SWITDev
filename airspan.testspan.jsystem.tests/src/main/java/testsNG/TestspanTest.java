@@ -147,7 +147,7 @@ public class TestspanTest extends SystemTestCase4 {
 				unexpectedInScenario = new HashMap<String, Integer>();
 			}
 			GeneralUtils.printToConsole(String.format("Creating log files for test for eNondeB %s", eNodeB.getName()));
-
+			eNodeB.setUnexpectedReboot(0);
 			Logger[] loggers = eNodeB.getLoggers();
 			for (Logger logger : loggers) {
 				logger.startLog(String.format("%s_%s", getMethodName(), logger.getParent().getName()));

@@ -3902,7 +3902,7 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
 				NodeSoftwareStatus softwareStatus = result.getNodeSoftwareStatus().get(0).getSoftwareStatus().get(i);
 				if((numberOfSoftwareStatus == 1) || (imageType == null) || imageType.value().equals(softwareStatus.getImageType())){
 					newsoftwareStatus = new SoftwareStatus();
-					newsoftwareStatus.ImageType = softwareStatus.getImageType() == "Combined LTE + Relay" ? ImageType.AirDensity.value() : softwareStatus.getImageType();
+					newsoftwareStatus.ImageType = softwareStatus.getImageType().equals("Combined LTE + Relay") ? ImageType.AirDensity.value() : softwareStatus.getImageType();
 					newsoftwareStatus.RunningVersion = softwareStatus.getRunningVersion();
 					newsoftwareStatus.StandbyVersion = softwareStatus.getStandbyVersion();
 					newsoftwareStatus.LastRequested = softwareStatus.getLastRequested();

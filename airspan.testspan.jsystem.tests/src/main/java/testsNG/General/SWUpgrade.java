@@ -116,9 +116,14 @@ public class SWUpgrade extends TestspanTest {
 		
 		softwareUtiles.waitForAllRunningAndInService(softwareActivateStartTimeInMili, eNodebSwStausList);
 		
-		if(!softwareUtiles.validateRunningVersion(eNodebSwStausList)){
-			isPass = false;
-		}
+		isPass = softwareUtiles.validateRunningVersion(eNodebSwStausList);
+        if(isPass){        	
+        	report.addProperty("SoftwareUpgradeType", SWUpgradeConnectionMethod.Netspan.toString());
+        	report.report("SW upgrade test passed successfully");
+        }else{
+        	report.report("One or more of the enodeBs hasn't been updated", Reporter.FAIL);
+        	reason += "One or more of the enodeBs hasn't been updated";
+        }
     }
 
 	private void swUpgrade(ServerProtocolType downloadType)  {

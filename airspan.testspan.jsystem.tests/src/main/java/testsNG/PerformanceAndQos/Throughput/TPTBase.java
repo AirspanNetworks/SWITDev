@@ -719,6 +719,7 @@ public class TPTBase extends TestspanTest {
 					+ ", UL : " + String.format("%.2f", retValues.getElement1()));
 
 		} else {
+			retValues = Pair.createPair(doubleTo2DigitsAfterPoint(retValues.getElement0()), doubleTo2DigitsAfterPoint(retValues.getElement1()));
 			report.report("using Auto Generated loads => DL : " + retValues.getElement0() + ", UL : "
 					+ retValues.getElement1());
 			report.report("checking if CA test and PTP test");

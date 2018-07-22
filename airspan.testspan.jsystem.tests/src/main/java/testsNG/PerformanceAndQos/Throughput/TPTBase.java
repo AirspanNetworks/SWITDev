@@ -243,6 +243,10 @@ public class TPTBase extends TestspanTest {
 				radioParams.setCfi("1");
 				report.report("Running with Dynamic CFI");
 			}
+			if(!radioParams.getDuplex().equals("TDD")){
+				radioParams.setFrameConfig("1");
+				radioParams.setSpecialSubFrame("7");
+			}
 			int maxUeSupported = netspanServer.getMaxUeSupported(dut);
 			report.report("Number of max UE supported according to netspan: "+maxUeSupported);
 			GeneralUtils.printToConsole(radioParams.getCalculatorString(streamsMode));

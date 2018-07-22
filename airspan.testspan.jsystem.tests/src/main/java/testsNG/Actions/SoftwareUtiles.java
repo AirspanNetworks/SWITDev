@@ -1157,7 +1157,7 @@ public class SoftwareUtiles {
 
 					EnodeBUpgradeImage upgradeImage = new EnodeBUpgradeImage();
 					upgradeImage.setName(softwareImage);
-					upgradeImage.setImageType(eNodeB.getImageType().value());
+					upgradeImage.setImageType(softwareStatus.ImageType);
 					if (enodeBUpgradeServer.getUpgradeServerProtocolType() == ServerProtocolType.SFTP) {
 						buildFileName = "/upload/" + buildFileName;
 					}

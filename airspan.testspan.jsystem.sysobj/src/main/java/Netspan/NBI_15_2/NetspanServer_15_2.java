@@ -3832,6 +3832,9 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
 		case "AirVelocity":
 			hardwareCategory = HardwareCategory.AIR_VELOCITY;
 			break;
+		case "AirVelocityFemto":
+			hardwareCategory = HardwareCategory.AIR_VELOCITY_FEMTO;
+			break;
 		case "AirUnity":
 			hardwareCategory = HardwareCategory.AIR_UNITY;
 			break;
@@ -3899,7 +3902,7 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
 				NodeSoftwareStatus softwareStatus = result.getNodeSoftwareStatus().get(0).getSoftwareStatus().get(i);
 				if((numberOfSoftwareStatus == 1) || (imageType == null) || imageType.value().equals(softwareStatus.getImageType())){
 					newsoftwareStatus = new SoftwareStatus();
-					newsoftwareStatus.ImageType = softwareStatus.getImageType() == "Combined LTE + Relay" ? ImageType.AirDensity.value() : softwareStatus.getImageType();
+					newsoftwareStatus.ImageType = softwareStatus.getImageType().equals("Combined LTE + Relay") ? ImageType.AirDensity.value() : softwareStatus.getImageType();
 					newsoftwareStatus.RunningVersion = softwareStatus.getRunningVersion();
 					newsoftwareStatus.StandbyVersion = softwareStatus.getStandbyVersion();
 					newsoftwareStatus.LastRequested = softwareStatus.getLastRequested();
@@ -4279,5 +4282,11 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
 	public String getImageType(String nodeName) {
 		report.report("getImageType method is not implemented for this netspan(15_2)!");
 		return null;
+	}
+	
+	@Override
+	public int getMaxUeSupported(EnodeB enb) {
+		report.report("getMaxUeSupported method is not implemented for this netspan(15_2)!", Reporter.WARNING);
+		return 0;
 	}
 }

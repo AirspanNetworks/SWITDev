@@ -1771,13 +1771,14 @@ public class EnodeBConfig {
 			if(dut.isDynamicCFIEnable()){
 				if(dut.disableDynamicCFI()){
 					report.report("Disable Dynamic CFI Successfully");
-					report.report("Rebooting Node after Disabling Dynamic CFI");
+					GeneralUtils.startLevel("Rebooting Node after Disabling Dynamic CFI");
 					dut.reboot();
 					//Heng - dont worry about the wait this is a safe switch to wait for reboot 
 					//the wair for allrunnig itself will take 5 minutes so this wait will not affect runtime
 					//but will help up to make the code simplier and not wait for reboot event at this point
 					GeneralUtils.unSafeSleep(2*60*1000);
 					dut.waitForAllRunning(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);
+					GeneralUtils.stopLevel();
 				}else{
 					report.report("Could not Disable Dynamic CFI",Reporter.WARNING);
 				}
@@ -1801,9 +1802,10 @@ public class EnodeBConfig {
 			if(!dut.isDynamicCFIEnable()){
 				if(dut.enableDynamicCFI()){
 					report.report("enabled Dynamic CFI Successfully");
-					report.report("Rebooting Node after enabled Dynamic CFI");
+					GeneralUtils.startLevel("Rebooting Node after enabled Dynamic CFI");
 					dut.reboot();
 					dut.waitForAllRunning(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);
+					GeneralUtils.stopLevel();
 				}else{
 					report.report("Could not Enable Dynamic CFI",Reporter.WARNING);
 				}

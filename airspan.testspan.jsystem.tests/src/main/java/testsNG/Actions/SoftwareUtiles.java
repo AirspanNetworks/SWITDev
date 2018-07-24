@@ -37,20 +37,22 @@ import static java.nio.file.StandardCopyOption.*;
 public class SoftwareUtiles {
 	public enum SWUpgradeConnectionMethod {
 		CLI, SNMP, Netspan
- 	}
-    /**
-     * the version that needs to be copied
-     **/
-    private String FSMBuild = "";
-    private String XLPBuild = "";
-    /**
-     * the source of the copy
-     **/
-    private File sourceServer = new File("P:\\BS\\Development\\Air4G_LTE\\Builds\\");
-    /**
-     * the destination of the copy
-     **/
-    private File destServer;
+	}
+
+	/**
+	 * the version that needs to be copied
+	 **/
+	private String FSMBuild = "";
+	private String FSMv4Build = "";
+	private String XLPBuild = "";
+	/**
+	 * the source of the copy
+	 **/
+	private File sourceServer = new File("P:\\BS\\Development\\Air4G_LTE\\Builds\\");
+	/**
+	 * the destination of the copy
+	 **/
+	private File destServer;
 
     /**
      * The enodeB that called for this thread

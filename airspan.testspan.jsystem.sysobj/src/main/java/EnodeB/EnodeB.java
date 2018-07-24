@@ -87,7 +87,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 	};
 	
 	public enum Architecture {
-		XLP, FSM
+		XLP, FSM, FSMv4
 	};
 
 	public Architecture architecture;

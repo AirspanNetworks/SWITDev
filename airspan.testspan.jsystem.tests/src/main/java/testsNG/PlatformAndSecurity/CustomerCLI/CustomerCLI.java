@@ -114,6 +114,7 @@ public class CustomerCLI extends TestspanTest{
 			buffer = sendCommand("show banks\n");
 			ssh.disconnect();
 			report.report("checking if ' # Welcome to Airspan CLI # ' is in CLI.");
+			reportMultiLineMessage(buffer);
 			return buffer.contains("# Welcome to Airspan CLI #");	
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -149,9 +150,17 @@ public class CustomerCLI extends TestspanTest{
 			ssh.connect();
 			result = sendCommand(command);
 			result = cutResponseWithFilter(result,">>");
-			String debugResult = result.substring(0,123);
+			int len = result.length();
+			String debugResult = "";
 			
-			GeneralUtils.startLevel("response : "+debugResult+".....");
+			if(len>124){
+				debugResult = result.substring(0,123);
+				GeneralUtils.startLevel("response: "+debugResult+".....");
+			}else{
+				debugResult = result;
+				GeneralUtils.startLevel("response: "+debugResult);
+			}
+			
 			reportMultiLineMessage(result);
 			GeneralUtils.stopLevel();
 			
@@ -165,6 +174,7 @@ public class CustomerCLI extends TestspanTest{
 		String result="";
 		try {
 		ssh.sendString(command, true);
+		GeneralUtils.unSafeSleep(1*1000);
 		result = ssh.readInputBuffer();
 		}catch(Exception e) {
 			e.printStackTrace();

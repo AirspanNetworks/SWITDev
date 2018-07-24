@@ -29,6 +29,8 @@ import UE.VirtualUE;
 import Utils.GeneralUtils;
 import Utils.GeneralUtils.HtmlFieldColor;
 import Utils.GeneralUtils.HtmlTable;
+import Utils.LteThroughputCalculator;
+import Utils.LteThroughputCalculator.ConfigurationEnum;
 import Utils.Pair;
 import Utils.SetupUtils;
 import Utils.StreamList;
@@ -176,12 +178,13 @@ public class TPTBase extends TestspanTest {
 			report.report("There is no attenuator set ");
 		}
 		changeOtherENBsToOOS();
-		getRadioProfile();
 
 		if (runWithDynamicCFI)
 			enbConfig.enableDynamicCFI(this.dut);
 		else
 			enbConfig.disableDynamicCFI(this.dut);
+		
+		getRadioProfile();
 
 		printResultsForTest = true;
 		resetTestBol = false;
@@ -236,6 +239,16 @@ public class TPTBase extends TestspanTest {
 		GeneralUtils.startLevel("Radio Parameters Initialize:");
 		try {
 			radioParams = enbConfig.getRadioProfile(dut);
+			if (runWithDynamicCFI){
+				radioParams.setCfi("1");
+				report.report("Running with Dynamic CFI");
+			}
+			if(!radioParams.getDuplex().equals("TDD")){
+				radioParams.setFrameConfig("1");
+				radioParams.setSpecialSubFrame("7");
+			}
+			int maxUeSupported = netspanServer.getMaxUeSupported(dut);
+			report.report("Number of max UE supported according to netspan: "+maxUeSupported);
 			GeneralUtils.printToConsole(radioParams.getCalculatorString(streamsMode));
 		} catch (Exception e) {
 			report.report("Error: " + e.getMessage());
@@ -574,14 +587,17 @@ public class TPTBase extends TestspanTest {
 		CalculatorMap calc = new CalculatorMap();
 
 		Pair<Double, Double> trafficValuPair;
-		try {
-			trafficValuPair = calc.getDLandULconfiguration(radioParams);
-		} catch (Exception e) {
-			trafficValuPair = null;
-			e.printStackTrace();
+		trafficValuPair = getLoadsFromXml(radioParams);
+		if(trafficValuPair == null){
+			try {
+				trafficValuPair = calc.getDLandULconfiguration(radioParams);
+			} catch (Exception e) {
+				trafficValuPair = null;
+				e.printStackTrace();
+			}			
 		}
 
-		if (dut instanceof Ninja)
+		if (dut instanceof Ninja && trafficValuPair != null)
 			trafficValuPair = ConvertToNinjaValues(trafficValuPair);
 
 		if (trafficValuPair != null) {
@@ -591,6 +607,28 @@ public class TPTBase extends TestspanTest {
 		return trafficValuPair;
 	}
 
+	private Pair<Double,Double> getLoadsFromXml(RadioParameters radio){
+		String dl_ul = null;
+		int maxUeSupported = netspanServer.getMaxUeSupported(dut);
+		
+		if(maxUeSupported > 0){
+			dl_ul = LteThroughputCalculator.getInstance().getPassCriteriaFromStaticLteThroughputCalculator(radioParams, ConfigurationEnum.USER, maxUeSupported, streamsMode);
+		}
+		if(dl_ul != null){
+			String[] toReturn = dl_ul.split("_");
+			Double dl = Double.valueOf(toReturn[0])*1.1;
+			Double ul = Double.valueOf(toReturn[1])*1.1;
+			Pair<Double,Double> response = Pair.createPair(doubleTo2DigitsAfterPoint(dl), doubleTo2DigitsAfterPoint(ul));
+			return response;
+		}
+		return null;
+	}
+	
+	private Double doubleTo2DigitsAfterPoint(Double doub){
+		String toRet = String.format("%.2f",doub);
+		return Double.valueOf(toRet);
+	}
+	
 	private Pair<Double, Double> ConvertToNinjaValues(Pair<Double, Double> trafficValuPair) {
 
 		Pair<Double, Double> pair = new Pair<Double, Double>(trafficValuPair.getElement0() * 0.95 / 1.1,
@@ -685,6 +723,7 @@ public class TPTBase extends TestspanTest {
 					+ ", UL : " + String.format("%.2f", retValues.getElement1()));
 
 		} else {
+			retValues = Pair.createPair(doubleTo2DigitsAfterPoint(retValues.getElement0()), doubleTo2DigitsAfterPoint(retValues.getElement1()));
 			report.report("using Auto Generated loads => DL : " + retValues.getElement0() + ", UL : "
 					+ retValues.getElement1());
 			report.report("checking if CA test and PTP test");
@@ -1185,7 +1224,7 @@ public class TPTBase extends TestspanTest {
 			double passCriteria) throws IOException, InvalidFormatException {
 
 		if (runWithDynamicCFI)
-			radioParams.setCfi("2");
+			radioParams.setCfi("1");
 		String numberOfCellsStr = "1";
 		String[] dlul = getCalculatorPassCriteria(radioParams);
 		double dl = Double.parseDouble(dlul[0]);
@@ -1280,12 +1319,20 @@ public class TPTBase extends TestspanTest {
 	}
 
 	private String[] getCalculatorPassCriteria(RadioParameters radioParams) {
-		String calculatorStringKey = ParseRadioProfileToString(radioParams);
-		if (calculatorStringKey == null) {
-			report.report("calculator key value is empty - fail test", Reporter.FAIL);
+		String dl_ul = null;
+		int maxUeSupported = netspanServer.getMaxUeSupported(dut);
+		if(maxUeSupported > 0){
+			dl_ul = LteThroughputCalculator.getInstance().getPassCriteriaFromStaticLteThroughputCalculator(radioParams, ConfigurationEnum.USER, maxUeSupported, streamsMode);
 		}
-		CalculatorMap calcMap = new CalculatorMap();
-		String dl_ul = calcMap.getPassCriteria(calculatorStringKey);
+		if(dl_ul == null){
+			report.report("Failed to get Pass Criteria from StaticXmlLteThroughputCalculatorGeneratedByAutomation.xlsx file, getting Pass Criteria from static chart.", Reporter.WARNING);
+			String calculatorStringKey = ParseRadioProfileToString(radioParams);
+			if (calculatorStringKey == null) {
+				report.report("calculator key value is empty - fail test", Reporter.FAIL);
+			}
+			CalculatorMap calcMap = new CalculatorMap();
+			dl_ul = calcMap.getPassCriteria(calculatorStringKey);
+		}
 		return dl_ul.split("_");
 	}
 

@@ -1114,7 +1114,7 @@ public class SoftwareUtiles {
 				numberOfExpectedReboots = GeneralUtils.ERROR_VALUE;
 	        }
 		}else{
-			report.report("SoftwareImage doesn't exist.", Reporter.FAIL);
+			report.report("SoftwareImage doesn't exist in SUT.", Reporter.FAIL);
 			numberOfExpectedReboots = GeneralUtils.ERROR_VALUE;
 		}
 		report.report("Number Of Expected Reboots: " + numberOfExpectedReboots);

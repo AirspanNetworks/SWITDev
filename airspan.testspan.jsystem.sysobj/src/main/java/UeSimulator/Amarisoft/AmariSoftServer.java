@@ -117,7 +117,6 @@ public class AmariSoftServer extends SystemObjectImpl{
 	
 	private void fillUeList() {
 		int ueId = 2;// start at 2 because amarisoft must start with atleast 1 UE.
-		String groupName;
 		unusedUes = new HashMap<>();
 		for (int i = 0; i < imsiStartList.length; i++) {
 			Long startImsi = new Long(imsiStartList[i]);

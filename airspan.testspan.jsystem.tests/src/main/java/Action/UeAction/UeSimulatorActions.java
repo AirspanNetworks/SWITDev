@@ -280,7 +280,7 @@ public class UeSimulatorActions extends Action {
 	}
 	
 	@Test											
-	@TestProperties(name = "start UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = { "UeId", "IMSI", "UEs", "selectionMethod" })
+	@TestProperties(name = "start UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = { "UeId", "IMSI", "UEs", "selectionMethod"})
 	public void startUes() {
 		boolean res = true;
 

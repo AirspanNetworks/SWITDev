@@ -91,7 +91,7 @@ public class IPerfLinuxMachine extends IPerfMachine{
 		int numberOfLinesForSample = 0;
 		numberOfLinesForSample = IPerfMachine.getNumberOfLinesForSample();
 		String getLastTpLines = "tail -n-"+numberOfLinesForSample+" " + tpCountersFileNames;
-		Pair<Boolean, String> res = sendCommand(getLastTpLines, 150);
+		Pair<Boolean, String> res = sendCommand(getLastTpLines, 1000);
 		return res.getElement1();
 	}
 

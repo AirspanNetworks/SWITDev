@@ -123,9 +123,11 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		
 		GeneralUtils.unSafeSleep(10000);
 		iperfMachineDL.sendCommand(ulServerCommandsFile);
+		GeneralUtils.unSafeSleep(3000);
 		iperfMachineUL.sendCommand(dlServerCommandsFile);
 		GeneralUtils.unSafeSleep(3000);
 		iperfMachineDL.sendCommand(dlclientCommandsFile);
+		GeneralUtils.unSafeSleep(3000);
 		iperfMachineUL.sendCommand(ulclientCommandsFile);
 		GeneralUtils.unSafeSleep(30000);
 	}

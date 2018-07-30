@@ -260,12 +260,16 @@ public class AmariSoftServer extends SystemObjectImpl{
     
     public boolean startServer(String configFile){
     	try {   
-    		boolean ans = sendCommands("/root/ue/lteue /root/ue/config/" + configFile,"sample_rate=");
+    		boolean ans = sendCommands("/root/ue/lteue /root/ue/config/" + configFile,"This software is licensed to AIRSPAN NETWORKS LTD (SWIT)");
+    		GeneralUtils.unSafeSleep(10000);
     		if (!ans) {
-    			GeneralUtils.printToConsole("Failed starting server with config file: " + configFile);
+    			report.report("Failed starting server with config file: " + configFile, Reporter.FAIL);
     			return false;
 			}
-    		
+    		if (!sendCommands("ps -aux | grep lteue", "/root/ue/config/" + configFile)) {
+    			report.report("Failed starting server with config file: " + configFile, Reporter.FAIL);
+    			return false;
+    		}
         	URI endpointURI = new URI("ws://"+ip+":"+port);
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             container.connectToServer(this, endpointURI);
@@ -354,6 +358,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 			ans += privateBuffer;
 			if (ans.contains(response)){
 				waitForResponse = false;
+				report.report(ans);
 				return true;			
 			}
 			sendRawCommand("");
@@ -367,6 +372,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 			return;
 		}
 		try {
+			report.report("sending command: " + command);
 			lteUeTerminal.sendString(command + "\n", false);
 		} catch (IOException e) {
 			e.printStackTrace();

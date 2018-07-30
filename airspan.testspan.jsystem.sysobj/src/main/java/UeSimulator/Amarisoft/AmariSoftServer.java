@@ -358,7 +358,6 @@ public class AmariSoftServer extends SystemObjectImpl{
 			ans += privateBuffer;
 			if (ans.contains(response)){
 				waitForResponse = false;
-				report.report(ans);
 				return true;			
 			}
 			sendRawCommand("");

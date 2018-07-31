@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Stack;
@@ -69,6 +68,8 @@ public class AmariSoftServer extends SystemObjectImpl{
 	private String port;
 	private String userName;
 	private String password;
+	private int timingAdvance = 5;
+
 	private double txgain;
 	private double rxgain;
 	private String ueConfigFileName = "automationConfigFile";
@@ -99,7 +100,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 		super.init();
 		port = 900 + sdrList[0];
     	connect();
-    	
+
     	ueMap = new HashMap<>();
     	sdrCellsMap = new HashMap<>();
     	fillUeList();
@@ -152,6 +153,14 @@ public class AmariSoftServer extends SystemObjectImpl{
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	
+	public int getTimingAdvance() {
+		return timingAdvance;
+	}
+
+	public void setTimingAdvance(String timingAdvance) {
+		this.timingAdvance = Integer.parseInt(timingAdvance);
 	}
 	
 	public double getTxgain() {
@@ -260,16 +269,12 @@ public class AmariSoftServer extends SystemObjectImpl{
     
     public boolean startServer(String configFile){
     	try {   
-    		boolean ans = sendCommands("/root/ue/lteue /root/ue/config/" + configFile,"This software is licensed to AIRSPAN NETWORKS LTD (SWIT)");
-    		GeneralUtils.unSafeSleep(10000);
+    		boolean ans = sendCommands("/root/ue/lteue /root/ue/config/" + configFile,"sample_rate=");
     		if (!ans) {
-    			report.report("Failed starting server with config file: " + configFile, Reporter.FAIL);
+    			GeneralUtils.printToConsole("Failed starting server with config file: " + configFile);
     			return false;
 			}
-    		if (!sendCommands("ps -aux | grep lteue", "/root/ue/config/" + configFile)) {
-    			report.report("Failed starting server with config file: " + configFile, Reporter.FAIL);
-    			return false;
-    		}
+    		
         	URI endpointURI = new URI("ws://"+ip+":"+port);
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             container.connectToServer(this, endpointURI);
@@ -573,6 +578,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     
     synchronized private Object sendSynchronizedMessage(String message)
 	{
+    	System.out.println("sending command: " + message);
     	Object ans;
     	if (!running) {
 			report.report("attpempted to send message \"" + message + "\" to amarisoft server that is not running." , Reporter.WARNING);
@@ -696,80 +702,6 @@ public class AmariSoftServer extends SystemObjectImpl{
 		ueMap.put(ueId,ue);
 		unusedUes.remove(ueId);
 		return true;
-	}
-	public boolean deleteUE(int ueId)
-	{
-		ObjectMapper mapper = new ObjectMapper();
-		UEAction getUE = new UEAction();
-		getUE.setUeId(ueId);
-		getUE.setMessage(Actions.UE_DELETE);
-		try {
-			sendSynchronizedMessage(mapper.writeValueAsString(getUE));
-		} catch (JsonProcessingException e) {
-			GeneralUtils.printToConsole("Failed to delete ue: " + ueId);
-			GeneralUtils.printToConsole(e.getMessage());
-			e.printStackTrace();
-			return false;
-		}
-		return true;
-	}
-	public boolean deleteUes(int amount, int cellId)
-	{
-		GeneralUtils.startLevel("deleting " + amount + " UEs from Amarisoft simulator.");
-		boolean result = true;
-		for (int i = 0; i < amount; i++) {
-			 if(ueMap.size() <= 0) {
-				report.report("Failed deleting UE from simulator. " + i + " UEs were deleted out of " + amount + " requsted.", Reporter.WARNING);
-				return false;
-			}
-			//Object[] keys = unusedUes.keySet().toArray();
-			
-			//int ueId = (Integer)keys[0];
-			report.report("Deleting UE : " + cellId+i);
-			boolean deleteUEResult = deleteUE(cellId + i);
-			if (deleteUEResult) {
-				ueMap.remove(cellId + i);
-				AmarisoftUE ue = new AmarisoftUE(cellId + i, this);
-				unusedUes.put(cellId + i, ue);
-				unusedUes.put(cellId + i, ue);
-			}
-			result = result && deleteUEResult;
-		}
-		GeneralUtils.stopLevel();
-		return result;
-	}
-	
-	public boolean deleteUes(int amount)
-	{
-		GeneralUtils.startLevel("deleting " + amount + " UEs from Amarisoft simulator.");
-		boolean result = true;
-		int deletedAmount = 0;
-		Iterator key = ueMap.keySet().iterator();
-		int ueNum = ueMap.entrySet().iterator().next().getKey();
-		while(key.hasNext()) {
-			if (deletedAmount < amount) {
-				if (ueMap.containsKey(ueNum)) {
-					if (deleteUE(ueNum)) {
-						deletedAmount++;
-						ueMap.remove(ueNum);
-						AmarisoftUE ue = new AmarisoftUE(ueNum, this);
-						report.report("UE : " + ueNum + " ( " + ue.getImsi() + " ) was deleted");
-						unusedUes.put(ueNum, ue);
-					}
-					else {
-						report.report("UE :" + ueMap.get(ueNum).getImsi() + " haven't been deleted from ue simulator");
-						result = false;
-						
-					}
-					ueNum++;
-				}
-			}
-			else {
-				break;
-			}
-		}
-		GeneralUtils.stopLevel();
-		return result;
 	}
 	
 	public boolean uePowerOn(int ueId)
@@ -942,7 +874,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 			cell.setDlEarfcn(earfcnList.get(i));
 			cell.setNAntennaDl(2);
 			cell.setNAntennaUl(1);
-			cell.setGlobalTimingAdvance(2);
+			cell.setGlobalTimingAdvance(timingAdvance);
 			GeneralUtils.printToConsole("Adding cell with earfcn: " + earfcnList.get(i) + " to run on sdr " + sdrList[i]);
 			cells.add(cell);
 			rfDriver += "dev"+i+"=/dev/sdr"+sdrList[i]+",";

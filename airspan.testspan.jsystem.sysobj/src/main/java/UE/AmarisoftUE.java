@@ -6,17 +6,17 @@ import Utils.GeneralUtils;
 public class AmarisoftUE extends UE{
 
 	public int ueId;
-	//public String groupName;
+	public String groupName;
 	private AmariSoftServer server;
 	
 	public AmarisoftUE() {
 		super("AmarisoftUE");
 	}
 	
-	public AmarisoftUE(int ueId, AmariSoftServer server) {
+	public AmarisoftUE(int ueId, String groupName, AmariSoftServer server) {
 		this();
 		this.ueId = ueId;
-		//this.groupName = groupName;
+		this.groupName = groupName;
 		this.server = server;
 		setName("AmarisoftUE" + (10000 + ueId));
 	}

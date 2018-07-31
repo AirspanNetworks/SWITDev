@@ -371,7 +371,6 @@ public class AmariSoftServer extends SystemObjectImpl{
 			return;
 		}
 		try {
-			report.report("sending command: " + command);
 			lteUeTerminal.sendString(command + "\n", false);
 		} catch (IOException e) {
 			e.printStackTrace();

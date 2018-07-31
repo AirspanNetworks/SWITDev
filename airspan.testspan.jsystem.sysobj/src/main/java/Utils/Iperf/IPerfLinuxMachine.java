@@ -27,6 +27,7 @@ public class IPerfLinuxMachine extends IPerfMachine{
 			if((sshSession == null) || (!sshSession.isConnected())){
 				sshSession = new SSHConnector(hostname, username, password);
 				sshSession.initConnection();
+				
 			}else{
 				GeneralUtils.printToConsole("IPerf Machine is already connected.");
 			}
@@ -36,7 +37,20 @@ public class IPerfLinuxMachine extends IPerfMachine{
 			GeneralUtils.printToConsole("FAILED to connect to IPerf Machine.");
 			e.printStackTrace();
 		}
-		return sshSession.isConnected();
+		boolean connected = sshSession.isConnected();
+		if(connected){
+			sendCommand("rm "+preAddressTpFile+"clientOutputDL*");
+		    sendCommand("rm "+preAddressTpFile+"tpUL*");
+			sendCommand("rm "+preAddressTpFile+"DLclientSide.txt");
+			sendCommand("rm "+preAddressTpFile+"ULserverSide.txt");
+			sendCommand("rm "+preAddressTpFile+"nohup*");
+		
+			sendCommand("rm "+preAddressTpFile+"clientOutputUL*");
+			sendCommand("rm "+preAddressTpFile+"tpDL*");
+			sendCommand("rm "+preAddressTpFile+"ULclientSide.txt");
+			sendCommand("rm "+preAddressTpFile+"DLserverSide.txt");
+		}
+		return connected;
 	}
 
 	public Pair<Boolean,String> sendCommand(String command, int timeoutInMili){

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Stack;
@@ -704,6 +705,79 @@ public class AmariSoftServer extends SystemObjectImpl{
 		return true;
 	}
 	
+	public boolean deleteUE(int ueId)
+	{
+		ObjectMapper mapper = new ObjectMapper();
+		UEAction getUE = new UEAction();
+		getUE.setUeId(ueId);
+		getUE.setMessage(Actions.UE_DELETE);
+		try {
+			sendSynchronizedMessage(mapper.writeValueAsString(getUE));
+		} catch (JsonProcessingException e) {
+			GeneralUtils.printToConsole("Failed to delete ue: " + ueId);
+			GeneralUtils.printToConsole(e.getMessage());
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
+	public boolean deleteUes(int amount, int UEId)
+	{
+		GeneralUtils.startLevel("deleting " + amount + " UEs from Amarisoft simulator.");
+		boolean result = true;
+		for (int i = 0; i < amount; i++) {
+			 if(ueMap.size() <= 0) {
+				report.report("Failed deleting UE from simulator. " + i + " UEs were deleted out of " + amount + " requsted.", Reporter.WARNING);
+				return false;
+			}
+			
+			report.report("Deleting UE : " + UEId+i);
+			boolean deleteUEResult = deleteUE(UEId + i);
+			if (deleteUEResult) {
+				ueMap.remove(UEId + i);
+				AmarisoftUE ue = new AmarisoftUE(UEId + i, this);
+				unusedUes.put(UEId + i, ue);
+				unusedUes.put(UEId + i, ue);
+			}
+			result = result && deleteUEResult;
+		}
+		GeneralUtils.stopLevel();
+		return result;
+	}
+	
+	public boolean deleteUes(int amount)
+	{
+		GeneralUtils.startLevel("deleting " + amount + " UEs from Amarisoft simulator.");
+		boolean result = true;
+		int deletedAmount = 0;
+		Iterator key = ueMap.keySet().iterator();
+		int ueNum = ueMap.entrySet().iterator().next().getKey();
+		while(key.hasNext()) {
+			if (deletedAmount < amount) {
+				if (ueMap.containsKey(ueNum)) {
+					if (deleteUE(ueNum)) {
+						deletedAmount++;
+						ueMap.remove(ueNum);
+						AmarisoftUE ue = new AmarisoftUE(ueNum, this);
+						report.report("UE : " + ueNum + " ( " + ue.getImsi() + " ) was deleted");
+						unusedUes.put(ueNum, ue);
+					}
+					else {
+						report.report("UE :" + ueMap.get(ueNum).getImsi() + " haven't been deleted from ue simulator");
+						result = false;
+						
+					}
+					ueNum++;
+				}
+			}
+			else {
+				break;
+			}
+		}
+		GeneralUtils.stopLevel();
+		return result;
+	}
 	public boolean uePowerOn(int ueId)
 	{
 		UE ue = ueMap.get(ueId);

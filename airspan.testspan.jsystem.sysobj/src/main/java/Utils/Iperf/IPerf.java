@@ -217,9 +217,19 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 	public void Connect() throws Exception {
 		if(iperfMachineDL != null){
 			iperfMachineDL.connect();
+			iperfMachineDL.sendCommand("rm clientOutputDL*");
+			iperfMachineDL.sendCommand("rm tpUL*");
+			iperfMachineDL.sendCommand("rm DLclientSide.txt");
+			iperfMachineDL.sendCommand("rm ULserverSide.txt");
+			iperfMachineDL.sendCommand("rm nohup*");
 		}
 		if(iperfMachineUL != null){
 			iperfMachineUL.connect();
+			iperfMachineDL.sendCommand("rm clientOutputUL*");
+			iperfMachineDL.sendCommand("rm tpDL*");
+			iperfMachineDL.sendCommand("rm ULclientSide.txt");
+			iperfMachineDL.sendCommand("rm DLserverSide.txt");
+			iperfMachineDL.sendCommand("rm nohup*");
 		}
 	}
 

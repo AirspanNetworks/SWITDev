@@ -97,6 +97,10 @@ public class P0 extends TestspanTest{
 		if(attenuatorSetUnderTest==null){
 			attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(attenuatorSetName);
 		}
+		attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(attenuatorSetName);
+		attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(attenuatorSetName);
+		attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(attenuatorSetName);
+		attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(attenuatorSetName);
 		attenuatorRespond = true;
 		checkAttenuatorConnection();
 		enbInTest = new ArrayList<EnodeB>();

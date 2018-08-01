@@ -94,6 +94,11 @@ public class P0 extends TestspanTest{
 	@SuppressWarnings("unchecked")
 	@Override
 	public void init() throws Exception{
+		if(attenuatorSetUnderTest==null){
+			attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(attenuatorSetName);
+		}
+		attenuatorRespond = true;
+		checkAttenuatorConnection();
 		enbInTest = new ArrayList<EnodeB>();
 		enbInTest.add(dutInTest);
 		enbInTest.add(dut2);
@@ -3210,7 +3215,7 @@ public class P0 extends TestspanTest{
 
 	@ParameterProperties(description = "Name of Enodeb Which the test will be run On")
 	public void setDUT(String dut) {
-		this.dutInTest = (EnodeB) SysObjUtils.getInstnce().initSystemObject(EnodeB.class,false,dut).get(0);
+		//this.dutInTest = (EnodeB) SysObjUtils.getInstnce().initSystemObject(EnodeB.class,false,dut).get(0);
 	}
 	
 	public String getDUT() {
@@ -3219,7 +3224,7 @@ public class P0 extends TestspanTest{
 
 	@ParameterProperties(description = "Name of Enodeb Which the test will be run On")
 	public void setDUT2(String dut) {
-		this.dut2 = (EnodeB) SysObjUtils.getInstnce().initSystemObject(EnodeB.class,false,dut).get(0);
+		//this.dut2 = (EnodeB) SysObjUtils.getInstnce().initSystemObject(EnodeB.class,false,dut).get(0);
 	}
 	
 	public String getDUT2() {

@@ -321,7 +321,7 @@ public class NetspanServer_15_5 extends NetspanServer_15_2 implements Netspan_15
 						lteCellSet.setIsEmergencyAccessBarred(objectFactory.createLteCellSetWsIsEmergencyAccessBarred(cellBarringParams.IsEmergencyAccessBarred));
 					if (cellBarringParams.IsSignalingAccessBarred != null){
 						lteCellSet.setIsSignalingAccessBarred(objectFactory.createLteCellSetWsIsSignalingAccessBarred(cellBarringParams.IsSignalingAccessBarred));
-						if(cellBarringParams.IsSignalingAccessBarred){
+						if(cellBarringParams.IsSignalingAccessBarred && cellBarringParams.signalingAccessBarring != null){
 							if(cellBarringParams.signalingAccessBarring.getBarringFactor().value() != null)
 								lteCellSet.setSignalingAccessBarringFactor(objectFactory.createLteCellSetWsSignalingAccessBarringFactor(cellBarringParams.signalingAccessBarring.getBarringFactor().value()));
 							if(cellBarringParams.signalingAccessBarring.getBarringTime().value() != null)
@@ -339,7 +339,7 @@ public class NetspanServer_15_5 extends NetspanServer_15_2 implements Netspan_15
 						}	
 					}
 					if (cellBarringParams.IsDataAccessBarred != null){
-						if(cellBarringParams.IsDataAccessBarred){
+						if(cellBarringParams.IsDataAccessBarred && cellBarringParams.dataAccessBarring != null){
 							if (cellBarringParams.dataAccessBarring.getBarringFactor().value() != null)
 								lteCellSet.setDataAccessBarringFactor(objectFactory.createLteCellGetWsDataAccessBarringFactor(cellBarringParams.dataAccessBarring.getBarringFactor().value()));
 							if (cellBarringParams.signalingAccessBarring.getBarringTime().value() != null)

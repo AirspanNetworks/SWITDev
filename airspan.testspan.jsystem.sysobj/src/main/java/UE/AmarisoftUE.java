@@ -6,6 +6,7 @@ import Utils.GeneralUtils;
 public class AmarisoftUE extends UE{
 
 	public int ueId;
+	//public String groupName;
 	private AmariSoftServer server;
 	
 	public AmarisoftUE() {
@@ -15,6 +16,7 @@ public class AmarisoftUE extends UE{
 	public AmarisoftUE(int ueId, AmariSoftServer server) {
 		this();
 		this.ueId = ueId;
+		//this.groupName = groupName;
 		this.server = server;
 		setName("AmarisoftUE" + (10000 + ueId));
 	}

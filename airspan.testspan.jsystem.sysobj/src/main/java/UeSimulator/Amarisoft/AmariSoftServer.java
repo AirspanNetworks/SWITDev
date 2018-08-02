@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Stack;
@@ -68,6 +69,8 @@ public class AmariSoftServer extends SystemObjectImpl{
 	private String port;
 	private String userName;
 	private String password;
+	private int timingAdvance = 5;
+
 	private double txgain;
 	private double rxgain;
 	private String ueConfigFileName = "automationConfigFile";
@@ -109,7 +112,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     	ip="192.168.58.91";
     	userName="root";
     	password = "SWITswit";
-    	port="9000";
+    	port="9002";
     	connect();
     	
     }
@@ -151,6 +154,14 @@ public class AmariSoftServer extends SystemObjectImpl{
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	
+	public int getTimingAdvance() {
+		return timingAdvance;
+	}
+
+	public void setTimingAdvance(String timingAdvance) {
+		this.timingAdvance = Integer.parseInt(timingAdvance);
 	}
 	
 	public double getTxgain() {
@@ -568,6 +579,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     
     synchronized private Object sendSynchronizedMessage(String message)
 	{
+    	System.out.println("sending command: " + message);
     	Object ans;
     	if (!running) {
 			report.report("attpempted to send message \"" + message + "\" to amarisoft server that is not running." , Reporter.WARNING);
@@ -693,6 +705,79 @@ public class AmariSoftServer extends SystemObjectImpl{
 		return true;
 	}
 	
+	public boolean deleteUE(int ueId)
+	{
+		ObjectMapper mapper = new ObjectMapper();
+		UEAction getUE = new UEAction();
+		getUE.setUeId(ueId);
+		getUE.setMessage(Actions.UE_DELETE);
+		try {
+			sendSynchronizedMessage(mapper.writeValueAsString(getUE));
+		} catch (JsonProcessingException e) {
+			GeneralUtils.printToConsole("Failed to delete ue: " + ueId);
+			GeneralUtils.printToConsole(e.getMessage());
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
+	public boolean deleteUes(int amount, int UEId)
+	{
+		GeneralUtils.startLevel("deleting " + amount + " UEs from Amarisoft simulator.");
+		boolean result = true;
+		for (int i = 0; i < amount; i++) {
+			 if(ueMap.size() <= 0) {
+				report.report("Failed deleting UE from simulator. " + i + " UEs were deleted out of " + amount + " requsted.", Reporter.WARNING);
+				return false;
+			}
+			
+			report.report("Deleting UE : " + UEId+i);
+			boolean deleteUEResult = deleteUE(UEId + i);
+			if (deleteUEResult) {
+				ueMap.remove(UEId + i);
+				AmarisoftUE ue = new AmarisoftUE(UEId + i, this);
+				unusedUes.put(UEId + i, ue);
+				unusedUes.put(UEId + i, ue);
+			}
+			result = result && deleteUEResult;
+		}
+		GeneralUtils.stopLevel();
+		return result;
+	}
+	
+	public boolean deleteUes(int amount)
+	{
+		GeneralUtils.startLevel("deleting " + amount + " UEs from Amarisoft simulator.");
+		boolean result = true;
+		int deletedAmount = 0;
+		Iterator key = ueMap.keySet().iterator();
+		int ueNum = ueMap.entrySet().iterator().next().getKey();
+		while(key.hasNext()) {
+			if (deletedAmount < amount) {
+				if (ueMap.containsKey(ueNum)) {
+					if (deleteUE(ueNum)) {
+						deletedAmount++;
+						ueMap.remove(ueNum);
+						AmarisoftUE ue = new AmarisoftUE(ueNum, this);
+						report.report("UE : " + ueNum + " ( " + ue.getImsi() + " ) was deleted");
+						unusedUes.put(ueNum, ue);
+					}
+					else {
+						report.report("UE :" + ueMap.get(ueNum).getImsi() + " haven't been deleted from ue simulator");
+						result = false;
+						
+					}
+					ueNum++;
+				}
+			}
+			else {
+				break;
+			}
+		}
+		GeneralUtils.stopLevel();
+		return result;
+	}
 	public boolean uePowerOn(int ueId)
 	{
 		UE ue = ueMap.get(ueId);
@@ -863,7 +948,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 			cell.setDlEarfcn(earfcnList.get(i));
 			cell.setNAntennaDl(2);
 			cell.setNAntennaUl(1);
-			cell.setGlobalTimingAdvance(2);
+			cell.setGlobalTimingAdvance(timingAdvance);
 			GeneralUtils.printToConsole("Adding cell with earfcn: " + earfcnList.get(i) + " to run on sdr " + sdrList[i]);
 			cells.add(cell);
 			rfDriver += "dev"+i+"=/dev/sdr"+sdrList[i]+",";

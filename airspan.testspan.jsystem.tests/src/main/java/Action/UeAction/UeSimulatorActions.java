@@ -28,7 +28,7 @@ public class UeSimulatorActions extends Action {
 	private SelectionMethod selectionMethod = SelectionMethod.IMSI;
 	
 	public enum SelectionMethod{
-		IMSI, UEID, UENAME;
+		IMSI, UEID, UENAME, AMOUNT;
 	}
 	
 	@ParameterProperties(description = "UE Selection Method")
@@ -49,7 +49,7 @@ public class UeSimulatorActions extends Action {
 		this.IMSI = IMSI;
 	}
 	
-	@ParameterProperties(description = "number of UEs to add, default = 1")
+	@ParameterProperties(description = "number of UEs to add/delete, default = 1")
 	public void setNumUes(String numUes) {
 		try {
 			this.numUes = Integer.valueOf(numUes);
@@ -154,6 +154,75 @@ public class UeSimulatorActions extends Action {
 	}
 	
 	@Test											
+	@TestProperties(name = "delete UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = { "UeId", "IMSI", "UEs", "selectionMethod", "NumUes"})
+	public void deleteUes() {
+		boolean res = true;
+
+		try {
+			AmariSoftServer amariSoftServer = AmariSoftServer.getInstance();
+			int id;
+			switch (selectionMethod) {
+			case IMSI:
+				id = amariSoftServer.getUeId(IMSI);
+				res = amariSoftServer.uePowerOn(id);
+				break;
+
+			case UEID:
+				res = amariSoftServer.uePowerOn(ueId);
+				break;
+
+			case UENAME:
+				for (UE ue : ues) {
+					res &= ue.start();
+				}	
+				break;
+			case AMOUNT:
+				amariSoftServer.deleteUes(numUes);
+				break;
+			//case GROUPNAME:
+				//amariSoftServer.deleteUes(groupName);
+				//break;
+			default:
+				break;
+			}
+		} catch (Exception e) {
+			res = false;
+			report.report("Error trying to delete UEs: " + e.getMessage(), Reporter.WARNING);
+			e.printStackTrace();
+		}
+		
+		if (res == false) {
+			report.report("delete UEs Failed", Reporter.FAIL);
+		} else {
+			report.report("delete UEs Succeeded");
+		}
+	}
+
+	private void deleteUes(int amount) {
+		boolean flag = false;
+		try {
+			AmariSoftServer amariSoftServer = AmariSoftServer.getInstance();
+
+			if (!amariSoftServer.isRunning()) {
+				report.report("Simulator is not working, cant delete UEs", Reporter.WARNING);
+			}
+			else{
+				flag = amariSoftServer.deleteUes(amount);
+			}
+		} catch (Exception e) {
+			report.report("Error deleting Ues: " + e.getMessage(), Reporter.WARNING);
+			e.printStackTrace();
+		}
+
+		if (flag == false) {
+			report.report("Delete UEs Failed", Reporter.FAIL);
+		} else {
+			report.report("Delete UEs Succeeded");
+		}
+	}
+	
+	
+	@Test											
 	@TestProperties(name = "stop UE Simulator", returnParam = "LastStatus", paramsInclude = { })
 	public void stopUeSimulator() {
 		try {
@@ -211,7 +280,7 @@ public class UeSimulatorActions extends Action {
 	}
 	
 	@Test											
-	@TestProperties(name = "start UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = { "UeId", "IMSI", "UEs", "selectionMethod" })
+	@TestProperties(name = "start UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = { "UeId", "IMSI", "UEs", "selectionMethod"})
 	public void startUes() {
 		boolean res = true;
 
@@ -290,6 +359,9 @@ public class UeSimulatorActions extends Action {
 		if (methodName.equals("startUes") || methodName.equals("stopUes")) {
 			handleUIEventGetCounterValue(map, methodName);
 		}
+		if (methodName.equals("deleteUes")) {
+			handleUIEventDeleteFunc(map, methodName);
+		}
 	}
 	
 	private void handleUIEventGetCounterValue(HashMap<String, Parameter> map, String methodName) {
@@ -311,7 +383,35 @@ public class UeSimulatorActions extends Action {
 		case UENAME:
 			map.get("UEs").setVisible(true);
 			break;
+		default:
+			break;
 		}
+		
+	}
+	private void handleUIEventDeleteFunc(HashMap<String, Parameter> map, String methodName) {
+		map.get("UeId").setVisible(false);
+		map.get("IMSI").setVisible(false);
+		map.get("UEs").setVisible(false);
+		map.get("NumUes").setVisible(false);
+		
+		Parameter selectMethod = map.get("SelectionMethod");
+
+		switch (SelectionMethod.valueOf(selectMethod.getValue().toString())) {
+		case IMSI:
+			map.get("IMSI").setVisible(true);
+			break;
+
+		case UEID:
+			map.get("UeId").setVisible(true);
+			break;
+
+		case UENAME:
+			map.get("UEs").setVisible(true);
+			break;
+		case AMOUNT:
+			map.get("NumUes").setVisible(true);
+		}
+		
 	}
 	
 }

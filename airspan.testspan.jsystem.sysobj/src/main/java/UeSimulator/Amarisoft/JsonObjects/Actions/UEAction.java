@@ -22,6 +22,7 @@ public class UEAction {
 		POWER_OFF("power_off"),
 		UE_GET("ue_get"),
 		UE_ADD("ue_add"),
+		UE_DELETE("ue_del"),
 		CONFIG_GET("config_get")
 	    ;
 

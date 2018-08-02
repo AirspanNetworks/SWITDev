@@ -260,8 +260,10 @@ public class Progression extends TestspanTest {
 		GeneralUtils.startLevel("Redundency Test");
 		if(!fixMmesOrder())
 		{
+			GeneralUtils.stopLevel();
 			return false;
 		}
+		GeneralUtils.stopLevel();
 		printDebugData();
 		report.report("STEP 1: Get initial MME statuses");
 		NetworkElementStatus expectedStatus = henbGwEnabled == EnabledDisabledStates.ENABLED ? NetworkElementStatus.SCTP_ONLY : NetworkElementStatus.ACTIVE;

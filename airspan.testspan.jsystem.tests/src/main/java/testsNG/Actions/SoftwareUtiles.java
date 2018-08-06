@@ -12,6 +12,7 @@ import Netspan.API.Enums.HardwareCategory;
 import Netspan.API.Enums.ImageType;
 import Netspan.API.Enums.ServerProtocolType;
 import Netspan.API.Lte.EventInfo;
+import Netspan.API.Lte.NodeInfo;
 import Netspan.API.Software.RequestType;
 import Netspan.API.Software.SoftwareStatus;
 import TestingServices.TestConfig;
@@ -1083,6 +1084,8 @@ public class SoftwareUtiles {
 					}
 					upgradeImage.setBuildPath(buildFileName);
 					upgradeImage.setVersion(build);
+					NodeInfo ni = EnodeBConfig.getInstance().getNodeInfo(eNodeB);
+					upgradeImage.setHardwareCategory(HardwareCategory.valueOf(ni.hardwareType));
 					if(updateSoftwareImage(upgradeImage) == false){
 						report.report("FAILED To Update Software Image.", Reporter.FAIL);
 						numberOfExpectedReboots = GeneralUtils.ERROR_VALUE;
@@ -1104,6 +1107,8 @@ public class SoftwareUtiles {
 					upgradeImage.setImageType(ImageType.RELAY.value());
 					upgradeImage.setBuildPath(relayBuildFileName);
 					upgradeImage.setVersion(relayBuild);
+					NodeInfo ni = EnodeBConfig.getInstance().getNodeInfo(eNodeB);
+					upgradeImage.setHardwareCategory(HardwareCategory.valueOf(ni.hardwareType));
 					if(softwareStatus != null){
 						if(updateSoftwareImage(upgradeImage) == false){
 							report.report("FAILED To Update Software Image with Relay Version.", Reporter.FAIL);

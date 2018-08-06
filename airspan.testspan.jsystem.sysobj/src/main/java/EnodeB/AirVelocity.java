@@ -10,6 +10,7 @@ public class AirVelocity extends EnodeB {
 	@Override
 	public void init() throws Exception {
 		super.init();
+		setSWTypeInstance(22);
 		architecture = Architecture.FSM;
 	}
 

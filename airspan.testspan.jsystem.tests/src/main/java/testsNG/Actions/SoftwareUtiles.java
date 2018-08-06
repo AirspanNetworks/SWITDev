@@ -1085,7 +1085,7 @@ public class SoftwareUtiles {
 					upgradeImage.setBuildPath(buildFileName);
 					upgradeImage.setVersion(build);
 					NodeInfo ni = EnodeBConfig.getInstance().getNodeInfo(eNodeB);
-					upgradeImage.setHardwareCategory(HardwareCategory.valueOf(ni.hardwareType));
+					upgradeImage.setHardwareCategory(HardwareCategory.fromValue(ni.hardwareType));
 					if(updateSoftwareImage(upgradeImage) == false){
 						report.report("FAILED To Update Software Image.", Reporter.FAIL);
 						numberOfExpectedReboots = GeneralUtils.ERROR_VALUE;
@@ -1108,7 +1108,7 @@ public class SoftwareUtiles {
 					upgradeImage.setBuildPath(relayBuildFileName);
 					upgradeImage.setVersion(relayBuild);
 					NodeInfo ni = EnodeBConfig.getInstance().getNodeInfo(eNodeB);
-					upgradeImage.setHardwareCategory(HardwareCategory.valueOf(ni.hardwareType));
+					upgradeImage.setHardwareCategory(HardwareCategory.fromValue(ni.hardwareType));
 					if(softwareStatus != null){
 						if(updateSoftwareImage(upgradeImage) == false){
 							report.report("FAILED To Update Software Image with Relay Version.", Reporter.FAIL);

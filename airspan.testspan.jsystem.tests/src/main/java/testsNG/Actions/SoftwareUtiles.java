@@ -1078,14 +1078,17 @@ public class SoftwareUtiles {
 		        	
 		        	EnodeBUpgradeImage upgradeImage = new EnodeBUpgradeImage();
 					upgradeImage.setName(softwareImage);
-					upgradeImage.setImageType(eNodeB.getImageType().value());
+					NodeInfo ni = EnodeBConfig.getInstance().getNodeInfo(eNodeB);
+					if(ni.hardwareType.contains("480")){
+						upgradeImage.setImageType(ImageType.COMBINED_LTE_RELAY.value());
+					}else{
+						upgradeImage.setImageType(eNodeB.getImageType().value());						
+					}
 					if (enodeBUpgradeServer.getUpgradeServerProtocolType() == ServerProtocolType.SFTP){
 						buildFileName = "/upload/"+buildFileName; 
 					}
 					upgradeImage.setBuildPath(buildFileName);
 					upgradeImage.setVersion(build);
-					NodeInfo ni = EnodeBConfig.getInstance().getNodeInfo(eNodeB);
-					upgradeImage.setHardwareCategory(HardwareCategory.fromValue(ni.hardwareType));
 					if(updateSoftwareImage(upgradeImage) == false){
 						report.report("FAILED To Update Software Image.", Reporter.FAIL);
 						numberOfExpectedReboots = GeneralUtils.ERROR_VALUE;
@@ -1107,8 +1110,6 @@ public class SoftwareUtiles {
 					upgradeImage.setImageType(ImageType.RELAY.value());
 					upgradeImage.setBuildPath(relayBuildFileName);
 					upgradeImage.setVersion(relayBuild);
-					NodeInfo ni = EnodeBConfig.getInstance().getNodeInfo(eNodeB);
-					upgradeImage.setHardwareCategory(HardwareCategory.fromValue(ni.hardwareType));
 					if(softwareStatus != null){
 						if(updateSoftwareImage(upgradeImage) == false){
 							report.report("FAILED To Update Software Image with Relay Version.", Reporter.FAIL);

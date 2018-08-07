@@ -1271,14 +1271,14 @@ public class TPTBase extends TestspanTest {
 		}
 
 		if (use_Expected_DL) {
-			dlPassCriteria = modifyAndPortLinkAndPrint("dl",dlPassCriteria, this.Expected_DL);
+			dlPassCriteria = modifyAndPortLinkAndPrint("DL",dlPassCriteria, portsLoadPair.getElement0(), this.Expected_DL);
 		} else {
 			dlPassCriteria *= passCriteria;
 			report.report("DL Threshold : " + passCriteria * 100 + "%");
 
 		}
 		if (use_Expected_UL) {
-			ulPassCriteria = modifyAndPortLinkAndPrint("ul",ulPassCriteria, this.Expected_UL);
+			ulPassCriteria = modifyAndPortLinkAndPrint("UL",ulPassCriteria, portsLoadPair.getElement1(), this.Expected_UL);
 		} else {
 			ulPassCriteria *= passCriteria;
 			report.report("UL Threshold : " + passCriteria * 100 + "%");
@@ -1383,12 +1383,18 @@ public class TPTBase extends TestspanTest {
 		table.reportTable("");
 	}
 
-	private double modifyAndPortLinkAndPrint(String ul_dl, double calculatorPassWithSysModi,
+	private double modifyAndPortLinkAndPrint(String ul_dl,double calculatorPassWithSysModi, double systemLoadWithModifications,
 			double expectedPassCriteriaPercent) {
 		Double result = 0.0;
-		
-		result = calculatorPassWithSysModi * (expectedPassCriteriaPercent / 100.0);
+		Double toCalculate = 0.0;
+		if(calculatorPassWithSysModi <= systemLoadWithModifications){
+			toCalculate = calculatorPassWithSysModi;
+		}else{
+			toCalculate = systemLoadWithModifications;
+		}
+		result = toCalculate * (expectedPassCriteriaPercent / 100.0);
 		report.report("Pass Criteria for "+ul_dl+": " + String.format("%.2f", result));
+
 		return result;
 	}
 

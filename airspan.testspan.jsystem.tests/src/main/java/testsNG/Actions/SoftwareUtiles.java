@@ -1078,7 +1078,18 @@ public class SoftwareUtiles {
 		        	
 		        	EnodeBUpgradeImage upgradeImage = new EnodeBUpgradeImage();
 					upgradeImage.setName(softwareImage);
-					upgradeImage.setImageType(eNodeB.getImageType().value());						
+					ImageType it = eNodeB.getImageType();
+					if(it == ImageType.AirDensity || it == ImageType.COMBINED_LTE_RELAY){
+						int version = Integer.valueOf(eNodeB.getEnodeBversion().split("_")[0]);
+						if(version>=16){
+							upgradeImage.setImageType(ImageType.COMBINED_LTE_RELAY.value());
+						}else{
+							upgradeImage.setImageType(ImageType.AirDensity.value());
+						}
+					}else{
+						upgradeImage.setImageType(eNodeB.getImageType().value());												
+					}
+					
 					if (enodeBUpgradeServer.getUpgradeServerProtocolType() == ServerProtocolType.SFTP){
 						buildFileName = "/upload/"+buildFileName; 
 					}

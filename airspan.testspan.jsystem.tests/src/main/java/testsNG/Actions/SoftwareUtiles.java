@@ -1078,12 +1078,7 @@ public class SoftwareUtiles {
 		        	
 		        	EnodeBUpgradeImage upgradeImage = new EnodeBUpgradeImage();
 					upgradeImage.setName(softwareImage);
-					NodeInfo ni = EnodeBConfig.getInstance().getNodeInfo(eNodeB);
-					if(ni.hardwareType.contains("480")){
-						upgradeImage.setImageType(ImageType.COMBINED_LTE_RELAY.value());
-					}else{
-						upgradeImage.setImageType(eNodeB.getImageType().value());						
-					}
+					upgradeImage.setImageType(eNodeB.getImageType().value());						
 					if (enodeBUpgradeServer.getUpgradeServerProtocolType() == ServerProtocolType.SFTP){
 						buildFileName = "/upload/"+buildFileName; 
 					}

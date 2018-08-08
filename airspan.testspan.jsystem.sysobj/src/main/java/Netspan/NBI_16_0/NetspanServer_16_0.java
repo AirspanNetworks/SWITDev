@@ -174,6 +174,25 @@ public class NetspanServer_16_0 extends NetspanServer_15_5 implements Netspan_16
 	}
 	
 	@Override
+	public boolean updateSoftwareImage(EnodeBUpgradeImage upgradeImage) {
+		Netspan.NBI_16_0.Software.SwImageWs softwareImage = createSoftwareImageObject(upgradeImage);
+		Netspan.NBI_16_0.Software.SwFileInfoWs softwareFileInfo = createFileInfoObject(upgradeImage);
+		List<Netspan.NBI_16_0.Software.SwFileInfoWs> fileList = softwareImage.getSoftwareFileInfo();
+		fileList.add(softwareFileInfo);
+
+		Netspan.NBI_16_0.Software.SwImageResponse result = soapHelper_16_0
+				.getSoftwareSoap().softwareImageUpdate(softwareImage.getName(), softwareImage, credentialsSoftware);
+		if (result.getErrorCode() != Netspan.NBI_16_0.Software.ErrorCodes.OK) {
+			report.report("softwareImageUpdate via Netspan Failed : " + result.getErrorString(), Reporter.WARNING);
+			soapHelper_16_0.endSoftwareSoap();
+			return false;
+		} else {
+			soapHelper_16_0.endSoftwareSoap();
+			return true;
+		}
+	}
+	
+	@Override
 	public boolean createSoftwareImage(EnodeBUpgradeImage upgradeImage) {
 		
 		Netspan.NBI_16_0.Software.SwImageWs softwareImage = createSoftwareImageObject(upgradeImage);

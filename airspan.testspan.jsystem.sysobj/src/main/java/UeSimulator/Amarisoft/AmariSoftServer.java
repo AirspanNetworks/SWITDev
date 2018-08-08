@@ -250,7 +250,10 @@ public class AmariSoftServer extends SystemObjectImpl{
 				running = false;
 				return true;
 			} else {
-				report.report("Closing server failed.", Reporter.WARNING);
+				if (!sendCommands("ps -aux | grep lteue", "/root/ue/lteue-avx2 /root/ue/config/automationConfigFile"))
+					return true;
+				else 
+					report.report("Closing server failed.", Reporter.WARNING);
 				return false;
 			}
 		

@@ -155,6 +155,7 @@ public class P0 extends TestspanTest{
 	}
 	
 	private void checkAttenuatorConnection(){
+		peripheralsConfig.SetAttenuatorToMin(attenuatorSetUnderTest);
 		for(float attenuation : attenuatorSetUnderTest.getAttenuation()){
 			if(attenuation == GeneralUtils.ERROR_VALUE){
 				attenuatorRespond = false;

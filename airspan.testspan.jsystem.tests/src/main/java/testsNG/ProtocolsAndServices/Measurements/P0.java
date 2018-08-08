@@ -109,8 +109,8 @@ public class P0 extends TestspanTest{
 			attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(attenuatorSetName);
 		}
 		attenuatorRespond = true;
-		checkAttenuatorConnection();
 		peripheralsConfig = PeripheralsConfig.getInstance();
+		checkAttenuatorConnection();
 		dm  = new DMtool();
 		esonServer = (EsonServer) system.getSystemObject("EsonServer");
 		eson = new Eson();

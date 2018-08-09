@@ -121,6 +121,11 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 			exe.execute(ueIPerf);
 		}
 		
+		/*iperfMachineDL.sendCommand("echo '' >> " + ulServerCommandsFile);
+		iperfMachineDL.sendCommand("echo '' >> " + dlclientCommandsFile);
+		iperfMachineUL.sendCommand("echo '' >> " + dlServerCommandsFile);
+		iperfMachineUL.sendCommand("echo '' >> " + ulclientCommandsFile);*/
+		
 		GeneralUtils.unSafeSleep(10000);
 		iperfMachineDL.sendCommand("cat " + ulServerCommandsFile);
 		GeneralUtils.unSafeSleep(2000);
@@ -137,6 +142,12 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		iperfMachineUL.sendCommand("cat " + ulclientCommandsFile);
 		GeneralUtils.unSafeSleep(2000);
 		iperfMachineUL.sendCommand(ulclientCommandsFile);
+		GeneralUtils.unSafeSleep(2000);
+
+		iperfMachineDL.sendCommand("ps -aux | grep iperf");
+		GeneralUtils.unSafeSleep(2000);
+		iperfMachineUL.sendCommand("ps -aux | grep iperf");
+
 		GeneralUtils.unSafeSleep(20000);
 	}
 

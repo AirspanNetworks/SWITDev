@@ -127,10 +127,10 @@ public class UeSimulatorActions extends Action {
 	}
 	
 	@Test											
-	@TestProperties(name = "Add UEs", returnParam = "LastStatus", paramsInclude = { "NumUes", "release", "category",
-			"DUT", "cellId" })
+	@TestProperties(name = "Add UEs", returnParam = "LastStatus", paramsInclude = { "NumUes", "release", "category", "DUT", "cellId" })
 	public void AddUes() {
 		boolean flag = false;
+		
 		try {
 			report.report("Adding " + numUes + " UEs, release " + release + ", category " + category);
 			AmariSoftServer amariSoftServer = AmariSoftServer.getInstance();

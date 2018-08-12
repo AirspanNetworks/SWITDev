@@ -80,7 +80,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     private String[] imsiStartList;
     private String[] imsiStopList;
     private Stack<String> dlMachineNetworks;
-    public AmarisoftGroup[] amarisoftGroups ;
+    public AmarisoftGroup[] UEgroup ;
     private ArrayList<AmarisoftUE> ueMap_1;
     private ArrayList<AmarisoftUE> unusedUEs_1;
     private HashMap<Integer,AmarisoftUE> ueMap;
@@ -126,7 +126,12 @@ public class AmariSoftServer extends SystemObjectImpl{
 			Long startImsi = new Long(imsiStartList[i]);
 			Long stopImsi = new Long(imsiStopList[i]);
 			for (Long imsi = startImsi; imsi <= stopImsi ; imsi++) {
-				String groupName = AmarisoftGroup.checkIfImsiIsInGroup(imsi);
+				String groupName = "";
+				for (int j = 0; j < UEgroup.length; j++) {
+					groupName = UEgroup[j].checkIfImsiIsInGroup(imsi);
+					if (!groupName.equals(""))
+						break;
+				}
 				AmarisoftUE ue = new AmarisoftUE(ueId, groupName,  this);
 				ue.setImsi(imsi+"");
 				unusedUEs_1.add(ue);

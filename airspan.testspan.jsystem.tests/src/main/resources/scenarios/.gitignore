@@ -22,6 +22,7 @@
 >>>>>>> refs/heads/Oren
 /amarisoft.properties
 /amarisoft.xml
+<<<<<<< HEAD
 /Son_Test_Semion.properties
 /Son_Test_Semion.xml
 /TestAutoPciOnTheFly.properties
@@ -48,5 +49,7 @@
 /moran.xml
 /start_ues_in_amarisoft.properties
 /start_ues_in_amarisoft.xml
+=======
+>>>>>>> branch 'Dor' of ssh://build@asil-git/srv/git/SWITDev.git
 /DorTest.properties
 /DorTest.xml

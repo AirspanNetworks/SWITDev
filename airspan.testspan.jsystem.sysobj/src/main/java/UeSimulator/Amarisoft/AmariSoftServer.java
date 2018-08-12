@@ -737,7 +737,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 			boolean deleteUEResult = deleteUE(UEId + i);
 			if (deleteUEResult) {
 				ueMap.remove(UEId + i);
-				AmarisoftUE ue = new AmarisoftUE(UEId + i, this);
+				AmarisoftUE ue = new AmarisoftUE(UEId + i,"",  this);
 				unusedUes.put(UEId + i, ue);
 				unusedUes.put(UEId + i, ue);
 			}

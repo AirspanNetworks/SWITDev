@@ -27,6 +27,7 @@ public class IPerfLinuxMachine extends IPerfMachine{
 			if((sshSession == null) || (!sshSession.isConnected())){
 				sshSession = new SSHConnector(hostname, username, password);
 				sshSession.initConnection();
+				
 			}else{
 				GeneralUtils.printToConsole("IPerf Machine is already connected.");
 			}
@@ -36,7 +37,20 @@ public class IPerfLinuxMachine extends IPerfMachine{
 			GeneralUtils.printToConsole("FAILED to connect to IPerf Machine.");
 			e.printStackTrace();
 		}
-		return sshSession.isConnected();
+		boolean connected = sshSession.isConnected();
+		if(connected){
+			sendCommand("rm "+preAddressTpFile+"clientOutputDL*");
+		    sendCommand("rm "+preAddressTpFile+"tpUL*");
+			sendCommand("rm "+preAddressTpFile+"DLclientSide.txt");
+			sendCommand("rm "+preAddressTpFile+"ULserverSide.txt");
+			sendCommand("rm "+preAddressTpFile+"nohup*");
+		
+			sendCommand("rm "+preAddressTpFile+"clientOutputUL*");
+			sendCommand("rm "+preAddressTpFile+"tpDL*");
+			sendCommand("rm "+preAddressTpFile+"ULclientSide.txt");
+			sendCommand("rm "+preAddressTpFile+"DLserverSide.txt");
+		}
+		return connected;
 	}
 
 	public Pair<Boolean,String> sendCommand(String command, int timeoutInMili){
@@ -91,7 +105,7 @@ public class IPerfLinuxMachine extends IPerfMachine{
 		int numberOfLinesForSample = 0;
 		numberOfLinesForSample = IPerfMachine.getNumberOfLinesForSample();
 		String getLastTpLines = "tail -n-"+numberOfLinesForSample+" " + tpCountersFileNames;
-		Pair<Boolean, String> res = sendCommand(getLastTpLines, 150);
+		Pair<Boolean, String> res = sendCommand(getLastTpLines, 1000);
 		return res.getElement1();
 	}
 

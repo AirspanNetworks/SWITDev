@@ -1271,14 +1271,14 @@ public class TPTBase extends TestspanTest {
 		}
 
 		if (use_Expected_DL) {
-			dlPassCriteria = modifyAndPortLinkAndPrint(dlPassCriteria, portsLoadPair.getElement0(), this.Expected_DL);
+			dlPassCriteria = modifyAndPortLinkAndPrint("DL",dlPassCriteria, portsLoadPair.getElement0(), this.Expected_DL);
 		} else {
 			dlPassCriteria *= passCriteria;
 			report.report("DL Threshold : " + passCriteria * 100 + "%");
 
 		}
 		if (use_Expected_UL) {
-			ulPassCriteria = modifyAndPortLinkAndPrint(ulPassCriteria, portsLoadPair.getElement1(), this.Expected_UL);
+			ulPassCriteria = modifyAndPortLinkAndPrint("UL",ulPassCriteria, portsLoadPair.getElement1(), this.Expected_UL);
 		} else {
 			ulPassCriteria *= passCriteria;
 			report.report("UL Threshold : " + passCriteria * 100 + "%");
@@ -1383,32 +1383,19 @@ public class TPTBase extends TestspanTest {
 		table.reportTable("");
 	}
 
-	private double modifyAndPortLinkAndPrint(double calculatorPassWithSysModi, double systemLoadWithModifications,
+	private double modifyAndPortLinkAndPrint(String ul_dl,double calculatorPassWithSysModi, double systemLoadWithModifications,
 			double expectedPassCriteriaPercent) {
-		Double systemLoadWithCustomPercent = 0.0;
 		Double result = 0.0;
-		String calculationOne = "System Current Load For port : " + String.format("%.2f", systemLoadWithModifications);
-		systemLoadWithCustomPercent = systemLoadWithModifications * (expectedPassCriteriaPercent / 100.0);
-		String calculationTwo = "System load * custom JSystem Parameter = "
-				+ String.format("%.2f", systemLoadWithCustomPercent);
-		String conclusion;
-
-		result = systemLoadWithCustomPercent;
-		conclusion = "Pass Criteria : " + String.format("%.2f", systemLoadWithCustomPercent);
-		if (systemLoadWithCustomPercent >= calculatorPassWithSysModi) {
-			conclusion = "System Load : " + String.format("%.2f", systemLoadWithCustomPercent)
-					+ " , Maximum Capacity : " + String.format("%.2f", systemLoadWithModifications)
-					+ " => Pass Criteria will be : " + String.format("%.2f", calculatorPassWithSysModi);
-			result = calculatorPassWithSysModi;
+		Double toCalculate = 0.0;
+		if(calculatorPassWithSysModi <= systemLoadWithModifications){
+			toCalculate = calculatorPassWithSysModi;
+		}else{
+			toCalculate = systemLoadWithModifications;
 		}
-
-		GeneralUtils.startLevel(conclusion);
-		report.report(calculationOne);
-		report.report(calculationTwo);
-		GeneralUtils.stopLevel();
+		result = toCalculate * (expectedPassCriteriaPercent / 100.0);
+		report.report("Pass Criteria for "+ul_dl+": " + String.format("%.2f", result));
 
 		return result;
-
 	}
 
 	protected String ParseRadioProfileToString(RadioParameters radioParams2) {

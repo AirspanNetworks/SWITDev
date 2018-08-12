@@ -260,6 +260,7 @@ public class Progression extends TestspanTest {
 		GeneralUtils.startLevel("Redundency Test");
 		if(!fixMmesOrder())
 		{
+			GeneralUtils.stopLevel();
 			return false;
 		}
 		printDebugData();

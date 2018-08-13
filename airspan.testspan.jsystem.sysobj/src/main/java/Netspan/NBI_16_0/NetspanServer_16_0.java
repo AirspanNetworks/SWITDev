@@ -264,7 +264,7 @@ public class NetspanServer_16_0 extends NetspanServer_15_5 implements Netspan_16
 		SoftwareStatusGetWs result = soapHelper_16_0.getSoftwareSoap().softwareStatusGet(enbList, credentialsSoftware);
 		if (result.getErrorCode() != Netspan.NBI_16_0.Software.ErrorCodes.OK) {
 			report.report("softwareStatusGet via Netspan Failed : " + result.getErrorString(), Reporter.WARNING);
-			soapHelper_15_2.endSoftwareSoap();
+			soapHelper_16_0.endSoftwareSoap();
 			return null;
 		} else {
 			SoftwareStatus newsoftwareStatus = null;
@@ -282,7 +282,7 @@ public class NetspanServer_16_0 extends NetspanServer_15_5 implements Netspan_16
 					break;
 				}
 			}
-			soapHelper_15_2.endSoftwareSoap();
+			soapHelper_16_0.endSoftwareSoap();
 			return newsoftwareStatus;
 		}
 	}

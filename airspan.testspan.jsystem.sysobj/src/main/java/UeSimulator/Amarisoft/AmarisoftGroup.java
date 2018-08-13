@@ -41,10 +41,6 @@ public class AmarisoftGroup extends SystemObjectImpl{
 		this.imsiStop = imsiStop.split(",");
 	}
 
-
-	
-	
-	
 	public String checkIfImsiIsInGroup(Long imsi) {
 		for (int i = 0; i < imsiStart.length; i++) {
 			Long startImsi = new Long(imsiStart[i]);

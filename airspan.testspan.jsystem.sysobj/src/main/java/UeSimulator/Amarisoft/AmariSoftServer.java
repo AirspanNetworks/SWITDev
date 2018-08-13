@@ -39,7 +39,6 @@ import UeSimulator.Amarisoft.JsonObjects.Status.CellsWrapper;
 import UeSimulator.Amarisoft.JsonObjects.Status.ConfigGet;
 import UeSimulator.Amarisoft.JsonObjects.Status.UeAdd;
 import UeSimulator.Amarisoft.JsonObjects.Status.UeStatus;
-import Utils.CellNetspanProfiles;
 import Utils.GeneralUtils;
 import Utils.TerminalUtils;
 import jsystem.framework.report.ListenerstManager;

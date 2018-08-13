@@ -725,7 +725,7 @@ public class SoftwareUtiles {
 								return true;
 							}
 							else{
-								//report.report("varsion doesn't match to "+ image.getVersion());
+								//report.report("version doesn't match to "+ image.getVersion());
 								report.report("version is " + localimage.getVersion() + " and not " + image.getVersion() + " as expected");
 								return false;
 							}
@@ -1078,7 +1078,6 @@ public class SoftwareUtiles {
 		        	
 		        	EnodeBUpgradeImage upgradeImage = new EnodeBUpgradeImage();
 					upgradeImage.setName(softwareImage);
-<<<<<<< HEAD
 					ImageType it = eNodeB.getImageType();
 					if(it == ImageType.AirDensity || it == ImageType.COMBINED_LTE_RELAY){
 						int version = Integer.valueOf(eNodeB.getEnodeBversion().split("_")[0]);
@@ -1093,14 +1092,6 @@ public class SoftwareUtiles {
 					
 					if (enodeBUpgradeServer.getUpgradeServerProtocolType() == ServerProtocolType.SFTP){
 						buildFileName = "/upload/"+buildFileName; 
-=======
-					if (softwareStatus != null) 
-						upgradeImage.setImageType(softwareStatus.ImageType);
-					else
-						upgradeImage.setImageType(eNodeB.getImageType().value());
-					if (enodeBUpgradeServer.getUpgradeServerProtocolType() == ServerProtocolType.SFTP) {
-						buildFileName = "/upload/" + buildFileName;
->>>>>>> branch 'Dor' of ssh://build@asil-git/srv/git/SWITDev.git
 					}
 					upgradeImage.setBuildPath(buildFileName);
 					upgradeImage.setVersion(build);

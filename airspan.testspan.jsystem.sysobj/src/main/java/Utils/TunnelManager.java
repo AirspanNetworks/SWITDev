@@ -223,7 +223,7 @@ public class TunnelManager extends Thread{
 			GeneralUtils.unSafeSleep(30000);
 		}
 		if(this.isThreadNeeded == true && areThereAnyTriesLeft(this.eNodebIPSecDetailsList) == false){
-			report.report("TunnelManagerThread: Failed to instanciate IPSec tunnel - stopping TunnelManagerThread", Reporter.FAIL);
+			report.report("TunnelManagerThread: Failed to instanciate IPSec tunnel - stopping TunnelManagerThread", Reporter.WARNING);
 		}
 		this.isRunning = TunnelManagerThreadState.ENDED;
 	}
@@ -234,7 +234,7 @@ public class TunnelManager extends Thread{
 	private synchronized boolean setVirtualIPsAsPublicIPs(ArrayList<EnodebIPSecDetails> eNodebIPSecDetailsList){
 		ArrayList<Integer> eNodeBsIndexes = new ArrayList<>();
 		for(int i = 0; i < eNodebIPSecDetailsList.size(); i++){eNodeBsIndexes.add(i);}
-		report.report("TunnelManager: Getting Virtual IP.");
+		GeneralUtils.printToConsole("TunnelManager: Getting Virtual IP.");
 		for (int i = 0; i < 30; i++) {
 			if(eNodeBsIndexes.isEmpty() == false){
 				ArrayList<Integer> indexesToRemove = new ArrayList<>();
@@ -261,12 +261,12 @@ public class TunnelManager extends Thread{
 							GeneralUtils.unSafeSleep(3000);
 							if(eNodeB.isReachable() && eNodebIPSecDetailsList.get(j).isTunnelOpenedBefore() == true){
 								if(eNodeBInTestList.contains(eNodeB)){
-									report.report("TunnelManager: "+eNodeB.getName() + " is reachable by public IP ("+ eNodebIPSecDetailsList.get(j).getPublicIP() +") after IPSec Tunnel opened before.", Reporter.WARNING);
+									GeneralUtils.printToConsole("TunnelManager: "+eNodeB.getName() + " is reachable by public IP ("+ eNodebIPSecDetailsList.get(j).getPublicIP() +") after IPSec Tunnel opened before.");
 								}
 							}
 						}else{
 							if(eNodeBInTestList.contains(eNodeB) && eNodeB.getIpAddress() == eNodebIPSecDetailsList.get(j).getVirtualIP()){
-								report.report("TunnelManager: "+eNodeB.getName() + " is reachable by Virtual IP ("+ eNodebIPSecDetailsList.get(j).getVirtualIP() +").");
+								GeneralUtils.printToConsole("TunnelManager: "+eNodeB.getName() + " is reachable by Virtual IP ("+ eNodebIPSecDetailsList.get(j).getVirtualIP() +").");
 							}
 							eNodebIPSecDetailsList.get(j).setTunnelOpenedBefore(true);
 							indexesToRemove.add(j);

@@ -106,7 +106,7 @@ public class TestspanTest extends SystemTestCase4 {
 
 		initTestListener();
 		TunnelManager.seteNodeBInTestList(enbInTest);
-		TunnelManager.failedTestIfNoTriesLeftForAnyDut();
+		//TunnelManager.failedTestIfNoTriesLeftForAnyDut();
 		GeneralUtils.startLevel("Initialize Components");
 		
 		//if ue simulator is connected, start log.

@@ -305,7 +305,7 @@ public class TunnelManager extends Thread{
 			if(eNodebIPSecDetails.getNumberOfTriesToSetVirtualIP() >= MAX_NUMBER_OF_TRIES_TO_SET_VIRTUAL_IP){
 				EnodeB eNodeB = eNodebIPSecDetails.geteNodeB();
 				if(eNodeBInTestList.contains(eNodeB)){
-					report.report(eNodeB.getName() + " reach the limit of MAX attempts ("+ MAX_NUMBER_OF_TRIES_TO_SET_VIRTUAL_IP +") to open IPSec Tunnel.", Reporter.FAIL);
+					report.report(eNodeB.getName() + " reach the limit of MAX attempts ("+ MAX_NUMBER_OF_TRIES_TO_SET_VIRTUAL_IP +") to open IPSec Tunnel.", Reporter.WARNING);
 				}
 			}
 		}

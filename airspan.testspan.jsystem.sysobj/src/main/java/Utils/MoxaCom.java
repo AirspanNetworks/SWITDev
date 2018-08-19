@@ -132,11 +132,11 @@ public class MoxaCom extends SystemObjectImpl {
 			result = serial.readInputBuffer();
 			String buffer = "";
 			DateTime target = DateTime.now().plus(timeout);
-			while (result.isEmpty() || (!result.isEmpty() && !buffer.isEmpty())) {
+			while (result.isEmpty() || (!buffer.isEmpty())) {
 				GeneralUtils.unSafeSleep(DEFAULT_TIMEOUT);
 				buffer = serial.readInputBuffer();
 				result += buffer.trim();
-				if (timeout > 0 && !DateTime.now().isBefore(target)) {
+				if (timeout > 0 && DateTime.now().isAfter(target)) {
 					StdOut.print2console(String.format("Timeout reached [%d] msec", timeout));
 					break;
 				}

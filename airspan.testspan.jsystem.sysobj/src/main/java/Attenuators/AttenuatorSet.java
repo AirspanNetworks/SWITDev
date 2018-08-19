@@ -69,7 +69,7 @@ public class AttenuatorSet extends SystemObjectImpl {
 			
 			if(!attenuators[i].isConnected()) attenuators[i].connect();
 			if(!attenuators[i].isConnected()) {
-				att[i] = GeneralUtils.ERROR_VALUE;
+				att[i] = GeneralUtils.ERROR_VALUE_FLOAT;
 				continue;
 			}
 			

@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 
 import Attenuators.Utils.ControlledAttenuator;
 import Attenuators.Utils.ERudatAttenuatorCommands;
+import Utils.GeneralUtils;
 import Utils.MoxaCom;
 import Utils.MoxaComMode;
 import jsystem.utils.StringUtils;
@@ -76,25 +77,22 @@ public class RudatAttenuator extends ControlledAttenuator {
 		serialCom.clearBuffer();
 		String command = ERudatAttenuatorCommands.ATTENUATION_GET.getCommand(myType);
 		this.serialCom.sendString(command, false);
-		Pattern pattern = Pattern.compile("\\d+(\\.\\d{1,2})?");
-		
+		Pattern pattern = Pattern.compile("\\d+(\\.\\d+)?");		
 			
 		long startTime = System.currentTimeMillis(); //fetch starting time
-		while(false||(System.currentTimeMillis()-startTime)<(COMMAND_TIMEOUT*10))
+		while((System.currentTimeMillis()-startTime)<(COMMAND_TIMEOUT*10))
 		{
 			String result = serialCom.getResult(COMMAND_TIMEOUT);
+			GeneralUtils.printToConsole("Attenuator response: " + result);
 			Matcher matcher = pattern.matcher(result);
 			if(matcher.find()){
-			//	GeneralUtils.printToConsole(System.currentTimeMillis()-startTime);
-
-				return Float.parseFloat(matcher.group(0));
+				//	GeneralUtils.printToConsole(System.currentTimeMillis()-startTime);
+				return Float.valueOf(matcher.group(0));
 			}
+			this.serialCom.sendString(command, false);
 		}
-		
-			
-		return -999;
+		return GeneralUtils.ERROR_VALUE_FLOAT;
 	}
-
 }
 
 

@@ -41,6 +41,8 @@ public class GeneralUtils {
 	private static int levelCounter = 0;
 
 	public static final int ERROR_VALUE = -999;
+	
+	public static final float ERROR_VALUE_FLOAT = -999;
 
 	public static void clearLevelCounter(){
 		levelCounter = 0;

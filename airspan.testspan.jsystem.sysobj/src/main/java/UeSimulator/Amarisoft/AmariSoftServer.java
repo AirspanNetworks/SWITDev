@@ -82,7 +82,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     public AmarisoftGroup[] UEgroup ;
     private ArrayList<AmarisoftUE> ueMap_1;
     private ArrayList<AmarisoftUE> unusedUEs_1;
-    private HashMap<Integer,AmarisoftUE> ueMap;
+    //private HashMap<Integer,AmarisoftUE> ueMap;
     private HashMap<Integer,UE> unusedUes;
     private HashMap<String, Integer> sdrCellsMap;
     volatile private Object returnValue;
@@ -103,7 +103,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 		port = 900 + sdrList[0];
     	connect();
     	
-    	ueMap = new HashMap<>();
+    	ueMap_1 = new ArrayList();
     	sdrCellsMap = new HashMap<>();
     	fillUeList();
 	}
@@ -732,7 +732,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 		GeneralUtils.startLevel("deleting " + amount + " UEs from Amarisoft simulator.");
 		boolean result = true;
 		for (int i = 0; i < amount; i++) {
-			 if(ueMap.size() <= 0) {
+			 if(ueMap_1.size() <= 0) {
 				report.report("Failed deleting UE from simulator. " + i + " UEs were deleted out of " + amount + " requsted.", Reporter.WARNING);
 				return false;
 			}
@@ -740,7 +740,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 			report.report("Deleting UE : " + UEId+i);
 			boolean deleteUEResult = deleteUE(UEId + i);
 			if (deleteUEResult) {
-				ueMap.remove(UEId + i);
+				ueMap_1.remove(UEId + i);
 				AmarisoftUE ue = new AmarisoftUE(UEId + i, "", this);
 				unusedUes.put(UEId + i, ue);
 				unusedUes.put(UEId + i, ue);
@@ -751,25 +751,44 @@ public class AmariSoftServer extends SystemObjectImpl{
 		return result;
 	}
 	
+	//Deleting lastUEs from list according to given amount
 	public boolean deleteUes(int amount)
 	{
 		GeneralUtils.startLevel("deleting " + amount + " UEs from Amarisoft simulator.");
 		boolean result = true;
 		int deletedAmount = 0;
-		Iterator key = ueMap.keySet().iterator();
-		int ueNum = ueMap.entrySet().iterator().next().getKey();
-		while(key.hasNext()) {
+		if (deletedAmount < amount) {
+			int lastUE = ueMap_1.size()-1;
+			AmarisoftUE tempue = ueMap_1.get(lastUE);
+			if(deleteUE(tempue.ueId)) {
+				ueMap_1.remove(lastUE);
+				deletedAmount++;
+				report.report("UE : " + ueMap_1.get(lastUE).ueId + " ( " + ueMap_1.get(lastUE).getImsi() + " ) was deleted");
+				unusedUEs_1.add(tempue);
+			}
+			else {
+				report.report("UE :" + ueMap_1.get(lastUE).ueId + " ( " + ueMap_1.get(lastUE).getImsi() + " ) haven't been deleted from ue simulator");
+				result = false;
+			}
+		}
+		
+		
+		//Iterator key = ueMap.keySet().iterator();
+		//int ueNum = ueMap.entrySet().iterator().next().getKey();
+		/*int ueNum = ueMap_1.get(0).ueId;
+		ArrayList<AmarisoftUE> ues = ueMap_1;
+		for(AmarisoftUE ue: ues) {
 			if (deletedAmount < amount) {
-				if (ueMap.containsKey(ueNum)) {
+				if (ue.ueId == ueNum) {
 					if (deleteUE(ueNum)) {
 						deletedAmount++;
-						ueMap.remove(ueNum);
-						AmarisoftUE ue = new AmarisoftUE(ueNum, "", this);
+						ueMap_1.remove(ueNum);
+						AmarisoftUE tempue = new AmarisoftUE(ueNum, "", this);
 						report.report("UE : " + ueNum + " ( " + ue.getImsi() + " ) was deleted");
 						unusedUes.put(ueNum, ue);
 					}
 					else {
-						report.report("UE :" + ueMap.get(ueNum).getImsi() + " haven't been deleted from ue simulator");
+						report.report("UE :" + ueMap_1.get(ueNum).getImsi() + " haven't been deleted from ue simulator");
 						result = false;
 						
 					}
@@ -779,7 +798,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 			else {
 				break;
 			}
-		}
+		}*/
 		GeneralUtils.stopLevel();
 		return result;
 	}
@@ -811,7 +830,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 	
 	public boolean uePowerOn(int ueId)
 	{
-		UE ue = ueMap.get(ueId);
+		UE ue = getUEbyUEID(ueMap_1, ueId);
 		if (ue == null) {
 			GeneralUtils.printToConsole("Cant turn on Ueid " + ueId + " because it does not exist on the simulator.");
 			return false;
@@ -1035,7 +1054,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 	}
 
 	public ArrayList<UE> getUeList() {
-		return new ArrayList<UE>(ueMap.values());
+		return new ArrayList<UE>(ueMap_1);
 	}
 
 	public String getUeStatus(int ueId) {
@@ -1096,9 +1115,9 @@ public class AmariSoftServer extends SystemObjectImpl{
 	}
 
 	public int getUeId(String IMSI) {
-		for (Entry<Integer, AmarisoftUE> entry : ueMap.entrySet()) {
-			if (entry.getValue().getImsi().equals(IMSI)) {
-				return entry.getKey();
+		for (AmarisoftUE ue: ueMap_1) {
+			if (ue.getImsi() == IMSI) {
+				return ue.ueId;
 			}
 		}
 		GeneralUtils.printToConsole("Could not find UE with IMSI: " + IMSI);
@@ -1167,5 +1186,13 @@ public class AmariSoftServer extends SystemObjectImpl{
 		return cell.getNRbDl();
 	}
 
+	
+	private AmarisoftUE getUEbyUEID(ArrayList<AmarisoftUE> ues, int UEID) {
+		for(AmarisoftUE ue: ues) {
+			if (ue.ueId == UEID)
+				return ue;
+		}
+		return null;
+	}
 	
 }

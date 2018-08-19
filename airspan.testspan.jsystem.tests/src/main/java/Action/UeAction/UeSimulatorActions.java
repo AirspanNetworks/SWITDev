@@ -129,6 +129,37 @@ public class UeSimulatorActions extends Action {
 	@Test											
 	@TestProperties(name = "Add UEs", returnParam = "LastStatus", paramsInclude = { "NumUes", "release", "category", "DUT", "cellId" })
 	public void AddUes() {
+		boolean res = true;
+
+		try {
+			switch (selectionMethod) {
+			case AMOUNT:
+				AddUes(numUes);
+				break;
+			case GROUPNAME:
+				AddUes(groupName);
+				break;
+			default:
+				break;
+			}
+		} catch (Exception e) {
+			res = false;
+			report.report("Error trying to add UEs: " + e.getMessage(), Reporter.WARNING);
+			e.printStackTrace();
+		}
+		
+		if (res == false) {
+			report.report("Adding UEs Failed", Reporter.FAIL);
+		} else {
+			report.report("Adding UEs Succeeded");
+		}
+	}
+	private void AddUes(String groupName2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private boolean AddUes(int numUes) {
 		boolean flag = false;
 		
 		try {
@@ -154,8 +185,10 @@ public class UeSimulatorActions extends Action {
 
 		if (flag == false) {
 			report.report("Add UEs Failed", Reporter.FAIL);
+			return false;
 		} else {
 			report.report("Add UEs Succeeded");
+			return true;
 		}
 	}
 	

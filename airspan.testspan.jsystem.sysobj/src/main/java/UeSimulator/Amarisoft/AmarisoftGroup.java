@@ -1,9 +1,5 @@
 package UeSimulator.Amarisoft;
 
-import java.util.ArrayList;
-
-import EnodeB.EnodeB;
-import Utils.SysObjUtils;
 import jsystem.framework.system.SystemObjectImpl;
 
 public class AmarisoftGroup extends SystemObjectImpl{

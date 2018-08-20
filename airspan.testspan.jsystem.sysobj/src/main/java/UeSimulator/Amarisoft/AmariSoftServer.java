@@ -83,7 +83,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     private ArrayList<AmarisoftUE> ueMap_1;
     private ArrayList<AmarisoftUE> unusedUEs_1;
     //private HashMap<Integer,AmarisoftUE> ueMap;
-    private HashMap<Integer,UE> unusedUes;
+    //private HashMap<Integer,UE> unusedUes;
     private HashMap<String, Integer> sdrCellsMap;
     volatile private Object returnValue;
 
@@ -135,6 +135,25 @@ public class AmariSoftServer extends SystemObjectImpl{
 				ue.setImsi(imsi+"");
 				unusedUEs_1.add(ue);
 				ueId++;
+			}
+			checkGroupsValidation();
+		}
+	}
+
+	private void checkGroupsValidation() {
+		
+		for(AmarisoftGroup group: UEgroup) {
+			for (int i = 0; i < group.getImsiStart().length; i++) {
+				Long startImsi = new Long(group.getImsiStart()[i]);
+				Long stopImsi = new Long(group.getImsiStop()[i]);
+				for (Long UEimsi = startImsi; UEimsi <= stopImsi ; UEimsi++) {
+					for(AmarisoftUE amariUE: unusedUEs_1) {
+						if (UEimsi == Long.parseLong(amariUE.getImsi())) {
+							break;
+						}
+					}
+					report.report("IMSI: " + UEimsi + " doesn't exists in the main imsi list in the SUT", Reporter.WARNING);
+				}
 			}
 		}
 	}
@@ -642,14 +661,14 @@ public class AmariSoftServer extends SystemObjectImpl{
 		GeneralUtils.startLevel("Adding " + amount + " UEs to Amarisoft simulator.");
 		boolean result = true;
 		for (int i = 0; i < amount; i++) {
-			if (unusedUes.size() <= 0) {
+			if (unusedUEs_1.size() <= 0) {
 				report.report("Failed adding UE to simulator. " + i + " UEs were added out of " + amount + " requsted.", Reporter.WARNING);
 				return false;
 			}
-			Object[] keys = unusedUes.keySet().toArray();
+			//Object[] keys = unusedUEs_1.keySet().toArray();
 			
-			int ueId = (Integer)keys[0];
-			result = result && addUe(unusedUes.get(ueId), release, category, ueId, cellId);
+			int ueId = unusedUEs_1.get(i).ueId;
+			result = result && addUe(unusedUEs_1.get(i), release, category, ueId, cellId);
 		}
 		GeneralUtils.stopLevel();
 		return result;
@@ -742,8 +761,8 @@ public class AmariSoftServer extends SystemObjectImpl{
 			if (deleteUEResult) {
 				ueMap_1.remove(UEId + i);
 				AmarisoftUE ue = new AmarisoftUE(UEId + i, "", this);
-				unusedUes.put(UEId + i, ue);
-				unusedUes.put(UEId + i, ue);
+				unusedUEs_1.add(UEId + i, ue);
+				unusedUEs_1.add(UEId + i, ue);
 			}
 			result = result && deleteUEResult;
 		}

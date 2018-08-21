@@ -115,7 +115,7 @@ public class SON extends EnodebAction {
 		
 		// print test results.
 		GeneralUtils.startLevel("Add Neighbor Results");
-		
+		GeneralUtils.unSafeSleep(10000);
 		report.reportHtml(dut1.getName() + " - db get nghList", dut1.lteCli("db get nghlist"), true);
 		if (!neighbors.verifyAnrNeighbor(dut1, dut2)) {
 			report.report("[ERROR]: Can not find the neighbor on ngh list, test failed.", Reporter.FAIL);

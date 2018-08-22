@@ -115,7 +115,9 @@ public class AmariSoftServer extends SystemObjectImpl{
     	password = "SWITswit";
     	port="9002";
     	connect();
-    	
+    	ueMap_1 = new ArrayList();
+    	sdrCellsMap = new HashMap<>();
+    	fillUeList();
     }
 	
 	private void fillUeList() {

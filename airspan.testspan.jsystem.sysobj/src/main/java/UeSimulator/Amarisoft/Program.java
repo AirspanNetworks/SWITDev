@@ -10,6 +10,7 @@ import UeSimulator.Amarisoft.JsonObjects.Actions.UEAction.Actions;
 import UeSimulator.Amarisoft.JsonObjects.ConfigFile.Cell;
 import UeSimulator.Amarisoft.JsonObjects.ConfigFile.SimEvent;
 import UeSimulator.Amarisoft.JsonObjects.ConfigFile.UeList;
+import Utils.GeneralUtils;
 
 
 public class Program {
@@ -42,12 +43,17 @@ public class Program {
 		{
 		//clientEndPoint.startServer();
 			AmariSoftServer a = new AmariSoftServer();
+			a.setDlMachineNetworks("91.91.224.2-253,91.91.225.2-253");
 			a.easyInit();
 			a.startServer("0UE_SC_SWIT24");
 			a.addUes(5, 13, 4);
-			ArrayList<AmarisoftUE> ues = a.getUnusedUEs_1();
+			ArrayList<AmarisoftUE> ues = a.getUeMap();
 			for (AmarisoftUE ue: ues) {
 				ue.start();
+			}
+
+			for (AmarisoftUE ue: ues) {
+				ue.stop();
 			}
 			a.deleteUes(2);
 			a.stopServer();

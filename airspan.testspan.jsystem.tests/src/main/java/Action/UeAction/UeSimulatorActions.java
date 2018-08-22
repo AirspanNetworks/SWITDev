@@ -154,7 +154,7 @@ public class UeSimulatorActions extends Action {
 			report.report("Adding UEs Succeeded");
 		}
 	}
-	private void AddUes(String groupName2) {
+	private void AddUes(String groupName) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -342,6 +342,7 @@ public class UeSimulatorActions extends Action {
 				}				
 				break;
 			}
+			//need to add verification for IP address from amarisoft server
 		} catch (Exception e) {
 			res = false;
 			report.report("Error trying to start UEs: " + e.getMessage(), Reporter.WARNING);

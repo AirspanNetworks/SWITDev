@@ -1,13 +1,53 @@
 package UeSimulator.Amarisoft;
 
+import java.util.ArrayList;
+
 import jsystem.framework.system.SystemObjectImpl;
 
 public class AmarisoftGroup extends SystemObjectImpl{
 	private String groupName;
 	private String[] imsiStart;
 	private String[] imsiStop;
+	ArrayList<Long> IMSIs;
 	
 	
+	/*public int getSize() {
+		if (size == 0) {
+			for(int i = 0; i < imsiStart.length; i++) {
+				Long startImsi = new Long(imsiStart[i]);
+				Long stopImsi = new Long(imsiStop[i]);
+				size = size + (int) (stopImsi - startImsi);
+			}
+		}
+		return size;
+	}
+
+
+	public void setSize(int size) {
+		this.size = size;
+	}*/
+
+
+	public ArrayList<Long> getIMSIs() {
+		if(IMSIs == null) {
+			IMSIs = new ArrayList<>();
+			for(int i = 0; i < imsiStart.length; i++) {
+				Long startImsi = new Long(imsiStart[i]);
+				Long stopImsi = new Long(imsiStop[i]);
+				for (Long UEimsi = startImsi; UEimsi <= stopImsi ; UEimsi++) {
+					IMSIs.add(UEimsi);
+				}
+			}
+		}
+		return IMSIs;
+	}
+
+
+	public void setIMSIs(ArrayList<Long> iMSIs) {
+		IMSIs = iMSIs;
+	}
+
+
 	public String getGroupName() {
 		return groupName;
 	}
@@ -49,5 +89,7 @@ public class AmarisoftGroup extends SystemObjectImpl{
 		}
 		return "";
 	}
+	
+	
 	
 }

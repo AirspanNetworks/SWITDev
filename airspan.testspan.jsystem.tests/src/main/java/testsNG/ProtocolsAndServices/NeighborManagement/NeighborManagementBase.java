@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import EnodeB.AV100C;
 import EnodeB.EnodeB;
 import IPG.IPG;
 import Netspan.EnbProfiles;
@@ -30,7 +31,7 @@ import testsNG.Actions.Neighbors;
 
 public class NeighborManagementBase extends TestspanTest{
 	protected Neighbors neighbor = Neighbors.getInstance();
-	public static int MAXIMUM_ALLOWED_NEIGHBORS = 256;
+	public int MAXIMUM_ALLOWED_NEIGHBORS = 256;
 	public EnodeB DUT1;
 	public EnodeB DUT2;
 	protected ArrayList<EnodeB> otherEnb;
@@ -54,6 +55,8 @@ public class NeighborManagementBase extends TestspanTest{
 		enbInTest = new ArrayList<EnodeB>();
 		enbInTest.add(DUT1);
 		super.init();
+		if(DUT1 instanceof AV100C)
+			MAXIMUM_ALLOWED_NEIGHBORS = 32;
 		GeneralUtils.startLevel("Preparing environment to test");
 		otherEnb = (ArrayList<EnodeB>) enbInSetup.clone();
 		otherEnb.remove(DUT1);

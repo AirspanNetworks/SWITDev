@@ -69,6 +69,8 @@ public class AmariSoftServer extends SystemObjectImpl{
 	private String port;
 	private String userName;
 	private String password;
+	private int timingAdvance = 5;
+
 	private double txgain;
 	private double rxgain;
 	private String ueConfigFileName = "automationConfigFile";
@@ -126,7 +128,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     }
 	
 	private void fillUeList() {
-		int ueId = 2;// start at 2 because amarisoft must start with atleast 1 UE.
+		int ueId = 1;
 		unusedUEs_1 = new ArrayList<>();
 		for (int i = 0; i < imsiStartList.length; i++) {
 			Long startImsi = new Long(imsiStartList[i]);
@@ -1043,21 +1045,6 @@ public class AmariSoftServer extends SystemObjectImpl{
 		configObject.setRfDriver(new RfDriver());
 		configObject.getRfDriver().setName("sdr");
 		configObject.getRfDriver().setArgs(rfDriver);
-		ArrayList<UeList> ueLists = new ArrayList<UeList>();
-		UeList ueList = new UeList();
-		ueList.setAsRelease(13);
-		ueList.setUeCategory(4);
-		ueList.setForcedCqi(15);
-		ueList.setForcedRi(2);
-		ueList.setHalfDuplex(false);
-		ueList.setSimAlgo("milenage");
-		ueList.setImsi(imsiStartList[0]);
-		ueList.setK("5C95978B5E89488CB7DB44381E237809");
-		ueList.setOp("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
-		ueList.setTunSetupScript("ue-ifup");
-		
-		ueLists.add(ueList);
-		configObject.setUeList(ueLists);
 		setConfigFile(ueConfigFileName);
 		writeConfigFile();
 	}

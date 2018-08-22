@@ -120,7 +120,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     	ip="192.168.58.91";
     	userName="root";
     	password = "SWITswit";
-    	port="9002";
+    	port="9000";
     	connect();
     	ueMap_1 = new ArrayList();
     	sdrCellsMap = new HashMap<>();

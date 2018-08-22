@@ -967,7 +967,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 		configObject.setRfDriver(new RfDriver());
 		configObject.getRfDriver().setName("sdr");
 		configObject.getRfDriver().setArgs(rfDriver);
-		ArrayList<UeList> ueLists = new ArrayList<UeList>();
+		/*ArrayList<UeList> ueLists = new ArrayList<UeList>();
 		UeList ueList = new UeList();
 		ueList.setAsRelease(13);
 		ueList.setUeCategory(4);
@@ -981,7 +981,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 		ueList.setTunSetupScript("ue-ifup");
 		
 		ueLists.add(ueList);
-		configObject.setUeList(ueLists);
+		configObject.setUeList(ueLists);*/
 		setConfigFile(ueConfigFileName);
 		writeConfigFile();
 	}

@@ -1,28 +1,16 @@
 package UeSimulator.Amarisoft;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import UE.AmarisoftUE;
-import UE.UE;
 import UeSimulator.Amarisoft.JsonObjects.Actions.UEAction;
 import UeSimulator.Amarisoft.JsonObjects.Actions.UEAction.Actions;
 import UeSimulator.Amarisoft.JsonObjects.ConfigFile.Cell;
 import UeSimulator.Amarisoft.JsonObjects.ConfigFile.SimEvent;
 import UeSimulator.Amarisoft.JsonObjects.ConfigFile.UeList;
-import UeSimulator.Amarisoft.JsonObjects.Status.CellStatus;
-import UeSimulator.Amarisoft.JsonObjects.Status.CellsWrapper;
-import UeSimulator.Amarisoft.JsonObjects.Status.ConfigGet;
-import UeSimulator.Amarisoft.JsonObjects.Status.UeStatus;
-import jsystem.framework.GeneralEnums;
-import systemobject.terminal.SSH;
-import systemobject.terminal.Terminal;
+
 
 public class Program {
 
@@ -55,7 +43,12 @@ public class Program {
 		//clientEndPoint.startServer();
 			AmariSoftServer a = new AmariSoftServer();
 			a.easyInit();
-			a.startServer("128UE_SC_SWIT24");
+			a.startServer("0UE_SC_SWIT24");
+			a.addUes(5, 13, 4);
+			ArrayList<AmarisoftUE> ues = a.getUnusedUEs_1();
+			for (AmarisoftUE ue: ues) {
+				ue.start();
+			}
 			a.deleteUes(2);
 			a.stopServer();
 			//a.startServer("automationConfigFile");

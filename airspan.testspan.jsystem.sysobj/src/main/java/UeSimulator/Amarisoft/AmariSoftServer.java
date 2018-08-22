@@ -82,7 +82,12 @@ public class AmariSoftServer extends SystemObjectImpl{
     public AmarisoftGroup[] UEgroup ;
     private ArrayList<AmarisoftUE> ueMap_1;
     private ArrayList<AmarisoftUE> unusedUEs_1;
-    //private HashMap<Integer,AmarisoftUE> ueMap;
+    public ArrayList<AmarisoftUE> getUnusedUEs_1() {
+		return unusedUEs_1;
+	}
+
+
+	//private HashMap<Integer,AmarisoftUE> ueMap;
     //private HashMap<Integer,UE> unusedUes;
     private HashMap<String, Integer> sdrCellsMap;
     volatile private Object returnValue;

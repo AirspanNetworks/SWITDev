@@ -73,8 +73,8 @@ public class IPerfStream {
 					this.iperfClientCommand += "-P "+numberOfParallelIPerfStreams;
 					this.iperfServerCommand += "-P "+numberOfParallelIPerfStreams;
 				}
-				this.iperfClientCommand += " -i 1 -p " + (5000+this.qci);
-				this.iperfServerCommand += " -i 1 -p " + (5000+this.qci);
+				this.iperfClientCommand += " -i 1 -p " + (5010+this.qci);
+				this.iperfServerCommand += " -i 1 -p " + (5010+this.qci);
 				if(this.windowSizeInKbits != null){
 					this.iperfClientCommand += " -w "+this.windowSizeInKbits+"k";
 					this.iperfServerCommand += " -w "+this.windowSizeInKbits+"k";

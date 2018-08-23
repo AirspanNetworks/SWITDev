@@ -223,7 +223,14 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 
 
 	public void setUEs(ArrayList<UE> uEs) {
-		ues = uEs;
+		if(ues == null){
+			ues = new ArrayList<UE>();
+		}
+		for(UE ue : uEs){
+			if(!ues.contains(ue)){
+				ues.add(ue);
+			}	
+		}
 	}
 	
 

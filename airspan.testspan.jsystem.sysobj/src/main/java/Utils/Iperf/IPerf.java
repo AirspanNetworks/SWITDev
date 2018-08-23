@@ -585,7 +585,6 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		for(UEIPerf ueIPerf : allUEsIPerfList){
 			resultFiles.addAll(ueIPerf.getResultFiles());
 		}
-		this.allUEsIPerfList = new ArrayList<UEIPerf>();
 		return resultFiles;
 	}
 
@@ -605,6 +604,7 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		for(UEIPerf ueIPerf : allUEsIPerfList){
 			resultFiles.addAll(ueIPerf.getClientOutputFiles());
 		}
+		this.allUEsIPerfList = new ArrayList<UEIPerf>();
 		return resultFiles;
 	}
 	

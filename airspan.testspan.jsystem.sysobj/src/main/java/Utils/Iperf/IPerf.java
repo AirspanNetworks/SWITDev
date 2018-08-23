@@ -303,6 +303,7 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		if(iperfMachineUL != null){
 			iperfMachineUL.disconnect();
 		}
+		connected = false;
 	}
 
 	@Override

@@ -425,6 +425,8 @@ public class TPTBase extends TestspanTest {
 			report.report("start Traffic failed", Reporter.FAIL);
 			throw new Exception("start Traffic Failed from stc class");
 		}
+		trafficSTC.initStreams(this.protocol, ueNameListStc, qci,
+				TransmitDirection.BOTH);
 		
 		GeneralUtils.startLevel("Disable un-needed streams");
 		trafficSTC.disableUnneededStreams(this.protocol,ueNameListStc, qci);
@@ -436,8 +438,6 @@ public class TPTBase extends TestspanTest {
 		}
 		GeneralUtils.stopLevel();
 
-		trafficSTC.initStreams(this.protocol, ueNameListStc, qci,
-				TransmitDirection.BOTH);
 		
 		GeneralUtils.startLevel("Turning on ues in setup");
 		peripheralsConfig.startUEsOnlySnmp(SetupUtils.getInstance().getAllUEs());

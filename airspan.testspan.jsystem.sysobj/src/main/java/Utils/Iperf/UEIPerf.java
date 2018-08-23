@@ -37,7 +37,7 @@ public class UEIPerf implements Runnable {
 	protected long lastSampleTime;
 
 	public UEIPerf(UE ue, IPerfMachine iperfMachineDL, IPerfMachine iperfMachineUL, double ulLoad,
-			double dlLoad, Integer frameSize, ArrayList<Character> qciList) throws IOException, InterruptedException {
+			double dlLoad, Integer frameSize, ArrayList<Character> qciList, Protocol protocol,TransmitDirection direction) throws IOException, InterruptedException {
 		
 		this.ue = ue;
 
@@ -53,11 +53,15 @@ public class UEIPerf implements Runnable {
 		
 		for(Character qciChar : qciList){
 			int qciInt = Integer.valueOf(qciChar)-Integer.valueOf('0');
-			boolean state = qciInt == 9? true : false;
+			//boolean state = qciInt == 9? true : false;
 			String ueNumber = GeneralUtils.removeNonDigitsFromString(this.ue.getName());
 			try {
-				ulStreamArrayList.add(new IPerfStream(TransmitDirection.UL, ueNumber, qciInt, this.ue.getIPerfDlMachine(), this.ue.getIPerfDlMachine(), state, ulLoad/qciList.size(), frameSize));
-				dlStreamArrayList.add(new IPerfStream(TransmitDirection.DL, ueNumber, qciInt, this.ue.getWanIpAddress(), this.ue.getIPerfUlMachine(), state, dlLoad/qciList.size(), frameSize));
+				if(direction == TransmitDirection.BOTH || direction == TransmitDirection.UL){
+					ulStreamArrayList.add(new IPerfStream(TransmitDirection.UL, ueNumber, qciInt, this.ue.getIPerfDlMachine(), this.ue.getIPerfDlMachine(), true, ulLoad/qciList.size(), frameSize,protocol));					
+				}
+				if(direction == TransmitDirection.BOTH || direction == TransmitDirection.DL){
+					dlStreamArrayList.add(new IPerfStream(TransmitDirection.DL, ueNumber, qciInt, this.ue.getWanIpAddress(), this.ue.getIPerfUlMachine(), true, dlLoad/qciList.size(), frameSize,protocol));
+				}
 			} catch (Exception e) {
 				GeneralUtils.printToConsole(e.getMessage());
 				e.printStackTrace();
@@ -313,7 +317,7 @@ public class UEIPerf implements Runnable {
 		}
 	}
 
-	public ArrayList<ArrayList<String>> setStreamsState(ArrayList<String> ueNameList, ArrayList<Character> qciList,
+	public ArrayList<ArrayList<String>> setStreamsState(Protocol protocol,ArrayList<String> ueNameList, ArrayList<Character> qciList,
 			TransmitDirection transmitDirection, boolean state) {
 		ArrayList<IPerfStream> allStream = new ArrayList<IPerfStream>();
 		ArrayList<String> notStateStreamList = new ArrayList<String>();
@@ -324,7 +328,7 @@ public class UEIPerf implements Runnable {
 			//qci from stram
 			char qciFromSTC = iperfStream.getStreamName().charAt(iperfStream.getStreamName().length() - 1); 
 			//UE name form Stream (UE_)
-			String ueNameFromIPerf = iperfStream.getStreamName().substring(3,iperfStream.getStreamName().length()-1);
+			String ueNameFromIPerf = iperfStream.getStreamName().substring(7,iperfStream.getStreamName().length()-1);
 			//check if the stream's Transmit Direction is NOT in transmitDirection 
 			if(!transmitDirection.value.contains(iperfStream.getTransmitDirection().value)){
 				notStateStreamList.add(iperfStream.getStreamName());
@@ -339,6 +343,10 @@ public class UEIPerf implements Runnable {
 			else if(!ueNameList.contains(ueNameFromIPerf)){
 				notStateStreamList.add(iperfStream.getStreamName());
 				System.out.println("Stream : "+iperfStream.getStreamName()+" isActive set to "+!state+" for UE");
+				iperfStream.setActive(!state);
+			}else if(iperfStream.getProtocol() != protocol){
+				notStateStreamList.add(iperfStream.getStreamName());
+				System.out.println("Stream : "+iperfStream.getStreamName()+" isActive set to "+!state+" for traffic type");
 				iperfStream.setActive(!state);
 			}else{
 				stateStreamList.add(iperfStream.getStreamName());
@@ -358,7 +366,7 @@ public class UEIPerf implements Runnable {
 		return enableDisableStreamName; 
 	}
 
-	public ArrayList<ArrayList<String>> setStreamsStateAndNoChangeOthers(ArrayList<String> ueNameList, ArrayList<Character> qciList,
+	public ArrayList<ArrayList<String>> setStreamsStateAndNoChangeOthers(Protocol protocol,ArrayList<String> ueNameList, ArrayList<Character> qciList,
 			TransmitDirection transmitDirection, boolean state) {
 		ArrayList<IPerfStream> allStream = new ArrayList<IPerfStream>();
 		ArrayList<String> notStateStreamList = new ArrayList<String>();
@@ -369,9 +377,10 @@ public class UEIPerf implements Runnable {
 			//qci from stram
 			char qciFromSTC = iperfStream.getStreamName().charAt(iperfStream.getStreamName().length() - 1); 
 			//UE name form Stream (UE_)
-			String ueNameFromIPerf = iperfStream.getStreamName().substring(3,iperfStream.getStreamName().length()-1);
+			String ueNameFromIPerf = iperfStream.getStreamName().substring(7,iperfStream.getStreamName().length()-1);
 			if(transmitDirection.value.contains(iperfStream.getTransmitDirection().value) &&
-					qciList.contains(qciFromSTC) && ueNameList.contains(ueNameFromIPerf)){
+					qciList.contains(qciFromSTC) && ueNameList.contains(ueNameFromIPerf) &&
+					protocol == iperfStream.getProtocol()){
 				stateStreamList.add(iperfStream.getStreamName());
 				System.out.println("Stream : "+iperfStream.getStreamName()+" isActive set to "+state);
 				iperfStream.setActive(state);
@@ -509,19 +518,19 @@ public class UEIPerf implements Runnable {
 	}
 
 	public void setProtocol(Protocol protocol) {
-		this.protocol = protocol;
+		/*this.protocol = protocol;
 		for(IPerfStream ulIPerfStream : ulStreamArrayList){
 			ulIPerfStream.setProtocol(protocol);
 		}
 		for(IPerfStream dlIPerfStream : dlStreamArrayList){
 			dlIPerfStream.setProtocol(protocol);
-		}
+		}*/
 	}
 
 	public ArrayList<Pair<String, ArrayList<String>>> getAllActiveStreamsIPerfCommands() {
 		ArrayList<Pair<String, ArrayList<String>>> activeStreamsIPerfCommands = new ArrayList<Pair<String, ArrayList<String>>>();
 		for(IPerfStream ulIPerfStream : ulStreamArrayList){
-			if(ulIPerfStream.isActive()){
+			if(ulIPerfStream.isActive() && !ulIPerfStream.isRunningTraffic()){
 				ArrayList<String> activeStreamIPerfCommands = new ArrayList<String>();
 				activeStreamIPerfCommands.add(ulIPerfStream.getIperfClientCommand());
 				activeStreamIPerfCommands.add(ulIPerfStream.getIperfServerCommand());
@@ -529,7 +538,7 @@ public class UEIPerf implements Runnable {
 			}
 		}
 		for(IPerfStream dlIPerfStream : dlStreamArrayList){
-			if(dlIPerfStream.isActive()){
+			if(dlIPerfStream.isActive()  && !dlIPerfStream.isRunningTraffic()){
 				ArrayList<String> activeStreamIPerfCommands = new ArrayList<String>();
 				activeStreamIPerfCommands.add(dlIPerfStream.getIperfClientCommand());
 				activeStreamIPerfCommands.add(dlIPerfStream.getIperfServerCommand());

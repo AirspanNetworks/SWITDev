@@ -26,6 +26,7 @@ import testsNG.Actions.Traffic;
 import testsNG.Actions.Utils.CalculatorMap;
 import testsNG.Actions.Utils.ParallelCommandsThread;
 import Entities.ITrafficGenerator.CounterUnit;
+import Entities.ITrafficGenerator.Protocol;
 import Entities.ITrafficGenerator.TransmitDirection;
 import Entities.LoadParam;
 import Entities.StreamParams;
@@ -1740,7 +1741,7 @@ public class P0 extends TestspanTest {
 			ues.add("UE" + i);
 		}
 		try {
-			traffic.disableUnneededStreams(ues, qci);
+			traffic.disableUnneededStreams(Protocol.UDP,ues, qci);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1752,7 +1753,7 @@ public class P0 extends TestspanTest {
 			ues.add("UE" + i);
 		}
 		try {
-			traffic.disableStreamsByUeNameQciAndPortDirectionAndEnableTheRest(ues, qci, TransmitDirection.DL);
+			traffic.disableStreamsByUeNameQciAndPortDirectionAndEnableTheRest(Protocol.UDP,ues, qci, TransmitDirection.DL);
 			//traffic.disableDLStreamsByNameAndQci(ues, qci);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1764,7 +1765,7 @@ public class P0 extends TestspanTest {
 		ArrayList<Character> qci2 = new ArrayList<>();
 		ues.add("UE1");
 		try {
-			traffic.disableUnneededStreams(ues, qci2);
+			traffic.disableUnneededStreams(Protocol.UDP,ues, qci2);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1785,12 +1786,12 @@ public class P0 extends TestspanTest {
 			ues2.add("UE" + i);
 		}
 		try {
-			traffic.enableStreamsByNameAndQciAndDirection(ues, qci1, TransmitDirection.BOTH);
+			traffic.enableStreamsByNameAndQciAndDirection(Protocol.UDP,ues, qci1, TransmitDirection.BOTH);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		try {
-			traffic.enableStreamsByNameAndQciAndDirection(ues2, qci2, TransmitDirection.BOTH);
+			traffic.enableStreamsByNameAndQciAndDirection(Protocol.UDP,ues2, qci2, TransmitDirection.BOTH);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1812,12 +1813,12 @@ public class P0 extends TestspanTest {
 			ues2.add("UE" + i);
 		}
 		try {
-			traffic.enableStreamsByNameAndQciAndDirection(ues, qci1, TransmitDirection.BOTH);
+			traffic.enableStreamsByNameAndQciAndDirection(Protocol.UDP,ues, qci1, TransmitDirection.BOTH);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		try {
-			traffic.enableStreamsByNameAndQciAndDirection(ues2, qci2, TransmitDirection.BOTH);
+			traffic.enableStreamsByNameAndQciAndDirection(Protocol.UDP,ues2, qci2, TransmitDirection.BOTH);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

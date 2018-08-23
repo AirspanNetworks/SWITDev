@@ -354,7 +354,7 @@ public class TrafficAction extends Action {
 			return;
 		}
 
-		ArrayList<String> toCheck = convertToStreamStrings(ues,qci,transmitDirection);
+		ArrayList<String> toCheck = convertToStreamStrings(ues,qci,transmitDirection,trafficType);
 		if(trafficManagerInstance.checkIfStreamsExist(toCheck)){
 			report.report("Action failed - trying to run traffic on a stream already running", Reporter.FAIL);
 			return;
@@ -364,16 +364,17 @@ public class TrafficAction extends Action {
 				expectedLoadType, ULExpected, DLExpected, dut, parallelStreams, windowSize, mss, frameSize, trafficType, runTime, toCheck);
 	}
 
-	public ArrayList<String> convertToStreamStrings(ArrayList<UE> ues, ArrayList<Character> qci, TransmitDirection transmitDirection){
+	public ArrayList<String> convertToStreamStrings(ArrayList<UE> ues, ArrayList<Character> qci, TransmitDirection transmitDirection, Protocol protocol){
 		ArrayList<String> toReturn = new ArrayList<String>();
+		String protocolForStream = (protocol == Protocol.TCP ? "TCP_":"UDP_");
 		for(UE ue:ues){
 			String numUE = "UE" + ue.getName().replaceAll("\\D+", "").trim();
 			for(Character ch:qci){
 				if(transmitDirection == TransmitDirection.BOTH || transmitDirection == TransmitDirection.UL){
-					toReturn.add("UL_UE"+numUE+ch);
+					toReturn.add(protocolForStream+"UL_UE"+numUE+ch);
 				}
 				if(transmitDirection == TransmitDirection.BOTH || transmitDirection == TransmitDirection.DL){
-					toReturn.add("DL_UE"+numUE+ch);
+					toReturn.add(protocolForStream+"DL_UE"+numUE+ch);
 				}
 			}
 		}

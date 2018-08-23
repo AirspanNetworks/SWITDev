@@ -5,6 +5,8 @@ import org.junit.Test;
 import EnodeB.EnodeB;
 import Entities.StreamParams;
 import Entities.ITrafficGenerator.CounterUnit;
+import Entities.ITrafficGenerator.Protocol;
+import Entities.ITrafficGenerator.TransmitDirection;
 import Netspan.API.Enums.HandoverType;
 import Netspan.API.Enums.HoControlStateTypes;
 import Netspan.API.Enums.X2ControlStateTypes;
@@ -181,7 +183,7 @@ public class PacketForwarding extends TPTBase {
 				return false;
 			}
 			GeneralUtils.startLevel("Disable un-needed streams");
-			trafficSTC.disableUnneededStreams(ueNameListStc, qci);
+			trafficSTC.disableUnneededStreams(Protocol.UDP,ueNameListStc, qci);
 			// if the last ue deleted and there is nothing to check!
 			if (ueNameListStc.size() == 0) {
 				report.report("No UEs in Test", Reporter.WARNING);

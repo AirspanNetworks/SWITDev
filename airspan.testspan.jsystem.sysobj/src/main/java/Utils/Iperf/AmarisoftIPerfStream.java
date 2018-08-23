@@ -15,8 +15,8 @@ import Entities.ITrafficGenerator.Protocol;
  */
 public class AmarisoftIPerfStream extends IPerfStream {
 
-	public AmarisoftIPerfStream(TransmitDirection transmitDirection, String ueNumber, int qci, String destIpAddress, String srcIpAddress, boolean state, double streamLoad, Integer frameSize) throws Exception {
-		super(transmitDirection, ueNumber, qci, destIpAddress, srcIpAddress, state, streamLoad, frameSize);
+	public AmarisoftIPerfStream(TransmitDirection transmitDirection, String ueNumber, int qci, String destIpAddress, String srcIpAddress, boolean state, double streamLoad, Integer frameSize, Protocol protocol) throws Exception {
+		super(transmitDirection, ueNumber, qci, destIpAddress, srcIpAddress, state, streamLoad, frameSize,protocol);
 	}
 	
 	void generateIPerfCommands(){

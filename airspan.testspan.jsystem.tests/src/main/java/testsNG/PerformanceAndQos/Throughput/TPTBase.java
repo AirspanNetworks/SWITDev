@@ -19,6 +19,7 @@ import EnodeB.EnodeB;
 import EnodeB.Ninja;
 import EnodeB.Components.UEDist;
 import Entities.ITrafficGenerator.Protocol;
+import Entities.ITrafficGenerator.TransmitDirection;
 import Entities.StreamParams;
 import Netspan.API.Enums.EnbStates;
 import Netspan.Profiles.RadioParameters;
@@ -118,7 +119,7 @@ public class TPTBase extends TestspanTest {
 	protected int cellNumber = 0;
 
 	protected boolean runWithDynamicCFI = false;
-	protected Protocol protocol;
+	protected Protocol protocol = Protocol.UDP;
 	protected Long startingTestTime;
 
 	@Override
@@ -424,9 +425,9 @@ public class TPTBase extends TestspanTest {
 			report.report("start Traffic failed", Reporter.FAIL);
 			throw new Exception("start Traffic Failed from stc class");
 		}
-
+		
 		GeneralUtils.startLevel("Disable un-needed streams");
-		trafficSTC.disableUnneededStreams(ueNameListStc, qci);
+		trafficSTC.disableUnneededStreams(this.protocol,ueNameListStc, qci);
 		// if the last ue deleted and there is nothing to check!
 		if (ueNameListStc.size() == 0) {
 			report.report("No UEs in Test");
@@ -435,6 +436,9 @@ public class TPTBase extends TestspanTest {
 		}
 		GeneralUtils.stopLevel();
 
+		trafficSTC.initStreams(this.protocol, ueNameListStc, qci,
+				TransmitDirection.BOTH);
+		
 		GeneralUtils.startLevel("Turning on ues in setup");
 		peripheralsConfig.startUEsOnlySnmp(SetupUtils.getInstance().getAllUEs());
 		GeneralUtils.stopLevel();

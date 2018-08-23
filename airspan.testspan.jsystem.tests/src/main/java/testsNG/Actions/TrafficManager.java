@@ -98,7 +98,7 @@ public class TrafficManager {
 					return;
 				}
 			}
-			if(!enableAditionalStreams(ueList, qci, direction)){
+			if(!enableAditionalStreams(protocol,ueList, qci, direction)){
 				return;
 			}
 			initNumberParallelStreams(numberParallelStreams, new ArrayList<StreamParams>());
@@ -116,7 +116,7 @@ public class TrafficManager {
 					return;
 				}
 			}
-			if(!enableAditionalStreams(ueList, qci, direction)){
+			if(!enableAditionalStreams(protocol,ueList, qci, direction)){
 				return;
 			}
 			if(!getLoadPerStream(enb, loadType, DlLoad,UlLoad)){
@@ -170,11 +170,11 @@ public class TrafficManager {
 		return action;
 	}
 	
-	private boolean enableAditionalStreams(ArrayList<String> ueNameListStc, ArrayList<Character> qci,
+	private boolean enableAditionalStreams(Protocol protocol,ArrayList<String> ueNameListStc, ArrayList<Character> qci,
 			TransmitDirection direction) {
 		try {
 			GeneralUtils.startLevel("Enabling wanted streams");
-			trafficInstance.enableStreamsByNameAndQciAndDirection(ueNameListStc, qci, direction);
+			trafficInstance.enableStreamsByNameAndQciAndDirection(protocol,ueNameListStc, qci, direction);
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();

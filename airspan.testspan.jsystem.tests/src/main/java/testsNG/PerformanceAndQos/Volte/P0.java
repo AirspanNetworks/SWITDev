@@ -16,6 +16,7 @@ import EnodeB.EnodeB;
 import Entities.LoadParam;
 import Entities.StreamParams;
 import Entities.ITrafficGenerator.CounterUnit;
+import Entities.ITrafficGenerator.Protocol;
 import Entities.ITrafficGenerator.TransmitDirection;
 import UE.UE;
 import UE.UESimulator;
@@ -597,7 +598,7 @@ public class P0 extends TPTBase{
 		qci1.add('5');
 		
 		try {
-			trafficSTC.enableStreamsByNameAndQciAndDirection(ueNameListStc, qci1, TransmitDirection.BOTH);
+			trafficSTC.enableStreamsByNameAndQciAndDirection(this.protocol,ueNameListStc, qci1, TransmitDirection.BOTH);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1116,7 +1117,7 @@ public class P0 extends TPTBase{
 		}
 		
 		GeneralUtils.startLevel("Disable un-needed streams");
-		trafficSTC.disableUnneededStreams(ueNameListStc, qci);
+		trafficSTC.disableUnneededStreams(this.protocol,ueNameListStc, qci);
 		// if the last ue deleted and there is nothing to check!
 		if (ueNameListStc.size() == 0) {
 			report.report("No UEs in Test");
@@ -1211,7 +1212,7 @@ public class P0 extends TPTBase{
 		ues.add(ueNameListStc.get(1));
 		
 		try {
-			trafficSTC.enableStreamsByNameAndQciAndDirection(ues, qci1, TransmitDirection.BOTH);
+			trafficSTC.enableStreamsByNameAndQciAndDirection(Protocol.UDP,ues, qci1, TransmitDirection.BOTH);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

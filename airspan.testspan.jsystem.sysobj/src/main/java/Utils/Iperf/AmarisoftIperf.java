@@ -3,6 +3,7 @@ package Utils.Iperf;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import Entities.ITrafficGenerator.Protocol;
 import Entities.ITrafficGenerator.TransmitDirection;
 import UE.AmarisoftUE;
 import Utils.GeneralUtils;
@@ -10,17 +11,21 @@ import Utils.GeneralUtils;
 public class AmarisoftIperf extends UEIPerf{
 
 	public AmarisoftIperf(AmarisoftUE ue, IPerfMachine iperfMachineDL, IPerfMachine iperfMachineUL, double ulLoad, double dlLoad,
-			Integer frameSize, ArrayList<Character> qciList) throws IOException, InterruptedException {
-		super(ue, iperfMachineDL, iperfMachineUL, ulLoad, dlLoad, frameSize, qciList);
+			Integer frameSize, ArrayList<Character> qciList, Protocol protocol,TransmitDirection direction) throws IOException, InterruptedException {
+		super(ue, iperfMachineDL, iperfMachineUL, ulLoad, dlLoad, frameSize, qciList,protocol,direction);
 		ulStreamArrayList = new ArrayList<>();
 		dlStreamArrayList = new ArrayList<>();
 		for(Character qciChar : qciList){
 			int qciInt = Integer.valueOf(qciChar)-Integer.valueOf('0');
-			boolean state = qciInt == 9? true : false;
+			//boolean state = qciInt == 9? true : false;
 			String ueNumber = GeneralUtils.removeNonDigitsFromString(this.ue.getName());
 			try {
-				ulStreamArrayList.add(new IPerfStream(TransmitDirection.UL, ueNumber, qciInt, this.ue.getIPerfDlMachine(), this.ue.getIPerfDlMachine(), state, ulLoad/qciList.size(), frameSize));
-				dlStreamArrayList.add(new AmarisoftIPerfStream(TransmitDirection.DL, ueNumber, qciInt, this.ue.getWanIpAddress(),  this.ue.getWanIpAddress(), state, dlLoad/qciList.size(), frameSize));
+				if(direction == TransmitDirection.BOTH || direction == TransmitDirection.UL){
+					ulStreamArrayList.add(new IPerfStream(TransmitDirection.UL, ueNumber, qciInt, this.ue.getIPerfDlMachine(), this.ue.getIPerfDlMachine(), true, ulLoad/qciList.size(), frameSize,protocol));
+				}
+				if(direction == TransmitDirection.BOTH || direction == TransmitDirection.DL){
+					dlStreamArrayList.add(new AmarisoftIPerfStream(TransmitDirection.DL, ueNumber, qciInt, this.ue.getWanIpAddress(),  this.ue.getWanIpAddress(), true, dlLoad/qciList.size(), frameSize,protocol));
+				}
 			} catch (Exception e) {
 				GeneralUtils.printToConsole(e.getMessage());
 				e.printStackTrace();

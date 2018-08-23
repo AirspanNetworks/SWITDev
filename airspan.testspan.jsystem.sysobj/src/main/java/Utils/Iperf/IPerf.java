@@ -11,6 +11,8 @@ import java.util.concurrent.Executors;
 import Entities.ITrafficGenerator;
 import Entities.LoadParam;
 import Entities.StreamParams;
+import Entities.ITrafficGenerator.Protocol;
+import Entities.ITrafficGenerator.TransmitDirection;
 import UE.AmarisoftUE;
 import UE.AndroidUE;
 import UE.UE;
@@ -42,10 +44,12 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 	
 	private ArrayList<UE> ues;
 	private ArrayList<UEIPerf> allUEsIPerfList;
-	private String tpDlCountersFileNames;
-	private String tpUlCountersFileNames;
+	private String tpDlCountersFileNames = null;
+	private String tpUlCountersFileNames = null;
 	private String defultConfigFile;
 	private String currentConfigFile;
+	private static boolean connected = false;
+	
 	public IPerf() throws Exception {
 		super();
 		this.allUEsIPerfList = new ArrayList<UEIPerf>();
@@ -72,8 +76,46 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		Connect();
 		
 		setUEs(ues);
+	}
+	
+	protected ArrayList<String> convertUeToNamesList(ArrayList<UE> ueList2) {
+		ArrayList<String> ueList = new ArrayList<String>();
+		for (UE ue : ueList2) {
+			ueList.add("UE" + ue.getName().replaceAll("\\D+", "").trim());
+		}
+		return ueList;
+	}
+
+	@Override
+	public void initStreams(Protocol protocol, ArrayList<String> ues, ArrayList<Character> qciListAllowdInTest,
+			TransmitDirection transmitDirection) throws Exception{
+		if(tpDlCountersFileNames != null){
+			tpDlCountersFileNames = "";
+			tpUlCountersFileNames = "";			
+		}
 		
-		ArrayList<Character> qciList = new ArrayList<Character>();
+		for(UE ue:this.ues){
+			String ueName = "UE" + ue.getName().replaceAll("\\D+", "").trim();
+			if(ues.contains(ueName)){
+				UEIPerf ueIPerf = null;
+				if(ue instanceof AmarisoftUE){
+					ueIPerf = new AmarisoftIperf((AmarisoftUE)ue, iperfMachineDL, iperfMachineUL, ulPortLoad/ues.size(), dlPortLoad/ues.size(), frameSize, qciListAllowdInTest,protocol,transmitDirection);
+				}else if(ue instanceof AndroidUE){
+					ueIPerf = new AndroidIPerf((AndroidUE)ue, iperfMachineDL, iperfMachineUL, ulPortLoad/ues.size(), dlPortLoad/ues.size(), frameSize, qciListAllowdInTest,protocol,transmitDirection);
+				}else{
+					ueIPerf = new UEIPerf(ue, iperfMachineDL, iperfMachineUL, ulPortLoad/ues.size(), dlPortLoad/ues.size(), frameSize, qciListAllowdInTest,protocol,transmitDirection);
+					tpDlCountersFileNames += (" " + ueIPerf.getDlActiveStreamFileNames());
+					tpUlCountersFileNames += (" " + ueIPerf.getUlActiveStreamFileNames());
+				}
+				this.allUEsIPerfList.add(ueIPerf);
+			}
+		}
+		updateConfigFile();
+		
+		
+		
+		
+		/*ArrayList<Character> qciList = new ArrayList<Character>();
 		tpDlCountersFileNames = "";
 		tpUlCountersFileNames = "";
 		qciList.add('9');
@@ -101,9 +143,9 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 				this.allUEsIPerfList.add(ueIPerf);
 			}
 		}
-		updateConfigFile();
+		updateConfigFile();*/
 	}
-
+	
 	public void startTraffic() throws Exception {
 		Connect();
 		ExecutorService exe = Executors.newFixedThreadPool(allUEsIPerfList.size());
@@ -224,9 +266,9 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 	
 	@Override
 	public boolean setProtocol(Protocol protocol) {
-		for(UEIPerf ueIPerf : allUEsIPerfList){
+		/*for(UEIPerf ueIPerf : allUEsIPerfList){
 			ueIPerf.setProtocol(protocol);
-		}
+		}*/
 		return true;
 	}
 
@@ -234,11 +276,14 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 	
 	@Override
 	public void Connect() throws Exception {
-		if(iperfMachineDL != null){
-			iperfMachineDL.connect();
-		}
-		if(iperfMachineUL != null){
-			iperfMachineUL.connect();
+		if(!connected){
+			if(iperfMachineDL != null){
+				iperfMachineDL.connect();
+			}
+			if(iperfMachineUL != null){
+				iperfMachineUL.connect();
+			}
+			connected = true;
 		}
 	}
 
@@ -424,22 +469,22 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 	}
 
 	@Override
-	public ArrayList<ArrayList<String>> disableStreamsByUeNameQciAndPortDirectionAndEnableTheRest(ArrayList<String> ueNamesNotAllowdInTest,
+	public ArrayList<ArrayList<String>> disableStreamsByUeNameQciAndPortDirectionAndEnableTheRest(Protocol protocol, ArrayList<String> ueNamesNotAllowdInTest,
 			ArrayList<Character> qciListNotAllowdInTest, 
 			TransmitDirection transmitDirection){
 		report.report("Disabling Un-needed UEs, QCIs And Transmit Direction.");
-		return setStreamsState(ueNamesNotAllowdInTest, qciListNotAllowdInTest, transmitDirection, false);
+		return setStreamsState(protocol,ueNamesNotAllowdInTest, qciListNotAllowdInTest, transmitDirection, false);
 	}
 	
 	@Override
-	public ArrayList<ArrayList<String>> enableStreamsByUeNameQciAndPortDirectionAndDisableTheRest(ArrayList<String> ueNamesAllowdInTest,
+	public ArrayList<ArrayList<String>> enableStreamsByUeNameQciAndPortDirectionAndDisableTheRest(Protocol protocol, ArrayList<String> ueNamesAllowdInTest,
 			ArrayList<Character> qciListAllowdInTest, 
 			TransmitDirection transmitDirection){
 		report.report("Enabling Needed Streams according UE number, QCIs And Transmit Direction.");
-		return setStreamsState(ueNamesAllowdInTest, qciListAllowdInTest, transmitDirection, true);
+		return setStreamsState(protocol,ueNamesAllowdInTest, qciListAllowdInTest, transmitDirection, true);
 	}
 	
-	private ArrayList<ArrayList<String>> setStreamsState(ArrayList<String> ueNameList,
+	private ArrayList<ArrayList<String>> setStreamsState(Protocol protocol,ArrayList<String> ueNameList,
 			ArrayList<Character> qciList, 
 			TransmitDirection transmitDirection,
 			boolean state){
@@ -448,7 +493,7 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		tpDlCountersFileNames = "";
 		tpUlCountersFileNames = "";
 		for(UEIPerf ueIPerf : allUEsIPerfList){
-			ArrayList<ArrayList<String>> enableDisableUeIPerfStreams = ueIPerf.setStreamsState(ueNameList, qciList, transmitDirection, state);
+			ArrayList<ArrayList<String>> enableDisableUeIPerfStreams = ueIPerf.setStreamsState(protocol,ueNameList, qciList, transmitDirection, state);
 			enableDisableStreams.add(enableDisableUeIPerfStreams.get(0));
 			enableDisableStreams.add(enableDisableUeIPerfStreams.get(1));
 			tpDlCountersFileNames += (" " + ueIPerf.getDlActiveStreamFileNames());
@@ -458,7 +503,7 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		return enableDisableStreams;
 	}
 
-	private ArrayList<ArrayList<String>> setStreamsStateAndNoChangeOthers(ArrayList<String> ueNameList,
+	private ArrayList<ArrayList<String>> setStreamsStateAndNoChangeOthers(Protocol protocol,ArrayList<String> ueNameList,
 			ArrayList<Character> qciList, 
 			TransmitDirection transmitDirection,
 			boolean state){
@@ -467,7 +512,7 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		tpDlCountersFileNames = "";
 		tpUlCountersFileNames = "";
 		for(UEIPerf ueIPerf : allUEsIPerfList){
-			ArrayList<ArrayList<String>> enableDisableUeIPerfStreams = ueIPerf.setStreamsStateAndNoChangeOthers(ueNameList, qciList, transmitDirection, state);
+			ArrayList<ArrayList<String>> enableDisableUeIPerfStreams = ueIPerf.setStreamsStateAndNoChangeOthers(protocol,ueNameList, qciList, transmitDirection, state);
 			enableDisableStreams.add(enableDisableUeIPerfStreams.get(0));
 			enableDisableStreams.add(enableDisableUeIPerfStreams.get(1));
 			tpDlCountersFileNames += (" " + ueIPerf.getDlActiveStreamFileNames());
@@ -535,9 +580,9 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 
 
 	@Override
-	public ArrayList<String> enableStreamsByUeNameQciAndPortDirection(ArrayList<String> ueNamesAllowdInTest,
+	public ArrayList<String> enableStreamsByUeNameQciAndPortDirection(Protocol protocol,ArrayList<String> ueNamesAllowdInTest,
 			ArrayList<Character> qciListAllowdInTest, TransmitDirection transmitDirection) {
-		return setStreamsStateAndNoChangeOthers(ueNamesAllowdInTest, qciListAllowdInTest, transmitDirection, true).get(0);
+		return setStreamsStateAndNoChangeOthers(protocol,ueNamesAllowdInTest, qciListAllowdInTest, transmitDirection, true).get(0);
 	}
 
 

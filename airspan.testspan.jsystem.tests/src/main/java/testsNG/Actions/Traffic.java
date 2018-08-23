@@ -353,6 +353,11 @@ public class Traffic {
 		return false;	
 	}
 	
+	public void initStreams(Protocol protocol, ArrayList<String> ues, ArrayList<Character> qciListAllowdInTest,
+			TransmitDirection transmitDirection) throws Exception{
+		trafficGenerator.initStreams(protocol, ues, qciListAllowdInTest, transmitDirection);
+	}
+	
 	public boolean startTraffic(TrafficCapacity capacity) throws Exception {
 		
 		if (!init()) {
@@ -368,7 +373,7 @@ public class Traffic {
 			ArrayList<String> uesNames = convertUeToNamesList(SetupUtils.getInstance().getAllUEs());
 			ArrayList<Character> qci = new ArrayList<>();
 			qci.add(new Character('9'));
-			disableUnneededStreams(uesNames,qci);
+			disableUnneededStreams(Protocol.UDP,uesNames,qci);
 			Double loadDL = new Double(10);
 			Double loadUL = new Double(1);
 			Pair<Double,Double> loadPair = new Pair<Double,Double>(loadDL,loadUL);
@@ -1258,7 +1263,7 @@ public class Traffic {
 	 * @param qci
 	 */
 	//uesNameAllowd ={UE1,UE10,UE3}
-	public void disableUnneededStreams(ArrayList<String> uesNameAllowdInTest,ArrayList<Character> qci) throws Exception {
+	public void disableUnneededStreams(Protocol protocol,ArrayList<String> uesNameAllowdInTest,ArrayList<Character> qci) throws Exception {
 		ArrayList<String> disabledStreamsList = new ArrayList<String>();
 		ArrayList<String> enabledStreamsList = new ArrayList<String>();
 		ArrayList<String> arrayAfterParseActiveStreams = new ArrayList<String>();
@@ -1269,7 +1274,7 @@ public class Traffic {
 		
 		if (generatorType == TrafficGeneratorType.ITraffic) {
 			ArrayList<ArrayList<String>> returnedArray = 
-					trafficGenerator.enableStreamsByUeNameQciAndPortDirectionAndDisableTheRest(uesNameAllowdInTest,qci, TransmitDirection.BOTH);
+					trafficGenerator.enableStreamsByUeNameQciAndPortDirectionAndDisableTheRest(protocol,uesNameAllowdInTest,qci, TransmitDirection.BOTH);
 			enabledStreamsList.addAll(returnedArray.get(0));
 			disabledStreamsList.addAll(returnedArray.get(1));
 			setactiveStreamsArray(returnedArray.get(0));
@@ -1323,11 +1328,11 @@ public class Traffic {
 	}
 
 	
-	public void disableDLStreamsByNameAndQci(ArrayList<String> ues,ArrayList<Character> qci) throws Exception{
+	public void disableDLStreamsByNameAndQci(Protocol protocol, ArrayList<String> ues,ArrayList<Character> qci) throws Exception{
 		ArrayList<String> disabledStreamsList = new ArrayList<String>();
 		if (generatorType == TrafficGeneratorType.ITraffic) {
 			report.report("Disabling wanted UEs and QCIs from DL port");
-			disabledStreamsList = trafficGenerator.disableStreamsByUeNameQciAndPortDirectionAndEnableTheRest(ues, qci, TransmitDirection.DL).get(1);
+			disabledStreamsList = trafficGenerator.disableStreamsByUeNameQciAndPortDirectionAndEnableTheRest(protocol, ues, qci, TransmitDirection.DL).get(1);
 		}
 		
 		if(generatorType == TrafficGeneratorType.TestCenter){
@@ -1360,13 +1365,13 @@ public class Traffic {
 	}
 	
 	// This function ONLY enables stream and not disabled not needed ones
-	public void enableStreamsByNameAndQciAndDirection(ArrayList<String> ues,ArrayList<Character> qci,
+	public void enableStreamsByNameAndQciAndDirection(Protocol protocol,ArrayList<String> ues,ArrayList<Character> qci,
 			TransmitDirection direction) throws Exception {
 		ArrayList<String> enabledStreamsList = new ArrayList<String>();
 		
 		if (generatorType == TrafficGeneratorType.ITraffic) {
 			ArrayList<String> returnedArray = 
-					trafficGenerator.enableStreamsByUeNameQciAndPortDirection(ues,qci,direction);
+					trafficGenerator.enableStreamsByUeNameQciAndPortDirection(protocol,ues,qci,direction);
 			enabledStreamsList.addAll(returnedArray);
 			addEnabledStreams(returnedArray);
 		}
@@ -1732,11 +1737,11 @@ public class Traffic {
 		trafficGenerator.setFrameSizeStreamULPort(load);
 	}
 	
-	public void disableStreamsByUeNameQciAndPortDirectionAndEnableTheRest(ArrayList<String> ueNamesNotAllowdInTest,
+	public void disableStreamsByUeNameQciAndPortDirectionAndEnableTheRest(Protocol protocol,ArrayList<String> ueNamesNotAllowdInTest,
 			ArrayList<Character> qciListNotAllowdInTest, 
 			TransmitDirection transmitDirection) {
 		if(generatorType == TrafficGeneratorType.ITraffic){
-			trafficGenerator.disableStreamsByUeNameQciAndPortDirectionAndEnableTheRest(ueNamesNotAllowdInTest,
+			trafficGenerator.disableStreamsByUeNameQciAndPortDirectionAndEnableTheRest(protocol,ueNamesNotAllowdInTest,
 					qciListNotAllowdInTest, transmitDirection);
 		}
 		

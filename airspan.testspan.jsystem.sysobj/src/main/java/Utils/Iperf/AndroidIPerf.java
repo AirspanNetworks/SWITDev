@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import Entities.ITrafficGenerator.Protocol;
+import Entities.ITrafficGenerator.TransmitDirection;
 import UE.AndroidUE;
 import Utils.GeneralUtils;
 import Utils.Pair;
@@ -31,8 +33,8 @@ public class AndroidIPerf extends UEIPerf {
 	ArrayList<Long> dlCounters = null;
 
 	public AndroidIPerf(AndroidUE ue, IPerfMachine iperfMachineDL, IPerfMachine iperfMachineUL, double ulPortLoad,
-			double dlPortLoad, int frameSize, ArrayList<Character> qciList) throws IOException, InterruptedException {
-		super(ue, iperfMachineDL, iperfMachineUL, ulPortLoad, dlPortLoad, frameSize, qciList);
+			double dlPortLoad, int frameSize, ArrayList<Character> qciList, Protocol protocol,TransmitDirection direction) throws IOException, InterruptedException {
+		super(ue, iperfMachineDL, iperfMachineUL, ulPortLoad, dlPortLoad, frameSize, qciList,protocol,direction);
 		androidUe = ue;
 		driver = androidUe.getDriver();
 		ulIPerfStream = null;

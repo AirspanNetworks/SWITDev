@@ -36,17 +36,18 @@ public class IPerfStream {
 	protected Double lastIntervalUsedForLastSample;
 	protected boolean isRunningTraffic; 
 
-	public IPerfStream(TransmitDirection transmitDirection, String ueNumber, int qci, String destIpAddress, String srcIpAddress, boolean state, double streamLoad, Integer frameSize) throws Exception {
+	public IPerfStream(TransmitDirection transmitDirection, String ueNumber, int qci, String destIpAddress, String srcIpAddress, boolean state, double streamLoad, Integer frameSize, Protocol protocol) throws Exception {
 		if(transmitDirection == TransmitDirection.BOTH){
 			throw new Exception("Stream Can't be to BOTH directions (UL & DL).");
 		}
-		this.streamName = (transmitDirection.value + "_UE" + ueNumber) + qci;
+		String protocolForName = (protocol == Protocol.TCP ? "TCP_":"UDP_");
+		this.streamName = protocolForName + transmitDirection.value + "_UE" + ueNumber + qci;
 		this.transmitDirection = transmitDirection;
 		this.ueNumber = ueNumber;
 		this.qci = qci;
-		this.protocol = Protocol.UDP;
-		this.tpFileName = "tp" + transmitDirection.value+"_UE" + ueNumber + "QCI" + qci + ".txt"; //UL & DL files are named the same in purpose - for updating the counter in the opposite stream
-		this.clientOutputFileName = "clientOutput" + transmitDirection.value+"_UE" + ueNumber + "QCI" + qci + ".txt";
+		this.protocol = protocol;
+		this.tpFileName = protocolForName + "tp" + transmitDirection.value+"_UE" + ueNumber + "QCI" + qci + ".txt"; //UL & DL files are named the same in purpose - for updating the counter in the opposite stream
+		this.clientOutputFileName = protocolForName + "clientOutput" + transmitDirection.value+"_UE" + ueNumber + "QCI" + qci + ".txt";
 		this.destIpAddress = destIpAddress;
 		this.srcIpAddress = srcIpAddress;
 		this.numberOfParallelIPerfStreams = 1;
@@ -163,6 +164,11 @@ public class IPerfStream {
 	public void setProtocol(Protocol protocol) {
 		if(!isRunningTraffic()){
 			this.protocol = protocol;
+			String protocolForStream = (protocol == Protocol.TCP ? "TCP_":"UDP_");
+			this.tpFileName = protocolForStream+"tp" + transmitDirection.value+"_UE" + ueNumber + "QCI" + qci + ".txt"; //UL & DL files are named the same in purpose - for updating the counter in the opposite stream
+			this.clientOutputFileName = protocolForStream+"clientOutput" + transmitDirection.value+"_UE" + ueNumber + "QCI" + qci + ".txt";
+			this.streamName = protocolForStream+(transmitDirection.value + "_UE" + ueNumber) + qci;
+
 			generateIPerfCommands();			
 		}
 	}

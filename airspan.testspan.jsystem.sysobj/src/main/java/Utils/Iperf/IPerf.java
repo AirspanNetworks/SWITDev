@@ -77,14 +77,6 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		
 		setUEs(ues);
 	}
-	
-	protected ArrayList<String> convertUeToNamesList(ArrayList<UE> ueList2) {
-		ArrayList<String> ueList = new ArrayList<String>();
-		for (UE ue : ueList2) {
-			ueList.add("UE" + ue.getName().replaceAll("\\D+", "").trim());
-		}
-		return ueList;
-	}
 
 	@Override
 	public void initStreams(Protocol protocol, ArrayList<String> ues, ArrayList<Character> qciListAllowdInTest,
@@ -214,6 +206,7 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		iperfMachineDL.stopIPerf();
 		iperfMachineUL.stopIPerf();
 		Disconnect();
+		this.allUEsIPerfList = new ArrayList<UEIPerf>();
 	}
 
 
@@ -223,14 +216,7 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 
 
 	public void setUEs(ArrayList<UE> uEs) {
-		if(ues == null){
-			ues = new ArrayList<UE>();
-		}
-		for(UE ue : uEs){
-			if(!ues.contains(ue)){
-				ues.add(ue);
-			}	
-		}
+		ues = uEs;
 	}
 	
 

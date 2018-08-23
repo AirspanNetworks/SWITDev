@@ -92,12 +92,17 @@ public class TrafficManager {
 			Double windowSizeInKbits, Integer mss, Integer packetSize, Protocol protocol, Integer timeout,
 			ArrayList<String> streams){
 		
-		if(trafficType == GeneratorType.Iperf){
-			if(!isTrafficInit){
-				if(!initTrafficWithNoStartTraffic(TrafficCapacity.FULLTPT, protocol)){
-					return;
-				}
+		if(!isTrafficInit){
+			if(!initTrafficWithNoStartTraffic(TrafficCapacity.FULLTPT, protocol)){
+				return;
 			}
+		}
+		try {
+			trafficInstance.initStreams(protocol, ueList, qci, direction);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if(trafficType == GeneratorType.Iperf){
 			if(!enableAditionalStreams(protocol,ueList, qci, direction)){
 				return;
 			}
@@ -111,11 +116,6 @@ public class TrafficManager {
 			}
 			
 		}else{
-			if(!isTrafficInit){
-				if(!initTrafficWithNoStartTraffic(TrafficCapacity.FULLTPT, protocol)){
-					return;
-				}
-			}
 			if(!enableAditionalStreams(protocol,ueList, qci, direction)){
 				return;
 			}

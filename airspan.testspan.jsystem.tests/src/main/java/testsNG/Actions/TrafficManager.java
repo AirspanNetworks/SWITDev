@@ -137,6 +137,7 @@ public class TrafficManager {
 		if(!saveConfigFileAndStart()){
 			return;
 		}
+		trafficInstance.addCommandFilesToReport();
 		GeneralUtils.unSafeSleep(5*1000);
 		isTrafficInit = true;
 		TrafficSampler current = new TrafficSampler(trafficInstance,name,ueList,qci, direction, type, ulExp, dlExp, enb, timeout, streams);

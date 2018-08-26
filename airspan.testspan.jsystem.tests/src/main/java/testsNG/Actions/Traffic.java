@@ -354,8 +354,8 @@ public class Traffic {
 	}
 	
 	public void initStreams(Protocol protocol, ArrayList<String> ues, ArrayList<Character> qciListAllowdInTest,
-			TransmitDirection transmitDirection) throws Exception{
-		trafficGenerator.initStreams(protocol, ues, qciListAllowdInTest, transmitDirection);
+			TransmitDirection transmitDirection,Integer runTime) throws Exception{
+		trafficGenerator.initStreams(protocol, ues, qciListAllowdInTest, transmitDirection,runTime);
 	}
 	
 	public boolean startTraffic(TrafficCapacity capacity) throws Exception {

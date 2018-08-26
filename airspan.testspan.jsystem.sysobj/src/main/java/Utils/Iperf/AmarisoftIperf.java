@@ -11,8 +11,9 @@ import Utils.GeneralUtils;
 public class AmarisoftIperf extends UEIPerf{
 
 	public AmarisoftIperf(AmarisoftUE ue, IPerfMachine iperfMachineDL, IPerfMachine iperfMachineUL, double ulLoad, double dlLoad,
-			Integer frameSize, ArrayList<Character> qciList, Protocol protocol,TransmitDirection direction) throws IOException, InterruptedException {
-		super(ue, iperfMachineDL, iperfMachineUL, ulLoad, dlLoad, frameSize, qciList,protocol,direction);
+			Integer frameSize, ArrayList<Character> qciList, Protocol protocol,TransmitDirection direction,
+			Integer runTime) throws IOException, InterruptedException {
+		super(ue, iperfMachineDL, iperfMachineUL, ulLoad, dlLoad, frameSize, qciList,protocol,direction,runTime);
 		ulStreamArrayList = new ArrayList<>();
 		dlStreamArrayList = new ArrayList<>();
 		for(Character qciChar : qciList){
@@ -21,10 +22,10 @@ public class AmarisoftIperf extends UEIPerf{
 			String ueNumber = GeneralUtils.removeNonDigitsFromString(this.ue.getName());
 			try {
 				if(direction == TransmitDirection.BOTH || direction == TransmitDirection.UL){
-					ulStreamArrayList.add(new IPerfStream(TransmitDirection.UL, ueNumber, qciInt, this.ue.getIPerfDlMachine(), this.ue.getIPerfDlMachine(), true, ulLoad/qciList.size(), frameSize,protocol));
+					ulStreamArrayList.add(new IPerfStream(TransmitDirection.UL, ueNumber, qciInt, this.ue.getIPerfDlMachine(), this.ue.getIPerfDlMachine(), true, ulLoad/qciList.size(), frameSize,protocol,runTime));
 				}
 				if(direction == TransmitDirection.BOTH || direction == TransmitDirection.DL){
-					dlStreamArrayList.add(new AmarisoftIPerfStream(TransmitDirection.DL, ueNumber, qciInt, this.ue.getWanIpAddress(),  this.ue.getWanIpAddress(), true, dlLoad/qciList.size(), frameSize,protocol));
+					dlStreamArrayList.add(new AmarisoftIPerfStream(TransmitDirection.DL, ueNumber, qciInt, this.ue.getWanIpAddress(),  this.ue.getWanIpAddress(), true, dlLoad/qciList.size(), frameSize,protocol,runTime));
 				}
 			} catch (Exception e) {
 				GeneralUtils.printToConsole(e.getMessage());

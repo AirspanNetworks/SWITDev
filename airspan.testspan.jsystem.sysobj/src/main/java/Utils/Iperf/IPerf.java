@@ -80,7 +80,7 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 
 	@Override
 	public void initStreams(Protocol protocol, ArrayList<String> ues, ArrayList<Character> qciListAllowdInTest,
-			TransmitDirection transmitDirection) throws Exception{
+			TransmitDirection transmitDirection,Integer runTime) throws Exception{
 		if(tpDlCountersFileNames != null){
 			tpDlCountersFileNames = "";
 			tpUlCountersFileNames = "";			
@@ -91,11 +91,11 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 			if(ues.contains(ueName)){
 				UEIPerf ueIPerf = null;
 				if(ue instanceof AmarisoftUE){
-					ueIPerf = new AmarisoftIperf((AmarisoftUE)ue, iperfMachineDL, iperfMachineUL, ulPortLoad/ues.size(), dlPortLoad/ues.size(), frameSize, qciListAllowdInTest,protocol,transmitDirection);
+					ueIPerf = new AmarisoftIperf((AmarisoftUE)ue, iperfMachineDL, iperfMachineUL, ulPortLoad/ues.size(), dlPortLoad/ues.size(), frameSize, qciListAllowdInTest,protocol,transmitDirection,runTime);
 				}else if(ue instanceof AndroidUE){
-					ueIPerf = new AndroidIPerf((AndroidUE)ue, iperfMachineDL, iperfMachineUL, ulPortLoad/ues.size(), dlPortLoad/ues.size(), frameSize, qciListAllowdInTest,protocol,transmitDirection);
+					ueIPerf = new AndroidIPerf((AndroidUE)ue, iperfMachineDL, iperfMachineUL, ulPortLoad/ues.size(), dlPortLoad/ues.size(), frameSize, qciListAllowdInTest,protocol,transmitDirection,runTime);
 				}else{
-					ueIPerf = new UEIPerf(ue, iperfMachineDL, iperfMachineUL, ulPortLoad/ues.size(), dlPortLoad/ues.size(), frameSize, qciListAllowdInTest,protocol,transmitDirection);
+					ueIPerf = new UEIPerf(ue, iperfMachineDL, iperfMachineUL, ulPortLoad/ues.size(), dlPortLoad/ues.size(), frameSize, qciListAllowdInTest,protocol,transmitDirection,runTime);
 					tpDlCountersFileNames += (" " + ueIPerf.getDlActiveStreamFileNames());
 					tpUlCountersFileNames += (" " + ueIPerf.getUlActiveStreamFileNames());
 				}

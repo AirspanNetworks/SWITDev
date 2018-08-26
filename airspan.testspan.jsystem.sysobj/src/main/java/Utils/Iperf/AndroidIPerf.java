@@ -33,8 +33,8 @@ public class AndroidIPerf extends UEIPerf {
 	ArrayList<Long> dlCounters = null;
 
 	public AndroidIPerf(AndroidUE ue, IPerfMachine iperfMachineDL, IPerfMachine iperfMachineUL, double ulPortLoad,
-			double dlPortLoad, int frameSize, ArrayList<Character> qciList, Protocol protocol,TransmitDirection direction) throws IOException, InterruptedException {
-		super(ue, iperfMachineDL, iperfMachineUL, ulPortLoad, dlPortLoad, frameSize, qciList,protocol,direction);
+			double dlPortLoad, int frameSize, ArrayList<Character> qciList, Protocol protocol,TransmitDirection direction,Integer runTime) throws IOException, InterruptedException {
+		super(ue, iperfMachineDL, iperfMachineUL, ulPortLoad, dlPortLoad, frameSize, qciList,protocol,direction,runTime);
 		androidUe = ue;
 		driver = androidUe.getDriver();
 		ulIPerfStream = null;

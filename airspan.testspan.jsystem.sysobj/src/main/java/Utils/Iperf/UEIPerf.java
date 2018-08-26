@@ -37,7 +37,8 @@ public class UEIPerf implements Runnable {
 	protected long lastSampleTime;
 
 	public UEIPerf(UE ue, IPerfMachine iperfMachineDL, IPerfMachine iperfMachineUL, double ulLoad,
-			double dlLoad, Integer frameSize, ArrayList<Character> qciList, Protocol protocol,TransmitDirection direction) throws IOException, InterruptedException {
+			double dlLoad, Integer frameSize, ArrayList<Character> qciList, Protocol protocol,
+			TransmitDirection direction, Integer runTime) throws IOException, InterruptedException {
 		
 		this.ue = ue;
 
@@ -57,10 +58,10 @@ public class UEIPerf implements Runnable {
 			String ueNumber = GeneralUtils.removeNonDigitsFromString(this.ue.getName());
 			try {
 				if(direction == TransmitDirection.BOTH || direction == TransmitDirection.UL){
-					ulStreamArrayList.add(new IPerfStream(TransmitDirection.UL, ueNumber, qciInt, this.ue.getIPerfDlMachine(), this.ue.getIPerfDlMachine(), true, ulLoad/qciList.size(), frameSize,protocol));					
+					ulStreamArrayList.add(new IPerfStream(TransmitDirection.UL, ueNumber, qciInt, this.ue.getIPerfDlMachine(), this.ue.getIPerfDlMachine(), true, ulLoad/qciList.size(), frameSize,protocol,runTime));					
 				}
 				if(direction == TransmitDirection.BOTH || direction == TransmitDirection.DL){
-					dlStreamArrayList.add(new IPerfStream(TransmitDirection.DL, ueNumber, qciInt, this.ue.getWanIpAddress(), this.ue.getIPerfUlMachine(), true, dlLoad/qciList.size(), frameSize,protocol));
+					dlStreamArrayList.add(new IPerfStream(TransmitDirection.DL, ueNumber, qciInt, this.ue.getWanIpAddress(), this.ue.getIPerfUlMachine(), true, dlLoad/qciList.size(), frameSize,protocol,runTime));
 				}
 			} catch (Exception e) {
 				GeneralUtils.printToConsole(e.getMessage());

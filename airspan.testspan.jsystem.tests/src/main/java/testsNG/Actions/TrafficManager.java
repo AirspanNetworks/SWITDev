@@ -98,7 +98,7 @@ public class TrafficManager {
 			}
 		}
 		try {
-			trafficInstance.initStreams(protocol, ueList, qci, direction);
+			trafficInstance.initStreams(protocol, ueList, qci, direction, timeout);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

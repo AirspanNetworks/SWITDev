@@ -426,7 +426,7 @@ public class TPTBase extends TestspanTest {
 			throw new Exception("start Traffic Failed from stc class");
 		}
 		trafficSTC.initStreams(this.protocol, ueNameListStc, qci,
-				TransmitDirection.BOTH);
+				TransmitDirection.BOTH,null);
 		
 		GeneralUtils.startLevel("Disable un-needed streams");
 		trafficSTC.disableUnneededStreams(this.protocol,ueNameListStc, qci);

@@ -35,8 +35,12 @@ public class IPerfStream {
 	protected Protocol protocol;
 	protected Double lastIntervalUsedForLastSample;
 	protected boolean isRunningTraffic; 
+	protected Integer runTime;
+	
 
-	public IPerfStream(TransmitDirection transmitDirection, String ueNumber, int qci, String destIpAddress, String srcIpAddress, boolean state, double streamLoad, Integer frameSize, Protocol protocol) throws Exception {
+	public IPerfStream(TransmitDirection transmitDirection, String ueNumber,
+			int qci, String destIpAddress, String srcIpAddress, boolean state,
+			double streamLoad, Integer frameSize, Protocol protocol, Integer runTime) throws Exception {
 		if(transmitDirection == TransmitDirection.BOTH){
 			throw new Exception("Stream Can't be to BOTH directions (UL & DL).");
 		}
@@ -52,7 +56,7 @@ public class IPerfStream {
 		this.srcIpAddress = srcIpAddress;
 		this.numberOfParallelIPerfStreams = 1;
 		this.lastIntervalUsedForLastSample = 0.0;
-		
+		this.runTime = runTime;
 		this.isActive = state;
 		this.streamLoad = streamLoad;
 		this.frameSize = frameSize;
@@ -63,8 +67,10 @@ public class IPerfStream {
 	
 	void generateIPerfCommands(){
 		if(!isRunningTraffic()){
+			String runTimeTraffic = (runTime != null ? String.valueOf(runTime):UEIPerf.IPERF_TIME_LIMIT);
+
 			if(this.protocol == Protocol.UDP){
-				this.iperfClientCommand = "-c " + this.destIpAddress + " -u -i 1 -p " + (5000+this.qci) + " -l " + this.frameSize + ".0B -b " + convertTo3DigitsAfterPoint(this.streamLoad) + "M -t " + UEIPerf.IPERF_TIME_LIMIT;
+				this.iperfClientCommand = "-c " + this.destIpAddress + " -u -i 1 -p " + (5000+this.qci) + " -l " + this.frameSize + ".0B -b " + convertTo3DigitsAfterPoint(this.streamLoad) + "M -t " + runTimeTraffic;
 				this.iperfServerCommand = "-s -u -i 1 -p " + (5000+this.qci) + " -B " + this.srcIpAddress + " -l " + this.frameSize + ".0B -f k";
 			}else if(this.protocol == Protocol.TCP){
 				this.iperfClientCommand = "-c " + this.destIpAddress + " ";
@@ -84,7 +90,7 @@ public class IPerfStream {
 					this.iperfClientCommand += " -M "+this.frameSize;
 					this.iperfServerCommand += " -M "+this.frameSize;
 				}
-				this.iperfClientCommand += " -t " + UEIPerf.IPERF_TIME_LIMIT;
+				this.iperfClientCommand += " -t " + runTimeTraffic;
 				this.iperfServerCommand += " -f k";
 			}else{
 				GeneralUtils.printToConsole("Protocol NOT UDP and NOT TCP - FAILURE");

@@ -368,5 +368,14 @@ public class TrafficManager {
 			return false;
 		}
 		return true;
+	}
+
+	public boolean checkIfNameExist(String semanticName) {
+		for(TrafficSampler ts : samplerList){
+			if(ts.getName().equals(semanticName)){
+				return true;
+			}
+		}
+		return false;
 	}	
 }

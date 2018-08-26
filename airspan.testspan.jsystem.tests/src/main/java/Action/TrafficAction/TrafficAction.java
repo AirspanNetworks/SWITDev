@@ -291,6 +291,11 @@ public class TrafficAction extends Action {
 			return;
 		}
 		
+		if(semanticName == null){
+			report.report("No name was configured", Reporter.FAIL);
+			return;
+		}
+		
 		trafficManagerInstance = TrafficManager.getInstance(generatorType);
 		
 		if(trafficManagerInstance == null){
@@ -299,6 +304,7 @@ public class TrafficAction extends Action {
 		}
 		
 		GeneralUtils.startLevel("Parameters for start traffic");
+		report.report("Semantic name: "+semanticName);
 		report.report("Generator type: "+generatorType.toString());
 		report.report("Traffic type: "+trafficType.toString());
 		report.report("Transmit direction: "+transmitDirection.toString());
@@ -308,10 +314,7 @@ public class TrafficAction extends Action {
 		if(dut != null){
 			report.report("EnodeB for calculator criterias: "+dut.getNetspanName());
 		}
-		if(semanticName != null){
-			report.report("Semantic name: "+semanticName);
-		}
-
+		
 		if(trafficType == Protocol.TCP){
 			if(windowSize != null){
 				report.report("Window size: "+windowSize);
@@ -350,6 +353,10 @@ public class TrafficAction extends Action {
 		}		
 		GeneralUtils.stopLevel();
 
+		if(trafficManagerInstance.checkIfNameExist(semanticName)){
+			report.report("Action failed - trying to run traffic with a semantic name already running", Reporter.FAIL);
+		}
+		
 		if(!trafficManagerInstance.checkGeneratorType(generatorType)){
 			return;
 		}

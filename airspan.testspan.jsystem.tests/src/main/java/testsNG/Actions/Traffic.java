@@ -1747,6 +1747,26 @@ public class Traffic {
 		
 	}
 
+	public void addCommandFilesToReport() {
+		if(generatorType == TrafficGeneratorType.ITraffic){
+			ArrayList<File> commandFiles = trafficGenerator.getCommandFiles();
+			if (!commandFiles.isEmpty()) {
+				GeneralUtils.startLevel("Command Files.");
+				for (File commandFile : commandFiles) {
+					File toUpload = new File(commandFile.getName());
+					commandFile.renameTo(toUpload);
+					try {
+						ReporterHelper.copyFileToReporterAndAddLink(report, toUpload, toUpload.getName());
+					} catch (Exception e) {
+						GeneralUtils.printToConsole("FAIL to upload TP commands File: " + commandFile.getName());
+						e.printStackTrace();
+					}
+				}
+				GeneralUtils.stopLevel();
+			}
+		}
+	}
+	
 	public void addResultFilesToReport(String tryNumber) {
 		if(generatorType == TrafficGeneratorType.ITraffic){
 			ArrayList<File> commandFiles = trafficGenerator.getCommandFiles();

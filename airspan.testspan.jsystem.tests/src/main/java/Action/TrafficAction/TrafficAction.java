@@ -355,6 +355,7 @@ public class TrafficAction extends Action {
 
 		if(trafficManagerInstance.checkIfNameExist(semanticName)){
 			report.report("Action failed - trying to run traffic with a semantic name already running", Reporter.FAIL);
+			return;
 		}
 		
 		if(!trafficManagerInstance.checkGeneratorType(generatorType)){

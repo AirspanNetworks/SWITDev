@@ -288,7 +288,7 @@ public class TrafficAction extends Action {
 	}
 	
 	@Test
-	@TestProperties(name = "Enhanced Stop Traffic", returnParam = "LastStatus", paramsInclude = { "SemanticName" })
+	@TestProperties(name = "Enhanced Stop Traffic", returnParam = "LastStatus", paramsInclude = { "TrafficToStop" })
 	public void enhancedStopTraffic() {
 
 		trafficManagerInstance = TrafficManager.getInstance(null);

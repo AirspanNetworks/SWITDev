@@ -558,7 +558,7 @@ public abstract class XLP extends EnodeBComponent {
 			GeneralUtils.printToConsole("Could not get OperationalStatus from EnodeB (after 3 retries)");
 			return false;
 		}
-		if (service.equals(EnbStates.IN_SERVICE))
+		if (service.equals(EnbStates.IN_SERVICE) && running.equals(EnbStates.IN_SERVICE))
 			return true;
 		else
 			return false;

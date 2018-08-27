@@ -43,7 +43,22 @@ public class TrafficAction extends Action {
 	private String ULExpected;
 	private String DLExpected;
 	private String semanticName;
-	
+	private ArrayList<String> trafficToStop;
+
+	public ArrayList<String> getTrafficToStop() {
+		return trafficToStop;
+	}
+
+	public void setTrafficToStop(String trafficToStop) {
+		this.trafficToStop = new ArrayList<String>();
+		if(trafficToStop != null){
+			String[] temp = trafficToStop.split(",");
+			for(String str : temp){
+				this.trafficToStop.add(str);
+			}
+		}
+	}
+
 	public Integer getFrameSize() {
 		return frameSize;
 	}
@@ -91,7 +106,7 @@ public class TrafficAction extends Action {
 		return windowSize;
 	}
 
-	@ParameterProperties(description = "value for -w Iperf Parameter")
+	@ParameterProperties(description = "value for -w Iperf Parameter (not mandatory)")
 	public void setWindowSize(String windowSize) {
 		this.windowSize = Double.valueOf(windowSize);			
 	}
@@ -100,7 +115,7 @@ public class TrafficAction extends Action {
 		return parallelStreams;
 	}
 
-	@ParameterProperties(description = "value for -P iperf parameter")
+	@ParameterProperties(description = "value for -P iperf parameter (not mandatory)")
 	public void setParallelStreams(String parallelStreams) {
 		this.parallelStreams = Integer.valueOf(parallelStreams);			
 	}
@@ -109,7 +124,7 @@ public class TrafficAction extends Action {
 		return mss;
 	}
 
-	@ParameterProperties(description = "value for -m iperf parameter")
+	@ParameterProperties(description = "value for -m iperf parameter (not mandatory)")
 	public void setMss(String mss) {
 		this.mss = Integer.valueOf(mss);			
 	}
@@ -168,7 +183,7 @@ public class TrafficAction extends Action {
 		return runTime;
 	}
 
-	@ParameterProperties(description = "Run time in seconds")
+	@ParameterProperties(description = "Run time in seconds (not mandatory)")
 	public void setRunTime(String runTime) {
 		this.runTime = Integer.valueOf(runTime);			
 	}
@@ -273,6 +288,19 @@ public class TrafficAction extends Action {
 	}
 	
 	@Test
+	@TestProperties(name = "Enhanced Stop Traffic", returnParam = "LastStatus", paramsInclude = { "SemanticName" })
+	public void enhancedStopTraffic() {
+
+		trafficManagerInstance = TrafficManager.getInstance(null);
+		if(trafficManagerInstance == null){
+			report.report("Failed to init traffic manager instance",Reporter.FAIL);
+			return;
+		}
+		
+		trafficManagerInstance.stopTraffic(trafficToStop);
+	}
+	
+	@Test
 	@TestProperties(name = "Enhanced Start Traffic", returnParam = "LastStatus", paramsInclude = { "UEs","GeneratorType",
 			"TrafficType","TransmitDirection","RunTime","Qci","SemanticName","LoadType","Dut","ULLoad","DLLoad","FrameSize",
 			"WindowSize","ParallelStreams","Mss","ExpectedLoadType","ULExpected","DLExpected"})
@@ -299,7 +327,7 @@ public class TrafficAction extends Action {
 		trafficManagerInstance = TrafficManager.getInstance(generatorType);
 		
 		if(trafficManagerInstance == null){
-			report.report("Generator type was not found in SUT");
+			report.report("Generator type was not found in SUT",Reporter.FAIL);
 			return;
 		}
 		

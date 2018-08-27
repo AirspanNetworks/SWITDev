@@ -496,6 +496,8 @@ public class Traffic {
 		return true;
 	}
 	
+	
+	
 	public void shutDown(){
 		try{
 			switch (generatorType) {
@@ -1843,5 +1845,9 @@ public class Traffic {
 			return false;
 		}
 		return true;
+	}
+
+	public void stopTraffic(ArrayList<String> streamList) {
+		trafficGenerator.stopTraffic(streamList);
 	}
 }

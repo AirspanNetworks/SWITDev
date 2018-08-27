@@ -125,6 +125,7 @@ public class IPerfLinuxMachine extends IPerfMachine{
 				e.printStackTrace();
 			}
 		}
+		scpClient.close();
 		File file = new File(fileName); 
 		return file;
 	}

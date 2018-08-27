@@ -34,6 +34,11 @@ public class TrafficSampler implements Runnable{
 		}
 	}
 	
+	public void stopTraffic(){
+		keepRunning = false;
+		trafficInstance.stopTraffic(streamList);
+	}
+	
 	@Override
 	public void run() {
 		long start = System.currentTimeMillis();

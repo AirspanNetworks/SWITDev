@@ -3,6 +3,7 @@ package Utils.Iperf;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import Entities.ITrafficGenerator.CounterUnit;
 import Entities.ITrafficGenerator.Protocol;
@@ -607,5 +608,40 @@ public class UEIPerf implements Runnable {
 			}
 		}
 		return 0;
+	}
+
+	public void stopTraffic(ArrayList<String> streamList) {
+		//String resultGrep = iperfMachineDL.sendCommand("ps -aux | grep iperf").getElement1();
+		//String commandToKill = "kill -9 ";
+		Iterator<IPerfStream> iter = dlStreamArrayList.iterator();
+		while(iter.hasNext()){
+			IPerfStream ips = iter.next();
+			if(streamList.contains(ips.getStreamName())){
+				iter.remove();
+			}
+		}
+		
+		iter = ulStreamArrayList.iterator();
+		while(iter.hasNext()){
+			IPerfStream ips = iter.next();
+			if(streamList.contains(ips.getStreamName())){
+				iter.remove();
+			}
+		}
+		
+		/*ArrayList<IPerfStream> dlTemp = (ArrayList<IPerfStream>) dlStreamArrayList.clone();
+		for(IPerfStream ips : dlTemp){
+			if(streamList.contains(ips.getStreamName())){
+				dlStreamArrayList.remove(ips);
+			}
+		}
+		//resultGrep = iperfMachineUL.sendCommand("ps -aux | grep iperf").getElement1();
+		//commandToKill = "kill -9 ";
+		ArrayList<IPerfStream> ulTemp = (ArrayList<IPerfStream>) ulStreamArrayList.clone();
+		for(IPerfStream ips : ulTemp){
+			if(streamList.contains(ips.getStreamName())){
+				ulStreamArrayList.remove(ips);
+			}
+		}*/
 	}
 }

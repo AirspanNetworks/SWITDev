@@ -2,9 +2,11 @@ package testsNG.Actions;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import Action.TrafficAction.TrafficAction.ExpectedType;
 import Action.TrafficAction.TrafficAction.LoadType;
+import DMTool.Measurement.MeasurementCfgObject;
 import EnodeB.EnodeB;
 import Entities.LoadParam;
 import Entities.StreamParams;
@@ -377,5 +379,22 @@ public class TrafficManager {
 			}
 		}
 		return false;
-	}	
+	}
+
+	public void stopTraffic(ArrayList<String> trafficToStop) {
+		if(trafficToStop.isEmpty()){
+			trafficInstance.stopTraffic();
+		}
+		for(String nameToStop : trafficToStop){
+			report.report("Stopping traffic "+nameToStop);
+			Iterator<TrafficSampler> iter = samplerList.iterator();
+			while(iter.hasNext()){
+				TrafficSampler ts = iter.next();
+				if(ts.getName().equals(nameToStop)){
+					ts.stopTraffic();
+					iter.remove();
+				}
+			}			
+		}
+	}
 }

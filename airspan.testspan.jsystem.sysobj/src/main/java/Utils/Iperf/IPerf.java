@@ -654,4 +654,12 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 			ueIPerf.setWindowSizeInKbs(windowSizeInKbs);
 		}
 	}
+
+
+	@Override
+	public void stopTraffic(ArrayList<String> streamList) {
+		for(UEIPerf ueIPerf : allUEsIPerfList){
+			ueIPerf.stopTraffic(streamList);
+		}
+	}
 }

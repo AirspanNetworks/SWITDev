@@ -49,6 +49,7 @@ public class TrafficAction extends Action {
 		return trafficToStop;
 	}
 
+	
 	public void setTrafficToStop(String trafficToStop) {
 		this.trafficToStop = new ArrayList<String>();
 		if(trafficToStop != null){

@@ -257,7 +257,7 @@ public class GemtekUE extends UE {
 	@Override
 	public boolean setAPN(String apnName) {
 		String oid = MibReader.getInstance().resolveByName("pmpDevCpeLteAPNAttach");
-		String oid1 = MibReader.getInstance().resolveByName(" pmpDevCpeMobileNetworkAPNAttach");
+		String oid1 = MibReader.getInstance().resolveByName("pmpDevCpeMobileNetworkAPNAttach");
 		boolean flag = true;
 		try {
 			report.report((String.format("Setting ue \"%s\" APN to %s by SNMP.", this.getName(), apnName)));

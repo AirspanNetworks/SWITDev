@@ -49,7 +49,7 @@ public class SoftwareUtiles {
 	/**
 	 * the source of the copy
 	 **/
-	private File sourceServer = new File("P:\\BS\\Development\\Air4G_LTE\\Builds\\");
+	private File sourceServer = new File("\\FS4\\Projects\\Development\\Internal\\Builds\\");
 	/**
 	 * the destination of the copy
 	 **/

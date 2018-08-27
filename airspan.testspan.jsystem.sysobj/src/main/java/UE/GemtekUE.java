@@ -257,12 +257,19 @@ public class GemtekUE extends UE {
 	@Override
 	public boolean setAPN(String apnName) {
 		String oid = MibReader.getInstance().resolveByName("pmpDevCpeLteAPNAttach");
+		String oid1 = MibReader.getInstance().resolveByName(" pmpDevCpeMobileNetworkAPNAttach");
 		boolean flag = true;
 		try {
 			report.report((String.format("Setting ue \"%s\" APN to %s by SNMP.", this.getName(), apnName)));
 			flag &= snmp.snmpSet(oid, 1);
 			oid = MibReader.getInstance().resolveByName("pmpDevCpeLteAPNName");
 			flag &= snmp.snmpSet(oid, apnName);
+			if (!flag){
+				flag = snmp.snmpSet(oid1, 1);
+				oid1 = MibReader.getInstance().resolveByName("pmpDevCpeMobileNetworkAPNName");
+				flag &= snmp.snmpSet(oid1, apnName);
+			}
+			return snmp.get(oid).equals(apnName) || snmp.get(oid1).equals(apnName); 
 		} catch (Exception e) {
 			report.report("can't send command snmp protocol");
 			e.printStackTrace();

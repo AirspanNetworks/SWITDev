@@ -628,13 +628,21 @@ public class UEIPerf implements Runnable {
 				String process = getProcessNumber(resultGrepDl, ips.getIperfClientCommand());
 				if(process == null){
 					process = getProcessNumber(resultGrepUl, ips.getIperfClientCommand());
+					if(process != null){
+						commandToKillUl += process+" ";						
+					}
+				}else{
+					commandToKillDl += process+" ";					
 				}
-				commandToKillDl += process;
 				process = getProcessNumber(resultGrepDl, ips.getIperfServerCommand());
 				if(process == null){
 					process = getProcessNumber(resultGrepUl, ips.getIperfServerCommand());
+					if(process != null){
+						commandToKillUl += process+" ";
+					}
+				}else{					
+					commandToKillDl += process;
 				}
-				commandToKillDl += process;
 				iter.remove();
 			}
 		}
@@ -646,13 +654,21 @@ public class UEIPerf implements Runnable {
 				String process = getProcessNumber(resultGrepUl, ips.getIperfClientCommand());
 				if(process == null){
 					process = getProcessNumber(resultGrepDl, ips.getIperfClientCommand());
+					if(process != null){
+						commandToKillDl += process+" ";						
+					}
+				}else{
+					commandToKillUl += process;					
 				}
-				commandToKillUl += process;
 				process = getProcessNumber(resultGrepUl, ips.getIperfServerCommand());
 				if(process == null){
 					process = getProcessNumber(resultGrepDl, ips.getIperfServerCommand());
+					if(process != null){
+						commandToKillDl += process+" ";
+					}
+				}else{
+					commandToKillUl += process;					
 				}
-				commandToKillUl += process;
 				iter.remove();
 			}
 		}

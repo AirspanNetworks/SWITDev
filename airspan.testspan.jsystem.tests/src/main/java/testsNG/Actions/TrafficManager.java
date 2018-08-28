@@ -31,7 +31,7 @@ public class TrafficManager {
 	private Boolean isTrafficInit = null;;
 	private GeneratorType trafficType = null;
 	private static ArrayList<TrafficSampler> samplerList; 
-	private Traffic trafficInstance;
+	private volatile Traffic trafficInstance;
 	
 	private static TrafficManager instance;
 	//private ArrayList<StreamParams> streams = new ArrayList<StreamParams>();

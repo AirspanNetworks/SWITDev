@@ -39,11 +39,11 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 	
 	private static IPerf instance=null;
 	
-	public IPerfMachine iperfMachineDL;
-	public IPerfMachine iperfMachineUL;
+	public volatile IPerfMachine iperfMachineDL;
+	public volatile IPerfMachine iperfMachineUL;
 	
 	private ArrayList<UE> ues;
-	private ArrayList<UEIPerf> allUEsIPerfList;
+	private volatile ArrayList<UEIPerf> allUEsIPerfList;
 	private String tpDlCountersFileNames = null;
 	private String tpUlCountersFileNames = null;
 	private String defultConfigFile;

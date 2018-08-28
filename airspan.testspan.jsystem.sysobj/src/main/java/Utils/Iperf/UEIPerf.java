@@ -25,11 +25,11 @@ public class UEIPerf implements Runnable {
 
 	protected UE ue;
 
-	protected IPerfMachine iperfMachineDL;
+	protected volatile IPerfMachine iperfMachineDL;
 	
-	protected IPerfMachine iperfMachineUL;
-	protected ArrayList<IPerfStream> ulStreamArrayList;
-	protected ArrayList<IPerfStream> dlStreamArrayList;
+	protected volatile IPerfMachine iperfMachineUL;
+	protected volatile ArrayList<IPerfStream> ulStreamArrayList;
+	protected volatile ArrayList<IPerfStream> dlStreamArrayList;
 
 	protected double ulUeLoad;
 	protected double dlUeLoad;

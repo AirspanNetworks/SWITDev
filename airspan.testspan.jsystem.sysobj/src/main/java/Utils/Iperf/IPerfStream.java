@@ -27,14 +27,14 @@ public class IPerfStream {
 	protected String clientOutputFileName;
 	protected String srcIpAddress;
 	
-	protected boolean isActive;
+	protected volatile boolean isActive;
 	protected double streamLoad;
 	protected String iperfClientCommand;
 	protected String iperfServerCommand;
 	protected ArrayList<Long> countersInBits;
 	protected Protocol protocol;
 	protected Double lastIntervalUsedForLastSample;
-	protected boolean isRunningTraffic; 
+	protected volatile boolean isRunningTraffic; 
 	protected Integer runTime;
 	
 

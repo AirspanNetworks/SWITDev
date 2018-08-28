@@ -80,7 +80,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     private String[] imsiStartList;
     private String[] imsiStopList;
     private Stack<String> dlMachineNetworks;
-    public ArrayList<AmarisoftGroup> UEgroup ;
+    public AmarisoftGroup[] UEgroup ;
     private ArrayList<AmarisoftUE> ueMap;
 	private ArrayList<AmarisoftUE> unusedUEs;
     private HashMap<String, Integer> sdrCellsMap;
@@ -118,25 +118,14 @@ public class AmariSoftServer extends SystemObjectImpl{
     	sdrCellsMap = new HashMap<>();
     	setImsiStartList("200010001008301");
     	setImsiStopList("200010001008400");
-    	UEgroup = new ArrayList<>();
-    	AmarisoftGroup amaGroup = new AmarisoftGroup();
-    	amaGroup.setGroupName("moran");
-    	amaGroup.setImsiStart("200010001008301");
-    	amaGroup.setImsiStop("200010001008302");
-    	AmarisoftGroup amaGroup2 = new AmarisoftGroup();
-    	amaGroup2.setGroupName("Gaby");
-    	amaGroup2.setImsiStart("200010001008303");
-    	amaGroup2.setImsiStop("200010001008304");
-    	UEgroup.add(amaGroup);
-    	UEgroup.add(amaGroup2);
     	fillUeList();
     	checkIfGroupsAreIdentical();
     }
     private void checkIfGroupsAreIdentical() {
-		for(int i = 0; i < UEgroup.size(); i++) {
-			AmarisoftGroup group1 = UEgroup.get(i);
-			 for(int j = i+1; j<UEgroup.size(); j++) {
-				 AmarisoftGroup group2 = UEgroup.get(j);
+		for(int i = 0; i < UEgroup.length; i++) {
+			AmarisoftGroup group1 = UEgroup[i];
+			 for(int j = i+1; j<UEgroup.length; j++) {
+				 AmarisoftGroup group2 = UEgroup[j];
 				 compareGroups(group1, group2);
 			 }
 		}
@@ -161,9 +150,9 @@ public class AmariSoftServer extends SystemObjectImpl{
 			Long stopImsi = new Long(imsiStopList[i]);
 			for (Long imsi = startImsi; imsi <= stopImsi ; imsi++) {
 				ArrayList<String> groupName = new ArrayList<>();
-				for (int j = 0; j < UEgroup.size(); j++) {
-					if(checkIfImsiIsInGroup(imsi, UEgroup.get(j).getGroupName()))
-						groupName.add(UEgroup.get(j).getGroupName());
+				for (int j = 0; j < UEgroup.length; j++) {
+					if(checkIfImsiIsInGroup(imsi, UEgroup[j].getGroupName()))
+						groupName.add(UEgroup[j].getGroupName());
 				}
 				AmarisoftUE ue = new AmarisoftUE(ueId, groupName,  this);
 				ue.setImsi(imsi+"");

@@ -682,7 +682,7 @@ public class UEIPerf implements Runnable {
 	}
 	
 	private String getProcessNumber(String file, String command){
-		Pattern p = Pattern.compile("^[0-9a-z]\\s+(\\d+).*"+command+"$");
+		Pattern p = Pattern.compile("[0-9a-z]\\s+(\\d+).*"+command);
 		Matcher m = p.matcher(file);
 		if(m.find()){
 			return m.group(1);

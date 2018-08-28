@@ -297,7 +297,9 @@ public class TrafficAction extends Action {
 			report.report("Failed to init traffic manager instance",Reporter.FAIL);
 			return;
 		}
-		
+		if(trafficToStop == null){
+			trafficToStop = new ArrayList<String>();
+		}
 		trafficManagerInstance.stopTraffic(trafficToStop);
 	}
 	

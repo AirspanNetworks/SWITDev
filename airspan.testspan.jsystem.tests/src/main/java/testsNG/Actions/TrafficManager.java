@@ -383,7 +383,12 @@ public class TrafficManager {
 
 	public void stopTraffic(ArrayList<String> trafficToStop) {
 		if(trafficToStop.isEmpty()){
-			trafficInstance.stopTraffic();
+			Iterator<TrafficSampler> iter = samplerList.iterator();
+			while(iter.hasNext()){
+				TrafficSampler ts = iter.next();
+				ts.stopTraffic();
+				iter.remove();
+			}		
 		}
 		for(String nameToStop : trafficToStop){
 			report.report("Stopping traffic "+nameToStop);

@@ -138,6 +138,7 @@ public class UEIPerf implements Runnable {
 		if(iperfMachineUL != null){
 			iperfMachineUL.stopIPerf();
 			for(IPerfStream ulIPerfStream : ulStreamArrayList){
+				ulIPerfStream.setActive(false);
 				ulIPerfStream.setRunningTraffic(false);
 			}
 		}else{
@@ -149,6 +150,7 @@ public class UEIPerf implements Runnable {
 		if(iperfMachineDL != null){
 			iperfMachineDL.stopIPerf();
 			for(IPerfStream dlIPerfStream : dlStreamArrayList){
+				dlIPerfStream.setActive(false);
 				dlIPerfStream.setRunningTraffic(false);
 			}
 		}else{

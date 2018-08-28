@@ -407,7 +407,7 @@ public class TrafficAction extends Action {
 		ArrayList<String> toReturn = new ArrayList<String>();
 		String protocolForStream = (protocol == Protocol.TCP ? "TCP_":"UDP_");
 		for(UE ue:ues){
-			String numUE = "UE" + ue.getName().replaceAll("\\D+", "").trim();
+			String numUE = ue.getName().replaceAll("\\D+", "").trim();
 			for(Character ch:qci){
 				if(transmitDirection == TransmitDirection.BOTH || transmitDirection == TransmitDirection.UL){
 					toReturn.add(protocolForStream+"UL_UE"+numUE+ch);

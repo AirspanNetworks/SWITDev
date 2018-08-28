@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import Entities.ITrafficGenerator.CounterUnit;
 import Entities.ITrafficGenerator.Protocol;
@@ -613,12 +615,26 @@ public class UEIPerf implements Runnable {
 	}
 
 	public void stopTraffic(ArrayList<String> streamList) {
-		//String resultGrep = iperfMachineDL.sendCommand("ps -aux | grep iperf").getElement1();
-		//String commandToKill = "kill -9 ";
+		String resultGrepDl = iperfMachineDL.sendCommand("ps -aux | grep iperf").getElement1();
+		GeneralUtils.unSafeSleep(2000);
+		String resultGrepUl = iperfMachineUL.sendCommand("ps -aux | grep iperf").getElement1();
+		GeneralUtils.unSafeSleep(2000);
+		String commandToKillDl = "kill -9 ";
+		String commandToKillUl = "kill -9 ";
 		Iterator<IPerfStream> iter = dlStreamArrayList.iterator();
 		while(iter.hasNext()){
 			IPerfStream ips = iter.next();
 			if(streamList.contains(ips.getStreamName())){
+				String process = getProcessNumber(resultGrepDl, ips.getIperfClientCommand());
+				if(process == null){
+					process = getProcessNumber(resultGrepUl, ips.getIperfClientCommand());
+				}
+				commandToKillDl += process;
+				process = getProcessNumber(resultGrepDl, ips.getIperfServerCommand());
+				if(process == null){
+					process = getProcessNumber(resultGrepUl, ips.getIperfServerCommand());
+				}
+				commandToKillDl += process;
 				iter.remove();
 			}
 		}
@@ -627,10 +643,28 @@ public class UEIPerf implements Runnable {
 		while(iter.hasNext()){
 			IPerfStream ips = iter.next();
 			if(streamList.contains(ips.getStreamName())){
+				String process = getProcessNumber(resultGrepUl, ips.getIperfClientCommand());
+				if(process == null){
+					process = getProcessNumber(resultGrepDl, ips.getIperfClientCommand());
+				}
+				commandToKillUl += process;
+				process = getProcessNumber(resultGrepUl, ips.getIperfServerCommand());
+				if(process == null){
+					process = getProcessNumber(resultGrepDl, ips.getIperfServerCommand());
+				}
+				commandToKillUl += process;
 				iter.remove();
 			}
 		}
+		iperfMachineDL.sendCommand(commandToKillDl);
+		GeneralUtils.unSafeSleep(3000);
+		iperfMachineDL.sendCommand("ps -aux | grep iperf");
+		GeneralUtils.unSafeSleep(1000);
 		
+		iperfMachineUL.sendCommand(commandToKillUl);
+		GeneralUtils.unSafeSleep(3000);
+		iperfMachineUL.sendCommand("ps -aux | grep iperf");
+		GeneralUtils.unSafeSleep(1000);
 		/*ArrayList<IPerfStream> dlTemp = (ArrayList<IPerfStream>) dlStreamArrayList.clone();
 		for(IPerfStream ips : dlTemp){
 			if(streamList.contains(ips.getStreamName())){
@@ -645,5 +679,14 @@ public class UEIPerf implements Runnable {
 				ulStreamArrayList.remove(ips);
 			}
 		}*/
+	}
+	
+	private String getProcessNumber(String file, String command){
+		Pattern p = Pattern.compile("^[0-9a-z]\\s+(\\d+).*"+command+"$");
+		Matcher m = p.matcher(file);
+		if(m.find()){
+			return m.group(1);
+		}
+		return null;
 	}
 }

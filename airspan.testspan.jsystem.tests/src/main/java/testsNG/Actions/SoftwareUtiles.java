@@ -233,19 +233,20 @@ public class SoftwareUtiles {
 		String build = getCurrentBuild(enodeB).trim();
 		String running = enodeB.getRunningVersion().trim();
 		String standby = enodeB.getSecondaryVersion().trim();
-		if (build.contains(running) || running.contains(build)) {
+		if ((build.contains(running) || running.contains(build))) {
 			report.report("The running bank contains version " + build + " on Enodeb: " + enodeB.getNetspanName());
 			return true;
-		} else if (build.contains(standby) || standby.contains(build)) {
+		} 
+		else if (build.contains(standby) || standby.contains(build)) {
 			report.report(
 					"The Standby Bank contains target version: " + build + " on Enodeb: " + enodeB.getNetspanName(),
 					logLevel);
 			if (enodeB.swapBanksAndReboot()) {
 				// Heng - dont worry about the wait this is a safe switch to
 				// wait for reboot
-				// the wair for allrunnig itself will take 5 minutes so this
+				// the wait for all running itself will take 5 minutes so this
 				// wait will not affect runtime
-				// but will help up to make the code simplier and not wait for
+				// but will help up to make the code simpler and not wait for
 				// reboot event at this point
 				GeneralUtils.unSafeSleep(2 * 60 * 1000);
 				enodeB.setUnexpectedReboot(0);
@@ -1507,8 +1508,12 @@ public class SoftwareUtiles {
 		boolean res = true;
 		GeneralUtils.startLevel("Validate Running Version.");
 		for (EnodebSwStatus eNodebSwStaus : eNodebSwStausList) {
-			res = res && isUpdatedViaSnmp(eNodebSwStaus.eNodeB, Reporter.FAIL);
-			res = res && isRelayVersionUpdated(eNodebSwStaus.eNodeB, eNodebSwStaus.realyTargetVersion, Reporter.FAIL);
+			res &= isUpdatedViaSnmp(eNodebSwStaus.eNodeB, Reporter.FAIL);
+			res &= isRelayVersionUpdated(eNodebSwStaus.eNodeB, eNodebSwStaus.realyTargetVersion, Reporter.FAIL);
+			if(!(eNodebSwStaus.isInRunningState || eNodebSwStaus.eNodeB.isInService())){
+				report.report(eNodebSwStaus.eNodeB.getName() + " is NOT in All-Running state", Reporter.FAIL);
+				res = false;
+			}			
 		}
 		GeneralUtils.stopLevel();
 		return res;

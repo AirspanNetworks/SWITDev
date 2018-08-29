@@ -662,4 +662,13 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 			ueIPerf.stopTraffic(streamList);
 		}
 	}
+	
+	@Override
+	public ArrayList<StreamParams> getAllStreamsResults(ArrayList<String> streamList) {
+		ArrayList<StreamParams> toReturn = new ArrayList<StreamParams>();
+		for(UEIPerf ueIPerf : allUEsIPerfList){
+			toReturn.addAll(ueIPerf.getAllStreamsResults(streamList));
+		}
+		return toReturn;
+	}
 }

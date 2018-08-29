@@ -36,6 +36,7 @@ public class TrafficSampler implements Runnable{
 	
 	public void stopTraffic(){
 		keepRunning = false;
+		//trafficInstance.getAllStreamsResults(streamList);
 		trafficInstance.stopTraffic(streamList);
 	}
 	

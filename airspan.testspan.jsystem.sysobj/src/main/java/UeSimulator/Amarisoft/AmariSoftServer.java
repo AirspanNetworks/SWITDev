@@ -159,8 +159,8 @@ public class AmariSoftServer extends SystemObjectImpl{
 				unusedUEs.add(ue);
 				ueId++;
 			}
-			checkGroupsValidation();
 		}
+		checkGroupsValidation();
 	}
 
 	private boolean checkIfImsiIsInGroup(long imsi, String groupName) {

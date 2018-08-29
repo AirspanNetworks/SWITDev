@@ -643,12 +643,18 @@ public class PeripheralsConfig {
 		ArrayList<UE> snmpFailUEs = new ArrayList<UE>();
 		GeneralUtils.startLevel("Start all UEs via snmp");
 		for (UE ue : ues) {
-			if(!ue.start()){
-				snmpFailUEs.add(ue);
-				report.report("UE "+ue.getLanIpAddress()+" has not started via snmp");
-			}else{
-				report.report("UE "+ue.getLanIpAddress()+" has started via snmp");
+			if (ue.getLanIpAddress() == null) {
+				report.report("Cant start ue " + ue.getImsi() + " because lanIPAdress is NULL", Reporter.WARNING);
+
 			}
+			else {
+				if(!ue.start()){
+					snmpFailUEs.add(ue);
+					report.report("UE "+ue.getLanIpAddress()+" has not started via snmp");
+				}else{
+					report.report("UE "+ue.getLanIpAddress()+" has started via snmp");
+				}
+			}	
 		}
 		report.report("Wait 10 seconds");
 		GeneralUtils.unSafeSleep(1000 * 10);

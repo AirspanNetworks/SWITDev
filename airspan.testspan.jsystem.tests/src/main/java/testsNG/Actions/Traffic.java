@@ -1850,4 +1850,8 @@ public class Traffic {
 	public void stopTraffic(ArrayList<String> streamList) {
 		trafficGenerator.stopTraffic(streamList);
 	}
+
+	public ArrayList<StreamParams> getAllStreamsResults(ArrayList<String> streamList) {
+		return trafficGenerator.getAllStreamsResults(streamList);
+	}
 }

@@ -705,4 +705,26 @@ public class UEIPerf implements Runnable {
 		}
 		return null;
 	}
+	
+	public ArrayList<StreamParams> getAllStreamsResults(ArrayList<String> streamList) {
+		ArrayList<StreamParams> toReturn = new ArrayList<StreamParams>();
+		for(IPerfStream ips : dlStreamArrayList){
+			if(streamList.contains(ips.getStreamName())){
+				toReturn.addAll(extractStatisticsFromFile(ips));
+			}
+		}
+		return toReturn;
+	}
+	
+	private ArrayList<StreamParams> extractStatisticsFromFile(IPerfStream ips){
+		ArrayList<StreamParams> toReturn = new ArrayList<StreamParams>();
+		return toReturn;
+		/*File file;
+		if(ips.getTransmitDirection() == TransmitDirection.DL){
+			file = iperfMachineDL.getFile(ips.getTpFileName());
+		}else{
+			file = iperfMachineUL.getFile(ips.getTpFileName());
+		}
+		Pattern p = Pattern.compile(".*] (\\d+.\\d+-\\d+.\\d+).*(\\d+)\\s+kbits/sec.*");*/
+	}
 }

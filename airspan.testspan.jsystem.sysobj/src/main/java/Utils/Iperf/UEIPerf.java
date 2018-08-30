@@ -1,6 +1,8 @@
 package Utils.Iperf;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -718,13 +720,42 @@ public class UEIPerf implements Runnable {
 	
 	private ArrayList<StreamParams> extractStatisticsFromFile(IPerfStream ips){
 		ArrayList<StreamParams> toReturn = new ArrayList<StreamParams>();
-		return toReturn;
-		/*File file;
-		if(ips.getTransmitDirection() == TransmitDirection.DL){
+		File file;
+		if(ips.getTransmitDirection() == TransmitDirection.UL){
 			file = iperfMachineDL.getFile(ips.getTpFileName());
 		}else{
 			file = iperfMachineUL.getFile(ips.getTpFileName());
 		}
-		Pattern p = Pattern.compile(".*] (\\d+.\\d+-\\d+.\\d+).*(\\d+)\\s+kbits/sec.*");*/
+		Pattern p = Pattern.compile("(\\d+.\\d+-\\s*\\d+.\\d+).*KBytes\\s+(\\d+)\\s+Kbits/sec.*");
+		try{
+			FileReader read = new FileReader(file);
+			BufferedReader br = new BufferedReader(read);
+			String line;
+			while((line = br.readLine()) != null){
+				Matcher m = p.matcher(line);
+				long sampleTime = System.currentTimeMillis();
+				if(m.find()){
+					//System.out.println(m.group(1));
+					//System.out.println(m.group(2));
+					//String sampleTime = m.group(1);
+					Long currentValue = Long.valueOf(m.group(2));
+					StreamParams tempStreamParams = new StreamParams();
+					tempStreamParams.setName(ips.getStreamName());
+					tempStreamParams.setTimeStamp(sampleTime);
+					tempStreamParams.setActive(true);
+					tempStreamParams.setUnit(CounterUnit.BITS_PER_SECOND);
+					tempStreamParams.setTxRate((long)(ips.getStreamLoad()*1000*1000));
+					tempStreamParams.setRxRate(currentValue*1000);
+					tempStreamParams.setPacketSize(ips.getFrameSize());
+					sampleTime+=1000;
+					toReturn.add(tempStreamParams);
+				}
+			}
+			br.close();
+			read.close();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return toReturn;
 	}
 }

@@ -1,5 +1,7 @@
 package testsNG.Actions;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 
 import Action.TrafficAction.TrafficAction.ExpectedType;
@@ -8,6 +10,9 @@ import Entities.StreamParams;
 import Entities.ITrafficGenerator.CounterUnit;
 import Entities.ITrafficGenerator.TransmitDirection;
 import Utils.GeneralUtils;
+import Utils.StreamList;
+import jsystem.framework.report.ListenerstManager;
+import jsystem.framework.report.Reporter;
 
 public class TrafficSampler implements Runnable{
 	
@@ -26,6 +31,7 @@ public class TrafficSampler implements Runnable{
 	protected ArrayList<CounterUnit> counters = new ArrayList<CounterUnit>();
 	private Thread runnableThread;
 	private ArrayList<String> streamList;
+	public static Reporter report = ListenerstManager.getInstance();
 	
 	public void start(){
 		if(ExpectedType.None != expectedLoadType){
@@ -36,8 +42,33 @@ public class TrafficSampler implements Runnable{
 	
 	public void stopTraffic(){
 		keepRunning = false;
-		//trafficInstance.getAllStreamsResults(streamList);
+		ArrayList<StreamParams> temp = trafficInstance.getAllStreamsResults(streamList);
+		printPerStreamTables(temp);
 		trafficInstance.stopTraffic(streamList);
+	}
+	
+	protected void printPerStreamTables(ArrayList<StreamParams> listOfStreamList) {
+		StreamList TablePrinter = new StreamList();
+		ArrayList<String> headLines = new ArrayList<String>();
+		headLines.add("Rate [Mbit/s]");
+		GeneralUtils.startLevel("Per Stream Tables");
+		for (StreamParams stream : listOfStreamList) {
+				ArrayList<String> valuesList = new ArrayList<String>();
+				valuesList.add(longToString3DigitFormat(stream.getRxRate()));
+				String dateFormat = GeneralUtils.timeFormat(stream.getTimeStamp());
+				TablePrinter.addValues(stream.getName(), dateFormat, headLines, valuesList);
+		}
+		for (String stream : streamList) {
+			report.reportHtml(stream, TablePrinter.printTablesHtmlForStream(stream), true);
+		}
+		GeneralUtils.stopLevel();
+	}
+	
+	protected String longToString3DigitFormat(long number) {
+		double temp;
+		NumberFormat formatter = new DecimalFormat("#.###");
+		temp = number / 1000000.0;
+		return formatter.format(temp);
 	}
 	
 	@Override

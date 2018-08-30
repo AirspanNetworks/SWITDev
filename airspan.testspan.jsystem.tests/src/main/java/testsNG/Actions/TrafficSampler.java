@@ -42,7 +42,8 @@ public class TrafficSampler implements Runnable{
 	
 	public void stopTraffic(){
 		keepRunning = false;
-		//trafficInstance.getAllStreamsResults(streamList);
+		ArrayList<StreamParams> temp = trafficInstance.getAllStreamsResults(streamList);
+		printPerStreamTables(temp);
 		trafficInstance.stopTraffic(streamList);
 	}
 	

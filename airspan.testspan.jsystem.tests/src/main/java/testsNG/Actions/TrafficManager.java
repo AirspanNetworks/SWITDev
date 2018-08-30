@@ -33,6 +33,7 @@ public class TrafficManager {
 	private static ArrayList<TrafficSampler> samplerList; 
 	private volatile Traffic trafficInstance;
 	
+	
 	private static TrafficManager instance;
 	//private ArrayList<StreamParams> streams = new ArrayList<StreamParams>();
 	private Double loadStreamDl;

@@ -40,10 +40,15 @@ public class TrafficSampler implements Runnable{
 		}
 	}
 	
-	public void stopTraffic(){
-		keepRunning = false;
+	public void getStatistics(){
+		report.report("Statistics for traffic "+getName());
 		ArrayList<StreamParams> temp = trafficInstance.getAllStreamsResults(streamList);
-		printPerStreamTables(temp);
+		printPerStreamTables(temp);		
+	}
+	
+	public void stopTraffic(){
+		report.report("Stopping traffic "+getName());
+		keepRunning = false;
 		trafficInstance.stopTraffic(streamList);
 	}
 	

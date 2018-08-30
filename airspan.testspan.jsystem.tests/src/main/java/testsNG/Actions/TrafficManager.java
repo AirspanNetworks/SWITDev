@@ -387,16 +387,17 @@ public class TrafficManager {
 			Iterator<TrafficSampler> iter = samplerList.iterator();
 			while(iter.hasNext()){
 				TrafficSampler ts = iter.next();
+				ts.getStatistics();
 				ts.stopTraffic();
 				iter.remove();
 			}		
 		}
 		for(String nameToStop : trafficToStop){
-			report.report("Stopping traffic "+nameToStop);
 			Iterator<TrafficSampler> iter = samplerList.iterator();
 			while(iter.hasNext()){
 				TrafficSampler ts = iter.next();
 				if(ts.getName().equals(nameToStop)){
+					ts.getStatistics();
 					ts.stopTraffic();
 					iter.remove();
 				}

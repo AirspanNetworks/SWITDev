@@ -398,7 +398,7 @@ public class TrafficAction extends Action {
 			report.report("Action failed - trying to run traffic on a stream already running", Reporter.FAIL);
 			return;
 		}
-		
+		report.report("New codeeeeee");
 		trafficManagerInstance.startTraffic(semanticName, convertUeToNamesList(ues), qci, loadType, ULLoad,DLLoad, transmitDirection, 
 				expectedLoadType, ULExpected, DLExpected, dut, parallelStreams, windowSize, mss, frameSize, trafficType, runTime, toCheck);
 	}

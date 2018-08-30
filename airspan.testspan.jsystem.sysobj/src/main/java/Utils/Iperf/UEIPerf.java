@@ -715,6 +715,11 @@ public class UEIPerf implements Runnable {
 				toReturn.addAll(extractStatisticsFromFile(ips));
 			}
 		}
+		for(IPerfStream ips : ulStreamArrayList){
+			if(streamList.contains(ips.getStreamName())){
+				toReturn.addAll(extractStatisticsFromFile(ips));
+			}
+		}
 		return toReturn;
 	}
 	

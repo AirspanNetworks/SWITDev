@@ -736,9 +736,9 @@ public class UEIPerf implements Runnable {
 			FileReader read = new FileReader(file);
 			BufferedReader br = new BufferedReader(read);
 			String line;
+			long sampleTime = System.currentTimeMillis();
 			while((line = br.readLine()) != null){
 				Matcher m = p.matcher(line);
-				long sampleTime = System.currentTimeMillis();
 				if(m.find()){
 					//System.out.println(m.group(1));
 					//System.out.println(m.group(2));

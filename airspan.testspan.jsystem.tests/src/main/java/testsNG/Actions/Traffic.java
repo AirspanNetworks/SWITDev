@@ -1851,7 +1851,7 @@ public class Traffic {
 		trafficGenerator.stopTraffic(streamList);
 	}
 
-	public ArrayList<StreamParams> getAllStreamsResults(ArrayList<String> streamList) {
+	public ArrayList<ArrayList<StreamParams>> getAllStreamsResults(ArrayList<String> streamList) {
 		return trafficGenerator.getAllStreamsResults(streamList);
 	}
 }

@@ -6,24 +6,25 @@ import java.util.Iterator;
 
 import Action.TrafficAction.TrafficAction.ExpectedType;
 import Action.TrafficAction.TrafficAction.LoadType;
-import DMTool.Measurement.MeasurementCfgObject;
 import EnodeB.EnodeB;
 import Entities.LoadParam;
 import Entities.StreamParams;
+import Netspan.NetspanServer;
 import Netspan.Profiles.RadioParameters;
+import TestingServices.TestConfig;
 import Entities.ITrafficGenerator.Protocol;
 import Entities.ITrafficGenerator.TransmitDirection;
-import UE.UE;
 import Utils.GeneralUtils;
+import Utils.LteThroughputCalculator;
 import Utils.Pair;
 import Utils.SetupUtils;
+import Utils.LteThroughputCalculator.ConfigurationEnum;
 import jsystem.framework.report.ListenerstManager;
 import jsystem.framework.report.Reporter;
 import jsystem.framework.report.ReporterHelper;
 import jsystem.sysobj.traffic.TrafficException;
 import testsNG.Actions.Traffic.GeneratorType;
 import testsNG.Actions.Utils.CalculatorMap;
-import testsNG.Actions.Utils.TrafficGeneratorType;
 
 public class TrafficManager {
 
@@ -38,6 +39,9 @@ public class TrafficManager {
 	//private ArrayList<StreamParams> streams = new ArrayList<StreamParams>();
 	private Double loadStreamDl;
 	private Double loadStreamUl;
+	
+	private Double dlExpected;
+	private Double ulExpected;
 	
 	public static TrafficManager getInstance(GeneratorType type){
 		if(instance == null){
@@ -143,7 +147,8 @@ public class TrafficManager {
 		trafficInstance.addCommandFilesToReport();
 		GeneralUtils.unSafeSleep(5*1000);
 		isTrafficInit = true;
-		TrafficSampler current = new TrafficSampler(trafficInstance,name,ueList,qci, direction, type, ulExp, dlExp, enb, timeout, streams);
+		getExpectedValues(enb,type,dlExp,ulExp);
+		TrafficSampler current = new TrafficSampler(trafficInstance,name,ueList,qci, direction, type, ulExpected, dlExpected, enb, timeout, streams);
 		current.start();
 		samplerList.add(current);
 	}
@@ -217,6 +222,51 @@ public class TrafficManager {
 			GeneralUtils.stopLevel();			
 		}
 		return false;
+	}
+	
+	private void getExpectedValues(EnodeB enb, ExpectedType type, String dlExpected, String ulExpected){
+		if(ExpectedType.Custom == type){
+			if(dlExpected != null){
+				this.dlExpected = Double.valueOf(dlExpected);
+			}else{
+				this.dlExpected = null;
+			}
+			if(ulExpected != null){
+				this.ulExpected = Double.valueOf(ulExpected);
+			}else{
+				this.ulExpected = null;
+			}
+		}else{
+			Pair<Double,Double> load = getCalculatorPassCriteria(enb,getRadioProfile(enb));
+			if(load != null){
+				if(dlExpected != null){
+					this.dlExpected = (load.getElement0()*Double.valueOf(dlExpected))/100;
+				}else{
+					this.dlExpected = null;
+				}
+				if(ulExpected != null){
+					this.ulExpected = (load.getElement1()*Double.valueOf(ulExpected))/100;
+				}else{
+					this.ulExpected = null;
+				}
+				int cells = EnodeBConfig.getInstance().getNumberOfActiveCells(enb);
+				if(EnodeBConfig.getInstance().isCAEnableInNode(enb)){
+					if(this.dlExpected != null){
+						this.dlExpected = this.dlExpected* cells;
+					}
+				}else{
+					if(this.dlExpected != null){
+						this.dlExpected = this.dlExpected* cells;
+					}
+					if(this.ulExpected != null){
+						this.ulExpected = this.ulExpected* cells;
+					}					
+				}
+			}else{
+				this.dlExpected = null;
+				this.ulExpected = null;
+			}
+		}
 	}
 	
 	private void setLoadPerStream(EnodeB enb, LoadType loadType, String dlLoad, String ulLoad) {
@@ -299,13 +349,13 @@ public class TrafficManager {
 				loadStreamUl = Double.valueOf(ulLoad);
 			}
 		}else{
-			String[] load = getCalculatorPassCriteria(getRadioProfile(dut));
+			Pair<Double,Double> load = getCalculatorPassCriteria(dut,getRadioProfile(dut));
 			if(load != null){
 				if(dlLoad != null){
-					loadStreamDl = (Double.valueOf(load[0])*Double.valueOf(dlLoad))/100;
+					loadStreamDl = (load.getElement0()*Double.valueOf(dlLoad))/100;
 				}
 				if(ulLoad != null){
-					loadStreamUl = (Double.valueOf(load[1])*Double.valueOf(ulLoad))/100;
+					loadStreamUl = (load.getElement1()*Double.valueOf(ulLoad))/100;
 				}
 				int cells = EnodeBConfig.getInstance().getNumberOfActiveCells(dut);
 				if(EnodeBConfig.getInstance().isCAEnableInNode(dut)){
@@ -328,6 +378,16 @@ public class TrafficManager {
 		RadioParameters radioParams = null;
 		try {
 			radioParams = EnodeBConfig.getInstance().getRadioProfile(dut);
+			if (TestConfig.getInstace().getDynamicCFI()){
+				radioParams.setCfi("1");
+				report.report("Running with Dynamic CFI");
+			}
+			if(!radioParams.getDuplex().equals("TDD")){
+				radioParams.setFrameConfig("1");
+				radioParams.setSpecialSubFrame("7");
+			}
+			int maxUeSupported = NetspanServer.getInstance().getMaxUeSupported(dut);
+			report.report("Number of max UE supported according to netspan: "+maxUeSupported);
 			GeneralUtils.printToConsole(radioParams.getCalculatorString("PTP"));
 		} catch (Exception e) {
 			report.report("Error: " + e.getMessage());
@@ -336,15 +396,52 @@ public class TrafficManager {
 		return radioParams;
 	}
 	
-	private String[] getCalculatorPassCriteria(RadioParameters radioParams) {
+	private Pair<Double,Double> getCalculatorPassCriteria(EnodeB enb,RadioParameters radioParams) {
 		String calculatorStringKey = ParseRadioProfileToString(radioParams);
 		if (calculatorStringKey == null) {
 			report.report("calculator key value is empty - fail test", Reporter.FAIL);
 			return null;
 		}
-		CalculatorMap calcMap = new CalculatorMap();
-		String dl_ul = calcMap.getPassCriteria(calculatorStringKey);
-		return dl_ul.split("_"); 
+		CalculatorMap calc = new CalculatorMap();
+
+		Pair<Double, Double> trafficValuPair;
+		trafficValuPair = getLoadsFromXml(enb,radioParams);
+		if(trafficValuPair == null){
+			try {
+				trafficValuPair = calc.getDLandULconfiguration(radioParams);
+			} catch (Exception e) {
+				trafficValuPair = null;
+				e.printStackTrace();
+			}			
+		}
+		return trafficValuPair;
+	}
+	
+	private Pair<Double,Double> getLoadsFromXml(EnodeB enb,RadioParameters radio){
+		String dl_ul = null;
+		int maxUeSupported = 0;
+		try {
+			maxUeSupported = NetspanServer.getInstance().getMaxUeSupported(enb);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		if(maxUeSupported > 0){
+			dl_ul = LteThroughputCalculator.getInstance().getPassCriteriaFromStaticLteThroughputCalculator(radio, ConfigurationEnum.USER, maxUeSupported, "PTP");
+		}
+		if(dl_ul != null){
+			String[] toReturn = dl_ul.split("_");
+			Double dl = Double.valueOf(toReturn[0])*1.1;
+			Double ul = Double.valueOf(toReturn[1])*1.1;
+			Pair<Double,Double> response = Pair.createPair(doubleTo2DigitsAfterPoint(dl), doubleTo2DigitsAfterPoint(ul));
+			return response;
+		}
+		return null;
+	}
+	
+	private Double doubleTo2DigitsAfterPoint(Double doub){
+		String toRet = String.format("%.2f",doub);
+		return Double.valueOf(toRet);
 	}
 	
 	protected String ParseRadioProfileToString(RadioParameters radioParams2) {

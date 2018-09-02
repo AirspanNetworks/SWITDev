@@ -664,10 +664,16 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 	}
 	
 	@Override
-	public ArrayList<StreamParams> getAllStreamsResults(ArrayList<String> streamList) {
-		ArrayList<StreamParams> toReturn = new ArrayList<StreamParams>();
-		for(UEIPerf ueIPerf : allUEsIPerfList){
-			toReturn.addAll(ueIPerf.getAllStreamsResults(streamList));
+	public ArrayList<ArrayList<StreamParams>> getAllStreamsResults(ArrayList<String> streamList) {
+		ArrayList<ArrayList<StreamParams>> toReturn = new ArrayList<ArrayList<StreamParams>>();
+		for(UEIPerf ueIPerf : allUEsIPerfList){	
+			ArrayList<ArrayList<StreamParams>> temp = ueIPerf.getAllStreamsResults(streamList);
+			for(int index=0;index<temp.size();index++){
+				if(toReturn.get(index)==null){
+					toReturn.add(new ArrayList<StreamParams>());
+				}
+				toReturn.get(index).addAll(temp.get(index));
+			}
 		}
 		return toReturn;
 	}

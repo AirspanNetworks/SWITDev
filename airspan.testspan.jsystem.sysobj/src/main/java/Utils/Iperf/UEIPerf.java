@@ -708,23 +708,23 @@ public class UEIPerf implements Runnable {
 		return null;
 	}
 	
-	public ArrayList<StreamParams> getAllStreamsResults(ArrayList<String> streamList) {
-		ArrayList<StreamParams> toReturn = new ArrayList<StreamParams>();
+	public ArrayList<ArrayList<StreamParams>> getAllStreamsResults(ArrayList<String> streamList) {
+		ArrayList<ArrayList<StreamParams>> toReturn = new ArrayList<ArrayList<StreamParams>>();
 		for(IPerfStream ips : dlStreamArrayList){
 			if(streamList.contains(ips.getStreamName())){
-				toReturn.addAll(extractStatisticsFromFile(ips));
+				toReturn = extractStatisticsFromFile(ips,toReturn);
 			}
 		}
 		for(IPerfStream ips : ulStreamArrayList){
 			if(streamList.contains(ips.getStreamName())){
-				toReturn.addAll(extractStatisticsFromFile(ips));
+				toReturn = extractStatisticsFromFile(ips,toReturn);
 			}
 		}
 		return toReturn;
 	}
 	
-	private ArrayList<StreamParams> extractStatisticsFromFile(IPerfStream ips){
-		ArrayList<StreamParams> toReturn = new ArrayList<StreamParams>();
+	private ArrayList<ArrayList<StreamParams>> extractStatisticsFromFile(IPerfStream ips, ArrayList<ArrayList<StreamParams>> ret){
+		//ArrayList<StreamParams> toReturn = new ArrayList<StreamParams>();
 		File file;
 		if(ips.getTransmitDirection() == TransmitDirection.UL){
 			file = iperfMachineDL.getFile(ips.getTpFileName());
@@ -737,6 +737,7 @@ public class UEIPerf implements Runnable {
 			BufferedReader br = new BufferedReader(read);
 			String line;
 			long sampleTime = System.currentTimeMillis();
+			int sampleIndex = 0;
 			while((line = br.readLine()) != null){
 				Matcher m = p.matcher(line);
 				if(m.find()){
@@ -753,7 +754,10 @@ public class UEIPerf implements Runnable {
 					tempStreamParams.setRxRate(currentValue*1000);
 					tempStreamParams.setPacketSize(ips.getFrameSize());
 					sampleTime+=1000;
-					toReturn.add(tempStreamParams);
+					if(ret.get(sampleIndex) == null){
+						ret.add(new ArrayList<StreamParams>());
+					}
+					ret.get(sampleIndex).add(tempStreamParams);
 				}
 			}
 			br.close();
@@ -761,6 +765,6 @@ public class UEIPerf implements Runnable {
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-		return toReturn;
+		return ret;
 	}
 }

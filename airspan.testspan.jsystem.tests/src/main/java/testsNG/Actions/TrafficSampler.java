@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 
+
 import Action.TrafficAction.TrafficAction.ExpectedType;
 import EnodeB.EnodeB;
 import Entities.StreamParams;
@@ -21,8 +22,8 @@ public class TrafficSampler implements Runnable{
 	private ArrayList<String> ueList;
 	private ArrayList<Character> qci;
 	private ExpectedType expectedLoadType;
-	private String ULExpected;
-	private String DLExpected;
+	private Double ULExpected;
+	private Double DLExpected;
 	private TransmitDirection direction;
 	private EnodeB dut;
 	private Integer timeout;
@@ -42,8 +43,60 @@ public class TrafficSampler implements Runnable{
 	
 	public void getStatistics(){
 		report.report("Statistics for traffic "+getName());
-		ArrayList<StreamParams> temp = trafficInstance.getAllStreamsResults(streamList);
-		printPerStreamTables(temp);		
+		ArrayList<ArrayList<StreamParams>> temp = trafficInstance.getAllStreamsResults(streamList);
+		printPerStreamTables(temp);
+		compareWithCalculator(temp);
+	}
+	
+	private void compareWithCalculator(ArrayList<ArrayList<StreamParams>> listOfStreamList2){
+		ArrayList<Long> listUlAndDl = new ArrayList<Long>();
+		Long ULrxTotal = new Long(0);
+		Long DlrxTotal = new Long(0);
+		listUlAndDl = getUlDlResultsFromList(ULrxTotal, DlrxTotal, listOfStreamList2);
+		compareResults(listUlAndDl.get(0), listUlAndDl.get(1), listOfStreamList2);
+	}
+
+	
+	private void compareResults(Long uLrxTotal, Long dlrxTotal, ArrayList<ArrayList<StreamParams>> listOfStreamList) {
+		if(ULExpected != null){
+			double ul_Divided_With_Number_Of_Streams = uLrxTotal / 1000000.0 / listOfStreamList.size();
+			report.report("Expected UL: "+convertTo3DigitsAfterPoint(ULExpected)+" Mbps");
+			report.report("Actual average tpt: "+convertTo3DigitsAfterPoint(ul_Divided_With_Number_Of_Streams)+" Mbps");
+			if(ul_Divided_With_Number_Of_Streams < ULExpected){
+				report.report("UL actual is lower than expected", Reporter.FAIL);
+			}else{
+				report.report("UL actual is above expected");
+			}
+		}
+		if(DLExpected != null){
+			double dl_Divided_With_Number_Of_Streams = dlrxTotal / 1000000.0 / listOfStreamList.size();			
+			report.report("Expected DL: "+convertTo3DigitsAfterPoint(DLExpected)+" Mbps");
+			report.report("Actual average tpt: "+convertTo3DigitsAfterPoint(dl_Divided_With_Number_Of_Streams)+" Mbps");
+			if(dl_Divided_With_Number_Of_Streams < DLExpected){
+				report.report("DL actual is lower than expected", Reporter.FAIL);
+			}else{
+				report.report("DL actual is above expected");
+			}
+		}
+	}
+
+	private ArrayList<Long> getUlDlResultsFromList(Long uLrxTotal, Long dlrxTotal,
+			ArrayList<ArrayList<StreamParams>> listOfStreamList2) {
+		ArrayList<Long> listOfTotalRx = new ArrayList<Long>();
+		
+		for(ArrayList<StreamParams> list : listOfStreamList2){
+			for (StreamParams stream : list) {
+				if (stream.getName().contains("UL")) {
+					uLrxTotal += stream.getRxRate();
+				}
+				if (stream.getName().contains("DL")) {
+					dlrxTotal += stream.getRxRate();
+				}
+			}
+		}
+		listOfTotalRx.add(uLrxTotal);
+		listOfTotalRx.add(dlrxTotal);
+		return listOfTotalRx;
 	}
 	
 	public void stopTraffic(){
@@ -52,16 +105,18 @@ public class TrafficSampler implements Runnable{
 		trafficInstance.stopTraffic(streamList);
 	}
 	
-	protected void printPerStreamTables(ArrayList<StreamParams> listOfStreamList) {
+	protected void printPerStreamTables(ArrayList<ArrayList<StreamParams>> listOfStreamList) {
 		StreamList TablePrinter = new StreamList();
 		ArrayList<String> headLines = new ArrayList<String>();
 		headLines.add("Rate [Mbit/s]");
 		GeneralUtils.startLevel("Per Stream Tables");
-		for (StreamParams stream : listOfStreamList) {
+		for(ArrayList<StreamParams> list : listOfStreamList){
+			for (StreamParams stream : list) {
 				ArrayList<String> valuesList = new ArrayList<String>();
 				valuesList.add(longToString3DigitFormat(stream.getRxRate()));
 				String dateFormat = GeneralUtils.timeFormat(stream.getTimeStamp());
 				TablePrinter.addValues(stream.getName(), dateFormat, headLines, valuesList);
+			}			
 		}
 		for (String stream : streamList) {
 			report.reportHtml(stream, TablePrinter.printTablesHtmlForStream(stream), true);
@@ -74,6 +129,11 @@ public class TrafficSampler implements Runnable{
 		NumberFormat formatter = new DecimalFormat("#.###");
 		temp = number / 1000000.0;
 		return formatter.format(temp);
+	}
+	
+	private String convertTo3DigitsAfterPoint(double val){
+		NumberFormat formatter = new DecimalFormat("#.###");
+		return formatter.format(val);
 	}
 	
 	@Override
@@ -123,7 +183,7 @@ public class TrafficSampler implements Runnable{
 	}
 
 	public TrafficSampler(Traffic traffic, String name,  ArrayList<String> ueList, ArrayList<Character> qci, TransmitDirection direction, ExpectedType expectedLoadType,
-			String uLExpected, String dLExpected, EnodeB dut, Integer timeout, ArrayList<String> streamList) {
+			Double uLExpected, Double dLExpected, EnodeB dut, Integer timeout, ArrayList<String> streamList) {
 		super();
 		this.name = name;
 		this.ueList = ueList;
@@ -187,19 +247,19 @@ public class TrafficSampler implements Runnable{
 		this.expectedLoadType = expectedLoadType;
 	}
 
-	public String getULExpected() {
+	public Double getULExpected() {
 		return ULExpected;
 	}
 
-	public void setULExpected(String uLExpected) {
+	public void setULExpected(Double uLExpected) {
 		ULExpected = uLExpected;
 	}
 
-	public String getDLExpected() {
+	public Double getDLExpected() {
 		return DLExpected;
 	}
 
-	public void setDLExpected(String dLExpected) {
+	public void setDLExpected(Double dLExpected) {
 		DLExpected = dLExpected;
 	}
 }

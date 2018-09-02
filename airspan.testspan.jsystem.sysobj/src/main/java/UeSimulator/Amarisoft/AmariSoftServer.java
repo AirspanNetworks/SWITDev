@@ -102,7 +102,8 @@ public class AmariSoftServer extends SystemObjectImpl{
     	ueMap = new ArrayList();
     	sdrCellsMap = new HashMap<>();
     	fillUeList();
-    	checkIfGroupsAreIdentical();
+    	if (UEgroup != null)
+    		checkIfGroupsAreIdentical();
 	}
     
 
@@ -119,7 +120,8 @@ public class AmariSoftServer extends SystemObjectImpl{
     	setImsiStartList("200010001008301");
     	setImsiStopList("200010001008400");
     	fillUeList();
-    	checkIfGroupsAreIdentical();
+    	if (UEgroup != null)
+    		checkIfGroupsAreIdentical();
     }
     private void checkIfGroupsAreIdentical() {
 		for(int i = 0; i < UEgroup.length; i++) {
@@ -150,9 +152,11 @@ public class AmariSoftServer extends SystemObjectImpl{
 			Long stopImsi = new Long(imsiStopList[i]);
 			for (Long imsi = startImsi; imsi <= stopImsi ; imsi++) {
 				ArrayList<String> groupName = new ArrayList<>();
-				for (int j = 0; j < UEgroup.length; j++) {
-					if(checkIfImsiIsInGroup(imsi, UEgroup[j].getGroupName()))
-						groupName.add(UEgroup[j].getGroupName());
+				if (UEgroup != null) {
+					for (int j = 0; j < UEgroup.length; j++) {
+						if(checkIfImsiIsInGroup(imsi, UEgroup[j].getGroupName()))
+							groupName.add(UEgroup[j].getGroupName());
+					}
 				}
 				AmarisoftUE ue = new AmarisoftUE(ueId, groupName,  this);
 				ue.setImsi(imsi+"");
@@ -160,7 +164,8 @@ public class AmariSoftServer extends SystemObjectImpl{
 				ueId++;
 			}
 		}
-		checkGroupsValidation();
+		if (UEgroup != null)
+			checkGroupsValidation();
 	}
 
 	private boolean checkIfImsiIsInGroup(long imsi, String groupName) {

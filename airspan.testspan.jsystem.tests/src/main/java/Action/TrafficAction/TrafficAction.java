@@ -39,7 +39,7 @@ public class TrafficAction extends Action {
 	private Double windowSize;
 	private Integer parallelStreams;
 	private Integer mss;
-	private ExpectedType expectedLoadType = ExpectedType.None;
+	private ExpectedType expectedLoadType = ExpectedType.Custom;
 	private String ULExpected;
 	private String DLExpected;
 	private String semanticName;
@@ -221,7 +221,7 @@ public class TrafficAction extends Action {
 	}
 	
 	public enum ExpectedType{
-		Calculator_Based, Load_Based, Custom, None;
+		Calculator_Based, Load_Based, Custom;
 	}
 	
 	protected ArrayList<String> convertUeToNamesList(ArrayList<UE> ueList2) {
@@ -373,15 +373,14 @@ public class TrafficAction extends Action {
 			}
 		}
 		report.report("Expected load type: "+expectedLoadType.toString());
-		if(expectedLoadType != ExpectedType.None){
-			boolean custom = expectedLoadType == ExpectedType.Custom;
-			if(ULExpected != null){
-				report.report("UL expected: "+ULExpected+(custom?" Mbps":"%"));				
-			}
-			if(DLExpected != null){
-				report.report("DL expected: "+DLExpected+(custom?" Mbps":"%"));				
-			}
-		}		
+		boolean custom = expectedLoadType == ExpectedType.Custom;
+		if(ULExpected != null){
+			report.report("UL expected: "+ULExpected+(custom?" Mbps":"%"));				
+		}
+		if(DLExpected != null){
+			report.report("DL expected: "+DLExpected+(custom?" Mbps":"%"));				
+		}
+		
 		GeneralUtils.stopLevel();
 
 		if(trafficManagerInstance.checkIfNameExist(semanticName)){
@@ -472,21 +471,16 @@ public class TrafficAction extends Action {
 			map.get("FrameSize").setVisible(false);
 		}
 		
-		if(ExpectedType.None != ExpectedType.valueOf(map.get("ExpectedLoadType").getValue().toString())){
-			if(TransmitDirection.UL == TransmitDirection.valueOf(direction.getValue().toString()) || 
-					TransmitDirection.BOTH == TransmitDirection.valueOf(direction.getValue().toString())){
-				map.get("ULExpected").setVisible(true);
-			}else{
-				map.get("ULExpected").setValue(null);
-			}
-			if(TransmitDirection.DL == TransmitDirection.valueOf(direction.getValue().toString()) || 
-					TransmitDirection.BOTH == TransmitDirection.valueOf(direction.getValue().toString())){
-				map.get("DLExpected").setVisible(true);
-			}else{
-				map.get("DLExpected").setValue(null);
-			}
+		if(TransmitDirection.UL == TransmitDirection.valueOf(direction.getValue().toString()) || 
+				TransmitDirection.BOTH == TransmitDirection.valueOf(direction.getValue().toString())){
+			map.get("ULExpected").setVisible(true);
 		}else{
 			map.get("ULExpected").setValue(null);
+		}
+		if(TransmitDirection.DL == TransmitDirection.valueOf(direction.getValue().toString()) || 
+				TransmitDirection.BOTH == TransmitDirection.valueOf(direction.getValue().toString())){
+			map.get("DLExpected").setVisible(true);
+		}else{
 			map.get("DLExpected").setValue(null);
 		}
 		

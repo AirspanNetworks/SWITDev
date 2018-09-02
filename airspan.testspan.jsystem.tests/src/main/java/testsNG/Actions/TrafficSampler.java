@@ -35,10 +35,8 @@ public class TrafficSampler implements Runnable{
 	public static Reporter report = ListenerstManager.getInstance();
 	
 	public void start(){
-		if(ExpectedType.None != expectedLoadType){
-			runnableThread = new Thread(this);
-			runnableThread.start();			
-		}
+		runnableThread = new Thread(this);
+		runnableThread.start();			
 	}
 	
 	public void getStatistics(){

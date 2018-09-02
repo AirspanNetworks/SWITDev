@@ -102,7 +102,8 @@ public class AmariSoftServer extends SystemObjectImpl{
     	ueMap = new ArrayList();
     	sdrCellsMap = new HashMap<>();
     	fillUeList();
-    	checkIfGroupsAreIdentical();
+    	if (UEgroup != null)
+    		checkIfGroupsAreIdentical();
 	}
     
 
@@ -119,7 +120,8 @@ public class AmariSoftServer extends SystemObjectImpl{
     	setImsiStartList("200010001008301");
     	setImsiStopList("200010001008400");
     	fillUeList();
-    	checkIfGroupsAreIdentical();
+    	if (UEgroup != null)
+    		checkIfGroupsAreIdentical();
     }
     private void checkIfGroupsAreIdentical() {
 		for(int i = 0; i < UEgroup.length; i++) {
@@ -150,9 +152,11 @@ public class AmariSoftServer extends SystemObjectImpl{
 			Long stopImsi = new Long(imsiStopList[i]);
 			for (Long imsi = startImsi; imsi <= stopImsi ; imsi++) {
 				ArrayList<String> groupName = new ArrayList<>();
-				for (int j = 0; j < UEgroup.length; j++) {
-					if(checkIfImsiIsInGroup(imsi, UEgroup[j].getGroupName()))
-						groupName.add(UEgroup[j].getGroupName());
+				if (UEgroup != null) {
+					for (int j = 0; j < UEgroup.length; j++) {
+						if(checkIfImsiIsInGroup(imsi, UEgroup[j].getGroupName()))
+							groupName.add(UEgroup[j].getGroupName());
+					}
 				}
 				AmarisoftUE ue = new AmarisoftUE(ueId, groupName,  this);
 				ue.setImsi(imsi+"");
@@ -160,7 +164,8 @@ public class AmariSoftServer extends SystemObjectImpl{
 				ueId++;
 			}
 		}
-		checkGroupsValidation();
+		if (UEgroup != null)
+			checkGroupsValidation();
 	}
 
 	private boolean checkIfImsiIsInGroup(long imsi, String groupName) {
@@ -688,6 +693,52 @@ public class AmariSoftServer extends SystemObjectImpl{
 		return ans;
 	}
 	
+	public boolean addUes(String groupName, int release, int category) {
+		return addUes(groupName, release, category, 0);
+	}
+	
+	public boolean addUes(String groupName, int release, int category, EnodeB enodeB, int cellId) {
+		int amarisoftCellId = getCellId(enodeB, cellId);
+		return addUes(groupName, release, category, amarisoftCellId);
+	}
+	
+	private boolean addUes(String groupName, int release, int category, int cellId) {
+		GeneralUtils.startLevel("Adding UEs to Amarisoft simulator from group " + groupName);
+		boolean result = true;
+			if (unusedUEs.size() <= 0) {
+				report.report("Failed adding UE to simulator. There are no free UEs in amarisoft to add", Reporter.WARNING);
+				return false;
+			}
+			int amount = unusedUEs.size();
+			if (groupName.equals("amarisoft")) {
+				while (unusedUEs.size() > 0) {
+					int ueId = unusedUEs.get(0).ueId;
+					result = result && addUe(unusedUEs.get(0), release, category, ueId, cellId);
+				}
+			}
+			else {
+				int i = 0;
+				boolean wasAdded = false;
+				while(i<unusedUEs.size()) {
+					wasAdded = false;
+					ArrayList<String> groups = unusedUEs.get(i).groupName;
+					for(String group: groups) {
+						if (group.equals(groupName)){
+							int ueId = unusedUEs.get(i).ueId;
+							result = result && addUe(unusedUEs.get(i), release, category, ueId, cellId);
+							wasAdded = true;
+							
+						}	
+					}
+					if (!wasAdded)
+						i++;
+				}	
+			}
+			
+		GeneralUtils.stopLevel();
+		return result;
+	}
+
 	public boolean addUes(int amount, int release, int category, EnodeB enodeB, int cellId)
 	{
 		int amarisoftCellId = getCellId(enodeB, cellId);
@@ -1218,5 +1269,13 @@ public class AmariSoftServer extends SystemObjectImpl{
     public ArrayList<AmarisoftUE> getUnusedUEs() {
 		return unusedUEs;
 	}
+
+
+
+
+
+
+
+
 	
 }

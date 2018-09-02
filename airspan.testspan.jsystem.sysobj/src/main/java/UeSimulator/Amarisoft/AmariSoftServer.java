@@ -693,6 +693,43 @@ public class AmariSoftServer extends SystemObjectImpl{
 		return ans;
 	}
 	
+	public boolean addUes(String groupName, int release, int category) {
+		return addUes(groupName, release, category, 0);
+	}
+	private boolean addUes(String groupName, int release, int category, int cellId) {
+		GeneralUtils.startLevel("Adding UEs to Amarisoft simulator from group " + groupName);
+		boolean result = true;
+		for (AmarisoftUE ue : unusedUEs) {
+			if (unusedUEs.size() <= 0) {
+				report.report("Failed adding UE to simulator. There are no free UEs in amarisoft to add", Reporter.WARNING);
+				return false;
+			}
+			if (groupName.equals("amarisoft")) {
+				int amount = unusedUEs.size();
+				for (int i = 0; i < amount; i++) {
+					if (unusedUEs.size() <= 0) {
+						report.report("Failed adding UE to simulator. " + i + " UEs were added out of " + amount + " requsted.", Reporter.WARNING);
+						return false;
+					}
+					int ueId = unusedUEs.get(0).ueId;
+					result = result && addUe(unusedUEs.get(0), release, category, ueId, cellId);
+				}
+			}
+			else {
+				ArrayList<String> groups = ue.groupName;
+				for(String group: groups) {
+					if (group.equals(group)){
+						int ueId = unusedUEs.get(0).ueId;
+						result = result && addUe(unusedUEs.get(0), release, category, ueId, cellId);
+					}	
+				}
+			}
+			
+		}
+		GeneralUtils.stopLevel();
+		return result;
+	}
+
 	public boolean addUes(int amount, int release, int category, EnodeB enodeB, int cellId)
 	{
 		int amarisoftCellId = getCellId(enodeB, cellId);
@@ -1223,5 +1260,9 @@ public class AmariSoftServer extends SystemObjectImpl{
     public ArrayList<AmarisoftUE> getUnusedUEs() {
 		return unusedUEs;
 	}
+
+
+
+
 	
 }

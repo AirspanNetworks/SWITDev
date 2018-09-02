@@ -754,7 +754,9 @@ public class UEIPerf implements Runnable {
 					tempStreamParams.setRxRate(currentValue*1000);
 					tempStreamParams.setPacketSize(ips.getFrameSize());
 					sampleTime+=1000;
-					if(ret.get(sampleIndex) == null){
+					try{
+						ret.get(sampleIndex);
+					}catch(Exception e){
 						ret.add(new ArrayList<StreamParams>());
 					}
 					ret.get(sampleIndex).add(tempStreamParams);

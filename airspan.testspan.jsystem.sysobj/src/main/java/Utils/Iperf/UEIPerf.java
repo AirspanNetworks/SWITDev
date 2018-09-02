@@ -731,7 +731,7 @@ public class UEIPerf implements Runnable {
 		}else{
 			file = iperfMachineUL.getFile(ips.getTpFileName());
 		}
-		Pattern p = Pattern.compile("(\\d+.\\d+-\\s*\\d+.\\d+).*KBytes\\s+(\\d+)\\s+Kbits/sec.*");
+		Pattern p = Pattern.compile("(\\d+.\\d+-\\s*\\d+.\\d+).*KBytes\\s+(\\d+|\\d+.\\d+)\\s+Kbits/sec.*");
 		try{
 			FileReader read = new FileReader(file);
 			BufferedReader br = new BufferedReader(read);
@@ -744,7 +744,13 @@ public class UEIPerf implements Runnable {
 					//System.out.println(m.group(1));
 					//System.out.println(m.group(2));
 					//String sampleTime = m.group(1);
-					Long currentValue = Long.valueOf(m.group(2));
+					Long currentValue = 0L;
+					if(m.group(2).contains(".")){
+						currentValue = Long.valueOf(m.group(2).split("\\.")[0]);
+					}else{
+						currentValue = Long.valueOf(m.group(2));
+					}
+					
 					StreamParams tempStreamParams = new StreamParams();
 					tempStreamParams.setName(ips.getStreamName());
 					tempStreamParams.setTimeStamp(sampleTime);

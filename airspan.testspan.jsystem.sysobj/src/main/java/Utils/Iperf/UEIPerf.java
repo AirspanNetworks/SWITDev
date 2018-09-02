@@ -760,6 +760,7 @@ public class UEIPerf implements Runnable {
 						ret.add(new ArrayList<StreamParams>());
 					}
 					ret.get(sampleIndex).add(tempStreamParams);
+					sampleIndex++;
 				}
 			}
 			br.close();

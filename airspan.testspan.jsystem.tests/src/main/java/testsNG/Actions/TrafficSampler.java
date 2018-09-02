@@ -60,7 +60,7 @@ public class TrafficSampler implements Runnable{
 			if(listOfStreamList.size() != 0){
 				double ul_Divided_With_Number_Of_Streams = uLrxTotal / 1000000.0 / listOfStreamList.size();
 				report.report("Expected UL: "+convertTo3DigitsAfterPoint(ULExpected)+" Mbps");
-				report.report("Actual average tpt: "+convertTo3DigitsAfterPoint(ul_Divided_With_Number_Of_Streams)+" Mbps");
+				report.report("Actual average UL tpt: "+convertTo3DigitsAfterPoint(ul_Divided_With_Number_Of_Streams)+" Mbps");
 				if(ul_Divided_With_Number_Of_Streams < ULExpected){
 					report.report("UL actual is lower than expected", Reporter.FAIL);
 				}else{
@@ -74,7 +74,7 @@ public class TrafficSampler implements Runnable{
 			if(listOfStreamList.size() != 0){
 				double dl_Divided_With_Number_Of_Streams = dlrxTotal / 1000000.0 / listOfStreamList.size();			
 				report.report("Expected DL: "+convertTo3DigitsAfterPoint(DLExpected)+" Mbps");
-				report.report("Actual average tpt: "+convertTo3DigitsAfterPoint(dl_Divided_With_Number_Of_Streams)+" Mbps");
+				report.report("Actual average DL tpt: "+convertTo3DigitsAfterPoint(dl_Divided_With_Number_Of_Streams)+" Mbps");
 				if(dl_Divided_With_Number_Of_Streams < DLExpected){
 					report.report("DL actual is lower than expected", Reporter.FAIL);
 				}else{

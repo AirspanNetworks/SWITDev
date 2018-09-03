@@ -36,7 +36,7 @@ public class IPerfStream {
 	protected Double lastIntervalUsedForLastSample;
 	protected volatile boolean isRunningTraffic; 
 	protected Integer runTime;
-	
+	protected long timeStart;
 
 	public IPerfStream(TransmitDirection transmitDirection, String ueNumber,
 			int qci, String destIpAddress, String srcIpAddress, boolean state,
@@ -234,5 +234,13 @@ public class IPerfStream {
 	
 	public void setRunningTraffic(boolean isRunningTraffic) {
 		this.isRunningTraffic = isRunningTraffic;
+	}
+	
+	public long getTimeStart() {
+		return timeStart;
+	}
+
+	public void setTimeStart(long timeStart) {
+		this.timeStart = timeStart;
 	}
 }

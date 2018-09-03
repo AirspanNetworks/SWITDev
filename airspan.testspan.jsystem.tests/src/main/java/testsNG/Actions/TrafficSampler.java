@@ -64,7 +64,7 @@ public class TrafficSampler implements Runnable{
 				if(ul_Divided_With_Number_Of_Streams < ULExpected){
 					report.report("UL actual is lower than expected", Reporter.FAIL);
 				}else{
-					report.report("UL actual is above expected");
+					report.step("UL actual is above expected");
 				}				
 			}else{
 				report.report("No results available for UL traffic", Reporter.FAIL);
@@ -78,7 +78,7 @@ public class TrafficSampler implements Runnable{
 				if(dl_Divided_With_Number_Of_Streams < DLExpected){
 					report.report("DL actual is lower than expected", Reporter.FAIL);
 				}else{
-					report.report("DL actual is above expected");
+					report.step("DL actual is above expected");
 				}			
 			}else{
 				report.report("No results available for DL traffic", Reporter.FAIL);

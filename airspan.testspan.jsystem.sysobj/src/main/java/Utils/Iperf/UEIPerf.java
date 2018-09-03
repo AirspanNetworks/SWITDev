@@ -176,6 +176,7 @@ public class UEIPerf implements Runnable {
 				if(ulIPerfStream.isActive() && !ulIPerfStream.isRunningTraffic()){
 					iperfMachineUL.startIPerfTraffic(ulIPerfStream.getIperfClientCommand(), ulIPerfStream.getClientOutputFileName(), TransmitDirection.UL);
 					ulIPerfStream.setRunningTraffic(true);
+					ulIPerfStream.setTimeStart(System.currentTimeMillis());
 				}
 			}
 		}else{
@@ -208,6 +209,7 @@ public class UEIPerf implements Runnable {
 				if(dlIPerfStream.isActive() && !dlIPerfStream.isRunningTraffic()){
 					iperfMachineDL.startIPerfTraffic(dlIPerfStream.getIperfClientCommand(), dlIPerfStream.getClientOutputFileName(), TransmitDirection.DL);
 					dlIPerfStream.setRunningTraffic(true);
+					dlIPerfStream.setTimeStart(System.currentTimeMillis());
 				}
 			}
 		}else{

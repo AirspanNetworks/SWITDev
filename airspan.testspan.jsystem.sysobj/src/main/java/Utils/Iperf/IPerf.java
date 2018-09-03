@@ -18,6 +18,7 @@ import UE.AndroidUE;
 import UE.UE;
 import Utils.GeneralUtils;
 import Utils.Pair;
+import jsystem.framework.report.ReporterHelper;
 import jsystem.framework.system.SystemManagerImpl;
 import jsystem.framework.system.SystemObjectImpl;
 
@@ -658,6 +659,24 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 
 	@Override
 	public void stopTraffic(ArrayList<String> streamList) {
+		ArrayList<File> resultFiles = new ArrayList<File>();
+		for(UEIPerf ueIPerf : allUEsIPerfList){
+			resultFiles.addAll(ueIPerf.getResultFiles(streamList));
+		}
+		if (!resultFiles.isEmpty()){
+			GeneralUtils.startLevel("Result Files.");
+			for(File resultFile : resultFiles){
+				File toUpload = new File(resultFile.getName());
+				resultFile.renameTo(toUpload);
+				try {
+					ReporterHelper.copyFileToReporterAndAddLink(report, toUpload, toUpload.getName());
+				} catch (Exception e) {
+					GeneralUtils.printToConsole("FAIL to upload TP Result File: " + resultFile.getName());
+					e.printStackTrace();
+				}
+			}
+			GeneralUtils.stopLevel();
+		}
 		for(UEIPerf ueIPerf : allUEsIPerfList){
 			ueIPerf.stopTraffic(streamList);
 		}

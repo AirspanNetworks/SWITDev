@@ -705,13 +705,12 @@ public class AmariSoftServer extends SystemObjectImpl{
 	private boolean addUes(String groupName, int release, int category, int cellId) {
 		GeneralUtils.startLevel("Adding UEs to Amarisoft simulator from group " + groupName);
 		boolean result = true;
-		for (AmarisoftUE ue : unusedUEs) {
 			if (unusedUEs.size() <= 0) {
 				report.report("Failed adding UE to simulator. There are no free UEs in amarisoft to add", Reporter.WARNING);
 				return false;
 			}
+			int amount = unusedUEs.size();
 			if (groupName.equals("amarisoft")) {
-				int amount = unusedUEs.size();
 				for (int i = 0; i < amount; i++) {
 					if (unusedUEs.size() <= 0) {
 						report.report("Failed adding UE to simulator. " + i + " UEs were added out of " + amount + " requsted.", Reporter.WARNING);
@@ -722,16 +721,19 @@ public class AmariSoftServer extends SystemObjectImpl{
 				}
 			}
 			else {
-				ArrayList<String> groups = ue.groupName;
-				for(String group: groups) {
-					if (group.equals(group)){
-						int ueId = unusedUEs.get(0).ueId;
-						result = result && addUe(unusedUEs.get(0), release, category, ueId, cellId);
-					}	
+				for(int i = 0; i< amount; i++) {
+					ArrayList<String> groups = unusedUEs.get(0).groupName;
+					for(String group: groups) {
+						if (group.equals(groupName)){
+							int ueId = unusedUEs.get(0).ueId;
+							result = result && addUe(unusedUEs.get(0), release, category, ueId, cellId);
+						}	
+					}
 				}
+				
+				
 			}
 			
-		}
 		GeneralUtils.stopLevel();
 		return result;
 	}

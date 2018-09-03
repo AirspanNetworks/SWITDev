@@ -721,17 +721,18 @@ public class AmariSoftServer extends SystemObjectImpl{
 				}
 			}
 			else {
-				for(int i = 0; i< amount; i++) {
+				int i = 0;
+				while(unusedUEs == null) {
 					ArrayList<String> groups = unusedUEs.get(i).groupName;
 					for(String group: groups) {
 						if (group.equals(groupName)){
 							int ueId = unusedUEs.get(i).ueId;
 							result = result && addUe(unusedUEs.get(i), release, category, ueId, cellId);
+							continue;
 						}	
 					}
-				}
-				
-				
+					i++;
+				}	
 			}
 			
 		GeneralUtils.stopLevel();

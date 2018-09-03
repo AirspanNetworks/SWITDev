@@ -154,7 +154,7 @@ public class UeSimulatorActions extends Action {
 	}
 	
 	@Test											
-	@TestProperties(name = "delete UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = { "UeId", "IMSI", "UEs", "selectionMethod", "NumUes"})
+	@TestProperties(name = "delete UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = { "UeId", "IMSI", "UEs", "SelectionMethod", "NumUes"})
 	public void deleteUes() {
 		boolean res = true;
 
@@ -280,7 +280,7 @@ public class UeSimulatorActions extends Action {
 	}
 	
 	@Test											
-	@TestProperties(name = "start UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = { "UeId", "IMSI", "UEs", "selectionMethod"})
+	@TestProperties(name = "start UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = { "UeId", "IMSI", "UEs", "SelectionMethod"})
 	public void startUes() {
 		boolean res = true;
 

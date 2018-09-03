@@ -622,8 +622,8 @@ public class UEIPerf implements Runnable {
 		GeneralUtils.unSafeSleep(2000);
 		String resultGrepUl = iperfMachineUL.sendCommand("ps -aux | grep iperf").getElement1();
 		GeneralUtils.unSafeSleep(2000);
-		String commandToKillDl = "kill -9 ";
-		String commandToKillUl = "kill -9 ";
+		String commandToKillDl = "sudo kill -9 ";
+		String commandToKillUl = "sudo kill -9 ";
 		Iterator<IPerfStream> iter = dlStreamArrayList.iterator();
 		while(iter.hasNext()){
 			IPerfStream ips = iter.next();
@@ -702,9 +702,12 @@ public class UEIPerf implements Runnable {
 	
 	private String getProcessNumber(String file, String command){
 		Pattern p = Pattern.compile("[0-9a-z]\\s+(\\d+).*"+command);
-		Matcher m = p.matcher(file);
-		if(m.find()){
-			return m.group(1);
+		String[] lines = file.split("\n");
+		for(String line:lines){
+			Matcher m = p.matcher(line);
+			if(m.find() && !line.contains("sudo")){
+				return m.group(1);
+			}			
 		}
 		return null;
 	}

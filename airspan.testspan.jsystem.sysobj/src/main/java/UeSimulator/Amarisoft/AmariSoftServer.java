@@ -725,8 +725,8 @@ public class AmariSoftServer extends SystemObjectImpl{
 					ArrayList<String> groups = unusedUEs.get(i).groupName;
 					for(String group: groups) {
 						if (group.equals(groupName)){
-							int ueId = unusedUEs.get(0).ueId;
-							result = result && addUe(unusedUEs.get(0), release, category, ueId, cellId);
+							int ueId = unusedUEs.get(i).ueId;
+							result = result && addUe(unusedUEs.get(i), release, category, ueId, cellId);
 						}	
 					}
 				}

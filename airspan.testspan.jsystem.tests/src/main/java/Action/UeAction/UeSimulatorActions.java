@@ -182,7 +182,7 @@ public class UeSimulatorActions extends Action {
 					flag = amariSoftServer.addUes(groupName, release, category);
 				} else {
 					report.report("Attaching UE to " + dut.getName() + " cell " + cellId);
-					flag = amariSoftServer.addUes(numUes, release, category, dut, cellId);
+					flag = amariSoftServer.addUes(groupName, release, category, dut, cellId);
 				}
 			}
 		} catch (Exception e) {

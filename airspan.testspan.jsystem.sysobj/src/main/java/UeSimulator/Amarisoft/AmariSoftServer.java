@@ -696,6 +696,12 @@ public class AmariSoftServer extends SystemObjectImpl{
 	public boolean addUes(String groupName, int release, int category) {
 		return addUes(groupName, release, category, 0);
 	}
+	
+	public boolean addUes(String groupName, int release, int category, EnodeB enodeB, int cellId) {
+		int amarisoftCellId = getCellId(enodeB, cellId);
+		return addUes(groupName, release, category, amarisoftCellId);
+	}
+	
 	private boolean addUes(String groupName, int release, int category, int cellId) {
 		GeneralUtils.startLevel("Adding UEs to Amarisoft simulator from group " + groupName);
 		boolean result = true;
@@ -1260,6 +1266,10 @@ public class AmariSoftServer extends SystemObjectImpl{
     public ArrayList<AmarisoftUE> getUnusedUEs() {
 		return unusedUEs;
 	}
+
+
+
+
 
 
 

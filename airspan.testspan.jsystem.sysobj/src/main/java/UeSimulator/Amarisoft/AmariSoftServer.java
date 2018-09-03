@@ -722,7 +722,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 			}
 			else {
 				for(int i = 0; i< amount; i++) {
-					ArrayList<String> groups = unusedUEs.get(0).groupName;
+					ArrayList<String> groups = unusedUEs.get(i).groupName;
 					for(String group: groups) {
 						if (group.equals(groupName)){
 							int ueId = unusedUEs.get(0).ueId;

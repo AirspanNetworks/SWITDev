@@ -730,6 +730,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 						if (group.equals(groupName)){
 							int ueId = unusedUEs.get(i).ueId;
 							result = result && addUe(unusedUEs.get(i), release, category, ueId, cellId);
+							wasAdded = true;
 							
 						}	
 					}

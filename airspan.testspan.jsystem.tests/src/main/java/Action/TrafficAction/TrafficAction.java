@@ -460,15 +460,14 @@ public class TrafficAction extends Action {
 			map.get("WindowSize").setValue(null);
 			map.get("ParallelStreams").setValue(null);
 			map.get("Mss").setValue(null);
-			map.get("WindowSize").setValue(null);
-			map.get("ParallelStreams").setValue(null);
-			map.get("Mss").setValue(null);
 		}else{
 			map.get("WindowSize").setVisible(true);
 			map.get("ParallelStreams").setVisible(true);
 			map.get("Mss").setVisible(true);
 			map.get("FrameSize").setValue(null);
 			map.get("FrameSize").setVisible(false);
+			map.get("ULLoad").setValue(null);
+			map.get("DLLoad").setValue(null);
 		}
 		
 		if(TransmitDirection.UL == TransmitDirection.valueOf(direction.getValue().toString()) || 

@@ -125,7 +125,7 @@ public class Traffic {
 	}
 
 	public enum GeneratorType{
-		Default, STC, Iperf;
+		STC, Iperf;
 	}
 	
 	private Traffic(ArrayList<UE> ues, GeneratorType type){
@@ -1817,6 +1817,8 @@ public class Traffic {
 				}
 				GeneralUtils.stopLevel();
 			}
+			
+			trafficGenerator.resetIperfList();
 		}
 	}
 	

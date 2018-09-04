@@ -39,7 +39,7 @@ public class AmarisoftIperf extends UEIPerf{
 		if(iperfMachineUL != null){
 			for(IPerfStream ulIPerfStream : ulStreamArrayList){
 				if(ulIPerfStream.isActive() && !ulIPerfStream.isRunningTraffic()){
-					String linuxClientCommand = "echo 'ip netns exec ue"+((AmarisoftUE)ue).ueId+" nohup iperf " + ulIPerfStream.getIperfClientCommand() + " &> "+ iperfMachineUL.getPreAddressTpFile() + ulIPerfStream.getClientOutputFileName() +" &' >> " + iperfMachineUL.getPreAddressTpFile() + "UL" + IPerf.clientSideCommandsFile;
+					String linuxClientCommand = "echo 'sudo ip netns exec ue"+((AmarisoftUE)ue).ueId+" nohup iperf " + ulIPerfStream.getIperfClientCommand() + " &> "+ iperfMachineUL.getPreAddressTpFile() + ulIPerfStream.getClientOutputFileName() +" &' >> " + iperfMachineUL.getPreAddressTpFile() + "UL" + IPerf.clientSideCommandsFile;
 					iperfMachineUL.sendCommand(linuxClientCommand).getElement0();
 					ulIPerfStream.setRunningTraffic(true);
 				}

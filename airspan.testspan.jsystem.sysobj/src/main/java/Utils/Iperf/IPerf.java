@@ -605,8 +605,12 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		for(UEIPerf ueIPerf : allUEsIPerfList){
 			resultFiles.addAll(ueIPerf.getClientOutputFiles());
 		}
-		this.allUEsIPerfList = new ArrayList<UEIPerf>();
 		return resultFiles;
+	}
+	
+	@Override
+	public void resetIperfList(){
+		this.allUEsIPerfList = new ArrayList<UEIPerf>();
 	}
 	
 	@Override
@@ -664,7 +668,7 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 			resultFiles.addAll(ueIPerf.getResultFiles(streamList));
 		}
 		if (!resultFiles.isEmpty()){
-			GeneralUtils.startLevel("Result Files.");
+			GeneralUtils.startLevel("Result Files");
 			for(File resultFile : resultFiles){
 				File toUpload = new File(resultFile.getName());
 				resultFile.renameTo(toUpload);
@@ -672,6 +676,24 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 					ReporterHelper.copyFileToReporterAndAddLink(report, toUpload, toUpload.getName());
 				} catch (Exception e) {
 					GeneralUtils.printToConsole("FAIL to upload TP Result File: " + resultFile.getName());
+					e.printStackTrace();
+				}
+			}
+			GeneralUtils.stopLevel();
+		}
+		ArrayList<File> transmitOutputFiles = new ArrayList<File>();
+		for(UEIPerf ueIPerf : allUEsIPerfList){
+			transmitOutputFiles.addAll(ueIPerf.getTransmitOutputFiles(streamList));
+		}
+		if (!transmitOutputFiles.isEmpty()){
+			GeneralUtils.startLevel("Transmit Ouput Files");
+			for(File transmitOutputFile : transmitOutputFiles){
+				File toUpload = new File(transmitOutputFile.getName());
+				transmitOutputFile.renameTo(toUpload);
+				try {
+					ReporterHelper.copyFileToReporterAndAddLink(report, toUpload, toUpload.getName());
+				} catch (Exception e) {
+					GeneralUtils.printToConsole("FAIL to upload TP Result File: " + transmitOutputFile.getName());
 					e.printStackTrace();
 				}
 			}

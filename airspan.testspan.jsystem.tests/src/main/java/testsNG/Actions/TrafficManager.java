@@ -69,11 +69,7 @@ public class TrafficManager {
 			trafficType = type;
 		}
 		if(trafficInstance == null){
-			if(type == GeneratorType.Default){
-				trafficInstance = Traffic.getInstance(SetupUtils.getInstance().getAllUEs());
-			}else{
-				trafficInstance = Traffic.getInstanceWithSpecificGeneratorType(SetupUtils.getInstance().getAllUEs(), type);
-			}			
+			trafficInstance = Traffic.getInstanceWithSpecificGeneratorType(SetupUtils.getInstance().getAllUEs(), type);			
 		}
 		if(trafficInstance == null){
 			instance = null;
@@ -147,8 +143,8 @@ public class TrafficManager {
 		trafficInstance.addCommandFilesToReport();
 		GeneralUtils.unSafeSleep(5*1000);
 		isTrafficInit = true;
-		getExpectedValues(enb,type,dlExp,ulExp,UlLoad,DlLoad);
-		TrafficSampler current = new TrafficSampler(trafficInstance,name,ueList,qci, direction, type, ulExpected, dlExpected, enb, timeout, streams);
+		getExpectedValues(enb,type,dlExp,ulExp,loadStreamUl,loadStreamDl);
+		TrafficSampler current = new TrafficSampler(trafficInstance,name,ueList,qci, direction, type, ulExpected, dlExpected, enb, timeout, streams, loadStreamUl, loadStreamDl);
 		current.start();
 		samplerList.add(current);
 	}
@@ -224,7 +220,7 @@ public class TrafficManager {
 		return false;
 	}
 	
-	private void getExpectedValues(EnodeB enb, ExpectedType type, String dlExpected, String ulExpected, String Uload, String Dload){
+	private void getExpectedValues(EnodeB enb, ExpectedType type, String dlExpected, String ulExpected, Double Uload, Double Dload){
 		if(ExpectedType.Custom == type){
 			if(dlExpected != null){
 				this.dlExpected = Double.valueOf(dlExpected);
@@ -268,12 +264,12 @@ public class TrafficManager {
 			}
 		}else if(ExpectedType.Load_Based == type){
 			if(dlExpected != null){
-				this.dlExpected = Double.valueOf(Dload)*Double.valueOf(dlExpected)/100.0;
+				this.dlExpected = Dload*Double.valueOf(dlExpected)/100.0;
 			}else{
 				this.dlExpected = null;
 			}
 			if(ulExpected != null){
-				this.ulExpected = Double.valueOf(Uload)*Double.valueOf(ulExpected)/100.0;
+				this.ulExpected = Uload*Double.valueOf(ulExpected)/100.0;
 			}else{
 				this.ulExpected = null;
 			}
@@ -372,8 +368,11 @@ public class TrafficManager {
 				if(EnodeBConfig.getInstance().isCAEnableInNode(dut)){
 					loadStreamDl = loadStreamDl* cells;
 				}else{
-					loadStreamDl = loadStreamDl* cells;
-					loadStreamUl = loadStreamUl* cells;					
+					if(loadStreamDl != null){
+						loadStreamDl = loadStreamDl* cells;						
+					}if(loadStreamUl != null){
+						loadStreamUl = loadStreamUl* cells;											
+					}
 				}
 			}else{
 				loadStreamDl = null;
@@ -442,8 +441,10 @@ public class TrafficManager {
 		}
 		if(dl_ul != null){
 			String[] toReturn = dl_ul.split("_");
-			Double dl = Double.valueOf(toReturn[0])*1.1;
-			Double ul = Double.valueOf(toReturn[1])*1.1;
+			Double dl = Double.valueOf(toReturn[0]);
+			Double ul = Double.valueOf(toReturn[1]);
+			report.report("Value of DL from xml calculator: "+dl);
+			report.report("Value of UL from xml calculator: "+ul);
 			Pair<Double,Double> response = Pair.createPair(doubleTo2DigitsAfterPoint(dl), doubleTo2DigitsAfterPoint(ul));
 			return response;
 		}

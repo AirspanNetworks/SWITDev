@@ -722,16 +722,19 @@ public class AmariSoftServer extends SystemObjectImpl{
 			}
 			else {
 				int i = 0;
+				boolean wasAdded = false;
 				while(unusedUEs.get(i) != null) {
+					wasAdded = false;
 					ArrayList<String> groups = unusedUEs.get(i).groupName;
 					for(String group: groups) {
 						if (group.equals(groupName)){
 							int ueId = unusedUEs.get(i).ueId;
 							result = result && addUe(unusedUEs.get(i), release, category, ueId, cellId);
-							continue;
+							
 						}	
 					}
-					i++;
+					if (!wasAdded)
+						i++;
 				}	
 			}
 			

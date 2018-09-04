@@ -3472,7 +3472,14 @@ public abstract class XLP extends EnodeBComponent {
 		String oid = MibReader.getInstance().resolveByName("asLteStkSonCfgPciAuto");
 		oid += ("." + cellId);
 		try {
-			return snmp.get(oid);
+			String snmpStr;
+			for(int i=1;i<4;i++){
+				GeneralUtils.printToConsole("Trying to get " + oid + " for the " + i + " time.");
+				snmpStr = snmp.get(oid);
+				if(snmpStr != null)
+					return snmpStr;
+				GeneralUtils.printToConsole("Failed to get " + oid + " for the " + i + " time.");
+			}			
 		} catch (Exception e) {
 			GeneralUtils.printToConsole("Error getting getSonCfgPciAuto: " + e.getMessage());
 			e.printStackTrace();

@@ -445,8 +445,8 @@ public class TrafficManager {
 		}
 		if(dl_ul != null){
 			String[] toReturn = dl_ul.split("_");
-			Double dl = Double.valueOf(toReturn[0])*1.1;
-			Double ul = Double.valueOf(toReturn[1])*1.1;
+			Double dl = Double.valueOf(toReturn[0]);
+			Double ul = Double.valueOf(toReturn[1]);
 			Pair<Double,Double> response = Pair.createPair(doubleTo2DigitsAfterPoint(dl), doubleTo2DigitsAfterPoint(ul));
 			return response;
 		}

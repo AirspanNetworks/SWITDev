@@ -196,7 +196,7 @@ public class TrafficSampler implements Runnable{
 	}
 
 	public TrafficSampler(Traffic traffic, String name,  ArrayList<String> ueList, ArrayList<Character> qci, TransmitDirection direction, ExpectedType expectedLoadType,
-			Double uLExpected, Double dLExpected, EnodeB dut, Integer timeout, ArrayList<String> streamList, String ulLoad, String dlLoad) {
+			Double uLExpected, Double dLExpected, EnodeB dut, Integer timeout, ArrayList<String> streamList, Double ulLoad, Double dlLoad) {
 		super();
 		this.name = name;
 		this.ueList = ueList;
@@ -209,16 +209,8 @@ public class TrafficSampler implements Runnable{
 		this.trafficInstance = traffic;
 		this.timeout = timeout;
 		this.streamList = streamList;
-		if(ulLoad != null){
-			this.ulLoad = Double.valueOf(ulLoad);			
-		}else{
-			this.ulLoad = null;
-		}
-		if(dlLoad != null){
-			this.dlLoad = Double.valueOf(dlLoad);			
-		}else{
-			this.dlLoad = null;
-		}
+		this.ulLoad = ulLoad;			
+		this.dlLoad = dlLoad;			
 	}
 
 	public boolean checkIfStreamsExist(ArrayList<String> streamsToCheck){

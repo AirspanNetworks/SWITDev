@@ -147,7 +147,7 @@ public class TrafficManager {
 		trafficInstance.addCommandFilesToReport();
 		GeneralUtils.unSafeSleep(5*1000);
 		isTrafficInit = true;
-		getExpectedValues(enb,type,dlExp,ulExp,UlLoad,DlLoad);
+		getExpectedValues(enb,type,dlExp,ulExp,loadStreamUl,loadStreamDl);
 		TrafficSampler current = new TrafficSampler(trafficInstance,name,ueList,qci, direction, type, ulExpected, dlExpected, enb, timeout, streams, loadStreamUl, loadStreamDl);
 		current.start();
 		samplerList.add(current);
@@ -224,7 +224,7 @@ public class TrafficManager {
 		return false;
 	}
 	
-	private void getExpectedValues(EnodeB enb, ExpectedType type, String dlExpected, String ulExpected, String Uload, String Dload){
+	private void getExpectedValues(EnodeB enb, ExpectedType type, String dlExpected, String ulExpected, Double Uload, Double Dload){
 		if(ExpectedType.Custom == type){
 			if(dlExpected != null){
 				this.dlExpected = Double.valueOf(dlExpected);
@@ -268,12 +268,12 @@ public class TrafficManager {
 			}
 		}else if(ExpectedType.Load_Based == type){
 			if(dlExpected != null){
-				this.dlExpected = Double.valueOf(Dload)*Double.valueOf(dlExpected)/100.0;
+				this.dlExpected = Dload*Double.valueOf(dlExpected)/100.0;
 			}else{
 				this.dlExpected = null;
 			}
 			if(ulExpected != null){
-				this.ulExpected = Double.valueOf(Uload)*Double.valueOf(ulExpected)/100.0;
+				this.ulExpected = Uload*Double.valueOf(ulExpected)/100.0;
 			}else{
 				this.ulExpected = null;
 			}

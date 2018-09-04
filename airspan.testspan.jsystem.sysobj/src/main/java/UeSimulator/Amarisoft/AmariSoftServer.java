@@ -711,19 +711,23 @@ public class AmariSoftServer extends SystemObjectImpl{
 			}
 			int amount = unusedUEs.size();
 			if (groupName.equals("amarisoft")) {
-				for (int i = 0; i < amount; i++) {
+				while (unusedUEs.size() > 0) {
+					int ueId = unusedUEs.get(0).ueId;
+					result = result && addUe(unusedUEs.get(0), release, category, ueId, cellId);
+				}
+				/*for (int i = 0; i < amount; i++) {
 					if (unusedUEs.size() <= 0) {
 						report.report("Failed adding UE to simulator. " + i + " UEs were added out of " + amount + " requsted.", Reporter.WARNING);
 						return false;
 					}
 					int ueId = unusedUEs.get(0).ueId;
 					result = result && addUe(unusedUEs.get(0), release, category, ueId, cellId);
-				}
+				}*/
 			}
 			else {
 				int i = 0;
 				boolean wasAdded = false;
-				while(unusedUEs.get(i) != null) {
+				while(i<unusedUEs.size()) {
 					wasAdded = false;
 					ArrayList<String> groups = unusedUEs.get(i).groupName;
 					for(String group: groups) {

@@ -360,7 +360,7 @@ public class UeSimulatorActions extends Action {
 	}
 	
 	@Test											
-	@TestProperties(name = "start UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = { "UeId", "IMSI", "UEs", "SelectionMethod"})
+	@TestProperties(name = "start UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = { "UeId", "IMSI", "UEs", "SelectionMethod","GroupName"})
 	public void startUes() {
 		boolean res = true;
 
@@ -382,6 +382,11 @@ public class UeSimulatorActions extends Action {
 					res &= ue.start();
 				}				
 				break;
+			case GROUPNAME:
+				for (UE ue : ues) {
+					res &= ue.start();
+				}				
+				break;
 			}
 			//need to add verification for IP address from amarisoft server
 		} catch (Exception e) {
@@ -398,7 +403,7 @@ public class UeSimulatorActions extends Action {
 	}
 
 	@Test											
-	@TestProperties(name = "stop UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = { "UeId", "IMSI", "UEs", "SelectionMethod" })
+	@TestProperties(name = "stop UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = { "UeId", "IMSI", "UEs", "SelectionMethod","GroupName" })
 	public void stopUes() {
 		boolean res = true;
 
@@ -453,6 +458,7 @@ public class UeSimulatorActions extends Action {
 		map.get("UeId").setVisible(false);
 		map.get("IMSI").setVisible(false);
 		map.get("UEs").setVisible(false);
+		map.get("GroupName").setVisible(false);
 		
 		Parameter selectMethod = map.get("SelectionMethod");
 
@@ -467,6 +473,9 @@ public class UeSimulatorActions extends Action {
 
 		case UENAME:
 			map.get("UEs").setVisible(true);
+			break;
+		case GROUPNAME:
+			map.get("GroupName").setVisible(true);
 			break;
 		default:
 			break;
@@ -516,10 +525,5 @@ public class UeSimulatorActions extends Action {
 			map.get("GroupName").setVisible(true);
 			break;
 		}
-		
 	}
-
-
-
-	
 }

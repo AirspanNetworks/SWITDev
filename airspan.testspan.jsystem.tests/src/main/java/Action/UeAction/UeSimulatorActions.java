@@ -415,12 +415,10 @@ public class UeSimulatorActions extends Action {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			
 		}
-		
-		
 	}
-
+	
 	@Test											
 	@TestProperties(name = "stop UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = { "UeId", "IMSI", "UEs", "SelectionMethod","GroupName" })
 	public void stopUes() {
@@ -444,6 +442,11 @@ public class UeSimulatorActions extends Action {
 					res &= ue.stop();
 				}				
 				break;
+			case GROUPNAME:
+				stopUes(groupName);			
+				break;
+			default:
+				break;
 			}
 		} catch (Exception e) {
 			res = false;
@@ -457,7 +460,29 @@ public class UeSimulatorActions extends Action {
 			report.report("stop UEs Succeeded");
 		}
 	}
+	private void stopUes(String groupName) {
+		try {
+			AmariSoftServer amariSoftServer = AmariSoftServer.getInstance();
+			for(AmarisoftUE ue : amariSoftServer.getUeMap()) {
+				for (String group: ue.groupName) {
+					if(group.equals(groupName)) {
+						if (ue.stop())
+							report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") stopped in amarisoft");
+						else {
+							report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") did not stop as expected", Reporter.WARNING);
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+			
+		}
+		
+	}
+
+
 	
+
 	@Override
 	public void handleUIEvent(HashMap<String, Parameter> map, String methodName) throws Exception {
 

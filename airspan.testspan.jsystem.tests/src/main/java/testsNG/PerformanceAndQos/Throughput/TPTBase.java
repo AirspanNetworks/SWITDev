@@ -1340,7 +1340,7 @@ public class TPTBase extends TestspanTest {
 		return dl_ul.split("_");
 	}
 
-	private void createHTMLTableWithResults(Double actualUl, Double expectedUL, Double actualDl, Double expectedDL,
+	public static void createHTMLTableWithResults(Double actualUl, Double expectedUL, Double actualDl, Double expectedDL,
 			Double injectedDL, Double injectedUL) {
 		ArrayList<String> results = new ArrayList<String>();
 		results.add("Injected [Mbps]");

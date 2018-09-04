@@ -14,6 +14,7 @@ import Utils.GeneralUtils;
 import Utils.StreamList;
 import jsystem.framework.report.ListenerstManager;
 import jsystem.framework.report.Reporter;
+import testsNG.PerformanceAndQos.Throughput.TPTBase;
 
 public class TrafficSampler implements Runnable{
 	
@@ -33,6 +34,8 @@ public class TrafficSampler implements Runnable{
 	private Thread runnableThread;
 	private ArrayList<String> streamList;
 	public static Reporter report = ListenerstManager.getInstance();
+	private Double ulLoad = null;
+	private Double dlLoad = null;
 	
 	public void start(){
 		//runnableThread = new Thread(this);
@@ -56,9 +59,10 @@ public class TrafficSampler implements Runnable{
 
 	
 	private void compareResults(Long uLrxTotal, Long dlrxTotal, ArrayList<ArrayList<StreamParams>> listOfStreamList) {
+		double ul_Divided_With_Number_Of_Streams = 0;
 		if(ULExpected != null){
 			if(listOfStreamList.size() != 0){
-				double ul_Divided_With_Number_Of_Streams = uLrxTotal / 1000000.0 / listOfStreamList.size();
+				ul_Divided_With_Number_Of_Streams = uLrxTotal / 1000000.0 / listOfStreamList.size();
 				report.report("Expected UL: "+convertTo3DigitsAfterPoint(ULExpected)+" Mbps");
 				report.report("Actual average UL tpt: "+convertTo3DigitsAfterPoint(ul_Divided_With_Number_Of_Streams)+" Mbps");
 				if(ul_Divided_With_Number_Of_Streams < ULExpected){
@@ -70,9 +74,10 @@ public class TrafficSampler implements Runnable{
 				report.report("No results available for UL traffic", Reporter.FAIL);
 			}
 		}
+		double dl_Divided_With_Number_Of_Streams = 0;
 		if(DLExpected != null){
 			if(listOfStreamList.size() != 0){
-				double dl_Divided_With_Number_Of_Streams = dlrxTotal / 1000000.0 / listOfStreamList.size();			
+				dl_Divided_With_Number_Of_Streams = dlrxTotal / 1000000.0 / listOfStreamList.size();			
 				report.report("Expected DL: "+convertTo3DigitsAfterPoint(DLExpected)+" Mbps");
 				report.report("Actual average DL tpt: "+convertTo3DigitsAfterPoint(dl_Divided_With_Number_Of_Streams)+" Mbps");
 				if(dl_Divided_With_Number_Of_Streams < DLExpected){
@@ -84,6 +89,8 @@ public class TrafficSampler implements Runnable{
 				report.report("No results available for DL traffic", Reporter.FAIL);
 			}
 		}
+		TPTBase.createHTMLTableWithResults(ul_Divided_With_Number_Of_Streams, (ULExpected==null?0:ULExpected), dl_Divided_With_Number_Of_Streams,
+				(DLExpected==null?0:DLExpected), (dlLoad==null?0:dlLoad), (ulLoad==null?0:ulLoad));
 	}
 
 	private ArrayList<Long> getUlDlResultsFromList(Long uLrxTotal, Long dlrxTotal,
@@ -189,7 +196,7 @@ public class TrafficSampler implements Runnable{
 	}
 
 	public TrafficSampler(Traffic traffic, String name,  ArrayList<String> ueList, ArrayList<Character> qci, TransmitDirection direction, ExpectedType expectedLoadType,
-			Double uLExpected, Double dLExpected, EnodeB dut, Integer timeout, ArrayList<String> streamList) {
+			Double uLExpected, Double dLExpected, EnodeB dut, Integer timeout, ArrayList<String> streamList, String ulLoad, String dlLoad) {
 		super();
 		this.name = name;
 		this.ueList = ueList;
@@ -202,6 +209,16 @@ public class TrafficSampler implements Runnable{
 		this.trafficInstance = traffic;
 		this.timeout = timeout;
 		this.streamList = streamList;
+		if(ulLoad != null){
+			this.ulLoad = Double.valueOf(ulLoad);			
+		}else{
+			this.ulLoad = null;
+		}
+		if(dlLoad != null){
+			this.dlLoad = Double.valueOf(dlLoad);			
+		}else{
+			this.dlLoad = null;
+		}
 	}
 
 	public boolean checkIfStreamsExist(ArrayList<String> streamsToCheck){

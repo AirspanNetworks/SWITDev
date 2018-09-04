@@ -148,7 +148,7 @@ public class TrafficManager {
 		GeneralUtils.unSafeSleep(5*1000);
 		isTrafficInit = true;
 		getExpectedValues(enb,type,dlExp,ulExp,UlLoad,DlLoad);
-		TrafficSampler current = new TrafficSampler(trafficInstance,name,ueList,qci, direction, type, ulExpected, dlExpected, enb, timeout, streams);
+		TrafficSampler current = new TrafficSampler(trafficInstance,name,ueList,qci, direction, type, ulExpected, dlExpected, enb, timeout, streams, UlLoad, DlLoad);
 		current.start();
 		samplerList.add(current);
 	}

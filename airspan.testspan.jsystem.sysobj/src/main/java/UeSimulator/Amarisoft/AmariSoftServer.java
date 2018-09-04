@@ -715,14 +715,6 @@ public class AmariSoftServer extends SystemObjectImpl{
 					int ueId = unusedUEs.get(0).ueId;
 					result = result && addUe(unusedUEs.get(0), release, category, ueId, cellId);
 				}
-				/*for (int i = 0; i < amount; i++) {
-					if (unusedUEs.size() <= 0) {
-						report.report("Failed adding UE to simulator. " + i + " UEs were added out of " + amount + " requsted.", Reporter.WARNING);
-						return false;
-					}
-					int ueId = unusedUEs.get(0).ueId;
-					result = result && addUe(unusedUEs.get(0), release, category, ueId, cellId);
-				}*/
 			}
 			else {
 				int i = 0;

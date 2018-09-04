@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import Action.Action;
 import EnodeB.EnodeB;
+import UE.AmarisoftUE;
 import UE.UE;
 import UeSimulator.Amarisoft.AmariSoftServer;
 import Utils.SysObjUtils;
@@ -383,10 +384,7 @@ public class UeSimulatorActions extends Action {
 				}				
 				break;
 			case GROUPNAME:
-				for (UE ue : ues) {
-					res &= ue.start();
-				}				
-				break;
+				startUE(groupName);
 			}
 			//need to add verification for IP address from amarisoft server
 		} catch (Exception e) {
@@ -400,6 +398,27 @@ public class UeSimulatorActions extends Action {
 		} else {
 			report.report("start UEs Succeeded");
 		}
+	}
+
+	private void startUE(String groupName) {
+		try {
+			AmariSoftServer amariSoftServer = AmariSoftServer.getInstance();
+			for(AmarisoftUE ue : amariSoftServer.getUeMap()) {
+				for (String group: ue.groupName) {
+					if(group.equals(groupName)) {
+						if (ue.start())
+							report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") started in amarisoft");
+						else {
+							report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") was not started as expected", Reporter.WARNING);
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
 	}
 
 	@Test											

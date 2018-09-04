@@ -619,13 +619,17 @@ public class UEIPerf implements Runnable {
 		return 0;
 	}
 
+	public String getKillCommand(){
+		return "kill -9 ";
+	}
+	
 	public void stopTraffic(ArrayList<String> streamList) {
 		String resultGrepDl = iperfMachineDL.sendCommand("ps -aux | grep iperf").getElement1();
 		GeneralUtils.unSafeSleep(2000);
 		String resultGrepUl = iperfMachineUL.sendCommand("ps -aux | grep iperf").getElement1();
 		GeneralUtils.unSafeSleep(2000);
-		String commandToKillDl = "sudo kill -9 ";
-		String commandToKillUl = "sudo kill -9 ";
+		String commandToKillDl = "kill -9 ";
+		String commandToKillUl = getKillCommand();
 		Iterator<IPerfStream> iter = dlStreamArrayList.iterator();
 		while(iter.hasNext()){
 			IPerfStream ips = iter.next();

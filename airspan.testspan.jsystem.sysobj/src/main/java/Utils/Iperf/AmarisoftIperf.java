@@ -68,4 +68,8 @@ public class AmarisoftIperf extends UEIPerf{
 		}
 	}
 	
+	@Override
+	public String getKillCommand(){
+		return "sudo kill -9 ";
+	}
 }

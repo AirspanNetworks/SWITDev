@@ -447,6 +447,8 @@ public class TrafficManager {
 			String[] toReturn = dl_ul.split("_");
 			Double dl = Double.valueOf(toReturn[0]);
 			Double ul = Double.valueOf(toReturn[1]);
+			report.report("Value of DL from xml calculator: "+dl);
+			report.report("Value of UL from xml calculator: "+ul);
 			Pair<Double,Double> response = Pair.createPair(doubleTo2DigitsAfterPoint(dl), doubleTo2DigitsAfterPoint(ul));
 			return response;
 		}

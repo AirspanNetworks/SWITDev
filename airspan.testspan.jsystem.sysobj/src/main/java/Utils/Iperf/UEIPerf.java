@@ -742,7 +742,7 @@ public class UEIPerf implements Runnable {
 			FileReader read = new FileReader(file);
 			BufferedReader br = new BufferedReader(read);
 			String line;
-			long sampleTime = System.currentTimeMillis();
+			long sampleTime = ips.getTimeStart();
 			int sampleIndex = 0;
 			while((line = br.readLine()) != null){
 				Matcher m = p.matcher(line);

@@ -709,7 +709,6 @@ public class AmariSoftServer extends SystemObjectImpl{
 				report.report("Failed adding UE to simulator. There are no free UEs in amarisoft to add", Reporter.WARNING);
 				return false;
 			}
-			int amount = unusedUEs.size();
 			if (groupName.equals("amarisoft")) {
 				while (unusedUEs.size() > 0) {
 					int ueId = unusedUEs.get(0).ueId;
@@ -851,7 +850,6 @@ public class AmariSoftServer extends SystemObjectImpl{
 			if (deleteUEResult) {
 				ueMap.remove(UEId + i);
 				AmarisoftUE ue = new AmarisoftUE(UEId + i, null, this);
-				unusedUEs.add(UEId + i, ue);
 				unusedUEs.add(UEId + i, ue);
 			}
 			result = result && deleteUEResult;

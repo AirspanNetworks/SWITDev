@@ -810,18 +810,18 @@ public class UEIPerf implements Runnable {
 
 	public ArrayList<File> getTransmitOutputFiles(ArrayList<String> streamList) {
 		ArrayList<File> resultFiles = new ArrayList<File>();
-		if(iperfMachineDL != null){
+		if(iperfMachineUL != null){
 			for(IPerfStream ulIPerfStream : ulStreamArrayList){
 				if(streamList.contains(ulIPerfStream.getStreamName())){
-					File resultFile = iperfMachineDL.getFile(ulIPerfStream.getClientOutputFileName());
+					File resultFile = iperfMachineUL.getFile(ulIPerfStream.getClientOutputFileName());
 					resultFiles.add(resultFile);
 				}
 			}
 		}
-		if(iperfMachineUL != null){
+		if(iperfMachineDL != null){
 			for(IPerfStream dlIPerfStream : dlStreamArrayList){
 				if(streamList.contains(dlIPerfStream.getStreamName())){
-					File resultFile = iperfMachineUL.getFile(dlIPerfStream.getClientOutputFileName());
+					File resultFile = iperfMachineDL.getFile(dlIPerfStream.getClientOutputFileName());
 					resultFiles.add(resultFile);
 				}
 			}	

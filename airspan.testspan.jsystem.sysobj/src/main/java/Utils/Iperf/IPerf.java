@@ -683,7 +683,7 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		}
 		ArrayList<File> transmitOutputFiles = new ArrayList<File>();
 		for(UEIPerf ueIPerf : allUEsIPerfList){
-			resultFiles.addAll(ueIPerf.getTransmitOutputFiles(streamList));
+			transmitOutputFiles.addAll(ueIPerf.getTransmitOutputFiles(streamList));
 		}
 		if (!transmitOutputFiles.isEmpty()){
 			GeneralUtils.startLevel("Transmit Ouput Files");

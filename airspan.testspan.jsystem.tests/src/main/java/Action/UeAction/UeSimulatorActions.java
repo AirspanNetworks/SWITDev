@@ -485,9 +485,6 @@ public class UeSimulatorActions extends Action {
 		
 	}
 
-
-	
-
 	@Override
 	public void handleUIEvent(HashMap<String, Parameter> map, String methodName) throws Exception {
 

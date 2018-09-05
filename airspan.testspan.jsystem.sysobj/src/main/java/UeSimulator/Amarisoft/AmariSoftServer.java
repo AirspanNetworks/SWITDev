@@ -851,6 +851,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 				ueMap.remove(UEId + i);
 				AmarisoftUE ue = new AmarisoftUE(UEId + i, null, this);
 				unusedUEs.add(UEId + i, ue);
+				unusedUEs.add(UEId + i, ue);
 			}
 			result = result && deleteUEResult;
 		}

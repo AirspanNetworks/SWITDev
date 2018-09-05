@@ -69,11 +69,7 @@ public class TrafficManager {
 			trafficType = type;
 		}
 		if(trafficInstance == null){
-			if(type == GeneratorType.Default){
-				trafficInstance = Traffic.getInstance(SetupUtils.getInstance().getAllUEs());
-			}else{
-				trafficInstance = Traffic.getInstanceWithSpecificGeneratorType(SetupUtils.getInstance().getAllUEs(), type);
-			}			
+			trafficInstance = Traffic.getInstanceWithSpecificGeneratorType(SetupUtils.getInstance().getAllUEs(), type);			
 		}
 		if(trafficInstance == null){
 			instance = null;

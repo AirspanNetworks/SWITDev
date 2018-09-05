@@ -26,7 +26,7 @@ import Utils.SysObjUtils;
 public class TrafficAction extends Action {
 	private ArrayList<UE> ues;
 	private TrafficManager trafficManagerInstance = null;
-	private GeneratorType generatorType = GeneratorType.Default;
+	private GeneratorType generatorType = GeneratorType.Iperf;
 	private Protocol trafficType = Protocol.UDP;
 	private TransmitDirection transmitDirection = TransmitDirection.BOTH;
 	private Integer runTime;

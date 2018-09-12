@@ -1,8 +1,14 @@
 package Utils.Iperf;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import Entities.ITrafficGenerator.CounterUnit;
 import Entities.ITrafficGenerator.Protocol;
@@ -24,11 +30,11 @@ public class UEIPerf implements Runnable {
 
 	protected UE ue;
 
-	protected IPerfMachine iperfMachineDL;
+	protected volatile IPerfMachine iperfMachineDL;
 	
-	protected IPerfMachine iperfMachineUL;
-	protected ArrayList<IPerfStream> ulStreamArrayList;
-	protected ArrayList<IPerfStream> dlStreamArrayList;
+	protected volatile IPerfMachine iperfMachineUL;
+	protected volatile ArrayList<IPerfStream> ulStreamArrayList;
+	protected volatile ArrayList<IPerfStream> dlStreamArrayList;
 
 	protected double ulUeLoad;
 	protected double dlUeLoad;
@@ -37,7 +43,8 @@ public class UEIPerf implements Runnable {
 	protected long lastSampleTime;
 
 	public UEIPerf(UE ue, IPerfMachine iperfMachineDL, IPerfMachine iperfMachineUL, double ulLoad,
-			double dlLoad, Integer frameSize, ArrayList<Character> qciList) throws IOException, InterruptedException {
+			double dlLoad, Integer frameSize, ArrayList<Character> qciList, Protocol protocol,
+			TransmitDirection direction, Integer runTime) throws IOException, InterruptedException {
 		
 		this.ue = ue;
 
@@ -53,11 +60,15 @@ public class UEIPerf implements Runnable {
 		
 		for(Character qciChar : qciList){
 			int qciInt = Integer.valueOf(qciChar)-Integer.valueOf('0');
-			boolean state = qciInt == 9? true : false;
+			//boolean state = qciInt == 9? true : false;
 			String ueNumber = GeneralUtils.removeNonDigitsFromString(this.ue.getName());
 			try {
-				ulStreamArrayList.add(new IPerfStream(TransmitDirection.UL, ueNumber, qciInt, this.ue.getIPerfDlMachine(), this.ue.getIPerfDlMachine(), state, ulLoad/qciList.size(), frameSize));
-				dlStreamArrayList.add(new IPerfStream(TransmitDirection.DL, ueNumber, qciInt, this.ue.getWanIpAddress(), this.ue.getIPerfUlMachine(), state, dlLoad/qciList.size(), frameSize));
+				if(direction == TransmitDirection.BOTH || direction == TransmitDirection.UL){
+					ulStreamArrayList.add(new IPerfStream(TransmitDirection.UL, ueNumber, qciInt, this.ue.getIPerfDlMachine(), this.ue.getIPerfDlMachine(), true, ulLoad/qciList.size(), frameSize,protocol,runTime));					
+				}
+				if(direction == TransmitDirection.BOTH || direction == TransmitDirection.DL){
+					dlStreamArrayList.add(new IPerfStream(TransmitDirection.DL, ueNumber, qciInt, this.ue.getWanIpAddress(), this.ue.getIPerfUlMachine(), true, dlLoad/qciList.size(), frameSize,protocol,runTime));
+				}
 			} catch (Exception e) {
 				GeneralUtils.printToConsole(e.getMessage());
 				e.printStackTrace();
@@ -132,6 +143,7 @@ public class UEIPerf implements Runnable {
 		if(iperfMachineUL != null){
 			iperfMachineUL.stopIPerf();
 			for(IPerfStream ulIPerfStream : ulStreamArrayList){
+				ulIPerfStream.setActive(false);
 				ulIPerfStream.setRunningTraffic(false);
 			}
 		}else{
@@ -143,6 +155,7 @@ public class UEIPerf implements Runnable {
 		if(iperfMachineDL != null){
 			iperfMachineDL.stopIPerf();
 			for(IPerfStream dlIPerfStream : dlStreamArrayList){
+				dlIPerfStream.setActive(false);
 				dlIPerfStream.setRunningTraffic(false);
 			}
 		}else{
@@ -163,6 +176,7 @@ public class UEIPerf implements Runnable {
 				if(ulIPerfStream.isActive() && !ulIPerfStream.isRunningTraffic()){
 					iperfMachineUL.startIPerfTraffic(ulIPerfStream.getIperfClientCommand(), ulIPerfStream.getClientOutputFileName(), TransmitDirection.UL);
 					ulIPerfStream.setRunningTraffic(true);
+					ulIPerfStream.setTimeStart(System.currentTimeMillis());
 				}
 			}
 		}else{
@@ -195,6 +209,7 @@ public class UEIPerf implements Runnable {
 				if(dlIPerfStream.isActive() && !dlIPerfStream.isRunningTraffic()){
 					iperfMachineDL.startIPerfTraffic(dlIPerfStream.getIperfClientCommand(), dlIPerfStream.getClientOutputFileName(), TransmitDirection.DL);
 					dlIPerfStream.setRunningTraffic(true);
+					dlIPerfStream.setTimeStart(System.currentTimeMillis());
 				}
 			}
 		}else{
@@ -313,7 +328,7 @@ public class UEIPerf implements Runnable {
 		}
 	}
 
-	public ArrayList<ArrayList<String>> setStreamsState(ArrayList<String> ueNameList, ArrayList<Character> qciList,
+	public ArrayList<ArrayList<String>> setStreamsState(Protocol protocol,ArrayList<String> ueNameList, ArrayList<Character> qciList,
 			TransmitDirection transmitDirection, boolean state) {
 		ArrayList<IPerfStream> allStream = new ArrayList<IPerfStream>();
 		ArrayList<String> notStateStreamList = new ArrayList<String>();
@@ -324,7 +339,7 @@ public class UEIPerf implements Runnable {
 			//qci from stram
 			char qciFromSTC = iperfStream.getStreamName().charAt(iperfStream.getStreamName().length() - 1); 
 			//UE name form Stream (UE_)
-			String ueNameFromIPerf = iperfStream.getStreamName().substring(3,iperfStream.getStreamName().length()-1);
+			String ueNameFromIPerf = iperfStream.getStreamName().substring(7,iperfStream.getStreamName().length()-1);
 			//check if the stream's Transmit Direction is NOT in transmitDirection 
 			if(!transmitDirection.value.contains(iperfStream.getTransmitDirection().value)){
 				notStateStreamList.add(iperfStream.getStreamName());
@@ -339,6 +354,10 @@ public class UEIPerf implements Runnable {
 			else if(!ueNameList.contains(ueNameFromIPerf)){
 				notStateStreamList.add(iperfStream.getStreamName());
 				System.out.println("Stream : "+iperfStream.getStreamName()+" isActive set to "+!state+" for UE");
+				iperfStream.setActive(!state);
+			}else if(iperfStream.getProtocol() != protocol){
+				notStateStreamList.add(iperfStream.getStreamName());
+				System.out.println("Stream : "+iperfStream.getStreamName()+" isActive set to "+!state+" for traffic type");
 				iperfStream.setActive(!state);
 			}else{
 				stateStreamList.add(iperfStream.getStreamName());
@@ -358,7 +377,7 @@ public class UEIPerf implements Runnable {
 		return enableDisableStreamName; 
 	}
 
-	public ArrayList<ArrayList<String>> setStreamsStateAndNoChangeOthers(ArrayList<String> ueNameList, ArrayList<Character> qciList,
+	public ArrayList<ArrayList<String>> setStreamsStateAndNoChangeOthers(Protocol protocol,ArrayList<String> ueNameList, ArrayList<Character> qciList,
 			TransmitDirection transmitDirection, boolean state) {
 		ArrayList<IPerfStream> allStream = new ArrayList<IPerfStream>();
 		ArrayList<String> notStateStreamList = new ArrayList<String>();
@@ -369,9 +388,10 @@ public class UEIPerf implements Runnable {
 			//qci from stram
 			char qciFromSTC = iperfStream.getStreamName().charAt(iperfStream.getStreamName().length() - 1); 
 			//UE name form Stream (UE_)
-			String ueNameFromIPerf = iperfStream.getStreamName().substring(3,iperfStream.getStreamName().length()-1);
+			String ueNameFromIPerf = iperfStream.getStreamName().substring(7,iperfStream.getStreamName().length()-1);
 			if(transmitDirection.value.contains(iperfStream.getTransmitDirection().value) &&
-					qciList.contains(qciFromSTC) && ueNameList.contains(ueNameFromIPerf)){
+					qciList.contains(qciFromSTC) && ueNameList.contains(ueNameFromIPerf) &&
+					protocol == iperfStream.getProtocol()){
 				stateStreamList.add(iperfStream.getStreamName());
 				System.out.println("Stream : "+iperfStream.getStreamName()+" isActive set to "+state);
 				iperfStream.setActive(state);
@@ -509,19 +529,19 @@ public class UEIPerf implements Runnable {
 	}
 
 	public void setProtocol(Protocol protocol) {
-		this.protocol = protocol;
+		/*this.protocol = protocol;
 		for(IPerfStream ulIPerfStream : ulStreamArrayList){
 			ulIPerfStream.setProtocol(protocol);
 		}
 		for(IPerfStream dlIPerfStream : dlStreamArrayList){
 			dlIPerfStream.setProtocol(protocol);
-		}
+		}*/
 	}
 
 	public ArrayList<Pair<String, ArrayList<String>>> getAllActiveStreamsIPerfCommands() {
 		ArrayList<Pair<String, ArrayList<String>>> activeStreamsIPerfCommands = new ArrayList<Pair<String, ArrayList<String>>>();
 		for(IPerfStream ulIPerfStream : ulStreamArrayList){
-			if(ulIPerfStream.isActive()){
+			if(ulIPerfStream.isActive() && !ulIPerfStream.isRunningTraffic()){
 				ArrayList<String> activeStreamIPerfCommands = new ArrayList<String>();
 				activeStreamIPerfCommands.add(ulIPerfStream.getIperfClientCommand());
 				activeStreamIPerfCommands.add(ulIPerfStream.getIperfServerCommand());
@@ -529,7 +549,7 @@ public class UEIPerf implements Runnable {
 			}
 		}
 		for(IPerfStream dlIPerfStream : dlStreamArrayList){
-			if(dlIPerfStream.isActive()){
+			if(dlIPerfStream.isActive()  && !dlIPerfStream.isRunningTraffic()){
 				ArrayList<String> activeStreamIPerfCommands = new ArrayList<String>();
 				activeStreamIPerfCommands.add(dlIPerfStream.getIperfClientCommand());
 				activeStreamIPerfCommands.add(dlIPerfStream.getIperfServerCommand());
@@ -598,4 +618,216 @@ public class UEIPerf implements Runnable {
 		}
 		return 0;
 	}
+
+	public String getKillCommand(){
+		return "kill -9 ";
+	}
+	
+	public void stopTraffic(ArrayList<String> streamList) {
+		String resultGrepDl = iperfMachineDL.sendCommand("ps -aux | grep iperf").getElement1();
+		GeneralUtils.unSafeSleep(2000);
+		String resultGrepUl = iperfMachineUL.sendCommand("ps -aux | grep iperf").getElement1();
+		GeneralUtils.unSafeSleep(2000);
+		String commandToKillDl = "kill -9 ";
+		String commandToKillUl = getKillCommand();
+		Iterator<IPerfStream> iter = dlStreamArrayList.iterator();
+		while(iter.hasNext()){
+			IPerfStream ips = iter.next();
+			if(streamList.contains(ips.getStreamName())){
+				String process = getProcessNumber(resultGrepDl, ips.getIperfClientCommand());
+				if(process == null){
+					process = getProcessNumber(resultGrepUl, ips.getIperfClientCommand());
+					if(process != null){
+						commandToKillUl += process+" ";						
+					}
+				}else{
+					commandToKillDl += process+" ";					
+				}
+				process = getProcessNumber(resultGrepDl, ips.getIperfServerCommand());
+				if(process == null){
+					process = getProcessNumber(resultGrepUl, ips.getIperfServerCommand());
+					if(process != null){
+						commandToKillUl += process+" ";
+					}
+				}else{					
+					commandToKillDl += process;
+				}
+				iter.remove();
+			}
+		}
+		
+		iter = ulStreamArrayList.iterator();
+		while(iter.hasNext()){
+			IPerfStream ips = iter.next();
+			if(streamList.contains(ips.getStreamName())){
+				String process = getProcessNumber(resultGrepUl, ips.getIperfClientCommand());
+				if(process == null){
+					process = getProcessNumber(resultGrepDl, ips.getIperfClientCommand());
+					if(process != null){
+						commandToKillDl += process+" ";						
+					}
+				}else{
+					commandToKillUl += process;					
+				}
+				process = getProcessNumber(resultGrepUl, ips.getIperfServerCommand());
+				if(process == null){
+					process = getProcessNumber(resultGrepDl, ips.getIperfServerCommand());
+					if(process != null){
+						commandToKillDl += process+" ";
+					}
+				}else{
+					commandToKillUl += process;					
+				}
+				iter.remove();
+			}
+		}
+		iperfMachineDL.sendCommand(commandToKillDl);
+		GeneralUtils.unSafeSleep(3000);
+		iperfMachineDL.sendCommand("ps -aux | grep iperf");
+		GeneralUtils.unSafeSleep(1000);
+		
+		iperfMachineUL.sendCommand(commandToKillUl);
+		GeneralUtils.unSafeSleep(3000);
+		iperfMachineUL.sendCommand("ps -aux | grep iperf");
+		GeneralUtils.unSafeSleep(1000);
+		/*ArrayList<IPerfStream> dlTemp = (ArrayList<IPerfStream>) dlStreamArrayList.clone();
+		for(IPerfStream ips : dlTemp){
+			if(streamList.contains(ips.getStreamName())){
+				dlStreamArrayList.remove(ips);
+			}
+		}
+		//resultGrep = iperfMachineUL.sendCommand("ps -aux | grep iperf").getElement1();
+		//commandToKill = "kill -9 ";
+		ArrayList<IPerfStream> ulTemp = (ArrayList<IPerfStream>) ulStreamArrayList.clone();
+		for(IPerfStream ips : ulTemp){
+			if(streamList.contains(ips.getStreamName())){
+				ulStreamArrayList.remove(ips);
+			}
+		}*/
+	}
+	
+	private String getProcessNumber(String file, String command){
+		Pattern p = Pattern.compile("[0-9a-z]\\s+(\\d+).*"+command);
+		String[] lines = file.split("\n");
+		for(String line:lines){
+			Matcher m = p.matcher(line);
+			if(m.find() && !line.contains("sudo")){
+				return m.group(1);
+			}			
+		}
+		return null;
+	}
+	
+	public ArrayList<ArrayList<StreamParams>> getAllStreamsResults(ArrayList<String> streamList) {
+		ArrayList<ArrayList<StreamParams>> toReturn = new ArrayList<ArrayList<StreamParams>>();
+		for(IPerfStream ips : dlStreamArrayList){
+			if(streamList.contains(ips.getStreamName())){
+				toReturn = extractStatisticsFromFile(ips,toReturn);
+			}
+		}
+		for(IPerfStream ips : ulStreamArrayList){
+			if(streamList.contains(ips.getStreamName())){
+				toReturn = extractStatisticsFromFile(ips,toReturn);
+			}
+		}
+		return toReturn;
+	}
+	
+	private ArrayList<ArrayList<StreamParams>> extractStatisticsFromFile(IPerfStream ips, ArrayList<ArrayList<StreamParams>> ret){
+		//ArrayList<StreamParams> toReturn = new ArrayList<StreamParams>();
+		File file;
+		if(ips.getTransmitDirection() == TransmitDirection.UL){
+			file = iperfMachineDL.getFile(ips.getTpFileName());
+		}else{
+			file = iperfMachineUL.getFile(ips.getTpFileName());
+		}
+		Pattern p = Pattern.compile("(\\d+.\\d+-\\s*\\d+.\\d+).*KBytes\\s+(\\d+|\\d+.\\d+)\\s+Kbits/sec.*");
+		try{
+			FileReader read = new FileReader(file);
+			BufferedReader br = new BufferedReader(read);
+			String line;
+			long sampleTime = ips.getTimeStart();
+			int sampleIndex = 0;
+			while((line = br.readLine()) != null){
+				Matcher m = p.matcher(line);
+				if(m.find()){
+					//System.out.println(m.group(1));
+					//System.out.println(m.group(2));
+					//String sampleTime = m.group(1);
+					Long currentValue = 0L;
+					if(m.group(2).contains(".")){
+						currentValue = Long.valueOf(m.group(2).split("\\.")[0]);
+					}else{
+						currentValue = Long.valueOf(m.group(2));
+					}
+					
+					StreamParams tempStreamParams = new StreamParams();
+					tempStreamParams.setName(ips.getStreamName());
+					tempStreamParams.setTimeStamp(sampleTime);
+					tempStreamParams.setActive(true);
+					tempStreamParams.setUnit(CounterUnit.BITS_PER_SECOND);
+					tempStreamParams.setTxRate((long)(ips.getStreamLoad()*1000*1000));
+					tempStreamParams.setRxRate(currentValue*1000);
+					tempStreamParams.setPacketSize(ips.getFrameSize());
+					sampleTime+=1000;
+					try{
+						ret.get(sampleIndex);
+					}catch(Exception e){
+						ret.add(new ArrayList<StreamParams>());
+					}
+					ret.get(sampleIndex).add(tempStreamParams);
+					sampleIndex++;
+				}
+			}
+			br.close();
+			read.close();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return ret;
+	}
+
+	public ArrayList<File> getResultFiles(ArrayList<String> streamList) {
+		ArrayList<File> resultFiles = new ArrayList<File>();
+		if(iperfMachineDL != null){
+			for(IPerfStream ulIPerfStream : ulStreamArrayList){
+				if(streamList.contains(ulIPerfStream.getStreamName())){
+					File resultFile = iperfMachineDL.getFile(ulIPerfStream.getTpFileName());
+					resultFiles.add(resultFile);
+				}
+			}
+		}
+		if(iperfMachineUL != null){
+			for(IPerfStream dlIPerfStream : dlStreamArrayList){
+				if(streamList.contains(dlIPerfStream.getStreamName())){
+					File resultFile = iperfMachineUL.getFile(dlIPerfStream.getTpFileName());
+					resultFiles.add(resultFile);
+				}
+			}	
+		}
+		return resultFiles;
+	}
+
+	public ArrayList<File> getTransmitOutputFiles(ArrayList<String> streamList) {
+		ArrayList<File> resultFiles = new ArrayList<File>();
+		if(iperfMachineUL != null){
+			for(IPerfStream ulIPerfStream : ulStreamArrayList){
+				if(streamList.contains(ulIPerfStream.getStreamName())){
+					File resultFile = iperfMachineUL.getFile(ulIPerfStream.getClientOutputFileName());
+					resultFiles.add(resultFile);
+				}
+			}
+		}
+		if(iperfMachineDL != null){
+			for(IPerfStream dlIPerfStream : dlStreamArrayList){
+				if(streamList.contains(dlIPerfStream.getStreamName())){
+					File resultFile = iperfMachineDL.getFile(dlIPerfStream.getClientOutputFileName());
+					resultFiles.add(resultFile);
+				}
+			}	
+		}
+		return resultFiles;
+	}
+
+
 }

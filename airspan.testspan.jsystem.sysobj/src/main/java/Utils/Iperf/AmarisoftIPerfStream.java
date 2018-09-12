@@ -15,14 +15,17 @@ import Entities.ITrafficGenerator.Protocol;
  */
 public class AmarisoftIPerfStream extends IPerfStream {
 
-	public AmarisoftIPerfStream(TransmitDirection transmitDirection, String ueNumber, int qci, String destIpAddress, String srcIpAddress, boolean state, double streamLoad, Integer frameSize) throws Exception {
-		super(transmitDirection, ueNumber, qci, destIpAddress, srcIpAddress, state, streamLoad, frameSize);
+	public AmarisoftIPerfStream(TransmitDirection transmitDirection, String ueNumber, int qci,
+			String destIpAddress, String srcIpAddress, boolean state, double streamLoad,
+			Integer frameSize, Protocol protocol,Integer runTime) throws Exception {
+		super(transmitDirection, ueNumber, qci, destIpAddress, srcIpAddress, state, streamLoad, frameSize,protocol,runTime);
 	}
 	
 	void generateIPerfCommands(){
 		if(!isRunningTraffic()){
+			String runTimeTraffic = (runTime != null ? String.valueOf(runTime):UEIPerf.IPERF_TIME_LIMIT);
 			if(this.protocol == Protocol.UDP){
-				this.iperfClientCommand = "-c " + this.destIpAddress + " -u -i 1 -p " + (5000+this.qci) + " -l " + this.frameSize + ".0B -b " + convertTo3DigitsAfterPoint(this.streamLoad) + "M -t " + UEIPerf.IPERF_TIME_LIMIT;
+				this.iperfClientCommand = "-c " + this.destIpAddress + " -u -i 1 -p " + (5000+this.qci) + " -l " + this.frameSize + ".0B -b " + convertTo3DigitsAfterPoint(this.streamLoad) + "M -t " + runTimeTraffic;
 				this.iperfServerCommand = "-s -u -i 1 -p " + (5000+this.qci) + " -l " + this.frameSize + ".0B -f k";
 			}else if(this.protocol == Protocol.TCP){
 				this.iperfClientCommand = "-c " + this.destIpAddress + " ";
@@ -31,8 +34,8 @@ public class AmarisoftIPerfStream extends IPerfStream {
 					this.iperfClientCommand += "-P "+numberOfParallelIPerfStreams;
 					this.iperfServerCommand += "-P "+numberOfParallelIPerfStreams;
 				}
-				this.iperfClientCommand += " -i 1 -p " + (5000+this.qci);
-				this.iperfServerCommand += " -i 1 -p " + (5000+this.qci);
+				this.iperfClientCommand += " -i 1 -p " + (5010+this.qci);
+				this.iperfServerCommand += " -i 1 -p " + (5010+this.qci);
 				if(this.windowSizeInKbits != null){
 					this.iperfClientCommand += " -w "+this.windowSizeInKbits+"k";
 					this.iperfServerCommand += " -w "+this.windowSizeInKbits+"k";
@@ -41,7 +44,7 @@ public class AmarisoftIPerfStream extends IPerfStream {
 					this.iperfClientCommand += " -M "+this.frameSize;
 					this.iperfServerCommand += " -M "+this.frameSize;
 				}
-				this.iperfClientCommand += " -t " + UEIPerf.IPERF_TIME_LIMIT;
+				this.iperfClientCommand += " -t " + runTimeTraffic;
 				this.iperfServerCommand += " -f k";
 			}else{
 				GeneralUtils.printToConsole("Protocol NOT UDP and NOT TCP - FAILURE");

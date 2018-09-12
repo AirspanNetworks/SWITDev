@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>airspan.testspan.jsystem</groupId>
 	<artifactId>airspan.testspan.jsystem.parent</artifactId>
-	<version>1.21.57</version> 
+	<version>1.21.61</version> 
 	<packaging>pom</packaging>
 	<properties>
 		<jsystem.version>6.1.06-beta1</jsystem.version>
@@ -203,7 +203,7 @@
 			<dependency>
 				<groupId>airspan</groupId>
 				<artifactId>RestSTC</artifactId>
-				<version>1.0.97</version>
+				<version>1.0.98</version>
 			</dependency>
 			<dependency>
 				<groupId>com.google.collections</groupId>

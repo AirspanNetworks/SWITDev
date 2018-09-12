@@ -1237,7 +1237,8 @@ public abstract class EnodeB extends SystemObjectImpl {
 	public int getEarfcn() {
 		String cell = getCellContextID() == 1 ? "40" : "41";
 		GeneralUtils.printToConsole("Get earfcn of cell " + cell);
-		return XLP.getEarfcn(cell);
+		int earfcn = XLP.getEarfcn(cell);
+		return earfcn != -1 ? earfcn : XLP.getEarfcn(cell);
 	}
 
 	public Plmn getPlmn() {

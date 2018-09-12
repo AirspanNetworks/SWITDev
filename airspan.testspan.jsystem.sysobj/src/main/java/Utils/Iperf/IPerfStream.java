@@ -27,31 +27,36 @@ public class IPerfStream {
 	protected String clientOutputFileName;
 	protected String srcIpAddress;
 	
-	protected boolean isActive;
+	protected volatile boolean isActive;
 	protected double streamLoad;
 	protected String iperfClientCommand;
 	protected String iperfServerCommand;
 	protected ArrayList<Long> countersInBits;
 	protected Protocol protocol;
 	protected Double lastIntervalUsedForLastSample;
-	protected boolean isRunningTraffic; 
+	protected volatile boolean isRunningTraffic; 
+	protected Integer runTime;
+	protected long timeStart;
 
-	public IPerfStream(TransmitDirection transmitDirection, String ueNumber, int qci, String destIpAddress, String srcIpAddress, boolean state, double streamLoad, Integer frameSize) throws Exception {
+	public IPerfStream(TransmitDirection transmitDirection, String ueNumber,
+			int qci, String destIpAddress, String srcIpAddress, boolean state,
+			double streamLoad, Integer frameSize, Protocol protocol, Integer runTime) throws Exception {
 		if(transmitDirection == TransmitDirection.BOTH){
 			throw new Exception("Stream Can't be to BOTH directions (UL & DL).");
 		}
-		this.streamName = (transmitDirection.value + "_UE" + ueNumber) + qci;
+		String protocolForName = (protocol == Protocol.TCP ? "TCP_":"UDP_");
+		this.streamName = protocolForName + transmitDirection.value + "_UE" + ueNumber + qci;
 		this.transmitDirection = transmitDirection;
 		this.ueNumber = ueNumber;
 		this.qci = qci;
-		this.protocol = Protocol.UDP;
-		this.tpFileName = "tp" + transmitDirection.value+"_UE" + ueNumber + "QCI" + qci + ".txt"; //UL & DL files are named the same in purpose - for updating the counter in the opposite stream
-		this.clientOutputFileName = "clientOutput" + transmitDirection.value+"_UE" + ueNumber + "QCI" + qci + ".txt";
+		this.protocol = protocol;
+		this.tpFileName = protocolForName + "tp" + transmitDirection.value+"_UE" + ueNumber + "QCI" + qci + ".txt"; //UL & DL files are named the same in purpose - for updating the counter in the opposite stream
+		this.clientOutputFileName = protocolForName + "clientOutput" + transmitDirection.value+"_UE" + ueNumber + "QCI" + qci + ".txt";
 		this.destIpAddress = destIpAddress;
 		this.srcIpAddress = srcIpAddress;
 		this.numberOfParallelIPerfStreams = 1;
 		this.lastIntervalUsedForLastSample = 0.0;
-		
+		this.runTime = runTime;
 		this.isActive = state;
 		this.streamLoad = streamLoad;
 		this.frameSize = frameSize;
@@ -62,8 +67,10 @@ public class IPerfStream {
 	
 	void generateIPerfCommands(){
 		if(!isRunningTraffic()){
+			String runTimeTraffic = (runTime != null ? String.valueOf(runTime):UEIPerf.IPERF_TIME_LIMIT);
+
 			if(this.protocol == Protocol.UDP){
-				this.iperfClientCommand = "-c " + this.destIpAddress + " -u -i 1 -p " + (5000+this.qci) + " -l " + this.frameSize + ".0B -b " + convertTo3DigitsAfterPoint(this.streamLoad) + "M -t " + UEIPerf.IPERF_TIME_LIMIT;
+				this.iperfClientCommand = "-c " + this.destIpAddress + " -u -i 1 -p " + (5000+this.qci) + " -l " + this.frameSize + ".0B -b " + convertTo3DigitsAfterPoint(this.streamLoad) + "M -t " + runTimeTraffic;
 				this.iperfServerCommand = "-s -u -i 1 -p " + (5000+this.qci) + " -B " + this.srcIpAddress + " -l " + this.frameSize + ".0B -f k";
 			}else if(this.protocol == Protocol.TCP){
 				this.iperfClientCommand = "-c " + this.destIpAddress + " ";
@@ -72,8 +79,8 @@ public class IPerfStream {
 					this.iperfClientCommand += "-P "+numberOfParallelIPerfStreams;
 					this.iperfServerCommand += "-P "+numberOfParallelIPerfStreams;
 				}
-				this.iperfClientCommand += " -i 1 -p " + (5000+this.qci);
-				this.iperfServerCommand += " -i 1 -p " + (5000+this.qci);
+				this.iperfClientCommand += " -i 1 -p " + (5010+this.qci);
+				this.iperfServerCommand += " -i 1 -p " + (5010+this.qci);
 				if(this.windowSizeInKbits != null){
 					this.iperfClientCommand += " -w "+this.windowSizeInKbits+"k";
 					this.iperfServerCommand += " -w "+this.windowSizeInKbits+"k";
@@ -83,7 +90,7 @@ public class IPerfStream {
 					this.iperfClientCommand += " -M "+this.frameSize;
 					this.iperfServerCommand += " -M "+this.frameSize;
 				}
-				this.iperfClientCommand += " -t " + UEIPerf.IPERF_TIME_LIMIT;
+				this.iperfClientCommand += " -t " + runTimeTraffic;
 				this.iperfServerCommand += " -f k";
 			}else{
 				GeneralUtils.printToConsole("Protocol NOT UDP and NOT TCP - FAILURE");
@@ -163,6 +170,11 @@ public class IPerfStream {
 	public void setProtocol(Protocol protocol) {
 		if(!isRunningTraffic()){
 			this.protocol = protocol;
+			String protocolForStream = (protocol == Protocol.TCP ? "TCP_":"UDP_");
+			this.tpFileName = protocolForStream+"tp" + transmitDirection.value+"_UE" + ueNumber + "QCI" + qci + ".txt"; //UL & DL files are named the same in purpose - for updating the counter in the opposite stream
+			this.clientOutputFileName = protocolForStream+"clientOutput" + transmitDirection.value+"_UE" + ueNumber + "QCI" + qci + ".txt";
+			this.streamName = protocolForStream+(transmitDirection.value + "_UE" + ueNumber) + qci;
+
 			generateIPerfCommands();			
 		}
 	}
@@ -222,5 +234,13 @@ public class IPerfStream {
 	
 	public void setRunningTraffic(boolean isRunningTraffic) {
 		this.isRunningTraffic = isRunningTraffic;
+	}
+	
+	public long getTimeStart() {
+		return timeStart;
+	}
+
+	public void setTimeStart(long timeStart) {
+		this.timeStart = timeStart;
 	}
 }

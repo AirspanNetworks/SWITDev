@@ -26,7 +26,7 @@ import Utils.SysObjUtils;
 public class TrafficAction extends Action {
 	private ArrayList<UE> ues;
 	private TrafficManager trafficManagerInstance = null;
-	private GeneratorType generatorType = GeneratorType.Default;
+	private GeneratorType generatorType = GeneratorType.Iperf;
 	private Protocol trafficType = Protocol.UDP;
 	private TransmitDirection transmitDirection = TransmitDirection.BOTH;
 	private Integer runTime;
@@ -39,11 +39,27 @@ public class TrafficAction extends Action {
 	private Double windowSize;
 	private Integer parallelStreams;
 	private Integer mss;
-	private ExpectedType expectedLoadType = ExpectedType.None;
+	private ExpectedType expectedLoadType = ExpectedType.Custom;
 	private String ULExpected;
 	private String DLExpected;
 	private String semanticName;
+	private ArrayList<String> trafficToStop;
+
+	public ArrayList<String> getTrafficToStop() {
+		return trafficToStop;
+	}
+
 	
+	public void setTrafficToStop(String trafficToStop) {
+		this.trafficToStop = new ArrayList<String>();
+		if(trafficToStop != null){
+			String[] temp = trafficToStop.split(",");
+			for(String str : temp){
+				this.trafficToStop.add(str);
+			}
+		}
+	}
+
 	public Integer getFrameSize() {
 		return frameSize;
 	}
@@ -91,7 +107,7 @@ public class TrafficAction extends Action {
 		return windowSize;
 	}
 
-	@ParameterProperties(description = "value for -w Iperf Parameter")
+	@ParameterProperties(description = "value for -w Iperf Parameter (not mandatory)")
 	public void setWindowSize(String windowSize) {
 		this.windowSize = Double.valueOf(windowSize);			
 	}
@@ -100,7 +116,7 @@ public class TrafficAction extends Action {
 		return parallelStreams;
 	}
 
-	@ParameterProperties(description = "value for -P iperf parameter")
+	@ParameterProperties(description = "value for -P iperf parameter (not mandatory)")
 	public void setParallelStreams(String parallelStreams) {
 		this.parallelStreams = Integer.valueOf(parallelStreams);			
 	}
@@ -109,7 +125,7 @@ public class TrafficAction extends Action {
 		return mss;
 	}
 
-	@ParameterProperties(description = "value for -m iperf parameter")
+	@ParameterProperties(description = "value for -m iperf parameter (not mandatory)")
 	public void setMss(String mss) {
 		this.mss = Integer.valueOf(mss);			
 	}
@@ -168,7 +184,7 @@ public class TrafficAction extends Action {
 		return runTime;
 	}
 
-	@ParameterProperties(description = "Run time in seconds")
+	@ParameterProperties(description = "Run time in seconds (not mandatory)")
 	public void setRunTime(String runTime) {
 		this.runTime = Integer.valueOf(runTime);			
 	}
@@ -205,7 +221,7 @@ public class TrafficAction extends Action {
 	}
 	
 	public enum ExpectedType{
-		Calculator_Based, Load_Based, Custom, None;
+		Calculator_Based, Load_Based, Custom;
 	}
 	
 	protected ArrayList<String> convertUeToNamesList(ArrayList<UE> ueList2) {
@@ -273,6 +289,21 @@ public class TrafficAction extends Action {
 	}
 	
 	@Test
+	@TestProperties(name = "Enhanced Stop Traffic", returnParam = "LastStatus", paramsInclude = { "TrafficToStop" })
+	public void enhancedStopTraffic() {
+
+		trafficManagerInstance = TrafficManager.getInstance(null);
+		if(trafficManagerInstance == null){
+			report.report("Failed to init traffic manager instance",Reporter.FAIL);
+			return;
+		}
+		if(trafficToStop == null){
+			trafficToStop = new ArrayList<String>();
+		}
+		trafficManagerInstance.stopTraffic(trafficToStop);
+	}
+	
+	@Test
 	@TestProperties(name = "Enhanced Start Traffic", returnParam = "LastStatus", paramsInclude = { "UEs","GeneratorType",
 			"TrafficType","TransmitDirection","RunTime","Qci","SemanticName","LoadType","Dut","ULLoad","DLLoad","FrameSize",
 			"WindowSize","ParallelStreams","Mss","ExpectedLoadType","ULExpected","DLExpected"})
@@ -291,14 +322,20 @@ public class TrafficAction extends Action {
 			return;
 		}
 		
+		if(semanticName == null){
+			report.report("No name was configured", Reporter.FAIL);
+			return;
+		}
+		
 		trafficManagerInstance = TrafficManager.getInstance(generatorType);
 		
 		if(trafficManagerInstance == null){
-			report.report("Generator type was not found in SUT");
+			report.report("Generator type was not found in SUT",Reporter.FAIL);
 			return;
 		}
 		
 		GeneralUtils.startLevel("Parameters for start traffic");
+		report.report("Semantic name: "+semanticName);
 		report.report("Generator type: "+generatorType.toString());
 		report.report("Traffic type: "+trafficType.toString());
 		report.report("Transmit direction: "+transmitDirection.toString());
@@ -308,10 +345,7 @@ public class TrafficAction extends Action {
 		if(dut != null){
 			report.report("EnodeB for calculator criterias: "+dut.getNetspanName());
 		}
-		if(semanticName != null){
-			report.report("Semantic name: "+semanticName);
-		}
-
+		
 		if(trafficType == Protocol.TCP){
 			if(windowSize != null){
 				report.report("Window size: "+windowSize);
@@ -339,22 +373,26 @@ public class TrafficAction extends Action {
 			}
 		}
 		report.report("Expected load type: "+expectedLoadType.toString());
-		if(expectedLoadType != ExpectedType.None){
-			boolean custom = expectedLoadType == ExpectedType.Custom;
-			if(ULExpected != null){
-				report.report("UL expected: "+ULExpected+(custom?" Mbps":"%"));				
-			}
-			if(DLExpected != null){
-				report.report("DL expected: "+DLExpected+(custom?" Mbps":"%"));				
-			}
-		}		
+		boolean custom = expectedLoadType == ExpectedType.Custom;
+		if(ULExpected != null){
+			report.report("UL expected: "+ULExpected+(custom?" Mbps":"%"));				
+		}
+		if(DLExpected != null){
+			report.report("DL expected: "+DLExpected+(custom?" Mbps":"%"));				
+		}
+		
 		GeneralUtils.stopLevel();
 
+		if(trafficManagerInstance.checkIfNameExist(semanticName)){
+			report.report("Action failed - trying to run traffic with a semantic name already running", Reporter.FAIL);
+			return;
+		}
+		
 		if(!trafficManagerInstance.checkGeneratorType(generatorType)){
 			return;
 		}
 
-		ArrayList<String> toCheck = convertToStreamStrings(ues,qci,transmitDirection);
+		ArrayList<String> toCheck = convertToStreamStrings(ues,qci,transmitDirection,trafficType);
 		if(trafficManagerInstance.checkIfStreamsExist(toCheck)){
 			report.report("Action failed - trying to run traffic on a stream already running", Reporter.FAIL);
 			return;
@@ -364,16 +402,17 @@ public class TrafficAction extends Action {
 				expectedLoadType, ULExpected, DLExpected, dut, parallelStreams, windowSize, mss, frameSize, trafficType, runTime, toCheck);
 	}
 
-	public ArrayList<String> convertToStreamStrings(ArrayList<UE> ues, ArrayList<Character> qci, TransmitDirection transmitDirection){
+	public ArrayList<String> convertToStreamStrings(ArrayList<UE> ues, ArrayList<Character> qci, TransmitDirection transmitDirection, Protocol protocol){
 		ArrayList<String> toReturn = new ArrayList<String>();
+		String protocolForStream = (protocol == Protocol.TCP ? "TCP_":"UDP_");
 		for(UE ue:ues){
-			String numUE = "UE" + ue.getName().replaceAll("\\D+", "").trim();
+			String numUE = ue.getName().replaceAll("\\D+", "").trim();
 			for(Character ch:qci){
 				if(transmitDirection == TransmitDirection.BOTH || transmitDirection == TransmitDirection.UL){
-					toReturn.add("UL_UE"+numUE+ch);
+					toReturn.add(protocolForStream+"UL_UE"+numUE+ch);
 				}
 				if(transmitDirection == TransmitDirection.BOTH || transmitDirection == TransmitDirection.DL){
-					toReturn.add("DL_UE"+numUE+ch);
+					toReturn.add(protocolForStream+"DL_UE"+numUE+ch);
 				}
 			}
 		}
@@ -421,32 +460,26 @@ public class TrafficAction extends Action {
 			map.get("WindowSize").setValue(null);
 			map.get("ParallelStreams").setValue(null);
 			map.get("Mss").setValue(null);
-			map.get("WindowSize").setValue(null);
-			map.get("ParallelStreams").setValue(null);
-			map.get("Mss").setValue(null);
 		}else{
 			map.get("WindowSize").setVisible(true);
 			map.get("ParallelStreams").setVisible(true);
 			map.get("Mss").setVisible(true);
 			map.get("FrameSize").setValue(null);
 			map.get("FrameSize").setVisible(false);
+			map.get("ULLoad").setValue(null);
+			map.get("DLLoad").setValue(null);
 		}
 		
-		if(ExpectedType.None != ExpectedType.valueOf(map.get("ExpectedLoadType").getValue().toString())){
-			if(TransmitDirection.UL == TransmitDirection.valueOf(direction.getValue().toString()) || 
-					TransmitDirection.BOTH == TransmitDirection.valueOf(direction.getValue().toString())){
-				map.get("ULExpected").setVisible(true);
-			}else{
-				map.get("ULExpected").setValue(null);
-			}
-			if(TransmitDirection.DL == TransmitDirection.valueOf(direction.getValue().toString()) || 
-					TransmitDirection.BOTH == TransmitDirection.valueOf(direction.getValue().toString())){
-				map.get("DLExpected").setVisible(true);
-			}else{
-				map.get("DLExpected").setValue(null);
-			}
+		if(TransmitDirection.UL == TransmitDirection.valueOf(direction.getValue().toString()) || 
+				TransmitDirection.BOTH == TransmitDirection.valueOf(direction.getValue().toString())){
+			map.get("ULExpected").setVisible(true);
 		}else{
 			map.get("ULExpected").setValue(null);
+		}
+		if(TransmitDirection.DL == TransmitDirection.valueOf(direction.getValue().toString()) || 
+				TransmitDirection.BOTH == TransmitDirection.valueOf(direction.getValue().toString())){
+			map.get("DLExpected").setVisible(true);
+		}else{
 			map.get("DLExpected").setValue(null);
 		}
 		

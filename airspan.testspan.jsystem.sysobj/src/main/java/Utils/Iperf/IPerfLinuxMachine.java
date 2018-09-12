@@ -39,16 +39,16 @@ public class IPerfLinuxMachine extends IPerfMachine{
 		}
 		boolean connected = sshSession.isConnected();
 		if(connected){
-			sendCommand("rm "+preAddressTpFile+"clientOutputDL*");
-		    sendCommand("rm "+preAddressTpFile+"tpUL*");
-			sendCommand("rm "+preAddressTpFile+"DLclientSide.txt");
-			sendCommand("rm "+preAddressTpFile+"ULserverSide.txt");
+			sendCommand("rm "+preAddressTpFile+"*clientOutputDL*");
+		    sendCommand("rm "+preAddressTpFile+"*tpUL*");
+			sendCommand("rm "+preAddressTpFile+"*DLclientSide.txt");
+			sendCommand("rm "+preAddressTpFile+"*ULserverSide.txt");
 			sendCommand("rm "+preAddressTpFile+"nohup*");
 		
-			sendCommand("rm "+preAddressTpFile+"clientOutputUL*");
-			sendCommand("rm "+preAddressTpFile+"tpDL*");
-			sendCommand("rm "+preAddressTpFile+"ULclientSide.txt");
-			sendCommand("rm "+preAddressTpFile+"DLserverSide.txt");
+			sendCommand("rm "+preAddressTpFile+"*clientOutputUL*");
+			sendCommand("rm "+preAddressTpFile+"*tpDL*");
+			sendCommand("rm "+preAddressTpFile+"*ULclientSide.txt");
+			sendCommand("rm "+preAddressTpFile+"*DLserverSide.txt");
 		}
 		return connected;
 	}
@@ -125,6 +125,7 @@ public class IPerfLinuxMachine extends IPerfMachine{
 				e.printStackTrace();
 			}
 		}
+		scpClient.close();
 		File file = new File(fileName); 
 		return file;
 	}

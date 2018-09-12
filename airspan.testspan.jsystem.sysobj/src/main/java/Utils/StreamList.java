@@ -41,6 +41,9 @@ public class StreamList {
 	}
 	
 	public String printTablesHtmlForStream(String stream){
-		return listOfStreams.get(stream).printTablesHTML();
+		if(listOfStreams.containsKey(stream)){
+			return listOfStreams.get(stream).printTablesHTML();			
+		}
+		return "Stream "+stream+" had no samples";
 	}
 }

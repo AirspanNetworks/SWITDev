@@ -322,8 +322,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 			} else {
 				report.report("Closing server failed.", Reporter.WARNING);
 				return false;
-			}
-		
+		}
 		return true;
     }
     
@@ -891,21 +890,25 @@ public class AmariSoftServer extends SystemObjectImpl{
 		GeneralUtils.startLevel("deleting all UES in group: " + groupName + " from Amarisoft simulator.");
 		boolean result = true;
 		for(int i = 0; i< ueMap.size(); i++) {
-			if (ueMap.get(i).groupName.equals(groupName)) {
-				int ueNum = ueMap.get(i).ueId;
-				if (deleteUE(ueNum)) {
-					ueMap.remove(ueNum);
-					AmarisoftUE ue = new AmarisoftUE(ueNum, null, this);
-					report.report("UE : " + ueNum + " ( " + ue.getImsi() + " ) was deleted");
-					unusedUEs.add(ue);
+			ArrayList<String> groups = ueMap.get(i).groupName;
+			for(String group: groups) {
+				if (group.equals(groupName)) {
+					int ueNum = ueMap.get(i).ueId;
+					if (deleteUE(ueNum)) {
+						ueMap.remove(ueNum);
+						AmarisoftUE ue = new AmarisoftUE(ueNum, null, this);
+						report.report("UE : " + ueNum + " ( " + ue.getImsi() + " ) was deleted");
+						unusedUEs.add(ue);
+					}
+					else {
+						report.report("UE :" + ueMap.get(ueNum).getImsi() + " haven't been deleted from ue simulator");
+						result = false;
+						
+					}
+					ueNum++;
 				}
-				else {
-					report.report("UE :" + ueMap.get(ueNum).getImsi() + " haven't been deleted from ue simulator");
-					result = false;
-					
-				}
-				ueNum++;
 			}
+			
 		}
 		GeneralUtils.stopLevel();
 		return result;

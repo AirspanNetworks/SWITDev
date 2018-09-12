@@ -46,7 +46,8 @@ public class Program {
 			a.setDlMachineNetworks("91.91.224.2-253,91.91.225.2-253");
 			a.easyInit();
 			a.startServer("0UE_SC_SWIT24");
-			a.addUes(5, 13, 4);
+			a.stopServer();
+			/*
 			ArrayList<AmarisoftUE> ues = a.getUeMap();
 			for (AmarisoftUE ue: ues) {
 				ue.start();
@@ -56,7 +57,7 @@ public class Program {
 				ue.stop();
 			}
 			a.deleteUes(2);
-			a.stopServer();
+			a.stopServer();*/
 			//a.startServer("automationConfigFile");
 			/*ConfigGet s = a.getConfig();
 			CellsWrapper cellWrapper = s.getCells();

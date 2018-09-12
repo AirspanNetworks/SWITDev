@@ -322,8 +322,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 			} else {
 				report.report("Closing server failed.", Reporter.WARNING);
 				return false;
-			}
-		
+		}
 		return true;
     }
     

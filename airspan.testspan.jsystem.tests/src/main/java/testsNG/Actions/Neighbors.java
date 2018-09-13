@@ -433,7 +433,7 @@ public class Neighbors {
 			report.report("Delete all 3rd parties by Netspan passed");
 	}
 
-	public boolean SetANRState(EnodeB enb, SonAnrStates anrState, ArrayList<Integer> anrFrequencyList,
+	public Boolean SetANRState(EnodeB enb, SonAnrStates anrState, ArrayList<Integer> anrFrequencyList,
 			Integer MinAllowedHoSuccessRate) throws IOException {
 
 		report.reportHtml("Before: db get anrCfg", enb.lteCli("db get anrCfg"), true);
@@ -454,16 +454,18 @@ public class Neighbors {
 		report.report("waiting 10 seconds to stabilize");
 		GeneralUtils.unSafeSleep(10000);
 		report.reportHtml("After: db get anrCfg", enb.lteCli("db get anrCfg"), true);
-		String AnrMode = enb.getAnrMode();
-		report.report(String.format("[INFO]: ANR parameters: \"anrMode\" - %s, \"drxOnDurationTimer\" - %s ", AnrMode,
-				enb.getAnrDurationTimer()));
+		String anrMode = enb.getAnrMode();
+		String anrDurationTimer = enb.getAnrDurationTimer();
+		report.report(String.format("[INFO]: ANR parameters: \"anrMode\" - %s, \"drxOnDurationTimer\" - %s ", anrMode,
+				anrDurationTimer));
 		boolean correctState = false;
-
-		if (anrState == SonAnrStates.DISABLED && AnrMode.equals("0")) {
+		if(anrMode.equals("-999") || anrDurationTimer.equals("-999"))
+			return null;
+		else if (anrState == SonAnrStates.DISABLED && anrMode.equals("0")) {
 			correctState = true;
-		} else if (anrState == SonAnrStates.HO_MEASUREMENT && AnrMode.equals("1")) {
+		} else if (anrState == SonAnrStates.HO_MEASUREMENT && anrMode.equals("1")) {
 			correctState = true;
-		} else if (anrState == SonAnrStates.PERIODICAL_MEASUREMENT && AnrMode.equals("2")) {
+		} else if (anrState == SonAnrStates.PERIODICAL_MEASUREMENT && anrMode.equals("2")) {
 			correctState = true;
 		}
 

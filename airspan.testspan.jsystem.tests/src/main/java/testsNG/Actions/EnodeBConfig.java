@@ -1125,6 +1125,7 @@ public class EnodeBConfig {
 				return false;
 			}
 		}
+		GeneralUtils.unSafeSleep(5*1000);
 		return result;
 	}
 

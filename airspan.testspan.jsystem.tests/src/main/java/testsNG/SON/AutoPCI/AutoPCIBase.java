@@ -161,6 +161,7 @@ public class AutoPCIBase extends TestspanTest {
 		GeneralUtils.startLevel("Change enodeB pci and reboot (if needed)");
 		GeneralUtils.startLevel("Setting Cell ID " + dut.getCellContextID() + ": PCI=" + pciStart);
 		boolean result = enodeBConfig.changeEnbCellPci(dut, pciStart);
+		printRSIPCIDebug(status.getSONStatus(dut));
 		if (result) {
 			report.report("Changing cell pci worked");
 			if(shouldReboot){

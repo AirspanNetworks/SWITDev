@@ -1,22 +1,24 @@
 package UE;
 
+import java.util.ArrayList;
+
 import UeSimulator.Amarisoft.AmariSoftServer;
 import Utils.GeneralUtils;
 
 public class AmarisoftUE extends UE{
 
 	public int ueId;
-	//public String groupName;
+	public ArrayList<String> groupName;
 	private AmariSoftServer server;
 	
 	public AmarisoftUE() {
 		super("AmarisoftUE");
 	}
 	
-	public AmarisoftUE(int ueId, AmariSoftServer server) {
+	public AmarisoftUE(int ueId, ArrayList<String> groupName, AmariSoftServer server) {
 		this();
 		this.ueId = ueId;
-		//this.groupName = groupName;
+		this.groupName = groupName;
 		this.server = server;
 		setName("AmarisoftUE" + (10000 + ueId));
 	}

@@ -180,10 +180,10 @@ public class TPTBase extends TestspanTest {
 		}
 		changeOtherENBsToOOS();
 
-		if (runWithDynamicCFI)
+		/*if (runWithDynamicCFI)
 			enbConfig.enableDynamicCFI(this.dut);
 		else
-			enbConfig.disableDynamicCFI(this.dut);
+			enbConfig.disableDynamicCFI(this.dut);*/
 		
 		getRadioProfile();
 

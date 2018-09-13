@@ -232,6 +232,7 @@ public class AutoPCIBase extends TestspanTest {
 				report.report("Reverting " + dut.getName() + " Cell #" + dut.getCellContextID()
 						+ " to default PCI number: " + initStatusPhysicalCellId);
 				enodeBConfig.changeEnbCellPci(dut, initStatusPhysicalCellId);
+				printRSIPCIDebug(status.getSONStatus(dut));
 				if(shouldReboot){
 					dut.reboot();
 				}

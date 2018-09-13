@@ -723,7 +723,7 @@ public class P0 extends TPTBase {
 	public void TPT_PtP_TCP_Qci9() throws Exception {
 		ArrayList<Character> qciList = new ArrayList<Character>();
 		qciList.add('9');
-		templateTPTest("TPT_PtP_TCP_Qci9", true, "PTP", null, qciList, 1, Protocol.TCP, null, null);
+		templateTPTest("TPT_PtP_TCP_Qci9", true, "PTP", null, qciList, 1, Protocol.TCP, 5, null);
 	}
 	
 	@Test
@@ -732,7 +732,7 @@ public class P0 extends TPTBase {
 	public void TPT_PtMP_TCP_Qci9() throws Exception {
 		ArrayList<Character> qciList = new ArrayList<Character>();
 		qciList.add('9');
-		templateTPTest("TPT_PtMP_TCP_Qci9", true, "PTMP", null, qciList, 0, Protocol.TCP, null, null);
+		templateTPTest("TPT_PtMP_TCP_Qci9", true, "PTMP", null, qciList, 0, Protocol.TCP, 5, null);
 	}
 	
 	@Test

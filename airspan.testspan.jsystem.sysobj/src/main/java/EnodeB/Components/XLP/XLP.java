@@ -3476,7 +3476,7 @@ public abstract class XLP extends EnodeBComponent {
 			for(int i=1;i<4;i++){
 				GeneralUtils.printToConsole("Trying to get " + oid + " for the " + i + " time.");
 				snmpStr = snmp.get(oid);
-				if(snmpStr != null)
+				if(snmpStr.equals(String.valueOf(GeneralUtils.ERROR_VALUE)))
 					return snmpStr;
 				GeneralUtils.printToConsole("Failed to get " + oid + " for the " + i + " time.");
 			}			

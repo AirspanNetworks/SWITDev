@@ -367,7 +367,7 @@ public class P0 extends TestspanTest {
 				neighbors.deleteAllNeighbors(enb);		
 				
 				// enable ANR on both Enbs.
-				boolean anrStateSuccess;
+				Boolean anrStateSuccess;
 				try{
 				anrStateSuccess = neighbors.SetANRState(enb, anrState, anrFrequencyList, MinAllowedHoSuccessRate);
 				}
@@ -375,7 +375,10 @@ public class P0 extends TestspanTest {
 					e.printStackTrace();
 					anrStateSuccess = false;
 				}
-				if (anrStateSuccess) {
+				if(anrStateSuccess == null){
+					report.report(String.format("%s - Could not validate ANR Set type.", enb.getName()),Reporter.WARNING);
+				}
+				else if (anrStateSuccess) {
 					report.report(String.format("%s - ANR Enabled type set successfully.", enb.getName()));
 				} else {
 					report.report(String.format("%s - ANR Set type failed.", enb.getName()),Reporter.FAIL);

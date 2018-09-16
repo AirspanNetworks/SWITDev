@@ -88,7 +88,7 @@ public abstract class EnodeBComponent extends SystemObjectImpl implements LogLis
 
 	private HashSet<String> corePathSet;
 	private boolean isStateChangedToCoreDump;
-	private final String coreFtpSetver = "\\\\asil-rdat-shares\\cores\\";
+	private final String coreFtpSetver = "\\\\swit-cores\\Cores\\";
 	private boolean deviceUnderTest;
 	private int unexpectedReboot = 0;
 	public int SWTypeInstnace;

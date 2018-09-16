@@ -77,6 +77,28 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		Connect();
 		
 		setUEs(ues);
+		
+		ArrayList<Character> qciList = new ArrayList<Character>();
+		tpDlCountersFileNames = "";
+		tpUlCountersFileNames = "";
+		qciList.add('9');
+		allUEsIPerfList.clear();
+		if(ues != null){
+			for(UE ue : ues){
+				UEIPerf ueIPerf = null;
+				if(ue instanceof AmarisoftUE){
+					ueIPerf = new AmarisoftIperf((AmarisoftUE)ue, iperfMachineDL, iperfMachineUL, ulPortLoad/ues.size(), dlPortLoad/ues.size(), frameSize, qciList,Protocol.UDP,TransmitDirection.BOTH,null);
+				}else if(ue instanceof AndroidUE){
+					ueIPerf = new AndroidIPerf((AndroidUE)ue, iperfMachineDL, iperfMachineUL, ulPortLoad/ues.size(), dlPortLoad/ues.size(), frameSize, qciList,Protocol.UDP,TransmitDirection.BOTH,null);
+				}else{
+					ueIPerf = new UEIPerf(ue, iperfMachineDL, iperfMachineUL, ulPortLoad/ues.size(), dlPortLoad/ues.size(), frameSize, qciList,Protocol.UDP,TransmitDirection.BOTH,null);
+					tpDlCountersFileNames += (" " + ueIPerf.getDlActiveStreamFileNames());
+					tpUlCountersFileNames += (" " + ueIPerf.getUlActiveStreamFileNames());
+				}
+				this.allUEsIPerfList.add(ueIPerf);
+			}
+		}
+		updateConfigFile();
 	}
 
 	@Override
@@ -86,7 +108,7 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 			tpDlCountersFileNames = "";
 			tpUlCountersFileNames = "";			
 		}
-		
+		allUEsIPerfList = new ArrayList<UEIPerf>();
 		for(UE ue:this.ues){
 			String ueName = "UE" + ue.getName().replaceAll("\\D+", "").trim();
 			if(ues.contains(ueName)){

@@ -191,7 +191,7 @@ public class TrafficAction extends Action {
 
 	@ParameterProperties(description = "Run time in format HH:MM:SS (not mandatory)")
 	public void setRunTime(String runTime) {
-		Pattern p = Pattern.compile("(\\d+:\\d+:\\d+");
+		Pattern p = Pattern.compile("(\\d+):(\\d+):(\\d+)");
 		Matcher m = p.matcher(runTime);
 		if(m.find()){
 			int hours = Integer.valueOf(m.group(1))*60*60;

@@ -1350,12 +1350,12 @@ public class TPTBase extends TestspanTest {
 		results.add("UL");
 		results.add(injectedUL==0?"N/A":String.format("%.2f", injectedUL));
 		results.add(expectedUL==0?"N/A":String.format("%.2f", expectedUL));
-		results.add(expectedUL==0?"N/A":String.format("%.2f", actualUl));
+		results.add(String.format("%.2f", actualUl));
 
 		results.add("DL");
 		results.add(injectedDL==0?"N/A":String.format("%.2f", injectedDL));
 		results.add(expectedDL==0?"N/A":String.format("%.2f", expectedDL));
-		results.add(expectedDL==0?"N/A":String.format("%.2f", actualDl));
+		results.add(String.format("%.2f", actualDl));
 
 		GeneralUtils.HtmlTable table = new HtmlTable();
 		// Head Line

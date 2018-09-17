@@ -478,6 +478,18 @@ public class TrafficAction extends Action {
 			map.get("WindowSize").setValue(null);
 			map.get("ParallelStreams").setValue(null);
 			map.get("Mss").setValue(null);
+			if(TransmitDirection.UL == TransmitDirection.valueOf(direction.getValue().toString()) || 
+					TransmitDirection.BOTH == TransmitDirection.valueOf(direction.getValue().toString())){
+				map.get("ULLoad").setVisible(true);
+			}else{
+				map.get("ULLoad").setValue(null);
+			}
+			if(TransmitDirection.DL == TransmitDirection.valueOf(direction.getValue().toString()) || 
+					TransmitDirection.BOTH == TransmitDirection.valueOf(direction.getValue().toString())){
+				map.get("DLLoad").setVisible(true);
+			}else{
+				map.get("DLLoad").setValue(null);
+			}
 		}else{
 			map.get("WindowSize").setVisible(true);
 			map.get("ParallelStreams").setVisible(true);

@@ -47,6 +47,7 @@ public class TrafficSampler implements Runnable{
 		ArrayList<ArrayList<StreamParams>> temp = trafficInstance.getAllStreamsResults(streamList);
 		printPerStreamTables(temp);
 		compareWithCalculator(temp);
+		trafficInstance.getResultFilesByList(streamList);
 	}
 	
 	private void compareWithCalculator(ArrayList<ArrayList<StreamParams>> listOfStreamList2){
@@ -56,7 +57,6 @@ public class TrafficSampler implements Runnable{
 		listUlAndDl = getUlDlResultsFromList(ULrxTotal, DlrxTotal, listOfStreamList2);
 		compareResults(listUlAndDl.get(0), listUlAndDl.get(1), listOfStreamList2);
 	}
-
 	
 	private void compareResults(Long uLrxTotal, Long dlrxTotal, ArrayList<ArrayList<StreamParams>> listOfStreamList) {
 		double ul_Divided_With_Number_Of_Streams = 0;
@@ -116,6 +116,10 @@ public class TrafficSampler implements Runnable{
 		report.report("Stopping traffic "+getName());
 		keepRunning = false;
 		trafficInstance.stopTraffic(streamList);
+	}
+	
+	public void removeStreams(){
+		trafficInstance.removeStreams(streamList);
 	}
 	
 	protected void printPerStreamTables(ArrayList<ArrayList<StreamParams>> listOfStreamList) {

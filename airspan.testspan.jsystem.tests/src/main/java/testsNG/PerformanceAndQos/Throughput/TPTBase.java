@@ -1348,13 +1348,13 @@ public class TPTBase extends TestspanTest {
 		results.add("Actual");
 
 		results.add("UL");
-		results.add(String.format("%.2f", injectedUL));
-		results.add(String.format("%.2f", expectedUL));
+		results.add(injectedUL==0?"N/A":String.format("%.2f", injectedUL));
+		results.add(expectedUL==0?"N/A":String.format("%.2f", expectedUL));
 		results.add(String.format("%.2f", actualUl));
 
 		results.add("DL");
-		results.add(String.format("%.2f", injectedDL));
-		results.add(String.format("%.2f", expectedDL));
+		results.add(injectedDL==0?"N/A":String.format("%.2f", injectedDL));
+		results.add(expectedDL==0?"N/A":String.format("%.2f", expectedDL));
 		results.add(String.format("%.2f", actualDl));
 
 		GeneralUtils.HtmlTable table = new HtmlTable();
@@ -1367,10 +1367,12 @@ public class TPTBase extends TestspanTest {
 		table.addField(HtmlFieldColor.WHITE, results.get(4));
 		table.addField(HtmlFieldColor.WHITE, results.get(5));
 		HtmlFieldColor line2Result = HtmlFieldColor.WHITE;
-		if (actualUl >= expectedUL) {
-			line2Result = HtmlFieldColor.GREEN;
-		} else {
-			line2Result = HtmlFieldColor.RED;
+		if(expectedUL!=0){
+			if (actualUl >= expectedUL) {
+				line2Result = HtmlFieldColor.GREEN;
+			} else {
+				line2Result = HtmlFieldColor.RED;
+			}			
 		}
 		table.addField(line2Result, results.get(6));
 		// 3rd Line
@@ -1378,10 +1380,12 @@ public class TPTBase extends TestspanTest {
 		table.addField(HtmlFieldColor.WHITE, results.get(8));
 		table.addField(HtmlFieldColor.WHITE, results.get(9));
 		HtmlFieldColor line3Result = HtmlFieldColor.WHITE;
-		if (actualDl >= expectedDL) {
-			line3Result = HtmlFieldColor.GREEN;
-		} else {
-			line3Result = HtmlFieldColor.RED;
+		if(expectedDL!=0){
+			if (actualDl >= expectedDL) {
+				line3Result = HtmlFieldColor.GREEN;
+			} else {
+				line3Result = HtmlFieldColor.RED;
+			}			
 		}
 		table.addField(line3Result, results.get(10));
 		table.reportTable("");

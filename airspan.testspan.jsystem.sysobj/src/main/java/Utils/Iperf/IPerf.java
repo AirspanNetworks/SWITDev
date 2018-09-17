@@ -183,24 +183,25 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		iperfMachineUL.sendCommand("echo '' >> " + dlServerCommandsFile);
 		iperfMachineUL.sendCommand("echo '' >> " + ulclientCommandsFile);*/
 		
+		GeneralUtils.unSafeSleep(5000);
+		
+		//GeneralUtils.unSafeSleep(2000);
+		iperfMachineDL.sendCommand("cat " + dlclientCommandsFile);
+		//GeneralUtils.unSafeSleep(2000);
+		iperfMachineDL.sendCommand(dlclientCommandsFile);
+		//GeneralUtils.unSafeSleep(2000);
+		iperfMachineUL.sendCommand("cat " + ulclientCommandsFile);
+		//GeneralUtils.unSafeSleep(2000);
+		iperfMachineUL.sendCommand(ulclientCommandsFile);
 		GeneralUtils.unSafeSleep(10000);
 		iperfMachineDL.sendCommand("cat " + ulServerCommandsFile);
-		GeneralUtils.unSafeSleep(2000);
+		//GeneralUtils.unSafeSleep(2000);
 		iperfMachineDL.sendCommand(ulServerCommandsFile);
-		GeneralUtils.unSafeSleep(2000);
+		//GeneralUtils.unSafeSleep(2000);
 		iperfMachineUL.sendCommand("cat " + dlServerCommandsFile);
-		GeneralUtils.unSafeSleep(2000);
+		//GeneralUtils.unSafeSleep(2000);
 		iperfMachineUL.sendCommand(dlServerCommandsFile);
 		GeneralUtils.unSafeSleep(2000);
-		iperfMachineDL.sendCommand("cat " + dlclientCommandsFile);
-		GeneralUtils.unSafeSleep(2000);
-		iperfMachineDL.sendCommand(dlclientCommandsFile);
-		GeneralUtils.unSafeSleep(2000);
-		iperfMachineUL.sendCommand("cat " + ulclientCommandsFile);
-		GeneralUtils.unSafeSleep(2000);
-		iperfMachineUL.sendCommand(ulclientCommandsFile);
-		GeneralUtils.unSafeSleep(2000);
-
 		iperfMachineDL.sendCommand("ps -aux | grep iperf");
 		GeneralUtils.unSafeSleep(2000);
 		iperfMachineUL.sendCommand("ps -aux | grep iperf");
@@ -210,13 +211,13 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 
 	public void startTrafficDL() throws Exception {
 		for (UEIPerf ueIPerf : allUEsIPerfList) {
-			ueIPerf.runTrafficDL();
+			ueIPerf.runTrafficDL(System.currentTimeMillis());
 		}
 	}
 	
 	public void startTrafficUL() throws Exception{
 		for(UEIPerf ueIPerf : allUEsIPerfList){
-			ueIPerf.runTrafficUL();
+			ueIPerf.runTrafficUL(System.currentTimeMillis());
 		}
 	}
 	
@@ -682,9 +683,8 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		}
 	}
 
-
 	@Override
-	public void stopTraffic(ArrayList<String> streamList) {
+	public void getResultFilesByList(ArrayList<String> streamList) {
 		ArrayList<File> resultFiles = new ArrayList<File>();
 		for(UEIPerf ueIPerf : allUEsIPerfList){
 			resultFiles.addAll(ueIPerf.getResultFiles(streamList));
@@ -721,8 +721,19 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 			}
 			GeneralUtils.stopLevel();
 		}
+	}
+	
+	@Override
+	public void stopTraffic(ArrayList<String> streamList) {
 		for(UEIPerf ueIPerf : allUEsIPerfList){
 			ueIPerf.stopTraffic(streamList);
+		}
+	}
+	
+	@Override
+	public void removeStreams(ArrayList<String> streamList){
+		for(UEIPerf ueIPerf : allUEsIPerfList){
+			ueIPerf.removeStreams(streamList);
 		}
 	}
 	

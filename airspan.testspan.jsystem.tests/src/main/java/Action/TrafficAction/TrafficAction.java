@@ -26,26 +26,26 @@ import Utils.SysObjUtils;
 import Utils.Iperf.UEIPerf;
 
 public class TrafficAction extends Action {
-	private ArrayList<UE> ues;
+	private ArrayList<UE> ues = null;
 	private TrafficManager trafficManagerInstance = null;
 	private GeneratorType generatorType = GeneratorType.Iperf;
 	private Protocol trafficType = Protocol.UDP;
 	private TransmitDirection transmitDirection = TransmitDirection.BOTH;
-	private Integer runTime;
-	private ArrayList<Character> qci;
+	private Integer runTime = null;
+	private ArrayList<Character> qci = null;
 	private LoadType loadType = LoadType.Calculator_Based;
-	private EnodeB dut;
-	private String ULLoad;
-	private String DLLoad;
-	private Integer frameSize;
-	private Double windowSize;
-	private Integer parallelStreams;
-	private Integer mss;
+	private EnodeB dut = null;
+	private String ULLoad = null;
+	private String DLLoad = null;
+	private Integer frameSize = null;
+	private Double windowSize = null;
+	private Integer parallelStreams = null;
+	private Integer mss = null;
 	private ExpectedType expectedLoadType = ExpectedType.Calculator_Based;
-	private String ULExpected;
-	private String DLExpected;
-	private String semanticName;
-	private ArrayList<String> trafficToStop;
+	private String ULExpected = null;
+	private String DLExpected = null;
+	private String semanticName = null;
+	private ArrayList<String> trafficToStop = null;
 
 	public ArrayList<String> getTrafficToStop() {
 		return trafficToStop;

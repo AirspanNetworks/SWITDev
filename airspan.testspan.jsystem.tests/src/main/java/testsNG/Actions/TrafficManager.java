@@ -147,6 +147,10 @@ public class TrafficManager {
 		TrafficSampler current = new TrafficSampler(trafficInstance,name,ueList,qci, direction, type, ulExpected, dlExpected, enb, timeout, streams, loadStreamUl, loadStreamDl);
 		current.start();
 		samplerList.add(current);
+		ulExpected = null;
+		dlExpected = null;
+		loadStreamUl = null;
+		loadStreamDl = null;
 	}
 	
 	private boolean initTrafficWithNoStartTraffic(TrafficCapacity tptCapacity, Protocol protocol) {

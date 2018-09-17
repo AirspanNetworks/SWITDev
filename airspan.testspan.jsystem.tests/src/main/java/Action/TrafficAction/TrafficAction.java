@@ -3,6 +3,8 @@ package Action.TrafficAction;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.junit.Test;
 
@@ -12,7 +14,6 @@ import jsystem.framework.report.Reporter;
 import jsystem.framework.scenario.Parameter;
 import testsNG.Actions.Traffic;
 import testsNG.Actions.Traffic.GeneratorType;
-import testsNG.Actions.Traffic.TrafficType;
 import testsNG.Actions.TrafficManager;
 import Action.Action;
 import EnodeB.EnodeB;
@@ -22,6 +23,7 @@ import UE.UE;
 import UeSimulator.Amarisoft.AmariSoftServer;
 import Utils.GeneralUtils;
 import Utils.SysObjUtils;
+import Utils.Iperf.UEIPerf;
 
 public class TrafficAction extends Action {
 	private ArrayList<UE> ues;
@@ -39,7 +41,7 @@ public class TrafficAction extends Action {
 	private Double windowSize;
 	private Integer parallelStreams;
 	private Integer mss;
-	private ExpectedType expectedLoadType = ExpectedType.Custom;
+	private ExpectedType expectedLoadType = ExpectedType.Calculator_Based;
 	private String ULExpected;
 	private String DLExpected;
 	private String semanticName;
@@ -49,7 +51,7 @@ public class TrafficAction extends Action {
 		return trafficToStop;
 	}
 
-	
+	@ParameterProperties(description = "Traffic names to stop, separated by comma. Leave empty to stop all traffics")
 	public void setTrafficToStop(String trafficToStop) {
 		this.trafficToStop = new ArrayList<String>();
 		if(trafficToStop != null){
@@ -64,6 +66,7 @@ public class TrafficAction extends Action {
 		return frameSize;
 	}
 
+	@ParameterProperties(description = "Frame size for udp traffic. Default - 1400")
 	public void setFrameSize(String frameSize) {
 		this.frameSize = Integer.valueOf(frameSize);			
 	}
@@ -99,6 +102,7 @@ public class TrafficAction extends Action {
 		return expectedLoadType;
 	}
 
+	@ParameterProperties(description = "Type of expected traffic: calculator based/custom")
 	public void setExpectedLoadType(ExpectedType expectedType) {
 		this.expectedLoadType = expectedType;
 	}
@@ -163,6 +167,7 @@ public class TrafficAction extends Action {
 		return loadType;
 	}
 
+	@ParameterProperties(description = "Type of traffic load: calculator based/custom")
 	public void setLoadType(LoadType loadType) {
 		this.loadType = loadType;
 	}
@@ -184,9 +189,18 @@ public class TrafficAction extends Action {
 		return runTime;
 	}
 
-	@ParameterProperties(description = "Run time in seconds (not mandatory)")
+	@ParameterProperties(description = "Run time in format HH:MM:SS (not mandatory)")
 	public void setRunTime(String runTime) {
-		this.runTime = Integer.valueOf(runTime);			
+		Pattern p = Pattern.compile("(\\d+:\\d+:\\d+");
+		Matcher m = p.matcher(runTime);
+		if(m.find()){
+			int hours = Integer.valueOf(m.group(1))*60*60;
+			int minutes = Integer.valueOf(m.group(2))*60;
+			int seconds = Integer.valueOf(m.group(3));
+			this.runTime = hours+minutes+seconds;
+		}else{
+			this.runTime = null;
+		}
 	}
 
 	public TransmitDirection getTransmitDirection() {
@@ -202,7 +216,7 @@ public class TrafficAction extends Action {
 		return generatorType;
 	}
 	
-	@ParameterProperties(description = "Choose traffic generator type, Default will use Traffic Generator Priority (Currently STC → Iperf)")
+	@ParameterProperties(description = "Choose traffic generator type: Iperf/STC)")
 	public void setGeneratorType(GeneratorType genType) {
 		this.generatorType = genType;
 	}
@@ -221,7 +235,7 @@ public class TrafficAction extends Action {
 	}
 	
 	public enum ExpectedType{
-		Calculator_Based, Load_Based, Custom;
+		Calculator_Based, Custom;
 	}
 	
 	protected ArrayList<String> convertUeToNamesList(ArrayList<UE> ueList2) {
@@ -339,7 +353,11 @@ public class TrafficAction extends Action {
 		report.report("Generator type: "+generatorType.toString());
 		report.report("Traffic type: "+trafficType.toString());
 		report.report("Transmit direction: "+transmitDirection.toString());
-		report.report("Run time: "+runTime);
+		if(runTime!=null){
+			report.report("Run time: "+runTime+" seconds");
+		}else{
+			report.report("Default time will be applied ("+UEIPerf.IPERF_TIME_LIMIT+" seconds)");
+		}
 		report.report("UEs: "+ues.toString());
 		report.report("Qcis: "+qci.toString());
 		if(dut != null){
@@ -485,8 +503,8 @@ public class TrafficAction extends Action {
 		
 		Parameter loadType = map.get("LoadType");
 		Parameter expectedType = map.get("ExpectedLoadType");
-		if(loadType != null && (LoadType.Calculator_Based == LoadType.valueOf(loadType.getValue().toString())
-				|| ExpectedType.Calculator_Based == ExpectedType.valueOf(expectedType.getValue().toString()))){
+		if((loadType!=null && LoadType.Calculator_Based == LoadType.valueOf(loadType.getValue().toString()))
+				|| ExpectedType.Calculator_Based == ExpectedType.valueOf(expectedType.getValue().toString())){
 			map.get("Dut").setVisible(true);
 		}else{
 			map.get("Dut").setValue(null);

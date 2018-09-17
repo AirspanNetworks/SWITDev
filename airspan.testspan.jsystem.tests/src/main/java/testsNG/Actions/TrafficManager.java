@@ -262,7 +262,7 @@ public class TrafficManager {
 				this.dlExpected = null;
 				this.ulExpected = null;
 			}
-		}else if(ExpectedType.Load_Based == type){
+		}/*else if(ExpectedType.Load_Based == type){
 			if(dlExpected != null){
 				this.dlExpected = Dload*Double.valueOf(dlExpected)/100.0;
 			}else{
@@ -273,7 +273,7 @@ public class TrafficManager {
 			}else{
 				this.ulExpected = null;
 			}
-		}
+		}*/
 	}
 	
 	private void setLoadPerStream(EnodeB enb, LoadType loadType, String dlLoad, String ulLoad) {

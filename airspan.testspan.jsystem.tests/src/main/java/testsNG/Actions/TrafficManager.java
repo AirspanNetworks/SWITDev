@@ -525,19 +525,15 @@ public class TrafficManager {
 
 	public void getTrafficStatistics(ArrayList<String> trafficToGetStatistics) {
 		if(trafficToGetStatistics.isEmpty()){
-			Iterator<TrafficSampler> iter = samplerList.iterator();
-			while(iter.hasNext()){
-				TrafficSampler ts = iter.next();
+			for(TrafficSampler ts:samplerList){
 				GeneralUtils.startLevel("Getting statistics for traffic "+ts.getName());
 				ts.getStatistics();
 				GeneralUtils.stopLevel();
 			}
 		}else{
-			for(String nameToStop : trafficToGetStatistics){
-				Iterator<TrafficSampler> iter = samplerList.iterator();
-				while(iter.hasNext()){
-					TrafficSampler ts = iter.next();
-					if(ts.getName().equals(nameToStop)){
+			for(String nameToGetStatistics : trafficToGetStatistics){
+				for(TrafficSampler ts:samplerList){
+					if(ts.getName().equals(nameToGetStatistics)){
 						GeneralUtils.startLevel("Getting statistics for traffic "+ts.getName());
 						ts.getStatistics();
 						GeneralUtils.stopLevel();

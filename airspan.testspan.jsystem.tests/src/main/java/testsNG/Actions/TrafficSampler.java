@@ -118,6 +118,10 @@ public class TrafficSampler implements Runnable{
 		trafficInstance.stopTraffic(streamList);
 	}
 	
+	public void removeStreams(){
+		trafficInstance.removeStreams(streamList);
+	}
+	
 	protected void printPerStreamTables(ArrayList<ArrayList<StreamParams>> listOfStreamList) {
 		StreamList TablePrinter = new StreamList();
 		ArrayList<String> headLines = new ArrayList<String>();

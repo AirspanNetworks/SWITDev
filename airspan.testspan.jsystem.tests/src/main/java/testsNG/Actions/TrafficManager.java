@@ -503,6 +503,7 @@ public class TrafficManager {
 				GeneralUtils.startLevel("Getting statistics and stopping traffic "+ts.getName());
 				ts.stopTraffic();
 				ts.getStatistics();
+				ts.removeStreams();
 				iter.remove();
 				GeneralUtils.stopLevel();
 			}		
@@ -515,6 +516,7 @@ public class TrafficManager {
 						GeneralUtils.startLevel("Getting statistics and stopping traffic "+ts.getName());
 						ts.stopTraffic();
 						ts.getStatistics();
+						ts.removeStreams();
 						iter.remove();
 						GeneralUtils.stopLevel();
 					}

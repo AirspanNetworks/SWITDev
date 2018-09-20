@@ -730,6 +730,13 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 	}
 	
 	@Override
+	public void removeStreams(ArrayList<String> streamList){
+		for(UEIPerf ueIPerf : allUEsIPerfList){
+			ueIPerf.removeStreams(streamList);
+		}
+	}
+	
+	@Override
 	public ArrayList<ArrayList<StreamParams>> getAllStreamsResults(ArrayList<String> streamList) {
 		ArrayList<ArrayList<StreamParams>> toReturn = new ArrayList<ArrayList<StreamParams>>();
 		for(UEIPerf ueIPerf : allUEsIPerfList){	

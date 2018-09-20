@@ -624,6 +624,24 @@ public class UEIPerf implements Runnable {
 		return "kill -9 ";
 	}
 	
+	public void removeStreams(ArrayList<String> streamList){
+		Iterator<IPerfStream> iter = dlStreamArrayList.iterator();
+		while(iter.hasNext()){
+			IPerfStream ips = iter.next();
+			if(streamList.contains(ips.getStreamName())){
+				iter.remove();
+			}
+		}
+		
+		iter = ulStreamArrayList.iterator();
+		while(iter.hasNext()){
+			IPerfStream ips = iter.next();
+			if(streamList.contains(ips.getStreamName())){
+				iter.remove();
+			}
+		}
+	}
+	
 	public void stopTraffic(ArrayList<String> streamList) {
 		String resultGrepDl = iperfMachineDL.sendCommand("ps -aux | grep iperf").getElement1();
 		GeneralUtils.unSafeSleep(2000);

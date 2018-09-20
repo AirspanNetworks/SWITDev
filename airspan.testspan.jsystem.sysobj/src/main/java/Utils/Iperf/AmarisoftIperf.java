@@ -35,13 +35,14 @@ public class AmarisoftIperf extends UEIPerf{
 	}
 
 	@Override
-	protected void runTrafficULClient() {
+	protected void runTrafficULClient(long startTime) {
 		if(iperfMachineUL != null){
 			for(IPerfStream ulIPerfStream : ulStreamArrayList){
 				if(ulIPerfStream.isActive() && !ulIPerfStream.isRunningTraffic()){
 					String linuxClientCommand = "echo 'sudo ip netns exec ue"+((AmarisoftUE)ue).ueId+" nohup iperf " + ulIPerfStream.getIperfClientCommand() + " &> "+ iperfMachineUL.getPreAddressTpFile() + ulIPerfStream.getClientOutputFileName() +" &' >> " + iperfMachineUL.getPreAddressTpFile() + "UL" + IPerf.clientSideCommandsFile;
 					iperfMachineUL.sendCommand(linuxClientCommand).getElement0();
 					ulIPerfStream.setRunningTraffic(true);
+					ulIPerfStream.setTimeStart(startTime);
 				}
 			}
 		}else{

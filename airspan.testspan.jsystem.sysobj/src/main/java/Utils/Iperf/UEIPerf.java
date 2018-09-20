@@ -78,8 +78,9 @@ public class UEIPerf implements Runnable {
 
 	public void run() {
 		try {
-			runTrafficUL();
-			runTrafficDL();
+			long startTime = System.currentTimeMillis();
+			runTrafficUL(startTime);
+			runTrafficDL(startTime);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -163,20 +164,20 @@ public class UEIPerf implements Runnable {
 		}
 	}
 
-	public void runTrafficUL() {
+	public void runTrafficUL(long startTime) {
 		/**It is critical to start to listen before transmitting traffic for TCP Packets!!!
 		   without it - it won't work! **/
 		startULListener();
-		runTrafficULClient();
+		runTrafficULClient(startTime);
 	}
 
-	protected void runTrafficULClient() {
+	protected void runTrafficULClient(long startTime) {
 		if(iperfMachineUL != null){
 			for(IPerfStream ulIPerfStream : ulStreamArrayList){
 				if(ulIPerfStream.isActive() && !ulIPerfStream.isRunningTraffic()){
 					iperfMachineUL.startIPerfTraffic(ulIPerfStream.getIperfClientCommand(), ulIPerfStream.getClientOutputFileName(), TransmitDirection.UL);
 					ulIPerfStream.setRunningTraffic(true);
-					ulIPerfStream.setTimeStart(System.currentTimeMillis());
+					ulIPerfStream.setTimeStart(startTime);
 				}
 			}
 		}else{
@@ -196,20 +197,20 @@ public class UEIPerf implements Runnable {
 		}
 	}
 
-	public void runTrafficDL() {
+	public void runTrafficDL(long startTime) {
 		/**It is critical to start to listen before transmitting traffic for TCP Packets!!!
 		   without it - it won't work! **/
 		startDLListener();
-		runTrafficDLClient();
+		runTrafficDLClient(startTime);
 	}
 
-	protected void runTrafficDLClient() {
+	protected void runTrafficDLClient(long startTime) {
 		if(iperfMachineDL != null){
 			for(IPerfStream dlIPerfStream : dlStreamArrayList){
 				if(dlIPerfStream.isActive() && !dlIPerfStream.isRunningTraffic()){
 					iperfMachineDL.startIPerfTraffic(dlIPerfStream.getIperfClientCommand(), dlIPerfStream.getClientOutputFileName(), TransmitDirection.DL);
 					dlIPerfStream.setRunningTraffic(true);
-					dlIPerfStream.setTimeStart(System.currentTimeMillis());
+					dlIPerfStream.setTimeStart(startTime);
 				}
 			}
 		}else{

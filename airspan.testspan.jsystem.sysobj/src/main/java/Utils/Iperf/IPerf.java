@@ -210,13 +210,13 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 
 	public void startTrafficDL() throws Exception {
 		for (UEIPerf ueIPerf : allUEsIPerfList) {
-			ueIPerf.runTrafficDL();
+			ueIPerf.runTrafficDL(System.currentTimeMillis());
 		}
 	}
 	
 	public void startTrafficUL() throws Exception{
 		for(UEIPerf ueIPerf : allUEsIPerfList){
-			ueIPerf.runTrafficUL();
+			ueIPerf.runTrafficUL(System.currentTimeMillis());
 		}
 	}
 	

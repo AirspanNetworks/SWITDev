@@ -42,7 +42,7 @@ public class AndroidIPerf extends UEIPerf {
 	}
 
 	@Override
-	public void runTrafficULClient() {
+	public void runTrafficULClient(long startTime) {
 		// Android support one iperf stream
 		this.ulIPerfStream = ulStreamArrayList.get(0);
 		boolean gotActiveStream = false;

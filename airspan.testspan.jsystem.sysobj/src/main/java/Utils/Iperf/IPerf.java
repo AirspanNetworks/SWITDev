@@ -183,14 +183,8 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		iperfMachineUL.sendCommand("echo '' >> " + dlServerCommandsFile);
 		iperfMachineUL.sendCommand("echo '' >> " + ulclientCommandsFile);*/
 		
-		GeneralUtils.unSafeSleep(10000);
-		iperfMachineDL.sendCommand("cat " + ulServerCommandsFile);
-		//GeneralUtils.unSafeSleep(2000);
-		iperfMachineDL.sendCommand(ulServerCommandsFile);
-		//GeneralUtils.unSafeSleep(2000);
-		iperfMachineUL.sendCommand("cat " + dlServerCommandsFile);
-		//GeneralUtils.unSafeSleep(2000);
-		iperfMachineUL.sendCommand(dlServerCommandsFile);
+		GeneralUtils.unSafeSleep(2000);
+		
 		//GeneralUtils.unSafeSleep(2000);
 		iperfMachineDL.sendCommand("cat " + dlclientCommandsFile);
 		//GeneralUtils.unSafeSleep(2000);
@@ -199,8 +193,15 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		iperfMachineUL.sendCommand("cat " + ulclientCommandsFile);
 		//GeneralUtils.unSafeSleep(2000);
 		iperfMachineUL.sendCommand(ulclientCommandsFile);
+		GeneralUtils.unSafeSleep(10000);
+		iperfMachineDL.sendCommand("cat " + ulServerCommandsFile);
+		//GeneralUtils.unSafeSleep(2000);
+		iperfMachineDL.sendCommand(ulServerCommandsFile);
+		//GeneralUtils.unSafeSleep(2000);
+		iperfMachineUL.sendCommand("cat " + dlServerCommandsFile);
+		//GeneralUtils.unSafeSleep(2000);
+		iperfMachineUL.sendCommand(dlServerCommandsFile);
 		GeneralUtils.unSafeSleep(2000);
-
 		iperfMachineDL.sendCommand("ps -aux | grep iperf");
 		GeneralUtils.unSafeSleep(2000);
 		iperfMachineUL.sendCommand("ps -aux | grep iperf");

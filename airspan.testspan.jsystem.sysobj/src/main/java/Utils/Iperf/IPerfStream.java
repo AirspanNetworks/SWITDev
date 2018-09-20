@@ -67,7 +67,7 @@ public class IPerfStream {
 	
 	void generateIPerfCommands(){
 		if(!isRunningTraffic()){
-			String runTimeTraffic = (runTime != null ? String.valueOf(runTime):UEIPerf.IPERF_TIME_LIMIT);
+			String runTimeTraffic = (runTime != null ? String.valueOf(runTime+10):UEIPerf.IPERF_TIME_LIMIT);
 
 			if(this.protocol == Protocol.UDP){
 				this.iperfClientCommand = "-c " + this.destIpAddress + " -u -i 1 -p " + (5000+this.qci) + " -l " + this.frameSize + ".0B -b " + convertTo3DigitsAfterPoint(this.streamLoad) + "M -t " + runTimeTraffic;

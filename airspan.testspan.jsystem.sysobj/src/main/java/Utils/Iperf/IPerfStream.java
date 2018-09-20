@@ -71,7 +71,7 @@ public class IPerfStream {
 
 			if(this.protocol == Protocol.UDP){
 				this.iperfClientCommand = "-c " + this.destIpAddress + " -u -i 1 -p " + (5000+this.qci) + " -l " + this.frameSize + ".0B -b " + convertTo3DigitsAfterPoint(this.streamLoad) + "M -t " + runTimeTraffic;
-				this.iperfServerCommand = "-s -u -i 1 -p " + (5000+this.qci) + " -B " + this.srcIpAddress + " -l " + this.frameSize + ".0B -f k";
+				this.iperfServerCommand = "-s -u -i 1 -p " + (5000+this.qci) + " -B " + this.srcIpAddress + " -l " + this.frameSize + ".0B -f k -t"+ runTimeTraffic;
 			}else if(this.protocol == Protocol.TCP){
 				this.iperfClientCommand = "-c " + this.destIpAddress + " ";
 				this.iperfServerCommand = "-s ";
@@ -91,7 +91,7 @@ public class IPerfStream {
 					this.iperfServerCommand += " -M "+this.frameSize;
 				}
 				this.iperfClientCommand += " -t " + runTimeTraffic;
-				this.iperfServerCommand += " -f k";
+				this.iperfServerCommand += " -f k -t "+ runTimeTraffic;
 			}else{
 				GeneralUtils.printToConsole("Protocol NOT UDP and NOT TCP - FAILURE");
 			}

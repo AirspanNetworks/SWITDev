@@ -682,9 +682,8 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		}
 	}
 
-
 	@Override
-	public void stopTraffic(ArrayList<String> streamList) {
+	public void getResultFilesByList(ArrayList<String> streamList) {
 		ArrayList<File> resultFiles = new ArrayList<File>();
 		for(UEIPerf ueIPerf : allUEsIPerfList){
 			resultFiles.addAll(ueIPerf.getResultFiles(streamList));
@@ -721,6 +720,10 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 			}
 			GeneralUtils.stopLevel();
 		}
+	}
+	
+	@Override
+	public void stopTraffic(ArrayList<String> streamList) {
 		for(UEIPerf ueIPerf : allUEsIPerfList){
 			ueIPerf.stopTraffic(streamList);
 		}

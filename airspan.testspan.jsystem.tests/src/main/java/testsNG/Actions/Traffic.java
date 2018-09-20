@@ -1849,6 +1849,10 @@ public class Traffic {
 		return true;
 	}
 
+	public void getResultFilesByList(ArrayList<String> streamList){
+		trafficGenerator.getResultFilesByList(streamList);
+	}
+	
 	public void stopTraffic(ArrayList<String> streamList) {
 		trafficGenerator.stopTraffic(streamList);
 	}

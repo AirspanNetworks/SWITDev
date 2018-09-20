@@ -671,7 +671,6 @@ public class UEIPerf implements Runnable {
 				}else{					
 					commandToKillDl += process;
 				}
-				iter.remove();
 			}
 		}
 		
@@ -697,7 +696,6 @@ public class UEIPerf implements Runnable {
 				}else{
 					commandToKillUl += process;					
 				}
-				iter.remove();
 			}
 		}
 		iperfMachineDL.sendCommand(commandToKillDl);

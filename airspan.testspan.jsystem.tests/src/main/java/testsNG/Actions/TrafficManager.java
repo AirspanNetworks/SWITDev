@@ -501,8 +501,8 @@ public class TrafficManager {
 			while(iter.hasNext()){
 				TrafficSampler ts = iter.next();
 				GeneralUtils.startLevel("Getting statistics and stopping traffic "+ts.getName());
-				ts.getStatistics();
 				ts.stopTraffic();
+				ts.getStatistics();
 				iter.remove();
 				GeneralUtils.stopLevel();
 			}		
@@ -513,8 +513,8 @@ public class TrafficManager {
 					TrafficSampler ts = iter.next();
 					if(ts.getName().equals(nameToStop)){
 						GeneralUtils.startLevel("Getting statistics and stopping traffic "+ts.getName());
-						ts.getStatistics();
 						ts.stopTraffic();
+						ts.getStatistics();
 						iter.remove();
 						GeneralUtils.stopLevel();
 					}

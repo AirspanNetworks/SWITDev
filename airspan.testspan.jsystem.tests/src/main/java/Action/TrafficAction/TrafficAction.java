@@ -46,6 +46,16 @@ public class TrafficAction extends Action {
 	private String DLExpected = null;
 	private String semanticName = null;
 	private ArrayList<String> trafficToStop = null;
+	private ArrayList<String> trafficToGetStatistics = null;
+
+	public ArrayList<String> getTrafficToGetStatistics() {
+		return trafficToGetStatistics;
+	}
+
+	@ParameterProperties(description = "Traffic names to get statistics, separated by comma. Leave empty to get all traffics statistics")
+	public void setTrafficToGetStatistics(ArrayList<String> trafficToGetStatistics) {
+		this.trafficToGetStatistics = trafficToGetStatistics;
+	}
 
 	public ArrayList<String> getTrafficToStop() {
 		return trafficToStop;
@@ -296,10 +306,17 @@ public class TrafficAction extends Action {
 	}
 
 	// @Test // 5
-	@TestProperties(name = "Get Traffic Statistics", returnParam = "LastStatus", paramsInclude = { "" })
+	@TestProperties(name = "Get Traffic Statistics", returnParam = "LastStatus", paramsInclude = { "TrafficToGetStatistics" })
 	public void getTrafficStatistics() {
-		report.report("Get Traffic Statistics");
-		// TODO
+		trafficManagerInstance = TrafficManager.getInstance(null);
+		if(trafficManagerInstance == null){
+			report.report("Failed to init traffic manager instance",Reporter.FAIL);
+			return;
+		}
+		if(trafficToGetStatistics == null){
+			trafficToGetStatistics = new ArrayList<String>();
+		}
+		trafficManagerInstance.getTrafficStatistics(trafficToGetStatistics);
 	}
 	
 	@Test

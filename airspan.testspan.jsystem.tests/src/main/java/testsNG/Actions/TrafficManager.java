@@ -506,18 +506,43 @@ public class TrafficManager {
 				iter.remove();
 				GeneralUtils.stopLevel();
 			}		
+		}else{
+			for(String nameToStop : trafficToStop){
+				Iterator<TrafficSampler> iter = samplerList.iterator();
+				while(iter.hasNext()){
+					TrafficSampler ts = iter.next();
+					if(ts.getName().equals(nameToStop)){
+						GeneralUtils.startLevel("Getting statistics and stopping traffic "+ts.getName());
+						ts.getStatistics();
+						ts.stopTraffic();
+						iter.remove();
+						GeneralUtils.stopLevel();
+					}
+				}			
+			}			
 		}
-		for(String nameToStop : trafficToStop){
+	}
+
+	public void getTrafficStatistics(ArrayList<String> trafficToGetStatistics) {
+		if(trafficToGetStatistics.isEmpty()){
 			Iterator<TrafficSampler> iter = samplerList.iterator();
 			while(iter.hasNext()){
 				TrafficSampler ts = iter.next();
-				if(ts.getName().equals(nameToStop)){
-					GeneralUtils.startLevel("Getting statistics and stopping traffic "+ts.getName());
-					ts.getStatistics();
-					ts.stopTraffic();
-					iter.remove();
-					GeneralUtils.stopLevel();
-				}
+				GeneralUtils.startLevel("Getting statistics for traffic "+ts.getName());
+				ts.getStatistics();
+				GeneralUtils.stopLevel();
+			}
+		}else{
+			for(String nameToStop : trafficToGetStatistics){
+				Iterator<TrafficSampler> iter = samplerList.iterator();
+				while(iter.hasNext()){
+					TrafficSampler ts = iter.next();
+					if(ts.getName().equals(nameToStop)){
+						GeneralUtils.startLevel("Getting statistics for traffic "+ts.getName());
+						ts.getStatistics();
+						GeneralUtils.stopLevel();
+					}
+				}			
 			}			
 		}
 	}

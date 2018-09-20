@@ -305,7 +305,7 @@ public class TrafficAction extends Action {
 		}
 	}
 
-	// @Test // 5
+	@Test
 	@TestProperties(name = "Get Traffic Statistics", returnParam = "LastStatus", paramsInclude = { "TrafficToGetStatistics" })
 	public void getTrafficStatistics() {
 		trafficManagerInstance = TrafficManager.getInstance(null);

@@ -236,28 +236,13 @@ public class UeSimulatorActions extends Action {
 	}
 	
 	@Test											
-	@TestProperties(name = "delete UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = { "UeId", "IMSI", "UEs", "SelectionMethod", "NumUes", "GroupName"})
+	@TestProperties(name = "delete UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = { "UeId", "IMSI", "UEs", "UesOptions", "NumUes", "GroupName"})
 	public void deleteUes() {
 		boolean res = true;
 
 		try {
 			AmariSoftServer amariSoftServer = AmariSoftServer.getInstance();
-			int id;
-			switch (selectionMethod) {
-			case IMSI:
-				id = amariSoftServer.getUeId(IMSI);
-				res = amariSoftServer.uePowerOn(id);
-				break;
-
-			case UEID:
-				res = amariSoftServer.uePowerOn(ueId);
-				break;
-
-			case UENAME:
-				for (UE ue : ues) {
-					res &= ue.start();
-				}	
-				break;
+			switch (uesOptions) {
 			case AMOUNT:
 				amariSoftServer.deleteUes(numUes);
 				break;
@@ -362,31 +347,21 @@ public class UeSimulatorActions extends Action {
 	}
 	
 	@Test											
-	@TestProperties(name = "start UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = { "UeId", "IMSI", "UEs", "SelectionMethod","GroupName"})
+	@TestProperties(name = "start UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = { "UeId", "IMSI", "UEs", "UesOptions","GroupName"})
 	public void startUes() {
 		boolean res = true;
 
 		try {
 			AmariSoftServer amariSoftServer = AmariSoftServer.getInstance();
 			int id;
-			switch (selectionMethod) {
-			case IMSI:
-				id = amariSoftServer.getUeId(IMSI);
-				res = amariSoftServer.uePowerOn(id);
-				break;
-
-			case UEID:
-				res = amariSoftServer.uePowerOn(ueId);
-				break;
-
-			case UENAME:
-				for (UE ue : ues) {
-					res &= ue.start();
-				}				
+			switch (uesOptions) {
+			case AMOUNT:
 				break;
 			case GROUPNAME:
 				startUE(groupName);
+				break;
 			}
+			
 			//need to add verification for IP address from amarisoft server
 		} catch (Exception e) {
 			res = false;
@@ -423,27 +398,13 @@ public class UeSimulatorActions extends Action {
 	}
 	
 	@Test											
-	@TestProperties(name = "stop UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = { "UeId", "IMSI", "UEs", "SelectionMethod","GroupName" })
+	@TestProperties(name = "stop UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = { "UeId", "IMSI", "UEs", "UesOptions","GroupName" })
 	public void stopUes() {
 		boolean res = true;
 
 		try {
-			AmariSoftServer amariSoftServer = AmariSoftServer.getInstance();
-			int id;
-			switch (selectionMethod) {
-			case IMSI:
-				id = amariSoftServer.getUeId(IMSI);
-				res = amariSoftServer.uePowerOff(id);
-				break;
-
-			case UEID:
-				res = amariSoftServer.uePowerOff(ueId);
-				break;
-
-			case UENAME:
-				for (UE ue : ues) {
-					res &= ue.stop();
-				}				
+			switch (uesOptions) {
+			case AMOUNT:
 				break;
 			case GROUPNAME:
 				stopUes(groupName);			

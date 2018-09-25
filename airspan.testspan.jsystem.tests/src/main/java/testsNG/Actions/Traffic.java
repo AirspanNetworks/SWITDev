@@ -354,8 +354,8 @@ public class Traffic {
 	}
 	
 	public void initStreams(Protocol protocol, ArrayList<String> ues, ArrayList<Character> qciListAllowdInTest,
-			TransmitDirection transmitDirection,Integer runTime) throws Exception{
-		trafficGenerator.initStreams(protocol, ues, qciListAllowdInTest, transmitDirection,runTime);
+			TransmitDirection transmitDirection,Integer runTime, boolean resetStreams) throws Exception{
+		trafficGenerator.initStreams(protocol, ues, qciListAllowdInTest, transmitDirection,runTime, resetStreams);
 	}
 	
 	public boolean startTraffic(TrafficCapacity capacity) throws Exception {
@@ -1822,6 +1822,10 @@ public class Traffic {
 		}
 	}
 	
+	public void resetIperfList(){
+		trafficGenerator.resetIperfList();
+	}
+	
 	public ArrayList<UE> getUES(EnodeB enb){
 		ArrayList<UE> staticUES = SetupUtils.getInstance().getStaticUEs(enb);
 		ArrayList<UE> dynamicUES = SetupUtils.getInstance().getDynamicUEs();
@@ -1863,5 +1867,10 @@ public class Traffic {
 	
 	public ArrayList<ArrayList<StreamParams>> getAllStreamsResults(ArrayList<String> streamList) {
 		return trafficGenerator.getAllStreamsResults(streamList);
+	}
+
+	public ArrayList<ArrayList<StreamParams>> getResultsAfterTest(
+			ArrayList<ArrayList<StreamParams>> listOfStreamList2) {
+		return trafficGenerator.getResultsAfterTest(listOfStreamList2);
 	}
 }

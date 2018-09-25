@@ -33,6 +33,8 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 	 */
 	public static String clientSideCommandsFile = "clientSide.txt";
 	public static String serverSideCommandsFile = "serverSide.txt";
+	public static String commandsUl;
+	public static String commandsDl;
 	
 	private double ulPortLoad = 10;
 	private double dlPortLoad = 70;
@@ -103,12 +105,14 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 
 	@Override
 	public void initStreams(Protocol protocol, ArrayList<String> ues, ArrayList<Character> qciListAllowdInTest,
-			TransmitDirection transmitDirection,Integer runTime) throws Exception{
+			TransmitDirection transmitDirection,Integer runTime, boolean resetStreams) throws Exception{
 		if(tpDlCountersFileNames != null){
 			tpDlCountersFileNames = "";
 			tpUlCountersFileNames = "";			
 		}
-		allUEsIPerfList = new ArrayList<UEIPerf>();
+		if(resetStreams){
+			allUEsIPerfList = new ArrayList<UEIPerf>();			
+		}
 		for(UE ue:this.ues){
 			String ueName = "UE" + ue.getName().replaceAll("\\D+", "").trim();
 			if(ues.contains(ueName)){
@@ -126,39 +130,6 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 			}
 		}
 		updateConfigFile();
-		
-		
-		
-		
-		/*ArrayList<Character> qciList = new ArrayList<Character>();
-		tpDlCountersFileNames = "";
-		tpUlCountersFileNames = "";
-		qciList.add('9');
-		qciList.add('8');
-		qciList.add('7');
-		qciList.add('6');
-		qciList.add('5');
-		qciList.add('4');
-		qciList.add('3');
-		qciList.add('2');
-		qciList.add('1');
-		allUEsIPerfList.clear();
-		if(ues != null){
-			for(UE ue : ues){
-				UEIPerf ueIPerf = null;
-				if(ue instanceof AmarisoftUE){
-					ueIPerf = new AmarisoftIperf((AmarisoftUE)ue, iperfMachineDL, iperfMachineUL, ulPortLoad/ues.size(), dlPortLoad/ues.size(), frameSize, qciList);
-				}else if(ue instanceof AndroidUE){
-					ueIPerf = new AndroidIPerf((AndroidUE)ue, iperfMachineDL, iperfMachineUL, ulPortLoad/ues.size(), dlPortLoad/ues.size(), frameSize, qciList);
-				}else{
-					ueIPerf = new UEIPerf(ue, iperfMachineDL, iperfMachineUL, ulPortLoad/ues.size(), dlPortLoad/ues.size(), frameSize, qciList);
-					tpDlCountersFileNames += (" " + ueIPerf.getDlActiveStreamFileNames());
-					tpUlCountersFileNames += (" " + ueIPerf.getUlActiveStreamFileNames());
-				}
-				this.allUEsIPerfList.add(ueIPerf);
-			}
-		}
-		updateConfigFile();*/
 	}
 	
 	public void startTraffic() throws Exception {
@@ -174,42 +145,52 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		iperfMachineUL.sendCommand("echo '' > " + dlServerCommandsFile + " ; chmod +x " + dlServerCommandsFile);
 		iperfMachineUL.sendCommand("echo '' > " + ulclientCommandsFile + " ; chmod +x " + ulclientCommandsFile);
 
+		
+		commandsUl = "";
+		commandsDl = "";
+
+		Protocol pro = getProtocol();
 		for (UEIPerf ueIPerf : allUEsIPerfList) {
 			exe.execute(ueIPerf);
+			GeneralUtils.unSafeSleep(100);
 		}
 		
-		/*iperfMachineDL.sendCommand("echo '' >> " + ulServerCommandsFile);
-		iperfMachineDL.sendCommand("echo '' >> " + dlclientCommandsFile);
-		iperfMachineUL.sendCommand("echo '' >> " + dlServerCommandsFile);
-		iperfMachineUL.sendCommand("echo '' >> " + ulclientCommandsFile);*/
+		GeneralUtils.printToConsole("DL:" + commandsDl);
+		iperfMachineDL.sendCommand(commandsDl);
+		GeneralUtils.printToConsole("UL:" + commandsUl);
+		iperfMachineUL.sendCommand(commandsUl);
 		
-		GeneralUtils.unSafeSleep(5000);
+		GeneralUtils.unSafeSleep(1000);
 		
-		//GeneralUtils.unSafeSleep(2000);
-		iperfMachineDL.sendCommand("cat " + dlclientCommandsFile);
-		//GeneralUtils.unSafeSleep(2000);
-		iperfMachineDL.sendCommand(dlclientCommandsFile);
-		//GeneralUtils.unSafeSleep(2000);
-		iperfMachineUL.sendCommand("cat " + ulclientCommandsFile);
-		//GeneralUtils.unSafeSleep(2000);
-		iperfMachineUL.sendCommand(ulclientCommandsFile);
-		GeneralUtils.unSafeSleep(10000);
-		iperfMachineDL.sendCommand("cat " + ulServerCommandsFile);
-		//GeneralUtils.unSafeSleep(2000);
-		iperfMachineDL.sendCommand(ulServerCommandsFile);
-		//GeneralUtils.unSafeSleep(2000);
-		iperfMachineUL.sendCommand("cat " + dlServerCommandsFile);
-		//GeneralUtils.unSafeSleep(2000);
-		iperfMachineUL.sendCommand(dlServerCommandsFile);
+		if(pro == Protocol.TCP){
+			iperfMachineDL.sendCommand("cat " + ulServerCommandsFile);
+			iperfMachineDL.sendCommand(ulServerCommandsFile);
+			iperfMachineUL.sendCommand("cat " + dlServerCommandsFile);
+			iperfMachineUL.sendCommand(dlServerCommandsFile);
+			GeneralUtils.unSafeSleep(1000);
+			iperfMachineDL.sendCommand("cat " + dlclientCommandsFile);
+			iperfMachineDL.sendCommand(dlclientCommandsFile);
+			iperfMachineUL.sendCommand("cat " + ulclientCommandsFile);
+			iperfMachineUL.sendCommand(ulclientCommandsFile);
+		}else{
+			iperfMachineDL.sendCommand("cat " + dlclientCommandsFile);
+			iperfMachineDL.sendCommand(dlclientCommandsFile);
+			iperfMachineUL.sendCommand("cat " + ulclientCommandsFile);
+			iperfMachineUL.sendCommand(ulclientCommandsFile);
+			GeneralUtils.unSafeSleep(10000);
+			iperfMachineDL.sendCommand("cat " + ulServerCommandsFile);
+			iperfMachineDL.sendCommand(ulServerCommandsFile);
+			iperfMachineUL.sendCommand("cat " + dlServerCommandsFile);
+			iperfMachineUL.sendCommand(dlServerCommandsFile);
+		}
+		
 		GeneralUtils.unSafeSleep(2000);
 		iperfMachineDL.sendCommand("ps -aux | grep iperf");
 		GeneralUtils.unSafeSleep(2000);
 		iperfMachineUL.sendCommand("ps -aux | grep iperf");
-
-		GeneralUtils.unSafeSleep(20000);
 	}
 
-	public void startTrafficDL() throws Exception {
+	/*public void startTrafficDL() throws Exception {
 		for (UEIPerf ueIPerf : allUEsIPerfList) {
 			ueIPerf.runTrafficDL(System.currentTimeMillis());
 		}
@@ -219,8 +200,20 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		for(UEIPerf ueIPerf : allUEsIPerfList){
 			ueIPerf.runTrafficUL(System.currentTimeMillis());
 		}
-	}
+	}*/
 	
+	private Protocol getProtocol() {
+		Protocol pro = Protocol.UDP;
+		for(UEIPerf ueIPerf : allUEsIPerfList){
+			pro = ueIPerf.getProtocolToStart();
+			if(pro != null){
+				return pro;
+			}
+		}
+		return pro;
+	}
+
+
 	public void stopTraffic() throws Exception{
 		for(UEIPerf ueIPerf : allUEsIPerfList){
 			if (ueIPerf instanceof AndroidIPerf) {				
@@ -336,12 +329,12 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 	@Override
 	public void readAllCounters(){
 		//From DL Machine getting UL counters & From UL Machine getting DL counters 
-		String ulCountersStr = iperfMachineDL == null ? "" : iperfMachineDL.getStrCounters(tpUlCountersFileNames);
+		/*String ulCountersStr = iperfMachineDL == null ? "" : iperfMachineDL.getStrCounters(tpUlCountersFileNames);
 		String dlCountersStr = iperfMachineUL == null ? "" :iperfMachineUL.getStrCounters(tpDlCountersFileNames);
 		
 		for(UEIPerf ueIPerf : allUEsIPerfList){
 			ueIPerf.updateCounters(ulCountersStr, dlCountersStr);
-		}
+		}*/
 	}
 
 	@Override
@@ -441,7 +434,7 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 	public ArrayList<ArrayList<StreamParams>> getActiveStreamCurrentSample(ArrayList<CounterUnit> counterUnitList,
 			TransmitDirection transmitDirection) {
 		ArrayList<ArrayList<StreamParams>> sampleArrayList = new ArrayList<ArrayList<StreamParams>>();
-		ArrayList<ArrayList<StreamParams>> ueSampleArrayList = new ArrayList<ArrayList<StreamParams>>();
+		/*ArrayList<ArrayList<StreamParams>> ueSampleArrayList = new ArrayList<ArrayList<StreamParams>>();
 		int minNumberOfSamples = IPerfMachine.getMinNumberOfSamples();
 		for(int i = 1; i <= minNumberOfSamples; i++){
 			sampleArrayList.add(new ArrayList<StreamParams>());
@@ -470,7 +463,7 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		}
 		GeneralUtils.printToConsole("IPerfMachine.minNumberOfSamples="+minNumberOfSamples);
 		//Initial minNumberOfSamples for trying to get max number of samples in the next round.
-		IPerfMachine.setMinNumberOfSamples(10);
+		IPerfMachine.setMinNumberOfSamples(10);*/
 		return sampleArrayList;
 	}
 	
@@ -742,6 +735,25 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		ArrayList<ArrayList<StreamParams>> toReturn = new ArrayList<ArrayList<StreamParams>>();
 		for(UEIPerf ueIPerf : allUEsIPerfList){	
 			ArrayList<ArrayList<StreamParams>> temp = ueIPerf.getAllStreamsResults(streamList);
+			for(int index=0;index<temp.size();index++){
+				try{
+					toReturn.get(index);
+				}catch(Exception e){
+					toReturn.add(new ArrayList<StreamParams>());
+				}
+				toReturn.get(index).addAll(temp.get(index));
+			}
+		}
+		return toReturn;
+	}
+
+
+	@Override
+	public ArrayList<ArrayList<StreamParams>> getResultsAfterTest(
+			ArrayList<ArrayList<StreamParams>> listOfStreamList2) {
+		ArrayList<ArrayList<StreamParams>> toReturn = new ArrayList<ArrayList<StreamParams>>();
+		for(UEIPerf ueIPerf : allUEsIPerfList){	
+			ArrayList<ArrayList<StreamParams>> temp = ueIPerf.getResultsAfterTest();
 			for(int index=0;index<temp.size();index++){
 				try{
 					toReturn.get(index);

@@ -31,14 +31,14 @@ public abstract class IPerfWindowsMachine extends IPerfMachine{
 	}
 
 	@Override
-	public boolean startIPerfTraffic(String clientCommand, String tpFileName, TransmitDirection transmitDirection){
+	public String startIPerfTraffic(String clientCommand, String tpFileName, TransmitDirection transmitDirection){
 		clientCommand = "iperf " + clientCommand;
-		sendCommand(clientCommand);
-		return true;
+		//sendCommand(clientCommand);
+		return clientCommand;
 	}
 	
 	@Override
-	public boolean startIPerfListener(Integer numberOfParallelIPerfStreams, String serverCommand, String tpFileName, TransmitDirection transmitDirection) {
+	public String startIPerfListener(Integer numberOfParallelIPerfStreams, String serverCommand, String tpFileName, TransmitDirection transmitDirection) {
 		lastReadedLine = "";
 		serverCommand = "iperf " + serverCommand;
 		String windowsServerCommand = serverCommand + " > " + preAddressTpFile + tpFileName;
@@ -47,7 +47,8 @@ public abstract class IPerfWindowsMachine extends IPerfMachine{
 		}else{
 			windowsServerCommand = serverCommand + " > " + preAddressTpFile + tpFileName;
 		}
-		return sendCommand(windowsServerCommand).getElement0();
+		//return sendCommand(windowsServerCommand).getElement0();
+		return windowsServerCommand;
 	}
 
 	@Override

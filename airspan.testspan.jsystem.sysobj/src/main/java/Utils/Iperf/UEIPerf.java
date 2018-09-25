@@ -175,7 +175,7 @@ public class UEIPerf implements Runnable {
 		if(iperfMachineUL != null){
 			for(IPerfStream ulIPerfStream : ulStreamArrayList){
 				if(ulIPerfStream.isActive() && !ulIPerfStream.isRunningTraffic()){
-					iperfMachineUL.startIPerfTraffic(ulIPerfStream.getIperfClientCommand(), ulIPerfStream.getClientOutputFileName(), TransmitDirection.UL);
+					IPerf.commandsUl += iperfMachineUL.startIPerfTraffic(ulIPerfStream.getIperfClientCommand(), ulIPerfStream.getClientOutputFileName(), TransmitDirection.UL)+"\n";
 					ulIPerfStream.setRunningTraffic(true);
 					ulIPerfStream.setTimeStart(startTime);
 				}
@@ -189,7 +189,7 @@ public class UEIPerf implements Runnable {
 		if(iperfMachineDL != null){
 			for(IPerfStream ulIPerfStream : ulStreamArrayList){
 				if(ulIPerfStream.isActive() && !ulIPerfStream.isRunningTraffic()){
-					iperfMachineDL.startIPerfListener(ulIPerfStream.getNumberOfParallelIPerfStreams(), ulIPerfStream.getIperfServerCommand(), ulIPerfStream.getTpFileName(), TransmitDirection.UL);
+					IPerf.commandsDl += iperfMachineDL.startIPerfListener(ulIPerfStream.getNumberOfParallelIPerfStreams(), ulIPerfStream.getIperfServerCommand(), ulIPerfStream.getTpFileName(), TransmitDirection.UL)+"\n";
 				}
 			}
 		}else{
@@ -208,7 +208,7 @@ public class UEIPerf implements Runnable {
 		if(iperfMachineDL != null){
 			for(IPerfStream dlIPerfStream : dlStreamArrayList){
 				if(dlIPerfStream.isActive() && !dlIPerfStream.isRunningTraffic()){
-					iperfMachineDL.startIPerfTraffic(dlIPerfStream.getIperfClientCommand(), dlIPerfStream.getClientOutputFileName(), TransmitDirection.DL);
+					IPerf.commandsDl += iperfMachineDL.startIPerfTraffic(dlIPerfStream.getIperfClientCommand(), dlIPerfStream.getClientOutputFileName(), TransmitDirection.DL)+"\n";
 					dlIPerfStream.setRunningTraffic(true);
 					dlIPerfStream.setTimeStart(startTime);
 				}
@@ -222,7 +222,7 @@ public class UEIPerf implements Runnable {
 		if(iperfMachineUL != null){
 			for(IPerfStream dlIPerfStream : dlStreamArrayList){
 				if(dlIPerfStream.isActive() && !dlIPerfStream.isRunningTraffic()){
-					iperfMachineUL.startIPerfListener(dlIPerfStream.getNumberOfParallelIPerfStreams(), dlIPerfStream.getIperfServerCommand(), dlIPerfStream.getTpFileName(), TransmitDirection.DL);
+					IPerf.commandsUl += iperfMachineUL.startIPerfListener(dlIPerfStream.getNumberOfParallelIPerfStreams(), dlIPerfStream.getIperfServerCommand(), dlIPerfStream.getTpFileName(), TransmitDirection.DL)+"\n";
 				}
 			}
 		}else{
@@ -844,6 +844,35 @@ public class UEIPerf implements Runnable {
 			}	
 		}
 		return resultFiles;
+	}
+
+	public Protocol getProtocolToStart() {
+		if(iperfMachineUL != null){
+			for(IPerfStream ulIPerfStream : ulStreamArrayList){
+				if(ulIPerfStream.isActive && !ulIPerfStream.isRunningTraffic()){
+					return ulIPerfStream.getProtocol();
+				}
+			}
+		}
+		if(iperfMachineDL != null){
+			for(IPerfStream dlIPerfStream : dlStreamArrayList){
+				if(dlIPerfStream.isActive && !dlIPerfStream.isRunningTraffic()){
+					return dlIPerfStream.getProtocol();
+				}
+			}	
+		}
+		return null;
+	}
+
+	public ArrayList<ArrayList<StreamParams>> getResultsAfterTest() {
+		ArrayList<ArrayList<StreamParams>> toReturn = new ArrayList<ArrayList<StreamParams>>();
+		for(IPerfStream ips : dlStreamArrayList){
+			toReturn = extractStatisticsFromFile(ips,toReturn);
+		}
+		for(IPerfStream ips : ulStreamArrayList){
+			toReturn = extractStatisticsFromFile(ips,toReturn);
+		}
+		return toReturn;
 	}
 
 

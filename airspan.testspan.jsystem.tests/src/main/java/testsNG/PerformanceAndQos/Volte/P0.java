@@ -1405,7 +1405,7 @@ public class P0 extends TPTBase{
 		return ret;
 	}
 	
-	private boolean checkForHalt() {
+	/*private boolean checkForHalt() {
 		long thresh = 0;
 		for (StreamParams stream : streams) {
 			thresh = HALT_STREAM_PARAM;
@@ -1418,7 +1418,7 @@ public class P0 extends TPTBase{
 			}
 		}
 		return false;
-	}
+	}*/
 	
 	protected ArrayList<StreamParams> checkStreamsForHalter() {
 		ArrayList<StreamParams> haltedStreams = new ArrayList<StreamParams>();
@@ -1460,13 +1460,13 @@ public class P0 extends TPTBase{
 	@Override
 	public void sampleResultsStatusOk() {
 		restartTime = false;
-		ArrayList<StreamParams> haltedStreams = null;
+		//ArrayList<StreamParams> haltedStreams = null;
 		ArrayList<StreamParams> sampleArrayList = null;
 		try {
 			sampleAllCounters();
 			sampleArrayList = getTPTCounters();
 			streams.addAll(sampleArrayList);
-			GeneralUtils.startLevel("Checking for HaltStream");
+			/*GeneralUtils.startLevel("Checking for HaltStream");
 			if (checkForHalt()) {
 				streams = null;
 				streams = new ArrayList<StreamParams>();
@@ -1528,7 +1528,7 @@ public class P0 extends TPTBase{
 			} else {
 				getCounters();
 				report.report("No halt stream");
-			}
+			}*/
 
 		} catch (Exception e) {
 			report.report("Interrupted in SamepleResultsStatusOk method in Traffic Class - " + e.getMessage());

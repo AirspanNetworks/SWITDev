@@ -33,10 +33,9 @@ public class TrafficManager {
 	private GeneratorType trafficType = null;
 	private static ArrayList<TrafficSampler> samplerList; 
 	private volatile Traffic trafficInstance;
-	
+	private boolean firstTraffic = true;
 	
 	private static TrafficManager instance;
-	//private ArrayList<StreamParams> streams = new ArrayList<StreamParams>();
 	private Double loadStreamDl;
 	private Double loadStreamUl;
 	
@@ -100,8 +99,12 @@ public class TrafficManager {
 				return;
 			}
 		}
+		if(firstTraffic){
+			trafficInstance.resetIperfList();
+			firstTraffic = false;
+		}
 		try {
-			trafficInstance.initStreams(protocol, ueList, qci, direction, timeout);
+			trafficInstance.initStreams(protocol, ueList, qci, direction, timeout,false);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -266,18 +269,7 @@ public class TrafficManager {
 				this.dlExpected = null;
 				this.ulExpected = null;
 			}
-		}/*else if(ExpectedType.Load_Based == type){
-			if(dlExpected != null){
-				this.dlExpected = Dload*Double.valueOf(dlExpected)/100.0;
-			}else{
-				this.dlExpected = null;
-			}
-			if(ulExpected != null){
-				this.ulExpected = Uload*Double.valueOf(ulExpected)/100.0;
-			}else{
-				this.ulExpected = null;
-			}
-		}*/
+		}
 	}
 	
 	private void setLoadPerStream(EnodeB enb, LoadType loadType, String dlLoad, String ulLoad) {
@@ -497,11 +489,19 @@ public class TrafficManager {
 
 	public void stopTraffic(ArrayList<String> trafficToStop) {
 		if(trafficToStop.isEmpty()){
+			/*Iterator<TrafficSampler> iter = samplerList.iterator();
+			while(iter.hasNext()){
+				TrafficSampler ts = iter.next();
+				GeneralUtils.startLevel("Stopping traffic "+ts.getName());
+				ts.stopTraffic();
+				GeneralUtils.stopLevel();
+			}*/
+			report.report("Stop traffic");
+			trafficInstance.stopTraffic();
 			Iterator<TrafficSampler> iter = samplerList.iterator();
 			while(iter.hasNext()){
 				TrafficSampler ts = iter.next();
-				GeneralUtils.startLevel("Getting statistics and stopping traffic "+ts.getName());
-				ts.stopTraffic();
+				GeneralUtils.startLevel("Getting statistics for traffic "+ts.getName());
 				ts.getStatistics();
 				ts.removeStreams();
 				iter.remove();
@@ -513,8 +513,18 @@ public class TrafficManager {
 				while(iter.hasNext()){
 					TrafficSampler ts = iter.next();
 					if(ts.getName().equals(nameToStop)){
-						GeneralUtils.startLevel("Getting statistics and stopping traffic "+ts.getName());
+						GeneralUtils.startLevel("Stopping traffic "+ts.getName());
 						ts.stopTraffic();
+						GeneralUtils.stopLevel();
+					}
+				}			
+			}			
+			for(String nameToStop : trafficToStop){
+				Iterator<TrafficSampler> iter = samplerList.iterator();
+				while(iter.hasNext()){
+					TrafficSampler ts = iter.next();
+					if(ts.getName().equals(nameToStop)){
+						GeneralUtils.startLevel("Getting statistics for traffic "+ts.getName());
 						ts.getStatistics();
 						ts.removeStreams();
 						iter.remove();

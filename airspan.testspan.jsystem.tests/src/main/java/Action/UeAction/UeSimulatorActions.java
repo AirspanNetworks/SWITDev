@@ -28,23 +28,23 @@ public class UeSimulatorActions extends Action {
 	private int ueId;
 	private String IMSI;
 	private String groupName;
-	private SelectionMethod selectionMethod = SelectionMethod.IMSI;
+	//private SelectionMethod selectionMethod = SelectionMethod.IMSI;
 	private UesOptions uesOptions = UesOptions.AMOUNT;
 	
 
 
-	public enum SelectionMethod{
+	/*public enum SelectionMethod{
 		IMSI, UEID, UENAME, AMOUNT, GROUPNAME;
-	}
+	}*/
 	
 	public enum UesOptions{
 		AMOUNT, GROUPNAME;
 	}
 	
-	@ParameterProperties(description = "UE Selection Method")
+	/*@ParameterProperties(description = "UE Selection Method")
 	public void setSelectionMethod(SelectionMethod selectionMethod) {
 			this.selectionMethod = selectionMethod;
-	}	
+	}*/	
 
 	@ParameterProperties(description = "UE Selection Method")
 	public void setUesOptions(UesOptions uesOptions) {
@@ -236,7 +236,7 @@ public class UeSimulatorActions extends Action {
 	}
 	
 	@Test											
-	@TestProperties(name = "delete UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = { "UeId", "IMSI", "UEs", "UesOptions", "NumUes", "GroupName"})
+	@TestProperties(name = "delete UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = {"UesOptions", "NumUes", "GroupName"})
 	public void deleteUes() {
 		boolean res = true;
 
@@ -347,7 +347,7 @@ public class UeSimulatorActions extends Action {
 	}
 	
 	@Test											
-	@TestProperties(name = "start UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = { "UeId", "IMSI", "UEs", "UesOptions","GroupName"})
+	@TestProperties(name = "start UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = {"UesOptions","GroupName", "NumUes"})
 	public void startUes() {
 		boolean res = true;
 
@@ -398,7 +398,7 @@ public class UeSimulatorActions extends Action {
 	}
 	
 	@Test											
-	@TestProperties(name = "stop UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = { "UeId", "IMSI", "UEs", "UesOptions","GroupName" })
+	@TestProperties(name = "stop UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = {"UesOptions","GroupName", "NumUes" })
 	public void stopUes() {
 		boolean res = true;
 
@@ -449,7 +449,7 @@ public class UeSimulatorActions extends Action {
 	@Override
 	public void handleUIEvent(HashMap<String, Parameter> map, String methodName) throws Exception {
 
-		if (methodName.equals("startUes") || methodName.equals("stopUes")) {
+		/*if (methodName.equals("startUes") || methodName.equals("stopUes")) {
 			handleUIEventGetCounterValue(map, methodName);
 		}
 		if (methodName.equals("deleteUes")) {
@@ -457,11 +457,12 @@ public class UeSimulatorActions extends Action {
 		}
 		if (methodName.equals("addUes")) {
 			handleUIEventAddFunc(map, methodName);
-		}
+		}*/
+		handleUIEventAddFunc(map, methodName);
 	}
 	
 
-	private void handleUIEventGetCounterValue(HashMap<String, Parameter> map, String methodName) {
+/*	private void handleUIEventGetCounterValue(HashMap<String, Parameter> map, String methodName) {
 		map.get("UeId").setVisible(false);
 		map.get("IMSI").setVisible(false);
 		map.get("UEs").setVisible(false);
@@ -516,7 +517,7 @@ public class UeSimulatorActions extends Action {
 			break;
 		}
 		
-	}
+	}*/
 	
 	private void handleUIEventAddFunc(HashMap<String, Parameter> map, String methodName) {
 		map.get("NumUes").setVisible(false);

@@ -9,6 +9,7 @@ import Action.Action;
 import EnodeB.EnodeB;
 import UE.AmarisoftUE;
 import UE.UE;
+import UE.UeState;
 import UeSimulator.Amarisoft.AmariSoftServer;
 import Utils.GeneralUtils;
 import Utils.SysObjUtils;
@@ -327,10 +328,9 @@ public class UeSimulatorActions extends Action {
 		boolean res = true;
 
 		try {
-			AmariSoftServer amariSoftServer = AmariSoftServer.getInstance();
-			int id;
 			switch (uesOptions) {
 			case AMOUNT:
+				startUE(numUes);
 				break;
 			case GROUPNAME:
 				startUE(groupName);
@@ -365,6 +365,30 @@ public class UeSimulatorActions extends Action {
 						}
 					}
 				}
+			}
+			GeneralUtils.stopLevel();
+		} catch (Exception e) {
+			report.report(e.getMessage());
+		}
+	}
+	
+	private void startUE(int amount) {
+		try {
+			int ueStarted = 0;
+			GeneralUtils.startLevel("starting UEs from group : " + groupName);
+			AmariSoftServer amariSoftServer = AmariSoftServer.getInstance();
+			for(AmarisoftUE ue : amariSoftServer.getUeMap()) {
+				while (ueStarted < amount) {
+					if(ue.getState() == UeState.disconnected || ue.getState() == UeState.unknown) {
+						if (ue.start())
+							report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") started in amarisoft");
+						else {
+							report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") was not started as expected", Reporter.WARNING);
+						}
+						ueStarted++;
+					}
+				}
+				
 			}
 			GeneralUtils.stopLevel();
 		} catch (Exception e) {

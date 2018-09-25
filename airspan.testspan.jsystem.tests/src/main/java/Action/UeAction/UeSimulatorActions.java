@@ -9,7 +9,9 @@ import Action.Action;
 import EnodeB.EnodeB;
 import UE.AmarisoftUE;
 import UE.UE;
+import UE.UeState;
 import UeSimulator.Amarisoft.AmariSoftServer;
+import UeSimulator.Amarisoft.JsonObjects.Status.UeStatus;
 import Utils.GeneralUtils;
 import Utils.SysObjUtils;
 import jsystem.framework.ParameterProperties;
@@ -25,43 +27,18 @@ public class UeSimulatorActions extends Action {
 	private int release = 13;
 	private int category = 4;
 	private int cellId = 1;
-	private int ueId;
-	private String IMSI;
 	private String groupName;
-	private SelectionMethod selectionMethod = SelectionMethod.IMSI;
 	private UesOptions uesOptions = UesOptions.AMOUNT;
 	
-
-
-	public enum SelectionMethod{
-		IMSI, UEID, UENAME, AMOUNT, GROUPNAME;
-	}
 	
 	public enum UesOptions{
 		AMOUNT, GROUPNAME;
 	}
 	
-	@ParameterProperties(description = "UE Selection Method")
-	public void setSelectionMethod(SelectionMethod selectionMethod) {
-			this.selectionMethod = selectionMethod;
-	}	
 
 	@ParameterProperties(description = "UE Selection Method")
 	public void setUesOptions(UesOptions uesOptions) {
 		this.uesOptions = uesOptions;
-	}
-
-	@ParameterProperties(description = "UeId")
-	public void setUeId(String ueId) {
-		try {
-			this.ueId = Integer.valueOf(ueId);
-		} catch (Exception e) {
-		}
-	}
-	
-	@ParameterProperties(description = "IMSI")
-	public void setIMSI(String IMSI) {
-		this.IMSI = IMSI;
 	}
 	
 	@ParameterProperties(description = "number of UEs to add/delete, default = 1")
@@ -141,7 +118,7 @@ public class UeSimulatorActions extends Action {
 	}
 	
 	@Test											
-	@TestProperties(name = "Add UEs", returnParam = "LastStatus", paramsInclude = {"NumUes","Release", "Category", "DUT", "CellId" , "UesOptions","GroupName"})
+	@TestProperties(name = "Add UEs", returnParam = "LastStatus", paramsInclude = {"Release", "Category", "DUT", "CellId" , "UesOptions","GroupName","NumUes"})
 	public void addUes() {
 		boolean res = true;
 
@@ -236,7 +213,7 @@ public class UeSimulatorActions extends Action {
 	}
 	
 	@Test											
-	@TestProperties(name = "delete UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = { "UeId", "IMSI", "UEs", "UesOptions", "NumUes", "GroupName"})
+	@TestProperties(name = "delete UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = {"UesOptions", "NumUes", "GroupName"})
 	public void deleteUes() {
 		boolean res = true;
 
@@ -319,7 +296,7 @@ public class UeSimulatorActions extends Action {
 	public void startUeSimulator() {
 		try {
 			if (duts == null) {
-				report.report("No DUTs given to start UE simulator.");
+				report.report("No DUTs given to start UE simulator.", Reporter.FAIL);
 				return;
 			}
 			report.report("Starting UE simulator with the following Cells:");
@@ -347,15 +324,14 @@ public class UeSimulatorActions extends Action {
 	}
 	
 	@Test											
-	@TestProperties(name = "start UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = { "UeId", "IMSI", "UEs", "UesOptions","GroupName"})
+	@TestProperties(name = "start UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = {"UesOptions","GroupName", "NumUes"})
 	public void startUes() {
 		boolean res = true;
 
 		try {
-			AmariSoftServer amariSoftServer = AmariSoftServer.getInstance();
-			int id;
 			switch (uesOptions) {
 			case AMOUNT:
+				startUE(numUes);
 				break;
 			case GROUPNAME:
 				startUE(groupName);
@@ -397,14 +373,42 @@ public class UeSimulatorActions extends Action {
 		}
 	}
 	
+	private void startUE(int amount) {
+		try {
+			int ueStarted = 0;
+			GeneralUtils.startLevel("starting " + amount + " UEs");
+			AmariSoftServer amariSoftServer = AmariSoftServer.getInstance();
+			for(AmarisoftUE ue : amariSoftServer.getUeMap()) {
+				if(ueStarted < amount) {
+					String status = amariSoftServer.getUeStatus(ue.ueId);
+					if(status.equals("disconnected")) {
+						if (ue.start())
+							report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") started in amarisoft");
+						else {
+							report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") was not started as expected", Reporter.WARNING);
+						}
+						ueStarted++;
+					}
+				}
+				else 
+					break;
+				
+			}
+			GeneralUtils.stopLevel();
+		} catch (Exception e) {
+			report.report(e.getMessage());
+		}
+	}
+	
 	@Test											
-	@TestProperties(name = "stop UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = { "UeId", "IMSI", "UEs", "UesOptions","GroupName" })
+	@TestProperties(name = "stop UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = {"UesOptions","GroupName", "NumUes" })
 	public void stopUes() {
 		boolean res = true;
 
 		try {
 			switch (uesOptions) {
 			case AMOUNT:
+				stopUEs(numUes);
 				break;
 			case GROUPNAME:
 				stopUes(groupName);			
@@ -424,6 +428,34 @@ public class UeSimulatorActions extends Action {
 			report.report("stop UEs Succeeded");
 		}
 	}
+	
+	private void stopUEs(int amount) {
+		try {
+			int ueStarted = 0;
+			GeneralUtils.startLevel("stopping " + amount + " UEs");
+			AmariSoftServer amariSoftServer = AmariSoftServer.getInstance();
+			for(AmarisoftUE ue : amariSoftServer.getUeMap()) {
+				if(ueStarted < amount) {
+					String status = amariSoftServer.getUeStatus(ue.ueId);
+					if(!status.equals("disconnected")) {
+						if (ue.start())
+							report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") stopped");
+						else {
+							report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") was not stopped as expected", Reporter.WARNING);
+						}
+						ueStarted++;
+					}
+				}
+				else 
+					break;
+				
+			}
+			GeneralUtils.stopLevel();
+		} catch (Exception e) {
+			report.report(e.getMessage());
+		}
+	}
+	
 	private void stopUes(String groupName) {
 		try {
 			GeneralUtils.startLevel("stopping UEs from group : " + groupName);
@@ -449,76 +481,6 @@ public class UeSimulatorActions extends Action {
 	@Override
 	public void handleUIEvent(HashMap<String, Parameter> map, String methodName) throws Exception {
 
-		if (methodName.equals("startUes") || methodName.equals("stopUes")) {
-			handleUIEventGetCounterValue(map, methodName);
-		}
-		if (methodName.equals("deleteUes")) {
-			handleUIEventDeleteFunc(map, methodName);
-		}
-		if (methodName.equals("addUes")) {
-			handleUIEventAddFunc(map, methodName);
-		}
-	}
-	
-
-	private void handleUIEventGetCounterValue(HashMap<String, Parameter> map, String methodName) {
-		map.get("UeId").setVisible(false);
-		map.get("IMSI").setVisible(false);
-		map.get("UEs").setVisible(false);
-		map.get("GroupName").setVisible(false);
-		
-		Parameter selectMethod = map.get("SelectionMethod");
-
-		switch (SelectionMethod.valueOf(selectMethod.getValue().toString())) {
-		case IMSI:
-			map.get("IMSI").setVisible(true);
-			break;
-
-		case UEID:
-			map.get("UeId").setVisible(true);
-			break;
-
-		case UENAME:
-			map.get("UEs").setVisible(true);
-			break;
-		case GROUPNAME:
-			map.get("GroupName").setVisible(true);
-			break;
-		default:
-			break;
-		}
-		
-	}
-	private void handleUIEventDeleteFunc(HashMap<String, Parameter> map, String methodName) {
-		map.get("UeId").setVisible(false);
-		map.get("IMSI").setVisible(false);
-		map.get("UEs").setVisible(false);
-		map.get("NumUes").setVisible(false);
-		map.get("GroupName").setVisible(false);
-		
-		Parameter selectMethod = map.get("SelectionMethod");
-
-		switch (SelectionMethod.valueOf(selectMethod.getValue().toString())) {
-		case IMSI:
-			map.get("IMSI").setVisible(true);
-			break;
-		case UEID:
-			map.get("UeId").setVisible(true);
-			break;
-		case UENAME:
-			map.get("UEs").setVisible(true);
-			break;
-		case AMOUNT:
-			map.get("NumUes").setVisible(true);
-			break;
-		case GROUPNAME:
-			map.get("GroupName").setVisible(true);
-			break;
-		}
-		
-	}
-	
-	private void handleUIEventAddFunc(HashMap<String, Parameter> map, String methodName) {
 		map.get("NumUes").setVisible(false);
 		map.get("GroupName").setVisible(false);
 		

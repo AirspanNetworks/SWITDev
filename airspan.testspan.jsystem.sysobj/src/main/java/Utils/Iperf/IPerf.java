@@ -146,7 +146,7 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		}
 				
 		GeneralUtils.printToConsole("1111111111111111111111111111");
-		GeneralUtils.unSafeSleep(20000);
+		GeneralUtils.unSafeSleep(120000);
 		GeneralUtils.printToConsole("2222222222222222222222222222");
 		
 		//GeneralUtils.unSafeSleep(2000);

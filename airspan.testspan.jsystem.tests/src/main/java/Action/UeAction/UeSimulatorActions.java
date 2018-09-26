@@ -388,6 +388,8 @@ public class UeSimulatorActions extends Action {
 						ueStarted++;
 					}
 				}
+				else 
+					break;
 				
 			}
 			GeneralUtils.stopLevel();

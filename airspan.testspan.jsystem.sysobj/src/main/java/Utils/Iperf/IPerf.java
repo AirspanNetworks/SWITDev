@@ -145,7 +145,9 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 			exe.execute(ueIPerf);
 		}
 				
+		GeneralUtils.printToConsole("1111111111111111111111111111");
 		GeneralUtils.unSafeSleep(20000);
+		GeneralUtils.printToConsole("2222222222222222222222222222");
 		
 		//GeneralUtils.unSafeSleep(2000);
 		iperfMachineDL.sendCommand("cat " + dlclientCommandsFile);

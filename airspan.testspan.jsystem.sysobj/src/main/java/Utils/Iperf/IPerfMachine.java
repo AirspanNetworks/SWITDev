@@ -32,8 +32,8 @@ public abstract class IPerfMachine extends SystemObjectImpl{
 	}
 
 	public abstract Pair<Boolean,String> sendCommand(String command);
-	public abstract boolean startIPerfTraffic(String clientCommand, String tpFileName, TransmitDirection transmitDirection);
-	public abstract boolean startIPerfListener(Integer numberOfParallelIPerfStreams, String serverCommand, String tpFileName, TransmitDirection transmitDirection);
+	public abstract String startIPerfTraffic(String clientCommand, String tpFileName, TransmitDirection transmitDirection);
+	public abstract String startIPerfListener(Integer numberOfParallelIPerfStreams, String serverCommand, String tpFileName, TransmitDirection transmitDirection);
 	public abstract String getStrCounters(String tpCountersFileNames);
 	public abstract File getFile(String fileName);
 	public abstract boolean stopIPerf();

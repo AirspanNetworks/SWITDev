@@ -33,6 +33,8 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 	 */
 	public static String clientSideCommandsFile = "clientSide.txt";
 	public static String serverSideCommandsFile = "serverSide.txt";
+	public static String commandsUl;
+	public static String commandsDl;
 	
 	private double ulPortLoad = 10;
 	private double dlPortLoad = 70;
@@ -141,12 +143,19 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		iperfMachineUL.sendCommand("echo '' > " + dlServerCommandsFile + " ; chmod +x " + dlServerCommandsFile);
 		iperfMachineUL.sendCommand("echo '' > " + ulclientCommandsFile + " ; chmod +x " + ulclientCommandsFile);
 
+		
+		commandsUl = "";
+		commandsDl = "";
+
 		for (UEIPerf ueIPerf : allUEsIPerfList) {
 			exe.execute(ueIPerf);
 		}
 				
+		iperfMachineDL.sendCommand(commandsDl);
+		iperfMachineUL.sendCommand(commandsUl);
+		
 		GeneralUtils.printToConsole("1111111111111111111111111111");
-		GeneralUtils.unSafeSleep(120000);
+		GeneralUtils.unSafeSleep(5000);
 		GeneralUtils.printToConsole("2222222222222222222222222222");
 		
 		//GeneralUtils.unSafeSleep(2000);
@@ -171,7 +180,7 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		iperfMachineUL.sendCommand("ps -aux | grep iperf");
 	}
 
-	public void startTrafficDL() throws Exception {
+	/*public void startTrafficDL() throws Exception {
 		for (UEIPerf ueIPerf : allUEsIPerfList) {
 			ueIPerf.runTrafficDL(System.currentTimeMillis());
 		}
@@ -181,7 +190,7 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		for(UEIPerf ueIPerf : allUEsIPerfList){
 			ueIPerf.runTrafficUL(System.currentTimeMillis());
 		}
-	}
+	}*/
 	
 	public void stopTraffic() throws Exception{
 		for(UEIPerf ueIPerf : allUEsIPerfList){

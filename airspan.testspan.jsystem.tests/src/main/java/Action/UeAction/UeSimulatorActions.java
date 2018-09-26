@@ -295,7 +295,7 @@ public class UeSimulatorActions extends Action {
 	public void startUeSimulator() {
 		try {
 			if (duts == null) {
-				report.report("No DUTs given to start UE simulator.");
+				report.report("No DUTs given to start UE simulator.", Reporter.FAIL);
 				return;
 			}
 			report.report("Starting UE simulator with the following Cells:");
@@ -378,7 +378,7 @@ public class UeSimulatorActions extends Action {
 			GeneralUtils.startLevel("starting UEs from group : " + groupName);
 			AmariSoftServer amariSoftServer = AmariSoftServer.getInstance();
 			for(AmarisoftUE ue : amariSoftServer.getUeMap()) {
-				while (ueStarted < amount) {
+				if(ueStarted < amount) {
 					if(ue.getState() == UeState.disconnected || ue.getState() == UeState.unknown) {
 						if (ue.start())
 							report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") started in amarisoft");

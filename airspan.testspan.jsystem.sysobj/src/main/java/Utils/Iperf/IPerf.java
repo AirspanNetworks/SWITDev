@@ -126,39 +126,6 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 			}
 		}
 		updateConfigFile();
-		
-		
-		
-		
-		/*ArrayList<Character> qciList = new ArrayList<Character>();
-		tpDlCountersFileNames = "";
-		tpUlCountersFileNames = "";
-		qciList.add('9');
-		qciList.add('8');
-		qciList.add('7');
-		qciList.add('6');
-		qciList.add('5');
-		qciList.add('4');
-		qciList.add('3');
-		qciList.add('2');
-		qciList.add('1');
-		allUEsIPerfList.clear();
-		if(ues != null){
-			for(UE ue : ues){
-				UEIPerf ueIPerf = null;
-				if(ue instanceof AmarisoftUE){
-					ueIPerf = new AmarisoftIperf((AmarisoftUE)ue, iperfMachineDL, iperfMachineUL, ulPortLoad/ues.size(), dlPortLoad/ues.size(), frameSize, qciList);
-				}else if(ue instanceof AndroidUE){
-					ueIPerf = new AndroidIPerf((AndroidUE)ue, iperfMachineDL, iperfMachineUL, ulPortLoad/ues.size(), dlPortLoad/ues.size(), frameSize, qciList);
-				}else{
-					ueIPerf = new UEIPerf(ue, iperfMachineDL, iperfMachineUL, ulPortLoad/ues.size(), dlPortLoad/ues.size(), frameSize, qciList);
-					tpDlCountersFileNames += (" " + ueIPerf.getDlActiveStreamFileNames());
-					tpUlCountersFileNames += (" " + ueIPerf.getUlActiveStreamFileNames());
-				}
-				this.allUEsIPerfList.add(ueIPerf);
-			}
-		}
-		updateConfigFile();*/
 	}
 	
 	public void startTraffic() throws Exception {
@@ -177,29 +144,24 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		for (UEIPerf ueIPerf : allUEsIPerfList) {
 			exe.execute(ueIPerf);
 		}
-		
-		/*iperfMachineDL.sendCommand("echo '' >> " + ulServerCommandsFile);
-		iperfMachineDL.sendCommand("echo '' >> " + dlclientCommandsFile);
-		iperfMachineUL.sendCommand("echo '' >> " + dlServerCommandsFile);
-		iperfMachineUL.sendCommand("echo '' >> " + ulclientCommandsFile);*/
-		
+				
 		GeneralUtils.unSafeSleep(20000);
 		
 		//GeneralUtils.unSafeSleep(2000);
 		iperfMachineDL.sendCommand("cat " + dlclientCommandsFile);
-		GeneralUtils.unSafeSleep(2000);
+		//GeneralUtils.unSafeSleep(2000);
 		iperfMachineDL.sendCommand(dlclientCommandsFile);
-		GeneralUtils.unSafeSleep(2000);
+		//GeneralUtils.unSafeSleep(2000);
 		iperfMachineUL.sendCommand("cat " + ulclientCommandsFile);
-		GeneralUtils.unSafeSleep(2000);
+		//GeneralUtils.unSafeSleep(2000);
 		iperfMachineUL.sendCommand(ulclientCommandsFile);
 		GeneralUtils.unSafeSleep(10000);
 		iperfMachineDL.sendCommand("cat " + ulServerCommandsFile);
-		GeneralUtils.unSafeSleep(2000);
+		//GeneralUtils.unSafeSleep(2000);
 		iperfMachineDL.sendCommand(ulServerCommandsFile);
-		GeneralUtils.unSafeSleep(2000);
+		//GeneralUtils.unSafeSleep(2000);
 		iperfMachineUL.sendCommand("cat " + dlServerCommandsFile);
-		GeneralUtils.unSafeSleep(2000);
+		//GeneralUtils.unSafeSleep(2000);
 		iperfMachineUL.sendCommand(dlServerCommandsFile);
 		GeneralUtils.unSafeSleep(2000);
 		iperfMachineDL.sendCommand("ps -aux | grep iperf");

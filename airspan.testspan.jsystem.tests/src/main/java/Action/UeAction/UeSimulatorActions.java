@@ -11,6 +11,7 @@ import UE.AmarisoftUE;
 import UE.UE;
 import UE.UeState;
 import UeSimulator.Amarisoft.AmariSoftServer;
+import UeSimulator.Amarisoft.JsonObjects.Status.UeStatus;
 import Utils.GeneralUtils;
 import Utils.SysObjUtils;
 import jsystem.framework.ParameterProperties;
@@ -375,11 +376,12 @@ public class UeSimulatorActions extends Action {
 	private void startUE(int amount) {
 		try {
 			int ueStarted = 0;
-			GeneralUtils.startLevel("starting UEs from group : " + groupName);
+			GeneralUtils.startLevel("starting " + amount + " UEs");
 			AmariSoftServer amariSoftServer = AmariSoftServer.getInstance();
 			for(AmarisoftUE ue : amariSoftServer.getUeMap()) {
 				if(ueStarted < amount) {
-					if(ue.getState() == UeState.disconnected || ue.getState() == UeState.unknown) {
+					String status = amariSoftServer.getUeStatus(ue.ueId);
+					if(status.equals("disconnected")) {
 						if (ue.start())
 							report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") started in amarisoft");
 						else {

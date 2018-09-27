@@ -408,6 +408,7 @@ public class UeSimulatorActions extends Action {
 		try {
 			switch (uesOptions) {
 			case AMOUNT:
+				stopUEs(numUes);
 				break;
 			case GROUPNAME:
 				stopUes(groupName);			
@@ -427,6 +428,34 @@ public class UeSimulatorActions extends Action {
 			report.report("stop UEs Succeeded");
 		}
 	}
+	
+	private void stopUEs(int amount) {
+		try {
+			int ueStarted = 0;
+			GeneralUtils.startLevel("stopping " + amount + " UEs");
+			AmariSoftServer amariSoftServer = AmariSoftServer.getInstance();
+			for(AmarisoftUE ue : amariSoftServer.getUeMap()) {
+				if(ueStarted < amount) {
+					String status = amariSoftServer.getUeStatus(ue.ueId);
+					if(!status.equals("disconnected")) {
+						if (ue.start())
+							report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") stopped");
+						else {
+							report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") was not stopped as expected", Reporter.WARNING);
+						}
+						ueStarted++;
+					}
+				}
+				else 
+					break;
+				
+			}
+			GeneralUtils.stopLevel();
+		} catch (Exception e) {
+			report.report(e.getMessage());
+		}
+	}
+	
 	private void stopUes(String groupName) {
 		try {
 			GeneralUtils.startLevel("stopping UEs from group : " + groupName);

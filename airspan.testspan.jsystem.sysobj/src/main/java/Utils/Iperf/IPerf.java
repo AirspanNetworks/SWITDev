@@ -149,6 +149,7 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 
 		for (UEIPerf ueIPerf : allUEsIPerfList) {
 			exe.execute(ueIPerf);
+			GeneralUtils.unSafeSleep(200);
 		}
 				
 		GeneralUtils.unSafeSleep(5000);

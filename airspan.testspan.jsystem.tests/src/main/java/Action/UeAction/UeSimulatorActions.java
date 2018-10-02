@@ -438,7 +438,7 @@ public class UeSimulatorActions extends Action {
 				if(ueStarted < amount) {
 					String status = amariSoftServer.getUeStatus(ue.ueId);
 					if(!status.equals("disconnected")) {
-						if (ue.start())
+						if (ue.stop())
 							report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") stopped");
 						else {
 							report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") was not stopped as expected", Reporter.WARNING);

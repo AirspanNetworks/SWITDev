@@ -315,13 +315,15 @@ public class AmariSoftServer extends SystemObjectImpl{
     }
 
     public boolean stopServer(){
-		if (running)
-			if (sendCommands("quit", "#")) {
+		if (running) {
+			sendCommands("quit", "#");
+			if (sendCommands("ps -aux | grep lteue", "/root/ue/lteue-avx2 /root/ue/config/3UE_SC_UDP_TDE1")) {
 				running = false;
 				return true;
 			} else {
 				report.report("Closing server failed.", Reporter.WARNING);
 				return false;
+			}
 		}
 		return true;
     }

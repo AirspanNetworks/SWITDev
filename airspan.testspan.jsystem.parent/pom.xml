@@ -203,7 +203,7 @@
 			<dependency>
 				<groupId>airspan</groupId>
 				<artifactId>RestSTC</artifactId>
-				<version>1.0.99</version>
+				<version>1.0.100</version>
 			</dependency>
 			<dependency>
 				<groupId>com.google.collections</groupId>

@@ -33,7 +33,7 @@ public class TrafficManager {
 	private GeneratorType trafficType = null;
 	private static ArrayList<TrafficSampler> samplerList; 
 	private volatile Traffic trafficInstance;
-	
+	private boolean firstTraffic = true;
 	
 	private static TrafficManager instance;
 	//private ArrayList<StreamParams> streams = new ArrayList<StreamParams>();
@@ -100,8 +100,12 @@ public class TrafficManager {
 				return;
 			}
 		}
+		if(firstTraffic){
+			trafficInstance.resetIperfList();
+			firstTraffic = false;
+		}
 		try {
-			trafficInstance.initStreams(protocol, ueList, qci, direction, timeout);
+			trafficInstance.initStreams(protocol, ueList, qci, direction, timeout,false);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

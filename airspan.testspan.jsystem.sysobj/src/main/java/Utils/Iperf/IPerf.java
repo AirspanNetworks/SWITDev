@@ -105,10 +105,13 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 
 	@Override
 	public void initStreams(Protocol protocol, ArrayList<String> ues, ArrayList<Character> qciListAllowdInTest,
-			TransmitDirection transmitDirection,Integer runTime) throws Exception{
+			TransmitDirection transmitDirection,Integer runTime, boolean resetStreams) throws Exception{
 		if(tpDlCountersFileNames != null){
 			tpDlCountersFileNames = "";
 			tpUlCountersFileNames = "";			
+		}
+		if(resetStreams){
+			allUEsIPerfList = new ArrayList<UEIPerf>();			
 		}
 		for(UE ue:this.ues){
 			String ueName = "UE" + ue.getName().replaceAll("\\D+", "").trim();

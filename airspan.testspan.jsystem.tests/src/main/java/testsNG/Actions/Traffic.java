@@ -354,8 +354,8 @@ public class Traffic {
 	}
 	
 	public void initStreams(Protocol protocol, ArrayList<String> ues, ArrayList<Character> qciListAllowdInTest,
-			TransmitDirection transmitDirection,Integer runTime) throws Exception{
-		trafficGenerator.initStreams(protocol, ues, qciListAllowdInTest, transmitDirection,runTime);
+			TransmitDirection transmitDirection,Integer runTime, boolean resetStreams) throws Exception{
+		trafficGenerator.initStreams(protocol, ues, qciListAllowdInTest, transmitDirection,runTime, resetStreams);
 	}
 	
 	public boolean startTraffic(TrafficCapacity capacity) throws Exception {
@@ -1820,6 +1820,10 @@ public class Traffic {
 			
 			trafficGenerator.resetIperfList();
 		}
+	}
+	
+	public void resetIperfList(){
+		trafficGenerator.resetIperfList();
 	}
 	
 	public ArrayList<UE> getUES(EnodeB enb){

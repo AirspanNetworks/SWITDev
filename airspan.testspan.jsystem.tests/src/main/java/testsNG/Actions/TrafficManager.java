@@ -530,7 +530,7 @@ public class TrafficManager {
 				while(iter.hasNext()){
 					TrafficSampler ts = iter.next();
 					if(ts.getName().equals(nameToStop)){
-						GeneralUtils.startLevel("Getting statistics and stopping traffic "+ts.getName());
+						GeneralUtils.startLevel("Getting statistics for traffic "+ts.getName());
 						ts.getStatistics();
 						ts.removeStreams();
 						iter.remove();

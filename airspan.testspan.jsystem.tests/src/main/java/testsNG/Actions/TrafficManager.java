@@ -500,8 +500,14 @@ public class TrafficManager {
 			Iterator<TrafficSampler> iter = samplerList.iterator();
 			while(iter.hasNext()){
 				TrafficSampler ts = iter.next();
-				GeneralUtils.startLevel("Getting statistics and stopping traffic "+ts.getName());
+				GeneralUtils.startLevel("Stopping traffic "+ts.getName());
 				ts.stopTraffic();
+				GeneralUtils.stopLevel();
+			}		
+			iter = samplerList.iterator();
+			while(iter.hasNext()){
+				TrafficSampler ts = iter.next();
+				GeneralUtils.startLevel("Getting statistics for traffic "+ts.getName());
 				ts.getStatistics();
 				ts.removeStreams();
 				iter.remove();
@@ -513,8 +519,18 @@ public class TrafficManager {
 				while(iter.hasNext()){
 					TrafficSampler ts = iter.next();
 					if(ts.getName().equals(nameToStop)){
-						GeneralUtils.startLevel("Getting statistics and stopping traffic "+ts.getName());
+						GeneralUtils.startLevel("Stopping traffic "+ts.getName());
 						ts.stopTraffic();
+						GeneralUtils.stopLevel();
+					}
+				}			
+			}			
+			for(String nameToStop : trafficToStop){
+				Iterator<TrafficSampler> iter = samplerList.iterator();
+				while(iter.hasNext()){
+					TrafficSampler ts = iter.next();
+					if(ts.getName().equals(nameToStop)){
+						GeneralUtils.startLevel("Getting statistics for traffic "+ts.getName());
 						ts.getStatistics();
 						ts.removeStreams();
 						iter.remove();

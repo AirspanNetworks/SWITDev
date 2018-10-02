@@ -9,9 +9,7 @@ import Action.Action;
 import EnodeB.EnodeB;
 import UE.AmarisoftUE;
 import UE.UE;
-import UE.UeState;
 import UeSimulator.Amarisoft.AmariSoftServer;
-import UeSimulator.Amarisoft.JsonObjects.Status.UeStatus;
 import Utils.GeneralUtils;
 import Utils.SysObjUtils;
 import jsystem.framework.ParameterProperties;
@@ -151,7 +149,14 @@ public class UeSimulatorActions extends Action {
 		try {
 			report.report("Adding UEs in group: " + groupName + ", release " + release + ", category " + category);
 			AmariSoftServer amariSoftServer = AmariSoftServer.getInstance();
-
+			amariSoftServer = AmariSoftServer.getInstance();
+			//checking if ue is part of more then 1 subgroup 
+			for(AmarisoftUE ue : amariSoftServer.getUnusedUEs()) {
+				if(ue.groupName.size() > 1) {
+					String names = String.join(",", ue.groupName);
+					report.report("*** The ue : " + ue.getImsi() + " is part of the groups : " + names + " ***");
+				}
+			}
 			if (!amariSoftServer.isRunning()) {
 				report.report("Simulator is not working, cant add UEs", Reporter.WARNING);
 			}
@@ -171,12 +176,11 @@ public class UeSimulatorActions extends Action {
 
 		if (flag == false) {
 			report.report("Add UEs Failed", Reporter.FAIL);
-			return false;
+			return  false;
 		} else {
 			report.report("Add UEs Succeeded");
 			return true;
 		}
-		
 	}
 
 	private boolean addUes(int numUes) {
@@ -327,7 +331,17 @@ public class UeSimulatorActions extends Action {
 	@TestProperties(name = "start UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = {"UesOptions","GroupName", "NumUes"})
 	public void startUes() {
 		boolean res = true;
-
+		try {
+			AmariSoftServer amarisoft = AmariSoftServer.getInstance();
+			if (amarisoft.getUeMap().size() == 0) {
+				report.report("There are no ues to start - ue list is empty");
+				return;
+			}
+		} catch (Exception e1) {
+			report.report("Couldn't open amarisft istance");
+			e1.printStackTrace();
+		}
+		
 		try {
 			switch (uesOptions) {
 			case AMOUNT:
@@ -404,7 +418,16 @@ public class UeSimulatorActions extends Action {
 	@TestProperties(name = "stop UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = {"UesOptions","GroupName", "NumUes" })
 	public void stopUes() {
 		boolean res = true;
-
+		try {
+			AmariSoftServer amarisoft = AmariSoftServer.getInstance();
+			if (amarisoft.getUeMap().size() == 0) {
+				report.report("There are no ues to stop - ue list is empty");
+				return;
+			}
+		} catch (Exception e1) {
+			report.report("Couldn't open amarisft istance");
+			e1.printStackTrace();
+		}
 		try {
 			switch (uesOptions) {
 			case AMOUNT:
@@ -438,7 +461,7 @@ public class UeSimulatorActions extends Action {
 				if(ueStarted < amount) {
 					String status = amariSoftServer.getUeStatus(ue.ueId);
 					if(!status.equals("disconnected")) {
-						if (ue.start())
+						if (ue.stop())
 							report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") stopped");
 						else {
 							report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") was not stopped as expected", Reporter.WARNING);

@@ -110,7 +110,6 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 			tpDlCountersFileNames = "";
 			tpUlCountersFileNames = "";			
 		}
-		allUEsIPerfList = new ArrayList<UEIPerf>();
 		for(UE ue:this.ues){
 			String ueName = "UE" + ue.getName().replaceAll("\\D+", "").trim();
 			if(ues.contains(ueName)){

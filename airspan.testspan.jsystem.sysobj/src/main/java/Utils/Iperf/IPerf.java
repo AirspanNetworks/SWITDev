@@ -149,15 +149,14 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		commandsUl = "";
 		commandsDl = "";
 
+		Protocol pro = getProtocol();
 		for (UEIPerf ueIPerf : allUEsIPerfList) {
 			exe.execute(ueIPerf);
 			GeneralUtils.unSafeSleep(100);
 		}
 		
-		//GeneralUtils.unSafeSleep(1000);
 		GeneralUtils.printToConsole("DL:" + commandsDl);
 		iperfMachineDL.sendCommand(commandsDl);
-		//GeneralUtils.unSafeSleep(1000);
 		GeneralUtils.printToConsole("UL:" + commandsUl);
 		iperfMachineUL.sendCommand(commandsUl);
 		
@@ -165,7 +164,6 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		GeneralUtils.unSafeSleep(1000);
 		GeneralUtils.printToConsole("2222222222222222222222222222");
 		
-		Protocol pro = getProtocol();
 		if(pro == Protocol.TCP){
 			iperfMachineDL.sendCommand("cat " + ulServerCommandsFile);
 			iperfMachineDL.sendCommand(ulServerCommandsFile);

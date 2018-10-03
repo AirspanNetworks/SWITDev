@@ -865,7 +865,12 @@ public class AmariSoftServer extends SystemObjectImpl{
 	//Deleting lastUEs from list according to given amount
 	public boolean deleteUes(int amount)
 	{
-		GeneralUtils.startLevel("deleting " + amount + " UEs from Amarisoft simulator.");
+		if (amount > ueMap.size()) {
+			report.report("There are no " + amount + " ues to delete, deleting " +ueMap.size(), Reporter.WARNING);
+			GeneralUtils.startLevel("deleting " + ueMap.size() + " UEs from Amarisoft simulator");
+		}
+		else 
+			GeneralUtils.startLevel("deleting " + amount + " UEs from Amarisoft simulator.");
 		boolean result = true;
 		int deletedAmount = 0;
 		int uesAmount = ueMap.size();

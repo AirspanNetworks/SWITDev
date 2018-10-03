@@ -418,12 +418,14 @@ public class AmariSoftServer extends SystemObjectImpl{
 	public boolean sendCommands(String cmd, String response) {
 		String privateBuffer = "";
 		String ans = "";
+		cliBuffer = "";
 		if (!connected) {
 			report.report("Attempted to send command \"" + cmd +"\" to machine that is not connected.", Reporter.WARNING);
 			return false;
 		}
 		waitForResponse = true;
 		sendRawCommand(cmd);
+		GeneralUtils.unSafeSleep(3000);
 		long startTime = System.currentTimeMillis(); // fetch starting time
 		while ((System.currentTimeMillis() - startTime) < 3000) {
 			GeneralUtils.unSafeSleep(200);

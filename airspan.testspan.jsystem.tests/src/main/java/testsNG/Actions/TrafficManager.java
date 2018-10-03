@@ -36,7 +36,6 @@ public class TrafficManager {
 	private boolean firstTraffic = true;
 	
 	private static TrafficManager instance;
-	//private ArrayList<StreamParams> streams = new ArrayList<StreamParams>();
 	private Double loadStreamDl;
 	private Double loadStreamUl;
 	
@@ -270,18 +269,7 @@ public class TrafficManager {
 				this.dlExpected = null;
 				this.ulExpected = null;
 			}
-		}/*else if(ExpectedType.Load_Based == type){
-			if(dlExpected != null){
-				this.dlExpected = Dload*Double.valueOf(dlExpected)/100.0;
-			}else{
-				this.dlExpected = null;
-			}
-			if(ulExpected != null){
-				this.ulExpected = Uload*Double.valueOf(ulExpected)/100.0;
-			}else{
-				this.ulExpected = null;
-			}
-		}*/
+		}
 	}
 	
 	private void setLoadPerStream(EnodeB enb, LoadType loadType, String dlLoad, String ulLoad) {

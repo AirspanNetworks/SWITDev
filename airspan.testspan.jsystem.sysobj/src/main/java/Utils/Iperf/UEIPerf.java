@@ -846,5 +846,23 @@ public class UEIPerf implements Runnable {
 		return resultFiles;
 	}
 
+	public Protocol getProtocolToStart() {
+		if(iperfMachineUL != null){
+			for(IPerfStream ulIPerfStream : ulStreamArrayList){
+				if(ulIPerfStream.isActive && !ulIPerfStream.isRunningTraffic()){
+					return ulIPerfStream.getProtocol();
+				}
+			}
+		}
+		if(iperfMachineDL != null){
+			for(IPerfStream dlIPerfStream : dlStreamArrayList){
+				if(dlIPerfStream.isActive && !dlIPerfStream.isRunningTraffic()){
+					return dlIPerfStream.getProtocol();
+				}
+			}	
+		}
+		return Protocol.UDP;
+	}
+
 
 }

@@ -153,7 +153,7 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 			exe.execute(ueIPerf);
 			GeneralUtils.unSafeSleep(100);
 		}
-				
+		
 		//GeneralUtils.unSafeSleep(1000);
 		GeneralUtils.printToConsole("DL:" + commandsDl);
 		iperfMachineDL.sendCommand(commandsDl);
@@ -165,23 +165,29 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		GeneralUtils.unSafeSleep(1000);
 		GeneralUtils.printToConsole("2222222222222222222222222222");
 		
-		//GeneralUtils.unSafeSleep(2000);
+		Protocol pro = getProtocol();
+		if(pro == Protocol.TCP){
+			iperfMachineDL.sendCommand("cat " + ulServerCommandsFile);
+			iperfMachineDL.sendCommand(ulServerCommandsFile);
+			iperfMachineUL.sendCommand("cat " + dlServerCommandsFile);
+			iperfMachineUL.sendCommand(dlServerCommandsFile);
+			GeneralUtils.unSafeSleep(1000);
+			iperfMachineDL.sendCommand("cat " + dlclientCommandsFile);
+			iperfMachineDL.sendCommand(dlclientCommandsFile);
+			iperfMachineUL.sendCommand("cat " + ulclientCommandsFile);
+			iperfMachineUL.sendCommand(ulclientCommandsFile);
+		}else{
+			iperfMachineDL.sendCommand("cat " + dlclientCommandsFile);
+			iperfMachineDL.sendCommand(dlclientCommandsFile);
+			iperfMachineUL.sendCommand("cat " + ulclientCommandsFile);
+			iperfMachineUL.sendCommand(ulclientCommandsFile);
+			GeneralUtils.unSafeSleep(10000);
+			iperfMachineDL.sendCommand("cat " + ulServerCommandsFile);
+			iperfMachineDL.sendCommand(ulServerCommandsFile);
+			iperfMachineUL.sendCommand("cat " + dlServerCommandsFile);
+			iperfMachineUL.sendCommand(dlServerCommandsFile);
+		}
 		
-		//GeneralUtils.unSafeSleep(10000);
-		iperfMachineDL.sendCommand("cat " + ulServerCommandsFile);
-		//GeneralUtils.unSafeSleep(1000);
-		iperfMachineDL.sendCommand(ulServerCommandsFile);
-		//GeneralUtils.unSafeSleep(2000);
-		iperfMachineUL.sendCommand("cat " + dlServerCommandsFile);
-		//GeneralUtils.unSafeSleep(1000);
-		iperfMachineUL.sendCommand(dlServerCommandsFile);
-		iperfMachineDL.sendCommand("cat " + dlclientCommandsFile);
-		//GeneralUtils.unSafeSleep(1000);
-		iperfMachineDL.sendCommand(dlclientCommandsFile);
-		//GeneralUtils.unSafeSleep(2000);
-		iperfMachineUL.sendCommand("cat " + ulclientCommandsFile);
-		//GeneralUtils.unSafeSleep(1000);
-		iperfMachineUL.sendCommand(ulclientCommandsFile);
 		GeneralUtils.unSafeSleep(2000);
 		iperfMachineDL.sendCommand("ps -aux | grep iperf");
 		GeneralUtils.unSafeSleep(2000);
@@ -200,6 +206,14 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		}
 	}*/
 	
+	private Protocol getProtocol() {
+		for(UEIPerf ueIPerf : allUEsIPerfList){
+			return ueIPerf.getProtocolToStart();
+		}
+		return Protocol.UDP;
+	}
+
+
 	public void stopTraffic() throws Exception{
 		for(UEIPerf ueIPerf : allUEsIPerfList){
 			if (ueIPerf instanceof AndroidIPerf) {				

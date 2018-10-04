@@ -861,7 +861,7 @@ public class UEIPerf implements Runnable {
 				}
 			}	
 		}
-		return Protocol.UDP;
+		return null;
 	}
 
 	public ArrayList<ArrayList<StreamParams>> getResultsAfterTest() {

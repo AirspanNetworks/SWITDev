@@ -203,10 +203,14 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 	}*/
 	
 	private Protocol getProtocol() {
+		Protocol pro = Protocol.UDP;
 		for(UEIPerf ueIPerf : allUEsIPerfList){
-			return ueIPerf.getProtocolToStart();
+			pro = ueIPerf.getProtocolToStart();
+			if(pro != null){
+				return pro;
+			}
 		}
-		return Protocol.UDP;
+		return pro;
 	}
 
 

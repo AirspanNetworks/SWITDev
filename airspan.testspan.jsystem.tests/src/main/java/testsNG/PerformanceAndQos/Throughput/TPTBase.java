@@ -902,7 +902,7 @@ public class TPTBase extends TestspanTest {
 		return uesWithHalts.size();
 	}
 
-	protected void reportForHalted(ArrayList<StreamParams> halts) {
+	/*protected void reportForHalted(ArrayList<StreamParams> halts) {
 		Set<UE> uesToCheck = new HashSet<UE>();
 		String name = "";
 		for (StreamParams haltedStream : halts) {
@@ -922,9 +922,9 @@ public class TPTBase extends TestspanTest {
 			e.printStackTrace();
 			report.report("Failed to check connection to epc");
 		}
-	}
+	}*/
 
-	private UE getUeToCheck(String name) {
+	/*private UE getUeToCheck(String name) {
 		for (UE ue : ueList) {
 			String ueName = ue.getName().replaceAll("\\D+", "").trim();
 			String ueFromHalt = name.replaceAll("\\D+", "").trim();
@@ -933,7 +933,7 @@ public class TPTBase extends TestspanTest {
 			}
 		}
 		return null;
-	}
+	}*/
 
 	/**
 	 * traverse halted streams list, extracting UE name :"UEx" updating ues in test
@@ -943,7 +943,7 @@ public class TPTBase extends TestspanTest {
 	 * @param haltedStreams
 	 * @param streams
 	 */
-	public void checkUEsRelationsWithStreams(ArrayList<StreamParams> haltedStreams) {
+	/*public void checkUEsRelationsWithStreams(ArrayList<StreamParams> haltedStreams) {
 		String ueFromSTC;
 		for (StreamParams haltedStream : haltedStreams) {
 
@@ -958,15 +958,15 @@ public class TPTBase extends TestspanTest {
 				report.report("UE : " + ueFromSTC + " has been removed", Reporter.WARNING);
 			}
 		}
-	}
+	}*/
 
-	protected void removeLastSampleAndReSampleOnce() throws Exception {
+	/*protected void removeLastSampleAndReSampleOnce() throws Exception {
 		report.report("removing last sample");
 		streams.clear();
 		report.report("re-Sample");
 		ArrayList<ArrayList<StreamParams>> sampleArrayList = samplePortsAndStreamsFromSTC();
 		addSamplesToListOfStreamList(sampleArrayList);
-	}
+	}*/
 
 	/**
 	 * @author Shahaf Shuhamy sample ports and streams to "streams" list
@@ -1002,7 +1002,7 @@ public class TPTBase extends TestspanTest {
 	 *            streamHalted
 	 * @return
 	 */
-	protected boolean checkListThreshold(ArrayList<StreamParams> haltedStreams) {
+	/*protected boolean checkListThreshold(ArrayList<StreamParams> haltedStreams) {
 		report.report("checking if more then " + PRECENT_OF_UE_RESET + "% of streams in halt status");
 		if (checkThresholdPrecentOfStreamsHalt(haltedStreams)) {
 			report.report("Stream Halt number of streams is: " + PRECENT_OF_UE_RESET + "% or higher");
@@ -1011,7 +1011,7 @@ public class TPTBase extends TestspanTest {
 			report.report("Streams in Halt Status are below threshold");
 			return false;
 		}
-	}
+	}*/
 
 	/**
 	 * @author Shahaf Shuhamy printing stream name
@@ -1019,14 +1019,14 @@ public class TPTBase extends TestspanTest {
 	 *            haltedStreams
 	 * @return
 	 */
-	protected String printStreamName(ArrayList<StreamParams> haltedStreams) {
+	/*protected String printStreamName(ArrayList<StreamParams> haltedStreams) {
 		StringBuilder sb = new StringBuilder();
 		for (StreamParams stream : haltedStreams) {
 			sb.append(stream.getName());
 			sb.append(" ");
 		}
 		return sb.toString();
-	}
+	}*/
 
 	/**
 	 * @author Shahaf Shuhamy checking the stream halt Threashold according to the
@@ -1034,12 +1034,12 @@ public class TPTBase extends TestspanTest {
 	 * @param haltedStreams
 	 * @return
 	 */
-	protected Boolean checkThresholdPrecentOfStreamsHalt(ArrayList<StreamParams> haltedStreams) {
+	/*protected Boolean checkThresholdPrecentOfStreamsHalt(ArrayList<StreamParams> haltedStreams) {
 		if (haltedStreams.size() >= streams.size() * PRECENT_OF_UE_RESET / 100) {
 			return true;
 		}
 		return false;
-	}
+	}*/
 
 	/**
 	 * @author Shahaf Shuhamy prints port tabels with StreamList Class print tables
@@ -1061,6 +1061,7 @@ public class TPTBase extends TestspanTest {
 		if (exceptionThrown) {
 			report.report("Exception failed the test - No Results");
 		} else {
+			listOfStreamList = getResultsAfterTest(listOfStreamList);
 			sumAndPrintTablesPerPort();
 			printPerStreamTables(listOfStreamList);
 
@@ -1076,6 +1077,11 @@ public class TPTBase extends TestspanTest {
 
 		}
 		trafficSTC.addResultFilesToReport("");
+	}
+
+	private ArrayList<ArrayList<StreamParams>> getResultsAfterTest(
+			ArrayList<ArrayList<StreamParams>> listOfStreamList2) {
+		return trafficSTC.getResultsAfterTest(listOfStreamList2);
 	}
 
 	private void printDLandULCounters(List<Integer> ulConters, List<Integer> dlCounters) {

@@ -1868,4 +1868,9 @@ public class Traffic {
 	public ArrayList<ArrayList<StreamParams>> getAllStreamsResults(ArrayList<String> streamList) {
 		return trafficGenerator.getAllStreamsResults(streamList);
 	}
+
+	public ArrayList<ArrayList<StreamParams>> getResultsAfterTest(
+			ArrayList<ArrayList<StreamParams>> listOfStreamList2) {
+		return trafficGenerator.getResultsAfterTest(listOfStreamList2);
+	}
 }

@@ -160,9 +160,7 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		GeneralUtils.printToConsole("UL:" + commandsUl);
 		iperfMachineUL.sendCommand(commandsUl);
 		
-		GeneralUtils.printToConsole("1111111111111111111111111111");
 		GeneralUtils.unSafeSleep(1000);
-		GeneralUtils.printToConsole("2222222222222222222222222222");
 		
 		if(pro == Protocol.TCP){
 			iperfMachineDL.sendCommand("cat " + ulServerCommandsFile);
@@ -327,12 +325,12 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 	@Override
 	public void readAllCounters(){
 		//From DL Machine getting UL counters & From UL Machine getting DL counters 
-		String ulCountersStr = iperfMachineDL == null ? "" : iperfMachineDL.getStrCounters(tpUlCountersFileNames);
+		/*String ulCountersStr = iperfMachineDL == null ? "" : iperfMachineDL.getStrCounters(tpUlCountersFileNames);
 		String dlCountersStr = iperfMachineUL == null ? "" :iperfMachineUL.getStrCounters(tpDlCountersFileNames);
 		
 		for(UEIPerf ueIPerf : allUEsIPerfList){
 			ueIPerf.updateCounters(ulCountersStr, dlCountersStr);
-		}
+		}*/
 	}
 
 	@Override
@@ -432,7 +430,7 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 	public ArrayList<ArrayList<StreamParams>> getActiveStreamCurrentSample(ArrayList<CounterUnit> counterUnitList,
 			TransmitDirection transmitDirection) {
 		ArrayList<ArrayList<StreamParams>> sampleArrayList = new ArrayList<ArrayList<StreamParams>>();
-		ArrayList<ArrayList<StreamParams>> ueSampleArrayList = new ArrayList<ArrayList<StreamParams>>();
+		/*ArrayList<ArrayList<StreamParams>> ueSampleArrayList = new ArrayList<ArrayList<StreamParams>>();
 		int minNumberOfSamples = IPerfMachine.getMinNumberOfSamples();
 		for(int i = 1; i <= minNumberOfSamples; i++){
 			sampleArrayList.add(new ArrayList<StreamParams>());
@@ -461,7 +459,7 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		}
 		GeneralUtils.printToConsole("IPerfMachine.minNumberOfSamples="+minNumberOfSamples);
 		//Initial minNumberOfSamples for trying to get max number of samples in the next round.
-		IPerfMachine.setMinNumberOfSamples(10);
+		IPerfMachine.setMinNumberOfSamples(10);*/
 		return sampleArrayList;
 	}
 	
@@ -733,6 +731,25 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		ArrayList<ArrayList<StreamParams>> toReturn = new ArrayList<ArrayList<StreamParams>>();
 		for(UEIPerf ueIPerf : allUEsIPerfList){	
 			ArrayList<ArrayList<StreamParams>> temp = ueIPerf.getAllStreamsResults(streamList);
+			for(int index=0;index<temp.size();index++){
+				try{
+					toReturn.get(index);
+				}catch(Exception e){
+					toReturn.add(new ArrayList<StreamParams>());
+				}
+				toReturn.get(index).addAll(temp.get(index));
+			}
+		}
+		return toReturn;
+	}
+
+
+	@Override
+	public ArrayList<ArrayList<StreamParams>> getResultsAfterTest(
+			ArrayList<ArrayList<StreamParams>> listOfStreamList2) {
+		ArrayList<ArrayList<StreamParams>> toReturn = new ArrayList<ArrayList<StreamParams>>();
+		for(UEIPerf ueIPerf : allUEsIPerfList){	
+			ArrayList<ArrayList<StreamParams>> temp = ueIPerf.getResultsAfterTest();
 			for(int index=0;index<temp.size();index++){
 				try{
 					toReturn.get(index);

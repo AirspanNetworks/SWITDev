@@ -864,5 +864,16 @@ public class UEIPerf implements Runnable {
 		return Protocol.UDP;
 	}
 
+	public ArrayList<ArrayList<StreamParams>> getResultsAfterTest() {
+		ArrayList<ArrayList<StreamParams>> toReturn = new ArrayList<ArrayList<StreamParams>>();
+		for(IPerfStream ips : dlStreamArrayList){
+			toReturn = extractStatisticsFromFile(ips,toReturn);
+		}
+		for(IPerfStream ips : ulStreamArrayList){
+			toReturn = extractStatisticsFromFile(ips,toReturn);
+		}
+		return toReturn;
+	}
+
 
 }

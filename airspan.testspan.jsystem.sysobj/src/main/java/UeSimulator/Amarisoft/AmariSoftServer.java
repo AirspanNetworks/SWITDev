@@ -908,7 +908,6 @@ public class AmariSoftServer extends SystemObjectImpl{
 					if (group.equals(groupName)) {
 						int ueNum = temp.ueId;
 						if (deleteUE(ueNum)) {
-							//ueMap.remove(temp);
 							it.remove();
 							AmarisoftUE ue = new AmarisoftUE(ueNum, null, this);
 							report.report("UE : " + ueNum + " ( " + ue.getImsi() + " ) was deleted");
@@ -921,33 +920,6 @@ public class AmariSoftServer extends SystemObjectImpl{
 					}
 				}
 		 }
-		
-		
-		
-		/*int i =0;
-		while(ueMap.get(i) != null) {
-			ArrayList<String> groups = ueMap.get(i).groupName;
-			for(String group: groups) {
-				if (group.equals(groupName)) {
-					int ueNum = ueMap.get(i).ueId;
-					if (deleteUE(ueNum)) {
-						ueMap.remove(i);
-						AmarisoftUE ue = new AmarisoftUE(ueNum, null, this);
-						report.report("UE : " + ueNum + " ( " + ue.getImsi() + " ) was deleted");
-						unusedUEs.add(ue);
-					}
-					else {
-						report.report("UE :" + ueMap.get(ueNum).getImsi() + " haven't been deleted from ue simulator");
-						result = false;
-						i++;
-						
-					}
-					ueNum++;
-				}
-				else
-					i++;
-			}
-		}*/
 		GeneralUtils.stopLevel();
 		return result;
 	}

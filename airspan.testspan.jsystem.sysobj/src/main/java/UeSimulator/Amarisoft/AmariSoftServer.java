@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Array;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -898,7 +899,8 @@ public class AmariSoftServer extends SystemObjectImpl{
 	{
 		GeneralUtils.startLevel("deleting all UES in group: " + groupName + " from Amarisoft simulator.");
 		boolean result = true;
-		for(int i = 0; i< ueMap.size(); i++) {
+		ArrayList<AmarisoftUE> uelist = ueMap;
+		for(int i = 0; i< uelist.size(); i++) {
 			ArrayList<String> groups = ueMap.get(i).groupName;
 			for(String group: groups) {
 				if (group.equals(groupName)) {

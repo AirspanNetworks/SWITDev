@@ -8,9 +8,6 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
-
-import org.python.modules.thread;
-
 import EnodeB.EnodeB;
 import EnodeB.Ninja;
 import Netspan.EnbProfiles;

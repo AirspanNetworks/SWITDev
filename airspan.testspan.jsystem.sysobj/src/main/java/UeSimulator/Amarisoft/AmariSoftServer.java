@@ -900,9 +900,9 @@ public class AmariSoftServer extends SystemObjectImpl{
 	{
 		GeneralUtils.startLevel("deleting all UES in group: " + groupName + " from Amarisoft simulator.");
 		boolean result = true;
-		Iterator<AmarisoftUE> iter = ueMap.iterator();
-		 while(iter.hasNext()) {
-			 AmarisoftUE temp = iter.next();
+		Iterator<AmarisoftUE> it = ueMap.iterator();
+		 while(it.hasNext()) {
+			 AmarisoftUE temp = it.next();
 			 ArrayList<String> groups = temp.groupName;
 			 for(String group: groups) {
 					if (group.equals(groupName)) {

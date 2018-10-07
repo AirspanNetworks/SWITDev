@@ -9,9 +9,7 @@ import Action.Action;
 import EnodeB.EnodeB;
 import UE.AmarisoftUE;
 import UE.UE;
-import UE.UeState;
 import UeSimulator.Amarisoft.AmariSoftServer;
-import UeSimulator.Amarisoft.JsonObjects.Status.UeStatus;
 import Utils.GeneralUtils;
 import Utils.SysObjUtils;
 import jsystem.framework.ParameterProperties;
@@ -327,7 +325,17 @@ public class UeSimulatorActions extends Action {
 	@TestProperties(name = "start UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = {"UesOptions","GroupName", "NumUes"})
 	public void startUes() {
 		boolean res = true;
-
+		try {
+			AmariSoftServer amarisoft = AmariSoftServer.getInstance();
+			if (amarisoft.getUeMap().size() == 0) {
+				report.report("There are no ues to start - ue list is empty");
+				return;
+			}
+		} catch (Exception e1) {
+			report.report("Couldn't open amarisft istance");
+			e1.printStackTrace();
+		}
+		
 		try {
 			switch (uesOptions) {
 			case AMOUNT:
@@ -404,7 +412,16 @@ public class UeSimulatorActions extends Action {
 	@TestProperties(name = "stop UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = {"UesOptions","GroupName", "NumUes" })
 	public void stopUes() {
 		boolean res = true;
-
+		try {
+			AmariSoftServer amarisoft = AmariSoftServer.getInstance();
+			if (amarisoft.getUeMap().size() == 0) {
+				report.report("There are no ues to stop - ue list is empty");
+				return;
+			}
+		} catch (Exception e1) {
+			report.report("Couldn't open amarisft istance");
+			e1.printStackTrace();
+		}
 		try {
 			switch (uesOptions) {
 			case AMOUNT:

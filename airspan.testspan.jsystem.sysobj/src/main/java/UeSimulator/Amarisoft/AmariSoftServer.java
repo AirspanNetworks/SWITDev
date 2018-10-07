@@ -908,7 +908,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 					if (group.equals(groupName)) {
 						int ueNum = temp.ueId;
 						if (deleteUE(ueNum)) {
-							ueMap.remove(temp);
+							//ueMap.remove(temp);
 							it.remove();
 							AmarisoftUE ue = new AmarisoftUE(ueNum, null, this);
 							report.report("UE : " + ueNum + " ( " + ue.getImsi() + " ) was deleted");

@@ -909,6 +909,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 						int ueNum = temp.ueId;
 						if (deleteUE(ueNum)) {
 							ueMap.remove(temp);
+							it.remove();
 							AmarisoftUE ue = new AmarisoftUE(ueNum, null, this);
 							report.report("UE : " + ueNum + " ( " + ue.getImsi() + " ) was deleted");
 							unusedUEs.add(ue);
@@ -917,7 +918,6 @@ public class AmariSoftServer extends SystemObjectImpl{
 							report.report("UE :" + ueMap.get(ueNum).getImsi() + " haven't been deleted from ue simulator");
 							result = false;
 						}
-						ueNum++;
 					}
 				}
 		 }

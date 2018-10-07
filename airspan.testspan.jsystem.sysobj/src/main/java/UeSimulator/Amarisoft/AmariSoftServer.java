@@ -903,6 +903,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 		int i =0;
 		for(Iterator<AmarisoftUE> iter = ueMap.listIterator(); iter.hasNext();) {
 			ArrayList<String> groups = ueMap.get(i).groupName;
+			AmarisoftUE temp = iter.next();
 			for(String group: groups) {
 				if (group.equals(groupName)) {
 					int ueNum = ueMap.get(i).ueId;

@@ -900,7 +900,31 @@ public class AmariSoftServer extends SystemObjectImpl{
 	{
 		GeneralUtils.startLevel("deleting all UES in group: " + groupName + " from Amarisoft simulator.");
 		boolean result = true;
-		int i =0;
+		Iterator<AmarisoftUE> iter = ueMap.iterator();
+		 while(iter.hasNext()) {
+			 AmarisoftUE temp = iter.next();
+			 ArrayList<String> groups = temp.groupName;
+			 for(String group: groups) {
+					if (group.equals(groupName)) {
+						int ueNum = temp.ueId;
+						if (deleteUE(ueNum)) {
+							ueMap.remove(temp);
+							AmarisoftUE ue = new AmarisoftUE(ueNum, null, this);
+							report.report("UE : " + ueNum + " ( " + ue.getImsi() + " ) was deleted");
+							unusedUEs.add(ue);
+						}
+						else {
+							report.report("UE :" + ueMap.get(ueNum).getImsi() + " haven't been deleted from ue simulator");
+							result = false;
+						}
+						ueNum++;
+					}
+				}
+		 }
+		
+		
+		
+		/*int i =0;
 		while(ueMap.get(i) != null) {
 			ArrayList<String> groups = ueMap.get(i).groupName;
 			for(String group: groups) {
@@ -923,7 +947,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 				else
 					i++;
 			}
-		}
+		}*/
 		GeneralUtils.stopLevel();
 		return result;
 	}

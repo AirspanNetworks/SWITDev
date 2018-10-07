@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
@@ -899,8 +900,8 @@ public class AmariSoftServer extends SystemObjectImpl{
 	{
 		GeneralUtils.startLevel("deleting all UES in group: " + groupName + " from Amarisoft simulator.");
 		boolean result = true;
-		ArrayList<AmarisoftUE> uelist = ueMap;
-		for(int i = 0; i< uelist.size(); i++) {
+		int i =0;
+		for(Iterator<AmarisoftUE> iter = ueMap.listIterator(); iter.hasNext();) {
 			ArrayList<String> groups = ueMap.get(i).groupName;
 			for(String group: groups) {
 				if (group.equals(groupName)) {
@@ -914,11 +915,13 @@ public class AmariSoftServer extends SystemObjectImpl{
 					else {
 						report.report("UE :" + ueMap.get(ueNum).getImsi() + " haven't been deleted from ue simulator");
 						result = false;
+						i++;
 						
 					}
 					ueNum++;
 				}
 			}
+			i++;
 			
 		}
 		GeneralUtils.stopLevel();

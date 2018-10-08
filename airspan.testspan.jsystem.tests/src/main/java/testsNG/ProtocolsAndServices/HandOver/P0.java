@@ -314,7 +314,7 @@ public class P0 extends TestspanTest {
 	private void startTraffic() {
 		GeneralUtils.startLevel("Starting traffic.");
 		try{
-			traffic.startTraffic(TrafficCapacity.CUSTOM);
+			traffic.startTraffic();
 		}catch(Exception e){
 			e.printStackTrace();
 		}

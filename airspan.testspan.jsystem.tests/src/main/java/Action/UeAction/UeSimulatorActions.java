@@ -149,6 +149,18 @@ public class UeSimulatorActions extends Action {
 		try {
 			report.report("Adding UEs in group: " + groupName + ", release " + release + ", category " + category);
 			AmariSoftServer amariSoftServer = AmariSoftServer.getInstance();
+			amariSoftServer = AmariSoftServer.getInstance();
+			//checking if ue is part of more then 1 subgroup 
+			for(AmarisoftUE ue : amariSoftServer.getUnusedUEs()) {
+				if(ue.groupName.size() > 1) {
+					String names = String.join(",", groupName);
+					/*for(String group: ue.groupName) {
+						names += "," + group;
+					}
+					names.replaceFirst("," , "");*/
+					report.report("*** The ue : " + ue.getImsi() + " is part of the groups : " + names + " ***");
+				}
+			}
 			if (!amariSoftServer.isRunning()) {
 				report.report("Simulator is not working, cant add UEs", Reporter.WARNING);
 			}
@@ -168,31 +180,11 @@ public class UeSimulatorActions extends Action {
 
 		if (flag == false) {
 			report.report("Add UEs Failed", Reporter.FAIL);
-			flag =  false;
+			return  false;
 		} else {
 			report.report("Add UEs Succeeded");
-			flag =  true;
+			return true;
 		}
-		
-		//checking if ue is part of more then 1 subgroup 
-		AmariSoftServer amariSoftServer2;
-		try {
-			amariSoftServer2 = AmariSoftServer.getInstance();
-			for(AmarisoftUE ue : amariSoftServer2.getUeMap()) {
-				if(ue.groupName.size() > 1) {
-					String names = String.join(",", groupName);
-					/*for(String group: ue.groupName) {
-						names += "," + group;
-					}
-					names.replaceFirst("," , "");*/
-					report.report("*** The ue : " + ue.getImsi() + " is part of the groups : " + names + " ***");
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		return flag;
 	}
 
 	private boolean addUes(int numUes) {

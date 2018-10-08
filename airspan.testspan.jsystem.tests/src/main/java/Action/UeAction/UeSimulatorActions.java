@@ -154,10 +154,6 @@ public class UeSimulatorActions extends Action {
 			for(AmarisoftUE ue : amariSoftServer.getUnusedUEs()) {
 				if(ue.groupName.size() > 1) {
 					String names = String.join(",", ue.groupName);
-					/*for(String group: ue.groupName) {
-						names += "," + group;
-					}
-					names.replaceFirst("," , "");*/
 					report.report("*** The ue : " + ue.getImsi() + " is part of the groups : " + names + " ***");
 				}
 			}

@@ -45,7 +45,7 @@ public class Program {
 			AmariSoftServer a = new AmariSoftServer();
 			a.setDlMachineNetworks("91.91.224.2-253,91.91.225.2-253");
 			a.easyInit();
-			a.startServer("0UE_SC_SWIT24");
+			a.startServer("3UE_SC_UDP_TDE1");
 			a.stopServer();
 			/*
 			ArrayList<AmarisoftUE> ues = a.getUeMap();

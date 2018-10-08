@@ -153,7 +153,7 @@ public class UeSimulatorActions extends Action {
 			//checking if ue is part of more then 1 subgroup 
 			for(AmarisoftUE ue : amariSoftServer.getUnusedUEs()) {
 				if(ue.groupName.size() > 1) {
-					String names = String.join(",", groupName);
+					String names = String.join(",", ue.groupName);
 					/*for(String group: ue.groupName) {
 						names += "," + group;
 					}

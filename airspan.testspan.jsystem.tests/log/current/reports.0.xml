@@ -1,1 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><reports startTime="1528809361410" status="true"/>
+<?xml version="1.0" encoding="UTF-8"?><reports Date="Mon Aug 13 10:58:11 IDT 2018" Scenario="default" Setup="default.xml" Station="192.168.57.86" User="mgoldenberg" Version="unknown" startTime="1538034206178" status="true">
+    <test count="1" name="UeSimulatorActions.null" package="Action.UeAction" startTime="1538034208128" status="true" testIndex="0"/>
+    <test count="2" name="UeSimulatorActions.null" package="Action.UeAction" startTime="1538034210397" status="true" testIndex="1"/>
+</reports>

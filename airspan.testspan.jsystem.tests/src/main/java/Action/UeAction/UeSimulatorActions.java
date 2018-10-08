@@ -145,7 +145,6 @@ public class UeSimulatorActions extends Action {
 	}
 	private boolean addUes(String groupName) {
 		boolean flag = false;
-		
 		try {
 			report.report("Adding UEs in group: " + groupName + ", release " + release + ", category " + category);
 			AmariSoftServer amariSoftServer = AmariSoftServer.getInstance();

@@ -3,14 +3,11 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
@@ -115,7 +112,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     	ip="192.168.58.91";
     	userName="root";
     	password = "SWITswit";
-    	port="9001";
+    	port="9000";
     	connect();
     	ueMap = new ArrayList();
     	sdrCellsMap = new HashMap<>();
@@ -317,15 +314,13 @@ public class AmariSoftServer extends SystemObjectImpl{
     }
 
     public boolean stopServer(){
-		if (running) {
-			sendCommands("quit", "#");
-			if (!sendCommands("ps -aux | grep lteue", "/root/ue/lteue-avx2 /root/ue/config/automationConfigFile")) {
+		if (running)
+			if (sendCommands("quit", "#")) {
 				running = false;
 				return true;
 			} else {
 				report.report("Closing server failed.", Reporter.WARNING);
 				return false;
-			}
 		}
 		return true;
     }
@@ -420,14 +415,12 @@ public class AmariSoftServer extends SystemObjectImpl{
 	public boolean sendCommands(String cmd, String response) {
 		String privateBuffer = "";
 		String ans = "";
-		cliBuffer = "";
 		if (!connected) {
 			report.report("Attempted to send command \"" + cmd +"\" to machine that is not connected.", Reporter.WARNING);
 			return false;
 		}
 		waitForResponse = true;
 		sendRawCommand(cmd);
-		GeneralUtils.unSafeSleep(3000);
 		long startTime = System.currentTimeMillis(); // fetch starting time
 		while ((System.currentTimeMillis() - startTime) < 3000) {
 			GeneralUtils.unSafeSleep(200);
@@ -710,6 +703,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 	private boolean addUes(String groupName, int release, int category, int cellId) {
 		GeneralUtils.startLevel("Adding UEs to Amarisoft simulator from group " + groupName);
 		boolean result = true;
+		boolean atListOneUE = false;
 			if (unusedUEs.size() <= 0) {
 				report.report("Failed adding UE to simulator. There are no free UEs in amarisoft to add", Reporter.WARNING);
 				return false;
@@ -723,7 +717,6 @@ public class AmariSoftServer extends SystemObjectImpl{
 			else {
 				int i = 0;
 				boolean wasAdded = false;
-				boolean atlistOneUE  = false;
 				while(i<unusedUEs.size()) {
 					wasAdded = false;
 					ArrayList<String> groups = unusedUEs.get(i).groupName;
@@ -732,18 +725,15 @@ public class AmariSoftServer extends SystemObjectImpl{
 							int ueId = unusedUEs.get(i).ueId;
 							result = result && addUe(unusedUEs.get(i), release, category, ueId, cellId);
 							wasAdded = true;
-							
+							atListOneUE = true;
 						}	
 					}
-					if (!wasAdded) {
+					if (!wasAdded)
 						i++;
-						atlistOneUE = true;
-					}
-						
-				}
-				if(!atlistOneUE)
-					report.report("There are no ues in the group: " + groupName, Reporter.WARNING);
+				}	
 			}
+			if (!atListOneUE)
+				report.report("There are no ues in group " + groupName + " to add to amarisoft", Reporter.WARNING);
 		GeneralUtils.stopLevel();
 		return result;
 	}
@@ -872,18 +862,13 @@ public class AmariSoftServer extends SystemObjectImpl{
 	//Deleting lastUEs from list according to given amount
 	public boolean deleteUes(int amount)
 	{
-		if (amount > ueMap.size()) {
-			report.report("There are no " + amount + " ues to delete, deleting " +ueMap.size(), Reporter.WARNING);
-			GeneralUtils.startLevel("deleting " + ueMap.size() + " UEs from Amarisoft simulator");
-		}
-		else 
-			GeneralUtils.startLevel("deleting " + amount + " UEs from Amarisoft simulator.");
+		GeneralUtils.startLevel("deleting " + amount + " UEs from Amarisoft simulator.");
 		boolean result = true;
 		int deletedAmount = 0;
-		int uesAmount = ueMap.size();
-		for(int i = 0; i<uesAmount; i++) {
+		ArrayList<AmarisoftUE> ues = ueMap;
+		for(int i = 0; i<ues.size(); i++) {
 			if (deletedAmount < amount) {
-				int lastUE = ueMap.size()-1;
+				int lastUE = ues.size()-1;
 				AmarisoftUE tempue = ueMap.get(lastUE);
 				if(deleteUE(tempue.ueId)) {
 					ueMap.remove(lastUE);
@@ -905,26 +890,27 @@ public class AmariSoftServer extends SystemObjectImpl{
 	{
 		GeneralUtils.startLevel("deleting all UES in group: " + groupName + " from Amarisoft simulator.");
 		boolean result = true;
-		Iterator<AmarisoftUE> it = ueMap.iterator();
-		 while(it.hasNext()) {
-			 AmarisoftUE temp = it.next();
-			 ArrayList<String> groups = temp.groupName;
-			 for(String group: groups) {
-					if (group.equals(groupName)) {
-						int ueNum = temp.ueId;
-						if (deleteUE(ueNum)) {
-							it.remove();
-							AmarisoftUE ue = new AmarisoftUE(ueNum, null, this);
-							report.report("UE : " + ueNum + " ( " + ue.getImsi() + " ) was deleted");
-							unusedUEs.add(ue);
-						}
-						else {
-							report.report("UE :" + ueMap.get(ueNum).getImsi() + " haven't been deleted from ue simulator");
-							result = false;
-						}
+		for(int i = 0; i< ueMap.size(); i++) {
+			ArrayList<String> groups = ueMap.get(i).groupName;
+			for(String group: groups) {
+				if (group.equals(groupName)) {
+					int ueNum = ueMap.get(i).ueId;
+					if (deleteUE(ueNum)) {
+						ueMap.remove(ueNum);
+						AmarisoftUE ue = new AmarisoftUE(ueNum, null, this);
+						report.report("UE : " + ueNum + " ( " + ue.getImsi() + " ) was deleted");
+						unusedUEs.add(ue);
 					}
+					else {
+						report.report("UE :" + ueMap.get(ueNum).getImsi() + " haven't been deleted from ue simulator");
+						result = false;
+						
+					}
+					ueNum++;
 				}
-		 }
+			}
+			
+		}
 		GeneralUtils.stopLevel();
 		return result;
 	}

@@ -367,20 +367,28 @@ public class UeSimulatorActions extends Action {
 	}
 
 	private void startUE(String groupName) {
+		boolean atlistOneUe = false;
 		try {
 			GeneralUtils.startLevel("starting UEs from group : " + groupName);
 			AmariSoftServer amariSoftServer = AmariSoftServer.getInstance();
 			for(AmarisoftUE ue : amariSoftServer.getUeMap()) {
 				for (String group: ue.groupName) {
 					if(group.equals(groupName)) {
-						if (ue.start())
-							report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") started in amarisoft");
-						else {
-							report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") was not started as expected", Reporter.WARNING);
+						String status = amariSoftServer.getUeStatus(ue.ueId);
+						if(status.equals("disconnected")) {
+							if (ue.start()) {
+								report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") started in amarisoft");
+								atlistOneUe = true;
+							}
+							else {
+								report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") was not started as expected", Reporter.WARNING);
+							}
 						}
 					}
 				}
 			}
+			if (!atlistOneUe)
+				report.report("There are no ues to start on group " + groupName, Reporter.WARNING);
 			GeneralUtils.stopLevel();
 		} catch (Exception e) {
 			report.report(e.getMessage());

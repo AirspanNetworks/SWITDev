@@ -723,6 +723,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 			else {
 				int i = 0;
 				boolean wasAdded = false;
+				boolean atlistOneUE  = false;
 				while(i<unusedUEs.size()) {
 					wasAdded = false;
 					ArrayList<String> groups = unusedUEs.get(i).groupName;
@@ -734,11 +735,15 @@ public class AmariSoftServer extends SystemObjectImpl{
 							
 						}	
 					}
-					if (!wasAdded)
+					if (!wasAdded) {
 						i++;
-				}	
+						atlistOneUE = true;
+					}
+						
+				}
+				if(!atlistOneUE)
+					report.report("There are no ues in the group: " + groupName, Reporter.WARNING);
 			}
-			
 		GeneralUtils.stopLevel();
 		return result;
 	}

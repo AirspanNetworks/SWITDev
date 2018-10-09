@@ -3,7 +3,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -704,6 +703,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 	private boolean addUes(String groupName, int release, int category, int cellId) {
 		GeneralUtils.startLevel("Adding UEs to Amarisoft simulator from group " + groupName);
 		boolean result = true;
+		boolean atListOneUE = false;
 			if (unusedUEs.size() <= 0) {
 				report.report("Failed adding UE to simulator. There are no free UEs in amarisoft to add", Reporter.WARNING);
 				return false;
@@ -725,14 +725,15 @@ public class AmariSoftServer extends SystemObjectImpl{
 							int ueId = unusedUEs.get(i).ueId;
 							result = result && addUe(unusedUEs.get(i), release, category, ueId, cellId);
 							wasAdded = true;
-							
+							atListOneUE = true;
 						}	
 					}
 					if (!wasAdded)
 						i++;
 				}	
 			}
-			
+			if (!atListOneUE)
+				report.report("There are no ues in group " + groupName + " to add to amarisoft", Reporter.WARNING);
 		GeneralUtils.stopLevel();
 		return result;
 	}

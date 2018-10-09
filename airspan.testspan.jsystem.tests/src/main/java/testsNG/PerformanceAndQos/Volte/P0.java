@@ -1311,10 +1311,10 @@ public class P0 extends TPTBase{
 		dl = dlrxTotal/1000000.0/sizeOfStreamList;			
 		
 		String dlRateToPrint = convertTo3DigitsAfterPoint(dl);
-		String dlCriteriaToPrint = convertTo3DigitsAfterPoint(dlCriteria);
+		String dlCriteriaToPrint = convertTo3DigitsAfterPoint(passCriteria*dlCriteria);
 		
 		String ulRateToPrint = convertTo3DigitsAfterPoint(ul);
-		String ulCriteriaToPrint = convertTo3DigitsAfterPoint(ulCriteria);
+		String ulCriteriaToPrint = convertTo3DigitsAfterPoint(passCriteria*ulCriteria);
 		
 		if(dl<passCriteria*dlCriteria){
 			report.report("DL rx rate for "+qciInfo+" does not match the threshold! DL rate: " + dlRateToPrint +" Mbps, instead of: "

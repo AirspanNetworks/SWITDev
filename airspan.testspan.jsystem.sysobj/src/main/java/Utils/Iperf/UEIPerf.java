@@ -642,13 +642,13 @@ public class UEIPerf implements Runnable {
 		}
 	}
 	
-	public void stopTraffic(ArrayList<String> streamList) {
-		String resultGrepDl = iperfMachineDL.sendCommand("ps -aux | grep iperf").getElement1();
-		GeneralUtils.unSafeSleep(2000);
-		String resultGrepUl = iperfMachineUL.sendCommand("ps -aux | grep iperf").getElement1();
-		GeneralUtils.unSafeSleep(2000);
-		String commandToKillDl = "kill -9 ";
-		String commandToKillUl = getKillCommand();
+	public void stopTraffic(ArrayList<String> streamList, String resultGrepDl, String resultGrepUl) {
+		if(!IPerf.commandsDl.contains("kill -9 ")){
+			IPerf.commandsDl = "kill -9 ";			
+		}
+		if(!IPerf.commandsUl.contains(getKillCommand())){
+			IPerf.commandsUl = getKillCommand();			
+		}
 		Iterator<IPerfStream> iter = dlStreamArrayList.iterator();
 		while(iter.hasNext()){
 			IPerfStream ips = iter.next();
@@ -657,19 +657,19 @@ public class UEIPerf implements Runnable {
 				if(process == null){
 					process = getProcessNumber(resultGrepUl, ips.getIperfClientCommand());
 					if(process != null){
-						commandToKillUl += process+" ";						
+						IPerf.commandsUl += process+" ";						
 					}
 				}else{
-					commandToKillDl += process+" ";					
+					IPerf.commandsDl += process+" ";					
 				}
 				process = getProcessNumber(resultGrepDl, ips.getIperfServerCommand());
 				if(process == null){
 					process = getProcessNumber(resultGrepUl, ips.getIperfServerCommand());
 					if(process != null){
-						commandToKillUl += process+" ";
+						IPerf.commandsUl += process+" ";
 					}
 				}else{					
-					commandToKillDl += process;
+					IPerf.commandsDl += process+" ";
 				}
 			}
 		}
@@ -682,31 +682,23 @@ public class UEIPerf implements Runnable {
 				if(process == null){
 					process = getProcessNumber(resultGrepDl, ips.getIperfClientCommand());
 					if(process != null){
-						commandToKillDl += process+" ";						
+						IPerf.commandsDl += process+" ";						
 					}
 				}else{
-					commandToKillUl += process;					
+					IPerf.commandsUl += process+" ";					
 				}
 				process = getProcessNumber(resultGrepUl, ips.getIperfServerCommand());
 				if(process == null){
 					process = getProcessNumber(resultGrepDl, ips.getIperfServerCommand());
 					if(process != null){
-						commandToKillDl += process+" ";
+						IPerf.commandsDl += process+" ";
 					}
 				}else{
-					commandToKillUl += process;					
+					IPerf.commandsUl += process+" ";					
 				}
 			}
 		}
-		iperfMachineDL.sendCommand(commandToKillDl);
-		GeneralUtils.unSafeSleep(3000);
-		iperfMachineDL.sendCommand("ps -aux | grep iperf");
-		GeneralUtils.unSafeSleep(1000);
 		
-		iperfMachineUL.sendCommand(commandToKillUl);
-		GeneralUtils.unSafeSleep(3000);
-		iperfMachineUL.sendCommand("ps -aux | grep iperf");
-		GeneralUtils.unSafeSleep(1000);
 		/*ArrayList<IPerfStream> dlTemp = (ArrayList<IPerfStream>) dlStreamArrayList.clone();
 		for(IPerfStream ips : dlTemp){
 			if(streamList.contains(ips.getStreamName())){

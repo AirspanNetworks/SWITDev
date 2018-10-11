@@ -642,11 +642,7 @@ public class UEIPerf implements Runnable {
 		}
 	}
 	
-	public void stopTraffic(ArrayList<String> streamList) {
-		String resultGrepDl = iperfMachineDL.sendCommand("ps -aux | grep iperf").getElement1();
-		GeneralUtils.unSafeSleep(2000);
-		String resultGrepUl = iperfMachineUL.sendCommand("ps -aux | grep iperf").getElement1();
-		GeneralUtils.unSafeSleep(2000);
+	public void stopTraffic(ArrayList<String> streamList, String resultGrepDl, String resultGrepUl) {
 		if(!IPerf.commandsDl.contains("kill -9 ")){
 			IPerf.commandsDl = "kill -9 ";			
 		}
@@ -673,7 +669,7 @@ public class UEIPerf implements Runnable {
 						IPerf.commandsUl += process+" ";
 					}
 				}else{					
-					IPerf.commandsDl += process;
+					IPerf.commandsDl += process+" ";
 				}
 			}
 		}
@@ -689,7 +685,7 @@ public class UEIPerf implements Runnable {
 						IPerf.commandsDl += process+" ";						
 					}
 				}else{
-					IPerf.commandsUl += process;					
+					IPerf.commandsUl += process+" ";					
 				}
 				process = getProcessNumber(resultGrepUl, ips.getIperfServerCommand());
 				if(process == null){
@@ -698,7 +694,7 @@ public class UEIPerf implements Runnable {
 						IPerf.commandsDl += process+" ";
 					}
 				}else{
-					IPerf.commandsUl += process;					
+					IPerf.commandsUl += process+" ";					
 				}
 			}
 		}

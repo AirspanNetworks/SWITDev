@@ -720,9 +720,13 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 	public void stopTraffic(ArrayList<String> streamList) {
 		commandsUl = "";
 		commandsDl = "";
+		String resultGrepDl = iperfMachineDL.sendCommand("ps -aux | grep iperf").getElement1();
+		GeneralUtils.unSafeSleep(2000);
+		String resultGrepUl = iperfMachineUL.sendCommand("ps -aux | grep iperf").getElement1();
+		GeneralUtils.unSafeSleep(2000);
 
 		for(UEIPerf ueIPerf : allUEsIPerfList){
-			ueIPerf.stopTraffic(streamList);
+			ueIPerf.stopTraffic(streamList, resultGrepDl, resultGrepUl);
 		}
 		
 		iperfMachineDL.sendCommand(commandsDl);

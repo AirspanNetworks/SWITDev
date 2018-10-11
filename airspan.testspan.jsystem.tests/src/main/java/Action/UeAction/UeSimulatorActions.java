@@ -507,7 +507,93 @@ public class UeSimulatorActions extends Action {
 		}
 		
 	}
+	
+	@Test											
+	@TestProperties(name = "RRC reestablishment", returnParam = "LastStatus", paramsInclude = {"UesOptions","GroupName", "NumUes" })
+	public void rrcReestablishment() {
+		boolean res = true;
+		try {
+			AmariSoftServer amarisoft = AmariSoftServer.getInstance();
+			if (amarisoft.getUeMap().size() == 0) {
+				report.report("There are no ues to reestablish - ue list is empty");
+				return;
+			}
+		} catch (Exception e1) {
+			report.report("Couldn't open amarisft instance");
+			e1.printStackTrace();
+		}
+		try {
+			switch (uesOptions) {
+			case AMOUNT:
+				rrcReestablishment(numUes);
+				break;
+			case GROUPNAME:
+				rrcReestablishment(groupName);			
+				break;
+			default:
+				break;
+			}
+		} catch (Exception e) {
+			res = false;
+			report.report("Error trying to stop UEs: " + e.getMessage(), Reporter.WARNING);
+			e.printStackTrace();
+		}
+		
+		if (res == false) {
+			report.report("stop UEs Failed", Reporter.FAIL);
+		} else {
+			report.report("stop UEs Succeeded");
+		}
+	}
 
+	private void rrcReestablishment(String groupName) {
+		try {
+			GeneralUtils.startLevel("reestablish UEs from group : " + groupName);
+			AmariSoftServer amariSoftServer = AmariSoftServer.getInstance();
+			for(AmarisoftUE ue : amariSoftServer.getUeMap()) {
+				for (String group: ue.groupName) {
+					if(group.equals(groupName)) {
+						if (ue.rrcReestablishment())
+							report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") reestablish");
+						else {
+							report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") did not reestablish", Reporter.WARNING);
+						}
+					}
+				}
+			}
+			GeneralUtils.stopLevel();
+		} catch (Exception e) {
+			report.report(e.getMessage());
+		}
+		
+	}
+	
+	private void rrcReestablishment(int amount) {
+		try {
+			int ueStarted = 0;
+			GeneralUtils.startLevel("reestablish " + amount + " UEs");
+			AmariSoftServer amariSoftServer = AmariSoftServer.getInstance();
+			for(AmarisoftUE ue : amariSoftServer.getUeMap()) {
+				if(ueStarted < amount) {
+					String status = amariSoftServer.getUeStatus(ue.ueId);
+					if(status.equals("connected")) {
+						if (ue.rrcReestablishment())
+							report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") reestablish");
+						else {
+							report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") was not reestablish", Reporter.WARNING);
+						}
+						ueStarted++;
+					}
+				}
+				else 
+					break;
+				
+			}
+			GeneralUtils.stopLevel();
+		} catch (Exception e) {
+			report.report(e.getMessage());
+		}
+	}
 	@Override
 	public void handleUIEvent(HashMap<String, Parameter> map, String methodName) throws Exception {
 

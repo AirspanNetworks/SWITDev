@@ -23,7 +23,8 @@ public class UEAction {
 		UE_GET("ue_get"),
 		UE_ADD("ue_add"),
 		UE_DELETE("ue_del"),
-		CONFIG_GET("config_get")
+		CONFIG_GET("config_get"),
+		RRC_RESET("rrc_reest")
 	    ;
 
 	    private final String text;

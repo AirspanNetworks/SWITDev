@@ -94,4 +94,7 @@ public class AmarisoftUE extends UE{
 		return false;
 	}
 
+	public boolean rrcReestablishment(){
+		return server.RRC_Reestablishment(ueId);
+	}
 }

@@ -1272,6 +1272,22 @@ public class AmariSoftServer extends SystemObjectImpl{
     public ArrayList<AmarisoftUE> getUnusedUEs() {
 		return unusedUEs;
 	}
+    
+    public boolean RRC_Reestablishment(int ueId) {
+    	ObjectMapper mapper = new ObjectMapper();
+		UEAction getUE = new UEAction();
+		getUE.setUeId(ueId);
+		getUE.setMessage(Actions.RRC_RESET);
+		try {
+			sendSynchronizedMessage(mapper.writeValueAsString(getUE));
+		} catch (JsonProcessingException e) {
+			GeneralUtils.printToConsole("Failed reestablish to ue " + ueId);
+			GeneralUtils.printToConsole(e.getMessage());
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+    }
 
 
 

@@ -933,8 +933,9 @@ public class AmariSoftServer extends SystemObjectImpl{
 			System.out.println(e.getMessage());
 			e.printStackTrace();
 			return false;
-		}		
-				
+		}
+		report.report("waiting 2 seconds");
+		GeneralUtils.unSafeSleep(2000);	
 		if (ue.getLanIpAddress() == null) {
 			String ip = getIpAddress(ueId);
 			ue.setLanIpAddress(ip);
@@ -1273,7 +1274,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 		return unusedUEs;
 	}
     
-    public boolean RRC_Reestablishment(int ueId) {
+   /* public boolean RRC_Reestablishment(int ueId) {
     	ObjectMapper mapper = new ObjectMapper();
 		UEAction getUE = new UEAction();
 		getUE.setUeId(ueId);
@@ -1287,14 +1288,5 @@ public class AmariSoftServer extends SystemObjectImpl{
 			return false;
 		}
 		return true;
-    }
-
-
-
-
-
-
-
-
-	
+    }*/
 }

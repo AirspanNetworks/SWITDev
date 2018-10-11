@@ -230,7 +230,6 @@ public class UeSimulatorActions extends Action {
 				amariSoftServer.deleteUes(groupName);
 				break;
 			default:
-				break;
 			}
 		} catch (Exception e) {
 			res = false;
@@ -508,7 +507,7 @@ public class UeSimulatorActions extends Action {
 		
 	}
 	
-	@Test											
+/*	@Test											
 	@TestProperties(name = "RRC reestablishment", returnParam = "LastStatus", paramsInclude = {"UesOptions","GroupName", "NumUes" })
 	public void rrcReestablishment() {
 		boolean res = true;
@@ -593,7 +592,7 @@ public class UeSimulatorActions extends Action {
 		} catch (Exception e) {
 			report.report(e.getMessage());
 		}
-	}
+	}*/
 	@Override
 	public void handleUIEvent(HashMap<String, Parameter> map, String methodName) throws Exception {
 

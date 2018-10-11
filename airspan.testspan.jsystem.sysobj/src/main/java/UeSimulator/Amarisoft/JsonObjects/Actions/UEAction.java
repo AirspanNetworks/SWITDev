@@ -48,6 +48,10 @@ public class UEAction {
 	
 	@JsonProperty("message")
 	private String message;
+	@JsonProperty("start_time")
+	private double start_time;
+
+
 	@JsonProperty("ue_id")
 	private Integer ueId;
 	@JsonProperty("list")
@@ -63,6 +67,14 @@ public class UEAction {
 	@JsonProperty("message")
 	public void setMessage(Actions message) {
 		this.message = message.toString();
+	}
+	@JsonProperty("start_time")
+	public double getStart_time() {
+		return start_time;
+	}
+	@JsonProperty("start_time")
+	public void setStart_time(double start_time) {
+		this.start_time = start_time;
 	}
 
 	@JsonProperty("ue_id")

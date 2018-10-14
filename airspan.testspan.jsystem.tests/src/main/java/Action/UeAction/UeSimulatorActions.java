@@ -117,10 +117,8 @@ public class UeSimulatorActions extends Action {
 	
 	@Test											
 	@TestProperties(name = "Add UEs", returnParam = "LastStatus", paramsInclude = {"Release", "Category", "DUT", "CellId" , "UesOptions","GroupName","NumUes"})
-	public void 
-Ues() {
+	public void addUes() {
 		boolean res = true;
-
 		try {
 			switch (uesOptions) {
 			case AMOUNT:

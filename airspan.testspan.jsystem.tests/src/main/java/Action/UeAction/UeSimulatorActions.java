@@ -403,17 +403,17 @@ public class UeSimulatorActions extends Action {
 					if(status.equals("disconnected")) {
 						if (ue.start() ) {
 							if (ue.getLanIpAddress() != null) {
-								report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") started in amarisoft");
+								report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") started in amarisoft. IP: " + ue.getLanIpAddress());
 								ueStarted++;
 							}
 							else {
 								if (ue.reboot()) {
 									if (ue.getLanIpAddress() != null) {
-										report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") started in amarisoft");
+										report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") started in amarisoft. IP: " + ue.getLanIpAddress());
 										ueStarted++;
 									}
 									else
-										report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") was not started as expected after 2 tries", Reporter.WARNING);
+										report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") was not started as expected after 2 tries. IP: " + ue.getLanIpAddress(), Reporter.WARNING);
 								}
 							}
 						}

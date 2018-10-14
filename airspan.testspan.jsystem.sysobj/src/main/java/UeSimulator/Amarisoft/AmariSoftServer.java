@@ -934,8 +934,6 @@ public class AmariSoftServer extends SystemObjectImpl{
 			e.printStackTrace();
 			return false;
 		}
-		report.report("waiting 2 seconds");
-		GeneralUtils.unSafeSleep(2000);	
 		if (ue.getLanIpAddress() == null) {
 			String ip = getIpAddress(ueId);
 			ue.setLanIpAddress(ip);

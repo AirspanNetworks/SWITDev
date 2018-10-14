@@ -117,7 +117,8 @@ public class UeSimulatorActions extends Action {
 	
 	@Test											
 	@TestProperties(name = "Add UEs", returnParam = "LastStatus", paramsInclude = {"Release", "Category", "DUT", "CellId" , "UesOptions","GroupName","NumUes"})
-	public void addUes() {
+	public void 
+Ues() {
 		boolean res = true;
 
 		try {
@@ -402,12 +403,22 @@ public class UeSimulatorActions extends Action {
 				if(ueStarted < amount) {
 					String status = amariSoftServer.getUeStatus(ue.ueId);
 					if(status.equals("disconnected")) {
-						if (ue.start())
-							report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") started in amarisoft");
-						else {
-							report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") was not started as expected", Reporter.WARNING);
+						if (ue.start() ) {
+							if (ue.getLanIpAddress() != null) {
+								report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") started in amarisoft");
+								ueStarted++;
+							}
+							else {
+								if (ue.reboot()) {
+									if (ue.getLanIpAddress() != null) {
+										report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") started in amarisoft");
+										ueStarted++;
+									}
+									else
+										report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") was not started as expected after 2 tries", Reporter.WARNING);
+								}
+							}
 						}
-						ueStarted++;
 					}
 				}
 				else 

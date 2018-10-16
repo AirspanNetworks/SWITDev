@@ -1020,6 +1020,7 @@ public class P0 extends TPTBase{
 		if (exceptionThrown) {
 			report.report("Exception failed the test - No Results");
 		} else {
+			listOfStreamList = getResultsAfterTest(listOfStreamList);
 			sumAndPrintTablesPerPort();
 			printPerStreamTables(listOfStreamList);
 
@@ -1466,79 +1467,9 @@ public class P0 extends TPTBase{
 			sampleAllCounters();
 			sampleArrayList = getTPTCounters();
 			streams.addAll(sampleArrayList);
-			/*GeneralUtils.startLevel("Checking for HaltStream");
-			if (checkForHalt()) {
-				streams = null;
-				streams = new ArrayList<StreamParams>();
-				report.report("Found halt streams", Reporter.WARNING);
-				report.report("Last sample was 0 - Re Sample one more time");
-				sampleAllCounters();
-				sampleArrayList = getTPTCounters();
-				streams.addAll(sampleArrayList);
-				if (checkForHalt()) {
-					report.report("Found halt streams", Reporter.WARNING);
-					report.report("Waiting 20 seconds");
-					GeneralUtils.unSafeSleep(20 * 1000);
-
-					streams = null;
-					streams = new ArrayList<StreamParams>();
-					report.report("Last sample was 0 - Re sample one more time");
-					sampleAllCounters();
-					sampleArrayList = getTPTCounters();
-					streams.addAll(sampleArrayList);
-					//restartTime = true;
-
-					if (checkForHalt()) {
-
-						haltedStreams = checkStreamsForHalter();
-						reportForHalted(haltedStreams);
-						report.report("Those Streams Are in Halt Status: " + printStreamName(haltedStreams));
-
-						//number of halted UEs is grater than Test Threshold.
-						double totalUESPercent = ueList.size() * PRECENT_OF_UE_RESET / 100;
-						boolean uesThreashold = getNumberOfUEs(haltedStreams) <= totalUESPercent ? true : false;
-
-						if (uesThreashold) {
-							report.report("disabling halted Streams since they are less than 30%.");
-								// Total UEs are over than 3 OR if Test take off less than 2 UEs.
-							GeneralUtils.printToConsole("Total number of UEs in Setup : "+ueList.size());
-							GeneralUtils.printToConsole("Number of UEs in Test Currently : "+ueNameListStc.size());
-							if( ueNameListStc.size() > 3  && ueList.size() - ueNameListStc.size() < 2) { 	
-								checkUEsRelationsWithStreams(haltedStreams);
-							}else{
-								report.report("Test UEs number is not enough For Throughtput! - Failing Test",Reporter.FAIL);	
-								exceptionThrown = true;
-								return;
-							}
-						}else{
-							resetUEs = true;
-						}
-						removeAllCommandsFromWatchDog();			
-						
-						resetDueToMultiHaltStreams = true;
-					}else{
-						getCounters();
-						report.report("No halt stream in third try");
-						startingTestTime+=20*1000;
-					}
-				}else{
-					getCounters();
-					report.report("No halt stream in second try");
-				}
-			} else {
-				getCounters();
-				report.report("No halt stream");
-			}*/
-
-		} catch (Exception e) {
-			report.report("Interrupted in SamepleResultsStatusOk method in Traffic Class - " + e.getMessage());
-			e.printStackTrace();
-			report.report("Error during test", Reporter.FAIL);
-			resetDueToMultiHaltStreams = true;
-			exceptionThrown = true;
-		} finally {
-			GeneralUtils.stopLevel();
+		}catch(Exception e){
 		}
+		
 		listOfStreamList.add(sampleArrayList);
 		streamsForPriorityTest.add(sampleArrayList);
 		streams = null;

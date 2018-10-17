@@ -1034,7 +1034,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 	synchronized private String getIpAddress(int ueId) {
 		String ueIp = null;
 		long t = System.currentTimeMillis();
-		long end = t + 10000;
+		long end = t + 5000;
 		while (System.currentTimeMillis() < end) {
 			UeStatus ueStatus = getUeInfo(ueId);
 			if (ueStatus != null) {

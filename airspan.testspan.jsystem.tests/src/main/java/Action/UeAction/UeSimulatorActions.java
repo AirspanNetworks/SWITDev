@@ -34,7 +34,7 @@ public class UeSimulatorActions extends Action {
 	}
 	
 
-	@ParameterProperties(description = "UE Selection Method")
+	@ParameterProperties(description = "UE Selection Method - default = amount: 1 UE")
 	public void setUesOptions(UesOptions uesOptions) {
 		this.uesOptions = uesOptions;
 	}

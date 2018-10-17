@@ -936,10 +936,17 @@ public class AmariSoftServer extends SystemObjectImpl{
 		}
 		if (ue.getLanIpAddress() == null) {
 			String ip = getIpAddress(ueId);
-			ue.setLanIpAddress(ip);
-			ue.setWanIpAddress(ip);
-			ue.setIPerfDlMachine(dlMachineNetworks.pop());
-			ue.setIPerfUlMachine(ip);
+			if (ip != null) {
+				ue.setLanIpAddress(ip);
+				ue.setWanIpAddress(ip);
+				if(dlMachineNetworks.size() == 1) 
+					ue.setIPerfDlMachine(dlMachineNetworks.get(0));
+				else {
+					if(ue.getIPerfDlMachine() == null)
+						ue.setIPerfDlMachine(dlMachineNetworks.pop());
+				}
+				ue.setIPerfUlMachine(ip);
+			}	
 		}
 		return true;
 	}	

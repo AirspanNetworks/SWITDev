@@ -1079,7 +1079,7 @@ public class TPTBase extends TestspanTest {
 		trafficSTC.addResultFilesToReport("");
 	}
 
-	private ArrayList<ArrayList<StreamParams>> getResultsAfterTest(
+	public ArrayList<ArrayList<StreamParams>> getResultsAfterTest(
 			ArrayList<ArrayList<StreamParams>> listOfStreamList2) {
 		return trafficSTC.getResultsAfterTest(listOfStreamList2);
 	}

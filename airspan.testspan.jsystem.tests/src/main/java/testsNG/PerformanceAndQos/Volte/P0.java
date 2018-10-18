@@ -1466,6 +1466,8 @@ public class P0 extends TPTBase{
 			sampleAllCounters();
 			sampleArrayList = getTPTCounters();
 			streams.addAll(sampleArrayList);
+		}catch(Exception e){
+		}
 			/*GeneralUtils.startLevel("Checking for HaltStream");
 			if (checkForHalt()) {
 				streams = null;
@@ -1528,7 +1530,7 @@ public class P0 extends TPTBase{
 			} else {
 				getCounters();
 				report.report("No halt stream");
-			}*/
+			}
 
 		} catch (Exception e) {
 			report.report("Interrupted in SamepleResultsStatusOk method in Traffic Class - " + e.getMessage());
@@ -1538,7 +1540,7 @@ public class P0 extends TPTBase{
 			exceptionThrown = true;
 		} finally {
 			GeneralUtils.stopLevel();
-		}
+		}*/
 		listOfStreamList.add(sampleArrayList);
 		streamsForPriorityTest.add(sampleArrayList);
 		streams = null;

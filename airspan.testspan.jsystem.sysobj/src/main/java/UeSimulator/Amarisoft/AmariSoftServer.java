@@ -804,7 +804,12 @@ public class AmariSoftServer extends SystemObjectImpl{
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}		
-	
+		
+		//check that RSRP is not 0
+		if(ue.getRSRP(ueId) == 0) {
+			report.report("RSRP of ue:" + ueId + " is 0, check that enodeB is active and the UE can hear it", Reporter.WARNING);
+		}
+		
 		try {
 			ue.init();
 		} catch (Exception e) {
@@ -933,20 +938,14 @@ public class AmariSoftServer extends SystemObjectImpl{
 			System.out.println(e.getMessage());
 			e.printStackTrace();
 			return false;
-		}
+		}		
+				
 		if (ue.getLanIpAddress() == null) {
 			String ip = getIpAddress(ueId);
-			if (ip != null) {
-				ue.setLanIpAddress(ip);
-				ue.setWanIpAddress(ip);
-				if(dlMachineNetworks.size() == 1) 
-					ue.setIPerfDlMachine(dlMachineNetworks.get(0));
-				else {
-					if(ue.getIPerfDlMachine() == null)
-						ue.setIPerfDlMachine(dlMachineNetworks.pop());
-				}
-				ue.setIPerfUlMachine(ip);
-			}	
+			ue.setLanIpAddress(ip);
+			ue.setWanIpAddress(ip);
+			ue.setIPerfDlMachine(dlMachineNetworks.pop());
+			ue.setIPerfUlMachine(ip);
 		}
 		return true;
 	}	
@@ -1041,7 +1040,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 	synchronized private String getIpAddress(int ueId) {
 		String ueIp = null;
 		long t = System.currentTimeMillis();
-		long end = t + 5000;
+		long end = t + 10000;
 		while (System.currentTimeMillis() < end) {
 			UeStatus ueStatus = getUeInfo(ueId);
 			if (ueStatus != null) {
@@ -1278,20 +1277,13 @@ public class AmariSoftServer extends SystemObjectImpl{
     public ArrayList<AmarisoftUE> getUnusedUEs() {
 		return unusedUEs;
 	}
-    
-   /* public boolean RRC_Reestablishment(int ueId) {
-    	ObjectMapper mapper = new ObjectMapper();
-		UEAction getUE = new UEAction();
-		getUE.setUeId(ueId);
-		getUE.setMessage(Actions.RRC_RESET);
-		try {
-			sendSynchronizedMessage(mapper.writeValueAsString(getUE));
-		} catch (JsonProcessingException e) {
-			GeneralUtils.printToConsole("Failed reestablish to ue " + ueId);
-			GeneralUtils.printToConsole(e.getMessage());
-			e.printStackTrace();
-			return false;
-		}
-		return true;
-    }*/
+
+
+
+
+
+
+
+
+	
 }

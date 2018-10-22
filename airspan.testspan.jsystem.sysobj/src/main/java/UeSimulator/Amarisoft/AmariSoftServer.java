@@ -870,10 +870,10 @@ public class AmariSoftServer extends SystemObjectImpl{
 		GeneralUtils.startLevel("deleting " + amount + " UEs from Amarisoft simulator.");
 		boolean result = true;
 		int deletedAmount = 0;
-		ArrayList<AmarisoftUE> ues = ueMap;
-		for(int i = 0; i<ues.size(); i++) {
+		int ues = ueMap.size();
+		for(int i = 0; i<ues; i++) {
 			if (deletedAmount < amount) {
-				int lastUE = ues.size()-1;
+				int lastUE = ueMap.size()-1;
 				AmarisoftUE tempue = ueMap.get(lastUE);
 				if(deleteUE(tempue.ueId)) {
 					ueMap.remove(lastUE);

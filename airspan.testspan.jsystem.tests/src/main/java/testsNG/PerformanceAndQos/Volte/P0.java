@@ -102,6 +102,8 @@ public class P0 extends TPTBase{
 	private String priorityTestFirstQcis = "";
 	private String priorityTestSecondQcis = "";
 	
+	protected final int threshold = 16;
+	
 	public String getApnEmergencyCall() {
 		return apnEmergencyCall;
 	}
@@ -956,17 +958,26 @@ public class P0 extends TPTBase{
 		GeneralUtils.stopLevel();
 	}
 	
+	protected boolean shouldReboot(){
+		int version = Integer.valueOf(dut.getEnodeBversion().split("_")[0]);
+		return version<threshold;
+	}
+	
 	protected boolean setMaxVolteCallAndReboot(int max){
 		boolean action = true;
 		action = dut.setMaxVolteCalls(max);
 		if(action){
-			report.report("Succeeded to set max volte calls to "+max+" in enodeb "+dut.getNetspanName()+". Rebooting enodeb");
-			dut.reboot();
-			action = dut.waitForAllRunningAndInService(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);
-			if(action){
-				report.report("Enodeb is all running and in service");
-			}else{
-				report.report("Enodeb failed to reach all running and in service after reboot",Reporter.WARNING);
+			report.report("Succeeded to set max volte calls to "+max+" in enodeb "+dut.getNetspanName());
+			boolean needReboot = shouldReboot();
+			if(needReboot){
+				report.report("Rebooting enodeb");
+				dut.reboot();
+				action = dut.waitForAllRunningAndInService(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);
+				if(action){
+					report.report("Enodeb is all running and in service");
+				}else{
+					report.report("Enodeb failed to reach all running and in service after reboot",Reporter.WARNING);
+				}				
 			}
 		}else{
 			report.report("Failed to set max volte calls to "+max,Reporter.WARNING);

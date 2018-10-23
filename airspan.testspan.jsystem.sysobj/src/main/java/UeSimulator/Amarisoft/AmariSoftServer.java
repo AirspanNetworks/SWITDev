@@ -194,18 +194,6 @@ public class AmariSoftServer extends SystemObjectImpl{
 				if(!imsiWasFound)
 					report.report("IMSI: " + groupimsi + " doesn't exists in the main imsi list in the SUT", Reporter.WARNING);
 			}
-			/*for (int i = 0; i < group.getImsiStart().length; i++) {
-				Long startImsi = new Long(group.getImsiStart()[i]);
-				Long stopImsi = new Long(group.getImsiStop()[i]);
-				for (Long UEimsi = startImsi; UEimsi <= stopImsi ; UEimsi++) {
-					for(AmarisoftUE amariUE: unusedUEs) {
-						if (UEimsi == Long.parseLong(amariUE.getImsi())) {
-							break;
-						}
-					}
-					report.report("IMSI: " + UEimsi + " doesn't exists in the main imsi list in the SUT", Reporter.WARNING);
-				}
-			}*/
 		}
 	}
 
@@ -1278,6 +1266,23 @@ public class AmariSoftServer extends SystemObjectImpl{
 		return unusedUEs;
 	}
 
+
+
+    public boolean RRC_Reestablishment(int ueId) {
+    	ObjectMapper mapper = new ObjectMapper();
+		UEAction getUE = new UEAction();
+		getUE.setUeId(ueId);
+		getUE.setMessage(Actions.RRC_RESET);
+		try {
+			sendSynchronizedMessage(mapper.writeValueAsString(getUE));
+		} catch (JsonProcessingException e) {
+			GeneralUtils.printToConsole("Failed reestablish to ue " + ueId);
+			GeneralUtils.printToConsole(e.getMessage());
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+    }
 
 
 

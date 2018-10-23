@@ -332,6 +332,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     
     public boolean startServer(String configFile){
     	try {   
+    		GeneralUtils.printToConsole(configFile);
     		boolean ans = sendCommands("/root/ue/lteue /root/ue/config/" + configFile,"sample_rate=");
     		if (!ans) {
     			GeneralUtils.printToConsole("Failed starting server with config file: " + configFile);

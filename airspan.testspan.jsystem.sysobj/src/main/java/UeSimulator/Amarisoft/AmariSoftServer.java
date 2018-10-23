@@ -68,7 +68,6 @@ public class AmariSoftServer extends SystemObjectImpl{
 	private String userName;
 	private String password;
 	private String timingAdvance;
-
 	private double txgain;
 	private double rxgain;
 	private String ueConfigFileName = "automationConfigFile";
@@ -221,6 +220,13 @@ public class AmariSoftServer extends SystemObjectImpl{
 		this.password = password;
 	}
 	
+	public String getTimingAdvance() {
+		return timingAdvance;
+	}
+
+	public void setTimingAdvance(String timingAdvance) {
+		this.timingAdvance = timingAdvance;
+	}
 	public double getTxgain() {
 		return txgain;
 	}

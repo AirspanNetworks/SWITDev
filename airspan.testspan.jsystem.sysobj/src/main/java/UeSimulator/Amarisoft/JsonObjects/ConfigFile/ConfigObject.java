@@ -34,7 +34,9 @@ public class ConfigObject {
     private String comAddr;
     @JsonProperty("rf_driver")
     private RfDriver rfDriver;
-    @JsonProperty("tx_gain")
+    @JsonProperty("global_timing_advance")
+    private Integer globalTimingAdvance;
+	@JsonProperty("tx_gain")
     private Double txGain;
     @JsonProperty("rx_gain")
     private Double rxGain;
@@ -88,7 +90,16 @@ public class ConfigObject {
     public void setRfDriver(RfDriver rfDriver) {
         this.rfDriver = rfDriver;
     }
-
+    
+    @JsonProperty("global_timing_advance")
+    public Integer getGlobalTimingAdvance() {
+		return globalTimingAdvance;
+	}
+    @JsonProperty("global_timing_advance")
+	public void setGlobalTimingAdvance(Integer globalTimingAdvance) {
+		this.globalTimingAdvance = globalTimingAdvance;
+	}
+    
     @JsonProperty("tx_gain")
     public Double getTxGain() {
         return txGain;

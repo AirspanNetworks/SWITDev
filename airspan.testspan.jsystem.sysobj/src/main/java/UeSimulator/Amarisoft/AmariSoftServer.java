@@ -67,7 +67,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 	private String port;
 	private String userName;
 	private String password;
-	private int timingAdvance;
+	private String timingAdvance;
 
 	private double txgain;
 	private double rxgain;
@@ -320,7 +320,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     }
     
     public boolean startServer(ArrayList<EnodeB> duts){
-    	setConfig(duts, timingAdvance);
+    	setConfig(duts, Integer.parseInt(timingAdvance));
     	return startServer(ueConfigFileName);
     }
     

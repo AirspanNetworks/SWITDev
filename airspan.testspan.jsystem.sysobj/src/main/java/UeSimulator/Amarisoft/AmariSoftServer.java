@@ -1077,7 +1077,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 		return true;
 	}
 	
-	private void setConfig(ArrayList<EnodeB> duts, int globaTime) {
+	private void setConfig(ArrayList<EnodeB> duts, int globalTime) {
 		configObject = new ConfigObject();
 		configObject.setLogOptions("all.level=none,all.max_size=0");
 		configObject.setLogFilename("/tmp/ue0.log");
@@ -1090,7 +1090,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 			cell.setDlEarfcn(earfcnList.get(i));
 			cell.setNAntennaDl(2);
 			cell.setNAntennaUl(1);
-			cell.setGlobalTimingAdvance(globaTime);
+			cell.setGlobalTimingAdvance(globalTime);
 			GeneralUtils.printToConsole("Adding cell with earfcn: " + earfcnList.get(i) + " to run on sdr " + sdrList[i]);
 			cells.add(cell);
 			rfDriver += "dev"+i+"=/dev/sdr"+sdrList[i]+",";

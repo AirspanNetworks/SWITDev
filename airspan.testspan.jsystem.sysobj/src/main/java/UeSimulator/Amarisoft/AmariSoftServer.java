@@ -67,7 +67,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 	private String port;
 	private String userName;
 	private String password;
-	private int timingAdvance = 5;
+	private int timingAdvance;
 
 	private double txgain;
 	private double rxgain;

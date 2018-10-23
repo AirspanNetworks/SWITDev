@@ -320,7 +320,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     }
     
     public boolean startServer(ArrayList<EnodeB> duts){
-    	setConfig(duts);
+    	setConfig(duts, timingAdvance);
     	return startServer(ueConfigFileName);
     }
     
@@ -927,13 +927,19 @@ public class AmariSoftServer extends SystemObjectImpl{
 			e.printStackTrace();
 			return false;
 		}		
-				
 		if (ue.getLanIpAddress() == null) {
 			String ip = getIpAddress(ueId);
-			ue.setLanIpAddress(ip);
-			ue.setWanIpAddress(ip);
-			ue.setIPerfDlMachine(dlMachineNetworks.pop());
-			ue.setIPerfUlMachine(ip);
+			if (ip != null) {
+				ue.setLanIpAddress(ip);
+				ue.setWanIpAddress(ip);
+				if(dlMachineNetworks.size() == 1) 
+					ue.setIPerfDlMachine(dlMachineNetworks.get(0));
+				else {
+					if(ue.getIPerfDlMachine() == null)
+						ue.setIPerfDlMachine(dlMachineNetworks.pop());
+				}
+				ue.setIPerfUlMachine(ip);
+			}	
 		}
 		return true;
 	}	
@@ -1065,7 +1071,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 		return true;
 	}
 	
-	private void setConfig(ArrayList<EnodeB> duts) {
+	private void setConfig(ArrayList<EnodeB> duts, int globaTime) {
 		configObject = new ConfigObject();
 		configObject.setLogOptions("all.level=none,all.max_size=0");
 		configObject.setLogFilename("/tmp/ue0.log");
@@ -1078,7 +1084,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 			cell.setDlEarfcn(earfcnList.get(i));
 			cell.setNAntennaDl(2);
 			cell.setNAntennaUl(1);
-			cell.setGlobalTimingAdvance(2);
+			cell.setGlobalTimingAdvance(globaTime);
 			GeneralUtils.printToConsole("Adding cell with earfcn: " + earfcnList.get(i) + " to run on sdr " + sdrList[i]);
 			cells.add(cell);
 			rfDriver += "dev"+i+"=/dev/sdr"+sdrList[i]+",";

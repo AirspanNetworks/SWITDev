@@ -18,151 +18,16 @@ public class Program {
 	public static AmariSoftServer clientEndPoint;
 	
 	public static void main(String[] args) throws JsonProcessingException {
-		// open websocket
-//		Terminal dlMachine = new SSH("192.168.58.148", "swit", "swit_user1");
-//		try {
-//			dlMachine.connect();
-//		} catch (IOException e2) {
-//			// TODO Auto-generated catch block
-//			e2.printStackTrace();
-//		}
-//		int port = 9;
-//		try {
-//			dlMachine.sendString("iperf -s -i 1 -p 500" + port + " -B 91.99.1.240 -f k & \n", true);
-//		} catch (IOException e2) {
-//			// TODO Auto-generated catch block
-//			e2.printStackTrace();
-//		} catch (InterruptedException e2) {
-//			// TODO Auto-generated catch block
-//			e2.printStackTrace();
-//		} // start server
-		//clientEndPoint = new AmariSoftServer("192.168.58.91", "9002", "root", "SWITswit");
-		//clientEndPoint.setConfig();
-		//clientEndPoint.setConfigFile("1UE_CA_UDP_SWIT24");
 		try
 		{
-		//clientEndPoint.startServer();
+		
 			AmariSoftServer a = new AmariSoftServer();
-			a.setDlMachineNetworks("91.91.224.2-253,91.91.225.2-253");
+			a.setDlMachineNetworks("91.91.117.240");
 			a.easyInit();
-			a.startServer("0UE_SC_TDE3");
+			a.startServer("automationConfigFile");
 			a.addUes(10, 13, 6);
 			
 			a.stopServer();
-			/*
-			ArrayList<AmarisoftUE> ues = a.getUeMap();
-			for (AmarisoftUE ue: ues) {
-				ue.start();
-			}
-
-			for (AmarisoftUE ue: ues) {
-				ue.stop();
-			}
-			a.deleteUes(2);
-			a.stopServer();*/
-			//a.startServer("automationConfigFile");
-			/*ConfigGet s = a.getConfig();
-			CellsWrapper cellWrapper = s.getCells();
-			ArrayList<CellStatus> cells = new ArrayList<>();
-			if (cellWrapper.getCell0() != null) {
-				cells.add(cellWrapper.getCell0());
-			}
-			if (cellWrapper.getCell1() != null) {
-				cells.add(cellWrapper.getCell1());
-			}
-			if (cellWrapper.getCell2() != null) {
-				cells.add(cellWrapper.getCell2());
-			}
-			if (cellWrapper.getCell3() != null) {
-				cells.add(cellWrapper.getCell3());
-			}
-			
-			for (CellStatus cellStatus : cells) {
-				System.out.println(cellStatus.getDlEarfcn());
-				System.out.println(cellStatus.getMode());
-				System.out.println(cellStatus.getNRbDl());
-				System.out.println(cellStatus.getNRbUl());
-				System.out.println(cellStatus.getPci());
-				System.out.println(cellStatus.getSpConfig());
-				System.out.println(cellStatus.getUl_earfcnn());
-				System.out.println(cellStatus.getUldlConfig());
-			}*/
-		
-		//sleep(20000);
-		//clientEndPoint.startIperfServer(1, 9);
-		//clientEndPoint.startTraffic(100, 9);
-		//sleep(2000);
-//		try {
-//			dlMachine.sendString("iperf -c 42.42.101.101 -i 5 -p 500" + port + " -t 99999 & \n", true);
-//		} catch (IOException e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		} catch (InterruptedException e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		}
-
-		// add listener
-//		clientEndPoint.addMessageHandler(new AmariSoftServer.MessageHandler() {
-//			public void handleMessage(String message) {
-//				System.out.println("Message recieved: " + message);
-//				ObjectMapper mapper = new ObjectMapper();
-//
-//				// Convert JSON string to Object
-//				UeStatus stat = null;
-//				try {
-//					stat = mapper.readValue(message, UeStatus.class);
-//					Double ulRate = stat.getUeList().get(0).getUlBitrate() / 1000;
-//					Double dlRate = stat.getUeList().get(0).getDlBitrate() / 1000;
-//					String emmState = stat.getUeList().get(0).getEmmState();
-//					int ueID = stat.getUeList().get(0).getUeId();
-//					System.out.println("UE ID: " + ueID + "\tulRate (kbit): " + ulRate.intValue() + "\tdlRate (kbit): "
-//							+ dlRate.intValue() + "\temmState:" + emmState);
-//
-//				} catch (JsonParseException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				} catch (JsonMappingException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				} catch (IOException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//
-//			}
-//		});
-//		String imsi = "20001000100";
-//		int imsiEnd = 8300;
-//		UE ue = new AmarisoftUE();
-//		for (int i = 2; i <= 21; i++) {			
-//			ue.setImsi(imsi + (imsiEnd +i ));
-//			clientEndPoint.addUe(ue, 13,6,i,0);
-//			sleep(100);
-//		}
-//		//imsiEnd = 9000;
-//		for (int i = 22; i <= 41; i++) {		
-//			ue.setImsi(imsi + (imsiEnd + i));
-//			clientEndPoint.addUe(ue, 13,6,i,1);
-//			sleep(100);
-//		}
-//		for (int i = 1; i <= 64; i++) {				
-//			clientEndPoint.uePowerOn(i);
-//			sleep(100);
-//		}	
-//		while (true){
-//			try {
-//				workUes(clientEndPoint);
-//			} catch (Exception e) {
-//				long currentTime = System.currentTimeMillis();
-//				SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-//				Date resultDate = new Date(currentTime);
-//				String formatedTime = sdf.format(resultDate);
-//				System.out.println(formatedTime+ " - system crashed, restarting.");
-//				sleep(10000);
-//				clientEndPoint.startServer();
-//			}
-//		}
 		}
 		catch (Exception e) {
 			System.out.println("Error: " + e.getMessage());

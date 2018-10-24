@@ -332,7 +332,6 @@ public class AmariSoftServer extends SystemObjectImpl{
     
     public boolean startServer(String configFile){
     	try {   
-    		GeneralUtils.printToConsole(configFile);
     		boolean ans = sendCommands("/root/ue/lteue /root/ue/config/" + configFile,"sample_rate=");
     		if (!ans) {
     			GeneralUtils.printToConsole("Failed starting server with config file: " + configFile);
@@ -669,6 +668,17 @@ public class AmariSoftServer extends SystemObjectImpl{
     	mapper.configure(SerializationFeature.INDENT_OUTPUT, false);
     	try {    		
 			String stat = mapper.writeValueAsString(configObject);
+			GeneralUtils.printToConsole(stat);
+			GeneralUtils.startLevel("server conectivity details");
+				report.report("Port: " + configObject.getComAddr());
+				report.report("Sdr number: " + configObject.getRfDriver().getArgs());
+				report.report("TX gain: " + configObject.getTxGain());
+				report.report("RX gain: " + configObject.getRxGain());
+				report.report("Bandwidth: " + configObject.getBandwidth());
+				report.report("Multi ue: " + configObject.getMultiUe());
+				report.report("DL ertfcn: " + configObject.getCells().get(0).getDlEarfcn());
+				report.report("Global timing advance: " + configObject.getCells().get(0).getGlobalTimingAdvance());
+			GeneralUtils.stopLevel();
 			String newStat = stat.replace("\"", "\\\"");
 			sendCommands("echo \"" + newStat + "\" > /root/ue/config/" + ueConfigFileName,"");
 		} catch (JsonProcessingException e) {

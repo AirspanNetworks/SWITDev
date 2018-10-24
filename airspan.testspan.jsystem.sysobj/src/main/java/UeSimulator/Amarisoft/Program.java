@@ -3,14 +3,11 @@ import java.util.ArrayList;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import UE.AmarisoftUE;
 import UeSimulator.Amarisoft.JsonObjects.Actions.UEAction;
 import UeSimulator.Amarisoft.JsonObjects.Actions.UEAction.Actions;
 import UeSimulator.Amarisoft.JsonObjects.ConfigFile.Cell;
 import UeSimulator.Amarisoft.JsonObjects.ConfigFile.SimEvent;
 import UeSimulator.Amarisoft.JsonObjects.ConfigFile.UeList;
-import Utils.GeneralUtils;
 
 
 public class Program {
@@ -83,7 +80,7 @@ public class Program {
 		ueList.setImeisv("1234567891234567");
 		ueList.setK("5C95978B5E89488CB7DB44381E237809");
 		ueList.setOp("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
-		ueList.setTunSetupScript("ue-ifup_TCP");
+		ueList.setTunSetupScript(".ue-ifup_auto");
 		ueList.setUeId(ueId);
 		//ueList.setAdditionalProperty("ue_count", 5);
 		ueLists.add(ueList);

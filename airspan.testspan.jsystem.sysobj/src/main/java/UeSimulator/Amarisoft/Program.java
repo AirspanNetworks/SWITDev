@@ -125,7 +125,7 @@ public class Program {
 		ueList.setImsi("200010001008301");
 		ueList.setK("5C95978B5E89488CB7DB44381E237809");
 		ueList.setOp("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
-		ueList.setTunSetupScript("ue-ifup_TCP");
+		ueList.setTunSetupScript(".ue-ifup_auto");
 		ueList.setSimEvents(simEvents);
 		ueLists.add(ueList);
 		ueList = new UeList();
@@ -138,7 +138,7 @@ public class Program {
 		ueList.setImsi("200010001008302");
 		ueList.setK("5C95978B5E89488CB7DB44381E237809");
 		ueList.setOp("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
-		ueList.setTunSetupScript("ue-ifup_TCP");
+		ueList.setTunSetupScript(".ue-ifup_auto");
 		ueList.setSimEvents(simEvents);
 		ueLists.add(ueList);
 		clientEndPoint.configObject.setUeList(ueLists);

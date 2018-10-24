@@ -348,11 +348,16 @@ public class UeSimulatorActions extends Action {
 				startUE(groupName);
 				break;
 			}
-			
-			//need to add verification for IP address from amarisoft server
 		} catch (Exception e) {
 			res = false;
 			report.report("Error trying to start UEs: " + e.getMessage(), Reporter.WARNING);
+			e.printStackTrace();
+		}
+		try {
+			AmariSoftServer amarisoft = AmariSoftServer.getInstance();
+			amarisoft.startTrafficLogs();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

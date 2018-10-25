@@ -170,9 +170,13 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 			GeneralUtils.unSafeSleep(100);
 		}
 		
+		GeneralUtils.printToConsole("DL server:" + commandsDlServer);
 		iperfMachineDL.createFile(dlServerCommandsFile, commandsDlServer);
+		GeneralUtils.printToConsole("DL client:" + commandsDlClient);
 		iperfMachineDL.createFile(dlclientCommandsFile, commandsDlClient);
+		GeneralUtils.printToConsole("UL server:" + commandsUlServer);
 		iperfMachineUL.createFile(ulServerCommandsFile, commandsUlServer);
+		GeneralUtils.printToConsole("UL clieant:" + commandsUlClient);
 		iperfMachineUL.createFile(ulclientCommandsFile, commandsUlClient);
 		
 		/*BufferedWriter writerDlServer = new BufferedWriter(new FileWriter(dlServerCommandsFile));
@@ -196,7 +200,7 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 			iperfMachineDL.sendCommand(commandsDlServer);
 		}
 		
-		GeneralUtils.printToConsole("DL server:" + commandsDlClient);
+		GeneralUtils.printToConsole("DL clieant:" + commandsDlClient);
 		if(!iperfMachineDL.putFile(dlclientCommandsFile)){
 			iperfMachineDL.sendCommand(commandsDlClient);
 		}
@@ -206,7 +210,7 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 			iperfMachineUL.sendCommand(commandsUlServer);
 		}
 		
-		GeneralUtils.printToConsole("UL server:" + commandsUlClient);
+		GeneralUtils.printToConsole("UL clieant:" + commandsUlClient);
 		if(!iperfMachineUL.putFile(ulclientCommandsFile)){
 			iperfMachineUL.sendCommand(commandsUlClient);
 		}

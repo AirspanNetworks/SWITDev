@@ -61,7 +61,7 @@ public class AmarisoftIperf extends UEIPerf{
 					}else{
 						linuxServerCommand = "sudo ip netns exec ue"+((AmarisoftUE)ue).ueId+" nohup iperf " + dlIPerfStream.getIperfServerCommand() + " &> " +  iperfMachineUL.getPreAddressTpFile() + dlIPerfStream.getTpFileName() + " &";
 					}
-					IPerf.commandsUlServer += linuxServerCommand+"\n";//iperfMachineUL.sendCommand(linuxServerCommand).getElement0();
+					IPerf.commandsDlServer += linuxServerCommand+"\n";//iperfMachineUL.sendCommand(linuxServerCommand).getElement0();
 				}
 			}
 		}else{

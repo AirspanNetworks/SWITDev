@@ -144,10 +144,10 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 	public void startTraffic() throws Exception {
 		Connect();
 		ExecutorService exe = Executors.newFixedThreadPool(allUEsIPerfList.size());
-		String ulServerCommandsFile = iperfMachineDL.preAddressTpFile +"UL"+ serverSideCommandsFile;
-		String dlclientCommandsFile = iperfMachineDL.preAddressTpFile +"DL"+ clientSideCommandsFile;
-		String dlServerCommandsFile = iperfMachineUL.preAddressTpFile +"DL"+ serverSideCommandsFile;
-		String ulclientCommandsFile = iperfMachineUL.preAddressTpFile +"UL"+ clientSideCommandsFile;
+		String ulServerCommandsFile = "UL"+ serverSideCommandsFile;
+		String dlclientCommandsFile = "DL"+ clientSideCommandsFile;
+		String dlServerCommandsFile = "DL"+ serverSideCommandsFile;
+		String ulclientCommandsFile = "UL"+ clientSideCommandsFile;
 		
 		/*iperfMachineDL.sendCommand("echo '' > " + ulServerCommandsFile + " ; chmod +x " + ulServerCommandsFile);
 		iperfMachineDL.sendCommand("echo '' > " + dlclientCommandsFile + " ; chmod +x " + dlclientCommandsFile);

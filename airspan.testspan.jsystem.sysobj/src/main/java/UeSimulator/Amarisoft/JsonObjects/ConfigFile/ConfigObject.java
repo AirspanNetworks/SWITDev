@@ -34,7 +34,7 @@ public class ConfigObject {
     private String comAddr;
     @JsonProperty("rf_driver")
     private RfDriver rfDriver;
-    @JsonProperty("tx_gain")
+	@JsonProperty("tx_gain")
     private Double txGain;
     @JsonProperty("rx_gain")
     private Double rxGain;
@@ -88,7 +88,7 @@ public class ConfigObject {
     public void setRfDriver(RfDriver rfDriver) {
         this.rfDriver = rfDriver;
     }
-
+    
     @JsonProperty("tx_gain")
     public Double getTxGain() {
         return txGain;

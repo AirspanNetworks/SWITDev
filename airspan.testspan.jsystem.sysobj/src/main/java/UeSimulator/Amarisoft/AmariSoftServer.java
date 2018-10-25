@@ -67,8 +67,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 	private String port;
 	private String userName;
 	private String password;
-	private int timingAdvance = 5;
-
+	private String timingAdvance;
 	private double txgain;
 	private double rxgain;
 	private String ueConfigFileName = "automationConfigFile";
@@ -194,18 +193,6 @@ public class AmariSoftServer extends SystemObjectImpl{
 				if(!imsiWasFound)
 					report.report("IMSI: " + groupimsi + " doesn't exists in the main imsi list in the SUT", Reporter.WARNING);
 			}
-			/*for (int i = 0; i < group.getImsiStart().length; i++) {
-				Long startImsi = new Long(group.getImsiStart()[i]);
-				Long stopImsi = new Long(group.getImsiStop()[i]);
-				for (Long UEimsi = startImsi; UEimsi <= stopImsi ; UEimsi++) {
-					for(AmarisoftUE amariUE: unusedUEs) {
-						if (UEimsi == Long.parseLong(amariUE.getImsi())) {
-							break;
-						}
-					}
-					report.report("IMSI: " + UEimsi + " doesn't exists in the main imsi list in the SUT", Reporter.WARNING);
-				}
-			}*/
 		}
 	}
 
@@ -233,6 +220,13 @@ public class AmariSoftServer extends SystemObjectImpl{
 		this.password = password;
 	}
 	
+	public String getTimingAdvance() {
+		return timingAdvance;
+	}
+
+	public void setTimingAdvance(String timingAdvance) {
+		this.timingAdvance = timingAdvance;
+	}
 	public double getTxgain() {
 		return txgain;
 	}
@@ -332,7 +326,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     }
     
     public boolean startServer(ArrayList<EnodeB> duts){
-    	setConfig(duts);
+    	setConfig(duts, Integer.parseInt(timingAdvance));
     	return startServer(ueConfigFileName);
     }
     
@@ -674,6 +668,17 @@ public class AmariSoftServer extends SystemObjectImpl{
     	mapper.configure(SerializationFeature.INDENT_OUTPUT, false);
     	try {    		
 			String stat = mapper.writeValueAsString(configObject);
+			GeneralUtils.printToConsole(stat);
+			GeneralUtils.startLevel("server conectivity details");
+				report.report("Port: " + configObject.getComAddr());
+				report.report("Sdr number: " + configObject.getRfDriver().getArgs());
+				report.report("TX gain: " + configObject.getTxGain());
+				report.report("RX gain: " + configObject.getRxGain());
+				report.report("Bandwidth: " + configObject.getBandwidth());
+				report.report("Multi ue: " + configObject.getMultiUe());
+				report.report("DL ertfcn: " + configObject.getCells().get(0).getDlEarfcn());
+				report.report("Global timing advance: " + configObject.getCells().get(0).getGlobalTimingAdvance());
+			GeneralUtils.stopLevel();
 			String newStat = stat.replace("\"", "\\\"");
 			sendCommands("echo \"" + newStat + "\" > /root/ue/config/" + ueConfigFileName,"");
 		} catch (JsonProcessingException e) {
@@ -780,7 +785,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 		ueProperties.setImeisv("1234567891234567");
 		ueProperties.setK("5C95978B5E89488CB7DB44381E237809");
 		ueProperties.setOp("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
-		ueProperties.setTunSetupScript("ue-ifup_TCP");
+		ueProperties.setTunSetupScript(".ue-ifup_auto");
 		ueProperties.setUeId(ueId);
 		//ueList.setAdditionalProperty("ue_count", 5);
 		ueLists.add(ueProperties);
@@ -804,7 +809,12 @@ public class AmariSoftServer extends SystemObjectImpl{
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}		
-	
+		
+		//check that RSRP is not 0
+		if(ue.getRSRP(ueId) == 0) {
+			report.report("RSRP of ue:" + ueId + " is 0, check that enodeB is active and the UE can hear it", Reporter.WARNING);
+		}
+		
 		try {
 			ue.init();
 		} catch (Exception e) {
@@ -865,10 +875,10 @@ public class AmariSoftServer extends SystemObjectImpl{
 		GeneralUtils.startLevel("deleting " + amount + " UEs from Amarisoft simulator.");
 		boolean result = true;
 		int deletedAmount = 0;
-		ArrayList<AmarisoftUE> ues = ueMap;
-		for(int i = 0; i<ues.size(); i++) {
+		int ues = ueMap.size();
+		for(int i = 0; i<ues; i++) {
 			if (deletedAmount < amount) {
-				int lastUE = ues.size()-1;
+				int lastUE = ueMap.size()-1;
 				AmarisoftUE tempue = ueMap.get(lastUE);
 				if(deleteUE(tempue.ueId)) {
 					ueMap.remove(lastUE);
@@ -933,7 +943,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 			System.out.println(e.getMessage());
 			e.printStackTrace();
 			return false;
-		}
+		}		
 		if (ue.getLanIpAddress() == null) {
 			String ip = getIpAddress(ueId);
 			if (ip != null) {
@@ -1041,7 +1051,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 	synchronized private String getIpAddress(int ueId) {
 		String ueIp = null;
 		long t = System.currentTimeMillis();
-		long end = t + 5000;
+		long end = t + 10000;
 		while (System.currentTimeMillis() < end) {
 			UeStatus ueStatus = getUeInfo(ueId);
 			if (ueStatus != null) {
@@ -1078,7 +1088,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 		return true;
 	}
 	
-	private void setConfig(ArrayList<EnodeB> duts) {
+	private void setConfig(ArrayList<EnodeB> duts, int globalTime) {
 		configObject = new ConfigObject();
 		configObject.setLogOptions("all.level=none,all.max_size=0");
 		configObject.setLogFilename("/tmp/ue0.log");
@@ -1091,7 +1101,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 			cell.setDlEarfcn(earfcnList.get(i));
 			cell.setNAntennaDl(2);
 			cell.setNAntennaUl(1);
-			cell.setGlobalTimingAdvance(2);
+			cell.setGlobalTimingAdvance(globalTime);
 			GeneralUtils.printToConsole("Adding cell with earfcn: " + earfcnList.get(i) + " to run on sdr " + sdrList[i]);
 			cells.add(cell);
 			rfDriver += "dev"+i+"=/dev/sdr"+sdrList[i]+",";
@@ -1278,8 +1288,10 @@ public class AmariSoftServer extends SystemObjectImpl{
     public ArrayList<AmarisoftUE> getUnusedUEs() {
 		return unusedUEs;
 	}
-    
-   /* public boolean RRC_Reestablishment(int ueId) {
+
+
+
+    public boolean RRC_Reestablishment(int ueId) {
     	ObjectMapper mapper = new ObjectMapper();
 		UEAction getUE = new UEAction();
 		getUE.setUeId(ueId);
@@ -1293,5 +1305,13 @@ public class AmariSoftServer extends SystemObjectImpl{
 			return false;
 		}
 		return true;
-    }*/
+    }
+
+
+
+
+
+
+
+	
 }

@@ -135,7 +135,7 @@ public class IPerfLinuxMachine extends IPerfMachine{
 	public boolean putFile(String fileName) {
 		ScpClient scpClient = new ScpClient(hostname, username, password);
 		try {
-			scpClient.putFiles(preAddressTpFile, fileName);
+			scpClient.putFiles(preAddressTpFile, preAddressTpFile + fileName);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}

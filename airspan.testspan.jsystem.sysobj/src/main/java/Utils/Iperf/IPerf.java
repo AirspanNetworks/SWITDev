@@ -170,7 +170,12 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 			GeneralUtils.unSafeSleep(100);
 		}
 		
-		BufferedWriter writerDlServer = new BufferedWriter(new FileWriter(dlServerCommandsFile));
+		iperfMachineDL.createFile(dlServerCommandsFile, commandsDlServer);
+		iperfMachineDL.createFile(dlclientCommandsFile, commandsDlClient);
+		iperfMachineUL.createFile(ulServerCommandsFile, commandsUlServer);
+		iperfMachineUL.createFile(ulclientCommandsFile, commandsUlClient);
+		
+		/*BufferedWriter writerDlServer = new BufferedWriter(new FileWriter(dlServerCommandsFile));
 		writerDlServer.write(commandsDlServer);
 		writerDlServer.close();
 		
@@ -206,15 +211,15 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 			iperfMachineUL.sendCommand(commandsUlClient);
 		}
 		
-		/*GeneralUtils.printToConsole("UL:" + commandsUl);
+		GeneralUtils.printToConsole("UL:" + commandsUl);
 		if(!iperfMachineUL.putFile("commandsUlFile")){
 			iperfMachineUL.sendCommand(commandsUl);
 		}*/
 		
-		iperfMachineDL.sendCommand("chmod +x " + ulServerCommandsFile);
-		iperfMachineDL.sendCommand("chmod +x " + dlclientCommandsFile);
-		iperfMachineUL.sendCommand("chmod +x " + dlServerCommandsFile);
-		iperfMachineUL.sendCommand("chmod +x " + ulclientCommandsFile);
+		iperfMachineDL.sendCommand("chmod +x " + iperfMachineDL.preAddressTpFile + ulServerCommandsFile);
+		iperfMachineDL.sendCommand("chmod +x " + iperfMachineDL.preAddressTpFile + dlclientCommandsFile);
+		iperfMachineUL.sendCommand("chmod +x " + iperfMachineUL.preAddressTpFile + dlServerCommandsFile);
+		iperfMachineUL.sendCommand("chmod +x " + iperfMachineUL.preAddressTpFile + ulclientCommandsFile);
 
 		
 		GeneralUtils.unSafeSleep(1000);

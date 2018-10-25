@@ -48,5 +48,11 @@ public class IPerfRemoteWindowsMachine extends IPerfWindowsMachine{
 		
 	}
 
+	@Override
+	public void createFile(String name, String content) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	
 }

@@ -170,7 +170,7 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 			GeneralUtils.unSafeSleep(100);
 		}
 		
-		GeneralUtils.printToConsole("DL server:" + commandsDlServer);
+		/*GeneralUtils.printToConsole("DL server:" + commandsDlServer);
 		iperfMachineDL.createFile(dlServerCommandsFile, commandsDlServer);
 		GeneralUtils.printToConsole("DL client:" + commandsDlClient);
 		iperfMachineDL.createFile(dlclientCommandsFile, commandsDlClient);
@@ -178,8 +178,8 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		iperfMachineUL.createFile(ulServerCommandsFile, commandsUlServer);
 		GeneralUtils.printToConsole("UL clieant:" + commandsUlClient);
 		iperfMachineUL.createFile(ulclientCommandsFile, commandsUlClient);
-		
-		/*BufferedWriter writerDlServer = new BufferedWriter(new FileWriter(dlServerCommandsFile));
+		*/
+		BufferedWriter writerDlServer = new BufferedWriter(new FileWriter(dlServerCommandsFile));
 		writerDlServer.write(commandsDlServer);
 		writerDlServer.close();
 		
@@ -214,7 +214,7 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		if(!iperfMachineUL.putFile(ulclientCommandsFile)){
 			iperfMachineUL.sendCommand(commandsUlClient);
 		}
-		
+		/*
 		GeneralUtils.printToConsole("UL:" + commandsUl);
 		if(!iperfMachineUL.putFile("commandsUlFile")){
 			iperfMachineUL.sendCommand(commandsUl);

@@ -1,9 +1,7 @@
 package Utils.Iperf;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
@@ -149,14 +147,5 @@ public class IPerfLinuxMachine extends IPerfMachine{
 		return false;
 	}
 	
-	public void createFile(String name, String content){
-		try {
-			BufferedWriter writer = new BufferedWriter(new FileWriter(preAddressTpFile+name));
-			writer.write(content);
-			writer.close();	
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+	
 }

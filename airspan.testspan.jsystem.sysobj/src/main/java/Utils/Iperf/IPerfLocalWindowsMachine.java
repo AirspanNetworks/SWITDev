@@ -61,10 +61,4 @@ public class IPerfLocalWindowsMachine extends IPerfWindowsMachine{
 		return false;
 		
 	}
-
-	@Override
-	public void createFile(String name, String content) {
-		// TODO Auto-generated method stub
-		
-	}
 }

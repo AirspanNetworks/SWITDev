@@ -489,16 +489,16 @@ public class TrafficManager {
 
 	public void stopTraffic(ArrayList<String> trafficToStop) {
 		if(trafficToStop.isEmpty()){
-			/*Iterator<TrafficSampler> iter = samplerList.iterator();
+			Iterator<TrafficSampler> iter = samplerList.iterator();
 			while(iter.hasNext()){
 				TrafficSampler ts = iter.next();
 				GeneralUtils.startLevel("Stopping traffic "+ts.getName());
 				ts.stopTraffic();
 				GeneralUtils.stopLevel();
-			}*/
-			report.report("Stop traffic");
-			trafficInstance.stopTraffic();
-			Iterator<TrafficSampler> iter = samplerList.iterator();
+			}
+			/*report.report("Stop traffic");
+			trafficInstance.stopTraffic();*/
+			iter = samplerList.iterator();
 			while(iter.hasNext()){
 				TrafficSampler ts = iter.next();
 				GeneralUtils.startLevel("Getting statistics for traffic "+ts.getName());

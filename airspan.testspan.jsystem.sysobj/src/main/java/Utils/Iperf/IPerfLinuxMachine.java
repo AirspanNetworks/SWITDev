@@ -2,6 +2,7 @@ package Utils.Iperf;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 
@@ -129,4 +130,22 @@ public class IPerfLinuxMachine extends IPerfMachine{
 		File file = new File(fileName); 
 		return file;
 	}
+
+	@Override
+	public boolean putFile(String fileName) {
+		ScpClient scpClient = new ScpClient(hostname, username, password);
+		try {
+			scpClient.putFiles(preAddressTpFile, System.getProperty("user.dir")+fileName);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
+		if(scpClient.getFiles(System.getProperty("user.dir"), preAddressTpFile + fileName)){
+			return true;
+		}
+		scpClient.close();
+		return false;
+	}
+	
+	
 }

@@ -1,7 +1,9 @@
 package Utils.Iperf;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -35,6 +37,13 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 	public static String serverSideCommandsFile = "serverSide.txt";
 	public static String commandsUl;
 	public static String commandsDl;
+	
+	public static String commandsUlServer;
+	public static String commandsDlServer;
+	
+	public static String commandsUlClient;
+	public static String commandsDlClient;
+	
 	
 	private double ulPortLoad = 10;
 	private double dlPortLoad = 70;
@@ -140,25 +149,73 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		String dlServerCommandsFile = iperfMachineUL.preAddressTpFile +"DL"+ serverSideCommandsFile;
 		String ulclientCommandsFile = iperfMachineUL.preAddressTpFile +"UL"+ clientSideCommandsFile;
 		
-		iperfMachineDL.sendCommand("echo '' > " + ulServerCommandsFile + " ; chmod +x " + ulServerCommandsFile);
+		/*iperfMachineDL.sendCommand("echo '' > " + ulServerCommandsFile + " ; chmod +x " + ulServerCommandsFile);
 		iperfMachineDL.sendCommand("echo '' > " + dlclientCommandsFile + " ; chmod +x " + dlclientCommandsFile);
 		iperfMachineUL.sendCommand("echo '' > " + dlServerCommandsFile + " ; chmod +x " + dlServerCommandsFile);
 		iperfMachineUL.sendCommand("echo '' > " + ulclientCommandsFile + " ; chmod +x " + ulclientCommandsFile);
-
+		*/
 		
-		commandsUl = "";
-		commandsDl = "";
+		//commandsUl = "";
+		//commandsDl = "";
 
+		commandsUlServer = "";
+		commandsDlServer = "";
+			
+		commandsUlClient = "";
+		commandsDlClient = "";
+		
 		Protocol pro = getProtocol();
 		for (UEIPerf ueIPerf : allUEsIPerfList) {
 			exe.execute(ueIPerf);
 			GeneralUtils.unSafeSleep(100);
 		}
 		
-		GeneralUtils.printToConsole("DL:" + commandsDl);
-		iperfMachineDL.sendCommand(commandsDl);
-		GeneralUtils.printToConsole("UL:" + commandsUl);
-		iperfMachineUL.sendCommand(commandsUl);
+		BufferedWriter writerDlServer = new BufferedWriter(new FileWriter(dlServerCommandsFile));
+		writerDlServer.write(commandsDlServer);
+		writerDlServer.close();
+		
+		BufferedWriter writerUlServer = new BufferedWriter(new FileWriter(ulServerCommandsFile));
+		writerUlServer.write(commandsUlServer);
+		writerUlServer.close();		
+		
+		BufferedWriter writerDlClient = new BufferedWriter(new FileWriter(dlclientCommandsFile));
+		writerDlClient.write(commandsDlClient);
+		writerDlClient.close();
+		
+		BufferedWriter writerUlClient = new BufferedWriter(new FileWriter(ulclientCommandsFile));
+		writerUlClient.write(commandsUlClient);
+		writerUlClient.close();	
+		
+		GeneralUtils.printToConsole("DL server:" + commandsDlServer);
+		if(!iperfMachineDL.putFile(dlServerCommandsFile)){
+			iperfMachineDL.sendCommand(commandsDlServer);
+		}
+		
+		GeneralUtils.printToConsole("DL server:" + commandsDlClient);
+		if(!iperfMachineDL.putFile(dlclientCommandsFile)){
+			iperfMachineDL.sendCommand(commandsDlClient);
+		}
+		
+		GeneralUtils.printToConsole("UL server:" + commandsUlServer);
+		if(!iperfMachineUL.putFile(ulServerCommandsFile)){
+			iperfMachineUL.sendCommand(commandsUlServer);
+		}
+		
+		GeneralUtils.printToConsole("UL server:" + commandsUlClient);
+		if(!iperfMachineUL.putFile(ulclientCommandsFile)){
+			iperfMachineUL.sendCommand(commandsUlClient);
+		}
+		
+		/*GeneralUtils.printToConsole("UL:" + commandsUl);
+		if(!iperfMachineUL.putFile("commandsUlFile")){
+			iperfMachineUL.sendCommand(commandsUl);
+		}*/
+		
+		iperfMachineDL.sendCommand("chmod +x " + ulServerCommandsFile);
+		iperfMachineDL.sendCommand("chmod +x " + dlclientCommandsFile);
+		iperfMachineUL.sendCommand("chmod +x " + dlServerCommandsFile);
+		iperfMachineUL.sendCommand("chmod +x " + ulclientCommandsFile);
+
 		
 		GeneralUtils.unSafeSleep(1000);
 		

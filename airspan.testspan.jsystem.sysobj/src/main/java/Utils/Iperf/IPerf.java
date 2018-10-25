@@ -144,9 +144,9 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 	public void startTraffic() throws Exception {
 		Connect();
 		ExecutorService exe = Executors.newFixedThreadPool(allUEsIPerfList.size());
-		String ulServerCommandsFile = iperfMachineUL.preAddressTpFile+"UL"+ serverSideCommandsFile;
+		String ulServerCommandsFile = iperfMachineDL.preAddressTpFile+"UL"+ serverSideCommandsFile;
 		String dlclientCommandsFile = iperfMachineDL.preAddressTpFile+"DL"+ clientSideCommandsFile;
-		String dlServerCommandsFile = iperfMachineDL.preAddressTpFile+"DL"+ serverSideCommandsFile;
+		String dlServerCommandsFile = iperfMachineUL.preAddressTpFile+"DL"+ serverSideCommandsFile;
 		String ulclientCommandsFile = iperfMachineUL.preAddressTpFile+"UL"+ clientSideCommandsFile;
 		
 		/*iperfMachineDL.sendCommand("echo '' > " + ulServerCommandsFile + " ; chmod +x " + ulServerCommandsFile);
@@ -196,7 +196,7 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		writerUlClient.close();	
 		
 		GeneralUtils.printToConsole("DL server:" + commandsDlServer);
-		if(!iperfMachineDL.putFile(dlServerCommandsFile)){
+		if(!iperfMachineDL.putFile(ulServerCommandsFile)){
 			iperfMachineDL.sendCommand(commandsDlServer);
 		}
 		
@@ -206,7 +206,7 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		}
 		
 		GeneralUtils.printToConsole("UL server:" + commandsUlServer);
-		if(!iperfMachineUL.putFile(ulServerCommandsFile)){
+		if(!iperfMachineUL.putFile(dlServerCommandsFile)){
 			iperfMachineUL.sendCommand(commandsUlServer);
 		}
 		
@@ -220,9 +220,9 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 			iperfMachineUL.sendCommand(commandsUl);
 		}*/
 		
-		iperfMachineUL.sendCommand("chmod +x " + ulServerCommandsFile);
+		iperfMachineDL.sendCommand("chmod +x " + ulServerCommandsFile);
 		iperfMachineDL.sendCommand("chmod +x " + dlclientCommandsFile);
-		iperfMachineDL.sendCommand("chmod +x " + dlServerCommandsFile);
+		iperfMachineUL.sendCommand("chmod +x " + dlServerCommandsFile);
 		iperfMachineUL.sendCommand("chmod +x " + ulclientCommandsFile);
 
 		

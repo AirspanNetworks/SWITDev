@@ -144,10 +144,10 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 	public void startTraffic() throws Exception {
 		Connect();
 		ExecutorService exe = Executors.newFixedThreadPool(allUEsIPerfList.size());
-		String ulServerCommandsFile = "UL"+ serverSideCommandsFile;
-		String dlclientCommandsFile = "DL"+ clientSideCommandsFile;
-		String dlServerCommandsFile = "DL"+ serverSideCommandsFile;
-		String ulclientCommandsFile = "UL"+ clientSideCommandsFile;
+		String ulServerCommandsFile = iperfMachineUL.preAddressTpFile+"UL"+ serverSideCommandsFile;
+		String dlclientCommandsFile = iperfMachineDL.preAddressTpFile+"DL"+ clientSideCommandsFile;
+		String dlServerCommandsFile = iperfMachineDL.preAddressTpFile+"DL"+ serverSideCommandsFile;
+		String ulclientCommandsFile = iperfMachineUL.preAddressTpFile+"UL"+ clientSideCommandsFile;
 		
 		/*iperfMachineDL.sendCommand("echo '' > " + ulServerCommandsFile + " ; chmod +x " + ulServerCommandsFile);
 		iperfMachineDL.sendCommand("echo '' > " + dlclientCommandsFile + " ; chmod +x " + dlclientCommandsFile);
@@ -179,19 +179,19 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		GeneralUtils.printToConsole("UL clieant:" + commandsUlClient);
 		iperfMachineUL.createFile(ulclientCommandsFile, commandsUlClient);
 		*/
-		BufferedWriter writerDlServer = new BufferedWriter(new FileWriter(iperfMachineDL.preAddressTpFile + dlServerCommandsFile));
+		BufferedWriter writerDlServer = new BufferedWriter(new FileWriter(dlServerCommandsFile));
 		writerDlServer.write(commandsDlServer);
 		writerDlServer.close();
 		
-		BufferedWriter writerUlServer = new BufferedWriter(new FileWriter(iperfMachineUL.preAddressTpFile + ulServerCommandsFile));
+		BufferedWriter writerUlServer = new BufferedWriter(new FileWriter(ulServerCommandsFile));
 		writerUlServer.write(commandsUlServer);
 		writerUlServer.close();		
 		
-		BufferedWriter writerDlClient = new BufferedWriter(new FileWriter(iperfMachineDL.preAddressTpFile + dlclientCommandsFile));
+		BufferedWriter writerDlClient = new BufferedWriter(new FileWriter(dlclientCommandsFile));
 		writerDlClient.write(commandsDlClient);
 		writerDlClient.close();
 		
-		BufferedWriter writerUlClient = new BufferedWriter(new FileWriter(iperfMachineUL.preAddressTpFile + ulclientCommandsFile));
+		BufferedWriter writerUlClient = new BufferedWriter(new FileWriter(ulclientCommandsFile));
 		writerUlClient.write(commandsUlClient);
 		writerUlClient.close();	
 		
@@ -220,10 +220,10 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 			iperfMachineUL.sendCommand(commandsUl);
 		}*/
 		
-		iperfMachineDL.sendCommand("chmod +x " + iperfMachineDL.preAddressTpFile + ulServerCommandsFile);
-		iperfMachineDL.sendCommand("chmod +x " + iperfMachineDL.preAddressTpFile + dlclientCommandsFile);
-		iperfMachineUL.sendCommand("chmod +x " + iperfMachineUL.preAddressTpFile + dlServerCommandsFile);
-		iperfMachineUL.sendCommand("chmod +x " + iperfMachineUL.preAddressTpFile + ulclientCommandsFile);
+		iperfMachineUL.sendCommand("chmod +x " + ulServerCommandsFile);
+		iperfMachineDL.sendCommand("chmod +x " + dlclientCommandsFile);
+		iperfMachineDL.sendCommand("chmod +x " + dlServerCommandsFile);
+		iperfMachineUL.sendCommand("chmod +x " + ulclientCommandsFile);
 
 		
 		GeneralUtils.unSafeSleep(1000);

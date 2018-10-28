@@ -1321,18 +1321,18 @@ public class TPTBase extends TestspanTest {
 
 		if (ul_Divided_With_Number_Of_Streams < ulPassCriteria) {
 			report.report("UL : Expected: " + calcUpRate + "[Mbps] , Actual : "
-					+ longToString3DigitFormat(uLrxTotal / ulStreamsNum) + "[Mbps]", Reporter.FAIL);
+					+ longToString3DigitFormat(uLrxTotal / (ulStreamsNum/ueNameListStc.size())) + "[Mbps]", Reporter.FAIL);
 		} else {
 			report.report("UL : Expected: " + calcUpRate + "[Mbps] , Actual : "
-					+ longToString3DigitFormat(uLrxTotal / ulStreamsNum) + "[Mbps]");
+					+ longToString3DigitFormat(uLrxTotal / (ulStreamsNum/ueNameListStc.size())) + "[Mbps]");
 		}
 
 		if (dl_Divided_With_Number_Of_Streams < dlPassCriteria) {
 			report.report("DL : Expected: " + calcDownRate + "[Mbps], Actual : "
-					+ longToString3DigitFormat(dlrxTotal / dlStreamsNum) + "[Mbps]", Reporter.FAIL);
+					+ longToString3DigitFormat(dlrxTotal / (dlStreamsNum/ueNameListStc.size())) + "[Mbps]", Reporter.FAIL);
 		} else {
 			report.report("DL : Expected: " + calcDownRate + "[Mbps], Actual : "
-					+ longToString3DigitFormat(dlrxTotal / dlStreamsNum) + "[Mbps]");
+					+ longToString3DigitFormat(dlrxTotal / (dlStreamsNum/ueNameListStc.size())) + "[Mbps]");
 		}
 		reason = "Exp - UL: " + calcUpRate + "Mbps" + " DL: " + calcDownRate + "Mbps<br>";
 		reason += "Act - UL: " + upRate + "Mbps" + " DL: " + downRate + "Mbps";

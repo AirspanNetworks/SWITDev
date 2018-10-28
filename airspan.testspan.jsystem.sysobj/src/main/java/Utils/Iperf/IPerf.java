@@ -144,10 +144,10 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 	public void startTraffic() throws Exception {
 		Connect();
 		ExecutorService exe = Executors.newFixedThreadPool(allUEsIPerfList.size());
-		String ulServerCommandsFile = iperfMachineDL.preAddressTpFile+"UL"+ serverSideCommandsFile;
-		String dlclientCommandsFile = iperfMachineDL.preAddressTpFile+"DL"+ clientSideCommandsFile;
-		String dlServerCommandsFile = iperfMachineUL.preAddressTpFile+"DL"+ serverSideCommandsFile;
-		String ulclientCommandsFile = iperfMachineUL.preAddressTpFile+"UL"+ clientSideCommandsFile;
+		String ulServerCommandsFile = "UL"+ serverSideCommandsFile;
+		String dlclientCommandsFile = "DL"+ clientSideCommandsFile;
+		String dlServerCommandsFile = "DL"+ serverSideCommandsFile;
+		String ulclientCommandsFile = "UL"+ clientSideCommandsFile;
 		
 		/*iperfMachineDL.sendCommand("echo '' > " + ulServerCommandsFile + " ; chmod +x " + ulServerCommandsFile);
 		iperfMachineDL.sendCommand("echo '' > " + dlclientCommandsFile + " ; chmod +x " + dlclientCommandsFile);
@@ -197,22 +197,23 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		
 		GeneralUtils.printToConsole("DL server:" + commandsDlServer);
 		if(!iperfMachineDL.putFile(ulServerCommandsFile)){
-			iperfMachineDL.sendCommand(commandsDlServer);
+			iperfMachineDL.sendCommand(convertToEchoCommands(commandsDlServer,iperfMachineDL.preAddressTpFile+ulServerCommandsFile));
 		}
 		
 		GeneralUtils.printToConsole("DL clieant:" + commandsDlClient);
 		if(!iperfMachineDL.putFile(dlclientCommandsFile)){
-			iperfMachineDL.sendCommand(commandsDlClient);
+			iperfMachineDL.sendCommand(convertToEchoCommands(commandsDlClient,iperfMachineDL.preAddressTpFile+dlclientCommandsFile));
+
 		}
 		
 		GeneralUtils.printToConsole("UL server:" + commandsUlServer);
 		if(!iperfMachineUL.putFile(dlServerCommandsFile)){
-			iperfMachineUL.sendCommand(commandsUlServer);
+			iperfMachineDL.sendCommand(convertToEchoCommands(commandsUlServer,iperfMachineUL.preAddressTpFile+dlServerCommandsFile));
 		}
 		
 		GeneralUtils.printToConsole("UL clieant:" + commandsUlClient);
 		if(!iperfMachineUL.putFile(ulclientCommandsFile)){
-			iperfMachineUL.sendCommand(commandsUlClient);
+			iperfMachineDL.sendCommand(convertToEchoCommands(commandsUlClient,iperfMachineUL.preAddressTpFile+ulclientCommandsFile));
 		}
 		/*
 		GeneralUtils.printToConsole("UL:" + commandsUl);
@@ -220,10 +221,10 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 			iperfMachineUL.sendCommand(commandsUl);
 		}*/
 		
-		iperfMachineDL.sendCommand("chmod +x " + ulServerCommandsFile);
-		iperfMachineDL.sendCommand("chmod +x " + dlclientCommandsFile);
-		iperfMachineUL.sendCommand("chmod +x " + dlServerCommandsFile);
-		iperfMachineUL.sendCommand("chmod +x " + ulclientCommandsFile);
+		iperfMachineDL.sendCommand("chmod +x " + iperfMachineDL.preAddressTpFile+ ulServerCommandsFile);
+		iperfMachineDL.sendCommand("chmod +x " + iperfMachineDL.preAddressTpFile+ dlclientCommandsFile);
+		iperfMachineUL.sendCommand("chmod +x " + iperfMachineUL.preAddressTpFile+ dlServerCommandsFile);
+		iperfMachineUL.sendCommand("chmod +x " + iperfMachineUL.preAddressTpFile+ ulclientCommandsFile);
 
 		
 		GeneralUtils.unSafeSleep(1000);
@@ -268,6 +269,16 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		}
 	}*/
 	
+	private String convertToEchoCommands(String commandsToConvert, String commandsFile) {
+		String[] temp = commandsToConvert.split("\n");
+		String toRet="";
+		for(String str : temp){
+			toRet += "echo " + str + ">> "+commandsFile;
+		}
+		return toRet;
+	}
+
+
 	private Protocol getProtocol() {
 		Protocol pro = Protocol.UDP;
 		for(UEIPerf ueIPerf : allUEsIPerfList){

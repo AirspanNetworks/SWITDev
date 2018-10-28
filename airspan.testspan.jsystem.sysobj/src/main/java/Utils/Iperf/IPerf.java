@@ -845,7 +845,6 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 				}
 				toReturn.get(index).addAll(temp.get(index));
 			}
-			GeneralUtils.printToConsole("Size of all: "+toReturn.size());
 		}
 		return toReturn;
 	}

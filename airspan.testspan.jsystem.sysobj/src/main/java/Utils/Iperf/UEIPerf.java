@@ -859,14 +859,10 @@ public class UEIPerf implements Runnable {
 	public ArrayList<ArrayList<StreamParams>> getResultsAfterTest() {
 		ArrayList<ArrayList<StreamParams>> toReturn = new ArrayList<ArrayList<StreamParams>>();
 		for(IPerfStream ips : dlStreamArrayList){
-			GeneralUtils.printToConsole("Stream: "+ips.getStreamName());
 			toReturn = extractStatisticsFromFile(ips,toReturn);
-			GeneralUtils.printToConsole("Size: "+toReturn.size());
 		}
 		for(IPerfStream ips : ulStreamArrayList){
-			GeneralUtils.printToConsole("Stream: "+ips.getStreamName());
 			toReturn = extractStatisticsFromFile(ips,toReturn);
-			GeneralUtils.printToConsole("Size: "+toReturn.size());
 		}
 		return toReturn;
 	}

@@ -179,19 +179,19 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		GeneralUtils.printToConsole("UL clieant:" + commandsUlClient);
 		iperfMachineUL.createFile(ulclientCommandsFile, commandsUlClient);
 		*/
-		BufferedWriter writerDlServer = new BufferedWriter(new FileWriter(dlServerCommandsFile));
+		BufferedWriter writerDlServer = new BufferedWriter(new FileWriter(System.getProperty("user.dir")+dlServerCommandsFile));
 		writerDlServer.write(commandsDlServer);
 		writerDlServer.close();
 		
-		BufferedWriter writerUlServer = new BufferedWriter(new FileWriter(ulServerCommandsFile));
+		BufferedWriter writerUlServer = new BufferedWriter(new FileWriter(System.getProperty("user.dir")+ulServerCommandsFile));
 		writerUlServer.write(commandsUlServer);
 		writerUlServer.close();		
 		
-		BufferedWriter writerDlClient = new BufferedWriter(new FileWriter(dlclientCommandsFile));
+		BufferedWriter writerDlClient = new BufferedWriter(new FileWriter(System.getProperty("user.dir")+dlclientCommandsFile));
 		writerDlClient.write(commandsDlClient);
 		writerDlClient.close();
 		
-		BufferedWriter writerUlClient = new BufferedWriter(new FileWriter(ulclientCommandsFile));
+		BufferedWriter writerUlClient = new BufferedWriter(new FileWriter(System.getProperty("user.dir")+ulclientCommandsFile));
 		writerUlClient.write(commandsUlClient);
 		writerUlClient.close();	
 		

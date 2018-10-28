@@ -134,6 +134,7 @@ public class IPerfLinuxMachine extends IPerfMachine{
 	@Override
 	public boolean putFile(String fileName) {
 		ScpClient scpClient = new ScpClient(hostname, username, password);
+		boolean toRet = false;
 		try {
 			scpClient.putFiles(preAddressTpFile, fileName);
 		} catch (IOException e1) {
@@ -141,10 +142,10 @@ public class IPerfLinuxMachine extends IPerfMachine{
 		}
 		
 		if(scpClient.getFiles(System.getProperty("user.dir"), preAddressTpFile + fileName)){
-			return true;
+			toRet = true;
 		}
 		scpClient.close();
-		return false;
+		return toRet;
 	}
 	
 	

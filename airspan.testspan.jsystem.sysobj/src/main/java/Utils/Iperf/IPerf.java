@@ -179,6 +179,8 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		GeneralUtils.printToConsole("UL clieant:" + commandsUlClient);
 		iperfMachineUL.createFile(ulclientCommandsFile, commandsUlClient);
 		*/
+		
+		GeneralUtils.printToConsole(System.getProperty("user.dir"));
 		BufferedWriter writerDlServer = new BufferedWriter(new FileWriter(System.getProperty("user.dir")+dlServerCommandsFile));
 		writerDlServer.write(commandsDlServer);
 		writerDlServer.close();

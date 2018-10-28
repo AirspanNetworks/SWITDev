@@ -181,19 +181,19 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		*/
 		
 		GeneralUtils.printToConsole(System.getProperty("user.dir"));
-		BufferedWriter writerDlServer = new BufferedWriter(new FileWriter(System.getProperty("user.dir")+dlServerCommandsFile));
+		BufferedWriter writerDlServer = new BufferedWriter(new FileWriter(dlServerCommandsFile));
 		writerDlServer.write(commandsDlServer);
 		writerDlServer.close();
 		
-		BufferedWriter writerUlServer = new BufferedWriter(new FileWriter(System.getProperty("user.dir")+ulServerCommandsFile));
+		BufferedWriter writerUlServer = new BufferedWriter(new FileWriter(ulServerCommandsFile));
 		writerUlServer.write(commandsUlServer);
 		writerUlServer.close();		
 		
-		BufferedWriter writerDlClient = new BufferedWriter(new FileWriter(System.getProperty("user.dir")+dlclientCommandsFile));
+		BufferedWriter writerDlClient = new BufferedWriter(new FileWriter(dlclientCommandsFile));
 		writerDlClient.write(commandsDlClient);
 		writerDlClient.close();
 		
-		BufferedWriter writerUlClient = new BufferedWriter(new FileWriter(System.getProperty("user.dir")+ulclientCommandsFile));
+		BufferedWriter writerUlClient = new BufferedWriter(new FileWriter(ulclientCommandsFile));
 		writerUlClient.write(commandsUlClient);
 		writerUlClient.close();	
 		

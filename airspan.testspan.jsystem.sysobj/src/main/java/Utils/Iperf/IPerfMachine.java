@@ -39,7 +39,6 @@ public abstract class IPerfMachine extends SystemObjectImpl{
 	public abstract String getStrCounters(String tpCountersFileNames);
 	public abstract File getFile(String fileName);
 	public abstract boolean putFile(String fileName);
-	//public abstract void createFile(String name, String content);
 	public abstract boolean stopIPerf();
 
 	public abstract void disconnect();

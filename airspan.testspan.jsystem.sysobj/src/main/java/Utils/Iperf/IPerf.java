@@ -149,6 +149,11 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		String dlServerCommandsFile = "DL"+ serverSideCommandsFile;
 		String ulclientCommandsFile = "UL"+ clientSideCommandsFile;
 		
+		String ulServerCommandsFileWithPrefix = iperfMachineDL.preAddressTpFile + "UL"+ serverSideCommandsFile;
+		String dlclientCommandsFileWithPrefix = iperfMachineDL.preAddressTpFile + "DL"+ clientSideCommandsFile;
+		String dlServerCommandsFileWithPrefix = iperfMachineUL.preAddressTpFile + "DL"+ serverSideCommandsFile;
+		String ulclientCommandsFileWithPrefix = iperfMachineUL.preAddressTpFile + "UL"+ clientSideCommandsFile;
+		
 		/*iperfMachineDL.sendCommand("echo '' > " + ulServerCommandsFile + " ; chmod +x " + ulServerCommandsFile);
 		iperfMachineDL.sendCommand("echo '' > " + dlclientCommandsFile + " ; chmod +x " + dlclientCommandsFile);
 		iperfMachineUL.sendCommand("echo '' > " + dlServerCommandsFile + " ; chmod +x " + dlServerCommandsFile);
@@ -170,16 +175,6 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 			GeneralUtils.unSafeSleep(100);
 		}
 		
-		/*GeneralUtils.printToConsole("DL server:" + commandsDlServer);
-		iperfMachineDL.createFile(dlServerCommandsFile, commandsDlServer);
-		GeneralUtils.printToConsole("DL client:" + commandsDlClient);
-		iperfMachineDL.createFile(dlclientCommandsFile, commandsDlClient);
-		GeneralUtils.printToConsole("UL server:" + commandsUlServer);
-		iperfMachineUL.createFile(ulServerCommandsFile, commandsUlServer);
-		GeneralUtils.printToConsole("UL clieant:" + commandsUlClient);
-		iperfMachineUL.createFile(ulclientCommandsFile, commandsUlClient);
-		*/
-		
 		GeneralUtils.printToConsole(System.getProperty("user.dir"));
 		BufferedWriter writerDlServer = new BufferedWriter(new FileWriter(dlServerCommandsFile));
 		writerDlServer.write(commandsDlServer);
@@ -199,58 +194,53 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		
 		GeneralUtils.printToConsole("DL server:" + commandsDlServer);
 		if(!iperfMachineDL.putFile(ulServerCommandsFile)){
-			iperfMachineDL.sendCommand(convertToEchoCommands(commandsDlServer,iperfMachineDL.preAddressTpFile+ulServerCommandsFile));
+			iperfMachineDL.sendCommand(convertToEchoCommands(commandsDlServer,ulServerCommandsFileWithPrefix));
 		}
 		
 		GeneralUtils.printToConsole("DL clieant:" + commandsDlClient);
 		if(!iperfMachineDL.putFile(dlclientCommandsFile)){
-			iperfMachineDL.sendCommand(convertToEchoCommands(commandsDlClient,iperfMachineDL.preAddressTpFile+dlclientCommandsFile));
+			iperfMachineDL.sendCommand(convertToEchoCommands(commandsDlClient,dlclientCommandsFileWithPrefix));
 
 		}
 		
 		GeneralUtils.printToConsole("UL server:" + commandsUlServer);
 		if(!iperfMachineUL.putFile(dlServerCommandsFile)){
-			iperfMachineDL.sendCommand(convertToEchoCommands(commandsUlServer,iperfMachineUL.preAddressTpFile+dlServerCommandsFile));
+			iperfMachineDL.sendCommand(convertToEchoCommands(commandsUlServer,dlServerCommandsFileWithPrefix));
 		}
 		
 		GeneralUtils.printToConsole("UL clieant:" + commandsUlClient);
 		if(!iperfMachineUL.putFile(ulclientCommandsFile)){
-			iperfMachineDL.sendCommand(convertToEchoCommands(commandsUlClient,iperfMachineUL.preAddressTpFile+ulclientCommandsFile));
+			iperfMachineDL.sendCommand(convertToEchoCommands(commandsUlClient,ulclientCommandsFileWithPrefix));
 		}
-		/*
-		GeneralUtils.printToConsole("UL:" + commandsUl);
-		if(!iperfMachineUL.putFile("commandsUlFile")){
-			iperfMachineUL.sendCommand(commandsUl);
-		}*/
 		
-		iperfMachineDL.sendCommand("chmod +x " + iperfMachineDL.preAddressTpFile+ ulServerCommandsFile);
-		iperfMachineDL.sendCommand("chmod +x " + iperfMachineDL.preAddressTpFile+ dlclientCommandsFile);
-		iperfMachineUL.sendCommand("chmod +x " + iperfMachineUL.preAddressTpFile+ dlServerCommandsFile);
-		iperfMachineUL.sendCommand("chmod +x " + iperfMachineUL.preAddressTpFile+ ulclientCommandsFile);
+		iperfMachineDL.sendCommand("chmod +x " + ulServerCommandsFileWithPrefix);
+		iperfMachineDL.sendCommand("chmod +x " + dlclientCommandsFileWithPrefix);
+		iperfMachineUL.sendCommand("chmod +x " + dlServerCommandsFileWithPrefix);
+		iperfMachineUL.sendCommand("chmod +x " + ulclientCommandsFileWithPrefix);
 
 		
 		GeneralUtils.unSafeSleep(1000);
 		
 		if(pro == Protocol.TCP){
-			iperfMachineDL.sendCommand("cat " + ulServerCommandsFile);
-			iperfMachineDL.sendCommand(ulServerCommandsFile);
-			iperfMachineUL.sendCommand("cat " + dlServerCommandsFile);
-			iperfMachineUL.sendCommand(dlServerCommandsFile);
+			iperfMachineDL.sendCommand("cat " + ulServerCommandsFileWithPrefix);
+			iperfMachineDL.sendCommand(ulServerCommandsFileWithPrefix);
+			iperfMachineUL.sendCommand("cat " + dlServerCommandsFileWithPrefix);
+			iperfMachineUL.sendCommand(dlServerCommandsFileWithPrefix);
 			GeneralUtils.unSafeSleep(1000);
-			iperfMachineDL.sendCommand("cat " + dlclientCommandsFile);
-			iperfMachineDL.sendCommand(dlclientCommandsFile);
-			iperfMachineUL.sendCommand("cat " + ulclientCommandsFile);
-			iperfMachineUL.sendCommand(ulclientCommandsFile);
+			iperfMachineDL.sendCommand("cat " + dlclientCommandsFileWithPrefix);
+			iperfMachineDL.sendCommand(dlclientCommandsFileWithPrefix);
+			iperfMachineUL.sendCommand("cat "+ ulclientCommandsFileWithPrefix);
+			iperfMachineUL.sendCommand(ulclientCommandsFileWithPrefix);
 		}else{
-			iperfMachineDL.sendCommand("cat " + dlclientCommandsFile);
-			iperfMachineDL.sendCommand(dlclientCommandsFile);
-			iperfMachineUL.sendCommand("cat " + ulclientCommandsFile);
-			iperfMachineUL.sendCommand(ulclientCommandsFile);
+			iperfMachineDL.sendCommand("cat " +dlclientCommandsFileWithPrefix);
+			iperfMachineDL.sendCommand(dlclientCommandsFileWithPrefix);
+			iperfMachineUL.sendCommand("cat "+ulclientCommandsFileWithPrefix);
+			iperfMachineUL.sendCommand(ulclientCommandsFileWithPrefix);
 			GeneralUtils.unSafeSleep(10000);
-			iperfMachineDL.sendCommand("cat " + ulServerCommandsFile);
-			iperfMachineDL.sendCommand(ulServerCommandsFile);
-			iperfMachineUL.sendCommand("cat " + dlServerCommandsFile);
-			iperfMachineUL.sendCommand(dlServerCommandsFile);
+			iperfMachineDL.sendCommand("cat " +ulServerCommandsFileWithPrefix);
+			iperfMachineDL.sendCommand(ulServerCommandsFileWithPrefix);
+			iperfMachineUL.sendCommand("cat " + dlServerCommandsFileWithPrefix);
+			iperfMachineUL.sendCommand(dlServerCommandsFileWithPrefix);
 		}
 		
 		GeneralUtils.unSafeSleep(2000);

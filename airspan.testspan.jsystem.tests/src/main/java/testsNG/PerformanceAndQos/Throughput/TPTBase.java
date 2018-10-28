@@ -1261,8 +1261,21 @@ public class TPTBase extends TestspanTest {
 		int numberOfCells = enbConfig.getNumberOfActiveCells(dut);
 		printPortSummeryBeforeTestEnds(debugPrinter, uLrxTotal, dlrxTotal);
 
-		double ul_Divided_With_Number_Of_Streams = uLrxTotal / 1000000.0 / listOfStreamList.size();
-		double dl_Divided_With_Number_Of_Streams = dlrxTotal / 1000000.0 / listOfStreamList.size();
+		int dlStreams=0;
+		int ulStreams=0;
+		for(ArrayList<StreamParams> streams:listOfStreamList){
+			for(StreamParams stream:streams){
+				if(stream.getName().contains("UL")){
+					ulStreams++;
+				}
+				if(stream.getName().contains("DL")){
+					dlStreams++;
+				}
+			}
+		}
+		
+		double ul_Divided_With_Number_Of_Streams = uLrxTotal / 1000000.0 / (ulStreams/ueNameListStc.size());
+		double dl_Divided_With_Number_Of_Streams = dlrxTotal / 1000000.0 / (dlStreams/ueNameListStc.size());
 
 		double ulPassCriteria = ul;
 		double dlPassCriteria = dl;

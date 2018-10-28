@@ -147,6 +147,4 @@ public class IPerfLinuxMachine extends IPerfMachine{
 		scpClient.close();
 		return toRet;
 	}
-	
-	
 }

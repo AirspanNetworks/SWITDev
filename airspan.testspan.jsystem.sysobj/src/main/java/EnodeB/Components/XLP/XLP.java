@@ -1959,12 +1959,14 @@ public abstract class XLP extends EnodeBComponent {
 			if(DlFreq != GeneralUtils.ERROR_VALUE){
 				break;
 			}
+			GeneralUtils.unSafeSleep(2000);
 		}
 		for(int i=0;i<3;i++){
 			band = getBand();
 			if(band != GeneralUtils.ERROR_VALUE){
 				break;
 			}
+			GeneralUtils.unSafeSleep(2000);
 		}
 		int earfcn = Earfcn.GetEarfcnFromFreqAndBand(DlFreq, band);
 		return earfcn;

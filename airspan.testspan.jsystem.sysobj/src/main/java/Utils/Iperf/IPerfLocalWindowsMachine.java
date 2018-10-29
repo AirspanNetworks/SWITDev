@@ -55,4 +55,10 @@ public class IPerfLocalWindowsMachine extends IPerfWindowsMachine{
 		File file = new File(preAddressTpFile+fileName);
 		return file;
 	}
+
+	@Override
+	public boolean putFile(String fileName) {
+		return false;
+		
+	}
 }

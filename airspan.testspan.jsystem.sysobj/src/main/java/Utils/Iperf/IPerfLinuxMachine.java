@@ -2,6 +2,7 @@ package Utils.Iperf;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 
@@ -79,7 +80,7 @@ public class IPerfLinuxMachine extends IPerfMachine{
 
 	@Override
 	public String startIPerfTraffic(String clientCommand, String clientOutputFileName, TransmitDirection transmitDirection){
-		String linuxClientCommand = "echo 'nohup iperf " + clientCommand + " &> "+ preAddressTpFile + clientOutputFileName +" &' >> " + preAddressTpFile + transmitDirection + IPerf.clientSideCommandsFile;
+		String linuxClientCommand = "nohup iperf " + clientCommand + " &> "+ preAddressTpFile + clientOutputFileName +" &";
 		return linuxClientCommand;
 	}
 
@@ -87,9 +88,9 @@ public class IPerfLinuxMachine extends IPerfMachine{
 	public String startIPerfListener(Integer numberOfParallelIPerfStreams, String serverCommand, String tpFileName, TransmitDirection transmitDirection){
 		String linuxServerCommand = "";
 		if(numberOfParallelIPerfStreams != null && numberOfParallelIPerfStreams > 1){
-			linuxServerCommand = "echo 'nohup iperf " + serverCommand + " | grep SUM --line-buffered &> " + preAddressTpFile + tpFileName + " &' >> " + preAddressTpFile + transmitDirection + IPerf.serverSideCommandsFile;
+			linuxServerCommand = "nohup iperf " + serverCommand + " | grep SUM --line-buffered &> " + preAddressTpFile + tpFileName + " &";
 		}else{
-			linuxServerCommand = "echo 'nohup iperf " + serverCommand + " &> " + preAddressTpFile + tpFileName + " &' >> " + preAddressTpFile + transmitDirection + IPerf.serverSideCommandsFile;
+			linuxServerCommand = "nohup iperf " + serverCommand + " &> " + preAddressTpFile + tpFileName + " &";
 		}
 		return linuxServerCommand;
 	}
@@ -128,5 +129,22 @@ public class IPerfLinuxMachine extends IPerfMachine{
 		scpClient.close();
 		File file = new File(fileName); 
 		return file;
+	}
+
+	@Override
+	public boolean putFile(String fileName) {
+		ScpClient scpClient = new ScpClient(hostname, username, password);
+		boolean toRet = false;
+		try {
+			scpClient.putFiles(preAddressTpFile, fileName);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
+		if(scpClient.getFiles(System.getProperty("user.dir"), preAddressTpFile + fileName)){
+			toRet = true;
+		}
+		scpClient.close();
+		return toRet;
 	}
 }

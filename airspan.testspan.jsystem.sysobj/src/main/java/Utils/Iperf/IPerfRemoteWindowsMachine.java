@@ -42,5 +42,9 @@ public class IPerfRemoteWindowsMachine extends IPerfWindowsMachine{
 		return new File("");
 	}
 
-	
+	@Override
+	public boolean putFile(String fileName) {
+		return false;
+		
+	}
 }

@@ -1283,15 +1283,12 @@ public class TPTBase extends TestspanTest {
 		if (use_Expected_DL) {
 			dlPassCriteria = modifyAndPortLinkAndPrint("DL",dlPassCriteria, portsLoadPair.getElement0(), this.Expected_DL);
 		} else {
-			dlPassCriteria *= passCriteria;
-			report.report("DL Threshold : " + passCriteria * 100 + "%");
-
+			dlPassCriteria = modifyAndPortLinkAndPrint("DL",dlPassCriteria, portsLoadPair.getElement0(), passCriteria * 100);
 		}
 		if (use_Expected_UL) {
 			ulPassCriteria = modifyAndPortLinkAndPrint("UL",ulPassCriteria, portsLoadPair.getElement1(), this.Expected_UL);
 		} else {
-			ulPassCriteria *= passCriteria;
-			report.report("UL Threshold : " + passCriteria * 100 + "%");
+			ulPassCriteria = modifyAndPortLinkAndPrint("UL",ulPassCriteria, portsLoadPair.getElement1(), passCriteria * 100);
 		}
 
 		// print results

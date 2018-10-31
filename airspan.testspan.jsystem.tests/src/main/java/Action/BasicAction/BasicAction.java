@@ -21,7 +21,13 @@ public class BasicAction extends Action {
 	private String ip;
 	private String userName;
 	private String password;
+	private String sleepTime;
 	
+	@ParameterProperties(description = "Waiting time in seconds after sending last command. Default - no waiting")
+	public void setSleepTime(String sleepTime) {
+		this.sleepTime = sleepTime;
+	}
+
 	@ParameterProperties(description = "IP for SSH")
 	public void setIp(String ip) {
 		this.ip = ip;
@@ -119,7 +125,7 @@ public class BasicAction extends Action {
 	
 	@Test
 	@TestProperties(name = "Send Commands In Device", returnParam = "LastStatus", paramsInclude = { "Ip", "Password",
-			"UserName", "DebugCommands" })
+			"UserName", "DebugCommands","SleepTime" })
 	public void sendCommandsInDevice() {
 		boolean isNull = false;
 		if(ip == null){
@@ -153,10 +159,12 @@ public class BasicAction extends Action {
 		
 		if(ssh.isConnected()){
 			for (String cmd : this.debugCommands.split(",")) {
-				String output = ssh.sendCommand(cmd, 200);
+				String output = ssh.sendCommand(cmd, 1000);
 				GeneralUtils.unSafeSleep(1000);
 				report.report("Response for "+cmd+":"+output);
 			}
+			int wait = sleepTime == null ? 0 : Integer.valueOf(sleepTime)*1000;
+			GeneralUtils.unSafeSleep(wait);
 			ssh.disconnect();
 		}else{
 			report.report("Failed to connect to device",Reporter.FAIL);

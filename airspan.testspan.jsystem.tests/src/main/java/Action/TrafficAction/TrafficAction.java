@@ -256,7 +256,7 @@ public class TrafficAction extends Action {
 		return ueList;
 	}
 	
-	@ParameterProperties(description = "UEs")
+	@ParameterProperties(description = "Name of UEs from the SUT")
 	public void setUEs(String ues) {
 		ArrayList<UE> tempUes = new ArrayList<>();
 		String[] ueArray = ues.split(",");

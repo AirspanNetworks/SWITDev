@@ -2068,13 +2068,20 @@ public abstract class XLP extends EnodeBComponent {
 	public int getRSRPEventTriggerGaps() {
 		String trigger = "";
 		String oid = MibReader.getInstance().resolveByName("asLteStkCellMeasRepCfgMeasurementType");
-		HashMap<String, Variable> mapTypes = snmp.SnmpWalk(oid);
-		for (Entry<String, Variable> var : mapTypes.entrySet()) {
-			if (var.getValue().toString().equals("4")) {
-				String[] temp = var.getKey().toString().split("\\.");
-				trigger = temp[temp.length - 1];
+		HashMap<String, Variable> mapTypes = null;
+		for(int i=0;i<3;i++){
+			mapTypes = snmp.SnmpWalk(oid);
+			for (Entry<String, Variable> var : mapTypes.entrySet()) {
+				if (var.getValue().toString().equals("4")) {
+					String[] temp = var.getKey().toString().split("\\.");
+					trigger = temp[temp.length - 1];
+					break;
+				}
+			}
+			if (trigger != "") {
 				break;
 			}
+			GeneralUtils.unSafeSleep(1000);
 		}
 		if (trigger == "") {
 			return GeneralUtils.ERROR_VALUE;
@@ -2082,11 +2089,18 @@ public abstract class XLP extends EnodeBComponent {
 		try {
 			oid = MibReader.getInstance().resolveByName("asLteStkCellMeasRepCfgRSRPEventThreshold1");
 			String result = snmp.get(oid + "." + trigger);
-			return Integer.parseInt(result);
+			for(int i=0;i<3;i++){
+				result = snmp.get(oid + "." + trigger);
+				if(result != String.valueOf(GeneralUtils.ERROR_VALUE)){
+					return Integer.parseInt(result);					
+				}
+				GeneralUtils.unSafeSleep(1000);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return GeneralUtils.ERROR_VALUE;
 		}
+		return GeneralUtils.ERROR_VALUE;
 	}
 
 	public int getNumberOfCells() {
@@ -2177,13 +2191,20 @@ public abstract class XLP extends EnodeBComponent {
 	public int getRSRPEventStopGaps() {
 		String trigger = "";
 		String oid = MibReader.getInstance().resolveByName("asLteStkCellMeasRepCfgMeasurementType");
-		HashMap<String, Variable> mapTypes = snmp.SnmpWalk(oid);
-		for (Entry<String, Variable> var : mapTypes.entrySet()) {
-			if (var.getValue().toString().equals("5")) {
-				String[] temp = var.getKey().toString().split("\\.");
-				trigger = temp[temp.length - 1];
+		HashMap<String, Variable> mapTypes = null;
+		for(int i=0;i<3;i++){
+			mapTypes = snmp.SnmpWalk(oid);
+			for (Entry<String, Variable> var : mapTypes.entrySet()) {
+				if (var.getValue().toString().equals("5")) {
+					String[] temp = var.getKey().toString().split("\\.");
+					trigger = temp[temp.length - 1];
+					break;
+				}
+			}
+			if (trigger != "") {
 				break;
 			}
+			GeneralUtils.unSafeSleep(1000);
 		}
 		if (trigger == "") {
 			return GeneralUtils.ERROR_VALUE;
@@ -2191,11 +2212,18 @@ public abstract class XLP extends EnodeBComponent {
 		try {
 			oid = MibReader.getInstance().resolveByName("asLteStkCellMeasRepCfgRSRPEventThreshold1");
 			String result = snmp.get(oid + "." + trigger);
-			return Integer.parseInt(result);
+			for(int i=0;i<3;i++){
+				result = snmp.get(oid + "." + trigger);
+				if(result != String.valueOf(GeneralUtils.ERROR_VALUE)){
+					return Integer.parseInt(result);					
+				}
+				GeneralUtils.unSafeSleep(1000);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return GeneralUtils.ERROR_VALUE;
 		}
+		return GeneralUtils.ERROR_VALUE;
 	}
 
 	public boolean setEnhanceStartGapAdmin(boolean enhance) {

@@ -116,7 +116,7 @@ public class BasicAction extends Action {
 	
 	@Test
 	@TestProperties(name = "Send Commands In Device", returnParam = "LastStatus", paramsInclude = { "Ip", "Password",
-			"UserName", "DebugCommands" })
+			"UserName", "DebugCommands","SleepTime" })
 	public void sendCommandsInDevice() {
 		boolean isNull = false;
 		if(ip == null){

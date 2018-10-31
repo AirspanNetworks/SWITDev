@@ -55,11 +55,11 @@ public class BasicAction extends Action {
 	}
 	
 	@Test // 1
-	@TestProperties(name = "Wait", returnParam = "LastStatus", paramsInclude = { "timeToWait" })
+	@TestProperties(name = "waitAction", returnParam = "LastStatus", paramsInclude = { "timeToWait" })
 	public void waitAction() {
 		long timeToWaitMillisecond;
 		timeToWaitMillisecond = setRunTimeToMilliSeconds(timeToWait);
-		report.report("Wait " + timeToWait + " Milliseconds");
+		report.report("Wait " + timeToWait);
 
 		if (GeneralUtils.unSafeSleep(timeToWaitMillisecond)) {
 			report.report("Wait " + timeToWaitMillisecond + " Milliseconds Succeeded");

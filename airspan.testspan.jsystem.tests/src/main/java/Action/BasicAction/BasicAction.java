@@ -148,7 +148,7 @@ public class BasicAction extends Action {
 				GeneralUtils.unSafeSleep(1000);
 				report.report("Response for "+cmd+":"+output);
 			}
-			GeneralUtils.unSafeSleep(5000);
+			GeneralUtils.unSafeSleep(20000);
 			ssh.disconnect();
 		}else{
 			report.report("Failed to connect to device",Reporter.FAIL);

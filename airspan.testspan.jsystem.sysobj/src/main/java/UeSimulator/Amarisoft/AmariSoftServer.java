@@ -1307,6 +1307,9 @@ public class AmariSoftServer extends SystemObjectImpl{
 		return true;
     }
 
+    public void startTrafficLogs() {
+    	sendSynchronizedMessage("t g");
+    }
 
 
 

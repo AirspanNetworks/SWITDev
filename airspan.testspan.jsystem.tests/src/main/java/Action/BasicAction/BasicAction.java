@@ -1,5 +1,8 @@
 package Action.BasicAction;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.junit.Test;
 
 import Action.Action;
@@ -12,7 +15,7 @@ import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
 
 public class BasicAction extends Action {
-	private Long timeToWaitMillisecond = null;
+	private String timeToWait;
 	private String ipPowerPort;
 	private String debugCommands;
 	private String ip;
@@ -38,9 +41,13 @@ public class BasicAction extends Action {
 		this.password = password;
 	}
 
-	@ParameterProperties(description = "Time To Wait In Millisecond")
-	public void setMllisecond(String mllisecond) {
-		this.timeToWaitMillisecond = Long.valueOf(mllisecond);
+	public String getTimeToWait() {
+		return timeToWait;
+	}
+	
+	@ParameterProperties(description = "Time To Wait In format HH:MM:SS")
+	public void setTimeToWait(String timeToWait) {
+		this.timeToWait = timeToWait;
 	}
 	
 	@ParameterProperties(description = "ipPower port")
@@ -54,14 +61,16 @@ public class BasicAction extends Action {
 	}
 	
 	@Test // 1
-	@TestProperties(name = "Wait Milliseconds", returnParam = "LastStatus", paramsInclude = { "Mllisecond" })
-	public void waitMilliseconds() {
-		report.report("Wait " + this.timeToWaitMillisecond + " Milliseconds");
+	@TestProperties(name = "waitAction", returnParam = "LastStatus", paramsInclude = { "timeToWait" })
+	public void waitAction() {
+		long timeToWaitMillisecond;
+		timeToWaitMillisecond = setRunTimeToMilliSeconds(timeToWait);
+		report.report("Wait " + timeToWait);
 
-		if (GeneralUtils.unSafeSleep(this.timeToWaitMillisecond)) {
-			report.report("Wait " + this.timeToWaitMillisecond + " Milliseconds Succeeded");
+		if (GeneralUtils.unSafeSleep(timeToWaitMillisecond)) {
+			report.report("Wait " + timeToWaitMillisecond + " Milliseconds Succeeded");
 		} else {
-			report.report("Failed to Wait " + this.timeToWaitMillisecond + " Milliseconds", Reporter.FAIL);
+			report.report("Failed to Wait " + timeToWaitMillisecond + " Milliseconds", Reporter.FAIL);
 		}
 	}
 	
@@ -160,5 +169,22 @@ public class BasicAction extends Action {
 		}else{
 			report.report("Failed to connect to device",Reporter.FAIL);
 		}
+	}
+	
+	@ParameterProperties(description = "Run time in format HH:MM:SS (not mandatory)")
+	public Integer setRunTimeToMilliSeconds(String runTime) {
+		Integer result;
+		Pattern p = Pattern.compile("(\\d+):(\\d+):(\\d+)");
+		Matcher m = p.matcher(runTime);
+		if(m.find()){
+			int hours = Integer.valueOf(m.group(1))*60*60;
+			int minutes = Integer.valueOf(m.group(2))*60;
+			int seconds = Integer.valueOf(m.group(3));
+			result = hours+minutes+seconds;
+			result = result *1000;
+		}else{
+			result = null;
+		}
+		return result;
 	}
 }

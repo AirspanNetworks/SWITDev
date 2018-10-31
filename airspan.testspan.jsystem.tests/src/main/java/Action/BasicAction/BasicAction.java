@@ -15,7 +15,7 @@ import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
 
 public class BasicAction extends Action {
-	private String timeToWait;
+	private String timeToWait = "00:00:00";
 	private String ipPowerPort;
 	private String debugCommands;
 	private String ip;

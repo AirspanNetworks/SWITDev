@@ -59,6 +59,6 @@ public class CommandWatchActiveUEsNmsTable extends Command{
 	
 	@Override
 	public int getExecutionDelaySec() {
-		return 2;
+		return 10;
 	}
 }

@@ -6,6 +6,7 @@ import Action.Action;
 import PowerControllers.PowerController;
 import PowerControllers.PowerControllerPort;
 import Utils.GeneralUtils;
+import Utils.SSHConnector;
 import jsystem.framework.ParameterProperties;
 import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
@@ -13,6 +14,23 @@ import jsystem.framework.report.Reporter;
 public class BasicAction extends Action {
 	private Long timeToWaitMillisecond = null;
 	private String ipPowerPort;
+	private String debugCommands;
+	private String ip;
+	private String userName;
+	private String password;
+	
+	@ParameterProperties(description = "IP for SSH")
+	public void setIp(String ip) {
+		this.ip = ip;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
 
 	@ParameterProperties(description = "Time To Wait In Millisecond")
 	public void setMllisecond(String mllisecond) {
@@ -24,6 +42,11 @@ public class BasicAction extends Action {
 		this.ipPowerPort = port;
 	}
 
+	@ParameterProperties(description = "Debug Commands List (Split by comma)")
+	public void setDebugCommands(String debugCommands) {
+		this.debugCommands = debugCommands;
+	}
+	
 	@Test // 1
 	@TestProperties(name = "Wait Milliseconds", returnParam = "LastStatus", paramsInclude = { "Mllisecond" })
 	public void waitMilliseconds() {
@@ -85,4 +108,49 @@ public class BasicAction extends Action {
 		}
 	}
 	
+	@Test
+	@TestProperties(name = "Send Commands In Device", returnParam = "LastStatus", paramsInclude = { "Ip", "Password",
+			"UserName", "DebugCommands" })
+	public void sendCommandsInDevice() {
+		boolean isNull = false;
+		if(ip == null){
+			report.report("IP cannot be empty",Reporter.FAIL);
+			isNull = true;
+		}
+		if(userName == null){
+			report.report("UserName cannot be empty",Reporter.FAIL);
+			isNull = true;
+		}
+		if(password == null){
+			report.report("Password cannot be empty",Reporter.FAIL);
+			isNull = true;
+		}
+		if(debugCommands == null){
+			report.report("DebugCommands cannot be empty",Reporter.FAIL);
+			isNull = true;
+		}
+		
+		if(isNull){
+			return;
+		}
+		
+		report.report("Debug Commands to send:");
+		for (String cmd : this.debugCommands.split(",")) {
+			report.report(cmd);
+		}
+
+		SSHConnector ssh = new SSHConnector(ip, userName, password);
+		ssh.initConnection();
+		
+		if(ssh.isConnected()){
+			for (String cmd : this.debugCommands.split(",")) {
+				String output = ssh.sendCommand(cmd, 200);
+				GeneralUtils.unSafeSleep(1000);
+				report.report("Response for "+cmd+":"+output);
+			}
+			ssh.disconnect();
+		}else{
+			report.report("Failed to connect to device",Reporter.FAIL);
+		}
+	}
 }

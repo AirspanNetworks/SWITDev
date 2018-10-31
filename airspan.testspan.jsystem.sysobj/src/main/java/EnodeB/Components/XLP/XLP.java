@@ -1952,8 +1952,22 @@ public abstract class XLP extends EnodeBComponent {
 	}
 
 	public int getEarfcn(String cell) {
-		int DlFreq = getDownlinkFrequency(cell);
-		int band =  getBand();
+		int DlFreq = GeneralUtils.ERROR_VALUE;
+		int band = GeneralUtils.ERROR_VALUE;
+		for(int i=0;i<3;i++){
+			DlFreq = getDownlinkFrequency(cell);
+			if(DlFreq != GeneralUtils.ERROR_VALUE){
+				break;
+			}
+			GeneralUtils.unSafeSleep(2000);
+		}
+		for(int i=0;i<3;i++){
+			band = getBand();
+			if(band != GeneralUtils.ERROR_VALUE){
+				break;
+			}
+			GeneralUtils.unSafeSleep(2000);
+		}
 		int earfcn = Earfcn.GetEarfcnFromFreqAndBand(DlFreq, band);
 		return earfcn;
 	}

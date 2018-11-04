@@ -287,7 +287,7 @@ public class SWUpgrade extends TestspanTest {
         }
         executorService.shutdown();
         try {
-			executorService.awaitTermination(EnodeB.WAIT_FOR_ALL_RUNNING_TIME + 60*1000, TimeUnit.MILLISECONDS);
+			executorService.awaitTermination(EnodeB.WAIT_FOR_ALL_RUNNING_TIME + 12*60*1000, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e1) {
 			report.report("Error while waiting for reset worker to finish", Reporter.WARNING);
 			e1.printStackTrace();
@@ -310,6 +310,7 @@ public class SWUpgrade extends TestspanTest {
         	GeneralUtils.printToConsole("db get loggerconfig debugcapenable :\n" + dut.lteCli("db get loggerconfig debugcapenable"));
         	if(softwareUtiles.noValidationNodes().contains(dut)){
         		report.report(dut.getName()+" had a version issue and will not be validate since version did not get all Running");
+        		validateUpdate = false;
         		continue;
         	}
         	validateUpdate = validateUpdate && softwareUtiles.isUpdatedViaSnmp(dut,Reporter.WARNING);

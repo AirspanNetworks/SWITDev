@@ -121,7 +121,9 @@ public class TPTBase extends TestspanTest {
 	protected boolean runWithDynamicCFI = false;
 	protected Protocol protocol = Protocol.UDP;
 	protected Long startingTestTime;
-
+	ArrayList<Integer> dlFromNetspan;
+	ArrayList<Integer> ulFromNetspan;
+ 
 	@Override
 	public void init() throws Exception {
 		if (enbInTest == null) {
@@ -147,6 +149,8 @@ public class TPTBase extends TestspanTest {
 
 		TEST_TIME_MILLIS = setTime(TEST_TIME_SHORT);
 		this.protocol = Protocol.UDP;
+		dlFromNetspan = new ArrayList<Integer>();
+		ulFromNetspan = new ArrayList<Integer>();
 	}
 
 	protected void watchDogInit() {
@@ -816,8 +820,10 @@ public class TPTBase extends TestspanTest {
 		restartTime = false;
 		//ArrayList<StreamParams> haltedStreams = null;
 		ArrayList<ArrayList<StreamParams>> sampleArrayList = null;
+		Pair<Integer, Integer> fromNetspan = null;
 		try {
 			sampleArrayList = samplePortsAndStreamsFromSTC();
+			fromNetspan = enbConfig.getUlDlTrafficValues(dut.getNetspanName());
 		} catch (Exception e) {
 		}
 		// Check Traffic Halt only for non UDP tests
@@ -879,6 +885,10 @@ public class TPTBase extends TestspanTest {
 		}*/
 		// check if more then 30% of streams are halted
 		addSamplesToListOfStreamList(sampleArrayList);
+		if(fromNetspan != null){
+			dlFromNetspan.add(fromNetspan.getElement0());
+			ulFromNetspan.add(fromNetspan.getElement1());
+		}
 		streams = null;
 		streams = new ArrayList<StreamParams>();
 	}
@@ -1069,6 +1079,7 @@ public class TPTBase extends TestspanTest {
 				GeneralUtils.printToConsole("print Results state : " + printResultsForTest);
 				if (printResultsForTest) {
 					compareWithCalculator(debugPrinter, listOfStreamList, passCriteria);
+					printValuesFromNetspan();
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -1077,6 +1088,19 @@ public class TPTBase extends TestspanTest {
 
 		}
 		trafficSTC.addResultFilesToReport("");
+	}
+
+	private void printValuesFromNetspan() {
+		int dl = 0;
+		int ul = 0;
+		for(Integer num:dlFromNetspan){
+			dl += num;
+		}
+		for(Integer num:ulFromNetspan){
+			ul += num;
+		}
+		report.report("DL value from netspan: "+doubleTo2DigitsAfterPoint((double)dl/dlFromNetspan.size())+"Mbps");
+		report.report("UL value from netspan: "+doubleTo2DigitsAfterPoint((double)ul/ulFromNetspan.size())+"Mbps");
 	}
 
 	public ArrayList<ArrayList<StreamParams>> getResultsAfterTest(

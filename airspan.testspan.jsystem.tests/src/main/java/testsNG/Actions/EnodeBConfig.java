@@ -46,6 +46,7 @@ import Netspan.Profiles.SonParameters;
 import Netspan.Profiles.SyncParameters;
 import Netspan.Profiles.SystemDefaultParameters;
 import Utils.GeneralUtils;
+import Utils.Pair;
 import Utils.GeneralUtils.RebootType;
 import Utils.Snmp.MibReader;
 import jsystem.framework.report.ListenerstManager;
@@ -1789,6 +1790,10 @@ public class EnodeBConfig {
 
 	public int getDLTPTPerQci(String nodeName, int qci){
 		return netspanServer.getDLTPTPerQci(nodeName, qci);
+	}
+	
+	public Pair<Integer,Integer> getUlDlTrafficValues(String nodeName){
+		return netspanServer.getUlDlTrafficValues(nodeName);
 	}
 	
 	/**

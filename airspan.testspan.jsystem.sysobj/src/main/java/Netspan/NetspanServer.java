@@ -47,6 +47,7 @@ import Netspan.Profiles.SonParameters;
 import Netspan.Profiles.SyncParameters;
 import Netspan.Profiles.SystemDefaultParameters;
 import Utils.GeneralUtils.RebootType;
+import Utils.Pair;
 import jsystem.framework.system.SystemManagerImpl;
 import jsystem.framework.system.SystemObjectImpl;
 
@@ -563,4 +564,6 @@ public abstract class NetspanServer extends SystemObjectImpl {
 	public abstract String getImageType(String nodeName);
 	
 	public abstract int getMaxUeSupported(EnodeB enb);
+	
+	public abstract Pair<Integer,Integer> getUlDlTrafficValues(String nodeName);
 }

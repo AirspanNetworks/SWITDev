@@ -1099,8 +1099,8 @@ public class TPTBase extends TestspanTest {
 		for(Integer num:ulFromNetspan){
 			ul += num;
 		}
-		report.report("DL value from netspan: "+doubleTo2DigitsAfterPoint(dl/1000.0/dlFromNetspan.size())+"Mbps");
-		report.report("UL value from netspan: "+doubleTo2DigitsAfterPoint(ul/1000.0/ulFromNetspan.size())+"Mbps");
+		report.report("DL value from netspan: "+doubleTo2DigitsAfterPoint(dl/1000.0/dlFromNetspan.size())+" Mbps");
+		report.report("UL value from netspan: "+doubleTo2DigitsAfterPoint(ul/1000.0/ulFromNetspan.size())+" Mbps");
 	}
 
 	public ArrayList<ArrayList<StreamParams>> getResultsAfterTest(

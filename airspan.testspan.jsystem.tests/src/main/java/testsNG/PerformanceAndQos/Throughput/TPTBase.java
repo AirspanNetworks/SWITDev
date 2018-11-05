@@ -1282,11 +1282,25 @@ public class TPTBase extends TestspanTest {
 		// GeneralUtils.printToConsole("OverAll pass criteria : "+passCriteria);
 		// }
 
+		int sizeDlStreams = 0;
+		int sizeUlStreams = 0;
+		
+		for(ArrayList<StreamParams> streams:listOfStreamList){
+			for(StreamParams stream:streams){
+				if(stream.getName().contains("DL")){
+					sizeDlStreams++;
+				}
+				if(stream.getName().contains("UL")){
+					sizeUlStreams++;
+				}
+			}
+		}
+		
 		int numberOfCells = enbConfig.getNumberOfActiveCells(dut);
 		printPortSummeryBeforeTestEnds(debugPrinter, uLrxTotal, dlrxTotal);
 
-		double ul_Divided_With_Number_Of_Streams = uLrxTotal / 1000000.0 / listOfStreamList.size();
-		double dl_Divided_With_Number_Of_Streams = dlrxTotal / 1000000.0 / listOfStreamList.size();
+		double ul_Divided_With_Number_Of_Streams = uLrxTotal / 1000000.0 / sizeUlStreams;
+		double dl_Divided_With_Number_Of_Streams = dlrxTotal / 1000000.0 / sizeDlStreams;
 
 		double ulPassCriteria = ul;
 		double dlPassCriteria = dl;
@@ -1329,18 +1343,18 @@ public class TPTBase extends TestspanTest {
 
 		if (ul_Divided_With_Number_Of_Streams < ulPassCriteria) {
 			report.report("UL : Expected: " + calcUpRate + "[Mbps] , Actual : "
-					+ longToString3DigitFormat(uLrxTotal / listOfStreamList.size()) + "[Mbps]", Reporter.FAIL);
+					+ longToString3DigitFormat(uLrxTotal / sizeUlStreams) + "[Mbps]", Reporter.FAIL);
 		} else {
 			report.report("UL : Expected: " + calcUpRate + "[Mbps] , Actual : "
-					+ longToString3DigitFormat(uLrxTotal / listOfStreamList.size()) + "[Mbps]");
+					+ longToString3DigitFormat(uLrxTotal / sizeUlStreams) + "[Mbps]");
 		}
 
 		if (dl_Divided_With_Number_Of_Streams < dlPassCriteria) {
 			report.report("DL : Expected: " + calcDownRate + "[Mbps], Actual : "
-					+ longToString3DigitFormat(dlrxTotal / listOfStreamList.size()) + "[Mbps]", Reporter.FAIL);
+					+ longToString3DigitFormat(dlrxTotal / sizeDlStreams) + "[Mbps]", Reporter.FAIL);
 		} else {
 			report.report("DL : Expected: " + calcDownRate + "[Mbps], Actual : "
-					+ longToString3DigitFormat(dlrxTotal / listOfStreamList.size()) + "[Mbps]");
+					+ longToString3DigitFormat(dlrxTotal / sizeDlStreams) + "[Mbps]");
 		}
 		reason = "Exp - UL: " + calcUpRate + "Mbps" + " DL: " + calcDownRate + "Mbps<br>";
 		reason += "Act - UL: " + upRate + "Mbps" + " DL: " + downRate + "Mbps";

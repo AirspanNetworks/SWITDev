@@ -333,7 +333,7 @@ public class Enodeb extends EnodebAction {
 	 */
 	@Test // 1
 	@TestProperties(name = "Wait For All Running And In Service", returnParam = "LastStatus", paramsInclude = { "DUT",
-			"TimeOutInMillisecond" })
+			"timeToWait" })
 	public void waitForAllRunningAndInService() {
 		report.report(dut.getName() + " Wait For All Running And In Service " + timeToWait + " milis");
 		long timeOutInMillisecond = setRunTimeToMilliSeconds(timeToWait);

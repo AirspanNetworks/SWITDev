@@ -2538,7 +2538,7 @@ public class P0 extends TestspanTest{
 		float attenuatorsCurrentValue = attenuatorSetUnderTest.getAttenuation()[0];
 		double rsrp = getMeasCurrentUe();
 		report.report("Attenuator's start value: "+attenuatorsCurrentValue);
-		report.report("Trying to get rsrp below: "+trigger);
+		report.report("Trying to get rsrp below: "+(trigger-2));
 		report.report("RSRP of UE: "+rsrp);
 		while(rsrp>=trigger-2 && attenuatorsCurrentValue+step<=maxVal){
 			attenuatorsCurrentValue+=step;
@@ -2568,7 +2568,7 @@ public class P0 extends TestspanTest{
 		float attenuatorsCurrentValue = attenuatorSetUnderTest.getAttenuation()[0];
 		double rsrp = getMeasCurrentUe();
 		report.report("Attenuator's start value: "+attenuatorsCurrentValue);
-		report.report("Trying to get rsrp above: "+trigger);
+		report.report("Trying to get rsrp above: "+(trigger+2));
 		report.report("RSRP of UE: "+rsrp);
 		while(rsrp<=trigger+2 && attenuatorsCurrentValue-step>=minVal){
 			attenuatorsCurrentValue-=step;
@@ -2598,7 +2598,7 @@ public class P0 extends TestspanTest{
 		int step = attenuatorSetUnderTest.getAttenuationStep();
 		float attenuatorsCurrentValue = attenuatorSetUnderTest.getAttenuation()[0];
 		report.report("Attenuator's start value: "+attenuatorsCurrentValue);
-		report.report("Trying to get rsrps below: "+trigger);
+		report.report("Trying to get rsrps below: "+(trigger-2));
 		while(!allUEsBelowA2(arrayUEs,trigger-2) && attenuatorsCurrentValue+step<=maxVal){
 			attenuatorsCurrentValue+=step;
 			if(peripheralsConfig.setAttenuatorSetValue(attenuatorSetUnderTest, attenuatorsCurrentValue)){
@@ -2639,7 +2639,7 @@ public class P0 extends TestspanTest{
 		int step = attenuatorSetUnderTest.getAttenuationStep();
 		float attenuatorsCurrentValue = attenuatorSetUnderTest.getAttenuation()[0];
 		report.report("Attenuator's start value: "+attenuatorsCurrentValue);
-		report.report("Trying to get rsrps above: "+trigger);
+		report.report("Trying to get rsrps above: "+(trigger+2));
 		while(!allUEsOverA1(arrayUEs,trigger+2) && attenuatorsCurrentValue-step>=minVal){
 			attenuatorsCurrentValue-=step;
 			if(peripheralsConfig.setAttenuatorSetValue(attenuatorSetUnderTest, attenuatorsCurrentValue)){

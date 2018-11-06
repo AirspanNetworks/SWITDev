@@ -1079,7 +1079,7 @@ public class TPTBase extends TestspanTest {
 				GeneralUtils.printToConsole("print Results state : " + printResultsForTest);
 				if (printResultsForTest) {
 					compareWithCalculator(debugPrinter, listOfStreamList, passCriteria);
-					printValuesFromNetspan();
+					//printValuesFromNetspan();
 				}
 			} catch (Exception e) {
 				e.printStackTrace();

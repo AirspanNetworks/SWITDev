@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.junit.Test;
 
@@ -98,7 +100,7 @@ public class Enodeb extends EnodebAction {
 
 	protected EnodeB dut;
 	protected Integer cellId = 1;
-	protected Long timeOutInMillisecond;
+	private String timeToWait = "00:00:00";
 	private String pingIP = "20.20.2.254";
 	private Integer triesToPing = 0;
 	private String debugCommands = "ue show rate";
@@ -186,10 +188,9 @@ public class Enodeb extends EnodebAction {
 			report.report("Failed to load CellId due to: " + exc.getMessage(), Reporter.FAIL);
 		}
 	}
-
-	@ParameterProperties(description = "Time Out in millisecond (Type: long)")
-	public void setTimeOutInMillisecond(String timeOutInMillisecond) {
-		this.timeOutInMillisecond = Long.valueOf(timeOutInMillisecond);
+	@ParameterProperties(description = "Run time in format HH:MM:SS")
+	public void setTimeToWait(String timeToWait) {
+		this.timeToWait = timeToWait;
 	}
 
 	@ParameterProperties(description = "IP")
@@ -332,11 +333,11 @@ public class Enodeb extends EnodebAction {
 	 */
 	@Test // 1
 	@TestProperties(name = "Wait For All Running And In Service", returnParam = "LastStatus", paramsInclude = { "DUT",
-			"TimeOutInMillisecond" })
+			"timeToWait" })
 	public void waitForAllRunningAndInService() {
-		report.report(dut.getName() + " Wait For All Running And In Service " + this.timeOutInMillisecond + " milis");
-
-		if (this.dut.waitForAllRunningAndInService(this.timeOutInMillisecond) == false) {
+		report.report(dut.getName() + " Wait For All Running And In Service " + timeToWait + " milis");
+		long timeOutInMillisecond = setRunTimeToMilliSeconds(timeToWait);
+		if (this.dut.waitForAllRunningAndInService(timeOutInMillisecond) == false) {
 			report.report("Wait For All Running And In Service Failed", Reporter.FAIL);
 		} else {
 			report.report("Wait For All Running And In Service Succeeded");
@@ -870,5 +871,21 @@ public class Enodeb extends EnodebAction {
 	@TestProperties(name = "Wait Granulatiry Period", returnParam = { "IsTestWasSuccessful" }, paramsInclude = {"DUT"})
 	public void waitGranulatiryPeriod() {
 		EnodeBConfig.getInstance().waitGranularityPeriodTime(dut);
+	}
+	
+	private Integer setRunTimeToMilliSeconds(String runTime) {
+		Integer result;
+		Pattern p = Pattern.compile("(\\d+):(\\d+):(\\d+)");
+		Matcher m = p.matcher(runTime);
+		if(m.find()){
+			int hours = Integer.valueOf(m.group(1))*60*60;
+			int minutes = Integer.valueOf(m.group(2))*60;
+			int seconds = Integer.valueOf(m.group(3));
+			result = hours+minutes+seconds;
+			result = result *1000;
+		}else{
+			result = null;
+		}
+		return result;
 	}
 }

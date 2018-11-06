@@ -1438,7 +1438,7 @@ public class TPTBase extends TestspanTest {
 		values.add(totalRate.toString());
 		Double ulMax = EndTestUlMax / 1000000.0;
 		values.add(ulMax.toString());
-		debugPrinter.addValues("Port Summery Test Results", "UL", headLines, values);
+		debugPrinter.addValues("Port Summary Test Results", "UL", headLines, values);
 		// down link configure arrayList
 		values.clear();
 		ulMin = EndTestDlMin / 1000000.0;
@@ -1448,10 +1448,10 @@ public class TPTBase extends TestspanTest {
 		values.add(totalRate.toString());
 		ulMax = EndTestDlMax / 1000000.0;
 		values.add(ulMax.toString());
-		debugPrinter.addValues("Port Summery Test Results", "DL", headLines, values);
+		debugPrinter.addValues("Port Summary Test Results", "DL", headLines, values);
 		// print table
-		report.reportHtml("Port Summery Test Results",
-				debugPrinter.printTablesHtmlForStream("Port Summery Test Results"), true);
+		report.reportHtml("Port Summary Test Results",
+				debugPrinter.printTablesHtmlForStream("Port Summary Test Results"), true);
 	}
 
 	/**

@@ -2530,6 +2530,7 @@ public class P0 extends TestspanTest{
 	private boolean changeAttBelowA2(){
 		int trigger = dutInTest.getRSRPEventTriggerGaps();
 		if(trigger==GeneralUtils.ERROR_VALUE){
+			report.report("Failed to get RSRP event trigger gap value");
 			return false;
 		}
 		int maxVal = attenuatorSetUnderTest.getMaxAttenuation();
@@ -2558,6 +2559,7 @@ public class P0 extends TestspanTest{
 	private boolean changeAttOverA1(){
 		int trigger = dutInTest.getRSRPEventStopGaps();
 		if(trigger==GeneralUtils.ERROR_VALUE){
+			report.report("Failed to get RSRP event stop gap value");
 			return false;
 		}
 		int minVal = attenuatorSetUnderTest.getMinAttenuation();
@@ -2587,6 +2589,7 @@ public class P0 extends TestspanTest{
 	private boolean changeAttBelowA2AllUEs(ArrayList<UE> arrayUEs) {
 		int trigger = dutInTest.getRSRPEventTriggerGaps();
 		if(trigger==GeneralUtils.ERROR_VALUE){
+			report.report("Failed to get RSRP event trigger gap value");
 			return false;
 		}
 		int maxVal = attenuatorSetUnderTest.getMaxAttenuation();
@@ -2626,6 +2629,7 @@ public class P0 extends TestspanTest{
 	private boolean changeAttOverA1AllUEs(ArrayList<UE> arrayUEs) {
 		int trigger = dutInTest.getRSRPEventStopGaps();
 		if(trigger==GeneralUtils.ERROR_VALUE){
+			report.report("Failed to get RSRP event stop gap value");
 			return false;
 		}
 		int minVal = attenuatorSetUnderTest.getMinAttenuation();

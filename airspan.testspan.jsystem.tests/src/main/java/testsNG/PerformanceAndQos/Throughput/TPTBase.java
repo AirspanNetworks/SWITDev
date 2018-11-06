@@ -1211,22 +1211,11 @@ public class TPTBase extends TestspanTest {
 	 */
 	protected void compareWithCalculator(StreamList debugPrinter, ArrayList<ArrayList<StreamParams>> listOfStreamList2,
 			double passCriteria) throws IOException, InvalidFormatException {
-		//ArrayList<Long> listUlAndDl = new ArrayList<Long>();
-		//Long ULrxTotal = new Long(0);
-		//Long DlrxTotal = new Long(0);
-		//listUlAndDl = getUlDlResultsFromList(ULrxTotal, DlrxTotal, listOfStreamList2);
-		long dl = 0;
-		long ul = 0;
-		for(Integer num:dlFromNetspan){
-			dl += num;
-		}
-		for(Integer num:ulFromNetspan){
-			ul += num;
-		}
-		//report.report("DL value from netspan: "+doubleTo2DigitsAfterPoint(dl/1000.0/dlFromNetspan.size())+" Mbps");
-		//report.report("UL value from netspan: "+doubleTo2DigitsAfterPoint(ul/1000.0/ulFromNetspan.size())+" Mbps");
-	
-		compareResultsWithCalculator(debugPrinter, ul*1000, dl*1000, passCriteria);
+		ArrayList<Long> listUlAndDl = new ArrayList<Long>();
+		Long ULrxTotal = new Long(0);
+		Long DlrxTotal = new Long(0);
+		listUlAndDl = getUlDlResultsFromList(ULrxTotal, DlrxTotal, listOfStreamList2);
+		compareResultsWithCalculator(debugPrinter, listUlAndDl.get(0), listUlAndDl.get(1), passCriteria);
 	}
 
 	// private double passCriteriaGet(){
@@ -1315,8 +1304,21 @@ public class TPTBase extends TestspanTest {
 		int numberOfCells = enbConfig.getNumberOfActiveCells(dut);
 		printPortSummeryBeforeTestEnds(debugPrinter, uLrxTotal, dlrxTotal);
 
-		double ul_Divided_With_Number_Of_Streams = uLrxTotal / 1000000.0 / sizeUlStreams;
-		double dl_Divided_With_Number_Of_Streams = dlrxTotal / 1000000.0 / sizeDlStreams;
+		long dlValue = 0;
+		long ulValue = 0;
+		for(Integer num:dlFromNetspan){
+			dlValue += num;
+		}
+		for(Integer num:ulFromNetspan){
+			ulValue += num;
+		}
+		//report.report("DL value from netspan: "+doubleTo2DigitsAfterPoint(dl/1000.0/dlFromNetspan.size())+" Mbps");
+		//report.report("UL value from netspan: "+doubleTo2DigitsAfterPoint(ul/1000.0/ulFromNetspan.size())+" Mbps");
+	
+		
+		
+		double ul_Divided_With_Number_Of_Streams = ulValue / 1000.0 / ulFromNetspan.size();
+		double dl_Divided_With_Number_Of_Streams = dlValue / 1000.0 / dlFromNetspan.size();
 
 		double ulPassCriteria = ul;
 		double dlPassCriteria = dl;
@@ -1359,18 +1361,18 @@ public class TPTBase extends TestspanTest {
 
 		if (ul_Divided_With_Number_Of_Streams < ulPassCriteria) {
 			report.report("UL : Expected: " + calcUpRate + "[Mbps] , Actual : "
-					+ longToString3DigitFormat(uLrxTotal / sizeUlStreams) + "[Mbps]", Reporter.FAIL);
+					+ doubleTo2DigitsAfterPoint(ul_Divided_With_Number_Of_Streams) + "[Mbps]", Reporter.FAIL);
 		} else {
 			report.report("UL : Expected: " + calcUpRate + "[Mbps] , Actual : "
-					+ longToString3DigitFormat(uLrxTotal / sizeUlStreams) + "[Mbps]");
+					+ doubleTo2DigitsAfterPoint(ul_Divided_With_Number_Of_Streams) + "[Mbps]");
 		}
 
 		if (dl_Divided_With_Number_Of_Streams < dlPassCriteria) {
 			report.report("DL : Expected: " + calcDownRate + "[Mbps], Actual : "
-					+ longToString3DigitFormat(dlrxTotal / sizeDlStreams) + "[Mbps]", Reporter.FAIL);
+					+ doubleTo2DigitsAfterPoint(dl_Divided_With_Number_Of_Streams) + "[Mbps]", Reporter.FAIL);
 		} else {
 			report.report("DL : Expected: " + calcDownRate + "[Mbps], Actual : "
-					+ longToString3DigitFormat(dlrxTotal / sizeDlStreams) + "[Mbps]");
+					+ doubleTo2DigitsAfterPoint(dl_Divided_With_Number_Of_Streams) + "[Mbps]");
 		}
 		reason = "Exp - UL: " + calcUpRate + "Mbps" + " DL: " + calcDownRate + "Mbps<br>";
 		reason += "Act - UL: " + upRate + "Mbps" + " DL: " + downRate + "Mbps";

@@ -131,6 +131,7 @@ import Netspan.NBI_15_2.Software.SoftwareStatusGetWs;
 import Netspan.NBI_15_2.Software.SwConfigSetWs;
 import Netspan.NBI_15_2.Software.SwServerWs;
 import Netspan.NBI_15_2.Status.LteAnrStatusWs;
+import Netspan.NBI_15_2.Status.LteIpThroughputCellWs;
 import Netspan.NBI_15_2.Status.LteIpThroughputGetResult;
 import Netspan.NBI_15_2.Status.LteIpThroughputQciWs;
 import Netspan.NBI_15_2.Status.LtePciStatusWs;
@@ -4288,5 +4289,29 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
 	public int getMaxUeSupported(EnodeB enb) {
 		report.report("getMaxUeSupported method is not implemented for this netspan(15_2)!", Reporter.WARNING);
 		return 0;
+	}
+
+	@Override
+	public Pair<Integer, Integer> getUlDlTrafficValues(String nodeName) {
+		int ul = 0;
+		int dl = 0;
+		LteIpThroughputGetResult result = soapHelper_15_2.getStatusSoap()
+				.enbIpThroughputStatusGet(nodeName, credentialsStatus);
+		
+		if(result.getErrorCode() != Netspan.NBI_15_2.Status.ErrorCodes.OK){
+			soapHelper_15_2.endStatusSoap();
+			return null;
+		}
+		List<LteIpThroughputCellWs> listOfCells = result.getCell();
+		
+		for(LteIpThroughputCellWs cellData:listOfCells){
+			List<LteIpThroughputQciWs> cellQciData = cellData.getQciData();
+			for (LteIpThroughputQciWs qciData : cellQciData) {
+				ul += qciData.getMacTrafficKbpsUl().getValue();
+				dl += qciData.getMacTrafficKbpsDl().getValue();
+			}
+		}
+		soapHelper_15_2.endStatusSoap();
+		return Pair.createPair(dl, ul);
 	}
 }

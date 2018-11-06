@@ -2992,4 +2992,10 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 		report.report("getMaxUeSupported method is not implemented for this netspan(14_5)!", Reporter.WARNING);
 		return 0;
 	}
+
+	@Override
+	public Pair<Integer, Integer> getUlDlTrafficValues(String nodeName) {
+		GeneralUtils.printToConsole("getUlDlTrafficValues function is not implemented for this netspan(14_5)!");
+		return null;
+	}
 }

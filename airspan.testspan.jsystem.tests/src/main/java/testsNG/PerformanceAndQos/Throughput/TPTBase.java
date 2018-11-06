@@ -1211,11 +1211,22 @@ public class TPTBase extends TestspanTest {
 	 */
 	protected void compareWithCalculator(StreamList debugPrinter, ArrayList<ArrayList<StreamParams>> listOfStreamList2,
 			double passCriteria) throws IOException, InvalidFormatException {
-		ArrayList<Long> listUlAndDl = new ArrayList<Long>();
-		Long ULrxTotal = new Long(0);
-		Long DlrxTotal = new Long(0);
-		listUlAndDl = getUlDlResultsFromList(ULrxTotal, DlrxTotal, listOfStreamList2);
-		compareResultsWithCalculator(debugPrinter, listUlAndDl.get(0), listUlAndDl.get(1), passCriteria);
+		//ArrayList<Long> listUlAndDl = new ArrayList<Long>();
+		//Long ULrxTotal = new Long(0);
+		//Long DlrxTotal = new Long(0);
+		//listUlAndDl = getUlDlResultsFromList(ULrxTotal, DlrxTotal, listOfStreamList2);
+		long dl = 0;
+		long ul = 0;
+		for(Integer num:dlFromNetspan){
+			dl += num;
+		}
+		for(Integer num:ulFromNetspan){
+			ul += num;
+		}
+		//report.report("DL value from netspan: "+doubleTo2DigitsAfterPoint(dl/1000.0/dlFromNetspan.size())+" Mbps");
+		//report.report("UL value from netspan: "+doubleTo2DigitsAfterPoint(ul/1000.0/ulFromNetspan.size())+" Mbps");
+	
+		compareResultsWithCalculator(debugPrinter, ul*1000, dl*1000, passCriteria);
 	}
 
 	// private double passCriteriaGet(){

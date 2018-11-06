@@ -4299,6 +4299,7 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
 				.enbIpThroughputStatusGet(nodeName, credentialsStatus);
 		
 		if(result.getErrorCode() != Netspan.NBI_15_2.Status.ErrorCodes.OK){
+			soapHelper_15_2.endStatusSoap();
 			return null;
 		}
 		List<LteIpThroughputCellWs> listOfCells = result.getCell();
@@ -4310,7 +4311,7 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
 				dl += qciData.getMacTrafficKbpsDl().getValue();
 			}
 		}
-		
+		soapHelper_15_2.endStatusSoap();
 		return Pair.createPair(dl, ul);
 	}
 }

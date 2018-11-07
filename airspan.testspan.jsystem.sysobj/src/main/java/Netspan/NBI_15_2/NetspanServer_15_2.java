@@ -4307,8 +4307,8 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
 		for(LteIpThroughputCellWs cellData:listOfCells){
 			List<LteIpThroughputQciWs> cellQciData = cellData.getQciData();
 			for (LteIpThroughputQciWs qciData : cellQciData) {
-				ul += qciData.getMacTrafficKbpsUl().getValue();
-				dl += qciData.getMacTrafficKbpsDl().getValue();
+				ul += qciData.getPdcpTrafficKbpsUl().getValue();
+				dl += qciData.getPdcpTrafficKbpsDl().getValue();
 			}
 		}
 		soapHelper_15_2.endStatusSoap();

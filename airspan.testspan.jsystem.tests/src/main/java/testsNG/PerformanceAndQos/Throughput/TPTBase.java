@@ -823,7 +823,9 @@ public class TPTBase extends TestspanTest {
 		Pair<Integer, Integer> fromNetspan = null;
 		try {
 			sampleArrayList = samplePortsAndStreamsFromSTC();
+			GeneralUtils.printToConsole("Before getting from netspan");
 			fromNetspan = enbConfig.getUlDlTrafficValues(dut.getNetspanName());
+			GeneralUtils.printToConsole("After getting from netspan");
 		} catch (Exception e) {
 		}
 		// Check Traffic Halt only for non UDP tests

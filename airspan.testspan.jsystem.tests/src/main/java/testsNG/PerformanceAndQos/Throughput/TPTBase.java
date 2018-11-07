@@ -886,8 +886,13 @@ public class TPTBase extends TestspanTest {
 		// check if more then 30% of streams are halted
 		addSamplesToListOfStreamList(sampleArrayList);
 		if(fromNetspan != null){
+			GeneralUtils.printToConsole("DL value from netspan is: "+fromNetspan.getElement0());
+			GeneralUtils.printToConsole("UL value from netspan is: "+fromNetspan.getElement1());
+
 			dlFromNetspan.add(fromNetspan.getElement0());
 			ulFromNetspan.add(fromNetspan.getElement1());
+		}else{
+			GeneralUtils.printToConsole("Received null from netspan");
 		}
 		streams = null;
 		streams = new ArrayList<StreamParams>();
@@ -1079,7 +1084,7 @@ public class TPTBase extends TestspanTest {
 				GeneralUtils.printToConsole("print Results state : " + printResultsForTest);
 				if (printResultsForTest) {
 					compareWithCalculator(debugPrinter, listOfStreamList, passCriteria);
-					//printValuesFromNetspan();
+					printValuesFromNetspan();
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -1099,6 +1104,10 @@ public class TPTBase extends TestspanTest {
 		for(Integer num:ulFromNetspan){
 			ul += num;
 		}
+		report.report("All dl in k: "+dl);
+		report.report("All ul in k: "+ul);
+		report.report("size dl: "+dlFromNetspan.size());
+		report.report("size ul: "+ulFromNetspan.size());
 		report.report("DL value from netspan: "+doubleTo2DigitsAfterPoint(dl/1000.0/dlFromNetspan.size())+" Mbps");
 		report.report("UL value from netspan: "+doubleTo2DigitsAfterPoint(ul/1000.0/ulFromNetspan.size())+" Mbps");
 	}

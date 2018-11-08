@@ -90,7 +90,7 @@ public class TrafficSampler implements Runnable{
 			}
 		}
 		TPTBase.createHTMLTableWithResults(ul_Divided_With_Number_Of_Streams, (ULExpected==null?0:ULExpected), dl_Divided_With_Number_Of_Streams,
-				(DLExpected==null?0:DLExpected), (dlLoad==null?0:dlLoad), (ulLoad==null?0:ulLoad));
+				(DLExpected==null?0:DLExpected), (dlLoad==null?0:dlLoad), (ulLoad==null?0:ulLoad), null);
 	}
 
 	private ArrayList<Long> getUlDlResultsFromList(Long uLrxTotal, Long dlrxTotal,

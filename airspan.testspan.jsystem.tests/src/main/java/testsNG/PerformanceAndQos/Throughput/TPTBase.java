@@ -1458,7 +1458,8 @@ public class TPTBase extends TestspanTest {
 			}			
 		}
 		table.addField(line3Result, results.get(10));
-		table.reportTable("Netspan Results");
+		report.report("Netspan Results:");
+		table.reportTable("");
 	}
 
 	private double modifyAndPortLinkAndPrint(String ul_dl,double calculatorPassWithSysModi, double systemLoadWithModifications,
@@ -1519,9 +1520,8 @@ public class TPTBase extends TestspanTest {
 		// print table
 		
 		report.report("Traffic Generator Test Results:");
-		report.report(debugPrinter.printTablesHtmlForStream("Traffic Generator Test Results"));
-		/*report.reportHtml("Port Summary Test Results",
-				debugPrinter.printTablesHtmlForStream("Port Summary Test Results"), true);*/
+		//report.reportHtml(debugPrinter.printTablesHtmlForStream("Traffic Generator Test Results"));
+		report.reportHtml(debugPrinter.printTablesHtmlForStream("Port Summary Test Results"),"", true);
 	}
 
 	/**

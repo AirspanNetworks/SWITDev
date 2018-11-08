@@ -241,20 +241,20 @@ public class SoftwareUtiles {
     public boolean isVersionUpdated(EnodeB enodeB, int logLevel) {
         String build = getCurrentBuild(enodeB).trim();
         //Get details via SNMP
-        String running = enodeB.getRunningVersion().trim();
-        String standby = enodeB.getSecondaryVersion().trim();
-        if (isBuildContainsTheUpdatedRunningVersion(enodeB, build, running)) {
-            return true;
-        }
+//        String running = enodeB.getRunningVersion().trim();
+//        String standby = enodeB.getSecondaryVersion().trim();
+//        if (isBuildContainsTheUpdatedRunningVersion(enodeB, build, running)) {
+//            return true;
+//        }
         //If can't get via SNMP - Get details via Netspan
-        running = netspanServer.getRunningVersionOfEnb(enodeB);
+        String running = netspanServer.getRunningVersionOfEnb(enodeB);
         if (isBuildContainsTheUpdatedRunningVersion(enodeB, build, running)) {
             return true;
         }
         //Check if the standby version was updated, if not, get it again via Netspan
-        if (!(build.contains(standby) && standby.contains(build))) {
-            standby = netspanServer.getStandByVersionOfEnb(enodeB);
-        }
+//        if (!(build.contains(standby) && standby.contains(build))) {
+            String standby = netspanServer.getStandByVersionOfEnb(enodeB);
+//        }
         //If the running version wasn't updated. go to the standby bank, checks if it was updated there.
         if (build.contains(standby) || standby.contains(build)) {
             report.report("The Standby Bank contains target version: " + build + " on Enodeb: " + enodeB.getNetspanName(), logLevel);

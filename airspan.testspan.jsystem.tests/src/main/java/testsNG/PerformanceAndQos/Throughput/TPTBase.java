@@ -1458,7 +1458,7 @@ public class TPTBase extends TestspanTest {
 			}			
 		}
 		table.addField(line3Result, results.get(10));
-		table.reportTable("");
+		table.reportTable("Netspan Results");
 	}
 
 	private double modifyAndPortLinkAndPrint(String ul_dl,double calculatorPassWithSysModi, double systemLoadWithModifications,
@@ -1505,7 +1505,7 @@ public class TPTBase extends TestspanTest {
 		values.add(totalRate.toString());
 		Double ulMax = EndTestUlMax / 1000000.0;
 		values.add(ulMax.toString());
-		debugPrinter.addValues("Port Summary Test Results", "UL", headLines, values);
+		debugPrinter.addValues("Traffic Generator Test Results", "UL", headLines, values);
 		// down link configure arrayList
 		values.clear();
 		ulMin = EndTestDlMin / 1000000.0;
@@ -1515,10 +1515,13 @@ public class TPTBase extends TestspanTest {
 		values.add(totalRate.toString());
 		ulMax = EndTestDlMax / 1000000.0;
 		values.add(ulMax.toString());
-		debugPrinter.addValues("Port Summary Test Results", "DL", headLines, values);
+		debugPrinter.addValues("Traffic Generator Test Results", "DL", headLines, values);
 		// print table
-		report.reportHtml("Port Summary Test Results",
-				debugPrinter.printTablesHtmlForStream("Port Summary Test Results"), true);
+		
+		report.report("Traffic Generator Test Results:");
+		report.report(debugPrinter.printTablesHtmlForStream("Traffic Generator Test Results"));
+		/*report.reportHtml("Port Summary Test Results",
+				debugPrinter.printTablesHtmlForStream("Port Summary Test Results"), true);*/
 	}
 
 	/**

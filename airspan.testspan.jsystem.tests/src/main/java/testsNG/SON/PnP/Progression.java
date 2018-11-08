@@ -260,7 +260,7 @@ public class Progression extends TestspanTest{
 		watchAllRunningTimeout.printStatus();
 		if(dut.isSwUpgradeDuringPnP()){
 			SoftwareUtiles softwareUtiles = SoftwareUtiles.getInstance();
-			softwareUtiles.isUpdatedViaSnmp(dut, Reporter.FAIL);
+			softwareUtiles.isVersionUpdated(dut, Reporter.FAIL);
 			softwareUtiles.isRelayVersionUpdated(dut, rebootTimeAndSwActivationDetails.getElement1().getRightElement(), Reporter.FAIL);
 		}
 		checkIfUEsAreConnectedToEnodeB(step++, dut);

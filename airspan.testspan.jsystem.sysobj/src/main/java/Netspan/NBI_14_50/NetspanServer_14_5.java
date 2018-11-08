@@ -2992,4 +2992,26 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 		report.report("getMaxUeSupported method is not implemented for this netspan(14_5)!", Reporter.WARNING);
 		return 0;
 	}
+
+	/**
+	 * get Running Version Of Enb
+	 *
+	 * @param enodeB - enodeB
+	 * @return - Running version
+	 */
+	public  String getRunningVersionOfEnb(EnodeB enodeB){
+		return null;
+	}
+
+	/**
+	 * get StandBy Version Of Enb
+	 *
+	 * @param enodeB - enodeB
+	 * @return - StandBy version
+	 */
+	public  String getStandByVersionOfEnb(EnodeB enodeB){
+		return null;
+	}
+
+
 }

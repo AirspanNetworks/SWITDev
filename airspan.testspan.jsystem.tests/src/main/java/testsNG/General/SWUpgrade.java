@@ -312,7 +312,7 @@ public class SWUpgrade extends TestspanTest {
         		report.report(dut.getName()+" had a version issue and will not be validate since version did not get all Running");
         		continue;
         	}
-        	validateUpdate = validateUpdate && softwareUtiles.isUpdatedViaSnmp(dut,Reporter.WARNING);
+        	validateUpdate = validateUpdate && softwareUtiles.isVersionUpdated(dut,Reporter.WARNING);
         }
         GeneralUtils.stopLevel();
         isPass = validateUpdate;

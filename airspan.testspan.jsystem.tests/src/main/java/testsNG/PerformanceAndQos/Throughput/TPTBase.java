@@ -820,12 +820,12 @@ public class TPTBase extends TestspanTest {
 		restartTime = false;
 		//ArrayList<StreamParams> haltedStreams = null;
 		ArrayList<ArrayList<StreamParams>> sampleArrayList = null;
-		Pair<Integer, Integer> fromNetspan = null;
+		//Pair<Integer, Integer> fromNetspan = null;
 		try {
 			sampleArrayList = samplePortsAndStreamsFromSTC();
-			//GeneralUtils.printToConsole("Before getting from netspan");
-			//fromNetspan = enbConfig.getUlDlTrafficValues(dut.getNetspanName());
-			//GeneralUtils.printToConsole("After getting from netspan");
+			/*GeneralUtils.printToConsole("Before getting from netspan");
+			fromNetspan = enbConfig.getUlDlTrafficValues(dut.getNetspanName());
+			GeneralUtils.printToConsole("After getting from netspan");*/
 		} catch (Exception e) {
 		}
 		// Check Traffic Halt only for non UDP tests
@@ -1517,9 +1517,6 @@ public class TPTBase extends TestspanTest {
 		values.add(ulMax.toString());
 		debugPrinter.addValues("Port Summary Test Results", "DL", headLines, values);
 		// print table
-		
-		//report.report("Traffic Generator Test Results:");
-		//report.reportHtml(debugPrinter.printTablesHtmlForStream("Traffic Generator Test Results"));
 		report.reportHtml("Port Summary Test Results",
 				debugPrinter.printTablesHtmlForStream("Port Summary Test Results"), true);
 	}

@@ -1457,11 +1457,9 @@ public class TPTBase extends TestspanTest {
 		table.addNewColumn(results.get(1));
 		table.addNewColumn(results.get(2));
 		// 2nd Line
+		table.addNewRow(results.get(3));
 		if(dl_ul_calc != null){
-			table.addNewRow(results.get(12));
-			table.addField(HtmlFieldColor.WHITE, results.get(3));
-		}else{
-			table.addNewRow(results.get(3));
+			table.addField(HtmlFieldColor.WHITE, results.get(12));
 		}
 		table.addField(HtmlFieldColor.WHITE, results.get(4));
 		table.addField(HtmlFieldColor.WHITE, results.get(5));
@@ -1475,11 +1473,9 @@ public class TPTBase extends TestspanTest {
 		}
 		table.addField(line2Result, results.get(6));
 		// 3rd Line
+		table.addNewRow(results.get(7));
 		if(dl_ul_calc != null){
-			table.addNewRow(results.get(13));
-			table.addField(HtmlFieldColor.WHITE, results.get(7));			
-		}else{
-			table.addNewRow(results.get(7));
+			table.addField(HtmlFieldColor.WHITE, results.get(13));			
 		}
 		table.addField(HtmlFieldColor.WHITE, results.get(8));
 		table.addField(HtmlFieldColor.WHITE, results.get(9));

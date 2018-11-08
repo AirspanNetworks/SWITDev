@@ -1388,8 +1388,19 @@ public class TPTBase extends TestspanTest {
 		reason = "Exp - UL: " + calcUpRate + "Mbps" + " DL: " + calcDownRate + "Mbps<br>";
 		reason += "Act - UL: " + upRate + "Mbps" + " DL: " + downRate + "Mbps";
 
+		String dlulCalc = getCalculatorPassCriteriaOnlyXml(radioParams);
+		
 		createHTMLTableWithResults(ul_Divided_With_Number_Of_Streams, ulPassCriteria, dl_Divided_With_Number_Of_Streams,
-				dlPassCriteria, portsLoadPair.getElement0(), portsLoadPair.getElement1());
+				dlPassCriteria, portsLoadPair.getElement0(), portsLoadPair.getElement1(),dlulCalc);
+	}
+
+	private String getCalculatorPassCriteriaOnlyXml(RadioParameters radioParams2) {
+		String dl_ul = null;
+		int maxUeSupported = netspanServer.getMaxUeSupported(dut);
+		if(maxUeSupported > 0){
+			dl_ul = LteThroughputCalculator.getInstance().getPassCriteriaFromStaticLteThroughputCalculator(radioParams, ConfigurationEnum.USER, maxUeSupported, streamsMode);
+		}
+		return dl_ul;
 	}
 
 	private String[] getCalculatorPassCriteria(RadioParameters radioParams) {
@@ -1411,7 +1422,7 @@ public class TPTBase extends TestspanTest {
 	}
 
 	public static void createHTMLTableWithResults(Double actualUl, Double expectedUL, Double actualDl, Double expectedDL,
-			Double injectedDL, Double injectedUL) {
+			Double injectedDL, Double injectedUL, String dl_ul_calc) {
 		ArrayList<String> results = new ArrayList<String>();
 		results.add("Injected [Mbps]");
 		results.add("Pass Criteria");
@@ -1427,13 +1438,31 @@ public class TPTBase extends TestspanTest {
 		results.add(expectedDL==0?"N/A":String.format("%.2f", expectedDL));
 		results.add(String.format("%.2f", actualDl));
 
+		if(dl_ul_calc != null){
+			String[] calc = dl_ul_calc.split("_");
+			double dlCalc = Double.parseDouble(calc[0]);
+			double ulCalc = Double.parseDouble(calc[1]);
+			results.add("Values from calculator");
+			results.add(String.format("%.2f", ulCalc));
+			results.add(String.format("%.2f", dlCalc));
+		}
+		
+		
 		GeneralUtils.HtmlTable table = new HtmlTable();
 		// Head Line
+		if(dl_ul_calc != null){
+			table.addNewColumn(results.get(11));			
+		}
 		table.addNewColumn(results.get(0));
 		table.addNewColumn(results.get(1));
 		table.addNewColumn(results.get(2));
 		// 2nd Line
-		table.addNewRow(results.get(3));
+		if(dl_ul_calc != null){
+			table.addNewRow(results.get(12));
+			table.addField(HtmlFieldColor.WHITE, results.get(3));
+		}else{
+			table.addNewRow(results.get(3));
+		}
 		table.addField(HtmlFieldColor.WHITE, results.get(4));
 		table.addField(HtmlFieldColor.WHITE, results.get(5));
 		HtmlFieldColor line2Result = HtmlFieldColor.WHITE;
@@ -1446,7 +1475,12 @@ public class TPTBase extends TestspanTest {
 		}
 		table.addField(line2Result, results.get(6));
 		// 3rd Line
-		table.addNewRow(results.get(7));
+		if(dl_ul_calc != null){
+			table.addNewRow(results.get(13));
+			table.addField(HtmlFieldColor.WHITE, results.get(7));			
+		}else{
+			table.addNewRow(results.get(7));
+		}
 		table.addField(HtmlFieldColor.WHITE, results.get(8));
 		table.addField(HtmlFieldColor.WHITE, results.get(9));
 		HtmlFieldColor line3Result = HtmlFieldColor.WHITE;

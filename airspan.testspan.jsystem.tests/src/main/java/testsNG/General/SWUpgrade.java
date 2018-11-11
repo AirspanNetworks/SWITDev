@@ -313,7 +313,7 @@ public class SWUpgrade extends TestspanTest {
         		validateUpdate = false;
         		continue;
         	}
-        	validateUpdate = validateUpdate && softwareUtiles.isUpdatedViaSnmp(dut,Reporter.WARNING);
+        	validateUpdate = validateUpdate && softwareUtiles.isVersionUpdated(dut,Reporter.WARNING);
         }
         GeneralUtils.stopLevel();
         isPass = validateUpdate;

@@ -2993,6 +2993,26 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 		return 0;
 	}
 
+	/**
+	 * get Running Version Of Enb
+	 *
+	 * @param enodeB - enodeB
+	 * @return - Running version
+	 */
+	public  String getRunningVersionOfEnb(EnodeB enodeB){
+		return null;
+	}
+
+	/**
+	 * get StandBy Version Of Enb
+	 *
+	 * @param enodeB - enodeB
+	 * @return - StandBy version
+	 */
+	public  String getStandByVersionOfEnb(EnodeB enodeB){
+		return null;
+	}
+
 	@Override
 	public Pair<Integer, Integer> getUlDlTrafficValues(String nodeName) {
 		GeneralUtils.printToConsole("getUlDlTrafficValues function is not implemented for this netspan(14_5)!");

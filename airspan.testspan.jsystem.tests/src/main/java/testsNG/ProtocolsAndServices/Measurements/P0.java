@@ -2350,7 +2350,7 @@ public class P0 extends TestspanTest{
 		int maxVal = attenuatorSetUnderTest.getMaxAttenuation();
 		float attenuatorsCurrentValue = attenuatorSetUnderTest.getAttenuation()[0];
 		int step = attenuatorSetUnderTest.getAttenuationStep();
-		while(!state.contains("ANR STATE = 5") && System.currentTimeMillis()-time<3*60*1000 && attenuatorsCurrentValue+step<=maxVal){
+		while(!state.contains("ANR STATE = 5") && System.currentTimeMillis()-time<4*60*1000 && attenuatorsCurrentValue+step<=maxVal){
 			attenuatorsCurrentValue+=step;
 			if(peripheralsConfig.setAttenuatorSetValue(attenuatorSetUnderTest, attenuatorsCurrentValue)){
 				report.report("Changed attenuator's value to "+attenuatorsCurrentValue);					

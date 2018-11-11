@@ -1,5 +1,9 @@
 package Action;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+
 import org.junit.After;
 import org.junit.Before;
 
@@ -9,13 +13,19 @@ import junit.framework.SystemTestCase4;
 public class Action extends SystemTestCase4 {
 	protected int actionID = 0;
 	protected String LastStatus = "";
-
+	public static final String DEFAULT_SOURCE_POM_PROPERTIES_FILE_NAME = "pom.properties";
+	public static final String PATH_TO_POM_PROPERTIES = System.getProperty("user.dir") + File.separator + "target"
+			+ File.separator + "maven-archiver" + File.separator + DEFAULT_SOURCE_POM_PROPERTIES_FILE_NAME;
+	protected String myVersion = "";
+	
 	protected enum Comparison {
 		EQUAL_TO, NOT_EQUAL_TO, BIGGER_THAN, SMALLER_THAN;
 	}
 	
 	@Before
 	public void init() {
+		myVersion = getVersion();
+		report.setContainerProperties(0, "Version", myVersion);
 	}
 
 	@After
@@ -103,5 +113,34 @@ public class Action extends SystemTestCase4 {
 			report.report(parameterName + ": Current Value=" + currentValue + ", Expected value="+expectedValue, Reporter.FAIL);
 			return false;
 		}
+	}
+	
+	public String getVersion() {
+		String version = "";
+		// try to load from maven properties first
+		try {
+			// open containing file
+			File file = new File(PATH_TO_POM_PROPERTIES);
+			FileReader fileReader = new FileReader(file);
+			BufferedReader bufferedReader = new BufferedReader(fileReader);
+			// parsing file line by line
+			String line = bufferedReader.readLine();
+			while (line != null) {
+				if (line.contains("version")) {
+					int index = line.indexOf("=");
+					version = line.substring(index + 1);
+					break;
+				}
+				line = bufferedReader.readLine();
+			}
+			// close mapping file
+			fileReader.close();
+		} catch (Exception e) {
+			// ignore
+		}
+		if ("" == version) {
+			version = "No version found";
+		}
+		return version;
 	}
 }

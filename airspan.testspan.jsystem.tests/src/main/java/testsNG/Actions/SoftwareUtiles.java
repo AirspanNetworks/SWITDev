@@ -241,32 +241,30 @@ public class SoftwareUtiles {
     public boolean isVersionUpdated(EnodeB enodeB, int logLevel) {
         String build = getCurrentBuild(enodeB).trim();
         //Get details via SNMP
-//        String running = enodeB.getRunningVersion().trim();
-//        String standby = enodeB.getSecondaryVersion().trim();
-//        if (isBuildContainsTheUpdatedRunningVersion(enodeB, build, running)) {
-//            return true;
-//        }
+        String running = enodeB.getRunningVersion().trim();
+        String standby = enodeB.getSecondaryVersion().trim();
+        if (isBuildContainsTheUpdatedRunningVersion(enodeB, build, running)) {
+            return true;
+        }
         //If can't get via SNMP - Get details via Netspan
-        String running = netspanServer.getRunningVersionOfEnb(enodeB);
+        report.report("Didn't get the correct running version via SNMP, retry via Netspan.");
+        running = netspanServer.getRunningVersionOfEnb(enodeB);
         if (isBuildContainsTheUpdatedRunningVersion(enodeB, build, running)) {
             return true;
         }
         //Check if the standby version was updated, if not, get it again via Netspan
-//        if (!(build.contains(standby) && standby.contains(build))) {
-            String standby = netspanServer.getStandByVersionOfEnb(enodeB);
-//        }
+        if (!(build.contains(standby) && standby.contains(build))) {
+            standby = netspanServer.getStandByVersionOfEnb(enodeB);
+        }
         //If the running version wasn't updated. go to the standby bank, checks if it was updated there.
         if (build.contains(standby) || standby.contains(build)) {
             report.report("The Standby Bank contains target version: " + build + " on Enodeb: " + enodeB.getNetspanName(), logLevel);
             //Takes the requested version from the standby bank if it necessary
             if (enodeB.swapBanksAndReboot()) {
                 /*
-                 * Heng - dont worry about the wait this is a safe switch to
-                 * wait for reboot
-                 * the wait for all running itself will take 5 minutes so this
-                 * wait will not affect runtime
-                 * but will help up to make the code simpler and not wait for
-                 * reboot event at this point
+                 * Heng - dont worry about the wait this is a safe switch to wait for reboot
+                 * the wait for all running itself will take 5 minutes so this wait will not affect runtime
+                 * but will help up to make the code simpler and not wait for reboot event at this point
                  */
                 GeneralUtils.unSafeSleep(2 * 60 * 1000);
                 enodeB.setUnexpectedReboot(0);

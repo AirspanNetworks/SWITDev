@@ -4277,9 +4277,10 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
      */
     public String getRunningVersionOfEnb(EnodeB enodeB) {
         String runningVersion = getSoftwareStatus(enodeB).getRunningVersion();
-        if (runningVersion == null)
+        if (runningVersion == null) {
+            report.report("The request to the Netspan Failed");
             return "Response Error";
-        else return runningVersion;
+        } else return runningVersion;
     }
 
     /**
@@ -4290,9 +4291,10 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
      */
     public String getStandByVersionOfEnb(EnodeB enodeB) {
         String standByVersion = getSoftwareStatus(enodeB).getStandbyVersion();
-        if (standByVersion == null)
+        if (standByVersion == null) {
+            report.report("The request to the Netspan Failed");
             return "Response Error";
-        else return standByVersion;
+        } else return standByVersion;
     }
 
 

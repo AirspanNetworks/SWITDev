@@ -795,7 +795,7 @@ public abstract class XLP extends EnodeBComponent {
 
 			// Download Done
 			if (precent.equals("100") && downloadStatus.equals(swStatusIdle)){
-				report.report(getName() +" - The download process passed successfully", Reporter.PASS);
+				report.report(getName() +" - The download process passed successfully via SNMP", Reporter.PASS);
 				return true;
 			}
 			
@@ -848,7 +848,7 @@ public abstract class XLP extends EnodeBComponent {
 
 		Pair<Boolean, SwStatus> result = null;
 		if ((swStatus == SwStatus.SW_STATUS_ACTIVATION_IN_PROGRESS) || (precent.equals("100") && downloadStatus.equals(swStatusIdle))){
-			report.report(getName() +" - The download process passed successfully", Reporter.PASS);
+			report.report(getName() +" - The download process passed successfully via SNMP", Reporter.PASS);
 			result = new Pair<Boolean, SwStatus>(true, swStatus);
 		}else if ((swStatus == SwStatus.SW_STATUS_ACTIVATION_FAILURE) || (swStatus == SwStatus.SW_STATUS_INSTALL_FAILURE)){
 			statusString = snmp.get(statusStringOid).trim();

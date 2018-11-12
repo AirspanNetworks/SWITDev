@@ -523,9 +523,7 @@ public class PeripheralsConfig {
 						+ " - trying SNMP");
 				enb.setOperationalStatus(enbState);
 			}	
-			if(enbState == EnbStates.IN_SERVICE)
-				enb.expecteInServiceState = true;
-			else 
+			if(enbState == EnbStates.OUT_OF_SERVICE)
 				enb.expecteInServiceState = false;
 			GeneralUtils.unSafeSleep(5000);
 			EnbStates state = null;

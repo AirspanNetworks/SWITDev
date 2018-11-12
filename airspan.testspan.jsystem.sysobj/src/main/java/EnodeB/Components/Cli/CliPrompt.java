@@ -77,16 +77,29 @@ public class CliPrompt{
 		scanningPath = "";
 		return null;
 	}
-	
+
+	/**
+	 * Executes a set of commands on a target prompt. Wrapper to execute with default value responseTimeout=10
+	 *
+	 * @param targetPrompt the prompt that the commands will be executed on.
+	 * @param command the commands to execute
+	 * @return the result of the commands.
+	 * @throws Exception
+	 */
+	public String execute(String targetPrompt, String command, String response) throws Exception {
+		return execute( targetPrompt,  command,  response,10);
+	}
+
 	/**
 	 * Executes a set of commands on a target prompt.
 	 *
 	 * @param targetPrompt the prompt that the commands will be executed on.
-	 * @param commands the commands to execute
+	 * @param command the commands to execute
+	 * @param responseTimeout - response Timeout
 	 * @return the result of the commands.
 	 * @throws Exception 
 	 */
-	public String execute(String targetPrompt, String command, String response) throws Exception {
+	public String execute(String targetPrompt, String command, String response, int responseTimeout) throws Exception {
 		flushBuffer();
 		sendNewLine();
 		getBuffer();
@@ -96,7 +109,8 @@ public class CliPrompt{
 			sendCommand(command);
 			getBuffer();
 			if (response != "" && response!=null) {
-				long endTimeMillis = System.currentTimeMillis() + 10 * 1000;
+				GeneralUtils.printToConsole("Waiting: " + responseTimeout + " seconds until the next command");
+				long endTimeMillis = System.currentTimeMillis() + responseTimeout * 1000;
 				boolean responseFound = false;
 				while(!responseFound){
 					if (buffer.contains(response)) {
@@ -311,7 +325,6 @@ public class CliPrompt{
 	/**
 	 * Checks if the buffer ends with known prompt.
 	 *
-	 * @param buffer the buffer
 	 * @return true, if the buffer ends with known prompt
 	 * @throws Exception 
 	 */
@@ -344,7 +357,7 @@ public class CliPrompt{
 	/**
 	 * Send commands to the terminal.
 	 *
-	 * @param commands the commands
+	 * @param command the command
 	 * @throws InterruptedException 
 	 * @throws IOException 
 	 */

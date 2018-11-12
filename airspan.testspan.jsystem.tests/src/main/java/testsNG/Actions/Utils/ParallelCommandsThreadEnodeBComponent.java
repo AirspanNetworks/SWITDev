@@ -23,22 +23,16 @@ public class ParallelCommandsThreadEnodeBComponent extends Thread{
 	private String componentName;
 	private EnodeB enb;
 	private int interval = 1;
+	private int responseTimeout;
 	private PrintStream ps;
 	private Reporter report = ListenerstManager.getInstance();
 	private boolean printWarning = true;
-	
-	public ParallelCommandsThreadEnodeBComponent(List<String> cmdSet, EnodeB enb, String componentName, int interval) throws IOException {
+
+	public ParallelCommandsThreadEnodeBComponent(List<String> cmdSet, EnodeB enb, String componentName, int responseTimeout ) throws IOException {
 		this.cmdSet = cmdSet;
 		this.enb = enb;
 		this.componentName = componentName;
-		this.interval = interval;
-		initializeLogger();
-	}
-	
-	public ParallelCommandsThreadEnodeBComponent(List<String> cmdSet, EnodeB enb, String componentName) throws IOException {
-		this.cmdSet = cmdSet;
-		this.enb = enb;
-		this.componentName = componentName;
+		this.responseTimeout = responseTimeout;
 		setName(componentName + "_ParallelCommandsThread");
 		initializeLogger();
 	}
@@ -89,7 +83,7 @@ public class ParallelCommandsThreadEnodeBComponent extends Thread{
 					}else if (cmd.contains("ue show link")) {
 						response = "Legend:";
 					}
-					ans = enb.sendCommandsOnSession(enb.getParallelCommandsPrompt(), cmd, response);
+					ans = enb.sendCommandsOnSession(enb.getParallelCommandsPrompt(), cmd, response, responseTimeout);
 					String javaTime = DateTime.now().toString("yyyy-MM-dd HH:mm:ss.SSS");
 					writeObjectToLogFile("*******************************************************************************\n");
 					writeObjectToLogFile("*** " + javaTime + " Starting command " + cmd + " ***\n");

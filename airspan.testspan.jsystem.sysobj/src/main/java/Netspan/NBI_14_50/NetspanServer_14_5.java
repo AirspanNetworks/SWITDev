@@ -3013,5 +3013,9 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 		return null;
 	}
 
-
+	@Override
+	public Pair<Integer, Integer> getUlDlTrafficValues(String nodeName) {
+		GeneralUtils.printToConsole("getUlDlTrafficValues function is not implemented for this netspan(14_5)!");
+		return null;
+	}
 }

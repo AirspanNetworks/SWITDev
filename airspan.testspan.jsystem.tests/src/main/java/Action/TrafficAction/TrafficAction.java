@@ -162,7 +162,7 @@ public class TrafficAction extends Action {
 		DLLoad = dLLoad;
 	}
 
-	@ParameterProperties(description = "Name of ENB from the SUT")
+	@ParameterProperties(description = "Name of ENB from the SUT (Mandatory when LoadType or ExpectedLoadType is calculator based)")
 	public void setDut(String dut) {
 		ArrayList<EnodeB> temp = (ArrayList<EnodeB>) SysObjUtils.getInstnce().initSystemObject(EnodeB.class, false,
 				dut.split(","));
@@ -256,7 +256,7 @@ public class TrafficAction extends Action {
 		return ueList;
 	}
 	
-	@ParameterProperties(description = "UEs")
+	@ParameterProperties(description = "Name of UEs from the SUT")
 	public void setUEs(String ues) {
 		ArrayList<UE> tempUes = new ArrayList<>();
 		String[] ueArray = ues.split(",");

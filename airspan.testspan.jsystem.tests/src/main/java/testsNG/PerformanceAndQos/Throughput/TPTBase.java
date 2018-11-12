@@ -121,7 +121,9 @@ public class TPTBase extends TestspanTest {
 	protected boolean runWithDynamicCFI = false;
 	protected Protocol protocol = Protocol.UDP;
 	protected Long startingTestTime;
-
+	ArrayList<Integer> dlFromNetspan;
+	ArrayList<Integer> ulFromNetspan;
+ 
 	@Override
 	public void init() throws Exception {
 		if (enbInTest == null) {
@@ -147,6 +149,8 @@ public class TPTBase extends TestspanTest {
 
 		TEST_TIME_MILLIS = setTime(TEST_TIME_SHORT);
 		this.protocol = Protocol.UDP;
+		dlFromNetspan = new ArrayList<Integer>();
+		ulFromNetspan = new ArrayList<Integer>();
 	}
 
 	protected void watchDogInit() {
@@ -426,7 +430,7 @@ public class TPTBase extends TestspanTest {
 			throw new Exception("start Traffic Failed from stc class");
 		}
 		trafficSTC.initStreams(this.protocol, ueNameListStc, qci,
-				TransmitDirection.BOTH,null,true);
+				TransmitDirection.BOTH,(int) (TEST_TIME_MILLIS/1000)+10,true);
 		
 		GeneralUtils.startLevel("Disable un-needed streams");
 		trafficSTC.disableUnneededStreams(this.protocol,ueNameListStc, qci);
@@ -816,8 +820,12 @@ public class TPTBase extends TestspanTest {
 		restartTime = false;
 		//ArrayList<StreamParams> haltedStreams = null;
 		ArrayList<ArrayList<StreamParams>> sampleArrayList = null;
+		//Pair<Integer, Integer> fromNetspan = null;
 		try {
 			sampleArrayList = samplePortsAndStreamsFromSTC();
+			/*GeneralUtils.printToConsole("Before getting from netspan");
+			fromNetspan = enbConfig.getUlDlTrafficValues(dut.getNetspanName());
+			GeneralUtils.printToConsole("After getting from netspan");*/
 		} catch (Exception e) {
 		}
 		// Check Traffic Halt only for non UDP tests
@@ -879,6 +887,15 @@ public class TPTBase extends TestspanTest {
 		}*/
 		// check if more then 30% of streams are halted
 		addSamplesToListOfStreamList(sampleArrayList);
+		/*if(fromNetspan != null){
+			GeneralUtils.printToConsole("DL value from netspan is: "+fromNetspan.getElement0());
+			GeneralUtils.printToConsole("UL value from netspan is: "+fromNetspan.getElement1());
+
+			dlFromNetspan.add(fromNetspan.getElement0());
+			ulFromNetspan.add(fromNetspan.getElement1());
+		}else{
+			GeneralUtils.printToConsole("Received null from netspan");
+		}*/
 		streams = null;
 		streams = new ArrayList<StreamParams>();
 	}
@@ -1069,6 +1086,7 @@ public class TPTBase extends TestspanTest {
 				GeneralUtils.printToConsole("print Results state : " + printResultsForTest);
 				if (printResultsForTest) {
 					compareWithCalculator(debugPrinter, listOfStreamList, passCriteria);
+					//printValuesFromNetspan();
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -1077,6 +1095,23 @@ public class TPTBase extends TestspanTest {
 
 		}
 		trafficSTC.addResultFilesToReport("");
+	}
+
+	private void printValuesFromNetspan() {
+		int dl = 0;
+		int ul = 0;
+		for(Integer num:dlFromNetspan){
+			dl += num;
+		}
+		for(Integer num:ulFromNetspan){
+			ul += num;
+		}
+		report.report("All dl in k: "+dl);
+		report.report("All ul in k: "+ul);
+		report.report("size dl: "+dlFromNetspan.size());
+		report.report("size ul: "+ulFromNetspan.size());
+		report.report("DL value from netspan: "+doubleTo2DigitsAfterPoint(dl/1000.0/dlFromNetspan.size())+" Mbps");
+		report.report("UL value from netspan: "+doubleTo2DigitsAfterPoint(ul/1000.0/ulFromNetspan.size())+" Mbps");
 	}
 
 	public ArrayList<ArrayList<StreamParams>> getResultsAfterTest(
@@ -1258,11 +1293,43 @@ public class TPTBase extends TestspanTest {
 		// GeneralUtils.printToConsole("OverAll pass criteria : "+passCriteria);
 		// }
 
+		int sizeDlStreams = 0;
+		int sizeUlStreams = 0;
+		
+		for(ArrayList<StreamParams> streams:listOfStreamList){
+			boolean promoteDl = true;
+			boolean promoteUl = true;
+			for(StreamParams stream:streams){
+				if(stream.getName().contains("DL") && promoteDl){
+					sizeDlStreams++;
+					promoteDl = false;
+				}
+				if(stream.getName().contains("UL") && promoteUl){
+					sizeUlStreams++;
+					promoteUl = false;
+				}
+			}
+		}
+		
+		
 		int numberOfCells = enbConfig.getNumberOfActiveCells(dut);
 		printPortSummeryBeforeTestEnds(debugPrinter, uLrxTotal, dlrxTotal);
 
-		double ul_Divided_With_Number_Of_Streams = uLrxTotal / 1000000.0 / listOfStreamList.size();
-		double dl_Divided_With_Number_Of_Streams = dlrxTotal / 1000000.0 / listOfStreamList.size();
+		/*long dlValue = 0;
+		long ulValue = 0;
+		for(Integer num:dlFromNetspan){
+			dlValue += num;
+		}
+		for(Integer num:ulFromNetspan){
+			ulValue += num;
+		}*/
+		//report.report("DL value from netspan: "+doubleTo2DigitsAfterPoint(dl/1000.0/dlFromNetspan.size())+" Mbps");
+		//report.report("UL value from netspan: "+doubleTo2DigitsAfterPoint(ul/1000.0/ulFromNetspan.size())+" Mbps");
+	
+		
+		
+		double ul_Divided_With_Number_Of_Streams = uLrxTotal / 1000000.0 / sizeUlStreams;
+		double dl_Divided_With_Number_Of_Streams = dlrxTotal / 1000000.0 / sizeDlStreams;
 
 		double ulPassCriteria = ul;
 		double dlPassCriteria = dl;
@@ -1283,15 +1350,12 @@ public class TPTBase extends TestspanTest {
 		if (use_Expected_DL) {
 			dlPassCriteria = modifyAndPortLinkAndPrint("DL",dlPassCriteria, portsLoadPair.getElement0(), this.Expected_DL);
 		} else {
-			dlPassCriteria *= passCriteria;
-			report.report("DL Threshold : " + passCriteria * 100 + "%");
-
+			dlPassCriteria = modifyAndPortLinkAndPrint("DL",dlPassCriteria, portsLoadPair.getElement0(), passCriteria * 100);
 		}
 		if (use_Expected_UL) {
 			ulPassCriteria = modifyAndPortLinkAndPrint("UL",ulPassCriteria, portsLoadPair.getElement1(), this.Expected_UL);
 		} else {
-			ulPassCriteria *= passCriteria;
-			report.report("UL Threshold : " + passCriteria * 100 + "%");
+			ulPassCriteria = modifyAndPortLinkAndPrint("UL",ulPassCriteria, portsLoadPair.getElement1(), passCriteria * 100);
 		}
 
 		// print results
@@ -1308,24 +1372,35 @@ public class TPTBase extends TestspanTest {
 
 		if (ul_Divided_With_Number_Of_Streams < ulPassCriteria) {
 			report.report("UL : Expected: " + calcUpRate + "[Mbps] , Actual : "
-					+ longToString3DigitFormat(uLrxTotal / listOfStreamList.size()) + "[Mbps]", Reporter.FAIL);
+					+ doubleTo2DigitsAfterPoint(ul_Divided_With_Number_Of_Streams) + "[Mbps]", Reporter.FAIL);
 		} else {
 			report.report("UL : Expected: " + calcUpRate + "[Mbps] , Actual : "
-					+ longToString3DigitFormat(uLrxTotal / listOfStreamList.size()) + "[Mbps]");
+					+ doubleTo2DigitsAfterPoint(ul_Divided_With_Number_Of_Streams) + "[Mbps]");
 		}
 
 		if (dl_Divided_With_Number_Of_Streams < dlPassCriteria) {
 			report.report("DL : Expected: " + calcDownRate + "[Mbps], Actual : "
-					+ longToString3DigitFormat(dlrxTotal / listOfStreamList.size()) + "[Mbps]", Reporter.FAIL);
+					+ doubleTo2DigitsAfterPoint(dl_Divided_With_Number_Of_Streams) + "[Mbps]", Reporter.FAIL);
 		} else {
 			report.report("DL : Expected: " + calcDownRate + "[Mbps], Actual : "
-					+ longToString3DigitFormat(dlrxTotal / listOfStreamList.size()) + "[Mbps]");
+					+ doubleTo2DigitsAfterPoint(dl_Divided_With_Number_Of_Streams) + "[Mbps]");
 		}
 		reason = "Exp - UL: " + calcUpRate + "Mbps" + " DL: " + calcDownRate + "Mbps<br>";
 		reason += "Act - UL: " + upRate + "Mbps" + " DL: " + downRate + "Mbps";
 
+		String dlulCalc = getCalculatorPassCriteriaOnlyXml(radioParams);
+		
 		createHTMLTableWithResults(ul_Divided_With_Number_Of_Streams, ulPassCriteria, dl_Divided_With_Number_Of_Streams,
-				dlPassCriteria, portsLoadPair.getElement0(), portsLoadPair.getElement1());
+				dlPassCriteria, portsLoadPair.getElement0(), portsLoadPair.getElement1(),dlulCalc);
+	}
+
+	private String getCalculatorPassCriteriaOnlyXml(RadioParameters radioParams2) {
+		String dl_ul = null;
+		int maxUeSupported = netspanServer.getMaxUeSupported(dut);
+		if(maxUeSupported > 0){
+			dl_ul = LteThroughputCalculator.getInstance().getPassCriteriaFromStaticLteThroughputCalculator(radioParams, ConfigurationEnum.USER, maxUeSupported, streamsMode);
+		}
+		return dl_ul;
 	}
 
 	private String[] getCalculatorPassCriteria(RadioParameters radioParams) {
@@ -1347,7 +1422,7 @@ public class TPTBase extends TestspanTest {
 	}
 
 	public static void createHTMLTableWithResults(Double actualUl, Double expectedUL, Double actualDl, Double expectedDL,
-			Double injectedDL, Double injectedUL) {
+			Double injectedDL, Double injectedUL, String dl_ul_calc) {
 		ArrayList<String> results = new ArrayList<String>();
 		results.add("Injected [Mbps]");
 		results.add("Pass Criteria");
@@ -1363,13 +1438,29 @@ public class TPTBase extends TestspanTest {
 		results.add(expectedDL==0?"N/A":String.format("%.2f", expectedDL));
 		results.add(String.format("%.2f", actualDl));
 
+		if(dl_ul_calc != null){
+			String[] calc = dl_ul_calc.split("_");
+			double dlCalc = Double.parseDouble(calc[0]);
+			double ulCalc = Double.parseDouble(calc[1]);
+			results.add("Values from calculator");
+			results.add(String.format("%.2f", ulCalc));
+			results.add(String.format("%.2f", dlCalc));
+		}
+		
+		
 		GeneralUtils.HtmlTable table = new HtmlTable();
 		// Head Line
+		if(dl_ul_calc != null){
+			table.addNewColumn(results.get(11));			
+		}
 		table.addNewColumn(results.get(0));
 		table.addNewColumn(results.get(1));
 		table.addNewColumn(results.get(2));
 		// 2nd Line
 		table.addNewRow(results.get(3));
+		if(dl_ul_calc != null){
+			table.addField(HtmlFieldColor.WHITE, results.get(12));
+		}
 		table.addField(HtmlFieldColor.WHITE, results.get(4));
 		table.addField(HtmlFieldColor.WHITE, results.get(5));
 		HtmlFieldColor line2Result = HtmlFieldColor.WHITE;
@@ -1383,6 +1474,9 @@ public class TPTBase extends TestspanTest {
 		table.addField(line2Result, results.get(6));
 		// 3rd Line
 		table.addNewRow(results.get(7));
+		if(dl_ul_calc != null){
+			table.addField(HtmlFieldColor.WHITE, results.get(13));			
+		}
 		table.addField(HtmlFieldColor.WHITE, results.get(8));
 		table.addField(HtmlFieldColor.WHITE, results.get(9));
 		HtmlFieldColor line3Result = HtmlFieldColor.WHITE;

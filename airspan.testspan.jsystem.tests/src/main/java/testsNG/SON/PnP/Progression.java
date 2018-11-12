@@ -161,9 +161,15 @@ public class Progression extends TestspanTest{
 			if (donor.isInOperationalStatus()){
 				report.report("Donor is in Running State.");
 			}else{
-				report.report("Donor is NOT in Running State.", Reporter.FAIL);
-				reason = "Donor is NOT in Running State.";
-				return;
+				if(donor.isReachable()){
+					report.report("Donor is NOT in Running State.", Reporter.FAIL);
+					reason = "Donor is NOT in Running State.";
+					return;					
+				}else{
+					report.report("Donor is NOT reachable. Cannot check running state.", Reporter.FAIL);
+					reason = "Donor is NOT reachable. Cannot check running state.";
+					return;			
+				}
 			}
 			String relayVersion = eNodeBWithDonorDut.getRelayRunningVersion();
 			if(relayVersion != ""){

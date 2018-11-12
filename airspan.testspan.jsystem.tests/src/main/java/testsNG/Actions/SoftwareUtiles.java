@@ -476,39 +476,40 @@ public class SoftwareUtiles {
             } else
                 swapBankAndReset = swapBanksAndResetEnodeb(enodeB);
 
-            if (!swapBankAndReset) {
-                report.report("EnodeB: " + enodeB.getName() + " wasn't rebooted", Reporter.WARNING);
-                time = System.currentTimeMillis() - time;
-                return;
-            }
-            // Heng - dont worry about the wait this is a safe switch to wait
-            // for reboot
-            // the wair for allrunnig itself will take 5 minutes so this wait
-            // will not affect runtime
-            // but will help up to make the code simplier and not wait for
-            // reboot event at this point
-            GeneralUtils.unSafeSleep(2 * 60 * 1000);
-            pass = enodeB.waitForAllRunning(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);
-            if (!isPass()) {
-                report.report("EnodeB: " + enodeB.getName() + " didn't reach All runing state during "
-                        + (EnodeB.WAIT_FOR_ALL_RUNNING_TIME) / 60000 + "Minutes", Reporter.FAIL);
-                time = System.currentTimeMillis() - time;
-                report.report("Swaping Banks and rebooting unit " + enodeB.getName());
-                swapBanksAndResetEnodeb(enodeB);
-                notToValidateNodes.add(enodeB);
-                // Heng - dont worry about the wait this is a safe switch to
-                // wait for reboot
-                // the wair for allrunnig itself will take 5 minutes so this
-                // wait will not affect runtime
-                // but will help up to make the code simplier and not wait for
-                // reboot event at this point
-                GeneralUtils.unSafeSleep(2 * 60 * 1000);
-                boolean allRun = enodeB.waitForAllRunning(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);
-                if (allRun) {
-                    report.report("All Running State for node : " + enodeB.getName());
-                } else {
-                    report.report("Failed to get to All Running after swaping back banks", Reporter.WARNING);
-                }
+
+			if (!swapBankAndReset) {
+				report.report("EnodeB: " + enodeB.getName() + " wasn't rebooted", Reporter.WARNING);
+				time = System.currentTimeMillis() - time;
+				return;
+			}
+			// Heng - dont worry about the wait this is a safe switch to wait
+			// for reboot
+			// the wair for allrunnig itself will take 5 minutes so this wait
+			// will not affect runtime
+			// but will help up to make the code simplier and not wait for
+			// reboot event at this point
+			GeneralUtils.unSafeSleep(2 * 60 * 1000);
+			pass = enodeB.waitForAllRunning(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);
+			if (!isPass()) {
+				report.report("EnodeB: " + enodeB.getName() + " didn't reach All runing state during "
+						+ (EnodeB.WAIT_FOR_ALL_RUNNING_TIME) / 60000 + " Minutes", Reporter.FAIL);
+				time = System.currentTimeMillis() - time;
+				report.report("Swaping Banks and rebooting unit " + enodeB.getName());
+				//swapBanksAndResetEnodeb(enodeB);
+				notToValidateNodes.add(enodeB);
+				// Heng - dont worry about the wait this is a safe switch to
+				// wait for reboot
+				// the wair for allrunnig itself will take 5 minutes so this
+				// wait will not affect runtime
+				// but will help up to make the code simplier and not wait for
+				// reboot event at this point
+				/*GeneralUtils.unSafeSleep(2 * 60 * 1000);
+				boolean allRun = enodeB.waitForAllRunning(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);
+				if (allRun) {
+					report.report("All Running State for node : " + enodeB.getName());
+				} else {
+					report.report("Failed to get to All Running after swaping back banks", Reporter.WARNING);
+				}*/
 
                 return;
             }

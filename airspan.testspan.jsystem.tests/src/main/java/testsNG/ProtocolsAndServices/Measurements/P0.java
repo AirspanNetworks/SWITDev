@@ -69,7 +69,7 @@ public class P0 extends TestspanTest{
 	private Integer originalRatio = null;
 	private Integer originalMinimum = null;
 	private Traffic traffic = null;
-	private int startGap;
+	private int triggerGap;
 	private int stopGap;
 	private int interEarfcn = -1;
 	private int middleEarfcn;
@@ -2151,7 +2151,7 @@ public class P0 extends TestspanTest{
 		}else{
 			stopGap = getMinRsrp()-6;
 		}
-		startGap = stopGap - 6;
+		triggerGap = stopGap - 6;
 		if(!multiple){
 			report.report("UE in test: "+ueInTest.getName());
 		}
@@ -2275,8 +2275,8 @@ public class P0 extends TestspanTest{
 		mobilityParams.setThresholdBasedMeasurement(EnabledDisabledStates.ENABLED);
 		report.report("A1 threshold configured: "+stopGap);
 		mobilityParams.setStopGap(stopGap);
-		report.report("A2 threshold configured: "+startGap);
-		mobilityParams.setStartGap(startGap);
+		report.report("A2 threshold configured: "+triggerGap);
+		mobilityParams.setStartGap(triggerGap);
 		mobilityParams.setThresholdBasedMeasurementDual(dualMode);
 		int numOfCellsInNode = dutInTest.getNumberOfActiveCells();
 		while(numOfCellsInNode > 0) {
@@ -2350,7 +2350,7 @@ public class P0 extends TestspanTest{
 		int maxVal = attenuatorSetUnderTest.getMaxAttenuation();
 		float attenuatorsCurrentValue = attenuatorSetUnderTest.getAttenuation()[0];
 		int step = attenuatorSetUnderTest.getAttenuationStep();
-		while(!state.contains("ANR STATE = 5") && System.currentTimeMillis()-time<3*60*1000 && attenuatorsCurrentValue+step<=maxVal){
+		while(!state.contains("ANR STATE = 5") && System.currentTimeMillis()-time<4*60*1000 && attenuatorsCurrentValue+step<=maxVal){
 			attenuatorsCurrentValue+=step;
 			if(peripheralsConfig.setAttenuatorSetValue(attenuatorSetUnderTest, attenuatorsCurrentValue)){
 				report.report("Changed attenuator's value to "+attenuatorsCurrentValue);					
@@ -2528,8 +2528,9 @@ public class P0 extends TestspanTest{
 	}
 	
 	private boolean changeAttBelowA2(){
-		int trigger = dutInTest.getRSRPEventTriggerGaps();
+		int trigger = triggerGap;//dutInTest.getRSRPEventTriggerGaps();
 		if(trigger==GeneralUtils.ERROR_VALUE){
+			report.report("Failed to get RSRP event trigger gap value");
 			return false;
 		}
 		int maxVal = attenuatorSetUnderTest.getMaxAttenuation();
@@ -2537,6 +2538,7 @@ public class P0 extends TestspanTest{
 		float attenuatorsCurrentValue = attenuatorSetUnderTest.getAttenuation()[0];
 		double rsrp = getMeasCurrentUe();
 		report.report("Attenuator's start value: "+attenuatorsCurrentValue);
+		report.report("Trying to get rsrp below: "+(trigger-2));
 		report.report("RSRP of UE: "+rsrp);
 		while(rsrp>=trigger-2 && attenuatorsCurrentValue+step<=maxVal){
 			attenuatorsCurrentValue+=step;
@@ -2556,8 +2558,9 @@ public class P0 extends TestspanTest{
 	}
 	
 	private boolean changeAttOverA1(){
-		int trigger = dutInTest.getRSRPEventStopGaps();
+		int trigger = stopGap;//dutInTest.getRSRPEventStopGaps();
 		if(trigger==GeneralUtils.ERROR_VALUE){
+			report.report("Failed to get RSRP event stop gap value");
 			return false;
 		}
 		int minVal = attenuatorSetUnderTest.getMinAttenuation();
@@ -2565,6 +2568,7 @@ public class P0 extends TestspanTest{
 		float attenuatorsCurrentValue = attenuatorSetUnderTest.getAttenuation()[0];
 		double rsrp = getMeasCurrentUe();
 		report.report("Attenuator's start value: "+attenuatorsCurrentValue);
+		report.report("Trying to get rsrp above: "+(trigger+2));
 		report.report("RSRP of UE: "+rsrp);
 		while(rsrp<=trigger+2 && attenuatorsCurrentValue-step>=minVal){
 			attenuatorsCurrentValue-=step;
@@ -2585,14 +2589,16 @@ public class P0 extends TestspanTest{
 	}
 	
 	private boolean changeAttBelowA2AllUEs(ArrayList<UE> arrayUEs) {
-		int trigger = dutInTest.getRSRPEventTriggerGaps();
+		int trigger = triggerGap;//dutInTest.getRSRPEventTriggerGaps();
 		if(trigger==GeneralUtils.ERROR_VALUE){
+			report.report("Failed to get RSRP event trigger gap value");
 			return false;
 		}
 		int maxVal = attenuatorSetUnderTest.getMaxAttenuation();
 		int step = attenuatorSetUnderTest.getAttenuationStep();
 		float attenuatorsCurrentValue = attenuatorSetUnderTest.getAttenuation()[0];
 		report.report("Attenuator's start value: "+attenuatorsCurrentValue);
+		report.report("Trying to get rsrps below: "+(trigger-2));
 		while(!allUEsBelowA2(arrayUEs,trigger-2) && attenuatorsCurrentValue+step<=maxVal){
 			attenuatorsCurrentValue+=step;
 			if(peripheralsConfig.setAttenuatorSetValue(attenuatorSetUnderTest, attenuatorsCurrentValue)){
@@ -2624,14 +2630,16 @@ public class P0 extends TestspanTest{
 	}
 
 	private boolean changeAttOverA1AllUEs(ArrayList<UE> arrayUEs) {
-		int trigger = dutInTest.getRSRPEventStopGaps();
+		int trigger = stopGap;//dutInTest.getRSRPEventStopGaps();
 		if(trigger==GeneralUtils.ERROR_VALUE){
+			report.report("Failed to get RSRP event stop gap value");
 			return false;
 		}
 		int minVal = attenuatorSetUnderTest.getMinAttenuation();
 		int step = attenuatorSetUnderTest.getAttenuationStep();
 		float attenuatorsCurrentValue = attenuatorSetUnderTest.getAttenuation()[0];
 		report.report("Attenuator's start value: "+attenuatorsCurrentValue);
+		report.report("Trying to get rsrps above: "+(trigger+2));
 		while(!allUEsOverA1(arrayUEs,trigger+2) && attenuatorsCurrentValue-step>=minVal){
 			attenuatorsCurrentValue-=step;
 			if(peripheralsConfig.setAttenuatorSetValue(attenuatorSetUnderTest, attenuatorsCurrentValue)){

@@ -197,7 +197,7 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 			iperfMachineDL.sendCommand(convertToEchoCommands(commandsDlServer,ulServerCommandsFileWithPrefix));
 		}
 		
-		GeneralUtils.printToConsole("DL clieant:" + commandsDlClient);
+		GeneralUtils.printToConsole("DL client:" + commandsDlClient);
 		if(!iperfMachineDL.putFile(dlclientCommandsFile)){
 			iperfMachineDL.sendCommand(convertToEchoCommands(commandsDlClient,dlclientCommandsFileWithPrefix));
 
@@ -208,7 +208,7 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 			iperfMachineDL.sendCommand(convertToEchoCommands(commandsUlServer,dlServerCommandsFileWithPrefix));
 		}
 		
-		GeneralUtils.printToConsole("UL clieant:" + commandsUlClient);
+		GeneralUtils.printToConsole("UL client:" + commandsUlClient);
 		if(!iperfMachineUL.putFile(ulclientCommandsFile)){
 			iperfMachineDL.sendCommand(convertToEchoCommands(commandsUlClient,ulclientCommandsFileWithPrefix));
 		}

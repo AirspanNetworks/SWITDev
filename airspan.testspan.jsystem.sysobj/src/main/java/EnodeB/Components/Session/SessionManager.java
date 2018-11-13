@@ -167,15 +167,26 @@ public class SessionManager {
 		}
 	}
 
-	public synchronized String sendCommandDefaultSession(String prompt, String command, String response) {
-		return sendCommands(this.defaultSession.getName(), prompt, command, response);
+	public synchronized String sendCommandDefaultSession(String prompt, String command, String response, int responseTimeout) {
+		return sendCommands(this.defaultSession.getName(), prompt, command, response, responseTimeout);
 	}
 
+	/** Wrapper tp sendCommands with an option to response Timeout
+	 * @param sessionName
+	 * @param prompt
+	 * @param command
+	 * @param response
+	 * @return
+	 */
 	public synchronized String sendCommands(String sessionName, String prompt, String command, String response) {
+		return sendCommands( sessionName,  prompt,  command,  response, 10);
+	}
+
+	public synchronized String sendCommands(String sessionName, String prompt, String command, String response, int responseTimeout) {
 		Session session = getSession(sessionName);
 		if (session != null) {
 			if (session.isConnected() || session.waitForSessionToConnect(SESSION_WAIT_TIMEOUT))
-				return session.sendCommands(prompt, command, response);
+				return session.sendCommands(prompt, command, response, responseTimeout);
 			else
 				GeneralUtils.printToConsole("Session: " + sessionName + " is not connectd");
 		} else
@@ -216,6 +227,4 @@ public class SessionManager {
 	public void setSerialSession(Session serialSession) {
 		this.serialSession = serialSession;
 	}
-	
-	
 }

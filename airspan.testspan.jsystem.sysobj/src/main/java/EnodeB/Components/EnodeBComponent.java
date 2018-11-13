@@ -440,14 +440,31 @@ public abstract class EnodeBComponent extends SystemObjectImpl implements LogLis
     }
 
     /**
-     * Navigate to prompt and executes the supplied command.
+     * Wrapper to - sendCommands - with an option for an inputa,
+     *  responseTimeout=10
+     *  sessionName=null
      *
      * @param prompt  - The component prompt (Shell, LteCli, Tnet, etc..)
      * @param command the command
      * @return the command value
      */
     public String sendCommands(String prompt, String command, String response) {
-        return sendCommandsOnSession(null, prompt, command, response);
+        return sendCommandsOnSession(null, prompt, command, response,10);
+    }
+
+    /**
+     * Wrapper to - sendCommands - with an option for an inputa,
+     *  responseTimeout=10
+     *  sessionName=sessionName
+     *
+     * @param sessionName the session name
+     * @param prompt      the prompt
+     * @param command     the command
+     * @return the string
+     * @throws IOException
+     */
+    public String sendCommandsOnSession(String sessionName, String prompt, String command, String response) {
+        return sendCommandsOnSession( sessionName,  prompt,  command,  response,10) ;
     }
 
     /**
@@ -459,11 +476,11 @@ public abstract class EnodeBComponent extends SystemObjectImpl implements LogLis
      * @return the string
      * @throws IOException
      */
-    public String sendCommandsOnSession(String sessionName, String prompt, String command, String response) {
+    public String sendCommandsOnSession(String sessionName, String prompt, String command, String response, int responseTimeout) {
         if (sessionName != null)
-            return sessionManager.sendCommands(sessionName, prompt, command, response);
+            return sessionManager.sendCommands(sessionName, prompt, command, response, responseTimeout);
         else
-            return sessionManager.sendCommandDefaultSession(prompt, command, response);
+            return sessionManager.sendCommandDefaultSession(prompt, command, response, responseTimeout);
     }
 
     /**

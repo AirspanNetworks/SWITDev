@@ -175,8 +175,8 @@ public class EnodebAction extends Action {
 	}
 	
 	/***************** Parallel Commands ********************/
-	protected void startingParallelCommands(EnodeB dut, List<String> commandList) throws IOException{
-		syncCommands = new ParallelCommandsThread(commandList, dut, null, null);
+	protected void startingParallelCommands(EnodeB dut, List<String> commandList,int responseTimeout) throws IOException{
+		syncCommands = new ParallelCommandsThread(commandList, dut, null, null,responseTimeout);
 		syncCommands.start();
 	}
 	

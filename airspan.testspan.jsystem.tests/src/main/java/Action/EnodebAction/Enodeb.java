@@ -105,6 +105,7 @@ public class Enodeb extends EnodebAction {
 	private Integer triesToPing = 0;
 	private String debugCommands = "ue show rate";
 	private String parallelCommands = "";
+	private int responseTimeout;
 	private EnbStates serviceState = EnbStates.IN_SERVICE;
 	private TargetShell targetShell = TargetShell.CLI;
 	private String valueToSet = "";
@@ -323,6 +324,15 @@ public class Enodeb extends EnodebAction {
 	@ParameterProperties(description = "Flow Control Status")
 	public void setFlowControlStatus(EnabledDisabledStates flowControlStatus) {
 		this.flowControlStatus = flowControlStatus;
+	}
+
+	/** Setter to the parameter responseTimeout - the time between 2 commands.
+	 *
+	 * @param responseTimeout - responseTimeout
+	 */
+	@ParameterProperties(description = "Response Timeout")
+	public void setResponseTimeout(int responseTimeout) {
+		this.responseTimeout = responseTimeout;
 	}
 
 	/**
@@ -689,13 +699,13 @@ public class Enodeb extends EnodebAction {
 
 	@Test
 	@TestProperties(name = "Start Parallel Commands", returnParam = { "IsTestWasSuccessful" }, paramsInclude = { "DUT",
-			"ParallelCommands" })
+			"ParallelCommands", "responseTimeout" })
 	public void startParallelCommands() {
 		report.report("Starting parallel commands: " + this.parallelCommands);
 		List<String> commandList = GeneralUtils.convertStringToArrayList(this.parallelCommands, ";");
 		boolean flag = true;
 		try {
-			startingParallelCommands(this.dut, commandList);
+			startingParallelCommands(this.dut, commandList, responseTimeout);
 		} catch (IOException e) {
 			e.printStackTrace();
 			report.report("Start parallel commands failed due to: " + e.getMessage(), Reporter.FAIL);

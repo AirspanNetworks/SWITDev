@@ -99,25 +99,38 @@ public class Session implements Runnable {
 		GeneralUtils.printToConsole("reconnection thread " + getName() + " starting.");
 		reconnectionThread.start();
 	}
-	
+
 	/**
-	 * Send commands to the terminal via a specific prompt (like lteCli>>,
-	 * tnet>, or shell)
-	 * 
+	 * Wrapper to sendCommands - with default responseTimeout=10
+	 * Send commands to the terminal via a specific prompt (like lteCli>>, tnet>, or shell)
+	 *
 	 * @param prompt
 	 *            the prompt to send the commands from
-	 * @param commands
+	 * @param command
 	 *            the commands you want to send
 	 * @return the output of the command
 	 */
 	public String sendCommands(String prompt, String command, String response) {
+		return sendCommands( prompt,  command,  response,10);
+	}
+
+	/**
+	 * Send commands to the terminal via a specific prompt (like lteCli>>, tnet>, or shell)
+	 * 
+	 * @param prompt
+	 *            the prompt to send the commands from
+	 * @param command
+	 *            the commands you want to send
+	 * @return the output of the command
+	 */
+	public String sendCommands(String prompt, String command, String response,int responseTimeout) {
 		String ans = "";
 		try {
 			boolean enableCliBuffer = this.enableCliBuffer;
 			setEnableCliBuffer(true);
 
 			cliBuffer = ""; // Clear Cli buffer
-			ans = cli.sendCommands(prompt, command, response);
+			ans = cli.sendCommands(prompt, command, response, responseTimeout);
 			setEnableCliBuffer(enableCliBuffer);
 		} catch (Exception e) {
 			GeneralUtils.printToConsole("Error sending string to cli " + e.getMessage());

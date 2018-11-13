@@ -63,6 +63,7 @@ public class BasicAction extends Action {
 	@Test // 1
 	@TestProperties(name = "waitAction", returnParam = "LastStatus", paramsInclude = { "timeToWait" })
 	public void waitAction() {
+		report.report("Moran");
 		long timeToWaitMillisecond;
 		timeToWaitMillisecond = setRunTimeToMilliSeconds(timeToWait);
 		report.report("Wait " + timeToWait);

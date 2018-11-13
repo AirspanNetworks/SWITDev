@@ -1322,12 +1322,12 @@ public class P0 extends TPTBase{
 		dl = dlrxTotal/1000000.0/sizeOfStreamList;			
 		
 		String dlRateToPrint = convertTo3DigitsAfterPoint(dl);
-		String dlCriteriaToPrint = convertTo3DigitsAfterPoint(passCriteria*dlCriteria);
+		String dlCriteriaToPrint = convertTo3DigitsAfterPoint(passCriteria*dlCriteria/8);
 		
 		String ulRateToPrint = convertTo3DigitsAfterPoint(ul);
-		String ulCriteriaToPrint = convertTo3DigitsAfterPoint(passCriteria*ulCriteria);
+		String ulCriteriaToPrint = convertTo3DigitsAfterPoint(passCriteria*ulCriteria/8);
 		
-		if(dl<passCriteria*dlCriteria){
+		if(dl<passCriteria*dlCriteria/8){
 			report.report("DL rx rate for "+qciInfo+" does not match the threshold! DL rate: " + dlRateToPrint +" Mbps, instead of: "
 					+ dlCriteriaToPrint, Reporter.FAIL);
 			reason = "DL rx rate for "+qciInfo+" does not match the threshold! DL rate: " + dlRateToPrint +" Mbps, instead of: "
@@ -1337,7 +1337,7 @@ public class P0 extends TPTBase{
 					+ dlCriteriaToPrint);		
 		}
 		
-		if(ul<passCriteria*ulCriteria){
+		if(ul<passCriteria*ulCriteria/8){
 			report.report("UL rx rate for "+qciInfo+" does not match the threshold! UL rate: " + ulRateToPrint +" Mbps, instead of: "
 					+ ulCriteriaToPrint, Reporter.FAIL);
 			reason = "UL rx rate for "+qciInfo+" does not match the threshold! UL rate: " + ulRateToPrint +" Mbps, instead of: "

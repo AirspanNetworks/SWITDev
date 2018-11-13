@@ -190,8 +190,12 @@ public class TestspanTest extends SystemTestCase4 {
 					+ (EnodeB.WAIT_FOR_ALL_RUNNING_TIME / 60000) + " Minutes)");
 			if (!eNodeB.waitForAllRunningAndInService(EnodeB.WAIT_FOR_ALL_RUNNING_TIME)) {
 				report.report(eNodeB.getNetspanName() + " failed to reach all running.", Reporter.WARNING);
-				enbsAreInService = false;
-				eNodeB.blackListed = true;
+				if(!(this instanceof SWUpgrade)){
+					enbsAreInService = false;
+					eNodeB.blackListed = true;					
+				}else{
+					report.report("SW upgrade test. Trying to upgrade when enodeb in no all running state");
+				}
 			}
 			if (eNodeB.isSkipCMP()) {
 				report.report("EnodeB " + eNodeB.getNetspanName() + " is working with SKIP CMPv2");

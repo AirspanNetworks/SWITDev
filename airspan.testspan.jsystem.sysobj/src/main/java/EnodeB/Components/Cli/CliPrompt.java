@@ -79,18 +79,6 @@ public class CliPrompt{
 	}
 
 	/**
-	 * Executes a set of commands on a target prompt. Wrapper to execute with default value responseTimeout=10
-	 *
-	 * @param targetPrompt the prompt that the commands will be executed on.
-	 * @param command the commands to execute
-	 * @return the result of the commands.
-	 * @throws Exception
-	 */
-	public String execute(String targetPrompt, String command, String response) throws Exception {
-		return execute( targetPrompt,  command,  response,10);
-	}
-
-	/**
 	 * Executes a set of commands on a target prompt.
 	 *
 	 * @param targetPrompt the prompt that the commands will be executed on.
@@ -109,15 +97,13 @@ public class CliPrompt{
 			sendCommand(command);
 			getBuffer();
 			if (response != "" && response!=null) {
-				GeneralUtils.printToConsole("Waiting: " + responseTimeout + " for the response.");
+				GeneralUtils.printToConsole("Waiting timeout of " + responseTimeout + " seconds for the response.");
 				long endTimeMillis = System.currentTimeMillis() + responseTimeout * 1000;
-				boolean responseFound = false;
-				while(!responseFound){
+				while (true){
 					if (buffer.contains(response)) {
-						responseFound = true;
 						break;
 					}
-					else{
+					else {
 						if (System.currentTimeMillis() > endTimeMillis) {
 							GeneralUtils.printToConsole("Cannot find response: " + response + " to command: " + command);
 				            break;
@@ -141,13 +127,13 @@ public class CliPrompt{
 			//GeneralUtils.printToConsole(this + ": Is the active prompt. Navigating to target " + targetPrompt);
 			CliPrompt target = navigateToPrompt(targetPrompt);
 			if (target != null)
-				return target.execute(targetPrompt, command, response,responseTimeout);
+				return target.execute(targetPrompt, command, response, responseTimeout);
 		}
 		else {
 			//GeneralUtils.printToConsole(this + ": This is not the active prompt. Searching for the active prompt.");
 			CliPrompt activePrompt = getActivePrompt();
 			if (activePrompt != null){
-				return activePrompt.execute(targetPrompt, command, response,responseTimeout);
+				return activePrompt.execute(targetPrompt, command, response, responseTimeout);
 			}
 		}
 		return flushBuffer();

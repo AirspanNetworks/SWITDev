@@ -141,13 +141,13 @@ public class CliPrompt{
 			//GeneralUtils.printToConsole(this + ": Is the active prompt. Navigating to target " + targetPrompt);
 			CliPrompt target = navigateToPrompt(targetPrompt);
 			if (target != null)
-				return target.execute(targetPrompt, command, response);
+				return target.execute(targetPrompt, command, response,responseTimeout);
 		}
 		else {
 			//GeneralUtils.printToConsole(this + ": This is not the active prompt. Searching for the active prompt.");
 			CliPrompt activePrompt = getActivePrompt();
 			if (activePrompt != null){
-				return activePrompt.execute(targetPrompt, command, response);		
+				return activePrompt.execute(targetPrompt, command, response,responseTimeout);
 			}
 		}
 		return flushBuffer();

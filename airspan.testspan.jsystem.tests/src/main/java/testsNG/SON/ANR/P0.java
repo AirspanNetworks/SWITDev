@@ -706,7 +706,7 @@ public class P0 extends TestspanTest {
 			
 		}
 		GeneralUtils.stopLevel();
-		report.report("Wait EvalPeriod * nghRemoveThreshold * 1.5 + 60 = " + (evalPeriod * nghRemoveThreshold * 1.5 + 60) + " seconds");
+		report.report("Wait EvalPeriod * nghRemoveThreshold * 1.5 + 60 = " + (evalPeriod * nghRemoveThreshold * 1.5 + 60) + " seconds for neighbor deletion");
 		GeneralUtils.unSafeSleep((long)(evalPeriod * nghRemoveThreshold * 1.5 + 60) * 1000);
 	
 		GeneralUtils.startLevel("Remove Neighbor Results");

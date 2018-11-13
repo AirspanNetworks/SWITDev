@@ -38,7 +38,7 @@ public class Cli {
 		currentPrompt.setCli(this);
 	}
 	
-	public String sendCommands(String prompt, String command, String response) throws NullPointerException, IOException {
+	public String sendCommands(String prompt, String command, String response, int responseTimeout) throws NullPointerException {
 		if (currentPrompt.findPrompt(prompt) == null) 
 			throw new NullPointerException(String.format("[%s]: Prompt \"%s\" not found!", name, prompt));
 
@@ -47,7 +47,7 @@ public class Cli {
 		String result = "";
 		boolean error = false;
 		try {
-			result = currentPrompt.execute(prompt, command, response);
+			result = currentPrompt.execute(prompt, command, response, responseTimeout);
 		} catch (Exception e) {
 			e.printStackTrace();
 			error = true;

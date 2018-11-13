@@ -8,11 +8,11 @@ import EnodeB.EnodeBWithDAN;
 public class ParallelCommandsThreadEnodbWithDan extends ParallelCommandsThreadEnodeBComponent{
 	private ParallelCommandsThreadEnodeBComponent[] danSyncCommands;
 
-	public ParallelCommandsThreadEnodbWithDan(List<String> enodebCmdSet, EnodeBWithDAN enbWithDan, List<String> danCmdSet) throws IOException {
-		super(enodebCmdSet, enbWithDan, enbWithDan.getXLPName());
+	public ParallelCommandsThreadEnodbWithDan(List<String> enodebCmdSet, EnodeBWithDAN enbWithDan, List<String> danCmdSet, int responseTimeout) throws IOException {
+		super(enodebCmdSet, enbWithDan, enbWithDan.getXLPName(), responseTimeout);
 		danSyncCommands = new ParallelCommandsThreadEnodeBComponent[enbWithDan.getDanArrlength()];
 		for(int i = 0; i < danSyncCommands.length; i++){
-			danSyncCommands[i] = new ParallelCommandsThreadEnodeBComponent(danCmdSet, enbWithDan, enbWithDan.getDanName(i));
+			danSyncCommands[i] = new ParallelCommandsThreadEnodeBComponent(danCmdSet, enbWithDan, enbWithDan.getDanName(i), responseTimeout);
 		}
 	}
 	

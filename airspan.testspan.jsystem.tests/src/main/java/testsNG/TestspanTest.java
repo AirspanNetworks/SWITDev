@@ -186,16 +186,21 @@ public class TestspanTest extends SystemTestCase4 {
 			report.report("setting WD CPU and Memory Command for enodeB " + eNodeB.getName());
 
 			PeripheralsConfig.getInstance().changeEnbState(eNodeB, EnbStates.IN_SERVICE);
-			report.report(eNodeB.getNetspanName() + ": Wait for all Running (TimeOut="
-					+ (EnodeB.WAIT_FOR_ALL_RUNNING_TIME / 60000) + " Minutes)");
-			if (!eNodeB.waitForAllRunningAndInService(EnodeB.WAIT_FOR_ALL_RUNNING_TIME)) {
-				report.report(eNodeB.getNetspanName() + " failed to reach all running.", Reporter.WARNING);
-				if(!(this instanceof SWUpgrade)){
-					enbsAreInService = false;
-					eNodeB.blackListed = true;					
-				}else{
+			if(this instanceof SWUpgrade){
+				report.report(eNodeB.getNetspanName() + ": Wait for all Running (TimeOut="
+						+ 1 + " Minutes)");
+				if (!eNodeB.waitForAllRunningAndInService(60*1000)) {
+					report.report(eNodeB.getNetspanName() + " failed to reach all running.", Reporter.WARNING);
 					report.report("SW upgrade test. Trying to upgrade when enodeb in no all running state");
 				}
+			}else{
+				report.report(eNodeB.getNetspanName() + ": Wait for all Running (TimeOut="
+						+ (EnodeB.WAIT_FOR_ALL_RUNNING_TIME / 60000) + " Minutes)");
+				if (!eNodeB.waitForAllRunningAndInService(EnodeB.WAIT_FOR_ALL_RUNNING_TIME)) {
+					report.report(eNodeB.getNetspanName() + " failed to reach all running.", Reporter.WARNING);
+					enbsAreInService = false;
+					eNodeB.blackListed = true;
+				}				
 			}
 			if (eNodeB.isSkipCMP()) {
 				report.report("EnodeB " + eNodeB.getNetspanName() + " is working with SKIP CMPv2");

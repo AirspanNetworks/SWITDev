@@ -109,7 +109,7 @@ public class CliPrompt{
 			sendCommand(command);
 			getBuffer();
 			if (response != "" && response!=null) {
-				GeneralUtils.printToConsole("Waiting: " + responseTimeout + " seconds until the next command");
+				GeneralUtils.printToConsole("Waiting: " + responseTimeout + " for the response.");
 				long endTimeMillis = System.currentTimeMillis() + responseTimeout * 1000;
 				boolean responseFound = false;
 				while(!responseFound){

@@ -105,7 +105,7 @@ public class Enodeb extends EnodebAction {
 	private Integer triesToPing = 0;
 	private String debugCommands = "ue show rate";
 	private String parallelCommands = "";
-	private int responseTimeout = 10;
+	private int responseTimeout;
 	private EnbStates serviceState = EnbStates.IN_SERVICE;
 	private TargetShell targetShell = TargetShell.CLI;
 	private String valueToSet = "";

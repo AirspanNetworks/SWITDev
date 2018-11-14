@@ -1384,10 +1384,10 @@ public class P0 extends TPTBase{
 	
 	private void validateActiveFlag(boolean active){
 		if(active){
-			report.report("Number of Qci 1 active UEs in NMS status table was "+ueNameListStc.size()+" or more during the whole test");
+			report.report("Number of Qci 1 active UEs in eNodeB according to snmp was "+ueNameListStc.size()+" or more during the whole test");
 		}else{
-			report.report("Number of Qci 1 active UEs in NMS status table was not "+ueNameListStc.size()+" or more during the whole test",Reporter.FAIL);
-			reason = "Number of Qci 1 active UEs in NMS status table was not "+ueNameListStc.size()+" or more during the whole test";
+			report.report("Number of Qci 1 active UEs in eNodeB according to snmp was not "+ueNameListStc.size()+" or more during the whole test",Reporter.FAIL);
+			reason = "Number of Qci 1 active UEs in eNodeB according to snmp was not "+ueNameListStc.size()+" or more during the whole test";
 		}
 	}
 	

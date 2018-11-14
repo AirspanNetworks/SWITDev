@@ -364,9 +364,7 @@ public class XLP_14_5 extends XLP {
 	/**
 	 * (non-Javadoc)
 	 * @throws IOException 
-	 * 
-	 * @see EnodeB.Components.XLP.XLP#verifyNbrListByCli(EnodeB.EnodeB,
-	 * EnodeB.EnodeB)
+	 *
 	 */
 	@Override
 	public boolean verifyNbrList(EnodeB neighbor) throws IOException {
@@ -396,8 +394,7 @@ public class XLP_14_5 extends XLP {
 	
 	/**
 	 * (non-Javadoc)
-	 * 
-	 * @see EnodeB.Components.XLP.XLP#verifyNoNeighbors(EnodeB.EnodeB)
+	 *
 	 */
 	@Override
 	public boolean verifyNoNeighbors() {
@@ -465,7 +462,7 @@ public class XLP_14_5 extends XLP {
 	@Override
 	public boolean verifyAnrNeighbor(EnodeB neighbor) {
 		String oid = MibReader.getInstance().resolveByName("asLteStkNghListDiscoveredByAnr");
-		
+
 		HashMap<String, Variable> anrValues = snmp.SnmpWalk(oid);
 
 		if (anrValues == null) {
@@ -477,11 +474,14 @@ public class XLP_14_5 extends XLP {
 		
 		String fullInstance = mnoBroadcastPlmn.trim() + "." + eutranCellId.trim();
 		String output = oid+"."+fullInstance;
-		if(anrValues.containsKey(output))
-			return true;
-		
-		return false;
+		GeneralUtils.printToConsole("Message for debug: mnoBroadcastPlmn.eutranCellId = "+ fullInstance);
+		return anrValues.containsKey(output);
+
 	}
+
+//	public boolean verifyAnrNeighborCli(EnodeB neighbor) {
+//		return !neighbor.lteCli("db get nghlist").contains("No entry found");
+//	}
 
 	@Override
 	public boolean resetCounter(String tableName, String index,HashMap<String, String> KeyValuePairs) {

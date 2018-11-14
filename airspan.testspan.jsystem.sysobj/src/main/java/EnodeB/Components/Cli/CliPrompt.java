@@ -77,16 +77,17 @@ public class CliPrompt{
 		scanningPath = "";
 		return null;
 	}
-	
+
 	/**
 	 * Executes a set of commands on a target prompt.
 	 *
 	 * @param targetPrompt the prompt that the commands will be executed on.
-	 * @param commands the commands to execute
+	 * @param command the commands to execute
+	 * @param responseTimeout - response Timeout
 	 * @return the result of the commands.
 	 * @throws Exception 
 	 */
-	public String execute(String targetPrompt, String command, String response) throws Exception {
+	public String execute(String targetPrompt, String command, String response, int responseTimeout) throws Exception {
 		flushBuffer();
 		sendNewLine();
 		getBuffer();
@@ -96,14 +97,13 @@ public class CliPrompt{
 			sendCommand(command);
 			getBuffer();
 			if (response != "" && response!=null) {
-				long endTimeMillis = System.currentTimeMillis() + 10 * 1000;
-				boolean responseFound = false;
-				while(!responseFound){
+				GeneralUtils.printToConsole("Waiting timeout of " + responseTimeout + " seconds for the response.");
+				long endTimeMillis = System.currentTimeMillis() + responseTimeout * 1000;
+				while (true){
 					if (buffer.contains(response)) {
-						responseFound = true;
 						break;
 					}
-					else{
+					else {
 						if (System.currentTimeMillis() > endTimeMillis) {
 							GeneralUtils.printToConsole("Cannot find response: " + response + " to command: " + command);
 				            break;
@@ -127,13 +127,13 @@ public class CliPrompt{
 			//GeneralUtils.printToConsole(this + ": Is the active prompt. Navigating to target " + targetPrompt);
 			CliPrompt target = navigateToPrompt(targetPrompt);
 			if (target != null)
-				return target.execute(targetPrompt, command, response);
+				return target.execute(targetPrompt, command, response, responseTimeout);
 		}
 		else {
 			//GeneralUtils.printToConsole(this + ": This is not the active prompt. Searching for the active prompt.");
 			CliPrompt activePrompt = getActivePrompt();
 			if (activePrompt != null){
-				return activePrompt.execute(targetPrompt, command, response);		
+				return activePrompt.execute(targetPrompt, command, response, responseTimeout);
 			}
 		}
 		return flushBuffer();
@@ -311,7 +311,6 @@ public class CliPrompt{
 	/**
 	 * Checks if the buffer ends with known prompt.
 	 *
-	 * @param buffer the buffer
 	 * @return true, if the buffer ends with known prompt
 	 * @throws Exception 
 	 */
@@ -344,7 +343,7 @@ public class CliPrompt{
 	/**
 	 * Send commands to the terminal.
 	 *
-	 * @param commands the commands
+	 * @param command the command
 	 * @throws InterruptedException 
 	 * @throws IOException 
 	 */

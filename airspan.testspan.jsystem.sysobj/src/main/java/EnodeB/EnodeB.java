@@ -2202,10 +2202,10 @@ public abstract class EnodeB extends SystemObjectImpl {
 		return XLP.getDefaultSession();
 	}
 	
-	public String sendCommandsOnSession( String prompt, String command, String response){
-		return XLP.sendCommandsOnSession(XLP.getDefaultSession().getName(), prompt, command, response);
+	public String sendCommandsOnSession(String prompt, String command, String response, int responseTimeout){
+		return XLP.sendCommandsOnSession(XLP.getDefaultSession().getName(), prompt, command, response, responseTimeout);
 	}
-	
+
 	public String getParallelCommandsPrompt() {
 		return XLP.getParallelCommandsPrompt();
 	}

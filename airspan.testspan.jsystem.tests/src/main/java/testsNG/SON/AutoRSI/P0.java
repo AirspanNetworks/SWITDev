@@ -177,7 +177,7 @@ public class P0 extends AutoRSIBase {
         report.report("Wait 30 seconds");
         GeneralUtils.unSafeSleep(1000 * 30);
 
-        reportAboutFindAlarm("Auto RSI Config Invalid");
+//        reportAboutFindAlarm("Auto RSI Config Invalid");
 
         checkConnectionUEWithStopStart();
         traffic.stopTraffic();

@@ -4,14 +4,13 @@ import java.io.IOException;
 import java.util.List;
 
 import EnodeB.EnodeBWithDonor;
-import EnodeB.Ninja;
 
 public class ParallelCommandsThreadEnodbWithDonor extends ParallelCommandsThreadEnodeBComponent{
 	private ParallelCommandsThreadEnodeBComponent donorSyncCommands;
 
-	public ParallelCommandsThreadEnodbWithDonor(List<String> enodebCmdSet, EnodeBWithDonor enbWithDonor, List<String> donorCmdSet) throws IOException {
-		super(enodebCmdSet, enbWithDonor, enbWithDonor.getXLPName());
-		donorSyncCommands = new ParallelCommandsThreadEnodeBComponent(donorCmdSet, enbWithDonor.getDonor(), enbWithDonor.getDonor().getXLPName());
+	public ParallelCommandsThreadEnodbWithDonor(List<String> enodebCmdSet, EnodeBWithDonor enbWithDonor, List<String> donorCmdSet, int responseTimeout) throws IOException {
+		super(enodebCmdSet, enbWithDonor, enbWithDonor.getXLPName(), responseTimeout);
+		donorSyncCommands = new ParallelCommandsThreadEnodeBComponent(donorCmdSet, enbWithDonor.getDonor(), enbWithDonor.getDonor().getXLPName(), responseTimeout);
 	}
 
 	@Override

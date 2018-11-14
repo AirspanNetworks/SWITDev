@@ -1294,11 +1294,11 @@ public class P0 extends TPTBase{
 		report.report("number of cells: " + numberOfCellsStr);
 
 		verifyThreshold(passCriteria, uLrxTotalQcisInList, dlrxTotalQcisInList, stringQcisInList(), 
-				dlCriteriaQcisInList, ulCriteriaQcisInList, ((priorityTest)?secondResultSizeOfStreams:listOfStreamList.size()));
+				dlCriteriaQcisInList, ulCriteriaQcisInList, ((priorityTest)?secondResultSizeOfStreams:listOfStreamList.size()),true);
 		
 		if(udpDataLoad!=0){
 			verifyThreshold(DATA_QCIS_THRESHOLD_PERCENT, uLrxTotalDataQcis, dlrxTotalDataQcis, "data qcis",
-					dlCriteriaDataQcis, ulCriteriaDataQcis, listOfStreamList.size());
+					dlCriteriaDataQcis, ulCriteriaDataQcis, listOfStreamList.size(),false);
 		}
 	}
 	
@@ -1312,9 +1312,10 @@ public class P0 extends TPTBase{
 	}
 	
 	private void verifyThreshold(double passCriteria, double uLrxTotal, double dlrxTotal, String qciInfo,
-			double dlCriteria, double ulCriteria, int sizeOfStreamList){
+			double dlCriteria, double ulCriteria, int sizeOfStreamList, boolean isQci1){
 		report.report("Threshold for "+qciInfo+": " + passCriteria * 100 + "%");
 		
+		int divide = isQci1?8:1;
 		double ul = 0;
 		double dl = 0;
 		
@@ -1322,12 +1323,12 @@ public class P0 extends TPTBase{
 		dl = dlrxTotal/1000000.0/sizeOfStreamList;			
 		
 		String dlRateToPrint = convertTo3DigitsAfterPoint(dl);
-		String dlCriteriaToPrint = convertTo3DigitsAfterPoint(passCriteria*dlCriteria/8);
+		String dlCriteriaToPrint = convertTo3DigitsAfterPoint(passCriteria*dlCriteria/divide);
 		
 		String ulRateToPrint = convertTo3DigitsAfterPoint(ul);
-		String ulCriteriaToPrint = convertTo3DigitsAfterPoint(passCriteria*ulCriteria/8);
+		String ulCriteriaToPrint = convertTo3DigitsAfterPoint(passCriteria*ulCriteria/divide);
 		
-		if(dl<passCriteria*dlCriteria/8){
+		if(dl<passCriteria*dlCriteria/divide){
 			report.report("DL rx rate for "+qciInfo+" does not match the threshold! DL rate: " + dlRateToPrint +" Mbps, instead of: "
 					+ dlCriteriaToPrint, Reporter.FAIL);
 			reason = "DL rx rate for "+qciInfo+" does not match the threshold! DL rate: " + dlRateToPrint +" Mbps, instead of: "
@@ -1337,7 +1338,7 @@ public class P0 extends TPTBase{
 					+ dlCriteriaToPrint);		
 		}
 		
-		if(ul<passCriteria*ulCriteria/8){
+		if(ul<passCriteria*ulCriteria/divide){
 			report.report("UL rx rate for "+qciInfo+" does not match the threshold! UL rate: " + ulRateToPrint +" Mbps, instead of: "
 					+ ulCriteriaToPrint, Reporter.FAIL);
 			reason = "UL rx rate for "+qciInfo+" does not match the threshold! UL rate: " + ulRateToPrint +" Mbps, instead of: "

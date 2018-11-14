@@ -97,7 +97,6 @@ public class CliPrompt{
 			sendCommand(command);
 			getBuffer();
 			if (response != "" && response!=null) {
-				GeneralUtils.printToConsole("Waiting timeout of " + responseTimeout + " seconds for the response.");
 				long endTimeMillis = System.currentTimeMillis() + responseTimeout * 1000;
 				while (true){
 					if (buffer.contains(response)) {

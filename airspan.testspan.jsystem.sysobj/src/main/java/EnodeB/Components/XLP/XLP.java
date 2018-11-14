@@ -3625,6 +3625,9 @@ public abstract class XLP extends EnodeBComponent {
 			return 0;
 		}
 		HashMap<String, org.snmp4j.smi.Variable> output = snmp.SnmpWalk(oid);
+		if(output.keySet().size()==0){
+			return GeneralUtils.ERROR_VALUE;
+		}
 		int answer = 0;
 		try{
 			for(String key : output.keySet()){

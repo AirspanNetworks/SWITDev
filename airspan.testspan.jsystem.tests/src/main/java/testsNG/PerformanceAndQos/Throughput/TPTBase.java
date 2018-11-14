@@ -1610,11 +1610,13 @@ public class TPTBase extends TestspanTest {
 	 * @author Moran Goldenberg
 	 */
 	protected void terminateWatchDog() {
-		if (wd == null || DLULwd == null) {
+		if (wd == null) {
 			return;
 		}
+		if(DLULwd != null){
+			wd.removeCommand(DLULwd);			
+		}
 		GeneralUtils.printToConsole("Shutting down Watch Dog object");
-		wd.removeCommand(DLULwd);
 		wd.shutDown();
 	}
 

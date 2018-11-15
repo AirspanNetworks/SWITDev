@@ -382,8 +382,17 @@ public class SNMP extends SystemObjectImpl {
 	}
 	
 	private String getString(String strOID, boolean isCurrent) {
-		VariableBinding vb = getSnmp(strOID, isCurrent);
+		VariableBinding vb = null;
+		//VariableBinding vb = getSnmp(strOID, isCurrent);
 		String str = "";
+		for(int i=0;i<3;i++){
+			vb = getSnmp(strOID, isCurrent);
+			if(vb != null){
+				break;
+			}
+			GeneralUtils.printToConsole("Failed to get snmp value #"+(i+1));
+			GeneralUtils.unSafeSleep(2*1000);
+		}
 		if(vb != null){
 			str = vb.toString();
 			if (str.contains("=")) {

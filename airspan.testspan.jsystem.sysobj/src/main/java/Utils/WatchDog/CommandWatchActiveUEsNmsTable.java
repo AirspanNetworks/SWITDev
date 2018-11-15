@@ -2,6 +2,7 @@ package Utils.WatchDog;
 
 import EnodeB.EnodeB;
 import Entities.ITrafficGenerator.TransmitDirection;
+import Utils.GeneralUtils;
 
 public class CommandWatchActiveUEsNmsTable extends Command{
 	
@@ -31,8 +32,10 @@ public class CommandWatchActiveUEsNmsTable extends Command{
 	}
 
 	protected boolean isQci1ActiveOneOrMoreViaXlp(){
-		boolean flagDl = (getActiveUEsPerQciDLViaXlp(qciToCheckInWD)>=numUEs);
-		boolean flagUl = (getActiveUEsPerQciULViaXlp(qciToCheckInWD)>=numUEs);
+		int dlResult = getActiveUEsPerQciDLViaXlp(qciToCheckInWD);
+		int ulResult = getActiveUEsPerQciULViaXlp(qciToCheckInWD);
+		boolean flagDl = (dlResult>=numUEs || dlResult == GeneralUtils.ERROR_VALUE);
+		boolean flagUl = (ulResult>=numUEs || ulResult == GeneralUtils.ERROR_VALUE);
 		return (flagDl || flagUl);
 	}
 	

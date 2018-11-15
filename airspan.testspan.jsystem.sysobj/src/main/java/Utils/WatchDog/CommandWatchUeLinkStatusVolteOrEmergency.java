@@ -61,6 +61,6 @@ public class CommandWatchUeLinkStatusVolteOrEmergency extends Command{
 	
 	@Override
 	public int getExecutionDelaySec() {
-		return 2;
+		return 10;
 	}
 }

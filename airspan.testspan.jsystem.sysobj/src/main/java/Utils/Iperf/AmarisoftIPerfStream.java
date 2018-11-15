@@ -25,8 +25,9 @@ public class AmarisoftIPerfStream extends IPerfStream {
 		if(!isRunningTraffic()){
 			String runTimeTraffic = (runTime != null ? (this.protocol == Protocol.TCP?String.valueOf(runTime):String.valueOf(runTime+10)):UEIPerf.IPERF_TIME_LIMIT);
 			if(this.protocol == Protocol.UDP){
-				this.iperfClientCommand = "-c " + this.destIpAddress + " -u -i 1 -p " + (5000+this.qci) + " -l " + this.frameSize + ".0B -b " + convertTo3DigitsAfterPoint(this.streamLoad) + "M -t " + runTimeTraffic;
-				this.iperfServerCommand = "-s -u -i 1 -p " + (5000+this.qci) + " -l " + this.frameSize + ".0B -f k";
+				String frame = this.frameSize == null?"1400":String.valueOf(this.frameSize);
+				this.iperfClientCommand = "-c " + this.destIpAddress + " -u -i 1 -p " + (5000+this.qci) + " -l " + frame + ".0B -b " + convertTo3DigitsAfterPoint(this.streamLoad) + "M -t " + runTimeTraffic;
+				this.iperfServerCommand = "-s -u -i 1 -p " + (5000+this.qci) + " -l " + frame + ".0B -f k";
 			}else if(this.protocol == Protocol.TCP){
 				this.iperfClientCommand = "-c " + this.destIpAddress + " ";
 				this.iperfServerCommand = "-s ";

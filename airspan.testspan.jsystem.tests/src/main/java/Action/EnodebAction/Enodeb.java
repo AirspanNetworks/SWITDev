@@ -345,9 +345,9 @@ public class Enodeb extends EnodebAction {
 	@TestProperties(name = "Wait For All Running And In Service", returnParam = "LastStatus", paramsInclude = { "DUT",
 			"timeToWait" })
 	public void waitForAllRunningAndInService() {
-		report.report(dut.getName() + " Wait For All Running And In Service " + timeToWait + " milis");
 		long timeOutInMillisecond = setRunTimeToMilliSeconds(timeToWait);
-		if (this.dut.waitForAllRunningAndInService(timeOutInMillisecond) == false) {
+		report.report(dut.getName() + " Wait For All Running And In Service " + timeOutInMillisecond/1000 + "  seconds.");
+		if (!this.dut.waitForAllRunningAndInService(timeOutInMillisecond)) {
 			report.report("Wait For All Running And In Service Failed", Reporter.FAIL);
 		} else {
 			report.report("Wait For All Running And In Service Succeeded");

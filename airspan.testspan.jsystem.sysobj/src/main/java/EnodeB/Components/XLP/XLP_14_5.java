@@ -474,14 +474,10 @@ public class XLP_14_5 extends XLP {
 		
 		String fullInstance = mnoBroadcastPlmn.trim() + "." + eutranCellId.trim();
 		String output = oid+"."+fullInstance;
-		GeneralUtils.printToConsole("Message for debug: mnoBroadcastPlmn.eutranCellId = "+ fullInstance);
+		GeneralUtils.printToConsole("'PLMN' and 'Eutran Cell ID' values: "+ fullInstance);
 		return anrValues.containsKey(output);
 
 	}
-
-//	public boolean verifyAnrNeighborCli(EnodeB neighbor) {
-//		return !neighbor.lteCli("db get nghlist").contains("No entry found");
-//	}
 
 	@Override
 	public boolean resetCounter(String tableName, String index,HashMap<String, String> KeyValuePairs) {

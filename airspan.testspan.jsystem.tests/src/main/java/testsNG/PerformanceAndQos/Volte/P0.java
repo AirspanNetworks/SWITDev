@@ -1188,7 +1188,7 @@ public class P0 extends TPTBase{
 		if(number == null){
 			report.report("Version does not support this MIB or UEs still not connected");				
 		}else{
-			if(number){
+			if(!number){
 				report.report("Not all UEs connected to EnodeB were with "+(isEmergencyCallTest?"Emergency":"VoLTE")+" flag active", Reporter.FAIL);
 				reason = "Not all UEs connected to EnodeB were with "+(isEmergencyCallTest?"Emergency":"VoLTE")+" flag active";
 				action = false;

@@ -1189,10 +1189,11 @@ public class P0 extends TPTBase{
 			report.report("Version does not support this MIB or UEs still not connected");				
 		}else{
 			if(number){
-				report.report("Number of UEs connected with "+(isEmergencyCallTest?"Emergency":"VoLTE")+" is "+number+" instead of "+numOfUes, Reporter.FAIL);
+				report.report("Not all UEs connected to EnodeB were with "+(isEmergencyCallTest?"Emergency":"VoLTE")+" flag active", Reporter.FAIL);
+				reason = "Not all UEs connected to EnodeB were with "+(isEmergencyCallTest?"Emergency":"VoLTE")+" flag active";
 				action = false;
 			}else{
-				report.report("Number of UEs connected with "+(isEmergencyCallTest?"Emergency":"VoLTE")+" is "+number+" - as expected");
+				report.report("All UEs connected to EnodeB were with "+(isEmergencyCallTest?"Emergency":"VoLTE")+" flag active - as expected");
 			}			
 		}
 		GeneralUtils.stopLevel();
@@ -1394,10 +1395,10 @@ public class P0 extends TPTBase{
 	
 	private void validateUELinkStatus(boolean linked){
 		if(linked){
-			report.report("Number of UEs with "+ (isEmergencyCallTest?"Emergency":"VoLTE") +" support flag active was "+ueNameListStc.size()+" or more during the whole test");
+			report.report("All UEs connected to EnodeB were with "+ (isEmergencyCallTest?"Emergency":"VoLTE") +" support flag active during the whole test");
 		}else{
-			report.report("Number of UEs with "+ (isEmergencyCallTest?"Emergency":"VoLTE") +" support flag active was not "+ueNameListStc.size()+" or more during the whole test", Reporter.FAIL);
-			reason = "Number of UEs with "+ (isEmergencyCallTest?"Emergency":"VoLTE") +" support flag active was not "+ueNameListStc.size()+" or more during the whole test";
+			report.report("Not all UEs connected to EnodeB were with "+ (isEmergencyCallTest?"Emergency":"VoLTE") +" support flag active during the whole test", Reporter.FAIL);
+			reason = "Not all UEs connected to EnodeB were with "+ (isEmergencyCallTest?"Emergency":"VoLTE") +" support flag active during the whole test";
 		}
 	}
 	

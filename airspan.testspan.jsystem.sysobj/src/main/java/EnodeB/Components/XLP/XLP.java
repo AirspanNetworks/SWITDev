@@ -3641,21 +3641,24 @@ public abstract class XLP extends EnodeBComponent {
 		return answer;
 	}
 	
-	public int getNumberOfUELinkStatusVolte(){
+	public Boolean getNumberOfUELinkStatusVolte(){
 		String oid = MibReader.getInstance().resolveByName("asLteStkCellUeLinkStatusVolteCalls");
 		HashMap<String, org.snmp4j.smi.Variable> output = snmp.SnmpWalk(oid);
 		if(output.isEmpty()){
-			return GeneralUtils.ERROR_VALUE;
+			return null; //GeneralUtils.ERROR_VALUE;
 		}
-		int answer = 0;
+		//int answer = 0;
 		try{
 			for(String key : output.keySet()){
-				answer += Integer.valueOf(output.get(key).toString());
+				if("0".equals(output.get(key).toString())){
+					return false;
+				}
+				//answer += Integer.valueOf(output.get(key).toString());
 			}
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-		return answer;
+		return true;
 	}
 	
 	public HashMap<String, Integer> getUELinkStatusVolteTable(){
@@ -3666,21 +3669,24 @@ public abstract class XLP extends EnodeBComponent {
 		return ans;
 	}
 	
-	public int getNumberOfUELinkStatusEmergency(){
+	public Boolean getNumberOfUELinkStatusEmergency(){
 		String oid = MibReader.getInstance().resolveByName("asLteStkCellUeLinkStatusEmergencyCalls");
 		HashMap<String, org.snmp4j.smi.Variable> output = snmp.SnmpWalk(oid);
 		if(output.isEmpty()){
-			return GeneralUtils.ERROR_VALUE;
+			return null; //GeneralUtils.ERROR_VALUE;
 		}
-		int answer = 0;
+		//int answer = 0;
 		try{
 			for(String key : output.keySet()){
-				answer += Integer.valueOf(output.get(key).toString());
+				if("0".equals(output.get(key).toString())){
+					return false;
+				}
+				//answer += Integer.valueOf(output.get(key).toString());
 			}
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-		return answer;
+		return true;
 	}
 	
 	public HashMap<String, Integer> getUELinkStatusEmergencyTable(){

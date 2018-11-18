@@ -1179,16 +1179,16 @@ public class P0 extends TPTBase{
 	private boolean checkAllUesAreVolteOrEmergency(int numOfUes){
 		boolean action = true;
 		GeneralUtils.startLevel("Check if all UEs are connected with "+(isEmergencyCallTest?"Emergency":"VoLTE")+" flag");
-		int number = 0;
+		Boolean number = null;
 		if(!isEmergencyCallTest){
 			number = dut.getNumberOfUELinkStatusVolte();
 		}else{
 			number = dut.getNumberOfUELinkStatusEmergency();
 		}
-		if(number == GeneralUtils.ERROR_VALUE){
+		if(number == null){
 			report.report("Version does not support this MIB or UEs still not connected");				
 		}else{
-			if(numOfUes > number){
+			if(number){
 				report.report("Number of UEs connected with "+(isEmergencyCallTest?"Emergency":"VoLTE")+" is "+number+" instead of "+numOfUes, Reporter.FAIL);
 				action = false;
 			}else{

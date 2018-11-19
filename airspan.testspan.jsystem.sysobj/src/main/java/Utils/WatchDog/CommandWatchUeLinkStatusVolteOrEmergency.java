@@ -23,13 +23,15 @@ public class CommandWatchUeLinkStatusVolteOrEmergency extends Command{
 	@Override
 	public void run() {
 		if(rntiToCheck == null){
-			int result = GeneralUtils.ERROR_VALUE;
+			Boolean result = null;
 			if(!isEmergency){
 				result = dut.getNumberOfUELinkStatusVolte();				
 			}else{
 				result = dut.getNumberOfUELinkStatusEmergency();			
 			}
-			flagActive = (result >= numUEs || result == GeneralUtils.ERROR_VALUE) && flagActive;			
+			if(result != null){
+				flagActive = result && flagActive;							
+			}
 		}else{
 			HashMap<String, Integer> result = null;
 			if(!isEmergency){

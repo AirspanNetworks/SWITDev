@@ -1424,7 +1424,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 		return XLP.getActiveUEPerQciAndTransmitDirection(transmit, qci);
 	}
 	
-	public int getNumberOfUELinkStatusVolte(){
+	public Boolean getNumberOfUELinkStatusVolte(){
 		return XLP.getNumberOfUELinkStatusVolte();
 	}
 	
@@ -1432,7 +1432,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 		return XLP.getUELinkStatusVolteTable();
 	}
 	
-	public int getNumberOfUELinkStatusEmergency(){
+	public Boolean getNumberOfUELinkStatusEmergency(){
 		return XLP.getNumberOfUELinkStatusEmergency();
 	}
 	

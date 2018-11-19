@@ -143,7 +143,7 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 	
 	public void startTraffic() throws Exception {
 		Connect();
-		ExecutorService exe = Executors.newFixedThreadPool(allUEsIPerfList.size());
+		//ExecutorService exe = Executors.newFixedThreadPool(allUEsIPerfList.size());
 		String ulServerCommandsFile = "UL"+ serverSideCommandsFile;
 		String dlclientCommandsFile = "DL"+ clientSideCommandsFile;
 		String dlServerCommandsFile = "DL"+ serverSideCommandsFile;
@@ -171,7 +171,8 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		
 		Protocol pro = getProtocol();
 		for (UEIPerf ueIPerf : allUEsIPerfList) {
-			exe.execute(ueIPerf);
+			ueIPerf.runTraffic();
+			//exe.execute(ueIPerf);
 			GeneralUtils.unSafeSleep(100);
 		}
 		

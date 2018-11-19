@@ -18,7 +18,7 @@ import UE.UE;
 import Utils.GeneralUtils;
 import Utils.Pair;
 
-public class UEIPerf implements Runnable {
+public class UEIPerf {
 
 	/**
 	 * IPerf traffic.
@@ -76,7 +76,7 @@ public class UEIPerf implements Runnable {
 		}
 	}
 
-	public void run() {
+	public void runTraffic() {
 		try {
 			long startTime = System.currentTimeMillis();
 			runTrafficUL(startTime);

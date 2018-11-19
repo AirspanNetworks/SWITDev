@@ -1194,22 +1194,24 @@ public class TPTBase extends TestspanTest {
 	 * @param listOfStreamList
 	 */
 	protected void printPerStreamTables(ArrayList<ArrayList<StreamParams>> listOfStreamList) {
-		StreamList TablePrinter = new StreamList();
-		ArrayList<String> headLines = new ArrayList<String>();
-		headLines.add("L1bitRate[Mbit/s]");
-		GeneralUtils.startLevel("Per Stream Tables");
-		for (ArrayList<StreamParams> streams : listOfStreamList) {
-			for (StreamParams stream : streams) {
-				ArrayList<String> valuesList = new ArrayList<String>();
-				valuesList.add(longToString3DigitFormat(stream.getRxRate()));
-				String dateFormat = GeneralUtils.timeFormat(stream.getTimeStamp());
-				TablePrinter.addValues(stream.getName(), dateFormat, headLines, valuesList);
+		if(listOfStreamList.size() != 0){
+			StreamList TablePrinter = new StreamList();
+			ArrayList<String> headLines = new ArrayList<String>();
+			headLines.add("L1bitRate[Mbit/s]");
+			GeneralUtils.startLevel("Per Stream Tables");
+			for (ArrayList<StreamParams> streams : listOfStreamList) {
+				for (StreamParams stream : streams) {
+					ArrayList<String> valuesList = new ArrayList<String>();
+					valuesList.add(longToString3DigitFormat(stream.getRxRate()));
+					String dateFormat = GeneralUtils.timeFormat(stream.getTimeStamp());
+					TablePrinter.addValues(stream.getName(), dateFormat, headLines, valuesList);
+				}
 			}
+			for (StreamParams stream : listOfStreamList.get(0)) {
+				report.reportHtml(stream.getName(), TablePrinter.printTablesHtmlForStream(stream.getName()), true);
+			}
+			GeneralUtils.stopLevel();			
 		}
-		for (StreamParams stream : listOfStreamList.get(0)) {
-			report.reportHtml(stream.getName(), TablePrinter.printTablesHtmlForStream(stream.getName()), true);
-		}
-		GeneralUtils.stopLevel();
 	}
 
 	/**

@@ -125,12 +125,9 @@ public class Provision extends TestspanTest {
 		if(nodeMap == null) {
 			return true;
 		}
-		
-		if(nodeMap.get(cellId) == null) {
-			return true;
-		}
-		
-		return false;
+
+		return nodeMap.get(cellId) == null;
+
 	}
 
 	/**

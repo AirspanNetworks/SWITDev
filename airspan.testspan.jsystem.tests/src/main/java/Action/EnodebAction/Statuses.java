@@ -149,10 +149,7 @@ public class Statuses extends EnodebAction{
 		if (valueType == ValueType.IP_ADDRESS || valueType == ValueType.DEFAULT_GETEWAY)
 			convertToHexIP();
 		boolean boolValue;
-		if (value.equals("1"))
-			boolValue = true;
-		else
-			boolValue = false;
+		boolValue = value.equals("1");
 		if (symbol == Symbol.EQUALS){
 			if (boolValue == booleanExpectedValue){
 				report.report("the value is : " + value + " as expected");

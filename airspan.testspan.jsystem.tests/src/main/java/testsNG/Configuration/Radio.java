@@ -365,7 +365,7 @@ public class Radio extends TestspanTest {
 		}
 		
 		//checked already and CA is not enable -> not changing radio
-		if(caTest == false){
+		if(!caTest){
 			GeneralUtils.stopLevel();
 			return clonedProfile;
 		}
@@ -375,7 +375,7 @@ public class Radio extends TestspanTest {
 		 * 				   if the Second cell -> modify radio frequencies (UL & DL) to first one + parameters according to Bandwidth.
 		 * 				   Note: Bandwidth 20 -> 18.9 Mhz , Bandwidth 15 -> 15 MHz
 		 */
-		if(caTest == true){
+		if(caTest){
 			if(cellNumber == 1){
 				report.report("saving 1st Radio frequency");
 				radioFreqInCaTest = currentProfile.getDownLinkFrequency();

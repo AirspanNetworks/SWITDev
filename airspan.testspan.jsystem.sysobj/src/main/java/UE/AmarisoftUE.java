@@ -48,8 +48,7 @@ public class AmarisoftUE extends UE{
 
 	@Override
 	public String getVersion() {
-		String ans = server.getVersion();
-		return ans;
+		return server.getVersion();
 	}
 
 	@Override
@@ -65,14 +64,12 @@ public class AmarisoftUE extends UE{
 
 	@Override
 	public String getUEStatus() {
-		String ans = server.getUeStatus(ueId);
-		return ans;
+		return server.getUeStatus(ueId);
 	}
 
 	@Override
 	public String getDuplexMode() {
-		String ans = server.getUeConnectedDuplexMode(ueId);
-		return ans;	
+		return server.getUeConnectedDuplexMode(ueId);
 	}
 
 	@Override
@@ -83,8 +80,7 @@ public class AmarisoftUE extends UE{
 	
 	@Override
 	public int getPCI() {
-		int ans = server.getUeConnectedPCI(ueId);
-		return ans;	
+		return server.getUeConnectedPCI(ueId);
 		
 	}
 	

@@ -42,10 +42,7 @@ public class CommandWatchActiveUEsNmsTable extends Command{
 	protected boolean isQci1ActiveOneViaXlp(){
 		int dl = getActiveUEsPerQciDLViaXlp(qciToCheckInWD);
 		int ul = getActiveUEsPerQciULViaXlp(qciToCheckInWD);
-		if((dl == 1 && ul<=1) || (ul == 1 && dl<=1)){
-			return true;
-		}
-		return false;
+		return (dl == 1 && ul <= 1) || (ul == 1 && dl <= 1);
 	}
 	
 	protected int getActiveUEsPerQciDLViaXlp(Character qci){

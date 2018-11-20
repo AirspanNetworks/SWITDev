@@ -194,7 +194,7 @@ public class Progression extends TestspanTest{
 			report.report("Failed to start traffic", Reporter.WARNING);
 		}
 		
-		if(trafficOn == false || safeStopTraffic(traffic)){
+		if(!trafficOn || safeStopTraffic(traffic)){
 			stopUEs(dut);
 			ledStatusExpectedValues[5] = LED_STATUS_PATTERNS.AS_LED_PATT_8_ON;
 			report.report("Wait for 10 seconds to ensure traffic stopped completely.");

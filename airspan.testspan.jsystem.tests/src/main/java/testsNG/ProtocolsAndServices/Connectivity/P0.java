@@ -868,11 +868,7 @@ public class P0 extends TestspanTest {
 		try {
 			ArrayList<UE> ueListInMethod = new ArrayList<UE>();
 			ueListInMethod.add(ueInMethod);
-			short numb = 1;
-			if (!peripheralsConfig.checkIfAllUEsAreConnectedToNode(ueListInMethod, dutInMethod)) {
-				return false;
-			}
-			return true;
+			return peripheralsConfig.checkIfAllUEsAreConnectedToNode(ueListInMethod, dutInMethod);
 		} catch (Exception e) {
 			report.report("Exception accured while checking Epc: " + e.getMessage());
 			return false;

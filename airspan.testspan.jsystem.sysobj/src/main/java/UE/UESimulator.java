@@ -141,11 +141,8 @@ final String HTTP_PREFIX = "http://";
 	@Override
 	public boolean start() {
 		execId = directExecution();
-		if(execId == null){
-			return false;
-		}
-		return true;
-		
+		return execId != null;
+
 	}
 
 	@Override
@@ -159,10 +156,7 @@ final String HTTP_PREFIX = "http://";
 	@Override
 	public boolean stop() {
 		Object result =stopCurrentTest();
-		if(result == null){
-			return false;
-		}
-		return true;
+		return result != null;
 	}
 
 	@Override
@@ -216,13 +210,9 @@ final String HTTP_PREFIX = "http://";
 	
 	public boolean isTestRunning(){
 		
-		String result = (String)sendCommand(TEST_MGT_URL, TEST_STATE, testID); 
-		
-		if(result.equals("idle") || result.equals("stopping")){
-			return false;
-		}else{
-			return true;
-		}
+		String result = (String)sendCommand(TEST_MGT_URL, TEST_STATE, testID);
+
+		return !result.equals("idle") && !result.equals("stopping");
 	}
 	
 	private Object stopCurrentTest(){

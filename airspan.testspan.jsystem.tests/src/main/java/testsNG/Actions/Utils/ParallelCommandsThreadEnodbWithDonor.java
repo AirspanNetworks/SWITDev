@@ -22,15 +22,13 @@ public class ParallelCommandsThreadEnodbWithDonor extends ParallelCommandsThread
 	@Override
 	public boolean stopCommands() {
 		super.stopCommands();
-		boolean flag = donorSyncCommands.stopCommands();
-		return flag;
+		return donorSyncCommands.stopCommands();
 	}
 
 	@Override
 	public boolean moveFileToReporterAndAddLink() {
 		super.moveFileToReporterAndAddLink();
-		boolean flag = donorSyncCommands.moveFileToReporterAndAddLink();
-		return flag;
+		return donorSyncCommands.moveFileToReporterAndAddLink();
 	}
 	
 	@Override

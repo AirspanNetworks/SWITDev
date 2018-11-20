@@ -97,11 +97,11 @@ public class UEIPerf implements Runnable {
 				for(IPerfStream dlIPerfStream : dlStreamArrayList){
 					if(dlIPerfStream.isActive()){
 						Integer parallel = dlIPerfStream.getNumberOfParallelIPerfStreams();
-						Pair<Double, ArrayList<Long>> currentSample = iperfMachineUL.parseCounterFromIPerfServerRespond((parallel != null && parallel > 1? true : false), dlIPerfStream.getLastIntervalUsedForLastSample(), dlCountersStr, dlIPerfStream.getTpFileName());
+						Pair<Double, ArrayList<Long>> currentSample = iperfMachineUL.parseCounterFromIPerfServerRespond((parallel != null && parallel > 1), dlIPerfStream.getLastIntervalUsedForLastSample(), dlCountersStr, dlIPerfStream.getTpFileName());
 						if(dlIPerfStream.getLastIntervalUsedForLastSample() == currentSample.getElement0()){ 
 							GeneralUtils.printToConsole("Failed to get sample - ReSample.");
 							String reSampleDlCountersStr = iperfMachineUL.getStrCounters(iperfMachineUL.getPreAddressTpFile() + dlIPerfStream.getTpFileName());
-							currentSample = iperfMachineUL.parseCounterFromIPerfServerRespond((parallel != null && parallel > 1? true : false), dlIPerfStream.getLastIntervalUsedForLastSample(), reSampleDlCountersStr, dlIPerfStream.getTpFileName());
+							currentSample = iperfMachineUL.parseCounterFromIPerfServerRespond((parallel != null && parallel > 1), dlIPerfStream.getLastIntervalUsedForLastSample(), reSampleDlCountersStr, dlIPerfStream.getTpFileName());
 						}
 						dlIPerfStream.setCountersInBits(currentSample);
 					}
@@ -119,11 +119,11 @@ public class UEIPerf implements Runnable {
 				for(IPerfStream ulIPerfStream : ulStreamArrayList){
 					if(ulIPerfStream.isActive()){
 						Integer parallel = ulIPerfStream.getNumberOfParallelIPerfStreams();
-						Pair<Double, ArrayList<Long>> currentSample = iperfMachineDL.parseCounterFromIPerfServerRespond((parallel != null && parallel > 1? true : false), ulIPerfStream.getLastIntervalUsedForLastSample(), ulCountersStr, ulIPerfStream.getTpFileName());
+						Pair<Double, ArrayList<Long>> currentSample = iperfMachineDL.parseCounterFromIPerfServerRespond((parallel != null && parallel > 1), ulIPerfStream.getLastIntervalUsedForLastSample(), ulCountersStr, ulIPerfStream.getTpFileName());
 						if(ulIPerfStream.getLastIntervalUsedForLastSample() == currentSample.getElement0()){ 
 							GeneralUtils.printToConsole("Failed to get sample - ReSample.");
 							String reSampleUlCountersStr = iperfMachineDL.getStrCounters(iperfMachineDL.getPreAddressTpFile() + ulIPerfStream.getTpFileName());
-							currentSample = iperfMachineDL.parseCounterFromIPerfServerRespond((parallel != null && parallel > 1? true : false), ulIPerfStream.getLastIntervalUsedForLastSample(), reSampleUlCountersStr, ulIPerfStream.getTpFileName());
+							currentSample = iperfMachineDL.parseCounterFromIPerfServerRespond((parallel != null && parallel > 1), ulIPerfStream.getLastIntervalUsedForLastSample(), reSampleUlCountersStr, ulIPerfStream.getTpFileName());
 						}
 						ulIPerfStream.setCountersInBits(currentSample);
 					}

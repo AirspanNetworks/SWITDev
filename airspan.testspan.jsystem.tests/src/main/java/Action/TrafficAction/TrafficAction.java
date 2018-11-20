@@ -286,7 +286,7 @@ public class TrafficAction extends Action {
 	public void startTraffic() {
 		report.report("Start Traffic");
 
-		if (Traffic.getInstance(ues).startTraffic(ues) == false) {
+		if (!Traffic.getInstance(ues).startTraffic(ues)) {
 			report.report("Start Traffic Failed", Reporter.FAIL);
 		} else {
 			report.report("Start Traffic Succeeded");
@@ -298,7 +298,7 @@ public class TrafficAction extends Action {
 	public void stopTraffic() {
 		report.report("Stop Traffic");
 
-		if (Traffic.getInstance(ues).stopTraffic() == false) {
+		if (!Traffic.getInstance(ues).stopTraffic()) {
 			report.report("Stop Traffic Failed", Reporter.FAIL);
 		} else {
 			report.report("Stop Traffic Succeeded");

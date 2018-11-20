@@ -27,7 +27,7 @@ public class IPerfRemoteWindowsMachine extends IPerfWindowsMachine{
 
 	@Override
 	public Pair<Boolean, String> sendCommand(String command){
-		return returnPair(sendCommandAndReturtExexcProcess(command) == null? false : true);
+		return returnPair(sendCommandAndReturtExexcProcess(command) != null);
 	}
 
 	@Override

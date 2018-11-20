@@ -42,13 +42,11 @@ public class Statuses {
 	}
 	
 	public PTPStatus getPTPStatusViaSnmp(EnodeB dut) {
-		PTPStatus response = dut.getPTPStatus();
-		return response;
+		return dut.getPTPStatus();
 	}
 	
 	public PTPStatus getPTPStatusViaNetspan(EnodeB dut) {
-		PTPStatus response = netspanServer.getPTPStatus(dut);
-		return response;
+		return netspanServer.getPTPStatus(dut);
 	}
 	
 	public PTPStatus getPTPStatus(EnodeB dut) {

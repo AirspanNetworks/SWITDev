@@ -312,10 +312,7 @@ public abstract class XLP extends EnodeBComponent {
             return false;
 
         if (output.contains("entries updated")) {
-            if (output.contains("0 entries updated"))
-                return false;
-            else
-                return true;
+            return !output.contains("0 entries updated");
         } else
             return false;
     }
@@ -397,10 +394,7 @@ public abstract class XLP extends EnodeBComponent {
                 tries = 3;
             }
         }
-        if (output.contains("entries deleted")) {
-            return true;
-        }
-        return false;
+        return output.contains("entries deleted");
     }
 
     /**
@@ -528,10 +522,7 @@ public abstract class XLP extends EnodeBComponent {
             GeneralUtils.printToConsole("Could not get OperationalStatus from EnodeB (after 3 retries)");
             return false;
         }
-        if (service.equals(EnbStates.IN_SERVICE) && running.equals(EnbStates.IN_SERVICE))
-            return true;
-        else
-            return false;
+        return service.equals(EnbStates.IN_SERVICE) && running.equals(EnbStates.IN_SERVICE);
     }
 
     /**
@@ -904,15 +895,10 @@ public abstract class XLP extends EnodeBComponent {
         String oid = MibReader.getInstance().resolveByName("asLteStkStackCfgOperationalStatus");
         try {
             if (enbState == EnbStates.IN_SERVICE) {
-                if (!snmp.snmpSet(oid, 1)) {
-                    return false;
-                }
+                return snmp.snmpSet(oid, 1);
             } else {
-                if (!snmp.snmpSet(oid, 2)) {
-                    return false;
-                }
+                return snmp.snmpSet(oid, 2);
             }
-            return true;
         } catch (Exception e) {
             report.report("Can't send command snmp protocol");
             e.printStackTrace();
@@ -961,8 +947,7 @@ public abstract class XLP extends EnodeBComponent {
         String oid = MibReader.getInstance().resolveByName("asLteStkMacCfgControlFormatIndicator");
         // String oid = "1.3.6.1.4.1.989.1.20.1.4.10.1.25.40";
         try {
-            String output = snmp.get(oid);
-            return output;
+            return snmp.get(oid);
         } catch (Exception e) {
             report.report("getCFISnmp failed due to: " + e.getMessage(), Reporter.WARNING);
             e.printStackTrace();
@@ -994,8 +979,7 @@ public abstract class XLP extends EnodeBComponent {
      */
     public String getSpecialSubFrameSnmp() throws IOException {
         String oid = MibReader.getInstance().resolveByName("asLteStkCellSib1CfgSsfPattern");
-        String output = snmp.get(oid);
-        return output;
+        return snmp.get(oid);
     }
 
     /**
@@ -1132,8 +1116,7 @@ public abstract class XLP extends EnodeBComponent {
 
     public String getEnbType() throws IOException {
         String oid = MibReader.getInstance().resolveByName("asLteStkStackCfgEnbType");
-        String output = snmp.get(oid);
-        return output;
+        return snmp.get(oid);
     }
 
     public void setEnbType(int value) {
@@ -1155,8 +1138,7 @@ public abstract class XLP extends EnodeBComponent {
      */
     public String getAnrMode() throws IOException {
         String oid = MibReader.getInstance().resolveByName("asLteStkCellAnrCfgAnrState");
-        String output = snmp.get(oid);
-        return output;
+        return snmp.get(oid);
     }
 
     public void setAnrMode(int value) {
@@ -1185,8 +1167,7 @@ public abstract class XLP extends EnodeBComponent {
     public boolean setPnpMode(int value) {
         String oid = MibReader.getInstance().resolveByName("asLteStkPnpCfgPnpMode");
         try {
-            boolean res = snmp.snmpSet(oid, value);
-            return res;
+            return snmp.snmpSet(oid, value);
         } catch (Exception e) {
             report.report("can't send command snmp protocol");
             e.printStackTrace();
@@ -1203,8 +1184,7 @@ public abstract class XLP extends EnodeBComponent {
      */
     public String getPnpWarmRebootMask() throws IOException {
         String oid = MibReader.getInstance().resolveByName("asLteStkPnpCfgWarmRebootMask");
-        String output = snmp.get(oid);
-        return output;
+        return snmp.get(oid);
     }
 
     public void setPnpWarmRebootMask(int value) {
@@ -1227,8 +1207,7 @@ public abstract class XLP extends EnodeBComponent {
      */
     public String getPnpWarmResetModeAdmin() throws IOException {
         String oid = MibReader.getInstance().resolveByName("asLteStkPnpCfgWarmResetModeAdmin");
-        String output = snmp.get(oid);
-        return output;
+        return snmp.get(oid);
     }
 
     public void setPnpWarmResetModeAdmin(int value) {
@@ -1251,8 +1230,7 @@ public abstract class XLP extends EnodeBComponent {
      */
     public String getAnrDurationTimer() throws IOException {
         String oid = MibReader.getInstance().resolveByName("asLteStkCellAnrCfgDrxOnDurationTimer");
-        String output = snmp.get(oid);
-        return output;
+        return snmp.get(oid);
     }
 
     public void setAnrDurationTimer(int value) {
@@ -1437,11 +1415,7 @@ public abstract class XLP extends EnodeBComponent {
 
         String oid = MibReader.getInstance().resolveByName("asLteStkMacCfgDcfiEnable");
         resultStr = snmp.get(oid + ".40");
-        if (resultStr.equals("1")) {
-            result = true;
-        } else {
-            result = false;
-        }
+        result = resultStr.equals("1");
         return result;
     }
 
@@ -2093,11 +2067,7 @@ public abstract class XLP extends EnodeBComponent {
     public boolean setTddAckMode(int value) {
         String oid = MibReader.getInstance().resolveByName("asLteStkCellDedCfgPhyTddAckNackFeedbackMode");
         try {
-            if (snmp.snmpSet(oid, value)) {
-                return true;
-            } else {
-                return false;
-            }
+            return snmp.snmpSet(oid, value);
         } catch (Exception e) {
             GeneralUtils.printToConsole(e.getMessage());
             return false;
@@ -2114,11 +2084,7 @@ public abstract class XLP extends EnodeBComponent {
     public boolean setPrachZeroCorrelZone(int value) {
         String oid = MibReader.getInstance().resolveByName("asLteStkCellSib2CfgPrachZeroCorrrelZoneCfg");
         try {
-            if (snmp.snmpSet(oid, value)) {
-                return true;
-            } else {
-                return false;
-            }
+            return snmp.snmpSet(oid, value);
         } catch (Exception e) {
             GeneralUtils.printToConsole(e.getMessage());
             return false;
@@ -2135,11 +2101,7 @@ public abstract class XLP extends EnodeBComponent {
     public boolean setCAMode(int value) {
         String oid = MibReader.getInstance().resolveByName("asLteStkStackCfgCaMode");
         try {
-            if (snmp.snmpSet(oid, value)) {
-                return true;
-            } else {
-                return false;
-            }
+            return snmp.snmpSet(oid, value);
         } catch (Exception e) {
             GeneralUtils.printToConsole(e.getMessage());
             return false;
@@ -2249,7 +2211,7 @@ public abstract class XLP extends EnodeBComponent {
         String runningVer = "";
         GeneralUtils.printToConsole("Check if Bank was swapped on " + this.getIpAddress() + " expected ver:" + testerVer);
         long startTime = System.currentTimeMillis(); // fetch starting time
-        while (false || (System.currentTimeMillis() - startTime) < timeout) {
+        while ((System.currentTimeMillis() - startTime) < timeout) {
             runningVer = this.getRunningVersion();
             if (runningVer.matches("\\d\\d+\\.\\d\\d+\\.\\d\\d+\\.\\d\\d+")) {
                 GeneralUtils.printToConsole("Receieved current version: " + runningVer);
@@ -2731,7 +2693,7 @@ public abstract class XLP extends EnodeBComponent {
 
     public boolean setPacketForwardingEnable(boolean value, int cellId) {
         String oid = MibReader.getInstance().resolveByName("asLteStkCellCfgPktFwdEnable") + "." + String.valueOf(cellId + 39);
-        String snmpValue = (value == true) ? "1" : "0";
+        String snmpValue = (value) ? "1" : "0";
         if (snmp.snmpSet(oid, snmpValue)) {
             return true;
         } else {
@@ -2994,8 +2956,7 @@ public abstract class XLP extends EnodeBComponent {
     public String getMmeStatus() {
         String oid = MibReader.getInstance().resolveByName("asLteStkMmeStatusCommsStatus");
         try {
-            String ret = this.snmp.get(oid);
-            return ret;
+            return this.snmp.get(oid);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -3005,8 +2966,7 @@ public abstract class XLP extends EnodeBComponent {
     public String getMmeStatusInfo() {
         String oid = MibReader.getInstance().resolveByName("asLteStkMmeStatusCommsStatusInfo");
         try {
-            String ret = this.snmp.get(oid);
-            return ret;
+            return this.snmp.get(oid);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -3016,8 +2976,7 @@ public abstract class XLP extends EnodeBComponent {
     public String getAddressType() {
         String oid = MibReader.getInstance().resolveByName("asLteStkMmeStatusIpAddressType");
         try {
-            String ret = this.snmp.get(oid);
-            return ret;
+            return this.snmp.get(oid);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -3054,11 +3013,7 @@ public abstract class XLP extends EnodeBComponent {
         String oid = MibReader.getInstance().resolveByName("asLteStkCellPosMeasCfgOtdoaMode");
         oid = oid + "." + cellIndex.value;
         String result = snmp.get(oid);
-        if (result.equals("1")) {
-            return true;
-        } else {
-            return false;
-        }
+        return result.equals("1");
     }
 
     /**
@@ -3086,11 +3041,7 @@ public abstract class XLP extends EnodeBComponent {
         String oid = MibReader.getInstance().resolveByName("asLteStkCellPosMeasCfgEcidModeEnabled");
         try {
             String result = snmp.get(oid);
-            if (result.equals("1")) {
-                return true;
-            } else {
-                return false;
-            }
+            return result.equals("1");
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -3100,8 +3051,7 @@ public abstract class XLP extends EnodeBComponent {
 
     public HashMap<String, Variable> getUEShowLinkTable() {
         String oid = MibReader.getInstance().resolveByName("asLteStkCellUeStatusEntry");
-        HashMap<String, org.snmp4j.smi.Variable> output = snmp.SnmpWalk(oid);
-        return output;
+        return snmp.SnmpWalk(oid);
     }
 
     public int getSmonThresholdsCriticalMin(int entry) {

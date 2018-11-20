@@ -2382,8 +2382,7 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
     @Override
     public String getCurrentRadioProfileName(EnodeB enb) {
         int cell = enb.getCellContextID();
-        String radioProfileName = this.getCurrentRadioProfileName(enb, cell);
-        return radioProfileName;
+        return this.getCurrentRadioProfileName(enb, cell);
     }
 
     @Override
@@ -2395,8 +2394,7 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
     @Override
     public String getCurrentMobilityProfileName(EnodeB enb) {
         int cell = enb.getCellContextID();
-        String mobilityProfileName = this.getCurrentMobilityProfileName(enb, cell);
-        return mobilityProfileName;
+        return this.getCurrentMobilityProfileName(enb, cell);
     }
 
     private String getCurrentMobilityProfileName(EnodeB enb, int cellNumber) {
@@ -2423,8 +2421,7 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
     @Override
     public String getCurrentCellAdvancedConfigurationProfileName(EnodeB enb) {
         int cell = enb.getCellContextID();
-        String cellAdvancedProfileName = this.getCurrentCellAdvancedConfigurationProfileName(enb, cell);
-        return cellAdvancedProfileName;
+        return this.getCurrentCellAdvancedConfigurationProfileName(enb, cell);
     }
 
     private String getCurrentCellAdvancedConfigurationProfileName(EnodeB enb, int cellNumber) {
@@ -2890,11 +2887,11 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
         }
 
         if (radioParams.getRmMode() != null) {
-            ResourceManagementTypes rmMode = radioParams.getRmMode() == true ? ResourceManagementTypes.SFR
+            ResourceManagementTypes rmMode = radioParams.getRmMode() ? ResourceManagementTypes.SFR
                     : ResourceManagementTypes.DISABLED;
             radioProfile.setRmMode(rmMode);
 
-            if (radioParams.getRmMode() == true) {
+            if (radioParams.getRmMode()) {
                 if (radioParams.getSFRSegment() != null) {
                     radioProfile.setSfrSegments(
                             factoryDetails.createEnbRadioProfileSfrSegments(radioParams.getSFRSegment()));
@@ -2927,10 +2924,10 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
         }
 
         if (radioParams.getECIDMode() != null) {
-            EnabledDisabledStates state = radioParams.getECIDMode() == true ? EnabledDisabledStates.ENABLED
+            EnabledDisabledStates state = radioParams.getECIDMode() ? EnabledDisabledStates.ENABLED
                     : EnabledDisabledStates.DISABLED;
             radioProfile.setEcidMode(factoryDetails.createEnbRadioProfileEcidMode(state));
-            if (radioParams.getECIDMode() == true) {
+            if (radioParams.getECIDMode()) {
                 radioProfile.setEcidTimer(
                         factoryDetails.createEnbRadioProfileEcidTimer(radioParams.getECIDProcedureTimer()));
             }
@@ -4214,8 +4211,7 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
             GeneralUtils.printToConsole("getMangementIp failed!");
             return GeneralUtils.ERROR_VALUE + "";
         }
-        String managmentIp = enbConfig.getManagementIpAddress();
-        return managmentIp;
+        return enbConfig.getManagementIpAddress();
     }
 
     @Override

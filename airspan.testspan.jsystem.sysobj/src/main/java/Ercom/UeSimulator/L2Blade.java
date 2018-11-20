@@ -39,7 +39,7 @@ public class L2Blade extends Blade{
 			return false;
 		}
 		boolean res = findAndReplaceString(currentBandwidth,getNewBandwidthAsString(),PATH_TO_L2OPTIONS_FILE+L2OPTIONS);	
-		if(res == true && validateBandwidthSetAction()){
+		if(res && validateBandwidthSetAction()){
 			StdOut.print2console("[OPT_UL_BW] parameter in L2options file changed successfully");
 			StdOut.print2console("New bandwidth set for L2Blade: "+getNewBandwidthAsString());
 			return true;
@@ -66,11 +66,7 @@ public class L2Blade extends Blade{
 		String bw = getCurrentBandwidth();
 		if(bw == null){
 			return false;
-		}else if(bw.equals(getNewBandwidthAsString())){
-			return true;
-		}else{
-			return false;
-		}
+		}else return bw.equals(getNewBandwidthAsString());
 	}
 	
 	private String getNewBandwidthAsString(){

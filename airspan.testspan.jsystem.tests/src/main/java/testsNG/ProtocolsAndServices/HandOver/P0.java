@@ -724,10 +724,7 @@ public class P0 extends TestspanTest {
 			report.step("Ho preformed!");
 		}
 		GeneralUtils.stopLevel();
-		if (flag1 == false || flag2 == false)
-			return false;
-		else
-			return true;
+		return flag1 && flag2;
 	}
 
 	public void performHoUpto2Times(HoControlStateTypes HOControlTypes, X2ControlStateTypes X2Types,
@@ -735,12 +732,8 @@ public class P0 extends TestspanTest {
 		for (int i = 1; i <= 1; i++) {
 			report.report("Run number " + i);
 			if (!preTest(HOControlTypes, X2Types, HOType, hoEventType, i-1)) {
-				if (i == 2) {
-					report.report("Retried 2 times - Failure reason: "+reason, Reporter.FAIL);
-				} else{
-					report.report("Hand over test failed - retrying again", Reporter.WARNING);
-					restartCommandsThread();						
-				}
+				report.report("Hand over test failed - retrying again", Reporter.WARNING);
+				restartCommandsThread();
 				continue;
 			}
 			boolean action = performHO(i-1);
@@ -750,13 +743,13 @@ public class P0 extends TestspanTest {
 					report.report("Retried 2 times - Failure reason: "+reason, Reporter.FAIL);
 				} else{
 					report.report("Hand over test failed - retrying again", Reporter.WARNING);
-					restartCommandsThread();						
+					restartCommandsThread();
 				}
 			} else{
 				break;
 			}
 		}
-		if(reason == ""){
+		if("" == reason){
 			reason = reasons[numOfMaxRetries-1];
 		}
 	}

@@ -96,10 +96,10 @@ public abstract class IPerfMachine extends SystemObjectImpl{
 		String[] tpLines = tpLinesStr.split("\n");
 		ArrayList<Long> rxCounterList= new ArrayList<Long>();
 		String lastTpLineUsedForCurrentSample = "";
-		if(tpLines != null){ 
+		if(tpLines != null){
 			for(String tpLine : tpLines){
 				if(tpLine.contains("Kbits")){
-					if((isMultiSession == false) || (tpLine.contains("SUM"))){
+					if((!isMultiSession) || (tpLine.contains("SUM"))){
 						Double lastEndOfIntervalOfTpLine = 0.0;
 						try{
 							String regexPattern = 	"] \\d+.\\d+-(\\d+.\\d+)";
@@ -134,7 +134,7 @@ public abstract class IPerfMachine extends SystemObjectImpl{
 				}
 			}
 		}
-		if(rxCounterList.isEmpty()){ //Failed to get sample 
+		if(rxCounterList.isEmpty()){ //Failed to get sample
 			GeneralUtils.printToConsole("IPerfMachine.parseCounterFromIPerfServerRespond: Failed to get sample From " + tpFileName);
 			rxCounterList.add((long) 0);
 		}

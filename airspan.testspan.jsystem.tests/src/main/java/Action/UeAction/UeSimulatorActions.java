@@ -311,7 +311,10 @@ public class UeSimulatorActions extends Action {
 			}
 			report.report("There are " + sdrCounter + " Cells in the enodeBs given, so " + sdrCounter + " are requiered.");
 			AmariSoftServer amariSoftServer = AmariSoftServer.getInstance();
-			amariSoftServer.startServer(duts);
+			if (amariSoftServer.startServer(duts)) 
+				report.report("UE simulator has started as expected");
+			else 
+				report.report("UE simulator didn't start", Reporter.FAIL);
 		} catch (Exception e) {
 			report.report("Error starting UE simulator: " + e.getMessage(), Reporter.WARNING);
 			e.printStackTrace();

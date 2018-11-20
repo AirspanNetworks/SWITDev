@@ -464,16 +464,16 @@ public class Neighbors {
         return status && correctState;
     }
 
-    /*
-     * public boolean deleteRandomaly(EnodeB enodeB){ List<String> allNeighbors
-     * = netspanServer.getNodeNeighborsName(enodeB); int numberOfNeighbors =
-     * allNeighbors.size();
-     *
-     * for (int i = 0; i<numberOfNeighbors; i++){ int random = new
-     * Random().nextInt(allNeighbors.size()); String randomNbr =
-     * allNeighbors.get(random);
-     *
-     * netspanServer.deleteNeighbor(enodeB, neighborName)
-     * allNeighbors.remove(random); } return false; }
-     */
-}
+	/*
+	 * public boolean deleteRandomaly(EnodeB enodeB){ List<String> allNeighbors
+	 * = netspanServer.getNodeNeighborsName(enodeB); int numberOfNeighbors =
+	 * allNeighbors.size();
+	 * 
+	 * for (int i = 0; i<numberOfNeighbors; i++){ int random = new
+	 * Random().nextInt(allNeighbors.size()); String randomNbr =
+	 * allNeighbors.get(random);
+	 * 
+	 * netspanServer.deleteNeighbor(enodeB, neighborName)
+	 * allNeighbors.remove(random); } return false; }
+	 */
+};

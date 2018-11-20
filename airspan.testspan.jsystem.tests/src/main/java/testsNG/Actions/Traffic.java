@@ -124,77 +124,77 @@ public class Traffic {
         }
     }
 
-    public enum GeneratorType {
-        STC, Iperf
-    }
-
-    private Traffic(ArrayList<UE> ues, GeneratorType type) {
-        if (type == GeneratorType.STC) {
-            try {
-                GeneralUtils.printToConsole("Trying to set RestSTC");
-                trafficGenerator = (ITrafficGenerator) system.getSystemObject("RestSTC");
-                generatorType = TrafficGeneratorType.ITraffic;
-                GeneralUtils.printToConsole("done setting RestSTC");
-            } catch (Exception e) {
-                e.printStackTrace();
-                report.report("There is no traffic STC instance in SUT!", Reporter.FAIL);
-                instance = null;
-                return;
-            }
-        } else if (type == GeneratorType.Iperf) {
-            GeneralUtils.printToConsole("Trying to set IPERF");
-            trafficGenerator = IPerf.getInstance(ues);
-            if (trafficGenerator == null) {
-                report.report("There is no traffic IPERF instance in SUT!", Reporter.FAIL);
-                instance = null;
-                return;
-            }
-            generatorType = TrafficGeneratorType.ITraffic;
-            GeneralUtils.printToConsole("done setting IPERF");
-        }
-    }
-
-    /**
-     * returns instance of the current SUT generator
-     *
-     * @return
-     * @throws Exception
-     */
-    public static Traffic getInstance(ArrayList<UE> ues) {
-        if (instance == null) {
-            instance = new Traffic(ues);
-        }
-        if (instance == null) {
-            return null;
-        }
-        instance.revertToDefault(instance.generatorType);
-        return instance;
-    }
-
-    public static Traffic getInstanceWithSpecificGeneratorType(ArrayList<UE> ues, GeneratorType type) {
-        if (instance == null) {
-            instance = new Traffic(ues, type);
-        }
-        if (instance == null) {
-            return null;
-        }
-        instance.revertToDefault(instance.generatorType);
-        return instance;
-    }
-
-    private void revertToDefault(TrafficGeneratorType type) {
-
-        switch (instance.generatorType) {
-            case ITraffic:
-                instance.configFile = new File(instance.trafficGenerator.getDefultConfigFile());
-                instance.trafficGenerator.setCurrentConfigFile(instance.trafficGenerator.getDefultConfigFile());
-                break;
-
-            case TestCenter:
-                instance.configFile = new File(instance.tg.getDefaultConfigTccFile());
-                break;
-        }
-    }
+	public enum GeneratorType{
+		STC, Iperf;
+	}
+	
+	private Traffic(ArrayList<UE> ues, GeneratorType type){
+		if(type == GeneratorType.STC){
+			try {
+				GeneralUtils.printToConsole("Trying to set RestSTC");
+				trafficGenerator = (ITrafficGenerator) system.getSystemObject("RestSTC");
+				generatorType = TrafficGeneratorType.ITraffic;
+				GeneralUtils.printToConsole("done setting RestSTC");
+			} catch (Exception e) {
+				e.printStackTrace();
+				report.report("There is no traffic STC instance in SUT!",Reporter.FAIL);
+				instance = null;
+				return;
+			}
+		}else if(type == GeneratorType.Iperf){
+			GeneralUtils.printToConsole("Trying to set IPERF");
+			trafficGenerator = IPerf.getInstance(ues);
+			if(trafficGenerator == null){
+				report.report("There is no traffic IPERF instance in SUT!",Reporter.FAIL);
+				instance = null;
+				return;
+			}
+			generatorType = TrafficGeneratorType.ITraffic;
+			GeneralUtils.printToConsole("done setting IPERF");
+		}
+	}
+	
+	/**
+	 * returns instance of the current SUT generator
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	public static Traffic getInstance(ArrayList<UE> ues){
+		if (instance == null){
+			instance = new Traffic(ues);
+		}
+		if(instance == null){
+			return null;
+		}
+		instance.revertToDefault(instance.generatorType);
+		return instance;
+	}
+	
+	public static Traffic getInstanceWithSpecificGeneratorType(ArrayList<UE> ues, GeneratorType type){
+		if (instance == null){
+			instance = new Traffic(ues, type);
+		}
+		if(instance == null){
+			return null;
+		}
+		instance.revertToDefault(instance.generatorType);
+		return instance;
+	}
+	
+	private void revertToDefault(TrafficGeneratorType type){
+		
+		switch(instance.generatorType){
+		case ITraffic:
+			instance.configFile = new File(instance.trafficGenerator.getDefultConfigFile());
+			instance.trafficGenerator.setCurrentConfigFile(instance.trafficGenerator.getDefultConfigFile());
+			break;
+			
+		case TestCenter:
+			instance.configFile = new File(instance.tg.getDefaultConfigTccFile());
+			break;
+			}
+	}
 
     /**
      * inits STC Sprirent getting ports init config file disableing Stc debug
@@ -1102,31 +1102,31 @@ public class Traffic {
         return streamsAdapter;
     }
 
-    /**
-     * giving stream their Names in known Format
-     *
-     * @param ulStreams
-     * @param dlStreams
-     * @return
-     * @throws TrafficException
-     */
-    public ArrayList<String> turnListsIntoStringArray(ArrayList<StcStream> ulStreams, ArrayList<StcStream> dlStreams)
-            throws TrafficException {
-        ArrayList<String> streams = new ArrayList<String>();
-        for (StcStream stc : ulStreams) {
-            streams.add(stc.getName());
-        }
-        for (StcStream stc : dlStreams) {
-            streams.add(stc.getName());
-        }
-        activeStreams = new StreamParams[streams.size()];
-        int i = 0;
-        for (String streamName : streams) {
-            activeStreams[i] = new StreamParams(streamName, true);
-            i++;
-        }
-        return streams;
-    }
+	/**
+	 * giving stream their Names in known Format
+	 * 
+	 * @param ulStreams
+	 * @param dlStreams
+	 * @return
+	 * @throws TrafficException
+	 */
+	public ArrayList<String> turnListsIntoStringArray(ArrayList<StcStream> ulStreams, ArrayList<StcStream> dlStreams)
+			throws TrafficException {
+		ArrayList<String> streams = new ArrayList<String>();;
+		for(StcStream stc : ulStreams){
+			streams.add(stc.getName());
+		}
+		for(StcStream stc : dlStreams){
+			streams.add(stc.getName());
+		}
+		activeStreams = new StreamParams[streams.size()];
+		int i = 0;
+		for (String streamName : streams) {
+			activeStreams[i] = new StreamParams(streamName, true);
+			i++;
+		}
+		return streams;
+	}
 
     public void setactiveStreamsArray(ArrayList<String> streamsAdapter) {
         if (streamsAdapter != null) {

@@ -20,6 +20,8 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.WebSocketContainer;
 
+import org.python.modules.synchronize;
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -63,6 +65,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     private static Object waitLock = new Object();
 
 	private Terminal lteUeTerminal;
+	private Terminal lteUecommands;
 	private String ip;
 	private String port;
 	private String userName;
@@ -84,7 +87,9 @@ public class AmariSoftServer extends SystemObjectImpl{
     private HashMap<String, Integer> sdrCellsMap;
     volatile private Object returnValue;
 	private String loggerBuffer="";
+	private String loggerBufferForCommands="";
 	private String cliBuffer = "";
+	private String cliBufferForCommands = "";
 	private Thread loggerBufferThread;
 	private String logFileName = "AmarisoftLog";
 	private boolean waitForResponse = false;
@@ -308,19 +313,30 @@ public class AmariSoftServer extends SystemObjectImpl{
     }
 
     public boolean stopServer(){
+    	boolean result = false;
 		if (running) {
-			sendCommands("quit", "#");
-			if (sendCommands("ps -aux |grep lteue", "/root/ue/lteue-avx2 /root/ue/config/automationConfigFile")) {
+			sendCommands("quit", "#", lteUeTerminal, true);
+			if (!sendCommands("ps -aux |grep lteue", "/root/ue/config/automationConfigFile", lteUecommands, false)) {
 				running = false;
-				return true;
+				result =  true;
 			} else {
 				report.report("Closing server failed.", Reporter.WARNING);
-				return false;
+				running = true;
+				result =  false;
 			}
 		}
-		return true;
+		disconnectSession();
+		return result;
     }
     
+    private void disconnectSession() {
+    	try {
+			lteUecommands.disconnect();
+			lteUeTerminal.disconnect();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    }
     public boolean startServer(EnodeB dut){
     	ArrayList<EnodeB> tempEnodebList = new ArrayList<>();
     	tempEnodebList.add(dut);
@@ -334,11 +350,17 @@ public class AmariSoftServer extends SystemObjectImpl{
     
     public boolean startServer(String configFile){
     	try {   
-    		boolean ans = sendCommands("/root/ue/lteue /root/ue/config/" + configFile,"sample_rate=");
+    		boolean ans = sendCommands("/root/ue/lteue /root/ue/config/" + configFile,"sample_rate=", lteUeTerminal, true);
     		if (!ans) {
     			GeneralUtils.printToConsole("Failed starting server with config file: " + configFile);
+    			running = false;
     			return false;
 			}
+    		if(!sendCommands("ps -aux |grep lteue", " /root/ue/config/automationConfigFile", lteUecommands, false)) {
+    			GeneralUtils.printToConsole("Failed starting server with config file: " + configFile);
+    			running = false;
+    			return false;
+    		}
     		
         	URI endpointURI = new URI("ws://"+ip+":"+port);
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
@@ -408,20 +430,24 @@ public class AmariSoftServer extends SystemObjectImpl{
 		
 	}
 
-	public boolean sendCommands(String cmd, String response) {
+	public boolean sendCommands(String cmd, String response, Terminal terminal, boolean isRunningTerminal) {
 		String privateBuffer = "";
 		String ans = "";
+		cliBufferForCommands = "";
 		if (!connected) {
 			report.report("Attempted to send command \"" + cmd +"\" to machine that is not connected.", Reporter.WARNING);
 			return false;
 		}
 		waitForResponse = true;
-		sendRawCommand(cmd);
+		sendRawCommand(cmd, terminal);
 		long startTime = System.currentTimeMillis(); // fetch starting time
 		while ((System.currentTimeMillis() - startTime) < 3000) {
 			GeneralUtils.unSafeSleep(200);
 			try {
-				privateBuffer += cliBuffer;
+				if (isRunningTerminal)
+					privateBuffer += cliBuffer;
+				else 
+					privateBuffer += cliBufferForCommands;
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
@@ -430,18 +456,18 @@ public class AmariSoftServer extends SystemObjectImpl{
 				waitForResponse = false;
 				return true;			
 			}
-			sendRawCommand("");
+			sendRawCommand("", terminal);
 		}
 		waitForResponse = false;
 		return false;
 	}
 		
-	public void sendRawCommand(String command){
-		if (lteUeTerminal == null) {
+	public void sendRawCommand(String command, Terminal terminal){
+		if (terminal == null) {
 			return;
 		}
 		try {
-			lteUeTerminal.sendString(command + "\n", false);
+			terminal.sendString(command + "\n", false);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
@@ -521,10 +547,14 @@ public class AmariSoftServer extends SystemObjectImpl{
 
     private void connect() { 
 		this.lteUeTerminal = new SSH(ip, userName, password);
+		this.lteUecommands = new SSH(ip, userName, password);
 		try {
 			this.lteUeTerminal.connect();
+			this.lteUecommands.connect();
 		} catch (IOException e) {
 			e.printStackTrace();
+			disconnectSession();
+			return;
 		}
 		connected = true;
 		startLogger();
@@ -598,11 +628,11 @@ public class AmariSoftServer extends SystemObjectImpl{
 
 	}
 
-	private synchronized void readInputBuffer() {
+	private synchronized void readInputBuffer(Terminal terminal, boolean isRunningTerminal) {
 		String privateBuffer = "";
 		try {
 			if (connected )
-				privateBuffer += lteUeTerminal.readInputBuffer().replaceAll("\r", "");
+				privateBuffer += terminal.readInputBuffer().replaceAll("\r", "");
 			else
 				return;
 		} catch (Exception e) {
@@ -614,15 +644,30 @@ public class AmariSoftServer extends SystemObjectImpl{
 		int lastIndx = privateBuffer.lastIndexOf("\n");
 		if (lastIndx > -1) {
 			String buffer = privateBuffer.substring(0, lastIndx + 1);
-			loggerBuffer +=buffer;
-			if (waitForResponse) {
-				cliBuffer += buffer;				
+			if (isRunningTerminal) {
+				loggerBuffer +=buffer;
+				if (waitForResponse) {
+					cliBuffer += buffer;				
+				}
+				else
+					cliBuffer = "";
 			}
-			else
-				cliBuffer = "";
+			else {
+				loggerBufferForCommands +=buffer;
+				if (waitForResponse) {
+					cliBufferForCommands += buffer;				
+				}
+				else
+					cliBufferForCommands = "";
+			}
+			
 		}
 	}
     
+	private synchronized void readInputBuffer() {
+		readInputBuffer(lteUeTerminal, true);
+		readInputBuffer(lteUecommands, false);
+	}
     private String getLoggerBuffer() {
 		// To avoid the synchronized method readInputBuffer() - use a thread
 		// that will call it and wait for it instead.
@@ -684,7 +729,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 				report.report("Global timing advance: " + configObject.getCells().get(0).getGlobalTimingAdvance());
 			GeneralUtils.stopLevel();
 			String newStat = stat.replace("\"", "\\\"");
-			sendCommands("echo \"" + newStat + "\" > /root/ue/config/" + ueConfigFileName,"");
+			sendCommands("echo \"" + newStat + "\" > /root/ue/config/" + ueConfigFileName,"", lteUeTerminal, true);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}

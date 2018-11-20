@@ -1595,7 +1595,6 @@ public class TPTBase extends TestspanTest {
 						ulCounters.add(result);
 					} else
 						value = "-999";
-					;
 				}
 			} else
 				value = "-999";

@@ -28,7 +28,7 @@ public class Provision extends TestspanTest {
 	private EnodeBConfig enbConfig;
 	boolean status = true;
 	//map that will contain Node -> Cell ->Profiles list
-	static HashMap<EnodeB,HashMap<Integer, ArrayList<INetspanProfile>>> nodeCellProfilesMap = new HashMap<EnodeB,HashMap<Integer, ArrayList<INetspanProfile>>>();;
+	static HashMap<EnodeB,HashMap<Integer, ArrayList<INetspanProfile>>> nodeCellProfilesMap = new HashMap<EnodeB,HashMap<Integer, ArrayList<INetspanProfile>>>();
 	// this map is used to save different values like CA configuration
 	HashMap<String, String> differentMapValues = new HashMap<String, String>();
 	RadioParameters currentRadio = new RadioParameters();

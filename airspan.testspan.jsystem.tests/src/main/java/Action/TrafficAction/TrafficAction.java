@@ -241,11 +241,11 @@ public class TrafficAction extends Action {
 	}
 
 	public enum LoadType{
-		Calculator_Based, Custom;
+		Calculator_Based, Custom
 	}
 	
 	public enum ExpectedType{
-		Calculator_Based, Custom;
+		Calculator_Based, Custom
 	}
 	
 	protected ArrayList<String> convertUeToNamesList(ArrayList<UE> ueList2) {

@@ -261,7 +261,7 @@ public class CalculatorMap {
 	public enum nodeCellType {
 
 		MULTICELL("multiCell"), SINGLECELL("singleCell");
-		private nodeCellType(String c) {
+		nodeCellType(String c) {
 			value = c;
 		}
 

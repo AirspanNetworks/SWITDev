@@ -27,7 +27,7 @@ public enum EnodeBChannelBandwidth {
 	 * @param bw the bw
 	 * @param dbIndx the db indx
 	 */
-	private EnodeBChannelBandwidth(int bw, int dbIndx) {
+	EnodeBChannelBandwidth(int bw, int dbIndx) {
 		this.bw = bw;
 		this.dbIndx = dbIndx;
 	}

@@ -30,7 +30,7 @@ public class CalculatorMeasurments {
 			return name;
 		}
 
-	};
+	}
 
 	public enum Type {
 		TDD("TDD"), FDD("FDD");
@@ -45,7 +45,7 @@ public class CalculatorMeasurments {
 			return name;
 		}
 
-	};
+	}
 
 	public enum Settings {
 		BANDWIDTH("channel bandwidth"), DUPLEX("duplex"), FRAME_SPLIT("frame split"), SUBFRAME(

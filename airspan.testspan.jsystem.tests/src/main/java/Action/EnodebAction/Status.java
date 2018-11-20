@@ -39,15 +39,15 @@ public class Status extends EnodebAction {
 	}
 
 	public enum OperationalStatus {
-		InService, OutOfService;
+		InService, OutOfService
 	}
 
 	public enum StatusParameter {
-		Operational_Status, Configured_Tx_Power, Actual_Tx_Power, Measured_Vswr;
+		Operational_Status, Configured_Tx_Power, Actual_Tx_Power, Measured_Vswr
 	}
 	
 	public enum ExpectedStatus {
-		LOCKED, NOT_LOCKED;
+		LOCKED, NOT_LOCKED
 	}
 
 	@ParameterProperties(description = "Select Rf Number (default=RF_1)")

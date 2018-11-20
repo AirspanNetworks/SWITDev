@@ -125,7 +125,7 @@ public class Traffic {
 	}
 
 	public enum GeneratorType{
-		STC, Iperf;
+		STC, Iperf
 	}
 	
 	private Traffic(ArrayList<UE> ues, GeneratorType type){
@@ -1128,7 +1128,7 @@ public class Traffic {
 	 */
 	public ArrayList<String> turnListsIntoStringArray(ArrayList<StcStream> ulStreams, ArrayList<StcStream> dlStreams)
 			throws TrafficException {
-		ArrayList<String> streams = new ArrayList<String>();;
+		ArrayList<String> streams = new ArrayList<String>();
 		for(StcStream stc : ulStreams){
 			streams.add(stc.getName());
 		}

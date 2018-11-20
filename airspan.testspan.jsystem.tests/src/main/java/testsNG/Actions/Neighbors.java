@@ -484,4 +484,4 @@ public class Neighbors {
 	 * netspanServer.deleteNeighbor(enodeB, neighborName)
 	 * allNeighbors.remove(random); } return false; }
 	 */
-};
+}

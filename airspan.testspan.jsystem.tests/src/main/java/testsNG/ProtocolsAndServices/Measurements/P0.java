@@ -3222,7 +3222,7 @@ public class P0 extends TestspanTest{
 	
 	private enum Threshold{
 		Over_A1,
-		Below_A2;
+		Below_A2
 	}
 
 	@ParameterProperties(description = "Name of Enodeb Which the test will be run On")

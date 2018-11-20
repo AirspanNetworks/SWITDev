@@ -30,7 +30,7 @@ public class UeSimulatorActions extends Action {
 	
 	
 	public enum UesOptions{
-		AMOUNT, GROUPNAME;
+		AMOUNT, GROUPNAME
 	}
 	
 

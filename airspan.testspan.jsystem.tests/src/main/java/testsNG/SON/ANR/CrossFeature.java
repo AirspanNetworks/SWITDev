@@ -131,14 +131,14 @@ public class CrossFeature extends TestspanTest {
 		report.report("Wait for ANR Steady State (TimeOut = 3 Minutes)");
 		boolean flag = enodeBConfig.waitForAnrState(dut, 3*60*1000, 3);
 		enodeBConfig.showANRstate(dut, "ANR STATE = 3");
-		if(flag == false) {
+		if(!flag) {
 			report.startLevel("Try again to get ANR Steady State (TimeOut = 3 Minutes)");
 			peripheralsConfig.stopUEs(allUEs);
 			peripheralsConfig.startUEs(allUEs);
 			report.report("Wait for Steady State");
 			flag = enodeBConfig.waitForAnrState(dut, 3*60*1000, 3);
 			report.stopLevel();
-			if(flag == false) {
+			if(!flag) {
 				report.report("Can not get ANR Steady State", Reporter.WARNING);
 				return;
 			}
@@ -181,7 +181,7 @@ public class CrossFeature extends TestspanTest {
 				break;
 			}
 		}
-		if(flag == false) {
+		if(!flag) {
 			report.report("No UEs connected to Cell "+dut.getCellContextID()+": "+dut.getNetspanName()+" (PCI = "+enbPci+")", Reporter.WARNING);
 			return;
 		}

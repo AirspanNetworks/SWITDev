@@ -29,7 +29,7 @@ import testsNG.Actions.Utils.CalculatorMap;
 public class TrafficManager {
 
 	public static Reporter report = ListenerstManager.getInstance();
-	private Boolean isTrafficInit = null;;
+	private Boolean isTrafficInit = null;
 	private GeneratorType trafficType = null;
 	private static ArrayList<TrafficSampler> samplerList; 
 	private volatile Traffic trafficInstance;
@@ -290,8 +290,7 @@ public class TrafficManager {
 		ArrayList<LoadParam> loadingParametersDl = null;
 		ArrayList<LoadParam> loadingParametersUl = null;
 		
-		for(String str : ueList){
-			String name = str;
+		for(String name : ueList){
 			int ueNum = Integer.valueOf(name.replaceAll("\\D+", "").trim());
 			for(Character qciChar : qci){
 				if(loadStreamDl != null){

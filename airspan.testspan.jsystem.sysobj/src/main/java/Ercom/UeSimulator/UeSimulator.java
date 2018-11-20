@@ -143,7 +143,7 @@ public class UeSimulator extends SystemObjectImpl implements Runnable {
 	public String getPlatformDuplexMode() throws Exception {
 		String l1dm = l1Blade.getL1BladeDuplexMode();
 		String l2dm = l2Blade.getL2BladeDuplexMode();
-		if (l1dm != null && l2dm != null && l1dm.equals(l2dm)) {
+		if (l1dm != null && l1dm.equals(l2dm)) {
 			return l1dm;
 		}
 		else {

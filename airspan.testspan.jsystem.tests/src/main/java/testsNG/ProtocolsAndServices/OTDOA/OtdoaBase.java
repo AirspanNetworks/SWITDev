@@ -170,7 +170,7 @@ public class OtdoaBase extends TestspanTest{
 				if(prsMutingPeri!=null) radioParams.setPRSMutingPeriodicly(prsMutingPeri);
 				if(prsMutingPattern!=null) radioParams.setPRSMutingPattern(prsMutingPattern);
 			if(isFDD != null){
-				if(isFDD == false){
+				if(!isFDD){
 					radioParams.setDuplex("2");
 					radioParams.setFrameConfig(frameConfig.toString());
 					

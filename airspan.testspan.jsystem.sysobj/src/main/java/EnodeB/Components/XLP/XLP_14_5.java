@@ -211,9 +211,7 @@ public class XLP_14_5 extends XLP {
 	}
 
 	public boolean deleteAllNeighborsByCli() {
-		if (super.dbDelete("nghList", "*"))
-			return true;
-		return false;
+		return super.dbDelete("nghList", "*");
 	}
 
 	//getting the CLI parameters of EnodeB and neighbor for CLI verify check
@@ -363,10 +361,8 @@ public class XLP_14_5 extends XLP {
 
 	/**
 	 * (non-Javadoc)
-	 * @throws IOException 
-	 * 
-	 * @see EnodeB.Components.XLP.XLP#verifyNbrListByCli(EnodeB.EnodeB,
-	 * EnodeB.EnodeB)
+	 * @throws IOException
+	 *
 	 */
 	@Override
 	public boolean verifyNbrList(EnodeB neighbor) throws IOException {
@@ -396,8 +392,7 @@ public class XLP_14_5 extends XLP {
 	
 	/**
 	 * (non-Javadoc)
-	 * 
-	 * @see EnodeB.Components.XLP.XLP#verifyNoNeighbors(EnodeB.EnodeB)
+	 *
 	 */
 	@Override
 	public boolean verifyNoNeighbors() {
@@ -465,7 +460,7 @@ public class XLP_14_5 extends XLP {
 	@Override
 	public boolean verifyAnrNeighbor(EnodeB neighbor) {
 		String oid = MibReader.getInstance().resolveByName("asLteStkNghListDiscoveredByAnr");
-		
+
 		HashMap<String, Variable> anrValues = snmp.SnmpWalk(oid);
 
 		if (anrValues == null) {
@@ -477,10 +472,9 @@ public class XLP_14_5 extends XLP {
 		
 		String fullInstance = mnoBroadcastPlmn.trim() + "." + eutranCellId.trim();
 		String output = oid+"."+fullInstance;
-		if(anrValues.containsKey(output))
-			return true;
-		
-		return false;
+		GeneralUtils.printToConsole("'PLMN' and 'Eutran Cell ID' values: "+ fullInstance);
+		return anrValues.containsKey(output);
+
 	}
 
 	@Override

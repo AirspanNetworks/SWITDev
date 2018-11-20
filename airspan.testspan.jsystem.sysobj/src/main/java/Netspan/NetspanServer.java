@@ -117,8 +117,7 @@ public abstract class NetspanServer extends SystemObjectImpl {
      * @throws Exception the exception
      */
     public static NetspanServer getInstance() throws Exception {
-        NetspanServer ns = (NetspanServer) SystemManagerImpl.getInstance().getSystemObject("NMS");
-        return ns;
+        return (NetspanServer) SystemManagerImpl.getInstance().getSystemObject("NMS");
     }
 
     @Override

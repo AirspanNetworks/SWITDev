@@ -21,8 +21,10 @@ public class CommandWatchUeLinkStatusVolte extends Command{
 	@Override
 	public void run() {
 		if(rntiToCheck == null){
-			int result = dut.getNumberOfUELinkStatusVolte();
-			flagActive = (result >= numUEs || result == GeneralUtils.ERROR_VALUE) && flagActive;			
+			Boolean result = dut.getNumberOfUELinkStatusVolte();
+			if(result != null){
+				flagActive = result && flagActive;							
+			}
 		}else{
 			HashMap<String, Integer> result = dut.getUELinkStatusVolteTable();
 			if(!result.isEmpty()){

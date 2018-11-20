@@ -10,7 +10,7 @@ public enum UeState {
 	 * 
 	 * @param level - negative level for unwanted states & positive level for wanted states.
 	 */
-	private UeState(boolean goodState) {
+	UeState(boolean goodState) {
 		this.goodState = goodState;
 	}
 	

@@ -385,7 +385,7 @@ public class Progression extends TestspanTest {
 
 	private boolean verifyDicicResults() {
 		boolean actionState = true;
-		isUnmanaged = isUe ? !isRntp | !isX2 : false;
+		isUnmanaged = isUe && !isRntp | !isX2;
 		GeneralUtils.startLevel("Test Results");
 		report.report(String.format(
 				"Expected Results: IsIcic - %s, Average RSRP bigger than -140 - %s, Unmanaged interference - %s.", isX2,

@@ -345,9 +345,9 @@ public class Enodeb extends EnodebAction {
 	@TestProperties(name = "Wait For All Running And In Service", returnParam = "LastStatus", paramsInclude = { "DUT",
 			"timeToWait" })
 	public void waitForAllRunningAndInService() {
-		report.report(dut.getName() + " Wait For All Running And In Service " + timeToWait + " milis");
 		long timeOutInMillisecond = setRunTimeToMilliSeconds(timeToWait);
-		if (this.dut.waitForAllRunningAndInService(timeOutInMillisecond) == false) {
+		report.report(dut.getName() + " Wait For All Running And In Service " + timeOutInMillisecond/1000 + "  seconds.");
+		if (!this.dut.waitForAllRunningAndInService(timeOutInMillisecond)) {
 			report.report("Wait For All Running And In Service Failed", Reporter.FAIL);
 		} else {
 			report.report("Wait For All Running And In Service Succeeded");
@@ -359,7 +359,7 @@ public class Enodeb extends EnodebAction {
 	public void reboot() {
 		report.report("Reboot EnodeB " + this.dut.getName());
 
-		if (this.dut.reboot() == false) {
+		if (!this.dut.reboot()) {
 			report.report("Reboot Failed", Reporter.FAIL);
 		} else {
 			report.report("Reboot Succeeded");
@@ -373,7 +373,7 @@ public class Enodeb extends EnodebAction {
 
 		boolean flag = this.dut.resetCounter(null, null, null);
 
-		if (flag == false) {
+		if (!flag) {
 			report.report("Reset Counters Failed", Reporter.FAIL);
 		} else {
 			report.report("Reset Counters Succeeded");
@@ -440,7 +440,7 @@ public class Enodeb extends EnodebAction {
 		report.report("Set Service State = " + this.serviceState);
 		boolean flag = PeripheralsConfig.getInstance().changeEnbState(this.dut, this.serviceState);
 
-		if (flag == false) {
+		if (!flag) {
 			report.report("Set Service State Failed", Reporter.FAIL);
 		} else {
 			report.report("Set Service State Succeeded");

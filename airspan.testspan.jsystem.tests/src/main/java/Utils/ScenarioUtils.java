@@ -296,7 +296,7 @@ public class ScenarioUtils {
 
 	public void calledOnceInEndFunc(List<EnodeB> enbInTest, boolean forceUpdate) {
 		
-		if (isCalledOnceInEndFunc == false) {
+		if (!isCalledOnceInEndFunc) {
 			isCalledOnceInEndFunc = true;
 			
 			String customer = TestConfig.getInstace().getCustomer();

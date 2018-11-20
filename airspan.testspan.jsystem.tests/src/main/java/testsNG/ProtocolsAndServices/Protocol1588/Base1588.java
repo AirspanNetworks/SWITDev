@@ -230,10 +230,7 @@ public class Base1588 extends TestspanTest {
 		} else if (time != GeneralUtils.ERROR_VALUE && !waitForLock)
 			report.report("PTP is unlocked");
 
-		if (time == GeneralUtils.ERROR_VALUE)
-			return false;
-		else
-			return true;
+		return time != GeneralUtils.ERROR_VALUE;
 	}
 
 	protected boolean reportAndWaitHoldOverExpiredDB(long timeOut) throws Exception {
@@ -266,10 +263,7 @@ public class Base1588 extends TestspanTest {
 		} else if (time != GeneralUtils.ERROR_VALUE && !inSrevice)
 			report.report(" Enb is Out Of Service");
 
-		if (time == GeneralUtils.ERROR_VALUE)
-			return false;
-		else
-			return true;
+		return time != GeneralUtils.ERROR_VALUE;
 	}
 
 	protected boolean reportAboutSetMibDB(String name, String mib, int value, Integer index) throws Exception {

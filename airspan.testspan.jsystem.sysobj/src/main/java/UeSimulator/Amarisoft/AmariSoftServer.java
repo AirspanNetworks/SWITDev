@@ -512,9 +512,9 @@ public class AmariSoftServer extends SystemObjectImpl{
      *
      * @author Jiji_Sasidharan
      */
-    public static interface MessageHandler {
+    public interface MessageHandler {
 
-        public void handleMessage(String message);
+        void handleMessage(String message);
     }
 
     private void connect() { 

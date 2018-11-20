@@ -198,7 +198,7 @@ public class Progression extends TestspanTest{
 	
 	public void checkForOutOfServiceBehavior(EnodeB eNodeB, CellIndex oosCellIndex){
 		GeneralUtils.startLevel("Check for Out Of Service behavior for Cell "+ (oosCellIndex.value%40));
-		if(eNodeB.isInService(oosCellIndex.value) == false){
+		if(!eNodeB.isInService(oosCellIndex.value)){
 			report.report("****CELL "+(oosCellIndex.value%40)+" SERVICE STATE = 0 ****");
 		}else{
 			report.report("****CELL "+(oosCellIndex.value%40)+" SERVICE STATE = 1 ****", Reporter.FAIL);
@@ -216,7 +216,7 @@ public class Progression extends TestspanTest{
 	
 	public void checkForInServiceBehavior(EnodeB eNodeB, CellIndex isCellIndex){
 		GeneralUtils.startLevel("Check for In Service behavior for cell "+ (isCellIndex.value%40));
-		if(eNodeB.isInService(isCellIndex.value) == true){
+		if(eNodeB.isInService(isCellIndex.value)){
 			report.report("****CELL "+(isCellIndex.value%40)+" SERVICE STATE = 1 ****");
 		}else{
 			report.report("****CELL "+(isCellIndex.value%40)+" SERVICE STATE = 0 ****", Reporter.FAIL);

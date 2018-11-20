@@ -318,11 +318,8 @@ public class SoftwareUtiles {
         String standby = enodeB.getSecondaryVersion().trim();
         report.report(enodeB.getName() + " running version is: " + running);
         report.report(enodeB.getName() + " standby version is: " + standby);
-        if (running.contains(build) || standby.contains(build)) {
-            return true;
-        }
+        return running.contains(build) || standby.contains(build);
 
-        return false;
     }
 
     public String getCurrentBuild(EnodeB enodeB) {
@@ -752,10 +749,7 @@ public class SoftwareUtiles {
             boolean downloadPass = enodeB.downloadSWSnmp(build, downloadType, user, password);
             GeneralUtils.unSafeSleep(5 * 1000);
             if (downloadPass) {
-                boolean downloadState = enodeB.getDownloadStates();
-                if (downloadState) {
-                    return true;
-                }
+                return enodeB.getDownloadStates();
             }
 
             return false;
@@ -1264,7 +1258,7 @@ public class SoftwareUtiles {
                     }
                     upgradeImage.setBuildPath(buildFileName);
                     upgradeImage.setVersion(build);
-                    if (updateSoftwareImage(upgradeImage) == false) {
+                    if (!updateSoftwareImage(upgradeImage)) {
                         report.report("FAILED To Update Software Image.", Reporter.FAIL);
                         numberOfExpectedReboots = GeneralUtils.ERROR_VALUE;
                     }
@@ -1286,7 +1280,7 @@ public class SoftwareUtiles {
                     upgradeImage.setBuildPath(relayBuildFileName);
                     upgradeImage.setVersion(relayBuild);
                     if (softwareStatus != null) {
-                        if (updateSoftwareImage(upgradeImage) == false) {
+                        if (!updateSoftwareImage(upgradeImage)) {
                             report.report("FAILED To Update Software Image with Relay Version.", Reporter.FAIL);
                             numberOfExpectedReboots = GeneralUtils.ERROR_VALUE;
                         }
@@ -1323,7 +1317,6 @@ public class SoftwareUtiles {
                         fileName = file.getName();
                         report.report("Relay Build Name Is: " + fileName);
                         File destFile = new File(destServer.getPath().toString() + File.separator + fileName);
-                        ;
                         File sourceFile = file;
                         /**
                          *
@@ -1474,7 +1467,7 @@ public class SoftwareUtiles {
         } while ((!eNodebSwStausListTmp.isEmpty())
                 && (System.currentTimeMillis() - softwareActivateStartTimeInMili <= (EnodeB.UPGRADE_TIMEOUT / 3)));
         for (EnodebSwStatus eNodebSwStaus : eNodebSwStausListTmp) {
-            if (eNodebSwStaus.isSwDownloadCompleted == false) {
+            if (!eNodebSwStaus.isSwDownloadCompleted) {
                 report.report(eNodebSwStaus.eNodeB.getName() + ": Software Download Didn't End.", Reporter.WARNING);
             }
         }
@@ -1493,7 +1486,7 @@ public class SoftwareUtiles {
                 eNodebSwStaus.reportUploadedAllNetspanEvents(softwareActivateStartTimeInDate);
                 GeneralUtils.printToConsole(eNodebSwStaus.eNodeB.getName() + ".isExpectBooting() = "
                         + eNodebSwStaus.eNodeB.isExpectBooting());
-                if (eNodebSwStaus.eNodeB.isExpectBooting() == false) {
+                if (!eNodebSwStaus.eNodeB.isExpectBooting()) {
                     eNodebSwStausListToRemove.add(eNodebSwStaus);
                     eNodebSwStaus.numberOfReboot++;
                     if (eNodebSwStaus.numberOfReboot < eNodebSwStaus.numberOfExpectedReboots) {
@@ -1533,7 +1526,7 @@ public class SoftwareUtiles {
             GeneralUtils.unSafeSleep(5 * 1000);
         }
         for (EnodebSwStatus eNodebSwStaus : eNodebSwStausListTmp) {
-            if (eNodebSwStaus.isSwDownloadCompleted == false) {
+            if (!eNodebSwStaus.isSwDownloadCompleted) {
                 report.report(eNodebSwStaus.eNodeB.getName() + ": Didn't Reach To Running State.", Reporter.FAIL);
             }
         }

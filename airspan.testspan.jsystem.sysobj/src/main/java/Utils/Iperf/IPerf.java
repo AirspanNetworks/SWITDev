@@ -143,7 +143,7 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 	
 	public void startTraffic() throws Exception {
 		Connect();
-		ExecutorService exe = Executors.newFixedThreadPool(allUEsIPerfList.size());
+		//ExecutorService exe = Executors.newFixedThreadPool(allUEsIPerfList.size());
 		String ulServerCommandsFile = "UL"+ serverSideCommandsFile;
 		String dlclientCommandsFile = "DL"+ clientSideCommandsFile;
 		String dlServerCommandsFile = "DL"+ serverSideCommandsFile;
@@ -171,7 +171,8 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		
 		Protocol pro = getProtocol();
 		for (UEIPerf ueIPerf : allUEsIPerfList) {
-			exe.execute(ueIPerf);
+			ueIPerf.runTraffic();
+			//exe.execute(ueIPerf);
 			GeneralUtils.unSafeSleep(100);
 		}
 		
@@ -502,7 +503,6 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 	@Override
 	public ArrayList<ArrayList<StreamParams>> getActiveStreamCurrentSample(ArrayList<CounterUnit> counterUnitList,
 			TransmitDirection transmitDirection) {
-		ArrayList<ArrayList<StreamParams>> sampleArrayList = new ArrayList<ArrayList<StreamParams>>();
 		/*ArrayList<ArrayList<StreamParams>> ueSampleArrayList = new ArrayList<ArrayList<StreamParams>>();
 		int minNumberOfSamples = IPerfMachine.getMinNumberOfSamples();
 		for(int i = 1; i <= minNumberOfSamples; i++){
@@ -533,7 +533,7 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		GeneralUtils.printToConsole("IPerfMachine.minNumberOfSamples="+minNumberOfSamples);
 		//Initial minNumberOfSamples for trying to get max number of samples in the next round.
 		IPerfMachine.setMinNumberOfSamples(10);*/
-		return sampleArrayList;
+		return new ArrayList<>();
 	}
 	
 	@Override

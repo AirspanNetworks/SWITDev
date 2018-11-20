@@ -542,11 +542,11 @@ public class RadioParameters implements INetspanProfile {
 
 		public int prs;
 
-		private PRSBandWidthEnum(int prs) {
+		PRSBandWidthEnum(int prs) {
 			this.prs = prs;
 		}
 
-		private PRSBandWidthEnum(String prs) {
+		PRSBandWidthEnum(String prs) {
 			switch (prs) {
 			case "6":
 				this.prs = 6;
@@ -584,11 +584,11 @@ public class RadioParameters implements INetspanProfile {
 
 		private int prs;
 
-		private PRSPeriodiclyEnum(int prs) {
+		PRSPeriodiclyEnum(int prs) {
 			this.prs = prs;
 		}
 
-		private PRSPeriodiclyEnum(String prs) {
+		PRSPeriodiclyEnum(String prs) {
 			switch (prs) {
 			case "160":
 				this.prs = 160;
@@ -619,11 +619,11 @@ public class RadioParameters implements INetspanProfile {
 
 		private int prs;
 
-		private PRSMutingPeriodiclyEnum(int prs) {
+		PRSMutingPeriodiclyEnum(int prs) {
 			this.prs = prs;
 		}
 
-		private PRSMutingPeriodiclyEnum(String prs) {
+		PRSMutingPeriodiclyEnum(String prs) {
 			switch (prs) {
 			case "2":
 				this.prs = 2;

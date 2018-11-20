@@ -145,10 +145,7 @@ public class P0 extends TestspanTest{
 	}
 	
 	private boolean checkConnectionToMME(){
-		if(dut.getMmeStatus().equals("1") && dut.getMmeStatusInfo().equals("connected")){
-			return true;
-		}
-		return false;
+		return dut.getMmeStatus().equals("1") && dut.getMmeStatusInfo().equals("connected");
 	}
 	
 	private boolean checkMmeAddress(String addressNetspan) {
@@ -365,7 +362,7 @@ public class P0 extends TestspanTest{
 		if(!checkResetMessages()){
 			report.report(reason,Reporter.FAIL);
 		}else{
-			report.report("All results in MIBs are as expected");;
+			report.report("All results in MIBs are as expected");
 		}
 		GeneralUtils.stopLevel();
 		
@@ -455,10 +452,7 @@ public class P0 extends TestspanTest{
 				break;
 			}
 		}
-		if(!action){
-			return false;
-		}
-		return true;
+		return action;
 	}
 	
 	private boolean checkResetMessages(){

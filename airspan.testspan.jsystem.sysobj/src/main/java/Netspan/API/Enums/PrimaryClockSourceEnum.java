@@ -4,5 +4,5 @@ public enum PrimaryClockSourceEnum {
 	NONE,
 	GNSS,
 	IEEE_1588,
-	NLM;
+	NLM
 }

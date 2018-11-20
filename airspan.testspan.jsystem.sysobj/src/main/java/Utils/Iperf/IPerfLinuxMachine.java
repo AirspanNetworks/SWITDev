@@ -64,8 +64,7 @@ public class IPerfLinuxMachine extends IPerfMachine{
 			GeneralUtils.printToConsole("FAILED to sent command to IPerf Machine.");
 			e.printStackTrace();
 		}
-		Pair<Boolean,String> res = new Pair<Boolean, String>(status, respond);
-		return res;
+		return new Pair<Boolean, String>(status, respond);
 	}
 	
 	@Override
@@ -80,8 +79,8 @@ public class IPerfLinuxMachine extends IPerfMachine{
 
 	@Override
 	public String startIPerfTraffic(String clientCommand, String clientOutputFileName, TransmitDirection transmitDirection){
-		String linuxClientCommand = "nohup iperf " + clientCommand + " &> "+ preAddressTpFile + clientOutputFileName +" &";
-		return linuxClientCommand;
+		//Return linux Client Command
+		return "nohup iperf " + clientCommand + " &> "+ preAddressTpFile + clientOutputFileName +" &";
 	}
 
 	@Override
@@ -127,8 +126,7 @@ public class IPerfLinuxMachine extends IPerfMachine{
 			}
 		}
 		scpClient.close();
-		File file = new File(fileName); 
-		return file;
+		return new File(fileName);
 	}
 
 	@Override

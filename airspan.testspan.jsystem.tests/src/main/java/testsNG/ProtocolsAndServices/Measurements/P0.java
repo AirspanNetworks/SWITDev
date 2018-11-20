@@ -2259,10 +2259,7 @@ public class P0 extends TestspanTest{
 	}
 	
 	private boolean changeSonProfile(SonParameters sonParams){
-		if(enodeBConfig.changeSonProfile(dutInTest, sonParams)){
-			return true;		
-		}
-		return false;
+		return enodeBConfig.changeSonProfile(dutInTest, sonParams);
 	}
 
 	/**
@@ -2336,11 +2333,7 @@ public class P0 extends TestspanTest{
 			report.report("Response from enodeB: "+state);
 		}
 		report.report("Response from enodeB: "+state);
-		if(state.contains("ANR STATE = 3")){
-			return true;
-		}else{
-			return false;
-		}
+		return state.contains("ANR STATE = 3");
 	}
 	
 	private boolean checkForLight(){
@@ -2350,7 +2343,7 @@ public class P0 extends TestspanTest{
 		int maxVal = attenuatorSetUnderTest.getMaxAttenuation();
 		float attenuatorsCurrentValue = attenuatorSetUnderTest.getAttenuation()[0];
 		int step = attenuatorSetUnderTest.getAttenuationStep();
-		while(!state.contains("ANR STATE = 5") && System.currentTimeMillis()-time<4*60*1000 && attenuatorsCurrentValue+step<=maxVal){
+		while(!state.contains("ANR STATE = 5") && System.currentTimeMillis()-time<3*60*1000 && attenuatorsCurrentValue+step<=maxVal){
 			attenuatorsCurrentValue+=step;
 			if(peripheralsConfig.setAttenuatorSetValue(attenuatorSetUnderTest, attenuatorsCurrentValue)){
 				report.report("Changed attenuator's value to "+attenuatorsCurrentValue);					
@@ -2364,12 +2357,17 @@ public class P0 extends TestspanTest{
 				return false;
 			}
 		}
-		report.report("Response from enodeB: "+state);
-		if(state.contains("ANR STATE = 5")){
-			return true;
-		}else{
-			return false;
+		time = System.currentTimeMillis();
+		while(!state.contains("ANR STATE = 5") && System.currentTimeMillis()-time<60*1000){
+			GeneralUtils.unSafeSleep(5*1000);
+			state = dutInTest.lteCli("cell show anrstate");
+			report.report("Response from enodeB: "+state);
+			if(state.contains("ANR STATE = 0")){
+				return false;
+			}
 		}
+		report.report("Response from enodeB: "+state);
+		return state.contains("ANR STATE = 5");
 	}
 
 	private void returnAttToMin(){
@@ -2440,10 +2438,7 @@ public class P0 extends TestspanTest{
 				}
 			}
 		}
-		if(measTables.getObjectTable().isEmpty() && expectedTables.getObjectTable().isEmpty()){
-			return true;
-		}
-		return false;
+		return measTables.getObjectTable().isEmpty() && expectedTables.getObjectTable().isEmpty();
 	}
 	
 	private boolean checkReport(){
@@ -2462,10 +2457,7 @@ public class P0 extends TestspanTest{
 				}
 			}
 		}
-		if(measTables.getReportTable().isEmpty() && expectedTables.getReportTable().isEmpty()){
-			return true;
-		}
-		return false;
+		return measTables.getReportTable().isEmpty() && expectedTables.getReportTable().isEmpty();
 	}
 	
 	private boolean checkCfg(){
@@ -2483,10 +2475,7 @@ public class P0 extends TestspanTest{
 				}
 			}
 		}
-		if(measTables.getCfgTable().isEmpty() && expectedTables.getCfgTable().isEmpty()){
-			return true;
-		}
-		return false;
+		return measTables.getCfgTable().isEmpty() && expectedTables.getCfgTable().isEmpty();
 	}
 	
 	private void createRealHashObject(){
@@ -2551,10 +2540,7 @@ public class P0 extends TestspanTest{
 			rsrp = getMeasCurrentUe();
 			report.report("RSRP of UE: "+rsrp);
 		}
-		if(!(rsrp<trigger-2)){
-			return false;
-		}
-		return true;
+		return rsrp < trigger - 2;
 	}
 	
 	private boolean changeAttOverA1(){
@@ -2582,10 +2568,7 @@ public class P0 extends TestspanTest{
 			report.report("RSRP of UE: "+rsrp);
 			
 		}
-		if(!(rsrp>trigger+2)){
-			return false;
-		}
-		return true;
+		return rsrp > trigger + 2;
 	}
 	
 	private boolean changeAttBelowA2AllUEs(ArrayList<UE> arrayUEs) {
@@ -2687,10 +2670,7 @@ public class P0 extends TestspanTest{
 	private boolean changeNetworkProfile(NetworkParameters params){
 		boolean action = false;
 		action = enodeBConfig.changeNetworkProfile(dutInTest, params);
-		if(!action){
-			return false;
-		}
-		return true;
+		return action;
 	}
 	
 	private void configureNetworkWithEsonServer(NetworkParameters params){
@@ -3213,7 +3193,7 @@ public class P0 extends TestspanTest{
 	
 	private enum Threshold{
 		Over_A1,
-		Below_A2;
+		Below_A2
 	}
 
 	@ParameterProperties(description = "Name of Enodeb Which the test will be run On")

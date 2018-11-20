@@ -851,8 +851,7 @@ public class NLM extends TestspanTest {
 
 		private boolean pduZeroHandle(byte[] data) {
 			String packetPdu = String.format("%02x", data[pTypeOffSet + 6]);
-			boolean result = packetPdu.equals("00");
-			return result;
+			return packetPdu.equals("00");
 		}
 
 		private void printPacketDebug(byte[] data, int packetNumber) {

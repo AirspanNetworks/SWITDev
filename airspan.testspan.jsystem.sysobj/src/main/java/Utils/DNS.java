@@ -48,13 +48,13 @@ public class DNS extends SystemObjectImpl{
 	}
 	
 	public void openConnection(){
-		if(socket.isConnected() == false){  
+		if(!socket.isConnected()){
 			socket.initConnection();
 		}
 	}
 	
 	public void closeConnection(){
-		if(socket.isConnected() == true){
+		if(socket.isConnected()){
 			socket.disconnect();
 		}
 	}
@@ -105,7 +105,7 @@ public class DNS extends SystemObjectImpl{
 							break;
 						}
 					}
-					if(result.getElement0() == true){
+					if(result.getElement0()){
 						socket.sendCommand(clearResponseCmd, 5);
 						ptrRequestNumberReceived++;
 						break;

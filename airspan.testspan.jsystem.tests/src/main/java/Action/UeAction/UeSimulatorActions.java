@@ -30,7 +30,7 @@ public class UeSimulatorActions extends Action {
 	
 	
 	public enum UesOptions{
-		AMOUNT, GROUPNAME;
+		AMOUNT, GROUPNAME
 	}
 	
 
@@ -136,7 +136,7 @@ public class UeSimulatorActions extends Action {
 			e.printStackTrace();
 		}
 		
-		if (res == false) {
+		if (!res) {
 			report.report("Adding UEs Failed", Reporter.FAIL);
 		} else {
 			report.report("Adding UEs Succeeded");
@@ -172,7 +172,7 @@ public class UeSimulatorActions extends Action {
 			e.printStackTrace();
 		}
 
-		if (flag == false) {
+		if (!flag) {
 			report.report("Add UEs Failed", Reporter.FAIL);
 			return  false;
 		} else {
@@ -205,7 +205,7 @@ public class UeSimulatorActions extends Action {
 			e.printStackTrace();
 		}
 
-		if (flag == false) {
+		if (!flag) {
 			report.report("Add UEs Failed", Reporter.FAIL);
 			return false;
 		} else {
@@ -236,7 +236,7 @@ public class UeSimulatorActions extends Action {
 			e.printStackTrace();
 		}
 		
-		if (res == false) {
+		if (!res) {
 			report.report("delete UEs Failed", Reporter.FAIL);
 		} else {
 			report.report("delete UEs Succeeded");
@@ -259,7 +259,7 @@ public class UeSimulatorActions extends Action {
 			e.printStackTrace();
 		}
 
-		if (flag == false) {
+		if (!flag) {
 			report.report("Delete UEs Failed", Reporter.FAIL);
 		} else {
 			report.report("Delete UEs Succeeded");
@@ -361,7 +361,7 @@ public class UeSimulatorActions extends Action {
 			e.printStackTrace();
 		}
 		
-		if (res == false) {
+		if (!res) {
 			report.report("start UEs Failed", Reporter.FAIL);
 		} else {
 			report.report("start UEs Succeeded");
@@ -465,7 +465,7 @@ public class UeSimulatorActions extends Action {
 			e.printStackTrace();
 		}
 		
-		if (res == false) {
+		if (!res) {
 			report.report("stop UEs Failed", Reporter.FAIL);
 		} else {
 			report.report("stop UEs Succeeded");
@@ -552,7 +552,7 @@ public class UeSimulatorActions extends Action {
 			e.printStackTrace();
 		}
 		
-		if (res == false) {
+		if (!res) {
 			report.report("stop UEs Failed", Reporter.FAIL);
 		} else {
 			report.report("stop UEs Succeeded");

@@ -119,9 +119,7 @@ public class EnodeBConfig {
 				return false;
 			}
 		} else {
-			if (!netspanServer.setProfile(enodeB, cellID, EnbProfiles.Radio_Profile, radioProfileName)) {
-				return false;
-			}
+			return netspanServer.setProfile(enodeB, cellID, EnbProfiles.Radio_Profile, radioProfileName);
 		}
 		return true;
 	}
@@ -489,11 +487,10 @@ public class EnodeBConfig {
 	}
 
 	public NodeInfo getNodeInfo(EnodeB enb) {
-		NodeInfo ni = netspanServer.getNodeDetails(enb);
 		// if(ni == null)
 		// WE NEET TO GET THE INFOR FROM SNMP
 
-		return ni;
+		return netspanServer.getNodeDetails(enb);
 	}
 
 	public String getPTPInterfaceIP(EnodeB dut) {
@@ -633,8 +630,7 @@ public class EnodeBConfig {
 	 */
 	public String IPv4ToIPv6Convention(String ip) {
 		String[] blocks = ip.split("\\.");
-		String result = "2020::20:2:" + blocks[blocks.length - 1];
-		return result;
+		return "2020::20:2:" + blocks[blocks.length - 1];
 	}
 
 	/**
@@ -1172,7 +1168,7 @@ public class EnodeBConfig {
 	}
 	
 	public boolean updateNetworkProfile(EnodeB enb, NetworkParameters networkParams){
-		boolean isSucceeded = true;;
+		boolean isSucceeded = true;
 		String currentProfile = netspanServer.getCurrentNetworkProfileName(enb);
 		networkParams.setProfileName(currentProfile);
 		isSucceeded = netspanServer.updateNetworkProfile(enb, currentProfile,networkParams);			
@@ -1891,11 +1887,7 @@ public class EnodeBConfig {
 			GeneralUtils.printToConsole(state);
 		}
 		GeneralUtils.printToConsole(state);
-		if(state.contains("ANR STATE = "+anrState)){
-			return true;
-		}else{
-			return false;
-		}
+		return state.contains("ANR STATE = " + anrState);
 	}
 	
 	public void printEnodebState(EnodeB dut, boolean inServiceExpect) {
@@ -2068,8 +2060,7 @@ public class EnodeBConfig {
 	}
 	
 	public List<LteBackhaul> getBackhaulInterfaceStatus(EnodeB enb) {
-		List<LteBackhaul> res = netspanServer.getBackhaulInterfaceStatus(enb);
-		return res;
+		return netspanServer.getBackhaulInterfaceStatus(enb);
 	}
 	
 	public Integer getEARFCNforNode(EnodeB node) {

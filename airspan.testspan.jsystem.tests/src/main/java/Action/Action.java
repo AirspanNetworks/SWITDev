@@ -19,7 +19,7 @@ public class Action extends SystemTestCase4 {
 	protected String myVersion = "";
 	
 	protected enum Comparison {
-		EQUAL_TO, NOT_EQUAL_TO, BIGGER_THAN, SMALLER_THAN;
+		EQUAL_TO, NOT_EQUAL_TO, BIGGER_THAN, SMALLER_THAN
 	}
 	
 	@Before
@@ -96,7 +96,7 @@ public class Action extends SystemTestCase4 {
 			break;
 		}
 
-		if (flag == false) {
+		if (!flag) {
 			report.report("Current Value: " + currentValue + ", Expected value: " + comparison + " " + expectedValue,
 					Reporter.FAIL);
 		} else {

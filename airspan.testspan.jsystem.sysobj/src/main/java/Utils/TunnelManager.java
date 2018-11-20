@@ -10,7 +10,8 @@ public class TunnelManager extends Thread{
 	private static TunnelManager instance;
 	final int MAX_NUMBER_OF_TRIES_TO_SET_VIRTUAL_IP = 5;
 	private boolean isThreadNeeded;
-	private enum TunnelManagerThreadState {NOT_STARTED, RUNNING, SUSPENDED, ENDED, STOPPED};
+	private enum TunnelManagerThreadState {NOT_STARTED, RUNNING, SUSPENDED, ENDED, STOPPED}
+
 	private TunnelManagerThreadState isRunning;
 	private ArrayList<EnodebIPSecDetails> eNodebIPSecDetailsList;
 	private static ArrayList<EnodeB> eNodeBInTestList;
@@ -49,7 +50,7 @@ public class TunnelManager extends Thread{
 				isEnodbInList = true;
 			}
 		}
-		if(isEnodbInList == false){
+		if(!isEnodbInList){
 			this.eNodebIPSecDetailsList.add(new EnodebIPSecDetails(eNodeB, eNodeB.getIpsecCertificateMacAddress(), eNodeB.getIpAddress(), eNodeB.getS1IpAddress(), ""));
 		}
 	}
@@ -195,7 +196,7 @@ public class TunnelManager extends Thread{
 				ArrayList<EnodebIPSecDetails> tmpENodebIPSecDetailsList = new ArrayList<>();
 				for(EnodebIPSecDetails eNodebIPSecDetails : this.eNodebIPSecDetailsList){
 					if((eNodebIPSecDetails.geteNodeB().getIpAddress() != eNodebIPSecDetails.getVirtualIP()) || (!eNodebIPSecDetails.geteNodeB().isReachable())){
-						if(this.isThreadNeeded == false){
+						if(!this.isThreadNeeded){
 							tmpENodebIPSecDetailsList.clear();
 							break;
 						}
@@ -211,7 +212,7 @@ public class TunnelManager extends Thread{
 					}
 				}
 				if(!tmpENodebIPSecDetailsList.isEmpty()){
-					if(setVirtualIPsAsPublicIPs(tmpENodebIPSecDetailsList) == false){
+					if(!setVirtualIPsAsPublicIPs(tmpENodebIPSecDetailsList)){
 						report.report("TunnelManagerThread: Failed to instanciate IPSec tunnel for all DUTs.", Reporter.WARNING);
 					}
 				}else{
@@ -222,7 +223,7 @@ public class TunnelManager extends Thread{
 			}
 			GeneralUtils.unSafeSleep(30000);
 		}
-		if(this.isThreadNeeded == true && areThereAnyTriesLeft(this.eNodebIPSecDetailsList) == false){
+		if(this.isThreadNeeded && !areThereAnyTriesLeft(this.eNodebIPSecDetailsList)){
 			report.report("TunnelManagerThread: Failed to instanciate IPSec tunnel - stopping TunnelManagerThread", Reporter.WARNING);
 		}
 		this.isRunning = TunnelManagerThreadState.ENDED;
@@ -236,7 +237,7 @@ public class TunnelManager extends Thread{
 		for(int i = 0; i < eNodebIPSecDetailsList.size(); i++){eNodeBsIndexes.add(i);}
 		GeneralUtils.printToConsole("TunnelManager: Getting Virtual IP.");
 		for (int i = 0; i < 30; i++) {
-			if(eNodeBsIndexes.isEmpty() == false){
+			if(!eNodeBsIndexes.isEmpty()){
 				ArrayList<Integer> indexesToRemove = new ArrayList<>();
 				for(int j : eNodeBsIndexes){
 					EnodeB eNodeB = eNodebIPSecDetailsList.get(j).geteNodeB();
@@ -259,7 +260,7 @@ public class TunnelManager extends Thread{
 							eNodeB.setS1IpAddress(eNodebIPSecDetailsList.get(j).getS1IpAddress());
 							eNodeB.initSNMP();
 							GeneralUtils.unSafeSleep(3000);
-							if(eNodeB.isReachable() && eNodebIPSecDetailsList.get(j).isTunnelOpenedBefore() == true){
+							if(eNodeB.isReachable() && eNodebIPSecDetailsList.get(j).isTunnelOpenedBefore()){
 								if(eNodeBInTestList.contains(eNodeB)){
 									GeneralUtils.printToConsole("TunnelManager: "+eNodeB.getName() + " is reachable by public IP ("+ eNodebIPSecDetailsList.get(j).getPublicIP() +") after IPSec Tunnel opened before.");
 								}
@@ -349,7 +350,7 @@ public class TunnelManager extends Thread{
 	
 	/***************Results Values****************/
 	
-	public static enum TunnelManagerResult{IPSEC_TUNNEL_OPENED_SUCCESSFULLY, IPSEC_TUNNEL_CLOSED_SUCCESSFULLY, 
+	public enum TunnelManagerResult{IPSEC_TUNNEL_OPENED_SUCCESSFULLY, IPSEC_TUNNEL_CLOSED_SUCCESSFULLY,
 		COULD_NOT_OPEN_IPSEC_TUNNEL, IPSEC_TUNNEL_OPENED_BUT_DID_NOT_REACH_ALL_RUNNING_STATE,
 		IPSEC_TUNNEL_CLOSED_BUT_DID_NOT_REACH_ALL_RUNNING_STATE}
 	

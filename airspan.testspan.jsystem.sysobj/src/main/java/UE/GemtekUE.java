@@ -99,12 +99,8 @@ public class GemtekUE extends UE {
 		String oid = MibReader.getInstance().resolveByName("pmpDevCpeSnmpRebootRequirement");
 		String result = null;
 		result = snmp.get(oid);
-		
-		if(result == "1"){
-			return true;
-		}else{
-			return false;
-		}
+
+		return result.equals("1");
 	}
 	
 	/**

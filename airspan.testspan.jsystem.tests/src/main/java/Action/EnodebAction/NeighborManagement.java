@@ -92,7 +92,7 @@ public class NeighborManagement extends EnodebAction {
 		boolean flag = Neighbors.getInstance().addNeighbor(this.dut, this.neighbour, this.hoControlState,
 				this.x2ControlState, this.handoverType, this.isStaticNeighbor, this.qOffsetRange);
 		report.reportHtml(dut.getName() + ": db get nghList", dut.lteCli("db get nghList"), true);
-		if (flag == false) {
+		if (!flag) {
 			report.report("Add Neighbour Failed", Reporter.FAIL);
 		} else {
 			report.report("Add Neighbour Succeeded");
@@ -105,7 +105,7 @@ public class NeighborManagement extends EnodebAction {
 		report.report("Delete All Neighbours of " + this.dut.getNetspanName());
 		boolean flag = Neighbors.getInstance().deleteAllNeighbors(this.dut);
 		report.reportHtml(dut.getName() + ": db get nghList", dut.lteCli("db get nghList"), true);
-		if (flag == false) {
+		if (!flag) {
 			report.report("Delete All Neighbours of " + this.dut.getNetspanName() + " Failed", Reporter.FAIL);
 		} else {
 			report.report("Delete All Neighbours of " + this.dut.getNetspanName() + " Succeeded");
@@ -156,7 +156,7 @@ public class NeighborManagement extends EnodebAction {
 				this.x2ControlState, this.handoverType, this.isStaticNeighbor, this.qOffsetRange);
 
 		report.reportHtml(dut.getName() + ": db get nghList", dut.lteCli("db get nghList"), true);
-		if (flag == false) {
+		if (!flag) {
 			report.report("Neighbour not verified!", Reporter.FAIL);
 		} else {
 			report.report("Neighbour verified!");
@@ -169,7 +169,7 @@ public class NeighborManagement extends EnodebAction {
 		report.report("EnodeB " + this.dut.getName() + " delete Neighbour = " + this.neighbour.getName());
 		boolean flag = Neighbors.getInstance().deleteNeighbor(this.dut, this.neighbour);
 		report.reportHtml(dut.getName() + ": db get nghList", dut.lteCli("db get nghList"), true);
-		if (flag == false) {
+		if (!flag) {
 			report.report("Neighbour not deleted!", Reporter.FAIL);
 		} else {
 			report.report("Neighbour deleted!");

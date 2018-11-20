@@ -95,8 +95,8 @@ public class CliPrompt{
 			flushBuffer();
 			sendCommand(command);
 			getBuffer();
+			long endTimeMillis = System.currentTimeMillis() + 5 * 1000;
 			if (response != "" && response!=null) {
-				long endTimeMillis = System.currentTimeMillis() + 10 * 1000;
 				boolean responseFound = false;
 				while(!responseFound){
 					if (buffer.contains(response)) {
@@ -109,6 +109,14 @@ public class CliPrompt{
 				            break;
 						}
 					}
+					sendNewLine();
+					getBuffer();
+					GeneralUtils.unSafeSleep(1000);
+				}
+			}else{
+				while(true){
+					if (System.currentTimeMillis() > endTimeMillis) 
+						break;
 					sendNewLine();
 					getBuffer();
 					GeneralUtils.unSafeSleep(1000);

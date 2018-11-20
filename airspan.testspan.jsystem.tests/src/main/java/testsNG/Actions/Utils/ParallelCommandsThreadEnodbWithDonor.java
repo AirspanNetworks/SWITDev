@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 
 import EnodeB.EnodeBWithDonor;
-import EnodeB.Ninja;
 
 public class ParallelCommandsThreadEnodbWithDonor extends ParallelCommandsThreadEnodeBComponent{
 	private ParallelCommandsThreadEnodeBComponent donorSyncCommands;

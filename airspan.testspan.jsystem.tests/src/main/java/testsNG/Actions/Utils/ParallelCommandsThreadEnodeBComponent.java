@@ -89,7 +89,7 @@ public class ParallelCommandsThreadEnodeBComponent extends Thread{
 					}else if (cmd.contains("ue show link")) {
 						response = "Legend:";
 					}
-					ans = enb.sendCommandsOnSession(enb.getParallelCommandsPrompt(), cmd, response);
+					ans = enb.sendCommandsOnSession(enb.getParallelCommandsPrompt(), cmd, null);
 					String javaTime = DateTime.now().toString("yyyy-MM-dd HH:mm:ss.SSS");
 					writeObjectToLogFile("*******************************************************************************\n");
 					writeObjectToLogFile("*** " + javaTime + " Starting command " + cmd + " ***\n");

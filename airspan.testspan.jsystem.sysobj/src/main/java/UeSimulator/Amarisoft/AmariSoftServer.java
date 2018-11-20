@@ -651,6 +651,8 @@ public class AmariSoftServer extends SystemObjectImpl{
 			try {
 				waitLock.wait();
 			} catch (InterruptedException e) {
+				e.printStackTrace();
+				waitLock.notify();
 			}
 			ans = returnValue;
 			returnValue = null;

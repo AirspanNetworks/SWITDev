@@ -33,7 +33,7 @@ public class Statuses extends EnodebAction{
 		MANAGMENT(1), S1_C(2), S1_U(3), X2_C(4), X2_U(5), PTP(6), C_SON(7), M2(8), M1(9), CALL_TRACE_SERVER(10);
 		
 		private int value;
-		private InterfaceType(int value){
+		InterfaceType(int value){
 			this.value = value;
 		}
 		public int getValue(){
@@ -45,7 +45,7 @@ public class Statuses extends EnodebAction{
 		IP_ADDRESS(4), SUBNET_MASK(5), VLAN_ENABLED(6), VLAN_ID(7),DEFAULT_GETEWAY(10), VALIDATION_STATUS(13);
 		
 		private int value;
-		private ValueType(int value){
+		ValueType(int value){
 			this.value = value;
 		}
 		public int getValue(){
@@ -134,7 +134,7 @@ public class Statuses extends EnodebAction{
 			stringEexpectedValue = "";
 			for(int i = 0; i<IPValues.length; i++){
 				String temp = GeneralUtils.decimal2hex(Integer.parseInt(IPValues[i]));
-				newIPValues[i] = String.format("%0"+ (3 - temp.length() ) + "d%s",0 , temp).substring(1,3);;
+				newIPValues[i] = String.format("%0"+ (3 - temp.length() ) + "d%s",0 , temp).substring(1,3);
 			}
 			for (int j =0; j<newIPValues.length ; j++) {
 				stringEexpectedValue = stringEexpectedValue +":" + newIPValues[j];

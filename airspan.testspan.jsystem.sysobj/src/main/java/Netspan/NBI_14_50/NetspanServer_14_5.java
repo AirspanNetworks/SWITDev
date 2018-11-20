@@ -1139,7 +1139,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 			wasadded = false;
 		}
 		return wasadded;
-	};
+	}
 
 	/**
 	 * (non-Javadoc)

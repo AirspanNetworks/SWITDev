@@ -387,7 +387,6 @@ public class AutoRSIBase extends TestspanTest {
 		int initialPci;
 		if (sonStatus != null) {
 			initialPci = sonStatus.PCICells.get(0).physicalCellId;
-			;
 		} else {
 			report.report("Failed getting initial PCI value from netspan, using SNMP", Reporter.WARNING);
 			initialPci = dut.getPci();

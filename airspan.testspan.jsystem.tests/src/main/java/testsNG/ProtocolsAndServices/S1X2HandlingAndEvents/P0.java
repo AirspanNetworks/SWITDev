@@ -365,7 +365,7 @@ public class P0 extends TestspanTest{
 		if(!checkResetMessages()){
 			report.report(reason,Reporter.FAIL);
 		}else{
-			report.report("All results in MIBs are as expected");;
+			report.report("All results in MIBs are as expected");
 		}
 		GeneralUtils.stopLevel();
 		

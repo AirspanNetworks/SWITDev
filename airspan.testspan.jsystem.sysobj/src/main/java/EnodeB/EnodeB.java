@@ -88,7 +88,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 	
 	public enum Architecture {
 		XLP, FSM, FSMv4
-	};
+	}
 
 	public Architecture architecture;
 	private static final String CONTROL_COMPONENT_HW_NAME = "XLP";
@@ -1266,7 +1266,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 	}
 
 	public void setIpsecTunnelEnabled(String ipsecTunnelEnabled) {
-		this.ipsecTunnelEnabled = GeneralUtils.stringToBoolean(ipsecTunnelEnabled);;
+		this.ipsecTunnelEnabled = GeneralUtils.stringToBoolean(ipsecTunnelEnabled);
 	}
 
 	public synchronized final int getSWTypeInstance() {

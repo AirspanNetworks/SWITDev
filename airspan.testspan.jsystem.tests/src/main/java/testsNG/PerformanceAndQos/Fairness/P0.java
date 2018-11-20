@@ -1900,7 +1900,7 @@ public class P0 extends TestspanTest {
 	
 	private enum PfsType{
 		OldPfs,
-		NewPfs;
+		NewPfs
 	}
 	
 	@ParameterProperties(description = "Name of Enodeb Which the test will be run On")

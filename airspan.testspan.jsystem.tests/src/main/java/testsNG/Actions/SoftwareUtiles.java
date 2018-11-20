@@ -1323,7 +1323,6 @@ public class SoftwareUtiles {
                         fileName = file.getName();
                         report.report("Relay Build Name Is: " + fileName);
                         File destFile = new File(destServer.getPath().toString() + File.separator + fileName);
-                        ;
                         File sourceFile = file;
                         /**
                          *

@@ -34,8 +34,8 @@ public class AccessBarringAdvanced {
 		EIGHTY("0.80"),
 		EIGHTYFIVE("0.85"),
 		NINETY("0.90"), 
-		NINETYFIVE("0.95");;
-		 private final String value;
+		NINETYFIVE("0.95");
+		private final String value;
 		 
 		AccessBarringFactor(String v) {
 		        value = v;

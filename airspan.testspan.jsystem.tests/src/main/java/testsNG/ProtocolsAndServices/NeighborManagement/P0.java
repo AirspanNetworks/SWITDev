@@ -523,7 +523,7 @@ public class P0 extends NeighborManagementBase {
 		boolean flag = neighbor.checkCannotAddNeighbor(tempEnodeB, newParty, HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC, HandoverType.TRIGGER_X_2, true, "0");
 		GeneralUtils.stopLevel();
 		
-		if(flag == false) {
+		if(!flag) {
 			report.report("Neighbor " + newParty.getNetspanName() + " was added to the neighbor list", Reporter.FAIL);
 			reason = "Additional neighbor was configured";
 		}

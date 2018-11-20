@@ -61,7 +61,7 @@ public class UeAction extends Action {
     public void checkIfUEsConnected() {
         report.report("Check if UEs connected");
 
-        if (PeripheralsConfig.getInstance().checkIfAllUEsAreConnectedToNode(this.ues, dut) == false) {
+        if (!PeripheralsConfig.getInstance().checkIfAllUEsAreConnectedToNode(this.ues, dut)) {
             report.report("Some of the UEs are not connected to EnodeB", Reporter.FAIL);
         } else {
             report.report("All the UEs are connected");
@@ -87,7 +87,7 @@ public class UeAction extends Action {
         report.report("Start UEs");
         boolean flag = PeripheralsConfig.getInstance().startUEs(ues);
 
-        if (flag == false) {
+        if (!flag) {
             report.report("Start UEs Failed", Reporter.FAIL);
         } else {
             report.report("Start UEs Succeeded");
@@ -100,7 +100,7 @@ public class UeAction extends Action {
         report.report("Stop UEs");
         boolean flag = PeripheralsConfig.getInstance().stopUEs(ues);
 
-        if (flag == false) {
+        if (!flag) {
             report.report("Stop UEs Failed", Reporter.FAIL);
         } else {
             report.report("Stop UEs Succeeded");
@@ -159,7 +159,7 @@ public class UeAction extends Action {
         report.report("Start UEs");
         boolean flag = PeripheralsConfig.getInstance().setAPN(ues, apnName);
 
-        if (flag == false) {
+        if (!flag) {
             report.report("Set UEs APN Failed", Reporter.FAIL);
         } else {
             report.step("Set UEs APN Succeeded");

@@ -33,18 +33,15 @@ public class AlarmsAndEvents {
 	}
 	
 	public List<EventInfo> getAllEventsNode(EnodeB dut){
-		 List<EventInfo> response = netspanServer.getAllEventsNode(dut); 
-		 return response;
+		return netspanServer.getAllEventsNode(dut);
 	}
 	
 	public List<EventInfo> getAllEventsNode(EnodeB dut, Date startTime){
-		 List<EventInfo> response = netspanServer.getAllEventsNode(dut, startTime); 
-		 return response;
+		return netspanServer.getAllEventsNode(dut, startTime);
 	}
 	
 	public List<EventInfo> getAllEventsNode(EnodeB dut, Date startTime, Date endTime){
-		 List<EventInfo> response = netspanServer.getEventsNodeByDateRange(dut, startTime, endTime); 
-		 return response;
+		return netspanServer.getEventsNodeByDateRange(dut, startTime, endTime);
 	}
 	
 	public boolean deleteAllAlarmsNode(EnodeB dut) {
@@ -153,8 +150,7 @@ public class AlarmsAndEvents {
 	}
 	
 	public List<EventInfo> getEventsNodeByDateRange(EnodeB dut, Date from, Date to) {
-		 List<EventInfo> response = netspanServer.getEventsNodeByDateRange(dut, from, to);
-		 return response;
+		return netspanServer.getEventsNodeByDateRange(dut, from, to);
 	}
 	
 	public boolean waitForAlarmShowUp(EnodeB dut, String alarmType, long timeout) {

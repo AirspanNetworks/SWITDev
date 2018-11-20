@@ -66,8 +66,7 @@ public class IPSecServer extends SystemObjectImpl {
 			String regexPattern = 	"ESTABLISHED.*" + macAddress.replace(":", "").toUpperCase() + ".*\\s*.*\\s*.*===\\s*(\\d*.\\d*.\\d*.\\d*)";
 			Pattern r = Pattern.compile(regexPattern);
 			Matcher m = r.matcher(response);
-			String res =  m.find() ? m.group(1) : "";
-			return res;
+			return m.find() ? m.group(1) : "";
 		} catch (Exception e) {
 			return "";
 		}

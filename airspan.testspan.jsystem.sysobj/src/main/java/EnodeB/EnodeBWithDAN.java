@@ -36,8 +36,8 @@ public abstract class EnodeBWithDAN extends EnodeB {
 				DAN[i].setExpectBooting(true);
 			}
 		}
-		boolean status = super.reboot();
-		return status;
+		//Return status
+		return super.reboot();
 	}
 
 	@Override

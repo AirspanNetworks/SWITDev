@@ -1852,8 +1852,7 @@ public final class PbLteStatusOuterClass {
     @java.lang.Override
     protected Builder newBuilderForType(
         com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-      Builder builder = new Builder(parent);
-      return builder;
+      return new Builder(parent);
     }
     /**
      * Protobuf type {@code PbLteStatus.PbLteAnrStatus}
@@ -2279,10 +2278,7 @@ public final class PbLteStatusOuterClass {
         if (!hasNbCellIdentity()) {
           return false;
         }
-        if (!hasNbPlmnId()) {
-          return false;
-        }
-        return true;
+        return hasNbPlmnId();
       }
 
       public Builder mergeFrom(
@@ -4577,8 +4573,7 @@ public final class PbLteStatusOuterClass {
     @java.lang.Override
     protected Builder newBuilderForType(
         com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-      Builder builder = new Builder(parent);
-      return builder;
+      return new Builder(parent);
     }
     /**
      * Protobuf type {@code PbLteStatus.PbLteCellStatus}
@@ -4845,10 +4840,7 @@ public final class PbLteStatusOuterClass {
       }
 
       public final boolean isInitialized() {
-        if (!hasCellNumber()) {
-          return false;
-        }
-        return true;
+        return hasCellNumber();
       }
 
       public Builder mergeFrom(
@@ -6091,8 +6083,7 @@ public final class PbLteStatusOuterClass {
     @java.lang.Override
     protected Builder newBuilderForType(
         com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-      Builder builder = new Builder(parent);
-      return builder;
+      return new Builder(parent);
     }
     /**
      * Protobuf type {@code PbLteStatus.PbLteMmeStatus}
@@ -6260,10 +6251,7 @@ public final class PbLteStatusOuterClass {
       }
 
       public final boolean isInitialized() {
-        if (!hasIpAddress()) {
-          return false;
-        }
-        return true;
+        return hasIpAddress();
       }
 
       public Builder mergeFrom(
@@ -7104,8 +7092,7 @@ public final class PbLteStatusOuterClass {
     @java.lang.Override
     protected Builder newBuilderForType(
         com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-      Builder builder = new Builder(parent);
-      return builder;
+      return new Builder(parent);
     }
     /**
      * Protobuf type {@code PbLteStatus.PbLteNwElementStatus}
@@ -8105,8 +8092,7 @@ public final class PbLteStatusOuterClass {
     @java.lang.Override
     protected Builder newBuilderForType(
         com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-      Builder builder = new Builder(parent);
-      return builder;
+      return new Builder(parent);
     }
     /**
      * Protobuf type {@code PbLteStatus.PbLteRfStatus}
@@ -9028,8 +9014,7 @@ public final class PbLteStatusOuterClass {
     @java.lang.Override
     protected Builder newBuilderForType(
         com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-      Builder builder = new Builder(parent);
-      return builder;
+      return new Builder(parent);
     }
     /**
      * Protobuf type {@code PbLteStatus.PbLteSgwStatus}
@@ -9179,10 +9164,7 @@ public final class PbLteStatusOuterClass {
       }
 
       public final boolean isInitialized() {
-        if (!hasIpAddress()) {
-          return false;
-        }
-        return true;
+        return hasIpAddress();
       }
 
       public Builder mergeFrom(
@@ -10205,7 +10187,8 @@ public final class PbLteStatusOuterClass {
     @java.lang.Override
     protected Builder newBuilderForType(
         com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-      Builder builder = new Builder(parent);
+      Builder builder;
+      builder = new Builder(parent);
       return builder;
     }
     /**

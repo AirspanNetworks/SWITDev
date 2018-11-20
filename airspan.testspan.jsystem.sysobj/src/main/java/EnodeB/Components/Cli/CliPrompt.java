@@ -314,10 +314,7 @@ public class CliPrompt{
 	 * @throws Exception 
 	 */
 	private boolean isBufferEndsWithKnownPrompt() throws Exception {
-		if (isActivePrompt() || getActivePrompt() != null)
-			return true;
-		else
-			return false;
+		return isActivePrompt() || getActivePrompt() != null;
 	}
 	
 	/**

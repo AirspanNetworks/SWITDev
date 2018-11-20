@@ -416,15 +416,11 @@ public class Logger implements Runnable {
 		}
 
 		public boolean equals(LoggerError other) {
-			if(process.equals(other.getProcess()) && client.equals(other.getClient())){
-				return true;
-			}
-			return false;
+			return process.equals(other.getProcess()) && client.equals(other.getClient());
 		}
 		
 		public String getKey(){
-			String ans = process+":"+client;
-			return ans;
+			return process+":"+client;
 		}
 		
 		public String getClient() {

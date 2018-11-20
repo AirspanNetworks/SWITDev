@@ -378,12 +378,12 @@ public class PacketForwarding extends TPTBase {
 		qci.add('9');
 		qci.add('7');
 		ueNameListStc = convertUeToNamesList(ueList);
-		if (packetForwardingThroughputProcess(dl, ul, ueList) == false) {
+		if (!packetForwardingThroughputProcess(dl, ul, ueList)) {
 			report.report("Start Traffic failed", Reporter.FAIL);
 			reason = "Start Traffic failed";
 			return;
 		}
-		if (peripheralsConfig.epcAndEnodeBsConnection(ueList, enbInTest) == false) {
+		if (!peripheralsConfig.epcAndEnodeBsConnection(ueList, enbInTest)) {
 			report.report("After traffic UE is not connected", Reporter.FAIL);
 			reason = "After traffic UE is not connected";
 			trafficSTC.stopTraffic();
@@ -398,7 +398,7 @@ public class PacketForwarding extends TPTBase {
 		Long sumDlQci9Dropped = checkPacketLost(rxAndTxValues, null, DL_PORT, AM_ERAB, QCI_9);
 		Long sumDlQci7Dropped = checkPacketLost(rxAndTxValues, null, DL_PORT, UM_ERAB, QCI_7);
 
-		if (packetForwardingHandOverProcess(dut, dut2, HO_TIMES, hoCounterString) == false) {
+		if (!packetForwardingHandOverProcess(dut, dut2, HO_TIMES, hoCounterString)) {
 			report.report("Some of HOs failed", Reporter.FAIL);
 			reason = "Some of HOs failed";
 		}

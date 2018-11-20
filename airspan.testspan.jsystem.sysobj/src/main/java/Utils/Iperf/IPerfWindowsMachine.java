@@ -26,8 +26,7 @@ public abstract class IPerfWindowsMachine extends IPerfMachine{
 	}
 	
 	public Pair<Boolean, String> returnPair(Boolean status) {
-		Pair<Boolean, String> res = new Pair<Boolean, String>(status, "");
-		return res;
+		return new Pair<Boolean, String>(status, "");
 	}
 
 	@Override

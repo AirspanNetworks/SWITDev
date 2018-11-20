@@ -104,7 +104,7 @@ public class P1 extends PowerControlBase {
 				}
 				resetUes(staticUEs);
 				status = peripheralsConfig.checkIfAllUEsAreConnectedToNode(staticUEs, dut);
-				if (status == false) {
+				if (!status) {
 					report.report("eNB is in-service but one of UEs wasn't connected", Reporter.FAIL);
 				}
 				peripheralsConfig.changeEnbState(dut, EnbStates.OUT_OF_SERVICE);
@@ -118,7 +118,7 @@ public class P1 extends PowerControlBase {
 					report.report("operationalStatus: " + enbState);
 				}
 				status = peripheralsConfig.checkIfAllUEsAreConnectedToNode(staticUEs, dut);
-				if (status == true) {
+				if (status) {
 					report.report("eNB is out-of-service but UEs succeed to connect", Reporter.FAIL);
 				}
 				GeneralUtils.stopLevel();

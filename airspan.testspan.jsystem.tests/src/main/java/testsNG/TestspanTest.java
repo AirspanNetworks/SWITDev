@@ -236,7 +236,7 @@ public class TestspanTest extends SystemTestCase4 {
 	static boolean isCalledOnceInInitFunc = false;
 
 	private void calledOnceInInitFunc() {
-		if (isCalledOnceInInitFunc == false) {
+		if (!isCalledOnceInInitFunc) {
 			isCalledOnceInInitFunc = true;
 			setDebugFtpServer();
 		}

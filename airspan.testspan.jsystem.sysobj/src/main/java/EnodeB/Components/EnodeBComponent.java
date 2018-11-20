@@ -701,7 +701,7 @@ public abstract class EnodeBComponent extends SystemObjectImpl implements LogLis
                     unexpectedReboot++;
                     report.report(getName() + " - unexpected reboot detected!", Reporter.FAIL);
                 }
-                if (SkipCMP && (this.waitForSrialPromptAndEchoToSkipCMP.isAlive() == false)) {
+                if (SkipCMP && (!this.waitForSrialPromptAndEchoToSkipCMP.isAlive())) {
                     this.waitForSrialPromptAndEchoToSkipCMP = new WaitForSrialPromptAndEchoToSkipCMP(WAIT_FOR_SERIAL_PROMPT);
                     this.waitForSrialPromptAndEchoToSkipCMP.start();
                 }

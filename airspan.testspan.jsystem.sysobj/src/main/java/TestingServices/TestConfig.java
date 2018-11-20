@@ -59,11 +59,7 @@ public class TestConfig extends SystemObjectImpl {
 	}
 	
 	public void setDynamicCfi(String dynamicCFI){
-		if(dynamicCFI.toLowerCase().equals("true")){
-			this.dynamicCfi = true;
-		}else{
-			this.dynamicCfi = false;
-		}
+		this.dynamicCfi = dynamicCFI.toLowerCase().equals("true");
 	}
 	
 	public boolean getDynamicCFI(){

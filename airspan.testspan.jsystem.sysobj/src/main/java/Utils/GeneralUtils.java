@@ -137,8 +137,7 @@ public class GeneralUtils {
     public static String getPrefixAutomation() {
         Long time = System.currentTimeMillis();
         String strTime = String.valueOf(time);
-        String subString = strTime.substring(strTime.length() - 5, strTime.length());
-        return subString;
+        return strTime.substring(strTime.length() - 5, strTime.length());
     }
 
     /**
@@ -199,21 +198,21 @@ public class GeneralUtils {
      * return 1 if value equals true, else return 0
      */
     public static int booleanToInteger(boolean value) {
-        return value == true ? 1 : 0;
+        return value ? 1 : 0;
     }
 
     /**
      * return true if value equals "1" or "true", else return 0
      */
     public static boolean stringToBoolean(String value) {
-        return (value.equals("1") || value.toLowerCase().equals("true")) ? true : false;
+        return value.equals("1") || value.toLowerCase().equals("true");
     }
 
     /**
      * return true if value equals "1" or "true", else return 0
      */
     public static boolean intToBoolean(int value) {
-        return value == 1 ? true : false;
+        return value == 1;
     }
 
     /**
@@ -496,8 +495,7 @@ public class GeneralUtils {
 
     public static class HtmlTable {
         public static String markLine(StyleTagName styleTagName, String line) {
-            String markedLine = "<" + styleTagName + ">" + line + "</" + styleTagName + ">";
-            return markedLine;
+            return "<" + styleTagName + ">" + line + "</" + styleTagName + ">";
         }
 
         private Vector<Vector<Pair<HtmlFieldColor, String>>> table;

@@ -96,7 +96,7 @@ public class Action extends SystemTestCase4 {
 			break;
 		}
 
-		if (flag == false) {
+		if (!flag) {
 			report.report("Current Value: " + currentValue + ", Expected value: " + comparison + " " + expectedValue,
 					Reporter.FAIL);
 		} else {

@@ -28,7 +28,7 @@ public class IPerfLocalWindowsMachine extends IPerfWindowsMachine{
 	
 	@Override
 	public Pair<Boolean, String> sendCommand(String command){
-		return returnPair(sendCommandAndReturtExexcProcess(command) == null? false : true);
+		return returnPair(sendCommandAndReturtExexcProcess(command) != null);
 	}
 	
 	public String sendCommandAndWaitForRespond(String command){
@@ -52,8 +52,7 @@ public class IPerfLocalWindowsMachine extends IPerfWindowsMachine{
 
 	@Override
 	public File getFile(String fileName) {
-		File file = new File(preAddressTpFile+fileName);
-		return file;
+		return new File(preAddressTpFile+fileName);
 	}
 
 	@Override

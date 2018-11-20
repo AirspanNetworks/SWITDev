@@ -25,8 +25,7 @@ public class NetspanSOAPManager {
 	 */
 	@SuppressWarnings("rawtypes")
 	public BindingProvider addRawDataHandler(BindingProvider soap) {
-		final BindingProvider bindingProvider = soap;
-		final Binding binding = bindingProvider.getBinding ();
+		final Binding binding = soap.getBinding ();
 		final List<Handler> handlerChain = binding.getHandlerChain ();
 		handlerChain.add (hndl);
 		binding.setHandlerChain (handlerChain);

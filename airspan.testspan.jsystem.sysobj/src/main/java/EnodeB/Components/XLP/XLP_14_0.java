@@ -41,9 +41,7 @@ public class XLP_14_0 extends XLP{
 	 */
 	@Override
 	public boolean deleteAllNeighborsByCli() {
-		if (super.dbDelete("nghCellCfg", "*"))
-			return true;
-		return false;
+		return super.dbDelete("nghCellCfg", "*");
 	}
 
 	/** (non-Javadoc)

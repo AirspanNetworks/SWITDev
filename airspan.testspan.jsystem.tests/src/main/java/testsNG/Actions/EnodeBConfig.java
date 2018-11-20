@@ -1172,7 +1172,7 @@ public class EnodeBConfig {
 	}
 	
 	public boolean updateNetworkProfile(EnodeB enb, NetworkParameters networkParams){
-		boolean isSucceeded = true;;
+		boolean isSucceeded = true;
 		String currentProfile = netspanServer.getCurrentNetworkProfileName(enb);
 		networkParams.setProfileName(currentProfile);
 		isSucceeded = netspanServer.updateNetworkProfile(enb, currentProfile,networkParams);			

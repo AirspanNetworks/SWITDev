@@ -490,13 +490,9 @@ public class GeneralUtils {
         }
     }
 
-    ;
-
     public enum StyleTagName {
         MARK1, MARK2, MARK3, MARK4, MARK5;
     }
-
-    ;
 
     public static class HtmlTable {
         public static String markLine(StyleTagName styleTagName, String line) {

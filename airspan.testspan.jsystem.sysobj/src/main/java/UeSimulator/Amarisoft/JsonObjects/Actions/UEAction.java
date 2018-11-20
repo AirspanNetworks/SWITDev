@@ -32,7 +32,7 @@ public class UEAction {
 	    /**
 	     * @param text
 	     */
-	    private Actions(final String text) {
+		Actions(final String text) {
 	        this.text = text;
 	    }
 

@@ -196,6 +196,6 @@ public class TestConfig extends SystemObjectImpl {
 	}
 
 	public void setSWUCliFallback(String sWUCliFallback) {
-		SWUCliFallback = Boolean.parseBoolean(sWUCliFallback);;
+		SWUCliFallback = Boolean.parseBoolean(sWUCliFallback);
 	}
 }

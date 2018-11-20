@@ -10,7 +10,8 @@ public class TunnelManager extends Thread{
 	private static TunnelManager instance;
 	final int MAX_NUMBER_OF_TRIES_TO_SET_VIRTUAL_IP = 5;
 	private boolean isThreadNeeded;
-	private enum TunnelManagerThreadState {NOT_STARTED, RUNNING, SUSPENDED, ENDED, STOPPED};
+	private enum TunnelManagerThreadState {NOT_STARTED, RUNNING, SUSPENDED, ENDED, STOPPED}
+
 	private TunnelManagerThreadState isRunning;
 	private ArrayList<EnodebIPSecDetails> eNodebIPSecDetailsList;
 	private static ArrayList<EnodeB> eNodeBInTestList;
@@ -349,7 +350,7 @@ public class TunnelManager extends Thread{
 	
 	/***************Results Values****************/
 	
-	public static enum TunnelManagerResult{IPSEC_TUNNEL_OPENED_SUCCESSFULLY, IPSEC_TUNNEL_CLOSED_SUCCESSFULLY, 
+	public enum TunnelManagerResult{IPSEC_TUNNEL_OPENED_SUCCESSFULLY, IPSEC_TUNNEL_CLOSED_SUCCESSFULLY,
 		COULD_NOT_OPEN_IPSEC_TUNNEL, IPSEC_TUNNEL_OPENED_BUT_DID_NOT_REACH_ALL_RUNNING_STATE,
 		IPSEC_TUNNEL_CLOSED_BUT_DID_NOT_REACH_ALL_RUNNING_STATE}
 	

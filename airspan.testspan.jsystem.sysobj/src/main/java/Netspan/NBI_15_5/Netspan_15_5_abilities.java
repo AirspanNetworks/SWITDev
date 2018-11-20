@@ -8,10 +8,10 @@ import Netspan.Profiles.MultiCellParameters;
 import Utils.FileServer;
 
 public interface Netspan_15_5_abilities {
-	public boolean getMultiCellProfile(EnodeB node, String cloneFromName);
-	public boolean getNeighborManagementProfile(EnodeB node, String cloneFromName);
-	public boolean isFileServerExists(String fileServerName);
-	public boolean createFileServer(FileServer fileServer);
-	public MultiCellParameters getMultiCellProfileObject(EnodeB node, String profileName);
-	public HashMap<String, NetworkElementStatus> getMMEStatuses(EnodeB enb);
+	boolean getMultiCellProfile(EnodeB node, String cloneFromName);
+	boolean getNeighborManagementProfile(EnodeB node, String cloneFromName);
+	boolean isFileServerExists(String fileServerName);
+	boolean createFileServer(FileServer fileServer);
+	MultiCellParameters getMultiCellProfileObject(EnodeB node, String profileName);
+	HashMap<String, NetworkElementStatus> getMMEStatuses(EnodeB enb);
 }

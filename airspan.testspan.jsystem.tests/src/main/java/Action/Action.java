@@ -19,7 +19,7 @@ public class Action extends SystemTestCase4 {
 	protected String myVersion = "";
 	
 	protected enum Comparison {
-		EQUAL_TO, NOT_EQUAL_TO, BIGGER_THAN, SMALLER_THAN;
+		EQUAL_TO, NOT_EQUAL_TO, BIGGER_THAN, SMALLER_THAN
 	}
 	
 	@Before

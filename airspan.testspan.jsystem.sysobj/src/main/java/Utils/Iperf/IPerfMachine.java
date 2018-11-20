@@ -22,8 +22,8 @@ public abstract class IPerfMachine extends SystemObjectImpl{
 	public IPerfMachine(){
 		super();
 		preAddressTpFile = "";
-	};
-	
+	}
+
 	public abstract boolean connect();
 
 	protected void resetParams(){

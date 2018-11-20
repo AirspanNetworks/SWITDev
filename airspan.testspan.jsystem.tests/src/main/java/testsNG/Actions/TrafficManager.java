@@ -29,7 +29,7 @@ import testsNG.Actions.Utils.CalculatorMap;
 public class TrafficManager {
 
 	public static Reporter report = ListenerstManager.getInstance();
-	private Boolean isTrafficInit = null;;
+	private Boolean isTrafficInit = null;
 	private GeneratorType trafficType = null;
 	private static ArrayList<TrafficSampler> samplerList; 
 	private volatile Traffic trafficInstance;

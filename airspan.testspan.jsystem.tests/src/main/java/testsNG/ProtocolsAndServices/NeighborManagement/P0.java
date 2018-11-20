@@ -578,7 +578,7 @@ public class P0 extends NeighborManagementBase {
 		}
 		GeneralUtils.stopLevel();
 		GeneralUtils.unSafeSleep(30*1000);
-		report.report("Total Neighbours deleted: "+deletedNbrCounter);;
+		report.report("Total Neighbours deleted: "+deletedNbrCounter);
 		GeneralUtils.startLevel("Checking that all neighbors where deleted");
 		try {
 			status = NetspanServer.getInstance().verifyNoNeighbors(tempEnodeB);

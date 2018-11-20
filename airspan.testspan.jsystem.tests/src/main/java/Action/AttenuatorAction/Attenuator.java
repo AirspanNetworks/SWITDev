@@ -98,7 +98,7 @@ public class Attenuator extends Action {
 		report.report("Set attenuator " + attenuatorSetName + " to value " + attValue);
 		
 		boolean success = PeripheralsConfig.getInstance().setAttenuatorSetValue(attenuatorSetUnderTest, attValue);
-		float attenuation = GeneralUtils.ERROR_VALUE;;
+		float attenuation = GeneralUtils.ERROR_VALUE;
 		float[] attenuations = AttenuatorSet.getAttenuatorSet(attenuatorSetName).getAttenuation();
 		if(attenuations.length > 0){
 			attenuation = attenuations[0];

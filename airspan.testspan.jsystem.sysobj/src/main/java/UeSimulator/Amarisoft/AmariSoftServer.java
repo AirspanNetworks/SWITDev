@@ -63,6 +63,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     private static Object waitLock = new Object();
 
 	private Terminal lteUeTerminal;
+	private Terminal lteUecommands;
 	private String ip;
 	private String port;
 	private String userName;
@@ -309,8 +310,8 @@ public class AmariSoftServer extends SystemObjectImpl{
 
     public boolean stopServer(){
 		if (running) {
-			sendCommands("quit", "#");
-			if (!sendCommands("ps -aux |grep lteue", "/root/ue/lteue-avx2 /root/ue/config/automationConfigFile")) {
+			sendCommands("quit", "#", lteUeTerminal);
+			if (!sendCommands("ps -aux |grep lteue", "/root/ue/lteue-avx2 /root/ue/config/automationConfigFile", lteUecommands)) {
 				running = false;
 				return true;
 			} else {
@@ -318,9 +319,18 @@ public class AmariSoftServer extends SystemObjectImpl{
 				return false;
 			}
 		}
+		disconnectSession();
 		return true;
     }
     
+    private void disconnectSession() {
+    	try {
+			lteUecommands.disconnect();
+			lteUeTerminal.disconnect();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    }
     public boolean startServer(EnodeB dut){
     	ArrayList<EnodeB> tempEnodebList = new ArrayList<>();
     	tempEnodebList.add(dut);
@@ -334,12 +344,12 @@ public class AmariSoftServer extends SystemObjectImpl{
     
     public boolean startServer(String configFile){
     	try {   
-    		boolean ans = sendCommands("/root/ue/lteue /root/ue/config/" + configFile,"sample_rate=");
+    		boolean ans = sendCommands("/root/ue/lteue /root/ue/config/" + configFile,"sample_rate=", lteUeTerminal);
     		if (!ans) {
     			GeneralUtils.printToConsole("Failed starting server with config file: " + configFile);
     			return false;
 			}
-    		if(!sendCommands("ps -aux |grep lteue", "/root/ue/lteue-avx2 /root/ue/config/automationConfigFile")) {
+    		if(!sendCommands("ps -aux |grep lteue", "/root/ue/lteue-avx2 /root/ue/config/automationConfigFile", lteUecommands)) {
     			GeneralUtils.printToConsole("Failed starting server with config file: " + configFile);
     			return false;
     		}
@@ -412,7 +422,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 		
 	}
 
-	public boolean sendCommands(String cmd, String response) {
+	public boolean sendCommands(String cmd, String response, Terminal terminal) {
 		String privateBuffer = "";
 		String ans = "";
 		if (!connected) {
@@ -420,7 +430,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 			return false;
 		}
 		waitForResponse = true;
-		sendRawCommand(cmd);
+		sendRawCommand(cmd, terminal);
 		long startTime = System.currentTimeMillis(); // fetch starting time
 		while ((System.currentTimeMillis() - startTime) < 3000) {
 			GeneralUtils.unSafeSleep(200);
@@ -434,18 +444,18 @@ public class AmariSoftServer extends SystemObjectImpl{
 				waitForResponse = false;
 				return true;			
 			}
-			sendRawCommand("");
+			sendRawCommand("", terminal);
 		}
 		waitForResponse = false;
 		return false;
 	}
 		
-	public void sendRawCommand(String command){
-		if (lteUeTerminal == null) {
+	public void sendRawCommand(String command, Terminal A){
+		if (A == null) {
 			return;
 		}
 		try {
-			lteUeTerminal.sendString(command + "\n", false);
+			A.sendString(command + "\n", false);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
@@ -525,10 +535,14 @@ public class AmariSoftServer extends SystemObjectImpl{
 
     private void connect() { 
 		this.lteUeTerminal = new SSH(ip, userName, password);
+		this.lteUecommands = new SSH(ip, userName, password);
 		try {
 			this.lteUeTerminal.connect();
+			this.lteUecommands.connect();
 		} catch (IOException e) {
 			e.printStackTrace();
+			disconnectSession();
+			return;
 		}
 		connected = true;
 		startLogger();
@@ -688,7 +702,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 				report.report("Global timing advance: " + configObject.getCells().get(0).getGlobalTimingAdvance());
 			GeneralUtils.stopLevel();
 			String newStat = stat.replace("\"", "\\\"");
-			sendCommands("echo \"" + newStat + "\" > /root/ue/config/" + ueConfigFileName,"");
+			sendCommands("echo \"" + newStat + "\" > /root/ue/config/" + ueConfigFileName,"", lteUeTerminal);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}

@@ -600,7 +600,7 @@ public class P0 extends TestspanTest {
 		GeneralUtils.stopLevel();
 		
 		// print test results.
-		GeneralUtils.unSafeSleep(10000);
+		GeneralUtils.unSafeSleep(20000);
 		GeneralUtils.startLevel("Add Neighbor Results");
 		GeneralUtils.reportHtmlLink("db get nghList", enodeB.lteCli("db get nghlist"));
 		if (!neighbors.verifyAnrNeighbor(enodeB, neighbor)) {

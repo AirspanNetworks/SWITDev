@@ -132,31 +132,31 @@ public class Progression extends TestspanTest{
 	public void change(){
 		NrtChangesParams nrtChangesParams = make3NrtChanges(dut);
 		GeneralUtils.unSafeSleep(3000);
-		if(verifyNrtChangesViaProtocolBufferAndUndoChanges(dut, nrtChangesParams) == false){
+		if(!verifyNrtChangesViaProtocolBufferAndUndoChanges(dut, nrtChangesParams)){
 			reason += "FAILED to verify NrtChanges Via Protocol Buffer.";
 		}
 		
 		CellChangesParams cellChangesParams = make3CellChanges(dut);
 		GeneralUtils.unSafeSleep(3000);
-		if(verifyCellChangesViaProtocolBufferAndUndoChanges(dut, cellChangesParams) == false){
+		if(!verifyCellChangesViaProtocolBufferAndUndoChanges(dut, cellChangesParams)){
 			reason += "FAILED to verify CellChanges Via Protocol Buffer.";
 		}
 		
 		NetworkElementChangesParams networkElementChangesParams = make3NetworkElementChanges(dut);
 		GeneralUtils.unSafeSleep(3000);
-		if(verifyNetworkElementChangesViaProtocolBufferAndUndoChanges(dut, networkElementChangesParams) == false){
+		if(!verifyNetworkElementChangesViaProtocolBufferAndUndoChanges(dut, networkElementChangesParams)){
 			reason += "FAILED to verify NetworkElementChanges Via Protocol Buffer.";
 		}
 		
 		MmeChangesParams mmeChangesParams = make3MmeChanges(dut);
 		GeneralUtils.unSafeSleep(3000);
-		if(verifyMmeChangesViaProtocolBufferAndUndoChanges(dut, mmeChangesParams) == false){
+		if(!verifyMmeChangesViaProtocolBufferAndUndoChanges(dut, mmeChangesParams)){
 			reason += "FAILED to verify MmeChanges Via Protocol Buffer.";
 		}
 		
 		RfChangesParams rfChangesParams = make3RfChanges(dut);
 		GeneralUtils.unSafeSleep(3000);
-		if(verifyRfChangesViaProtocolBufferAndUndoChanges(dut, rfChangesParams) == false){
+		if(!verifyRfChangesViaProtocolBufferAndUndoChanges(dut, rfChangesParams)){
 			reason += "FAILED to verify RfChanges Via Protocol Buffer.";
 		}
 	}
@@ -246,7 +246,7 @@ public class Progression extends TestspanTest{
 	private CellChangesParams make3CellChanges(EnodeB eNodeB){
 		CellChangesParams cellChangesParams = new CellChangesParams(eNodeB.getPbLteCellStatus(40), 40);
 		cellChangesParams.rsiValue = cellChangesParams.pbLteCellStatusOriginalValues != null && cellChangesParams.pbLteCellStatusOriginalValues.getRsiValue() != 7 ? 7 : 8;
-		cellChangesParams.mlbStatus = cellChangesParams.pbLteCellStatusOriginalValues != null && cellChangesParams.pbLteCellStatusOriginalValues.getMlbStatus() != 0 ? false : true;
+		cellChangesParams.mlbStatus = cellChangesParams.pbLteCellStatusOriginalValues == null || cellChangesParams.pbLteCellStatusOriginalValues.getMlbStatus() == 0;
 		
 		eNodeB.setCellChanges(0);
 		

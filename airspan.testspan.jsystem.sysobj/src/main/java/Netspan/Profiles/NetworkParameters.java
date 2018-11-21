@@ -181,10 +181,7 @@ public class NetworkParameters implements INetspanProfile{
 			return "(" + MCC + "," + MNC + ")";
 		}
 		public boolean equal(Plmn plmn2){
-			if (this.MCC.equals(plmn2.MCC)){
-				return true;
-			}
-			return false;
+			return this.MCC.equals(plmn2.MCC);
 		}
 	}
 	public ArrayList<String> getMMEIPS() {

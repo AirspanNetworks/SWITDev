@@ -503,7 +503,6 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 	@Override
 	public ArrayList<ArrayList<StreamParams>> getActiveStreamCurrentSample(ArrayList<CounterUnit> counterUnitList,
 			TransmitDirection transmitDirection) {
-		ArrayList<ArrayList<StreamParams>> sampleArrayList = new ArrayList<ArrayList<StreamParams>>();
 		/*ArrayList<ArrayList<StreamParams>> ueSampleArrayList = new ArrayList<ArrayList<StreamParams>>();
 		int minNumberOfSamples = IPerfMachine.getMinNumberOfSamples();
 		for(int i = 1; i <= minNumberOfSamples; i++){
@@ -534,7 +533,7 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		GeneralUtils.printToConsole("IPerfMachine.minNumberOfSamples="+minNumberOfSamples);
 		//Initial minNumberOfSamples for trying to get max number of samples in the next round.
 		IPerfMachine.setMinNumberOfSamples(10);*/
-		return sampleArrayList;
+		return new ArrayList<>();
 	}
 	
 	@Override

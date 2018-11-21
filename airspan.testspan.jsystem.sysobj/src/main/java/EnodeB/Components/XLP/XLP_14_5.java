@@ -211,9 +211,7 @@ public class XLP_14_5 extends XLP {
 	}
 
 	public boolean deleteAllNeighborsByCli() {
-		if (super.dbDelete("nghList", "*"))
-			return true;
-		return false;
+		return super.dbDelete("nghList", "*");
 	}
 
 	//getting the CLI parameters of EnodeB and neighbor for CLI verify check
@@ -363,7 +361,7 @@ public class XLP_14_5 extends XLP {
 
 	/**
 	 * (non-Javadoc)
-	 * @throws IOException 
+	 * @throws IOException
 	 *
 	 */
 	@Override

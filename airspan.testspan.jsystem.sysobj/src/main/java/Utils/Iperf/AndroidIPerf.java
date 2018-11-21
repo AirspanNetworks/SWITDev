@@ -47,7 +47,7 @@ public class AndroidIPerf extends UEIPerf {
 		this.ulIPerfStream = ulStreamArrayList.get(0);
 		boolean gotActiveStream = false;
 		for (IPerfStream ulIPerfStreamIte : ulStreamArrayList) {
-			if(gotActiveStream == false){
+			if(!gotActiveStream){
 				if (ulIPerfStreamIte.isActive()) {
 					this.ulIPerfStream = ulIPerfStreamIte;
 					gotActiveStream = true;
@@ -75,7 +75,7 @@ public class AndroidIPerf extends UEIPerf {
 		this.dlIPerfStream = dlStreamArrayList.get(0);
 		boolean gotActiveStream = false;
 		for (IPerfStream dlIPerfStreamIte : dlStreamArrayList) {
-			if(gotActiveStream == false){
+			if(!gotActiveStream){
 				if (dlIPerfStreamIte.isActive()) {
 					this.dlIPerfStream = dlIPerfStreamIte;
 					gotActiveStream = true;

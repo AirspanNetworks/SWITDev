@@ -466,11 +466,7 @@ public class P0 extends TestspanTest {
 		devSample = devsFrom;
 		boolean checkBoundariesUes = true;
 		for(Character ch : qci){
-			if(ch.equals('4') && TPTGbr && !mixTwiceAmbrOrTwiceGbr){
-				qciGbr = true;
-			}else{
-				qciGbr = false;
-			}
+			qciGbr = ch.equals('4') && TPTGbr && !mixTwiceAmbrOrTwiceGbr;
 			if(ch.equals('1')){
 				headLines.clear();
 				headLines.add(countTx+" in bps");
@@ -1077,10 +1073,7 @@ public class P0 extends TestspanTest {
 			return false;
 		}
 		report.report("Testing new PFS",ReportAttribute.BOLD);
-		if(!genericTestVolteHelper(PfsType.NewPfs)){
-			return false;
-		}
-		return true;
+		return genericTestVolteHelper(PfsType.NewPfs);
 	}
 	
 	private boolean genericTestVolteHelper(PfsType pfsType){
@@ -1185,10 +1178,7 @@ public class P0 extends TestspanTest {
 			return false;
 		}
 		report.report("Testing new PFS",ReportAttribute.BOLD);
-		if(!genericTestAlmostTcp(PfsType.NewPfs)){
-			return false;
-		}
-		return true;
+		return genericTestAlmostTcp(PfsType.NewPfs);
 	}
 	
 	private boolean genericTestAlmostTcp(PfsType pfsType){
@@ -1900,7 +1890,7 @@ public class P0 extends TestspanTest {
 	
 	private enum PfsType{
 		OldPfs,
-		NewPfs;
+		NewPfs
 	}
 	
 	@ParameterProperties(description = "Name of Enodeb Which the test will be run On")

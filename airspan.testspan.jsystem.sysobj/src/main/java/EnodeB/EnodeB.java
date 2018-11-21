@@ -88,7 +88,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 	
 	public enum Architecture {
 		XLP, FSM, FSMv4
-	};
+	}
 
 	public Architecture architecture;
 	private static final String CONTROL_COMPONENT_HW_NAME = "XLP";
@@ -1047,13 +1047,13 @@ public abstract class EnodeB extends SystemObjectImpl {
 	}
 
 	public boolean waitForReachable(long timeout) {
-		if (this.XLP.isReachable() == true) {
+		if (this.XLP.isReachable()) {
 			return true;
 		}
 		GeneralUtils.printToConsole("will wait for reachable " + timeout + " millis");
 		long startTime = System.currentTimeMillis(); // fetch starting time
 		while ((System.currentTimeMillis() - startTime) < timeout) {
-			if (this.XLP.isReachable() == true) {
+			if (this.XLP.isReachable()) {
 				return true;
 			}
 			GeneralUtils.unSafeSleep(3000);
@@ -1266,7 +1266,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 	}
 
 	public void setIpsecTunnelEnabled(String ipsecTunnelEnabled) {
-		this.ipsecTunnelEnabled = GeneralUtils.stringToBoolean(ipsecTunnelEnabled);;
+		this.ipsecTunnelEnabled = GeneralUtils.stringToBoolean(ipsecTunnelEnabled);
 	}
 
 	public synchronized final int getSWTypeInstance() {

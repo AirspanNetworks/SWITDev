@@ -129,7 +129,7 @@ public class P0 extends PowerControlBase {
 			radioParams.setTxpower(30);
 			boolean flag = enbConfig.cloneAndSetRadioProfileViaNetSpan(dut, dut.getDefaultNetspanProfiles().getRadio(), radioParams);
 			
-			if (flag == false) {
+			if (!flag) {
 				reason = "Failed to Clone and Set Radio Profile Via NetSpan";
 				syncCommands.stopCommands();
 				return;

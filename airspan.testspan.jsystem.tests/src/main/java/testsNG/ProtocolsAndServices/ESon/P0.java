@@ -579,10 +579,7 @@ public class P0 extends TestspanTest {
 				e2.printStackTrace();
 			}
 		}
-		if (eventsAfterSieving.isEmpty()) {
-			return false;
-		}
-		return true;
+		return !eventsAfterSieving.isEmpty();
 	}
 
 	/**
@@ -616,11 +613,7 @@ public class P0 extends TestspanTest {
 			if (eSonSession.login()) {
 				if (eSonSession.chooseEsonServer()) {
 					lastJsonData = eSonSession.refresh();
-					if (!getNodeDetails(lastJsonData)) {
-						return false;
-					} else {
-						return true;
-					}
+					return getNodeDetails(lastJsonData);
 				}
 			} else {
 				// login failed

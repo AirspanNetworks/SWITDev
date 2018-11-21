@@ -156,7 +156,7 @@ public class CloseAllIPerfSessions {
 	    	}catch(Exception e1){
 	    		e1.printStackTrace();
 	    	}
-	    	if(result == false){
+	    	if(!result){
 	    		System.out.println("FAILED to execute: pkill -15 iperf");
 	    	}
 	    	e.printStackTrace();

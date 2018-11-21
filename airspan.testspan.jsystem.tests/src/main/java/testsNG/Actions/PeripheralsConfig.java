@@ -529,11 +529,7 @@ public class PeripheralsConfig {
 			EnbStates state = null;
 			//cheacking that the enb state now is in service/ out of service according to expectations. 
 			state = enb.getServiceState();
-			if (state.equals(EnbStates.IN_SERVICE)){
-				enb.expecteInServiceState = true;
-			}
-			else 
-				enb.expecteInServiceState = false;
+			enb.expecteInServiceState = state.equals(EnbStates.IN_SERVICE);
 			return state == enbState;
 		}
 		
@@ -566,10 +562,7 @@ public class PeripheralsConfig {
 		finally{
 			GeneralUtils.stopLevel();
 		}
-		if(connectToEpc == true && connectToEnb == false){
-			return true;
-		}else
-			return false;
+		return connectToEpc && !connectToEnb;
 		
 	}
 
@@ -716,10 +709,10 @@ public class PeripheralsConfig {
 		
 		report.report("Ues are " + (status ? "" : "not ") + "connected.");
 		
-		if ((status == false) && (channelStatus.equals(EnbStates.OUT_OF_SERVICE))) {
+		if ((!status) && (channelStatus.equals(EnbStates.OUT_OF_SERVICE))) {
 			report.report(dut.getNetspanName() + " is Out_Of_Service and UEs wasn't connected", reporterStatus);
 			reason = dut.getNetspanName() + " is Out_Of_Service and UEs wasn't connected";
-		} else if ((status == false) && (channelStatus.equals(EnbStates.IN_SERVICE))) {
+		} else if ((!status) && (channelStatus.equals(EnbStates.IN_SERVICE))) {
 			report.report("Enb is In_Service but one of UEs wasn't connected", reporterStatus);
 			reason = dut.getNetspanName() + " is In_Service but one of UEs wasn't connected ";
 		}
@@ -742,8 +735,7 @@ public class PeripheralsConfig {
 		GeneralUtils.unSafeSleep(10*1000);
 		ArrayList<UE> ueList = new ArrayList<UE>();
 		ueList.add(ue);
-		boolean connected = checkIfAllUEsAreConnectedToNode(ueList, enb);
-		return connected;
+		return checkIfAllUEsAreConnectedToNode(ueList, enb);
 	}
 
 	public boolean waitForUeToConnect(UE ue, ArrayList<EnodeB> enbInTest, int ueConnectTimeout) {
@@ -770,8 +762,6 @@ public class PeripheralsConfig {
 	
 	public boolean isUEConnected(UE ue,ArrayList<EnodeB> node){
 		EnodeB currentEnb = epc.getCurrentEnodB(ue, node);
-		if (currentEnb !=null)
-			return true; 
-		return false;
+		return currentEnb != null;
 	}
 }

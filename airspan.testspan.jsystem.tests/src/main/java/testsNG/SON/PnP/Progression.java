@@ -205,7 +205,7 @@ public class Progression extends TestspanTest{
 			GeneralUtils.boldReportLine(step++ + ". For Warm Relay PnP see Appendix E.");
 			watchNmsEventsRelayWarmReboot = startFollowNmsEvents(timelineStageIndex++, WARM_RELAY_PNP_EVENTS_EXPECTED_DURATION_IN_MILI, dut, rebootTime, COLLECT_EVENTS_FROM_NMS_TIMEOUT, "Warm Relay PnP.", relayWarmRebootPnpEventListToFollow, 0, false);//Doesn't Wait, uses WatchDog
 			GeneralUtils.unSafeSleep(6000);//In purpose that Warm Relay PnP stage will finish before Cold eNodeB PnP for the timeline.
-		}else if(dut.isSwUpgradeDuringPnP() == false){
+		}else if(!dut.isSwUpgradeDuringPnP()){
 			//Waiting for NMS Events.
 			GeneralUtils.unSafeSleep(5 * 60 * 1000);
 		}
@@ -772,7 +772,7 @@ public class Progression extends TestspanTest{
 		}
 		
 		HtmlFieldColor severity = HtmlFieldColor.WHITE;
-		if(isStageCompleted == false){
+		if(!isStageCompleted){
 			severity = HtmlFieldColor.GRAY;
 			stageTimeStr = "Didn't detect stage completed, theoretical times only: " + stageTimeStr;
 		}else if(stageDurationInterval == null){
@@ -1086,11 +1086,7 @@ public class Progression extends TestspanTest{
 			wd.removeCommand(this);
 			if((System.currentTimeMillis() - rebootTime) < timeoutInMili){
 				GeneralUtils.printToConsole("WatchAllRunningTimeout.stopCounting()-> eNodeB is" + (eNodeB.isInOperationalStatus() ? "" : "not") + " in operational status");
-				if(eNodeB.isInOperationalStatus()){
-					this.isReachedToAllRunningBeforeTimeout = true;
-				}else{
-					this.isReachedToAllRunningBeforeTimeout = false;
-				}
+				this.isReachedToAllRunningBeforeTimeout = eNodeB.isInOperationalStatus();
 			}
 		}
 		
@@ -1100,11 +1096,7 @@ public class Progression extends TestspanTest{
 			if(this.state == WatchdogState.RUNNING && ((System.currentTimeMillis() - rebootTime) >= timeoutInMili)){
 				this.state = WatchdogState.ENDED;
 				GeneralUtils.printToConsole("WatchAllRunningTimeout.run() - Timeout Expired, eNodeB is" + (eNodeB.isInOperationalStatus() ? "" : "not") + " in operational status");
-				if(eNodeB.isInOperationalStatus()){
-					this.isReachedToAllRunningBeforeTimeout = true;
-				}else{
-					this.isReachedToAllRunningBeforeTimeout = false;
-				}
+				this.isReachedToAllRunningBeforeTimeout = eNodeB.isInOperationalStatus();
 				stopCounting();
 			}
 		}
@@ -1116,7 +1108,7 @@ public class Progression extends TestspanTest{
 		
 		public void printStatus(){
 			if(this.state == WatchdogState.ENDED){
-				if(this.isReachedToAllRunningBeforeTimeout == false){
+				if(!this.isReachedToAllRunningBeforeTimeout){
 					report.report("The eNodeB failed to reach ALL RUNNING within " + (timeoutInMili/(1000 * 60)) + " minutes.", Reporter.FAIL);
 					reason = "The eNodeB did failed to reach ALL RUNNING within " + (timeoutInMili/(1000 * 60)) + " minutes.";
 					this.state = WatchdogState.PRINTED;

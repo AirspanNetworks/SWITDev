@@ -1201,7 +1201,7 @@ public class NetspanServer_15_5 extends NetspanServer_15_2 implements Netspan_15
 		if (managementParmas.maintenanceWindow != null) {
 			managementProfile.setMaintenanceWindowIsEnabled(factoryDetails
 					.createEnbManagementProfileParamsMaintenanceWindowIsEnabled(managementParmas.maintenanceWindow));
-			if (managementParmas.maintenanceWindow == true) {
+			if (managementParmas.maintenanceWindow) {
 				MaintenanceWindowConfigurationWs maintenanceWindowConfigurationWs = factoryDetails
 						.createMaintenanceWindowConfigurationWs();
 				maintenanceWindowConfigurationWs

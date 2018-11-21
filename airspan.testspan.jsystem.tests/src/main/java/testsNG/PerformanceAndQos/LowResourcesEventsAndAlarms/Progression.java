@@ -123,18 +123,18 @@ public class Progression extends TestspanTest{
 				List<AlarmInfo> alarmsInfo = alarmsAndEvents.getAllAlarmsNode(dut);
 				if(alarmsInfo != null){
 		        	for(AlarmInfo alarmInfo : alarmsInfo){
-	        			if(hasCpuTrap == false && alarmInfo.alarmType.equals("Low CPU Resources")){
+	        			if(!hasCpuTrap && alarmInfo.alarmType.equals("Low CPU Resources")){
 	        				hasCpuTrap = true;
 	        				alarmsAndEvents.printAlarmInfo(alarmInfo);
-	        			}else if(hasRrcTrap == false && alarmInfo.alarmType.equals("Low RRC Resources")){
+	        			}else if(!hasRrcTrap && alarmInfo.alarmType.equals("Low RRC Resources")){
 	        				hasRrcTrap = true;
 	        				alarmsAndEvents.printAlarmInfo(alarmInfo);
-	        			}else if(hasMemoTrap == false && alarmInfo.alarmType.equals("Low Memory Resources")){
+	        			}else if(!hasMemoTrap && alarmInfo.alarmType.equals("Low Memory Resources")){
 	        				hasMemoTrap = true;
 	        				alarmsAndEvents.printAlarmInfo(alarmInfo);
 	        			}
 	        			
-	        			if(hasCpuTrap == true && hasRrcTrap == true && hasMemoTrap == true){
+	        			if(hasCpuTrap && hasRrcTrap && hasMemoTrap){
 	        				break;
 	        			}
 		        	}
@@ -157,15 +157,15 @@ public class Progression extends TestspanTest{
 				e.printStackTrace();
 			}
 			
-			if(hasCpuTrap == false){
+			if(!hasCpuTrap){
 				report.report("Low CPU Resources alarm missing", Reporter.FAIL);
 				reason = "Low CPU Resources alarm missing.";
 			}
-			if(hasRrcTrap == false){
+			if(!hasRrcTrap){
 				report.report("Low RRC Resources alarm missing", Reporter.FAIL);
 				reason += "Low RRC Resources alarm missing.";
 			}
-			if(hasMemoTrap == false){
+			if(!hasMemoTrap){
 				report.report("Low Memory Resources alarm missing", Reporter.FAIL);
 				reason += "Low Memory Resources alarm missing.";
 			}

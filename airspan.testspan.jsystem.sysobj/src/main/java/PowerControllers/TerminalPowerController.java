@@ -46,8 +46,7 @@ public abstract class TerminalPowerController extends PowerController {
 
 	protected String readBuffer() throws Exception {
 		Thread.sleep(BUFFER_WAIT_TIME);
-		String buffer = connection.readInputBuffer();
-		return buffer;
+		return connection.readInputBuffer();
 	}
 
 }

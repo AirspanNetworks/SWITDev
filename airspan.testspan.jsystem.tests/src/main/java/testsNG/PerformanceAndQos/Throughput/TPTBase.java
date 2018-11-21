@@ -198,16 +198,16 @@ public class TPTBase extends TestspanTest {
 
 	private void printTestParmas() {
 		GeneralUtils.startLevel("Test Parameters");
-		if (this.use_Load_UL == true) {
+		if (this.use_Load_UL) {
 			report.report("load up link : " + this.Load_UL + "%");
 		}
-		if (this.use_Load_DL == true) {
+		if (this.use_Load_DL) {
 			report.report("load down link : " + this.Load_DL + "%");
 		}
-		if (this.use_Expected_UL == true) {
+		if (this.use_Expected_UL) {
 			report.report("expected Up Link : " + this.Expected_UL + "%");
 		}
-		if (this.use_Expected_DL == true) {
+		if (this.use_Expected_DL) {
 			report.report("expected Down Link : " + this.Expected_DL + "%");
 		}
 		GeneralUtils.stopLevel();
@@ -1597,7 +1597,6 @@ public class TPTBase extends TestspanTest {
 						ulCounters.add(result);
 					} else
 						value = "-999";
-					;
 				}
 			} else
 				value = "-999";

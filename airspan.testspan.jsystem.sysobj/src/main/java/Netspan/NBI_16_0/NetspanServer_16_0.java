@@ -134,8 +134,7 @@ public class NetspanServer_16_0 extends NetspanServer_15_5 implements Netspan_16
 	@Override
 	public String getCurrentRadioProfileName(EnodeB enb) {
 		int cell = enb.getCellContextID();
-		String radioProfileName = this.getCurrentRadioProfileName(enb, cell);
-		return radioProfileName;
+		return this.getCurrentRadioProfileName(enb, cell);
 	}
 	
 	private String getCurrentRadioProfileName(EnodeB enb, int cellNumber) {

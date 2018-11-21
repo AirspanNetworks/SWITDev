@@ -125,14 +125,16 @@ public class ObjectStream {
 		
 		LinkedHashMap<String,String> ent = null;
 		// get the according keys
-		if(str=="Basic"){
-			ent = getFirstHashBasic();
-		}
-		else if(str=="Error"){
-			ent = getFirstHashError();
-		}
-		else{
-			ent = getFirstHashRest();
+		switch (str) {
+			case "Basic":
+				ent = getFirstHashBasic();
+				break;
+			case "Error":
+				ent = getFirstHashError();
+				break;
+			default:
+				ent = getFirstHashRest();
+				break;
 		}
 		// open table declaration html
 		String toPrint ="<table><tr><th height=\"30\"></th>";
@@ -187,24 +189,24 @@ public class ObjectStream {
 		return print;
 	}
 
+	/** get First Hash Basic value
+	 * @return
+	 */
 	public LinkedHashMap<String,String> getFirstHashBasic(){
-		for (Entry<String, LinkedHashMap<String, String>> entry : outerMapBasic.entrySet()){
-			return entry.getValue();
-		}
-		return null;
+		return outerMapBasic.entrySet().stream().findFirst().map(Entry::getValue).orElse(null);
 	}
-	
+
+	/** get First Hash Error value
+	 * @return
+	 */
 	public LinkedHashMap<String,String> getFirstHashError(){
-		for (Entry<String, LinkedHashMap<String, String>> entry : outerMapError.entrySet()){
-			return entry.getValue();
-		}
-		return null;
+		return outerMapError.entrySet().stream().findFirst().map(Entry::getValue).orElse(null);
 	}
-	
+
+	/** get First Hash Error value
+	 * @return
+	 */
 	public LinkedHashMap<String,String> getFirstHashRest(){
-		for (Entry<String, LinkedHashMap<String, String>> entry : outerMapRest.entrySet()){
-			return entry.getValue();
-		}
-		return null;
+		return outerMapRest.entrySet().stream().findFirst().map(Entry::getValue).orElse(null);
 	}
 }

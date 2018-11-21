@@ -20,6 +20,8 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.WebSocketContainer;
 
+import org.python.modules.synchronize;
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -85,7 +87,9 @@ public class AmariSoftServer extends SystemObjectImpl{
     private HashMap<String, Integer> sdrCellsMap;
     volatile private Object returnValue;
 	private String loggerBuffer="";
+	private String loggerBufferForCommands="";
 	private String cliBuffer = "";
+	private String cliBufferForCommands = "";
 	private Thread loggerBufferThread;
 	private String logFileName = "AmarisoftLog";
 	private boolean waitForResponse = false;
@@ -616,11 +620,11 @@ public class AmariSoftServer extends SystemObjectImpl{
 
 	}
 
-	private synchronized void readInputBuffer() {
+	private synchronized void readInputBuffer(Terminal terminal, boolean isRunningTerminal) {
 		String privateBuffer = "";
 		try {
 			if (connected )
-				privateBuffer += lteUeTerminal.readInputBuffer().replaceAll("\r", "");
+				privateBuffer += terminal.readInputBuffer().replaceAll("\r", "");
 			else
 				return;
 		} catch (Exception e) {
@@ -632,15 +636,30 @@ public class AmariSoftServer extends SystemObjectImpl{
 		int lastIndx = privateBuffer.lastIndexOf("\n");
 		if (lastIndx > -1) {
 			String buffer = privateBuffer.substring(0, lastIndx + 1);
-			loggerBuffer +=buffer;
-			if (waitForResponse) {
-				cliBuffer += buffer;				
+			if (isRunningTerminal) {
+				loggerBuffer +=buffer;
+				if (waitForResponse) {
+					cliBuffer += buffer;				
+				}
+				else
+					cliBuffer = "";
 			}
-			else
-				cliBuffer = "";
+			else {
+				loggerBufferForCommands +=buffer;
+				if (waitForResponse) {
+					cliBufferForCommands += buffer;				
+				}
+				else
+					cliBufferForCommands = "";
+			}
+			
 		}
 	}
     
+	private synchronized void readInputBuffer() {
+		readInputBuffer(lteUeTerminal, true);
+		readInputBuffer(lteUecommands, false);
+	}
     private String getLoggerBuffer() {
 		// To avoid the synchronized method readInputBuffer() - use a thread
 		// that will call it and wait for it instead.

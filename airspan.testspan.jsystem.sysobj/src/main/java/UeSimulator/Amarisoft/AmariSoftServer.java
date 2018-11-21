@@ -314,8 +314,8 @@ public class AmariSoftServer extends SystemObjectImpl{
 
     public boolean stopServer(){
 		if (running) {
-			sendCommands("quit", "#", lteUeTerminal);
-			if (!sendCommands("ps -aux |grep lteue", "/root/ue/lteue-avx2 /root/ue/config/automationConfigFile", lteUecommands)) {
+			sendCommands("quit", "#", lteUeTerminal, true);
+			if (!sendCommands("ps -aux |grep lteue", "/root/ue/lteue-avx2 /root/ue/config/automationConfigFile", lteUecommands, true)) {
 				running = false;
 				return true;
 			} else {
@@ -348,12 +348,12 @@ public class AmariSoftServer extends SystemObjectImpl{
     
     public boolean startServer(String configFile){
     	try {   
-    		boolean ans = sendCommands("/root/ue/lteue /root/ue/config/" + configFile,"sample_rate=", lteUeTerminal);
+    		boolean ans = sendCommands("/root/ue/lteue /root/ue/config/" + configFile,"sample_rate=", lteUeTerminal, true);
     		if (!ans) {
     			GeneralUtils.printToConsole("Failed starting server with config file: " + configFile);
     			return false;
 			}
-    		if(!sendCommands("ps -aux |grep lteue", "/root/ue/lteue-avx2 /root/ue/config/automationConfigFile", lteUecommands)) {
+    		if(!sendCommands("ps -aux |grep lteue", "/root/ue/lteue-avx2 /root/ue/config/automationConfigFile", lteUecommands, false)) {
     			GeneralUtils.printToConsole("Failed starting server with config file: " + configFile);
     			return false;
     		}
@@ -426,7 +426,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 		
 	}
 
-	public boolean sendCommands(String cmd, String response, Terminal terminal) {
+	public boolean sendCommands(String cmd, String response, Terminal terminal, boolean isRunningTerminal) {
 		String privateBuffer = "";
 		String ans = "";
 		if (!connected) {
@@ -439,7 +439,10 @@ public class AmariSoftServer extends SystemObjectImpl{
 		while ((System.currentTimeMillis() - startTime) < 3000) {
 			GeneralUtils.unSafeSleep(200);
 			try {
-				privateBuffer += cliBuffer;
+				if (isRunningTerminal)
+					privateBuffer += cliBuffer;
+				else 
+					privateBuffer += cliBufferForCommands;
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
@@ -721,7 +724,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 				report.report("Global timing advance: " + configObject.getCells().get(0).getGlobalTimingAdvance());
 			GeneralUtils.stopLevel();
 			String newStat = stat.replace("\"", "\\\"");
-			sendCommands("echo \"" + newStat + "\" > /root/ue/config/" + ueConfigFileName,"", lteUeTerminal);
+			sendCommands("echo \"" + newStat + "\" > /root/ue/config/" + ueConfigFileName,"", lteUeTerminal, true);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}

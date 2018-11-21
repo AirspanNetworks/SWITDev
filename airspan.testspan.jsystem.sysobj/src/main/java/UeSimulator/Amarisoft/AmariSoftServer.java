@@ -353,7 +353,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     			GeneralUtils.printToConsole("Failed starting server with config file: " + configFile);
     			return false;
 			}
-    		if(!sendCommands("ps -aux |grep lteue", "/root/ue/lteue-avx2 /root/ue/config/automationConfigFile", lteUecommands, false)) {
+    		if(!sendCommands("ps -aux |grep lteue", " /root/ue/config/automationConfigFile", lteUecommands, false)) {
     			GeneralUtils.printToConsole("Failed starting server with config file: " + configFile);
     			return false;
     		}

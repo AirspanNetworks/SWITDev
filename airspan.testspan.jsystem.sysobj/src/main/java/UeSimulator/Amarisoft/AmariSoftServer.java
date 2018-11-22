@@ -313,19 +313,20 @@ public class AmariSoftServer extends SystemObjectImpl{
     }
 
     public boolean stopServer(){
+    	boolean result = false;
 		if (running) {
 			sendCommands("quit", "#", lteUeTerminal, true);
 			if (!sendCommands("ps -aux |grep lteue", "/root/ue/config/automationConfigFile", lteUecommands, false)) {
 				running = false;
-				return true;
+				result =  true;
 			} else {
 				report.report("Closing server failed.", Reporter.WARNING);
 				running = true;
-				return false;
+				result =  false;
 			}
 		}
 		disconnectSession();
-		return true;
+		return result;
     }
     
     private void disconnectSession() {

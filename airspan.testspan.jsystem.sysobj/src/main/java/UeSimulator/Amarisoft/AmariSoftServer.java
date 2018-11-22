@@ -320,6 +320,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 				return true;
 			} else {
 				report.report("Closing server failed.", Reporter.WARNING);
+				running = true;
 				return false;
 			}
 		}

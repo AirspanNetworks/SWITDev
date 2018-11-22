@@ -49,6 +49,15 @@ public abstract class XLP extends EnodeBComponent {
         SwStatus(String code) {
             value = code;
         }
+        
+        public static SwStatus fromValue(String v) {
+            for (SwStatus c: SwStatus.values()) {
+                if (c.value.equals(v)) {
+                    return c;
+                }
+            }
+            throw new IllegalArgumentException(v);
+        }
     }
 
     public final static String swStatusIdle = "1";
@@ -798,7 +807,7 @@ public abstract class XLP extends EnodeBComponent {
 
         SwStatus swStatus = null;
         try {
-            swStatus = SwStatus.valueOf(downloadStatus);
+            swStatus = SwStatus.fromValue(downloadStatus);
         } catch (IllegalArgumentException e) {
             swStatus = SwStatus.SW_STATUS_ILLEGAL_VALUE;
         }

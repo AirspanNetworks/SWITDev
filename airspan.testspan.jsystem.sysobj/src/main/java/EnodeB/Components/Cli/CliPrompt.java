@@ -96,18 +96,28 @@ public class CliPrompt{
 			flushBuffer();
 			sendCommand(command);
 			getBuffer();
+			long endTimeMillis = System.currentTimeMillis() + responseTimeout * 1000;
 			if (response != "" && response!=null) {
-				long endTimeMillis = System.currentTimeMillis() + responseTimeout * 1000;
-				while (true){
+				boolean responseFound = false;
+				while(!responseFound){
 					if (buffer.contains(response)) {
+						responseFound = true;
 						break;
 					}
-					else {
+					else{
 						if (System.currentTimeMillis() > endTimeMillis) {
 							GeneralUtils.printToConsole("Cannot find response: " + response + " to command: " + command);
 				            break;
 						}
 					}
+					sendNewLine();
+					getBuffer();
+					GeneralUtils.unSafeSleep(1000);
+				}
+			}else{
+				while(true){
+					if (System.currentTimeMillis() > endTimeMillis) 
+						break;
 					sendNewLine();
 					getBuffer();
 					GeneralUtils.unSafeSleep(1000);

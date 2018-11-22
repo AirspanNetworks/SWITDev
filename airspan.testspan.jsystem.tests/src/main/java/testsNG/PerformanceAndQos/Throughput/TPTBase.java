@@ -404,7 +404,7 @@ public class TPTBase extends TestspanTest {
 
 		for (int numberOfTrys = 0; numberOfTrys < 2; numberOfTrys++) {
 			try {
-				syncCommands = new ParallelCommandsThread(commandList, dut, null, null);
+				syncCommands = new ParallelCommandsThread(commandList, dut, null, null, 5);
 				break;
 			} catch (Exception e) {
 				report.report("Cannot initialize streamers in ParallelCommandsThread Class, try number" + numberOfTrys);

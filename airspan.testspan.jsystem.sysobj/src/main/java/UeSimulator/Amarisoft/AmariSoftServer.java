@@ -101,7 +101,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 	public void init() throws Exception {
 		super.init();
 		port = 900 + sdrList[0];
-    	connect();
+    	//connect();
     	ueMap = new ArrayList();
     	sdrCellsMap = new HashMap<>();
     	fillUeList();
@@ -344,6 +344,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     }
     
     public boolean startServer(ArrayList<EnodeB> duts){
+    	connect();
     	setConfig(duts, Integer.parseInt(timingAdvance));
     	return startServer(ueConfigFileName);
     }

@@ -352,10 +352,12 @@ public class AmariSoftServer extends SystemObjectImpl{
     		boolean ans = sendCommands("/root/ue/lteue /root/ue/config/" + configFile,"sample_rate=", lteUeTerminal, true);
     		if (!ans) {
     			GeneralUtils.printToConsole("Failed starting server with config file: " + configFile);
+    			running = false;
     			return false;
 			}
     		if(!sendCommands("ps -aux |grep lteue", " /root/ue/config/automationConfigFile", lteUecommands, false)) {
     			GeneralUtils.printToConsole("Failed starting server with config file: " + configFile);
+    			running = false;
     			return false;
     		}
     		

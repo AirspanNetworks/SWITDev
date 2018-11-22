@@ -315,7 +315,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     public boolean stopServer(){
 		if (running) {
 			sendCommands("quit", "#", lteUeTerminal, true);
-			if (!sendCommands("ps -aux |grep lteue", "/root/ue/lteue-avx2 /root/ue/config/automationConfigFile", lteUecommands, true)) {
+			if (!sendCommands("ps -aux |grep lteue", "/root/ue/lteue-avx2 /root/ue/config/automationConfigFile", lteUecommands, false)) {
 				running = false;
 				return true;
 			} else {

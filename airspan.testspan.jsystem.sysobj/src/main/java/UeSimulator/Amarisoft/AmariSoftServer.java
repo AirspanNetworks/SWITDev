@@ -315,7 +315,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     public boolean stopServer(){
 		if (running) {
 			sendCommands("quit", "#", lteUeTerminal, true);
-			if (!sendCommands("ps -aux |grep lteue", "/root/ue/lteue-avx2 /root/ue/config/automationConfigFile", lteUecommands, false)) {
+			if (!sendCommands("ps -aux |grep lteue", "/root/ue/config/automationConfigFile", lteUecommands, false)) {
 				running = false;
 				return true;
 			} else {
@@ -429,6 +429,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 	public boolean sendCommands(String cmd, String response, Terminal terminal, boolean isRunningTerminal) {
 		String privateBuffer = "";
 		String ans = "";
+		cliBufferForCommands = "";
 		if (!connected) {
 			report.report("Attempted to send command \"" + cmd +"\" to machine that is not connected.", Reporter.WARNING);
 			return false;
@@ -457,12 +458,12 @@ public class AmariSoftServer extends SystemObjectImpl{
 		return false;
 	}
 		
-	public void sendRawCommand(String command, Terminal A){
-		if (A == null) {
+	public void sendRawCommand(String command, Terminal terminal){
+		if (terminal == null) {
 			return;
 		}
 		try {
-			A.sendString(command + "\n", false);
+			terminal.sendString(command + "\n", false);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {

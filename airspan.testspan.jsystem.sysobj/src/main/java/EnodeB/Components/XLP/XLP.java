@@ -1251,7 +1251,7 @@ public abstract class XLP extends EnodeBComponent {
      * @return - boolean - true if it's in all running state
      */
     public boolean waitForAllRunningAndInService(long timeout) {
-        GeneralUtils.printToConsole("Will wait for all running " + (timeout / 1000) + " minutes");
+        GeneralUtils.printToConsole("Will wait for all running " + (timeout / 1000) + " seconds");
         long startTime = System.currentTimeMillis(); // fetch starting time
         while ((System.currentTimeMillis() - startTime) < timeout) {
             if (isInOperationalStatus())

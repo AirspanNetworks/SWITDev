@@ -281,9 +281,9 @@ public class TrafficAction extends Action {
 		this.ues = (ArrayList<UE>) tempUes.clone();	
 	}
 
-	@Test // 1
-	@TestProperties(name = "Start Traffic", returnParam = "LastStatus", paramsInclude = { "UEs" })
-	public void startTraffic() {
+	//@Test // 1
+	//@TestProperties(name = "Start Traffic", returnParam = "LastStatus", paramsInclude = { "UEs" })
+	/*public void startTraffic() {
 		report.report("Start Traffic");
 
 		if (!Traffic.getInstance(ues).startTraffic(ues)) {
@@ -291,11 +291,11 @@ public class TrafficAction extends Action {
 		} else {
 			report.report("Start Traffic Succeeded");
 		}
-	}
+	}*/
 
-	@Test // 2
-	@TestProperties(name = "Stop Traffic", returnParam = "LastStatus", paramsInclude = { "UEs" })
-	public void stopTraffic() {
+	//@Test // 2
+	//@TestProperties(name = "Stop Traffic", returnParam = "LastStatus", paramsInclude = { "UEs" })
+	/*public void stopTraffic() {
 		report.report("Stop Traffic");
 
 		if (!Traffic.getInstance(ues).stopTraffic()) {
@@ -303,7 +303,7 @@ public class TrafficAction extends Action {
 		} else {
 			report.report("Stop Traffic Succeeded");
 		}
-	}
+	}*/
 
 	@Test
 	@TestProperties(name = "Get Traffic Statistics", returnParam = "LastStatus", paramsInclude = { "TrafficToGetStatistics" })
@@ -320,8 +320,8 @@ public class TrafficAction extends Action {
 	}
 	
 	@Test
-	@TestProperties(name = "Enhanced Stop Traffic", returnParam = "LastStatus", paramsInclude = { "TrafficToStop" })
-	public void enhancedStopTraffic() {
+	@TestProperties(name = "Stop Traffic", returnParam = "LastStatus", paramsInclude = { "TrafficToStop" })
+	public void stopTraffic() {
 
 		trafficManagerInstance = TrafficManager.getInstance(null);
 		if(trafficManagerInstance == null){
@@ -335,10 +335,10 @@ public class TrafficAction extends Action {
 	}
 	
 	@Test
-	@TestProperties(name = "Enhanced Start Traffic", returnParam = "LastStatus", paramsInclude = { "UEs","GeneratorType",
+	@TestProperties(name = "Start Traffic", returnParam = "LastStatus", paramsInclude = { "UEs","GeneratorType",
 			"TrafficType","TransmitDirection","RunTime","Qci","SemanticName","LoadType","Dut","ULLoad","DLLoad","FrameSize",
 			"WindowSize","ParallelStreams","Mss","ExpectedLoadType","ULExpected","DLExpected"})
-	public void enhancedStartTraffic() {
+	public void startTraffic() {
 			
 		if(trafficType == Protocol.TCP && generatorType == GeneratorType.STC){
 			report.report("Traffic type " + trafficType.toString() + " is not compatible with generator type " + generatorType.toString(), Reporter.FAIL);

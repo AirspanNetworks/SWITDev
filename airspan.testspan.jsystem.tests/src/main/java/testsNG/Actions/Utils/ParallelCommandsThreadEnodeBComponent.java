@@ -26,7 +26,6 @@ public class ParallelCommandsThreadEnodeBComponent extends Thread{
 	private int responseTimeout;
 	private PrintStream ps;
 	private Reporter report = ListenerstManager.getInstance();
-	private boolean printWarning = true;
 
 	public ParallelCommandsThreadEnodeBComponent(List<String> cmdSet, EnodeB enb, String componentName, int responseTimeout ) throws IOException {
 		this.cmdSet = cmdSet;
@@ -83,7 +82,7 @@ public class ParallelCommandsThreadEnodeBComponent extends Thread{
 					}else if (cmd.contains("ue show link")) {
 						response = "Legend:";
 					}
-					ans = enb.sendCommandsOnSession(enb.getParallelCommandsPrompt(), cmd, response, responseTimeout);
+					ans = enb.sendCommandsOnSession(enb.getParallelCommandsPrompt(), cmd, null, responseTimeout);
 					String javaTime = DateTime.now().toString("yyyy-MM-dd HH:mm:ss.SSS");
 					writeObjectToLogFile("*******************************************************************************\n");
 					writeObjectToLogFile("*** " + javaTime + " Starting command " + cmd + " ***\n");

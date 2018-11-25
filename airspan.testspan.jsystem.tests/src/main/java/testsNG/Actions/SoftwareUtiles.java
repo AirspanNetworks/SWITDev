@@ -240,58 +240,78 @@ public class SoftwareUtiles {
      */
     public boolean isVersionUpdated(EnodeB enodeB, int logLevel) {
         String build = getCurrentBuild(enodeB).trim();
-        //Get details via SNMP
-        String running = enodeB.getRunningVersion().trim();
-        String standby = enodeB.getSecondaryVersion().trim();
+        //Get get version via SNMP or Netspan
+        String running = getVersion(enodeB.getRunningVersion(), netspanServer.getRunningVersionOfEnb(enodeB));
+        // If the response is valid checking if updated
         if (isBuildContainsTheUpdatedRunningVersion(enodeB, build, running)) {
             return true;
         }
-        //If can't get via SNMP - Get details via Netspan
-        report.report("Didn't get the correct running version via SNMP, retry via Netspan.");
-        running = netspanServer.getRunningVersionOfEnb(enodeB);
-        if (isBuildContainsTheUpdatedRunningVersion(enodeB, build, running)) {
-            return true;
-        }
-        //Check if the standby version was updated, if not, get it again via Netspan
-        if (!(build.contains(standby) && standby.contains(build))) {
-            standby = netspanServer.getStandByVersionOfEnb(enodeB);
-        }
+        String standby = getVersion(enodeB.getSecondaryVersion(), netspanServer.getStandByVersionOfEnb(enodeB));
         //If the running version wasn't updated. go to the standby bank, checks if it was updated there.
         if (build.contains(standby) || standby.contains(build)) {
             report.report("The Standby Bank contains target version: " + build + " on Enodeb: " + enodeB.getNetspanName(), logLevel);
             //Takes the requested version from the standby bank if it necessary
-            if (enodeB.swapBanksAndReboot()) {
-                /*
-                 * Heng - dont worry about the wait this is a safe switch to wait for reboot
-                 * the wait for all running itself will take 5 minutes so this wait will not affect runtime
-                 * but will help up to make the code simpler and not wait for reboot event at this point
-                 */
-                GeneralUtils.unSafeSleep(2 * 60 * 1000);
-                enodeB.setUnexpectedReboot(0);
-                if (enodeB.waitForAllRunningAndInService(EnodeB.WAIT_FOR_ALL_RUNNING_TIME)) {
-                    //After swapping, again - Get details via SNMP
-                    String runningVersion = enodeB.getRunningVersion().trim();
-                    if (isBuildContainsTheUpdatedRunningVersion(enodeB, build, runningVersion)) return true;
-                    //If can't get via SNMP - Get details via Netspan
-                    runningVersion = netspanServer.getRunningVersionOfEnb(enodeB);
-                    if (isBuildContainsTheUpdatedRunningVersion(enodeB, build, runningVersion)) return true;
-                    else {
-                        report.report("The running bank does not contains version " + build + " on Enodeb: "
-                                + enodeB.getNetspanName() + " Current Build:" + runningVersion, logLevel);
-                        return false;
-                    }
-                } else {
-                    report.report("Failed to reach all running on Enodeb: " + enodeB.getNetspanName(), logLevel);
-                    return false;
-
-                }
-            } else {
-                report.report("Swap Bank and Reset Failed on Enodeb: " + enodeB.getNetspanName(), logLevel);
-                return false;
-            }
+            return swapBanks(enodeB, logLevel, build);
         } else {
             report.report("Nor the running bank nor the standby bank contains version " + build + " on Enodeb: "
                     + enodeB.getNetspanName(), logLevel);
+            return false;
+        }
+    }
+
+    /**
+     * This method get the Version via SNMP and if failed, via Netspan.
+     *
+     * @param versionViaSNMP    - version Via SNMP
+     * @param versionViaNetspan - version Via Netspan
+     * @return - String - Version
+     */
+    private String getVersion(String versionViaSNMP, String versionViaNetspan) {
+        //Get details via SNMP
+        String version = versionViaSNMP.trim();
+        //Checking response validation
+        if (!isValidVersionResponse(version)) {
+            //If can't get via SNMP - Get details via Netspan
+            report.report("Didn't get the correct version via SNMP, retry via Netspan.");
+            version = versionViaNetspan;
+        }
+        return version;
+    }
+
+    /**
+     * swap Banks
+     *
+     * @param enodeB   - enodeB
+     * @param logLevel -logLevel
+     * @param build    - build
+     * @return false if the action failed
+     */
+    private boolean swapBanks(EnodeB enodeB, int logLevel, String build) {
+        if (enodeB.swapBanksAndReboot()) {
+            /*
+             * Heng - don't worry about the wait this is a safe switch to wait for reboot
+             * the wait for all running itself will take 5 minutes so this wait will not affect runtime
+             * but will help up to make the code simpler and not wait for reboot event at this point
+             */
+            GeneralUtils.unSafeSleep(2 * 60 * 1000);
+            enodeB.setUnexpectedReboot(0);
+            if (enodeB.waitForAllRunningAndInService(EnodeB.WAIT_FOR_ALL_RUNNING_TIME)) {
+                //After swapping, again - Get details via SNMP or Netspan
+                String runningVersion = getVersion(enodeB.getRunningVersion(), netspanServer.getRunningVersionOfEnb(enodeB));
+                if (isBuildContainsTheUpdatedRunningVersion(enodeB, build, runningVersion)) {
+                    return true;
+                } else {
+                    report.report("The running bank does not contains version " + build + " on Enodeb: "
+                            + enodeB.getNetspanName() + " Current Build:" + runningVersion, logLevel);
+                    return false;
+                }
+            } else {
+                report.report("Failed to reach all running on Enodeb: " + enodeB.getNetspanName(), logLevel);
+                return false;
+
+            }
+        } else {
+            report.report("Swap Bank and Reset Failed on Enodeb: " + enodeB.getNetspanName(), logLevel);
             return false;
         }
     }
@@ -310,6 +330,16 @@ public class SoftwareUtiles {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Checks if response of version is a valid response.
+     *
+     * @param versionFromResponse - running Version From Response
+     * @return true if the response != null,ErrorValue
+     */
+    private boolean isValidVersionResponse(String versionFromResponse) {
+        return (versionFromResponse != null) && (!versionFromResponse.equals(String.valueOf(GeneralUtils.ERROR_VALUE)));
     }
 
     public boolean isVersionExists(EnodeB enodeB) {
@@ -474,32 +504,26 @@ public class SoftwareUtiles {
                 swapBankAndReset = swapBanksAndResetEnodeb(enodeB);
 
 
-			if (!swapBankAndReset) {
-				report.report("EnodeB: " + enodeB.getName() + " wasn't rebooted", Reporter.WARNING);
-				time = System.currentTimeMillis() - time;
-				return;
-			}
-			// Heng - dont worry about the wait this is a safe switch to wait
-			// for reboot
-			// the wair for allrunnig itself will take 5 minutes so this wait
-			// will not affect runtime
-			// but will help up to make the code simplier and not wait for
-			// reboot event at this point
-			GeneralUtils.unSafeSleep(2 * 60 * 1000);
-			pass = enodeB.waitForAllRunning(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);
-			if (!isPass()) {
-				report.report("EnodeB: " + enodeB.getName() + " didn't reach All runing state during "
-						+ (EnodeB.WAIT_FOR_ALL_RUNNING_TIME) / 60000 + " Minutes", Reporter.FAIL);
-				time = System.currentTimeMillis() - time;
-				report.report("Swaping Banks and rebooting unit " + enodeB.getName());
-				//swapBanksAndResetEnodeb(enodeB);
-				notToValidateNodes.add(enodeB);
-				// Heng - dont worry about the wait this is a safe switch to
-				// wait for reboot
-				// the wair for allrunnig itself will take 5 minutes so this
-				// wait will not affect runtime
-				// but will help up to make the code simplier and not wait for
-				// reboot event at this point
+            if (!swapBankAndReset) {
+                report.report("EnodeB: " + enodeB.getName() + " wasn't rebooted", Reporter.WARNING);
+                time = System.currentTimeMillis() - time;
+                return;
+            }
+            // Heng - dont worry about the wait this is a safe switch to wait for reboot
+            // the wair for allrunnig itself will take 5 minutes so this wait will not affect runtime
+            // but will help up to make the code simplier and not wait for reboot event at this point
+            GeneralUtils.unSafeSleep(2 * 60 * 1000);
+            pass = enodeB.waitForAllRunning(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);
+            if (!isPass()) {
+                report.report("EnodeB: " + enodeB.getName() + " didn't reach All runing state during "
+                        + (EnodeB.WAIT_FOR_ALL_RUNNING_TIME) / 60000 + " Minutes", Reporter.FAIL);
+                time = System.currentTimeMillis() - time;
+                report.report("Swaping Banks and rebooting unit " + enodeB.getName());
+                //swapBanksAndResetEnodeb(enodeB);
+                notToValidateNodes.add(enodeB);
+                // Heng - dont worry about the wait this is a safe switch to wait for reboot
+                // the wair for allrunnig itself will take 5 minutes so this wait will not affect runtime
+                // but will help up to make the code simplier and not wait for reboot event at this point
 				/*GeneralUtils.unSafeSleep(2 * 60 * 1000);
 				boolean allRun = enodeB.waitForAllRunning(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);
 				if (allRun) {

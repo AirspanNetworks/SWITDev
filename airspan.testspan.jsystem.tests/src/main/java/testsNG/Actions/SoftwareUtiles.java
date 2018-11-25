@@ -287,7 +287,9 @@ public class SoftwareUtiles {
      * @return false if the action failed
      */
     private boolean swapBanks(EnodeB enodeB, int logLevel, String build) {
-        if (enodeB.swapBanksAndReboot()) {
+        report.report("Starting Fallback procedure via SNMP");
+        report.report("Switch Bank");
+    	if (enodeB.swapBanksAndReboot()) {
             /*
              * Heng - don't worry about the wait this is a safe switch to wait for reboot
              * the wait for all running itself will take 5 minutes so this wait will not affect runtime
@@ -1492,7 +1494,7 @@ public class SoftwareUtiles {
                 && (System.currentTimeMillis() - softwareActivateStartTimeInMili <= (EnodeB.UPGRADE_TIMEOUT / 3)));
         for (EnodebSwStatus eNodebSwStaus : eNodebSwStausListTmp) {
             if (!eNodebSwStaus.isSwDownloadCompleted) {
-                report.report(eNodebSwStaus.eNodeB.getName() + ": Software Download Didn't End.", Reporter.WARNING);
+                report.report(eNodebSwStaus.eNodeB.getName() + ": Software Download Didn't End.", Reporter.FAIL);
             }
         }
         GeneralUtils.stopLevel();

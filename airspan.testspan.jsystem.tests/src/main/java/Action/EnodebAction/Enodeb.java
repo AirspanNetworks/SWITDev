@@ -112,6 +112,7 @@ public class Enodeb extends EnodebAction {
     private String debugCommands = "ue show rate";
     private String parallelCommands = "";
     private int responseTimeout;
+    private int waitBetweenCommands;
     private EnbStates serviceState = EnbStates.IN_SERVICE;
     private TargetShell targetShell = TargetShell.CLI;
     private String valueToSet = "";
@@ -334,13 +335,23 @@ public class Enodeb extends EnodebAction {
     }
 
     /**
-     * Setter to the parameter responseTimeout - the time between 2 commands.
+     * Setter to the parameter responseTimeout - the max timeout it waits until getting the response. [Seconds]
      *
      * @param responseTimeout - responseTimeout
      */
-    @ParameterProperties(description = "Response Timeout")
+    @ParameterProperties(description = "Response Timeout [Sec]")
     public void setResponseTimeout(int responseTimeout) {
         this.responseTimeout = responseTimeout;
+    }
+
+    /**
+     * Setter to the parameter waitBetweenCommands - the time between commands. [Seconds]
+     *
+     * @param waitBetweenCommands - waitBetweenCommands
+     */
+    @ParameterProperties(description = "Wait Between Commands Time Interval [Sec]")
+    public void setWaitBetweenCommands(int waitBetweenCommands) {
+        this.waitBetweenCommands = waitBetweenCommands;
     }
 
     /**
@@ -707,21 +718,28 @@ public class Enodeb extends EnodebAction {
         }
     }
 
+    /**
+     * Start Parallel Commands
+     *
+     * DUT - Name of the DUTs from the SUT
+     * ParallelCommands - Commands
+     * responseTimeout - response Timeout interval in Seconds
+     * waitBetweenCommands - wait Between Commands in Seconds
+     */
     @Test
     @TestProperties(name = "Start Parallel Commands", returnParam = {"IsTestWasSuccessful"}, paramsInclude = {"DUT",
-            "ParallelCommands", "responseTimeout"})
+            "ParallelCommands", "responseTimeout", "waitBetweenCommands"})
     public void startParallelCommands() {
         report.report("Starting parallel commands: " + this.parallelCommands);
         List<String> commandList = GeneralUtils.convertStringToArrayList(this.parallelCommands, ";");
         boolean flag = true;
         try {
-            startingParallelCommands(this.dut, commandList, responseTimeout);
+            startingParallelCommands(this.dut, commandList, responseTimeout, waitBetweenCommands);
         } catch (IOException e) {
             e.printStackTrace();
             report.report("Start parallel commands failed due to: " + e.getMessage(), Reporter.FAIL);
             flag = false;
         }
-
         if (flag) {
             report.report("Start parallel commands done");
         }

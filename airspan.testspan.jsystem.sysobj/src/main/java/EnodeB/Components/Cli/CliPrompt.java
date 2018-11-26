@@ -92,11 +92,10 @@ public class CliPrompt{
 		sendNewLine();
 		getBuffer();
 		if (targetPrompt.equals(prompt) && isActivePrompt()) {
-			//GeneralUtils.printToConsole(this + ": is the current active prompt.");
 			flushBuffer();
 			sendCommand(command);
 			getBuffer();
-			if (response != "" && response!=null) {
+			if (response!=null && !response.equals("") ) {
 				long endTimeMillis = System.currentTimeMillis() + responseTimeout * 1000;
 				while (true){
 					if (buffer.contains(response)) {

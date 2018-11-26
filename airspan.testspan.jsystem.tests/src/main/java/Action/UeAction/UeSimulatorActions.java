@@ -185,7 +185,10 @@ public class UeSimulatorActions extends Action {
 
 	private boolean addUes(int numUes) {
 		boolean flag = false;
-		
+		if(numUes == 0) {
+			report.report("Can't add 0 ues to ue simulator", Reporter.WARNING);
+			return true;
+		}
 		try {
 			report.report("Adding " + numUes + " UEs, release " + release + ", category " + category);
 			AmariSoftServer amariSoftServer = AmariSoftServer.getInstance();
@@ -220,9 +223,12 @@ public class UeSimulatorActions extends Action {
 	@TestProperties(name = "delete UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = {"UesOptions", "NumUes", "GroupName"})
 	public void deleteUes() {
 		boolean res = true;
-
 		try {
 			AmariSoftServer amariSoftServer = AmariSoftServer.getInstance();
+			if(amariSoftServer.getUeMap().size() == 0) {
+				report.report("There are no Ues to delete in list", Reporter.WARNING);
+				return;
+			}
 			switch (uesOptions) {
 			case AMOUNT:
 				amariSoftServer.deleteUes(numUes);
@@ -336,7 +342,7 @@ public class UeSimulatorActions extends Action {
 		try {
 			AmariSoftServer amarisoft = AmariSoftServer.getInstance();
 			if (amarisoft.getUeMap().size() == 0) {
-				report.report("There are no ues to start - ue list is empty");
+				report.report("There are no ues to start - ue list is empty", Reporter.WARNING);
 				return;
 			}
 		} catch (Exception e1) {
@@ -395,7 +401,7 @@ public class UeSimulatorActions extends Action {
 				}
 			}
 			if (!atlistOneUe)
-				report.report("There are no ues to start on group " + groupName, Reporter.WARNING);
+				report.report("no UEs started from group " + groupName, Reporter.WARNING);
 			GeneralUtils.stopLevel();
 		} catch (Exception e) {
 			report.report(e.getMessage());
@@ -446,7 +452,7 @@ public class UeSimulatorActions extends Action {
 		try {
 			AmariSoftServer amarisoft = AmariSoftServer.getInstance();
 			if (amarisoft.getUeMap().size() == 0) {
-				report.report("There are no ues to stop - ue list is empty");
+				report.report("There are no ues to stop - ue list is empty", Reporter.WARNING);
 				return;
 			}
 		} catch (Exception e1) {

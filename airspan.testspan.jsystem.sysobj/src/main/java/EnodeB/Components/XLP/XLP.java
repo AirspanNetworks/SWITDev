@@ -762,20 +762,20 @@ public abstract class XLP extends EnodeBComponent {
             precent = snmp.get(precentOid).trim();
             downloadStatus = snmp.get(statusCodeOid).trim();
 
-			// Download Done
-			if (precent.equals("100") && downloadStatus.equals(swStatusIdle)){
-				report.report(getName() +" - The download process passed successfully via SNMP", Reporter.PASS);
-				return true;
-			}
-			
-			if (downloadStatus.equals(swStatusInstallFailure)) {
-				
-				statusString = snmp.get(statusStringOid).trim();
-				report.report(getName() +" - Got bad state from SNMP: State= " + downloadStatus + " Status String= " + statusString,
-						Reporter.WARNING);
-				return false;
-						
-			}
+            // Download Done
+            if (precent.equals("100") && downloadStatus.equals(swStatusIdle)) {
+                report.report(getName() + " - The download process passed successfully via SNMP", Reporter.PASS);
+                return true;
+            }
+
+            if (downloadStatus.equals(swStatusInstallFailure)) {
+
+                statusString = snmp.get(statusStringOid).trim();
+                report.report(getName() + " - Got bad state from SNMP: State= " + downloadStatus + " Status String= " + statusString,
+                        Reporter.WARNING);
+                return false;
+
+            }
 
             if (!precent.equals("100") && downloadStatus.equals(swStatusIdle) && !precent.trim().equals("")) {
                 if (notHundredButIdle) {
@@ -1252,13 +1252,20 @@ public abstract class XLP extends EnodeBComponent {
         }
     }
 
+    /**
+     * wait For All Running And In Service
+     * Rhe EnodeB is being sampled repeatedly, in order to check its state
+     *
+     * @param timeout - (milliSeconds) While this time, the EnodeB is being sampled repeatedly, in order to check its state.
+     * @return - boolean - true if it's in all running state
+     */
     public boolean waitForAllRunningAndInService(long timeout) {
-        GeneralUtils.printToConsole("will wait for all running " + timeout + " milis");
+        GeneralUtils.printToConsole("Will wait for all running " + (timeout / 1000) + " seconds");
         long startTime = System.currentTimeMillis(); // fetch starting time
         while ((System.currentTimeMillis() - startTime) < timeout) {
             if (isInOperationalStatus())
                 return true;
-            GeneralUtils.unSafeSleep(5000);
+            GeneralUtils.unSafeSleep(60000);
         }
 
         if ((System.currentTimeMillis() - startTime) >= timeout) {
@@ -3509,110 +3516,110 @@ public abstract class XLP extends EnodeBComponent {
         sessionManager.showLoginStatus();
     }
 
-	public abstract boolean setGranularityPeriod(int value);
-	
-	public int getGranularityPeriod() {
-		String oid = MibReader.getInstance().resolveByName("asLteStatsIfControlRbStatsGranularityPeriod");
-		String response = "";
-		try {
-			response = snmp.get(oid);
-		} catch (Exception e) {
-			GeneralUtils.printToConsole("Error getting Granularity Period: " + e.getMessage());
-			e.printStackTrace();
-		}
-		try{
-			if(response!=null && !response.equals(String.valueOf(GeneralUtils.ERROR_VALUE))){
-				return Integer.valueOf(response);				
-			}
-		}catch(Exception e){
-			GeneralUtils.printToConsole("Error parsing to integer Granularity Period: " + e.getMessage());
-			e.printStackTrace();
-		}
-		return 5;
-	}
-	
-	public int getActiveUEPerQciAndTransmitDirection(TransmitDirection transmit, Character qci){
-		String oid = "";
-		if(transmit == TransmitDirection.DL){
-			oid = MibReader.getInstance().resolveByName("asLteStatsOnDemandPerQciUeActiveDl");
-		}else if(transmit == TransmitDirection.UL){
-			oid = MibReader.getInstance().resolveByName("asLteStatsOnDemandPerQciUeActiveUl");
-		}else{
-			GeneralUtils.printToConsole("Transmit direction should be UL or DL");
-			return 0;
-		}
-		HashMap<String, org.snmp4j.smi.Variable> output = snmp.SnmpWalk(oid);
-		if(output.keySet().size()==0){
-			return GeneralUtils.ERROR_VALUE;
-		}
-		int answer = 0;
-		try{
-			for(String key : output.keySet()){
-				if(qci.equals(key.charAt(key.length()-1))){
-					answer += Integer.valueOf(output.get(key).toString());
-				}
-			}
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		return answer;
-	}
-	
-	public Boolean getNumberOfUELinkStatusVolte(){
-		String oid = MibReader.getInstance().resolveByName("asLteStkCellUeLinkStatusVolteCalls");
-		HashMap<String, org.snmp4j.smi.Variable> output = snmp.SnmpWalk(oid);
-		if(output.isEmpty()){
-			return null; //GeneralUtils.ERROR_VALUE;
-		}
-		//int answer = 0;
-		try{
-			for(String key : output.keySet()){
-				if("0".equals(output.get(key).toString())){
-					return false;
-				}
-				//answer += Integer.valueOf(output.get(key).toString());
-			}
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		return true;
-	}
+    public abstract boolean setGranularityPeriod(int value);
 
-	public HashMap<String, Integer> getUELinkStatusVolteTable(){
-		String oid = MibReader.getInstance().resolveByName("asLteStkCellUeLinkStatusVolteCalls");
-		HashMap<String, org.snmp4j.smi.Variable> output = snmp.SnmpWalk(oid);
-		HashMap<String, Integer> ans = new HashMap<>();
-		ans = MapConverter(output);
-		return ans;
-	}
+    public int getGranularityPeriod() {
+        String oid = MibReader.getInstance().resolveByName("asLteStatsIfControlRbStatsGranularityPeriod");
+        String response = "";
+        try {
+            response = snmp.get(oid);
+        } catch (Exception e) {
+            GeneralUtils.printToConsole("Error getting Granularity Period: " + e.getMessage());
+            e.printStackTrace();
+        }
+        try {
+            if (response != null && !response.equals(String.valueOf(GeneralUtils.ERROR_VALUE))) {
+                return Integer.valueOf(response);
+            }
+        } catch (Exception e) {
+            GeneralUtils.printToConsole("Error parsing to integer Granularity Period: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return 5;
+    }
 
-	public Boolean getNumberOfUELinkStatusEmergency(){
-		String oid = MibReader.getInstance().resolveByName("asLteStkCellUeLinkStatusEmergencyCalls");
-		HashMap<String, org.snmp4j.smi.Variable> output = snmp.SnmpWalk(oid);
-		if(output.isEmpty()){
-			return null; //GeneralUtils.ERROR_VALUE;
-		}
-		//int answer = 0;
-		try{
-			for(String key : output.keySet()){
-				if("0".equals(output.get(key).toString())){
-					return false;
-				}
-				//answer += Integer.valueOf(output.get(key).toString());
-			}
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		return true;
-	}
-	
-	public HashMap<String, Integer> getUELinkStatusEmergencyTable(){
-		String oid = MibReader.getInstance().resolveByName("asLteStkCellUeLinkStatusEmergencyCalls");
-		HashMap<String, org.snmp4j.smi.Variable> output = snmp.SnmpWalk(oid);
-		HashMap<String, Integer> ans = new HashMap<>();
-		ans = MapConverter(output);
-		return ans;
-	}
+    public int getActiveUEPerQciAndTransmitDirection(TransmitDirection transmit, Character qci) {
+        String oid = "";
+        if (transmit == TransmitDirection.DL) {
+            oid = MibReader.getInstance().resolveByName("asLteStatsOnDemandPerQciUeActiveDl");
+        } else if (transmit == TransmitDirection.UL) {
+            oid = MibReader.getInstance().resolveByName("asLteStatsOnDemandPerQciUeActiveUl");
+        } else {
+            GeneralUtils.printToConsole("Transmit direction should be UL or DL");
+            return 0;
+        }
+        HashMap<String, org.snmp4j.smi.Variable> output = snmp.SnmpWalk(oid);
+        if (output.keySet().size() == 0) {
+            return GeneralUtils.ERROR_VALUE;
+        }
+        int answer = 0;
+        try {
+            for (String key : output.keySet()) {
+                if (qci.equals(key.charAt(key.length() - 1))) {
+                    answer += Integer.valueOf(output.get(key).toString());
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return answer;
+    }
+
+    public Boolean getNumberOfUELinkStatusVolte() {
+        String oid = MibReader.getInstance().resolveByName("asLteStkCellUeLinkStatusVolteCalls");
+        HashMap<String, org.snmp4j.smi.Variable> output = snmp.SnmpWalk(oid);
+        if (output.isEmpty()) {
+            return null; //GeneralUtils.ERROR_VALUE;
+        }
+        //int answer = 0;
+        try {
+            for (String key : output.keySet()) {
+                if ("0".equals(output.get(key).toString())) {
+                    return false;
+                }
+                //answer += Integer.valueOf(output.get(key).toString());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
+    public HashMap<String, Integer> getUELinkStatusVolteTable() {
+        String oid = MibReader.getInstance().resolveByName("asLteStkCellUeLinkStatusVolteCalls");
+        HashMap<String, org.snmp4j.smi.Variable> output = snmp.SnmpWalk(oid);
+        HashMap<String, Integer> ans = new HashMap<>();
+        ans = MapConverter(output);
+        return ans;
+    }
+
+    public Boolean getNumberOfUELinkStatusEmergency() {
+        String oid = MibReader.getInstance().resolveByName("asLteStkCellUeLinkStatusEmergencyCalls");
+        HashMap<String, org.snmp4j.smi.Variable> output = snmp.SnmpWalk(oid);
+        if (output.isEmpty()) {
+            return null; //GeneralUtils.ERROR_VALUE;
+        }
+        //int answer = 0;
+        try {
+            for (String key : output.keySet()) {
+                if ("0".equals(output.get(key).toString())) {
+                    return false;
+                }
+                //answer += Integer.valueOf(output.get(key).toString());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
+    public HashMap<String, Integer> getUELinkStatusEmergencyTable() {
+        String oid = MibReader.getInstance().resolveByName("asLteStkCellUeLinkStatusEmergencyCalls");
+        HashMap<String, org.snmp4j.smi.Variable> output = snmp.SnmpWalk(oid);
+        HashMap<String, Integer> ans = new HashMap<>();
+        ans = MapConverter(output);
+        return ans;
+    }
 
     public void createSerialCom(String serialIP, Integer port) {
         if (serialIP == null || port == null)

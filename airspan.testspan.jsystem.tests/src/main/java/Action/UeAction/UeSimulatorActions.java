@@ -185,7 +185,10 @@ public class UeSimulatorActions extends Action {
 
 	private boolean addUes(int numUes) {
 		boolean flag = false;
-		
+		if(numUes == 0) {
+			report.report("Can't add 0 ues to ue simulator", Reporter.WARNING);
+			return true;
+		}
 		try {
 			report.report("Adding " + numUes + " UEs, release " + release + ", category " + category);
 			AmariSoftServer amariSoftServer = AmariSoftServer.getInstance();
@@ -224,6 +227,7 @@ public class UeSimulatorActions extends Action {
 			AmariSoftServer amariSoftServer = AmariSoftServer.getInstance();
 			if(amariSoftServer.getUeMap().size() == 0) {
 				report.report("There are no Ues to delete in list", Reporter.WARNING);
+				return;
 			}
 			switch (uesOptions) {
 			case AMOUNT:

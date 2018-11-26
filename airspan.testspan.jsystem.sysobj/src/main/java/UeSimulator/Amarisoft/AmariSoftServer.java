@@ -926,10 +926,6 @@ public class AmariSoftServer extends SystemObjectImpl{
 		boolean result = true;
 		int deletedAmount = 0;
 		int ues = ueMap.size();
-		if (ues == 0) {
-			report.report("There are no Ues to delete", Reporter.WARNING);
-			return true;
-		}
 		for(int i = 0; i<ues; i++) {
 			if (deletedAmount < amount) {
 				int lastUE = ueMap.size()-1;
@@ -954,10 +950,6 @@ public class AmariSoftServer extends SystemObjectImpl{
 	{
 		GeneralUtils.startLevel("deleting all UES in group: " + groupName + " from Amarisoft simulator.");
 		boolean result = true;
-		if (ueMap.size() == 0) {
-			report.report("There are no Ues to delete", Reporter.WARNING);
-			return true;
-		}
 		for(int i = 0; i< ueMap.size(); i++) {
 			ArrayList<String> groups = ueMap.get(i).groupName;
 			for(String group: groups) {

@@ -404,7 +404,7 @@ public class TPTBase extends TestspanTest {
 
 		for (int numberOfTrys = 0; numberOfTrys < 2; numberOfTrys++) {
 			try {
-				syncCommands = new ParallelCommandsThread(commandList, dut, null, null, 5);
+				syncCommands = new ParallelCommandsThread(commandList, dut, null, null, 5,0);
 				break;
 			} catch (Exception e) {
 				report.report("Cannot initialize streamers in ParallelCommandsThread Class, try number" + numberOfTrys);
@@ -647,7 +647,7 @@ public class TPTBase extends TestspanTest {
 	/**
 	 * stopping all UEs
 	 * 
-	 * @param ueNameListStc2
+	 * @param uesAllowedInTest
 	 * @param ueList2
 	 */
 	protected void disableUEsNotInTest(ArrayList<String> uesAllowedInTest, ArrayList<UE> ueList2) {
@@ -793,7 +793,6 @@ public class TPTBase extends TestspanTest {
 	 * @author Shahaf Shuhamy
 	 * @param ueList
 	 *            WARNING Synchronized Method for Sleep after Rebooting UEs
-	 * @param locationOfUeRebooted
 	 */
 	protected synchronized void rebootUEs(ArrayList<UE> ueList) {
 		try {
@@ -813,7 +812,6 @@ public class TPTBase extends TestspanTest {
 	 * @author Shahaf Shuhamy sample statistics according to port sample statistics
 	 *         according to stream checking for halt stream if halt stream -> check
 	 *         which one
-	 * @param startingTestTime
 	 * @return
 	 */
 	public void sampleResultsStatusOk() {
@@ -1555,7 +1553,6 @@ public class TPTBase extends TestspanTest {
 
 	/**
 	 * @author Moran Goldenberg
-	 * @param temp
 	 */
 	protected void printDLandULAverageTableAndCounters() {
 		if (DLULwd == null) {

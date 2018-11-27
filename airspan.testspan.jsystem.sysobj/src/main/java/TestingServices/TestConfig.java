@@ -38,10 +38,12 @@ public class TestConfig extends SystemObjectImpl {
 				e.printStackTrace();
 			}
 		}
-
 		return instance;
 	}
-	
+
+	//fhdfyuhjfdhjfhgfh
+
+
 	public String getLoggerUploadAllUrl() {
 		return loggerUploadAllUrl;
 	}

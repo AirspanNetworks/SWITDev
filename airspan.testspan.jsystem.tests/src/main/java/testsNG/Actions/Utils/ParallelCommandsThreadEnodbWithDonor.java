@@ -8,9 +8,9 @@ import EnodeB.EnodeBWithDonor;
 public class ParallelCommandsThreadEnodbWithDonor extends ParallelCommandsThreadEnodeBComponent{
 	private ParallelCommandsThreadEnodeBComponent donorSyncCommands;
 
-	public ParallelCommandsThreadEnodbWithDonor(List<String> enodebCmdSet, EnodeBWithDonor enbWithDonor, List<String> donorCmdSet, int responseTimeout) throws IOException {
-		super(enodebCmdSet, enbWithDonor, enbWithDonor.getXLPName(), responseTimeout);
-		donorSyncCommands = new ParallelCommandsThreadEnodeBComponent(donorCmdSet, enbWithDonor.getDonor(), enbWithDonor.getDonor().getXLPName(), responseTimeout);
+	public ParallelCommandsThreadEnodbWithDonor(List<String> enodebCmdSet, EnodeBWithDonor enbWithDonor, List<String> donorCmdSet, int responseTimeout, int waitBetweenCommands) throws IOException {
+		super(enodebCmdSet, enbWithDonor, enbWithDonor.getXLPName(), responseTimeout, waitBetweenCommands);
+		donorSyncCommands = new ParallelCommandsThreadEnodeBComponent(donorCmdSet, enbWithDonor.getDonor(), enbWithDonor.getDonor().getXLPName(), responseTimeout, waitBetweenCommands);
 	}
 
 	@Override

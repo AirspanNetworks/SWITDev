@@ -16,6 +16,7 @@ import Netspan.API.Lte.EventInfo;
 import Netspan.API.Software.RequestType;
 import Netspan.API.Software.SoftwareStatus;
 import TestingServices.TestConfig;
+import Utils.CommonConstants;
 import Utils.GeneralUtils;
 import Utils.Pair;
 import Utils.Triple;
@@ -241,12 +242,12 @@ public class SoftwareUtiles {
     public boolean isVersionUpdated(EnodeB enodeB, int logLevel) {
         String build = getCurrentBuild(enodeB).trim();
         //Get get version via SNMP or Netspan
-        String running = getVersion(enodeB.getRunningVersion(), netspanServer.getRunningVersionOfEnb(enodeB));
+        String running = getVersion(enodeB, CommonConstants.RUNNING_STRING);
         // If the response is valid checking if updated
         if (isBuildContainsTheUpdatedRunningVersion(enodeB, build, running)) {
             return true;
         }
-        String standby = getVersion(enodeB.getSecondaryVersion(), netspanServer.getStandByVersionOfEnb(enodeB));
+        String standby = getVersion(enodeB, CommonConstants.STANDBY_STRING);
         //If the running version wasn't updated. go to the standby bank, checks if it was updated there.
         if (build.contains(standby) || standby.contains(build)) {
             report.report("The Standby Bank contains target version: " + build + " on Enodeb: " + enodeB.getNetspanName(), logLevel);
@@ -264,7 +265,7 @@ public class SoftwareUtiles {
      *
      * @param versionViaSNMP    - version Via SNMP
      * @param versionViaNetspan - version Via Netspan
-     * @return - String - Version
+     * @return - String - Version, or ERROR_VALUE if fails
      */
     private String getVersion(String versionViaSNMP, String versionViaNetspan) {
         //Get details via SNMP
@@ -279,6 +280,43 @@ public class SoftwareUtiles {
     }
 
     /**
+     * This method get the Version via SNMP and if failed, via Netspan.
+     *
+     * @param enodeB          - enodeB
+     * @param bankVersionType - bank Version Type ("Running" or "Standby")
+     * @return - String - Version, or ERROR_VALUE if fails
+     */
+    private String getVersion(EnodeB enodeB, String bankVersionType) {
+        //Get details via SNMP
+        String version;
+        switch (bankVersionType) {
+            case CommonConstants.RUNNING_STRING:
+                version = enodeB.getRunningVersion().trim();
+                break;
+            case CommonConstants.STANDBY_STRING:
+                version = enodeB.getSecondaryVersion().trim();
+                break;
+            default:
+                version = String.valueOf(GeneralUtils.ERROR_VALUE);
+        }
+        //Checking response validation
+        if (!isValidVersionResponse(version)) {
+            //If can't get via SNMP - Get details via Netspan
+            report.report("Didn't get the correct version via SNMP, retry via Netspan.");
+            switch (bankVersionType) {
+                case CommonConstants.RUNNING_STRING:
+                    version = netspanServer.getRunningVersionOfEnb(enodeB);
+                    break;
+                case CommonConstants.STANDBY_STRING:
+                    version = netspanServer.getStandByVersionOfEnb(enodeB);
+                    break;
+            }
+        }
+        return version;
+    }
+
+
+    /**
      * swap Banks
      *
      * @param enodeB   - enodeB
@@ -287,7 +325,9 @@ public class SoftwareUtiles {
      * @return false if the action failed
      */
     private boolean swapBanks(EnodeB enodeB, int logLevel, String build) {
-        if (enodeB.swapBanksAndReboot()) {
+        report.report("Starting Fallback procedure via SNMP");
+        report.report("Switch Bank");
+    	if (enodeB.swapBanksAndReboot()) {
             /*
              * Heng - don't worry about the wait this is a safe switch to wait for reboot
              * the wait for all running itself will take 5 minutes so this wait will not affect runtime
@@ -297,7 +337,7 @@ public class SoftwareUtiles {
             enodeB.setUnexpectedReboot(0);
             if (enodeB.waitForAllRunningAndInService(EnodeB.WAIT_FOR_ALL_RUNNING_TIME)) {
                 //After swapping, again - Get details via SNMP or Netspan
-                String runningVersion = getVersion(enodeB.getRunningVersion(), netspanServer.getRunningVersionOfEnb(enodeB));
+                String runningVersion = getVersion(enodeB, CommonConstants.RUNNING_STRING);
                 if (isBuildContainsTheUpdatedRunningVersion(enodeB, build, runningVersion)) {
                     return true;
                 } else {
@@ -1492,7 +1532,7 @@ public class SoftwareUtiles {
                 && (System.currentTimeMillis() - softwareActivateStartTimeInMili <= (EnodeB.UPGRADE_TIMEOUT / 3)));
         for (EnodebSwStatus eNodebSwStaus : eNodebSwStausListTmp) {
             if (!eNodebSwStaus.isSwDownloadCompleted) {
-                report.report(eNodebSwStaus.eNodeB.getName() + ": Software Download Didn't End.", Reporter.WARNING);
+                report.report(eNodebSwStaus.eNodeB.getName() + ": Software Download Didn't End.", Reporter.FAIL);
             }
         }
         GeneralUtils.stopLevel();

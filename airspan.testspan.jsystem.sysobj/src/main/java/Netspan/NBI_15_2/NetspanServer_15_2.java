@@ -3452,13 +3452,13 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
         return false;
     }
 
-	@Override
-	public boolean cloneNeighborManagementProfile(EnodeB node, String cloneFromName,
-			NeighbourManagementParameters neighbourManagementParams) {
-		report.report("cloneNeighborManagementProfile via NBI_15_2 Failed : Try to use correct NBI version",
-				Reporter.WARNING);
-		return false;
-	}
+    @Override
+    public boolean cloneNeighborManagementProfile(EnodeB node, String cloneFromName,
+                                                  NeighbourManagementParameters neighbourManagementParams) {
+        report.report("cloneNeighborManagementProfile via NBI_15_2 Failed : Try to use correct NBI version",
+                Reporter.WARNING);
+        return false;
+    }
 
     @Override
     public String getNeighborManagmentProfile(String nodeName) {
@@ -4258,13 +4258,16 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
      * get Running Version Of Enb
      *
      * @param enodeB - enodeB
-     * @return - Running version
+     * @return - Running version or ERROR_VALUE if fails
      */
     public String getRunningVersionOfEnb(EnodeB enodeB) {
-        String runningVersion = getSoftwareStatus(enodeB).getRunningVersion();
-        if (runningVersion == null) {
-            report.report("The request to the Netspan Failed");
-            return "Response Error";
+        NodeSoftwareStatus softwareStatus = getSoftwareStatus(enodeB);
+        if (!isResponseValid(softwareStatus)) {
+            return String.valueOf(GeneralUtils.ERROR_VALUE);
+        }
+        String runningVersion = softwareStatus.getRunningVersion();
+        if (!isResponseValid(runningVersion)) {
+            return String.valueOf(GeneralUtils.ERROR_VALUE);
         } else return runningVersion;
     }
 
@@ -4272,22 +4275,38 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
      * get StandBy Version Of Enb
      *
      * @param enodeB - enodeB
-     * @return - Running version
+     * @return - Running version or ERROR_VALUE if fails
      */
     public String getStandByVersionOfEnb(EnodeB enodeB) {
-        String standByVersion = getSoftwareStatus(enodeB).getStandbyVersion();
-        if (standByVersion == null) {
-            report.report("The request to the Netspan Failed");
-            return "Response Error";
+        NodeSoftwareStatus softwareStatus = getSoftwareStatus(enodeB);
+        if (!isResponseValid(softwareStatus)) {
+            return String.valueOf(GeneralUtils.ERROR_VALUE);
+        }
+        String standByVersion = softwareStatus.getStandbyVersion();
+        if (!isResponseValid(standByVersion)) {
+            return String.valueOf(GeneralUtils.ERROR_VALUE);
         } else return standByVersion;
     }
 
+    /**
+     * Checks if response is Valid  (!= null)
+     *
+     * @param object - response
+     * @return - true if null
+     */
+    private boolean isResponseValid(Object object) {
+        if (object == null) {
+            report.report("The request to the Netspan Failed");
+            return false;
+        } else
+            return true;
+    }
 
     /**
      * get Software Status of requested EnB
      *
      * @param enodeB - enodeB
-     * @return - first Node SW Status
+     * @return - first Node SW Status, null if fails
      */
     private NodeSoftwareStatus getSoftwareStatus(EnodeB enodeB) {
         SoftwareStatusGetWs softwareStatusGetWs = getSoftwareStatusForEnb(enodeB);
@@ -4299,39 +4318,41 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
         NodeSoftwareStatus firstNodeSWStatus = firstNodeSWStatusResult.getSoftwareStatus().get(0);
         return firstNodeSWStatus;
     }
-	@Override
-	public String getImageType(String nodeName) {
-		report.report("getImageType method is not implemented for this netspan(15_2)!");
-		return null;
-	}
 
-	@Override
-	public int getMaxUeSupported(EnodeB enb) {
-		report.report("getMaxUeSupported method is not implemented for this netspan(15_2)!", Reporter.WARNING);
-		return 0;
-	}
 
-	@Override
-	public Pair<Integer, Integer> getUlDlTrafficValues(String nodeName) {
-		int ul = 0;
-		int dl = 0;
-		LteIpThroughputGetResult result = soapHelper_15_2.getStatusSoap()
-				.enbIpThroughputStatusGet(nodeName, credentialsStatus);
+    @Override
+    public String getImageType(String nodeName) {
+        report.report("getImageType method is not implemented for this netspan(15_2)!");
+        return null;
+    }
 
-		if(result.getErrorCode() != Netspan.NBI_15_2.Status.ErrorCodes.OK){
-			soapHelper_15_2.endStatusSoap();
-			return null;
-		}
-		List<LteIpThroughputCellWs> listOfCells = result.getCell();
+    @Override
+    public int getMaxUeSupported(EnodeB enb) {
+        report.report("getMaxUeSupported method is not implemented for this netspan(15_2)!", Reporter.WARNING);
+        return 0;
+    }
 
-		for(LteIpThroughputCellWs cellData:listOfCells){
-			List<LteIpThroughputQciWs> cellQciData = cellData.getQciData();
-			for (LteIpThroughputQciWs qciData : cellQciData) {
-				ul += qciData.getPdcpTrafficKbpsUl().getValue();
-				dl += qciData.getPdcpTrafficKbpsDl().getValue();
-			}
-		}
-		soapHelper_15_2.endStatusSoap();
-		return Pair.createPair(dl, ul);
-	}
+    @Override
+    public Pair<Integer, Integer> getUlDlTrafficValues(String nodeName) {
+        int ul = 0;
+        int dl = 0;
+        LteIpThroughputGetResult result = soapHelper_15_2.getStatusSoap()
+                .enbIpThroughputStatusGet(nodeName, credentialsStatus);
+
+        if (result.getErrorCode() != Netspan.NBI_15_2.Status.ErrorCodes.OK) {
+            soapHelper_15_2.endStatusSoap();
+            return null;
+        }
+        List<LteIpThroughputCellWs> listOfCells = result.getCell();
+
+        for (LteIpThroughputCellWs cellData : listOfCells) {
+            List<LteIpThroughputQciWs> cellQciData = cellData.getQciData();
+            for (LteIpThroughputQciWs qciData : cellQciData) {
+                ul += qciData.getPdcpTrafficKbpsUl().getValue();
+                dl += qciData.getPdcpTrafficKbpsDl().getValue();
+            }
+        }
+        soapHelper_15_2.endStatusSoap();
+        return Pair.createPair(dl, ul);
+    }
 }

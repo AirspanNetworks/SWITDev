@@ -22,6 +22,8 @@ import Utils.Pair;
 import Utils.Triple;
 import jsystem.framework.report.ListenerstManager;
 import jsystem.framework.report.Reporter;
+import org.apache.commons.lang3.StringUtils;
+import testsNG.Actions.Utils.StringTools;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -44,13 +46,13 @@ public class SoftwareUtiles {
     /**
      * the version that needs to be copied
      **/
-    private String FSMBuild = "";
-    private String FSMv4Build = "";
-    private String XLPBuild = "";
+    private String FSMBuild = StringUtils.EMPTY;
+    private String FSMv4Build = StringUtils.EMPTY;
+    private String XLPBuild = StringUtils.EMPTY;
     /**
-     * the source of the copy
+     * the default source of the copy
      **/
-    private File sourceServer = new File("\\FS4\\Projects\\Development\\Internal\\Builds\\");
+    private File sourceServer = new File(StringTools.getStringWithUnifiedFileSeperator("\\FS4\\Projects\\Development\\Internal\\Builds\\"));
     /**
      * the destination of the copy
      **/
@@ -327,7 +329,7 @@ public class SoftwareUtiles {
     private boolean swapBanks(EnodeB enodeB, int logLevel, String build) {
         report.report("Starting Fallback procedure via SNMP");
         report.report("Switch Bank");
-    	if (enodeB.swapBanksAndReboot()) {
+        if (enodeB.swapBanksAndReboot()) {
             /*
              * Heng - don't worry about the wait this is a safe switch to wait for reboot
              * the wait for all running itself will take 5 minutes so this wait will not affect runtime
@@ -451,14 +453,29 @@ public class SoftwareUtiles {
 
     }
 
+    /**
+     * set Source Server, also considering the difference between Linux and Windows.
+     *
+     * @param sourceServer - path of the version (user's input from Jenkins)
+     */
     public void setSourceServer(String sourceServer) {
-        this.sourceServer = new File(sourceServer);
 
+        sourceServer = sourceServer.replaceAll("\\\\", File.separator);
+        if (GeneralUtils.isLinux()) {
+            sourceServer = sourceServer.replace(
+                    StringTools.getStringFileSeperator(StringUtils.EMPTY, "fs4", "Project"),
+                    StringTools.getStringFileSeperator(StringUtils.EMPTY, "mnt", "builds"));
+        }
+        this.sourceServer = new File(sourceServer);
     }
 
+    /**
+     * Default path setter, if there is no path
+     *
+     * @param build - build
+     */
     public void setSourceServerNoPath(String build) {
-        this.sourceServer = new File(sourceServer.getPath() + makeRelease(build) + "\\" + build + "\\release\\");
-
+        this.sourceServer = new File(StringTools.getStringFileSeperator(sourceServer.getPath() + makeRelease(build), build, "release", StringUtils.EMPTY));
     }
 
     public void setReason(Pair<String, Integer> reason) {
@@ -1254,7 +1271,7 @@ public class SoftwareUtiles {
 
                 // when build not mention or not found, set the running version
                 // as version target.
-                if ((eNodeB instanceof AirUnity) && (relayBuildFileName == null || relayBuildFileName == "")) {
+                if ((eNodeB instanceof AirUnity) && (relayBuildFileName == null || relayBuildFileName.equals(StringUtils.EMPTY))) {
                     report.report("Relay build not mention or not found, setting running version as target version.",
                             Reporter.WARNING);
                     SoftwareStatus softwareStatus = netspanServer.getSoftwareStatus(eNodeB.getNetspanName(),
@@ -1263,18 +1280,18 @@ public class SoftwareUtiles {
                         relayBuildFileName = "airunity-" + softwareStatus.RunningVersion + ".pak";
                     }
                 }
-                String fsmBuild = "";
+                String fsmBuild = StringUtils.EMPTY;
                 if (fsmBuildFileName != null && !fsmBuildFileName.equals("")) {
                     fsmBuild = fsmBuildFileName.substring(fsmBuildFileName.indexOf(".") + 1);
                     fsmBuild = fsmBuild.substring(0, fsmBuild.indexOf("."));
                 }
-                String fsmv4Build = "";
+                String fsmv4Build = StringUtils.EMPTY;
                 if (fsmv4BuildFileName != null && !fsmv4BuildFileName.equals("")) {
                     fsmv4Build = fsmv4BuildFileName.substring(fsmv4BuildFileName.indexOf(".") + 1);
                     fsmv4Build = fsmv4Build.substring(0, fsmv4Build.indexOf("."));
                 }
 
-                String xlpBuild = "";
+                String xlpBuild = StringUtils.EMPTY;
                 if (xlpBuildFileName != null && !xlpBuildFileName.equals("")) {
                     xlpBuild = xlpBuildFileName.substring(xlpBuildFileName.indexOf(".") + 1);
                     xlpBuild = xlpBuild.substring(0, xlpBuild.indexOf("."));
@@ -1283,7 +1300,7 @@ public class SoftwareUtiles {
                 if (eNodeB instanceof AirUnity) {
                     relayBuild = getRelayTargetBuild(eNodeB, relayBuildFileName);
                 }
-                String buildFileName = "";
+                String buildFileName = StringUtils.EMPTY;
                 if (eNodeB.getArchitecture() == Architecture.FSM) {
                     buildFileName = fsmBuildFileName;
                     build = fsmBuild;
@@ -1296,7 +1313,7 @@ public class SoftwareUtiles {
                 }
 
                 build = build.replaceAll("_", ".");
-                if (buildFileName != "") {
+                if (buildFileName != null && !buildFileName.equals(StringUtils.EMPTY)) {
                     SoftwareStatus softwareStatus = netspanServer.getSoftwareStatus(eNodeB.getNetspanName(),
                             eNodeB.getImageType());
                     if (softwareStatus != null) {
@@ -1305,9 +1322,7 @@ public class SoftwareUtiles {
                             numberOfExpectedReboots++;
                         } else {
                             report.report("Running Version equals Target Version - No Need To Upgrade eNodeB Version.");
-
                         }
-
                     }
 
                     EnodeBUpgradeImage upgradeImage = new EnodeBUpgradeImage();

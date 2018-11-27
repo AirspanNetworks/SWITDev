@@ -642,4 +642,12 @@ public class GeneralUtils {
         }
         return builder.toString();
     }
+
+    /** is Linux OS
+     *
+     * @return - true if it's linux
+     */
+    public static boolean isLinux() {
+        return System.getProperty("os.name").toLowerCase().contains("linux");
+    }
 }

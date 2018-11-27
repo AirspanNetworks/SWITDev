@@ -41,9 +41,6 @@ public class TestConfig extends SystemObjectImpl {
 		return instance;
 	}
 
-	//fhdfyuhjfdhjfhgfh
-
-
 	public String getLoggerUploadAllUrl() {
 		return loggerUploadAllUrl;
 	}

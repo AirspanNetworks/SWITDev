@@ -1,6 +1,10 @@
 package Action.UeAction;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 
 import org.junit.Test;
@@ -14,6 +18,7 @@ import UE.UE;
 import UeSimulator.Amarisoft.AmariSoftServer;
 import Utils.GeneralUtils;
 import Utils.SysObjUtils;
+import Utils.Iperf.AmarisoftIPerfStream;
 import jsystem.framework.ParameterProperties;
 import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
@@ -231,10 +236,10 @@ public class UeSimulatorActions extends Action {
 			}
 			switch (uesOptions) {
 			case AMOUNT:
-				amariSoftServer.deleteUes(numUes);
+				res = amariSoftServer.deleteUes(numUes);
 				break;
 			case GROUPNAME:
-				amariSoftServer.deleteUes(groupName);
+				res = amariSoftServer.deleteUes(groupName);
 				break;
 			default:
 			}
@@ -249,6 +254,15 @@ public class UeSimulatorActions extends Action {
 		} else {
 			report.report("delete UEs Succeeded");
 		}
+		AmariSoftServer amariSoftServer;
+		try {
+			amariSoftServer = AmariSoftServer.getInstance();
+			Collections.sort(amariSoftServer.getUnusedUEs());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 	private void deleteUes(int amount) {

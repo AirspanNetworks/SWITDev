@@ -454,6 +454,46 @@ public class SoftwareUtiles {
     }
 
     /**
+     * set Dest Server (by softwareImage), also considering the difference between Linux and Windows.
+     *
+     * @param softwareImage - softwareImage
+     */
+    public void setDestServer(String softwareImage) {
+        EnodeBUpgradeImage enodeBUpgradeImage = netspanServer.getSoftwareImage(softwareImage);
+        EnodeBUpgradeServer enodeBUpgradeServer = netspanServer.getSoftwareServer(enodeBUpgradeImage.getUpgradeServerName());
+        switch (GeneralUtils.getOS()) {
+            case CommonConstants.WINDOWS_OS:
+                generateDestFilePath(enodeBUpgradeServer.getUpgradeServerProtocolType(), enodeBUpgradeServer.getUpgradeServerIp());
+                break;
+            case CommonConstants.LINUX_OS:
+                generateDestFilePath(enodeBUpgradeServer.getUpgradeServerProtocolType(), "mnt/asil-swit");
+                break;
+        }
+    }
+
+    /**
+     * generate Dest File Path depending on ServerProtocolType (SFTP or TFTP).
+     * The relative path can be adjusted to Linux and to Windows:
+     * Windows: can access the path via ipNumber
+     * Linux: The path should be mounted (in advance)
+     *
+     * @param serverProtocolType SFTP or TFTP
+     * @param relativeFolderPath - IP for windows (enodeBUpgradeServer.getUpgradeServerIp) or mounted path (in advance)
+     */
+    public void generateDestFilePath(ServerProtocolType serverProtocolType, String relativeFolderPath) {
+        switch (serverProtocolType) {
+            case SFTP: {
+                setDestServer(new File(StringTools.getStringWithUnifiedFileSeperator("\\" + relativeFolderPath + "\\sftp\\upload")));
+                break;
+            }
+            case TFTP: {
+                setDestServer(new File(StringTools.getStringWithUnifiedFileSeperator("\\" + relativeFolderPath + "\\tftp")));
+                break;
+            }
+        }
+    }
+
+    /**
      * set Source Server, also considering the difference between Linux and Windows.
      *
      * @param sourceServer - path of the version (user's input from Jenkins)
@@ -1237,18 +1277,7 @@ public class SoftwareUtiles {
             EnodeBUpgradeImage enodeBUpgradeImage = netspanServer.getSoftwareImage(softwareImage);
             EnodeBUpgradeServer enodeBUpgradeServer = netspanServer
                     .getSoftwareServer(enodeBUpgradeImage.getUpgradeServerName());
-
-            switch (enodeBUpgradeServer.getUpgradeServerProtocolType()) {
-                case SFTP:
-                    setDestServer(new File(File.separator + File.separator + enodeBUpgradeServer.getUpgradeServerIp()
-                            + File.separator + "sftp" + File.separator + "upload"));
-                    break;
-                default:
-                    setDestServer(new File(File.separator + File.separator + enodeBUpgradeServer.getUpgradeServerIp()
-                            + File.separator + "tftp"));
-                    break;
-            }
-
+            setDestServer(softwareImage);
             String buildsPath = System.getProperty("BuildMachineVerPath");
 
             if (buildsPath != null && buildsPath.startsWith("\\") && !buildsPath.startsWith("\\\\")) {

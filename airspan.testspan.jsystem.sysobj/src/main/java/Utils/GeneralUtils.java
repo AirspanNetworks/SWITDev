@@ -1,6 +1,3 @@
-/**
- *
- */
 package Utils;
 
 import java.io.BufferedWriter;
@@ -218,7 +215,6 @@ public class GeneralUtils {
     /**
      * stopping level with reporter
      *
-     * @param report
      * @author Shahaf Shuhamy
      */
     public static boolean stopLevel() {
@@ -235,7 +231,6 @@ public class GeneralUtils {
     /**
      * starting level with reporter and get message
      *
-     * @param report
      * @param message
      * @author Shahaf Shuhamy
      */
@@ -307,7 +302,6 @@ public class GeneralUtils {
     /**
      * gets Long number (currentTimeMillis)
      *
-     * @param rxRate
      * @author Moran Goldenberg
      * @prints the message with time stamp
      */
@@ -648,6 +642,16 @@ public class GeneralUtils {
      * @return - true if it's linux
      */
     public static boolean isLinux() {
-        return System.getProperty("os.name").toLowerCase().contains("linux");
+        return System.getProperty("os.name").toLowerCase().contains(CommonConstants.LINUX_OS);
+    }
+
+    /** get OS
+     *
+     * @return - Stirng - return CommonConstants.LINUX_OS if Linux, else return CommonConstants.WINDOWS_OS
+     */
+    public static String getOS() {
+        if (System.getProperty("os.name").toLowerCase().contains(CommonConstants.LINUX_OS)){
+            return CommonConstants.LINUX_OS;
+        }else return CommonConstants.WINDOWS_OS;
     }
 }

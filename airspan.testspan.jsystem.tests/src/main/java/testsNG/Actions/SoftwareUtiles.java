@@ -459,11 +459,10 @@ public class SoftwareUtiles {
      * @param sourceServer - path of the version (user's input from Jenkins)
      */
     public void setSourceServer(String sourceServer) {
-
-        sourceServer = sourceServer.replaceAll("\\\\", File.separator);
+        sourceServer = StringTools.getStringWithUnifiedFileSeperator(sourceServer);
         if (GeneralUtils.isLinux()) {
             sourceServer = sourceServer.replace(
-                    StringTools.getStringFileSeperator(StringUtils.EMPTY, "fs4", "Project"),
+                    StringTools.getStringFileSeperator(StringUtils.EMPTY, "fs4", "Projects"),
                     StringTools.getStringFileSeperator(StringUtils.EMPTY, "mnt", "builds"));
         }
         this.sourceServer = new File(sourceServer);

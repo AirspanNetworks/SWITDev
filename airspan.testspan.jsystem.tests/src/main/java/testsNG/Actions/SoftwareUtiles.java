@@ -461,9 +461,7 @@ public class SoftwareUtiles {
     public void setSourceServer(String sourceServer) {
         sourceServer = StringTools.getStringWithUnifiedFileSeperator(sourceServer);
         if (GeneralUtils.isLinux()) {
-            sourceServer = sourceServer.replace(
-                    StringTools.getStringFileSeperator(StringUtils.EMPTY, "fs4", "Projects"),
-                    StringTools.getStringFileSeperator(StringUtils.EMPTY, "mnt", "builds"));
+            sourceServer = sourceServer.replace("Projects", "builds");
         }
         this.sourceServer = new File(sourceServer);
     }

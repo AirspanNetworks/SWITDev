@@ -32,7 +32,7 @@ public class StringTools {
      * @return - new path
      */
     public static String getStringWithUnifiedFileSeperator(String path) {
-        String newPath = path.replaceAll("/", File.separator);
+        String newPath = path.replaceAll("/", Matcher.quoteReplacement(File.separator));
         newPath =  newPath.replaceAll("\\\\+", Matcher.quoteReplacement(File.separator));
         return newPath;
     }

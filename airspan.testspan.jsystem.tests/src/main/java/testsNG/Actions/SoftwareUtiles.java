@@ -22,6 +22,8 @@ import Utils.Pair;
 import Utils.Triple;
 import jsystem.framework.report.ListenerstManager;
 import jsystem.framework.report.Reporter;
+import org.apache.commons.lang3.StringUtils;
+import testsNG.Actions.Utils.StringTools;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -44,13 +46,13 @@ public class SoftwareUtiles {
     /**
      * the version that needs to be copied
      **/
-    private String FSMBuild = "";
-    private String FSMv4Build = "";
-    private String XLPBuild = "";
+    private String FSMBuild = StringUtils.EMPTY;
+    private String FSMv4Build = StringUtils.EMPTY;
+    private String XLPBuild = StringUtils.EMPTY;
     /**
-     * the source of the copy
+     * the default source of the copy
      **/
-    private File sourceServer = new File("\\FS4\\Projects\\Development\\Internal\\Builds\\");
+    private File sourceServer = new File(StringTools.getStringWithUnifiedFileSeperator("\\FS4\\Projects\\Development\\Internal\\Builds\\"));
     /**
      * the destination of the copy
      **/
@@ -327,7 +329,7 @@ public class SoftwareUtiles {
     private boolean swapBanks(EnodeB enodeB, int logLevel, String build) {
         report.report("Starting Fallback procedure via SNMP");
         report.report("Switch Bank");
-    	if (enodeB.swapBanksAndReboot()) {
+        if (enodeB.swapBanksAndReboot()) {
             /*
              * Heng - don't worry about the wait this is a safe switch to wait for reboot
              * the wait for all running itself will take 5 minutes so this wait will not affect runtime
@@ -451,14 +453,66 @@ public class SoftwareUtiles {
 
     }
 
-    public void setSourceServer(String sourceServer) {
-        this.sourceServer = new File(sourceServer);
-
+    /**
+     * set Dest Server (by softwareImage), also considering the difference between Linux and Windows.
+     *
+     * @param softwareImage - softwareImage
+     */
+    public void setDestServer(String softwareImage) {
+        EnodeBUpgradeImage enodeBUpgradeImage = netspanServer.getSoftwareImage(softwareImage);
+        EnodeBUpgradeServer enodeBUpgradeServer = netspanServer.getSoftwareServer(enodeBUpgradeImage.getUpgradeServerName());
+        switch (GeneralUtils.getOS()) {
+            case CommonConstants.WINDOWS_OS:
+                generateDestFilePath(enodeBUpgradeServer.getUpgradeServerProtocolType(), enodeBUpgradeServer.getUpgradeServerIp());
+                break;
+            case CommonConstants.LINUX_OS:
+                generateDestFilePath(enodeBUpgradeServer.getUpgradeServerProtocolType(), "mnt/asil-swit");
+                break;
+        }
     }
 
-    public void setSourceServerNoPath(String build) {
-        this.sourceServer = new File(sourceServer.getPath() + makeRelease(build) + "\\" + build + "\\release\\");
+    /**
+     * generate Dest File Path depending on ServerProtocolType (SFTP or TFTP).
+     * The relative path can be adjusted to Linux and to Windows:
+     * Windows: can access the path via ipNumber
+     * Linux: The path should be mounted (in advance)
+     *
+     * @param serverProtocolType SFTP or TFTP
+     * @param relativeFolderPath - IP for windows (enodeBUpgradeServer.getUpgradeServerIp) or mounted path (in advance)
+     */
+    public void generateDestFilePath(ServerProtocolType serverProtocolType, String relativeFolderPath) {
+        switch (serverProtocolType) {
+            case SFTP: {
+                setDestServer(new File(StringTools.getStringWithUnifiedFileSeperator("\\" + relativeFolderPath + "\\sftp\\upload")));
+                break;
+            }
+            case TFTP: {
+                setDestServer(new File(StringTools.getStringWithUnifiedFileSeperator("\\" + relativeFolderPath + "\\tftp")));
+                break;
+            }
+        }
+    }
 
+    /**
+     * set Source Server, also considering the difference between Linux and Windows.
+     *
+     * @param sourceServer - path of the version (user's input from Jenkins)
+     */
+    public void setSourceServer(String sourceServer) {
+        sourceServer = StringTools.getStringWithUnifiedFileSeperator(sourceServer);
+        if (GeneralUtils.isLinux()) {
+            sourceServer = sourceServer.replace("Projects", "builds");
+        }
+        this.sourceServer = new File(sourceServer);
+    }
+
+    /**
+     * Default path setter, if there is no path
+     *
+     * @param build - build
+     */
+    public void setSourceServerNoPath(String build) {
+        this.sourceServer = new File(StringTools.getStringFileSeperator(sourceServer.getPath() + makeRelease(build), build, "release", StringUtils.EMPTY));
     }
 
     public void setReason(Pair<String, Integer> reason) {
@@ -1223,18 +1277,7 @@ public class SoftwareUtiles {
             EnodeBUpgradeImage enodeBUpgradeImage = netspanServer.getSoftwareImage(softwareImage);
             EnodeBUpgradeServer enodeBUpgradeServer = netspanServer
                     .getSoftwareServer(enodeBUpgradeImage.getUpgradeServerName());
-
-            switch (enodeBUpgradeServer.getUpgradeServerProtocolType()) {
-                case SFTP:
-                    setDestServer(new File(File.separator + File.separator + enodeBUpgradeServer.getUpgradeServerIp()
-                            + File.separator + "sftp" + File.separator + "upload"));
-                    break;
-                default:
-                    setDestServer(new File(File.separator + File.separator + enodeBUpgradeServer.getUpgradeServerIp()
-                            + File.separator + "tftp"));
-                    break;
-            }
-
+            setDestServer(softwareImage);
             String buildsPath = System.getProperty("BuildMachineVerPath");
 
             if (buildsPath != null && buildsPath.startsWith("\\") && !buildsPath.startsWith("\\\\")) {
@@ -1254,7 +1297,7 @@ public class SoftwareUtiles {
 
                 // when build not mention or not found, set the running version
                 // as version target.
-                if ((eNodeB instanceof AirUnity) && (relayBuildFileName == null || relayBuildFileName == "")) {
+                if ((eNodeB instanceof AirUnity) && (relayBuildFileName == null || relayBuildFileName.equals(StringUtils.EMPTY))) {
                     report.report("Relay build not mention or not found, setting running version as target version.",
                             Reporter.WARNING);
                     SoftwareStatus softwareStatus = netspanServer.getSoftwareStatus(eNodeB.getNetspanName(),
@@ -1263,18 +1306,18 @@ public class SoftwareUtiles {
                         relayBuildFileName = "airunity-" + softwareStatus.RunningVersion + ".pak";
                     }
                 }
-                String fsmBuild = "";
+                String fsmBuild = StringUtils.EMPTY;
                 if (fsmBuildFileName != null && !fsmBuildFileName.equals("")) {
                     fsmBuild = fsmBuildFileName.substring(fsmBuildFileName.indexOf(".") + 1);
                     fsmBuild = fsmBuild.substring(0, fsmBuild.indexOf("."));
                 }
-                String fsmv4Build = "";
+                String fsmv4Build = StringUtils.EMPTY;
                 if (fsmv4BuildFileName != null && !fsmv4BuildFileName.equals("")) {
                     fsmv4Build = fsmv4BuildFileName.substring(fsmv4BuildFileName.indexOf(".") + 1);
                     fsmv4Build = fsmv4Build.substring(0, fsmv4Build.indexOf("."));
                 }
 
-                String xlpBuild = "";
+                String xlpBuild = StringUtils.EMPTY;
                 if (xlpBuildFileName != null && !xlpBuildFileName.equals("")) {
                     xlpBuild = xlpBuildFileName.substring(xlpBuildFileName.indexOf(".") + 1);
                     xlpBuild = xlpBuild.substring(0, xlpBuild.indexOf("."));
@@ -1283,7 +1326,7 @@ public class SoftwareUtiles {
                 if (eNodeB instanceof AirUnity) {
                     relayBuild = getRelayTargetBuild(eNodeB, relayBuildFileName);
                 }
-                String buildFileName = "";
+                String buildFileName = StringUtils.EMPTY;
                 if (eNodeB.getArchitecture() == Architecture.FSM) {
                     buildFileName = fsmBuildFileName;
                     build = fsmBuild;
@@ -1296,7 +1339,7 @@ public class SoftwareUtiles {
                 }
 
                 build = build.replaceAll("_", ".");
-                if (buildFileName != "") {
+                if (buildFileName != null && !buildFileName.equals(StringUtils.EMPTY)) {
                     SoftwareStatus softwareStatus = netspanServer.getSoftwareStatus(eNodeB.getNetspanName(),
                             eNodeB.getImageType());
                     if (softwareStatus != null) {
@@ -1305,9 +1348,7 @@ public class SoftwareUtiles {
                             numberOfExpectedReboots++;
                         } else {
                             report.report("Running Version equals Target Version - No Need To Upgrade eNodeB Version.");
-
                         }
-
                     }
 
                     EnodeBUpgradeImage upgradeImage = new EnodeBUpgradeImage();

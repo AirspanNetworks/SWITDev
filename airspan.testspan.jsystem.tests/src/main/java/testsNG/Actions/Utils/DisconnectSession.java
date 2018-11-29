@@ -11,14 +11,14 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import testsNG.Actions.Utils.CloseAllIPerfSessions;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.apache.commons.lang3.StringUtils;
 
 public class DisconnectSession {
-	static String machineName = "";
+	static String machineName = StringUtils.EMPTY;
 	static String userIdPrefix = " - admin";
 	static String lastUpdateDate = "10/04/2018";
 	static String version = "1.1.1";
@@ -34,7 +34,7 @@ public class DisconnectSession {
 	private static void init() {
 		OkHttpClient client = new OkHttpClient.Builder().connectTimeout(500, TimeUnit.SECONDS)
 				.readTimeout(500, TimeUnit.SECONDS).writeTimeout(500, TimeUnit.SECONDS).build();
-		
+
 		try {
 			machineName = InetAddress.getLocalHost().getHostName();
 			System.out.println("Machine Name: " + machineName);
@@ -50,8 +50,8 @@ public class DisconnectSession {
 	public static void main(String[] args) {
 		scriptIntro();
 		init();
-		
-		final String filePath = "airspan.testspan.jsystem.tests/target/classes/sut/"  + args[0];// Relies that the execution run from the main project folder. 
+
+		final String filePath = "airspan.testspan.jsystem.tests/target/classes/sut/"  + args[0];// Relies that the execution run from the main project folder.
 
 		System.out.println("path to files "+filePath);
 		String serverIP = parseSUT(filePath);
@@ -64,10 +64,10 @@ public class DisconnectSession {
 				disconnectSession(server);
 			}
 		}
-		
+
 		CloseAllIPerfSessions closeAllIPerfSessions = new CloseAllIPerfSessions();
 		closeAllIPerfSessions.closeAllIPerfSessions(filePath);
-		
+
 		System.out.println("********** End DisconnectSession Script **********");
 	}
 
@@ -177,9 +177,9 @@ public class DisconnectSession {
 		boolean result = false;
 		String [] sessionNameUserIdSplit = cleanStr.split("--");
 		printStringArray(sessionNameUserIdSplit);
-		
+
 		for(String sessionName : sessionNameUserIdSplit){
-			String [] sessionNameJenkinsName = sessionName.split(" - ");	
+			String [] sessionNameJenkinsName = sessionName.split(" - ");
 			for(String sessionNameComponent : sessionNameJenkinsName){
 				if(sessionNameComponent.equals(jenkinsSlaveName2)){
 					result = true;
@@ -188,7 +188,7 @@ public class DisconnectSession {
 		}
 		return result;
 	}
-	
+
 	private static void printStringArray(String [] array){
 		System.out.println("array split : ");
 		for(String compenent : array){

@@ -514,7 +514,6 @@ public class TestspanTest extends SystemTestCase4 {
 
 	/**
 	 * 
-	 * @param cpuCommands
 	 * @author sshahaf
 	 */
 	private void printMemoryTables(ArrayList<CommandMemoryCPU> cpuCommands2) {
@@ -655,7 +654,7 @@ public class TestspanTest extends SystemTestCase4 {
 		filesArr = filesWithPaths.toArray(filesArr);
 		try {
 			GeneralUtils.printToConsole("getting all files from node with scp client");
-			if (!scpClientFromNode.getFiles(System.getProperty("user.dir") + "\\" + enb.getName() + testExtention,
+			if (!scpClientFromNode.getFiles(System.getProperty("user.dir") + File.separator + enb.getName() + testExtention,
 					filesArr)) {
 				report.report("Could not get file with the path : /bs/db/");
 				return false;

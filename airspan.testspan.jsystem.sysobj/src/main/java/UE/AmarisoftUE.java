@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import UeSimulator.Amarisoft.AmariSoftServer;
 import Utils.GeneralUtils;
 
-public class AmarisoftUE extends UE{
+public class AmarisoftUE extends UE implements Comparable{
 
 	public int ueId;
 	public ArrayList<String> groupName;
@@ -92,5 +92,11 @@ public class AmarisoftUE extends UE{
 
 	public boolean rrcReestablishment(){
 		return server.RRC_Reestablishment(ueId);
+	}
+
+	@Override
+	public int compareTo(Object o) {
+		// TODO Auto-generated method stub
+		return ueId - ((AmarisoftUE)o).ueId;
 	}
 }

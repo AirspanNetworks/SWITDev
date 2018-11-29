@@ -1,6 +1,10 @@
 package Action.UeAction;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 
 import org.junit.Test;
@@ -14,6 +18,7 @@ import UE.UE;
 import UeSimulator.Amarisoft.AmariSoftServer;
 import Utils.GeneralUtils;
 import Utils.SysObjUtils;
+import Utils.Iperf.AmarisoftIPerfStream;
 import jsystem.framework.ParameterProperties;
 import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
@@ -185,7 +190,10 @@ public class UeSimulatorActions extends Action {
 
 	private boolean addUes(int numUes) {
 		boolean flag = false;
-		
+		if(numUes == 0) {
+			report.report("Can't add 0 ues to ue simulator", Reporter.WARNING);
+			return true;
+		}
 		try {
 			report.report("Adding " + numUes + " UEs, release " + release + ", category " + category);
 			AmariSoftServer amariSoftServer = AmariSoftServer.getInstance();
@@ -220,15 +228,18 @@ public class UeSimulatorActions extends Action {
 	@TestProperties(name = "delete UEs in UE Simulator", returnParam = "LastStatus", paramsInclude = {"UesOptions", "NumUes", "GroupName"})
 	public void deleteUes() {
 		boolean res = true;
-
 		try {
 			AmariSoftServer amariSoftServer = AmariSoftServer.getInstance();
+			if(amariSoftServer.getUeMap().size() == 0) {
+				report.report("There are no Ues to delete in list", Reporter.WARNING);
+				return;
+			}
 			switch (uesOptions) {
 			case AMOUNT:
-				amariSoftServer.deleteUes(numUes);
+				res = amariSoftServer.deleteUes(numUes);
 				break;
 			case GROUPNAME:
-				amariSoftServer.deleteUes(groupName);
+				res = amariSoftServer.deleteUes(groupName);
 				break;
 			default:
 			}
@@ -243,6 +254,15 @@ public class UeSimulatorActions extends Action {
 		} else {
 			report.report("delete UEs Succeeded");
 		}
+		AmariSoftServer amariSoftServer;
+		try {
+			amariSoftServer = AmariSoftServer.getInstance();
+			Collections.sort(amariSoftServer.getUnusedUEs());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 	private void deleteUes(int amount) {
@@ -336,7 +356,7 @@ public class UeSimulatorActions extends Action {
 		try {
 			AmariSoftServer amarisoft = AmariSoftServer.getInstance();
 			if (amarisoft.getUeMap().size() == 0) {
-				report.report("There are no ues to start - ue list is empty");
+				report.report("There are no ues to start - ue list is empty", Reporter.WARNING);
 				return;
 			}
 		} catch (Exception e1) {
@@ -395,7 +415,7 @@ public class UeSimulatorActions extends Action {
 				}
 			}
 			if (!atlistOneUe)
-				report.report("There are no ues to start on group " + groupName, Reporter.WARNING);
+				report.report("no UEs started from group " + groupName, Reporter.WARNING);
 			GeneralUtils.stopLevel();
 		} catch (Exception e) {
 			report.report(e.getMessage());
@@ -446,7 +466,7 @@ public class UeSimulatorActions extends Action {
 		try {
 			AmariSoftServer amarisoft = AmariSoftServer.getInstance();
 			if (amarisoft.getUeMap().size() == 0) {
-				report.report("There are no ues to stop - ue list is empty");
+				report.report("There are no ues to stop - ue list is empty", Reporter.WARNING);
 				return;
 			}
 		} catch (Exception e1) {

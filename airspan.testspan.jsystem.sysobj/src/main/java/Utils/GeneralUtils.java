@@ -637,7 +637,8 @@ public class GeneralUtils {
         return builder.toString();
     }
 
-    /** is Linux OS
+    /**
+     * is Linux OS
      *
      * @return - true if it's linux
      */
@@ -645,13 +646,44 @@ public class GeneralUtils {
         return System.getProperty("os.name").toLowerCase().contains(CommonConstants.LINUX_OS);
     }
 
-    /** get OS
+    /**
+     * get OS
      *
      * @return - Stirng - return CommonConstants.LINUX_OS if Linux, else return CommonConstants.WINDOWS_OS
      */
     public static String getOS() {
-        if (System.getProperty("os.name").toLowerCase().contains(CommonConstants.LINUX_OS)){
+        if (System.getProperty("os.name").toLowerCase().contains(CommonConstants.LINUX_OS)) {
             return CommonConstants.LINUX_OS;
-        }else return CommonConstants.WINDOWS_OS;
+        } else return CommonConstants.WINDOWS_OS;
+    }
+
+    /**
+     * Try to parse String to Int
+     *
+     * @param userInput - userInput
+     * @return true is succeeded
+     */
+    private static  boolean tryParseInt(String userInput) {
+        try {
+            Integer.parseInt(userInput);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Converting the user's input String to Int, if typed wrong value, takes the default value.
+     *
+     * @param userInput    - user Input
+     * @param defaultValue - defaultValue
+     * @return - Integer
+     */
+    public static Integer parseInt(String userInput, Integer defaultValue) {
+        if (tryParseInt(userInput)) {
+            return Integer.parseInt(userInput);
+        } else {
+            return defaultValue;
+        }
     }
 }

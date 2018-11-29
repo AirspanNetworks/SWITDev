@@ -111,8 +111,8 @@ public class Enodeb extends EnodebAction {
     private Integer triesToPing = 0;
     private String debugCommands = "ue show rate";
     private String parallelCommands = "";
-    private String responseTimeout;
-    private String waitBetweenCommands;
+    private String responseTimeout = "10";
+    private String waitBetweenCommands = "0";
     private EnbStates serviceState = EnbStates.IN_SERVICE;
     private TargetShell targetShell = TargetShell.CLI;
     private String valueToSet = "";
@@ -720,7 +720,7 @@ public class Enodeb extends EnodebAction {
 
     /**
      * Start Parallel Commands
-     *
+     * <p>
      * DUT - Name of the DUTs from the SUT
      * ParallelCommands - Commands
      * responseTimeout - response Timeout interval in Seconds
@@ -734,7 +734,10 @@ public class Enodeb extends EnodebAction {
         List<String> commandList = GeneralUtils.convertStringToArrayList(this.parallelCommands, ";");
         boolean flag = true;
         try {
-            startingParallelCommands(this.dut, commandList, Integer.valueOf(responseTimeout), Integer.valueOf(waitBetweenCommands));
+
+            startingParallelCommands(this.dut, commandList,
+                    GeneralUtils.parseInt(responseTimeout, 10),
+                    GeneralUtils.parseInt(waitBetweenCommands, 0));
         } catch (IOException e) {
             e.printStackTrace();
             report.report("Start parallel commands failed due to: " + e.getMessage(), Reporter.FAIL);
@@ -750,7 +753,6 @@ public class Enodeb extends EnodebAction {
     public void stopParallelCommands() {
         report.report("Stopping parallel commands");
         boolean flag = stoppingParallelCommands();
-
         if (flag) {
             report.report("Stop parallel commands done");
         } else {

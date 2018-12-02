@@ -53,7 +53,7 @@ public class P0 extends TestspanTest {
 	private static final float PASS_LEVEL = 0.98f;
 
 	public long maxduration = LONG_TEST_DURATION;
-	private Neighbors neighbors = Neighbors.getInstance();
+	private Neighbors neighbors;
 	private Traffic traffic;
 	private PeripheralsConfig peripheralsConfig;
 	private AttenuatorSet attenuatorSetUnderTest;
@@ -113,6 +113,7 @@ public class P0 extends TestspanTest {
 		enbInTest = new ArrayList<>();
 		enbInTest.add(dut1);
 		enbInTest.add(dut2);
+		neighbors = Neighbors.getInstance();
 		super.init();
 		
 		GeneralUtils.startLevel("preparing environment to test");

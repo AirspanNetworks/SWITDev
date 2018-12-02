@@ -44,16 +44,19 @@ public class SWUpgrade extends TestspanTest {
 
     private String build;
     private ArrayList<EnodeB> duts;
-    private TestConfig tc = TestConfig.getInstace();
+    private TestConfig tc;
     private String buildM;
     private String pathBySut;
-    private SoftwareUtiles softwareUtiles = SoftwareUtiles.getInstance();
+    private SoftwareUtiles softwareUtiles;
     private EnodeBUpgradeServer enbUpgrade;
-    private EnodeBConfig enbConfig = EnodeBConfig.getInstance();
+    private EnodeBConfig enbConfig;
 
     @SuppressWarnings("unchecked")
 	@Override
     public void init() throws Exception {
+    	tc = TestConfig.getInstace();
+    	softwareUtiles = SoftwareUtiles.getInstance();
+    	enbConfig = EnodeBConfig.getInstance();
         enbInTest = (ArrayList<EnodeB>) duts.clone();
         super.init();
 

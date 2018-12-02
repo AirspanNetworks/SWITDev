@@ -32,8 +32,8 @@ public class P0 extends TestspanTest {
 	 public EnodeB dut;
 	 private String buildPath;
 	 private EnodeBUpgradeServer enbUpgrade;
-	 private TestConfig tc = TestConfig.getInstace();
-	 EnodeBConfig config = EnodeBConfig.getInstance();
+	 private TestConfig tc;
+	 EnodeBConfig config;
 	 SoftwareUtiles softwareUtiles;
 	 String buildName = null;
 	 String imageName = null;
@@ -42,6 +42,8 @@ public class P0 extends TestspanTest {
 
 	@Override
 	public void init() throws Exception {
+		config = EnodeBConfig.getInstance();
+		tc = TestConfig.getInstace();
 		enbInTest = new ArrayList<>();
 		enbInTest.add(dut);
 		super.init();

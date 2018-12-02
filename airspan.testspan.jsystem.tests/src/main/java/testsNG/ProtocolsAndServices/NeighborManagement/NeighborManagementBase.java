@@ -30,7 +30,7 @@ import testsNG.Actions.EnodeBConfig;
 import testsNG.Actions.Neighbors;
 
 public class NeighborManagementBase extends TestspanTest{
-	protected Neighbors neighbor = Neighbors.getInstance();
+	protected Neighbors neighbor;
 	public int MAXIMUM_ALLOWED_NEIGHBORS = 256;
 	public EnodeB DUT1;
 	public EnodeB DUT2;
@@ -52,6 +52,7 @@ public class NeighborManagementBase extends TestspanTest{
 	@SuppressWarnings("unchecked")
 	@Override
 	public void init() throws Exception {
+		neighbor = Neighbors.getInstance();
 		enbInTest = new ArrayList<EnodeB>();
 		enbInTest.add(DUT1);
 		super.init();

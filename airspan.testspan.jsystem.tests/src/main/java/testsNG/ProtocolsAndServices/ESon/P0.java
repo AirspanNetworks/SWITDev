@@ -43,7 +43,7 @@ public class P0 extends TestspanTest {
 	public ArrayList<UE> ues = null;
 	public ArrayList<UE> dynamicUEs = null;
 	private EnodeBConfig enbConfig;
-	private AlarmsAndEvents alarms = AlarmsAndEvents.getInstance();
+	private AlarmsAndEvents alarms;
 	private EsonServer eSonSession;
 	private String lteV6FileName = "lte-net.cfg";
 	private String snmpV6FileName = "snmpd.conf";
@@ -80,6 +80,7 @@ public class P0 extends TestspanTest {
 		super.init();
 		trafficGen = Traffic.getInstance(SetupUtils.getInstance().getAllUEs());
 		enbConfig = EnodeBConfig.getInstance();
+		alarms = AlarmsAndEvents.getInstance();
 		neighborManager = Neighbors.getInstance();
 		peripheralsConfig = PeripheralsConfig.getInstance();
 		attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(attenuatorSetName);

@@ -49,7 +49,7 @@ public class QosBased extends TestspanTest {
 	private UE staticUe;
 	public HashMap<String, Integer> passCriteria = new HashMap<>();
 	public HashMap<String, Integer> otherCounters = new HashMap<>();
-	private EnodeBConfig enodebConfig = EnodeBConfig.getInstance();
+	private EnodeBConfig enodebConfig;
 	
 	@Override
 	public void init() throws Exception {

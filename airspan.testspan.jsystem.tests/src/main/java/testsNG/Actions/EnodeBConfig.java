@@ -55,7 +55,7 @@ import jsystem.framework.report.Reporter;
 public class EnodeBConfig {
 
 	private static EnodeBConfig instance;
-	private static NetspanServer netspanServer = null;
+	private static NetspanServer netspanServer;
 	public static Reporter report = ListenerstManager.getInstance();
 	public Hashtable<String, EnbProfiles> clonedProfiles;
 	private static PeripheralsConfig peripheralsConfig = PeripheralsConfig.getInstance();

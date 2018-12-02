@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import Utils.CommonConstants;
 import org.junit.Test;
 
 import Attenuators.AttenuatorSet;
@@ -57,7 +58,7 @@ public class QosBased extends TestspanTest {
 		enbInTest.add(dut1);
 		enbInTest.add(dut2);
 		super.init();
-		attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet("rudat_set");
+		attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(CommonConstants.ATTENUATOR_SET_NAME);
 		enodeBConfig = EnodeBConfig.getInstance();
 		traffic = Traffic.getInstance(SetupUtils.getInstance().getAllUEs());
 		neighbors = Neighbors.getInstance();

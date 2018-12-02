@@ -7,14 +7,12 @@ import Utils.GeneralUtils;
 
 public class CommandWatchUeLinkStatusVolte extends Command{
 	private EnodeB dut;
-	private int numUEs;
 	private boolean flagActive;
 	private String rntiToCheck;
 	
-	public CommandWatchUeLinkStatusVolte(EnodeB enb,int numOfUes, String rnti) {
+	public CommandWatchUeLinkStatusVolte(EnodeB enb, String rnti) {
 		dut = enb;
 		flagActive = true;
-		numUEs = numOfUes;
 		rntiToCheck = rnti;
 	}
 

@@ -3,6 +3,8 @@ package testsNG.General;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import Utils.CommonConstants;
 import org.junit.Test;
 
 import Attenuators.AttenuatorSet;
@@ -46,7 +48,6 @@ public class UeRelated extends TestspanTest {
 	short numberOfRecoveryTrys = 0;
 	private EnodeB dut;
 	private ArrayList<EnodeB> dnuts;
-	private String attenuatorSetName = "rudat_set";
 	Traffic traffic;
 	ParallelCommandsThread commandsThread = null;
 
@@ -95,7 +96,7 @@ public class UeRelated extends TestspanTest {
 		
 		startUEs(dut);
 
-		AttenuatorSet attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(attenuatorSetName);
+		AttenuatorSet attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(CommonConstants.ATTENUATOR_SET_NAME);
 		GeneralUtils.startLevel("set the attenuators default value : " + attenuatorSetUnderTest.getDefaultValueAttenuation()
 				+ " [dB]\n");
 		peripheralsConfig.setAttenuatorSetValue(attenuatorSetUnderTest,

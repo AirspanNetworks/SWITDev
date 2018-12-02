@@ -2,6 +2,7 @@ package Action.EnodebAction;
 
 import java.util.ArrayList;
 
+import Utils.CommonConstants;
 import org.junit.Test;
 
 import Attenuators.AttenuatorSet;
@@ -19,7 +20,7 @@ public class SON extends EnodebAction {
 	private EnodeB dut2;
 	private Neighbors neighbors;
 	private AttenuatorSet attenuatorSetUnderTest;
-	private String attenuatorSetName = "rudat_set";
+	private String attenuatorSetName = CommonConstants.ATTENUATOR_SET_NAME;
 	private Integer attenuatrStartValue;
 	private Integer attenuatrStopValue;
 	private PeripheralsConfig peripheralsConfig;
@@ -151,7 +152,7 @@ public class SON extends EnodebAction {
 	
 	@ParameterProperties(description = "Attenuator to use (leave empty for SUT default)")
 	public void setAttenuatorSetName(String attenuatorSetName) {
-		this.attenuatorSetName =attenuatorSetName;
+		this.attenuatorSetName = attenuatorSetName;
 	}
 	
 	@ParameterProperties(description = "Attenuator start value (default max attenuator value)")

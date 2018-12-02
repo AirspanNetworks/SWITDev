@@ -15,9 +15,7 @@ public class CommandWatchDynamicUEs extends Command {
 	private ArrayList<EnodeB> nodesList = new ArrayList<EnodeB>();
 	private ArrayList<UE> allUEsInTest = new ArrayList<UE>();
 	private ArrayList<String> headLines = new ArrayList<String>();
-	private ArrayList<String> dataLines;
 	private ArrayList<String> rsrpHeadLines = new ArrayList<String>();
-	private ArrayList<String> rsrpDataLines;
 	private StreamList tablePrinter = new StreamList();
 	private StreamList rsrpTablePrinter = new StreamList();
 	private int sourcePci;
@@ -65,7 +63,7 @@ public class CommandWatchDynamicUEs extends Command {
 		}
 
 		// add time stamp for this sample
-		dataLines = new ArrayList<String>();
+		ArrayList<String> dataLines = new ArrayList<>();
 		dataLines.add(String.valueOf(UEsFromEPCCommand));
 
 		double precentOfDynamicUEs = (((double) UEsFromEPCCommand) / ((double) allUEsInTest.size())) * 100.0;
@@ -78,6 +76,7 @@ public class CommandWatchDynamicUEs extends Command {
 
 	private void addRsrpData() {
 		String timeStr = GeneralUtils.timeFormat(System.currentTimeMillis());
+		ArrayList<String> rsrpDataLines = new ArrayList<String>();
 		int rsrp1, rsrp2, pci, i = 0;
 		sqnCellMeasReport meas;
 		for (DMtool dm : dmToolList) {
@@ -85,7 +84,6 @@ public class CommandWatchDynamicUEs extends Command {
 			rsrp2 = 0;
 			pci = -1;
 			i++;
-			rsrpDataLines = new ArrayList<String>();
 			rsrpDataLines.add(dm.getUeIP());
 			try {
 				meas = dm.getMeas();

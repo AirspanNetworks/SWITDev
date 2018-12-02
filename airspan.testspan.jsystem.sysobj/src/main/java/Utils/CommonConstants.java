@@ -15,4 +15,8 @@ public class CommonConstants {
     //EnodeB
     public static final String RUNNING_STRING = "Running";
     public static final String STANDBY_STRING = "Standby";
+
+    //Attenuator
+    public static final String ATTENUATOR_SET_NAME = "rudat_set";
+
 }

@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import Utils.*;
 import org.junit.Test;
 import Attenuators.AttenuatorSet;
 import EnodeB.AirVelocity;
@@ -13,10 +15,6 @@ import Netspan.API.Enums.EnbStates;
 import Netspan.API.Enums.PrimaryClockSourceEnum;
 import Netspan.Profiles.EnodeBAdvancedParameters;
 import Netspan.Profiles.SyncParameters;
-import Utils.GeneralUtils;
-import Utils.ScpClient;
-import Utils.StreamList;
-import Utils.SysObjUtils;
 import Utils.PcapUtils.PcapParams;
 import Utils.PcapUtils.PcapParser;
 import io.pkts.PacketHandler;
@@ -52,7 +50,6 @@ public class NLM extends TestspanTest {
 	private final String localFileLocation = System.getProperty("user.dir");
 	private EnodeBConfig enbConfig;
 	private AttenuatorSet HO_attenuatorSetUnderTest;
-	private String HO_attenuatorSetName = "rudat_set";
 	private AttenuatorSet clksource_attenuatorSetUnderTest;
 	private String clksource_attenuatorSetName = "rudat_set2";
 	private int HO_attenuatorMin;
@@ -74,7 +71,7 @@ public class NLM extends TestspanTest {
 		scpCli = new ScpClient(dut.getIpAddress(), dut.getUsername(), dut.getPassword());
 		
 		try {
-			HO_attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(HO_attenuatorSetName);
+			HO_attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(CommonConstants.ATTENUATOR_SET_NAME);
 			HO_attenuatorMin = HO_attenuatorSetUnderTest.getMinAttenuation();
 			HO_attenuatorMax = HO_attenuatorSetUnderTest.getMaxAttenuation();
 		} catch (Exception e) {

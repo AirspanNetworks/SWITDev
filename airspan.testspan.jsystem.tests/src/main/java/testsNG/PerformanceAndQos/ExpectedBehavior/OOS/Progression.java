@@ -1,35 +1,24 @@
 package testsNG.PerformanceAndQos.ExpectedBehavior.OOS;
 
 import java.util.ArrayList;
-import java.util.List;
 
+import Utils.*;
 import org.junit.Test;
 
 import Attenuators.AttenuatorSet;
 import DMTool.DMtool;
 import DMTool.sqnCellMeasReport;
 import EnodeB.EnodeB;
-import Netspan.EnbProfiles;
-import Netspan.API.Enums.HandoverType;
-import Netspan.API.Enums.HoControlStateTypes;
-import Netspan.API.Enums.X2ControlStateTypes;
-import Netspan.Profiles.SonParameters;
 import UE.UE;
-import Utils.GeneralUtils;
 import Utils.GeneralUtils.CellIndex;
-import Utils.Pair;
-import Utils.SetupUtils;
-import Utils.SysObjUtils;
 import jsystem.framework.ParameterProperties;
 import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
 import testsNG.TestspanTest;
 import testsNG.Actions.EnodeBConfig;
-import testsNG.Actions.Neighbors;
 import testsNG.Actions.PeripheralsConfig;
 
 public class Progression extends TestspanTest{
-	private static final int PCI_COLLISION_DETECTION_TIMER = 2 * 60 * 1000;
 	private EnodeB dut;
 	private EnodeB neighbor;
 	private EnodeBConfig enodeBConfig;
@@ -53,7 +42,7 @@ public class Progression extends TestspanTest{
 				enb.setServiceState(GeneralUtils.CellIndex.ENB, 0);
 			}
 		}
-		AttenuatorSet attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet("rudat_set");
+		AttenuatorSet attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(CommonConstants.ATTENUATOR_SET_NAME);
 		report.report("set the attenuators default value : 0 [dB]\n");
 		PeripheralsConfig.getInstance().setAttenuatorSetValue(attenuatorSetUnderTest, 0);
 		initDmToolAndcheckUEsConnection(dut);

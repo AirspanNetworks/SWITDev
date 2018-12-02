@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import Utils.CommonConstants;
 import org.junit.Test;
 import org.snmp4j.smi.Variable;
 
@@ -53,7 +54,6 @@ public class P0 extends TestspanTest{
 	private EnodeBConfig enodeBConfig;
 	private ArrayList<EnodeB> virtualNeighborsList = new ArrayList<EnodeB>();
 	private ArrayList<EnodeB> allNeighborsList; 
-	private String attenuatorSetName = "rudat_set";
 	private AttenuatorSet attenuatorSetUnderTest = null;
 	private PeripheralsConfig peripheralsConfig;
 	private int attenuatorStepTime = 2000;
@@ -106,7 +106,7 @@ public class P0 extends TestspanTest{
 		enodeBConfig = EnodeBConfig.getInstance();
 		allNeighborsList = new ArrayList<EnodeB>();
 		if(attenuatorSetUnderTest==null){
-			attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(attenuatorSetName);
+			attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(CommonConstants.ATTENUATOR_SET_NAME);
 		}
 		attenuatorRespond = true;
 		checkAttenuatorConnection();

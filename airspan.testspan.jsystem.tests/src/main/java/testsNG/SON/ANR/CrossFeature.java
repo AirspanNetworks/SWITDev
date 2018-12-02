@@ -13,6 +13,7 @@ import EnodeB.EnodeB;
 import Netspan.NetspanServer;
 import Netspan.API.Enums.EnbStates;
 import UE.UE;
+import Utils.CommonConstants;
 import Utils.SetupUtils;
 import Utils.SysObjUtils;
 import Utils.Snmp.MibReader;
@@ -40,7 +41,6 @@ public class CrossFeature extends TestspanTest {
 	protected Neighbors neighborsUtils;
 	protected AlarmsAndEvents alarmsAndEvents;
 	protected DMtool dm = new DMtool();
-	private String attenuatorSetName = "rudat_set";
 	private AttenuatorSet attenuatorSetUnderTest;
 	private ArrayList<EnodeB> otherEnb;
 	
@@ -59,7 +59,7 @@ public class CrossFeature extends TestspanTest {
 		neighborsUtils = Neighbors.getInstance();
 		alarmsAndEvents = AlarmsAndEvents.getInstance();
 		peripheralsConfig = PeripheralsConfig.getInstance();
-		attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(attenuatorSetName);
+		attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(CommonConstants.ATTENUATOR_SET_NAME);
 		allUEs = SetupUtils.getInstance().getAllUEs();
 		
 		if (!dut.isInService()) {

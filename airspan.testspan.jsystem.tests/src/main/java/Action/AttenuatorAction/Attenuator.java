@@ -77,14 +77,14 @@ public class Attenuator extends Action {
 		this.attenuatorValue = attenuatorValue;
 	}
 	
-	@ParameterProperties(description = "Set attenuatorSetName")
+	@ParameterProperties(description = "Set ATTENUATOR_SET_NAME")
 	public void setAttenuatorSetName(String attenuatorSetName) {
 		this.attenuatorSetName = attenuatorSetName;
 	}
 	
 	
 	@Test
-	@TestProperties(name = "Set attenuator", returnParam = "LastStatus", paramsInclude = { "attenuatorSetName", "attenuatorValue" })
+	@TestProperties(name = "Set attenuator", returnParam = "LastStatus", paramsInclude = { "ATTENUATOR_SET_NAME", "attenuatorValue" })
 	public void setAttenuator() {
 		float attValue = GeneralUtils.ERROR_VALUE;
 		try {
@@ -114,7 +114,7 @@ public class Attenuator extends Action {
 	
 	
 	@Test
-	@TestProperties(name = "Move attenuator", returnParam = "LastStatus", paramsInclude = { "attenuatorSetName", "attenuatorMinValue", "attenuatorMaxValue", "attenuatorStep", "attenuatorStepTime", "totalTimeUnit", "totalTime" })
+	@TestProperties(name = "Move attenuator", returnParam = "LastStatus", paramsInclude = { "ATTENUATOR_SET_NAME", "attenuatorMinValue", "attenuatorMaxValue", "attenuatorStep", "attenuatorStepTime", "totalTimeUnit", "totalTime" })
 	public void moveAttenuator() {		
 		float attMin = 0, attMax = 0, attStep = 0, stepTime = 0, totalTimeMilisec = 0;
 		AttenuatorSet attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(attenuatorSetName);
@@ -152,7 +152,7 @@ public class Attenuator extends Action {
 		}catch (Exception e) {
 			report.report("Could not accept all of the parameters. " + e.getMessage(), Reporter.FAIL);
 			e.printStackTrace();
-			report.report("attenuatorSetName: " + attenuatorSetName + ", AttenuatorMinValue: " + attenuatorMinValue + ", attenuatorMaxValue: " + attenuatorMaxValue + ", attenuatorStep: " + attenuatorStep + ", attenuatorStepTime: " + attenuatorStepTime + ", attenuatorStepTime: " + totalTime);
+			report.report("ATTENUATOR_SET_NAME: " + attenuatorSetName + ", AttenuatorMinValue: " + attenuatorMinValue + ", attenuatorMaxValue: " + attenuatorMaxValue + ", attenuatorStep: " + attenuatorStep + ", attenuatorStepTime: " + attenuatorStepTime + ", attenuatorStepTime: " + totalTime);
 			return;
 		}
 		

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import Utils.CommonConstants;
 import org.junit.Test;
 import Attenuators.AttenuatorSet;
 import DMTool.DMtool;
@@ -40,7 +41,7 @@ public class Progression extends TestspanTest{
 		enbInTest.add(dut);
 		super.init();
 		dut.lteCli("logger threshold set client=WR_TPM cli=0");
-		attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet("rudat_set");
+		attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(CommonConstants.ATTENUATOR_SET_NAME);
 		report.report("Set the attenuators default value : " + attenuatorSetUnderTest.getDefaultValueAttenuation()+ " [dB]\n");
 		attenuatorSetUnderTest.setAttenuation(attenuatorSetUnderTest.getDefaultValueAttenuation());
 		report.report("Delete All Neighbors.");

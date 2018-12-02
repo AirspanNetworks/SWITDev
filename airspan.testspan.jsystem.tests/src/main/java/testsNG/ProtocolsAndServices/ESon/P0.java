@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import javax.xml.datatype.XMLGregorianCalendar;
+
+import Utils.CommonConstants;
 import org.junit.Test;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
@@ -51,7 +53,6 @@ public class P0 extends TestspanTest {
 	private String lastJsonData = "";
 	private Traffic trafficGen;
 	private Neighbors neighborManager;
-	private String attenuatorSetName = "rudat_set";
 	private ArrayList<Integer> pcis = new ArrayList<Integer>();
 	private ArrayList<Integer> neighbours = new ArrayList<Integer>();
 	private ArrayList<String> ECGIs = new ArrayList<>();
@@ -83,7 +84,7 @@ public class P0 extends TestspanTest {
 		alarms = AlarmsAndEvents.getInstance();
 		neighborManager = Neighbors.getInstance();
 		peripheralsConfig = PeripheralsConfig.getInstance();
-		attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(attenuatorSetName);
+		attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(CommonConstants.ATTENUATOR_SET_NAME);
 		eSonSession = (EsonServer) SystemManagerImpl.getInstance().getSystemObject("EsonServer");
 		GeneralUtils.stopLevel();
 	}

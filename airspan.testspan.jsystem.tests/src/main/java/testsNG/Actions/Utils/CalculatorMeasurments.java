@@ -13,7 +13,6 @@ import java.util.HashMap;
  */
 public class CalculatorMeasurments {
 	String fileName;
-	private FileInputStream inputStream;
 	Workbook workbook;
 	public final String createdFile = "FileForWorkOnCalculatorMeasurments.xlsx";
 
@@ -80,7 +79,7 @@ public class CalculatorMeasurments {
 
 	public CalculatorMeasurments(String fileName) throws IOException, InvalidFormatException {
 		this.fileName = fileName;
-		inputStream = new FileInputStream(fileName);
+		FileInputStream inputStream = new FileInputStream(fileName);
 		workbook = WorkbookFactory.create(inputStream);
 	}
 

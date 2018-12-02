@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import Utils.*;
 import com.sun.jna.platform.win32.ShellAPI.SHFILEOPSTRUCT;
 
 import Attenuators.AttenuatorSet;
@@ -27,10 +28,6 @@ import Netspan.Profiles.RadioParameters;
 import Netspan.Profiles.SonParameters;
 import TestingServices.TestConfig;
 import UE.UE;
-import Utils.GeneralUtils;
-import Utils.Pair;
-import Utils.SetupUtils;
-import Utils.SysObjUtils;
 import Utils.GeneralUtils.CellIndex;
 import Utils.Snmp.MibReader;
 import jsystem.framework.ParameterProperties;
@@ -67,7 +64,6 @@ public class AutoPCIBase extends TestspanTest {
     protected static String startPCIstatus = null;
     protected static int START_POWER_ADVANCED_PROFILE = 4;
     private ArrayList<EnodeB> otherEnb;
-    private String attenuatorSetName = "rudat_set";
     private AttenuatorSet attenuatorSetUnderTest = null;
     private Date startDate;
     private Date endDate;
@@ -99,7 +95,7 @@ public class AutoPCIBase extends TestspanTest {
         peripheralsConfig = PeripheralsConfig.getInstance();
         testConfig = TestConfig.getInstace();
         if (attenuatorSetUnderTest == null) {
-            attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(attenuatorSetName);
+            attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(CommonConstants.ATTENUATOR_SET_NAME);
         }
         if (peripheralsConfig.SetAttenuatorToMin(attenuatorSetUnderTest)) {
             report.report("Successfully set minimum attenuation");

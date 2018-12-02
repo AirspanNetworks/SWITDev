@@ -8,11 +8,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
+import Utils.*;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import Attenuators.AttenuatorSet;
 import EnodeB.EnodeB;
@@ -27,15 +26,9 @@ import TestingServices.TestConfig;
 import UE.UE;
 import UE.UESimulator;
 import UE.VirtualUE;
-import Utils.GeneralUtils;
 import Utils.GeneralUtils.HtmlFieldColor;
 import Utils.GeneralUtils.HtmlTable;
-import Utils.LteThroughputCalculator;
 import Utils.LteThroughputCalculator.ConfigurationEnum;
-import Utils.Pair;
-import Utils.SetupUtils;
-import Utils.StreamList;
-import Utils.SysObjUtils;
 import Utils.Reporters.GraphAdder;
 import Utils.WatchDog.WatchDogManager;
 import Utils.WatchDog.commandWatchDLAndUL;
@@ -76,7 +69,6 @@ public class TPTBase extends TestspanTest {
 	protected static final double PRECENT_OF_UE_RESET = 30;
 	protected static final double QOS_THRESHOLD_PRECENT = 0.5;
 	protected static final double TPT_THRESHOLD_PRECENT = 0.9;
-	protected String attenuatorSetName = "rudat_set";
 	protected AttenuatorSet attenuatorSetUnderTest;
 	protected Boolean testIsNotDoneStatus = true;
 	protected ArrayList<StreamParams> streams = new ArrayList<StreamParams>();
@@ -135,7 +127,7 @@ public class TPTBase extends TestspanTest {
 		peripheralsConfig = PeripheralsConfig.getInstance();
 		enbConfig = EnodeBConfig.getInstance();
 		try {
-			attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(attenuatorSetName);
+			attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(CommonConstants.ATTENUATOR_SET_NAME);
 		} catch (Exception e) {
 			attenuatorSetUnderTest = null;
 			report.report("Attenuator Fail to initialize");

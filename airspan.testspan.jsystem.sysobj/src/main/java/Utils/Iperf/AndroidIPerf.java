@@ -25,8 +25,6 @@ public class AndroidIPerf extends UEIPerf {
 	private final Object lock = new Object();
 	private MobileElement tptEl = null;
 	private MobileElement clearEl = null;
-	private String tptText = "";
-	private String lastLine = "";
 	private int lastLength = 0;
 	private IPerfStream ulIPerfStream;
 	private IPerfStream dlIPerfStream;
@@ -101,6 +99,7 @@ public class AndroidIPerf extends UEIPerf {
 	
 	@Override
 	protected void updateDLCounters(String dlCountersStr) {// Android support one iperf stream
+		String tptText;
 		int minNumberOfSamples = IPerfMachine.getMinNumberOfSamples();
 		if(this.dlIPerfStream.isActive()){
 			initArray();
@@ -113,7 +112,7 @@ public class AndroidIPerf extends UEIPerf {
 						lastLength = tptText.length();
 						for(int i = 0; i < minNumberOfSamples; i++){
 							tptText = tptText.substring(0, tptText.lastIndexOf("\n"));
-							lastLine = tptText.substring(tptText.lastIndexOf("\n") == -1 ? 0 : tptText.lastIndexOf("\n"));
+							String lastLine = tptText.substring(tptText.lastIndexOf("\n") == -1 ? 0 : tptText.lastIndexOf("\n"));
 							if(lastLine.contains("datagrams")){
 								i--;
 								continue;

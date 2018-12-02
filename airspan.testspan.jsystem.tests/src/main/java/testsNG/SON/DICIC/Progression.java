@@ -3,6 +3,7 @@ package testsNG.SON.DICIC;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import Utils.CommonConstants;
 import org.junit.Test;
 
 import Attenuators.AttenuatorSet;
@@ -30,7 +31,6 @@ import testsNG.SON.ANR.P0;
 
 public class Progression extends TestspanTest {
 
-	private String attenuatorSetName = "rudat_set";
 	private EnodeB dut1;
 	private EnodeB dut2;
 	private P0 ANR = new P0();
@@ -60,7 +60,7 @@ public class Progression extends TestspanTest {
 		ANR.init();
 		traffic = Traffic.getInstance(SetupUtils.getInstance().getAllUEs());
 		peripheralsConfig = PeripheralsConfig.getInstance();
-		attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(attenuatorSetName);
+		attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(CommonConstants.ATTENUATOR_SET_NAME);
 		GeneralUtils.stopLevel();
 	}
 

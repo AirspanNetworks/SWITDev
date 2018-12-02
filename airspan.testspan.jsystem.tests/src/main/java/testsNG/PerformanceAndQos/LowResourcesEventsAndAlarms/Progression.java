@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import Utils.*;
 import org.junit.Test;
 
 import Attenuators.AttenuatorSet;
@@ -12,10 +13,6 @@ import EnodeB.EnodeB;
 import Netspan.API.Enums.EnbStates;
 import Netspan.API.Lte.AlarmInfo;
 import UE.UE;
-import Utils.GeneralUtils;
-import Utils.Pair;
-import Utils.SetupUtils;
-import Utils.SysObjUtils;
 import jsystem.framework.ParameterProperties;
 import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
@@ -33,8 +30,7 @@ public class Progression extends TestspanTest{
 	private Traffic traffic;
 	private List<String> commandList;
 	private ParallelCommandsThread syncCommands;
-	private String attenuatorSetName = "rudat_set";
-	
+
 	@Override
 	public void init() throws Exception {
 		GeneralUtils.startLevel("Test Init");
@@ -51,7 +47,7 @@ public class Progression extends TestspanTest{
 			peripheralsConfig.changeEnbState(enb, EnbStates.OUT_OF_SERVICE);
 		}
 		
-		AttenuatorSet attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(attenuatorSetName);
+		AttenuatorSet attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(CommonConstants.ATTENUATOR_SET_NAME);
 		peripheralsConfig.setAttenuatorSetValue(attenuatorSetUnderTest, 0);
 		
 		ArrayList<UE> ues = getDutUEs();

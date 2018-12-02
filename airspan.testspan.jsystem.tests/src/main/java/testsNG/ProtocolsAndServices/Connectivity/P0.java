@@ -11,10 +11,7 @@ import Netspan.Profiles.NetworkParameters;
 import Netspan.Profiles.RadioParameters;
 import Netspan.Profiles.SecurityParameters;
 import UE.UE;
-import Utils.DefaultNetspanProfiles;
-import Utils.GeneralUtils;
-import Utils.SetupUtils;
-import Utils.SysObjUtils;
+import Utils.*;
 import jsystem.framework.ParameterProperties;
 import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
@@ -33,7 +30,6 @@ public class P0 extends TestspanTest {
 	protected PeripheralsConfig peripheralsConfig;
 	protected EnodeBConfig enbConfig;
 	protected AttenuatorSet attenuatorSetUnderTest;
-	protected String attenuatorSetName = "rudat_set";
 	protected ArrayList<UE> ueList;
 	protected ArrayList<EnodeB> otherEnbs;
 	protected int FIVE_SEC = 5*1000;
@@ -64,7 +60,7 @@ public class P0 extends TestspanTest {
 		neighbors = Neighbors.getInstance();
 		peripheralsConfig = PeripheralsConfig.getInstance();
 		enbConfig = EnodeBConfig.getInstance();
-		attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(attenuatorSetName);
+		attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(CommonConstants.ATTENUATOR_SET_NAME);
 		report.stopLevel();
 	}
 

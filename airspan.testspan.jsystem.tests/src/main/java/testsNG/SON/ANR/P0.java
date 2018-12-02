@@ -3,6 +3,8 @@ package testsNG.SON.ANR;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import Utils.CommonConstants;
 import org.junit.Test;
 import Attenuators.AttenuatorSet;
 import EPC.EPC;
@@ -56,8 +58,6 @@ public class P0 extends TestspanTest {
 	}
 
 	private int attenuatorStepTime = 2000;
-
-	private String attenuatorSetName = "rudat_set";
 
 	private AttenuatorSet attenuatorSetUnderTest;
 
@@ -159,7 +159,7 @@ public class P0 extends TestspanTest {
 		enbInTest.add(dut2);
 
 		super.init();
-		attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(attenuatorSetName);
+		attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(CommonConstants.ATTENUATOR_SET_NAME);
 		GeneralUtils.stopLevel();
 	}
 

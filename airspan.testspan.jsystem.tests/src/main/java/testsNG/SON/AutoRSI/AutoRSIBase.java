@@ -18,11 +18,7 @@ import Netspan.API.Lte.RsiStatusCell;
 import Netspan.API.Lte.SONStatus;
 import Netspan.Profiles.SonParameters;
 import UE.UE;
-import Utils.GeneralUtils;
-import Utils.Pair;
-import Utils.SetupUtils;
-import Utils.SysObjUtils;
-import Utils.Triple;
+import Utils.*;
 import Utils.Snmp.MibReader;
 import jsystem.framework.ParameterProperties;
 import jsystem.framework.report.Reporter;
@@ -51,7 +47,6 @@ public class AutoRSIBase extends TestspanTest {
 	protected ArrayList<EnodeB> list3Party = new ArrayList<EnodeB>();
 	protected DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss a");
 	protected AttenuatorSet attenuatorSetUnderTest;
-	protected String attenuatorSetName = "rudat_set";
 	protected boolean rsiInitAutoStatus;
 	protected String initSonProfileName;
 	protected ArrayList<Integer> initRsiList = new ArrayList<>();
@@ -101,7 +96,7 @@ public class AutoRSIBase extends TestspanTest {
 		testUEs = new ArrayList<>();
 		testUEs.add(testUE);
 
-		attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(attenuatorSetName);
+		attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(CommonConstants.ATTENUATOR_SET_NAME);
 		peripheralsConfig.SetAttenuatorToMin(attenuatorSetUnderTest);
 
 		for (EnodeB enodeB : enbInSetup) {

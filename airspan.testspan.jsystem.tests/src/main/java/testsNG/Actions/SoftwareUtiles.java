@@ -461,15 +461,15 @@ public class SoftwareUtiles {
     public void setDestServer(String softwareImage) {
         EnodeBUpgradeImage enodeBUpgradeImage = netspanServer.getSoftwareImage(softwareImage);
         EnodeBUpgradeServer enodeBUpgradeServer = netspanServer.getSoftwareServer(enodeBUpgradeImage.getUpgradeServerName());
-        File destPath;
+        String destPath;
         switch (GeneralUtils.getOS()) {
             case CommonConstants.WINDOWS_OS:
                 destPath = generateDestFilePath(enodeBUpgradeServer.getUpgradeServerProtocolType(), enodeBUpgradeServer.getUpgradeServerIp());
-                setDestServer(File.separator + destPath);
+                setDestServer(new File(File.separator + destPath));
                 break;
             case CommonConstants.LINUX_OS:
                 destPath = generateDestFilePath(enodeBUpgradeServer.getUpgradeServerProtocolType(), "mnt/asil-swit");
-                setDestServer(destPath);
+                setDestServer(new File(destPath));
                 break;
         }
 
@@ -484,14 +484,14 @@ public class SoftwareUtiles {
      * @param serverProtocolType SFTP or TFTP
      * @param relativeFolderPath - IP for windows (enodeBUpgradeServer.getUpgradeServerIp) or mounted path (in advance)
      */
-    public File generateDestFilePath(ServerProtocolType serverProtocolType, String relativeFolderPath) {
+    public String generateDestFilePath(ServerProtocolType serverProtocolType, String relativeFolderPath) {
         switch (serverProtocolType) {
             case SFTP: {
-                return new File(StringTools.getStringWithUnifiedFileSeperator("\\" + relativeFolderPath + "\\sftp\\upload"));
+                return StringTools.getStringWithUnifiedFileSeperator("\\" + relativeFolderPath + "\\sftp\\upload");
             }
             //TFTP
             default: {
-                return new File(StringTools.getStringWithUnifiedFileSeperator("\\" + relativeFolderPath + "\\tftp"));
+                return StringTools.getStringWithUnifiedFileSeperator("\\" + relativeFolderPath + "\\tftp");
             }
         }
     }

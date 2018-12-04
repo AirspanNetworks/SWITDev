@@ -461,14 +461,18 @@ public class SoftwareUtiles {
     public void setDestServer(String softwareImage) {
         EnodeBUpgradeImage enodeBUpgradeImage = netspanServer.getSoftwareImage(softwareImage);
         EnodeBUpgradeServer enodeBUpgradeServer = netspanServer.getSoftwareServer(enodeBUpgradeImage.getUpgradeServerName());
+        File destPath;
         switch (GeneralUtils.getOS()) {
             case CommonConstants.WINDOWS_OS:
-                generateDestFilePath(enodeBUpgradeServer.getUpgradeServerProtocolType(), enodeBUpgradeServer.getUpgradeServerIp());
+                destPath = generateDestFilePath(enodeBUpgradeServer.getUpgradeServerProtocolType(), enodeBUpgradeServer.getUpgradeServerIp());
+                setDestServer(File.separator + destPath);
                 break;
             case CommonConstants.LINUX_OS:
-                generateDestFilePath(enodeBUpgradeServer.getUpgradeServerProtocolType(), "mnt/asil-swit");
+                destPath = generateDestFilePath(enodeBUpgradeServer.getUpgradeServerProtocolType(), "mnt/asil-swit");
+                setDestServer(destPath);
                 break;
         }
+
     }
 
     /**
@@ -480,15 +484,14 @@ public class SoftwareUtiles {
      * @param serverProtocolType SFTP or TFTP
      * @param relativeFolderPath - IP for windows (enodeBUpgradeServer.getUpgradeServerIp) or mounted path (in advance)
      */
-    public void generateDestFilePath(ServerProtocolType serverProtocolType, String relativeFolderPath) {
+    public File generateDestFilePath(ServerProtocolType serverProtocolType, String relativeFolderPath) {
         switch (serverProtocolType) {
             case SFTP: {
-                setDestServer(new File(StringTools.getStringWithUnifiedFileSeperator("\\" + relativeFolderPath + "\\sftp\\upload")));
-                break;
+                return new File(StringTools.getStringWithUnifiedFileSeperator("\\" + relativeFolderPath + "\\sftp\\upload"));
             }
-            case TFTP: {
-                setDestServer(new File(StringTools.getStringWithUnifiedFileSeperator("\\" + relativeFolderPath + "\\tftp")));
-                break;
+            //TFTP
+            default: {
+                return new File(StringTools.getStringWithUnifiedFileSeperator("\\" + relativeFolderPath + "\\tftp"));
             }
         }
     }

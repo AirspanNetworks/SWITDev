@@ -317,9 +317,9 @@ public class TrafficAction extends Action {
 			"TrafficType", "TransmitDirection", "RunTime", "Qci", "SemanticName", "LoadType", "Dut", "ULLoad", "DLLoad",
 			"FrameSize", "WindowSize", "ParallelStreams", "Mss", "ExpectedLoadType", "ULExpected", "DLExpected" })
 	public void startTraffic() {
+		GeneralUtils.startLevel("Parameters for start traffic");
 		if (!validateParams())
 			return;
-		GeneralUtils.startLevel("Parameters for start traffic");
 		tptCulculation();
 		GeneralUtils.stopLevel();
 		if (!validateStreams())

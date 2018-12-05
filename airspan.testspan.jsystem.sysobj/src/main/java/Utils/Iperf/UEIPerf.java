@@ -718,11 +718,14 @@ public class UEIPerf {
 	private String getProcessNumber(String file, String command){
 		Pattern p = Pattern.compile("[0-9a-z]\\s+(\\d+).*"+command);
 		String[] lines = file.split("\n");
+		boolean found, isSudo;
 		for(String line:lines){
 			Matcher m = p.matcher(line);
-			if(m.find() && !line.contains("sudo")){
+			found = m.find();
+			isSudo = line.contains("sudo");
+			if(found && !isSudo){
 				return m.group(1);
-			}			
+			}
 		}
 		return null;
 	}

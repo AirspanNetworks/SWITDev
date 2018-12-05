@@ -49,10 +49,12 @@ public class SoftwareUtiles {
     private String FSMBuild = StringUtils.EMPTY;
     private String FSMv4Build = StringUtils.EMPTY;
     private String XLPBuild = StringUtils.EMPTY;
+
     /**
      * the default source of the copy
      **/
-    private File sourceServer = new File(StringTools.getStringWithUnifiedFileSeperator("\\FS4\\Projects\\Development\\Internal\\Builds\\"));
+    private File sourceServer = new File(StringTools.getStringWithUnifiedFileSeperator("\\\\FS4\\Projects\\Development\\Internal\\Builds\\"));
+
     /**
      * the destination of the copy
      **/

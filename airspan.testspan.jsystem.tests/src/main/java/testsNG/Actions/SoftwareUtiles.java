@@ -505,8 +505,13 @@ public class SoftwareUtiles {
      */
     public void setSourceServer(String sourceServer) {
         sourceServer = StringTools.getStringWithUnifiedFileSeperator(sourceServer);
-        if (GeneralUtils.isLinux()) {
-            sourceServer = sourceServer.replace("Projects", "builds");
+        switch (GeneralUtils.getOS()) {
+            case CommonConstants.WINDOWS_OS:
+                sourceServer = correctPathForWindowsDoubleSlash(sourceServer);
+                break;
+            case CommonConstants.LINUX_OS:
+                sourceServer = sourceServer.replace("Projects", "builds");
+                break;
         }
         this.sourceServer = new File(sourceServer);
     }
@@ -518,6 +523,18 @@ public class SoftwareUtiles {
      */
     public void setSourceServerNoPath(String build) {
         this.sourceServer = new File(StringTools.getStringFileSeperator(sourceServer.getPath() + makeRelease(build), build, "release", StringUtils.EMPTY));
+    }
+
+    /**
+     * Correct Path For Windows Double Slash - if the path doesn't start with "//" - fix it.
+     *
+     * @param path - path
+     * @return -  new path
+     */
+    public String correctPathForWindowsDoubleSlash(String path) {
+        if (path != null && path.startsWith("\\") && !path.startsWith("\\\\"))
+            path = "\\" + path;
+        return path;
     }
 
     public void setReason(Pair<String, Integer> reason) {

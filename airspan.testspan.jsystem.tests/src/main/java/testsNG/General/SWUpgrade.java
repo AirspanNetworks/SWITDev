@@ -366,9 +366,7 @@ public class SWUpgrade extends TestspanTest {
 
     private boolean setSourcePath() {
         if (buildM != null) {
-            if (buildM.startsWith("\\") && !buildM.startsWith("\\\\"))
-                buildM = "\\" + buildM;
-
+            buildM = softwareUtiles.correctPathForWindowsDoubleSlash(buildM);
             softwareUtiles.setSourceServer(buildM);
             report.report("Upgrading all components available to build Triggered By BuildMachine: " + buildM);
             return true;

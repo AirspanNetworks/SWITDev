@@ -642,7 +642,8 @@ public class UEIPerf {
 		}
 	}
 	
-	public String stopTraffic(ArrayList<String> streamList, String resultGrepDl, String resultGrepUl) {
+	public ArrayList<String> stopTraffic(ArrayList<String> streamList, String resultGrepDl, String resultGrepUl) {
+		ArrayList<String> removedProcesses = new ArrayList<>();
 		String process = null;
 		if(!IPerf.commandsDl.contains("kill -9 ")){
 			IPerf.commandsDl = "kill -9 ";			
@@ -679,6 +680,7 @@ public class UEIPerf {
 					for(String line:lines){
 						if(line.contains(process)){
 							resultGrepUl = resultGrepUl.replace(line, "");
+							removedProcesses.add(process);
 						}
 					}
 				}
@@ -707,9 +709,12 @@ public class UEIPerf {
 				}else{
 					IPerf.commandsUl += process+" ";					
 				}
+				if(process != null){
+					removedProcesses.add(process);
+				}
 			}
 		}
-		return process;
+		return removedProcesses;
 	}
 	
 	private String getProcessNumber(String file, String command){

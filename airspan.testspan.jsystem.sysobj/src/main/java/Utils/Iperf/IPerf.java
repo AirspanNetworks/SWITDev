@@ -795,9 +795,9 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		GeneralUtils.unSafeSleep(2000);
 
 		for(UEIPerf ueIPerf : allUEsIPerfList){
-			String process = ueIPerf.stopTraffic(streamList, resultGrepDl, resultGrepUl);
+			ArrayList<String> processes = ueIPerf.stopTraffic(streamList, resultGrepDl, resultGrepUl);
 			// Remove the the selected process line to support Amarisoft.
-			if(process != null){
+			for(String process : processes){
 				String[] lines = resultGrepUl.split("\n");
 				for(String line:lines){
 					if(line.contains(process)){

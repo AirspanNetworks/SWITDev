@@ -647,7 +647,7 @@ public class UEIPerf {
 			IPerf.commandsDl = "kill -9 ";			
 		}
 		if(!IPerf.commandsUl.contains(getKillCommand())){
-			IPerf.commandsUl = getKillCommand();			
+			IPerf.commandsUl = getKillCommand();	
 		}
 		Iterator<IPerfStream> iter = dlStreamArrayList.iterator();
 		while(iter.hasNext()){
@@ -657,10 +657,10 @@ public class UEIPerf {
 				if(process == null){
 					process = getProcessNumber(resultGrepUl, ips.getIperfClientCommand());
 					if(process != null){
-						IPerf.commandsUl += process+" ";						
+						IPerf.commandsUl += process+" ";				
 					}
 				}else{
-					IPerf.commandsDl += process+" ";					
+					IPerf.commandsDl += process+" ";				
 				}
 				process = getProcessNumber(resultGrepDl, ips.getIperfServerCommand());
 				if(process == null){
@@ -668,8 +668,19 @@ public class UEIPerf {
 					if(process != null){
 						IPerf.commandsUl += process+" ";
 					}
-				}else{					
+				}else{
 					IPerf.commandsDl += process+" ";
+				}
+				
+				// Remove the the selected process line to support Amarisoft.
+				if(process != null){
+					String[] lines = resultGrepUl.split("\n");
+					for(String line:lines){
+						if(line.contains(process)){
+							resultGrepUl = resultGrepUl.replace(line, "");
+							break;
+						}
+					}
 				}
 			}
 		}

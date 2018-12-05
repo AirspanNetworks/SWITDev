@@ -672,6 +672,16 @@ public class UEIPerf {
 				}else{
 					IPerf.commandsDl += process+" ";
 				}
+				
+				// Remove the the selected process line to support Amarisoft.
+				if(process != null){
+					String[] lines = resultGrepUl.split("\n");
+					for(String line:lines){
+						if(line.contains(process)){
+							resultGrepUl = resultGrepUl.replace(line, "");
+						}
+					}
+				}
 			}
 		}
 		

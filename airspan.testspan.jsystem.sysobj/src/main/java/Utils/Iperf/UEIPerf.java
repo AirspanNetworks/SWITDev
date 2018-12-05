@@ -642,7 +642,8 @@ public class UEIPerf {
 		}
 	}
 	
-	public void stopTraffic(ArrayList<String> streamList, String resultGrepDl, String resultGrepUl) {
+	public String stopTraffic(ArrayList<String> streamList, String resultGrepDl, String resultGrepUl) {
+		String process = null;
 		if(!IPerf.commandsDl.contains("kill -9 ")){
 			IPerf.commandsDl = "kill -9 ";			
 		}
@@ -653,7 +654,7 @@ public class UEIPerf {
 		while(iter.hasNext()){
 			IPerfStream ips = iter.next();
 			if(streamList.contains(ips.getStreamName())){
-				String process = getProcessNumber(resultGrepDl, ips.getIperfClientCommand());
+				process = getProcessNumber(resultGrepDl, ips.getIperfClientCommand());
 				if(process == null){
 					process = getProcessNumber(resultGrepUl, ips.getIperfClientCommand());
 					if(process != null){
@@ -671,17 +672,6 @@ public class UEIPerf {
 				}else{
 					IPerf.commandsDl += process+" ";
 				}
-				
-				// Remove the the selected process line to support Amarisoft.
-				if(process != null){
-					String[] lines = resultGrepUl.split("\n");
-					for(String line:lines){
-						if(line.contains(process)){
-							resultGrepUl = resultGrepUl.replace(line, "");
-							break;
-						}
-					}
-				}
 			}
 		}
 		
@@ -689,7 +679,7 @@ public class UEIPerf {
 		while(iter.hasNext()){
 			IPerfStream ips = iter.next();
 			if(streamList.contains(ips.getStreamName())){
-				String process = getProcessNumber(resultGrepUl, ips.getIperfClientCommand());
+				process = getProcessNumber(resultGrepUl, ips.getIperfClientCommand());
 				if(process == null){
 					process = getProcessNumber(resultGrepDl, ips.getIperfClientCommand());
 					if(process != null){
@@ -709,21 +699,7 @@ public class UEIPerf {
 				}
 			}
 		}
-		
-		/*ArrayList<IPerfStream> dlTemp = (ArrayList<IPerfStream>) dlStreamArrayList.clone();
-		for(IPerfStream ips : dlTemp){
-			if(streamList.contains(ips.getStreamName())){
-				dlStreamArrayList.remove(ips);
-			}
-		}
-		//resultGrep = iperfMachineUL.sendCommand("ps -aux | grep iperf").getElement1();
-		//commandToKill = "kill -9 ";
-		ArrayList<IPerfStream> ulTemp = (ArrayList<IPerfStream>) ulStreamArrayList.clone();
-		for(IPerfStream ips : ulTemp){
-			if(streamList.contains(ips.getStreamName())){
-				ulStreamArrayList.remove(ips);
-			}
-		}*/
+		return process;
 	}
 	
 	private String getProcessNumber(String file, String command){

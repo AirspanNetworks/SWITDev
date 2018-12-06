@@ -806,7 +806,6 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 				}
 			}
 		}
-		
 		iperfMachineDL.sendCommand(commandsDl);
 		iperfMachineUL.sendCommand(commandsUl);
 		GeneralUtils.unSafeSleep(3000);

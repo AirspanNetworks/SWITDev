@@ -787,31 +787,36 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 	
 	@Override
 	public void stopTraffic(ArrayList<String> streamList) {
-		commandsUl = "";
-		commandsDl = "";
-		String resultGrepDl = iperfMachineDL.sendCommand("ps -aux | grep iperf").getElement1();
-		GeneralUtils.unSafeSleep(2000);
-		String resultGrepUl = iperfMachineUL.sendCommand("ps -aux | grep iperf").getElement1();
-		GeneralUtils.unSafeSleep(2000);
-
-		for(UEIPerf ueIPerf : allUEsIPerfList){
-			ArrayList<String> processes = ueIPerf.stopTraffic(streamList, resultGrepDl, resultGrepUl);
-			// Remove the the selected process line to support Amarisoft.
-			for(String process : processes){
-				String[] lines = resultGrepUl.split("\n");
-				for(String line:lines){
-					if(line.contains(process)){
-						resultGrepUl = resultGrepUl.replace(line, "");
+		Pair<Boolean, String> resUl, resDl;
+		while(true){ 
+			commandsUl = "";
+			commandsDl = "";
+			String resultGrepDl = iperfMachineDL.sendCommand("ps -aux | grep iperf").getElement1();
+			GeneralUtils.unSafeSleep(2000);
+			String resultGrepUl = iperfMachineUL.sendCommand("ps -aux | grep iperf").getElement1();
+			GeneralUtils.unSafeSleep(2000);
+	
+			for(UEIPerf ueIPerf : allUEsIPerfList){
+				ArrayList<String> processes = ueIPerf.stopTraffic(streamList, resultGrepDl, resultGrepUl);
+				// Remove the the selected process line to support Amarisoft.
+				for(String process : processes){
+					String[] lines = resultGrepUl.split("\n");
+					for(String line:lines){
+						if(line.contains(process)){
+							resultGrepUl = resultGrepUl.replace(line, "");
+						}
 					}
 				}
 			}
+			iperfMachineDL.sendCommand(commandsDl);
+			iperfMachineUL.sendCommand(commandsUl);
+			GeneralUtils.unSafeSleep(3000);
+			resDl = iperfMachineDL.sendCommand("ps -aux | grep iperf");		
+			resUl = iperfMachineUL.sendCommand("ps -aux | grep iperf");
+			if(resDl.getElement0() && resUl.getElement0())
+				break;
+			GeneralUtils.unSafeSleep(1000);
 		}
-		iperfMachineDL.sendCommand(commandsDl);
-		iperfMachineUL.sendCommand(commandsUl);
-		GeneralUtils.unSafeSleep(3000);
-		iperfMachineDL.sendCommand("ps -aux | grep iperf");		
-		iperfMachineUL.sendCommand("ps -aux | grep iperf");
-		GeneralUtils.unSafeSleep(1000);
 	}
 	
 	@Override

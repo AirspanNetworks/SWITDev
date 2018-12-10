@@ -213,7 +213,7 @@ public class Traffic {
                 disableStcDebug();
                 return loadRelocate(DL_PORT_INDX, UL_PORT_INDX);
             case ITraffic:
-                trafficGenerator.closeAllConnections();
+                // trafficGenerator.closeAllConnections();
                 return initAndConnectSession();
             default:
                 return false;

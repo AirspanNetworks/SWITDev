@@ -49,10 +49,12 @@ public class SoftwareUtiles {
     private String FSMBuild = StringUtils.EMPTY;
     private String FSMv4Build = StringUtils.EMPTY;
     private String XLPBuild = StringUtils.EMPTY;
+
     /**
      * the default source of the copy
      **/
-    private File sourceServer = new File(StringTools.getStringWithUnifiedFileSeperator("\\FS4\\Projects\\Development\\Internal\\Builds\\"));
+    private File sourceServer = new File(StringTools.getStringWithUnifiedFileSeperator("\\\\FS4\\Projects\\Development\\Internal\\Builds\\"));
+
     /**
      * the destination of the copy
      **/
@@ -461,14 +463,18 @@ public class SoftwareUtiles {
     public void setDestServer(String softwareImage) {
         EnodeBUpgradeImage enodeBUpgradeImage = netspanServer.getSoftwareImage(softwareImage);
         EnodeBUpgradeServer enodeBUpgradeServer = netspanServer.getSoftwareServer(enodeBUpgradeImage.getUpgradeServerName());
+        String destPath;
         switch (GeneralUtils.getOS()) {
             case CommonConstants.WINDOWS_OS:
-                generateDestFilePath(enodeBUpgradeServer.getUpgradeServerProtocolType(), enodeBUpgradeServer.getUpgradeServerIp());
+                destPath = generateDestFilePath(enodeBUpgradeServer.getUpgradeServerProtocolType(), enodeBUpgradeServer.getUpgradeServerIp());
+                setDestServer(new File(File.separator + destPath));
                 break;
             case CommonConstants.LINUX_OS:
-                generateDestFilePath(enodeBUpgradeServer.getUpgradeServerProtocolType(), "mnt/asil-swit");
+                destPath = generateDestFilePath(enodeBUpgradeServer.getUpgradeServerProtocolType(), "mnt/asil-swit");
+                setDestServer(new File(destPath));
                 break;
         }
+
     }
 
     /**
@@ -480,15 +486,14 @@ public class SoftwareUtiles {
      * @param serverProtocolType SFTP or TFTP
      * @param relativeFolderPath - IP for windows (enodeBUpgradeServer.getUpgradeServerIp) or mounted path (in advance)
      */
-    public void generateDestFilePath(ServerProtocolType serverProtocolType, String relativeFolderPath) {
+    public String generateDestFilePath(ServerProtocolType serverProtocolType, String relativeFolderPath) {
         switch (serverProtocolType) {
             case SFTP: {
-                setDestServer(new File(StringTools.getStringWithUnifiedFileSeperator("\\" + relativeFolderPath + "\\sftp\\upload")));
-                break;
+                return StringTools.getStringWithUnifiedFileSeperator("\\" + relativeFolderPath + "\\sftp\\upload");
             }
-            case TFTP: {
-                setDestServer(new File(StringTools.getStringWithUnifiedFileSeperator("\\" + relativeFolderPath + "\\tftp")));
-                break;
+            //TFTP
+            default: {
+                return StringTools.getStringWithUnifiedFileSeperator("\\" + relativeFolderPath + "\\tftp");
             }
         }
     }
@@ -500,8 +505,13 @@ public class SoftwareUtiles {
      */
     public void setSourceServer(String sourceServer) {
         sourceServer = StringTools.getStringWithUnifiedFileSeperator(sourceServer);
-        if (GeneralUtils.isLinux()) {
-            sourceServer = sourceServer.replace("Projects", "builds");
+        switch (GeneralUtils.getOS()) {
+            case CommonConstants.WINDOWS_OS:
+                sourceServer = correctPathForWindowsDoubleSlash(sourceServer);
+                break;
+            case CommonConstants.LINUX_OS:
+                sourceServer = sourceServer.replace("Projects", "builds");
+                break;
         }
         this.sourceServer = new File(sourceServer);
     }
@@ -513,6 +523,18 @@ public class SoftwareUtiles {
      */
     public void setSourceServerNoPath(String build) {
         this.sourceServer = new File(StringTools.getStringFileSeperator(sourceServer.getPath() + makeRelease(build), build, "release", StringUtils.EMPTY));
+    }
+
+    /**
+     * Correct Path For Windows Double Slash - if the path doesn't start with "//" - fix it.
+     *
+     * @param path - path
+     * @return -  new path
+     */
+    public String correctPathForWindowsDoubleSlash(String path) {
+        if (path != null && path.startsWith("\\") && !path.startsWith("\\\\"))
+            path = "\\" + path;
+        return path;
     }
 
     public void setReason(Pair<String, Integer> reason) {

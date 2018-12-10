@@ -240,11 +240,11 @@ public abstract class EnodeB extends SystemObjectImpl {
 	public String lteCli(String command, String response) {
 		return this.XLP.lteCliWithResponse(command, response);
 	}
+
 	/**
 	 * Wait for running.
 	 *
-	 * @param timeout
-	 *            the timeout
+	 * @param timeout the timeout (milliSec)
 	 * @return true, if successful
 	 */
 	public boolean waitForAllRunningAndInService(long timeout) {
@@ -332,7 +332,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 			rebootStatus = rebootExecutionViaSnmp(rebootType);			
 		}
 		// wait 1 min to avoid fake allrunning in ipsec setups.
-		GeneralUtils.unSafeSleep(60000);
+		GeneralUtils.unSafeSleep(90000);
 		return rebootStatus;
 	}
 

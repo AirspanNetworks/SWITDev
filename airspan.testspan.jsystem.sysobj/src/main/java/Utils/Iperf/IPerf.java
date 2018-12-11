@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -821,7 +822,10 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 	
 	@Override
 	public void removeStreams(ArrayList<String> streamList){
-		for(UEIPerf ueIPerf : allUEsIPerfList){
+		Iterator<UEIPerf> iter = allUEsIPerfList.iterator();
+		UEIPerf ueIPerf;
+		while(iter.hasNext()){
+			ueIPerf = iter.next();
 			ueIPerf.removeStreams(streamList);
 			if(ueIPerf instanceof AmarisoftIperf)
 				allUEsIPerfList.remove(ueIPerf);

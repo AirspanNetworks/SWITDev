@@ -823,9 +823,8 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 	@Override
 	public void removeStreams(ArrayList<String> streamList){
 		Iterator<UEIPerf> iter = allUEsIPerfList.iterator();
-		UEIPerf ueIPerf;
 		while(iter.hasNext()){
-			ueIPerf = iter.next();
+			UEIPerf ueIPerf = iter.next();
 			ueIPerf.removeStreams(streamList);
 			if(ueIPerf instanceof AmarisoftIperf)
 				allUEsIPerfList.remove(ueIPerf);

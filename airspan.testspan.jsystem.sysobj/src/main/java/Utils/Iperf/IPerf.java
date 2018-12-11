@@ -288,7 +288,6 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		for(UEIPerf ueIPerf : allUEsIPerfList){
 			if (ueIPerf instanceof AndroidIPerf) {			
 				ueIPerf.stopTraffic();
-				allUEsIPerfList.remove(ueIPerf);
 			}
 		}
 		iperfMachineDL.stopIPerf();
@@ -824,6 +823,8 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 	public void removeStreams(ArrayList<String> streamList){
 		for(UEIPerf ueIPerf : allUEsIPerfList){
 			ueIPerf.removeStreams(streamList);
+			if(ueIPerf instanceof AndroidIPerf)
+				allUEsIPerfList.remove(ueIPerf);
 		}
 	}
 	

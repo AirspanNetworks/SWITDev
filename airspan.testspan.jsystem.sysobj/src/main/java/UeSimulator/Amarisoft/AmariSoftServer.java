@@ -862,7 +862,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 		
 		//check that RSRP is not 0
 		if(ue.getRSRP(ueId) == 0) {
-			report.report("RSRP of ue:" + ueId + " is 0, check that enodeB is active and the UE can hear it", Reporter.WARNING);
+			report.report("RSRP of ue: " + ueId + " is 0, check that enodeB is active and the UE can hear it", Reporter.WARNING);
 		}
 		
 		try {
@@ -1085,13 +1085,13 @@ public class AmariSoftServer extends SystemObjectImpl{
 			getUE.setUeId(ueId);
 
 			getUE.setMessage(Actions.UE_GET);
-			GeneralUtils.printToConsole("sending get_ue" + ueId);
+			GeneralUtils.printToConsole("sending get_ue " + ueId);
 
 			Object ans = sendSynchronizedMessage(mapper.writeValueAsString(getUE));
 
 			ueStatus = (UeStatus) ans;
 		} catch (JsonProcessingException e) {
-			GeneralUtils.printToConsole("Failed get_ue" + ueId);
+			GeneralUtils.printToConsole("Failed get_ue " + ueId);
 			e.printStackTrace();
 		}
 		return ueStatus;
@@ -1108,7 +1108,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 				if (ueStatus.getUeList() != null && ueStatus.getUeList().size() > 0) {
 					if (ueStatus.getUeList().get(0) != null) {
 						ueIp = ueStatus.getUeList().get(0).getIp();
-						GeneralUtils.printToConsole("Found IP" + ueIp);
+						GeneralUtils.printToConsole("Found IP " + ueIp);
 					}
 				}
 			}
@@ -1202,7 +1202,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 			if (ueStatus.getUeList() != null && ueStatus.getUeList().size() > 0) {
 				if (ueStatus.getUeList().get(0) != null) {
 					status = ueStatus.getUeList().get(0).getRrcState();
-					GeneralUtils.printToConsole("Found status" + status);
+					GeneralUtils.printToConsole("Found status " + status);
 				}
 			}
 		}
@@ -1216,7 +1216,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 			if (ueStatus.getUeList() != null && ueStatus.getUeList().size() > 0) {
 				if (ueStatus.getUeList().get(0) != null) {
 					ans = ueStatus.getUeList().get(0).getRsrp();
-					GeneralUtils.printToConsole("Found RSRP" + ans);
+					GeneralUtils.printToConsole("Found RSRP " + ans);
 				}
 			}
 		}
@@ -1230,7 +1230,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 			if (ueStatus.getUeList() != null && ueStatus.getUeList().size() > 0) {
 				if (ueStatus.getUeList().get(0) != null) {
 					ans = ueStatus.getUeList().get(0).getRsrp();
-					GeneralUtils.printToConsole("Found RSRP" + ans);
+					GeneralUtils.printToConsole("Found RSRP " + ans);
 				}
 			}
 		}
@@ -1269,7 +1269,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 			if (ueStatus.getUeList() != null && ueStatus.getUeList().size() > 0) {
 				if (ueStatus.getUeList().get(0) != null) {
 					ans = ueStatus.getUeList().get(0).getCellIndex();
-					GeneralUtils.printToConsole("Found cellIndex" + ans);
+					GeneralUtils.printToConsole("Found cellIndex " + ans);
 					return ans;
 				}
 			}

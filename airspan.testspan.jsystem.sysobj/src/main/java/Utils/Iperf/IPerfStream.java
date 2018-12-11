@@ -74,11 +74,11 @@ public class IPerfStream {
 				this.iperfClientCommand = "-c " + this.destIpAddress + " -u -i 1 -p " + (5000+this.qci) + " -l " + frame + ".0B -b " + convertTo3DigitsAfterPoint(this.streamLoad) + "M -t " + runTimeTraffic;
 				this.iperfServerCommand = "-s -u -i 1 -p " + (5000+this.qci) + " -B " + this.srcIpAddress + " -l " + frame + ".0B -f k -t "+ runTimeTraffic;
 			}else if(this.protocol == Protocol.TCP){
-				this.iperfClientCommand = "-c " + this.destIpAddress + " ";
-				this.iperfServerCommand = "-s ";
+				this.iperfClientCommand = "-c " + this.destIpAddress;
+				this.iperfServerCommand = "-s";
 				if(this.numberOfParallelIPerfStreams != null){
-					this.iperfClientCommand += "-P "+numberOfParallelIPerfStreams;
-					this.iperfServerCommand += "-P "+numberOfParallelIPerfStreams;
+					this.iperfClientCommand += " -P "+numberOfParallelIPerfStreams;
+					this.iperfServerCommand += " -P "+numberOfParallelIPerfStreams;
 				}
 				this.iperfClientCommand += " -i 1 -p " + (5010+this.qci);
 				this.iperfServerCommand += " -i 1 -p " + (5010+this.qci);

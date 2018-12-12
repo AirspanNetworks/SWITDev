@@ -88,8 +88,8 @@ public class P0 extends Base1588 {
 			GeneralUtils.stopLevel();
 			reportOnPTPInterfaceStatus();
 			
-			report.report("Wait 60 seconds");
-			GeneralUtils.unSafeSleep(1000 * 60);
+			report.report("Wait 30 seconds");
+			GeneralUtils.unSafeSleep(1000 * 30);
 
 			ptpStatus = status.getPTPStatusViaNetspan(dut);
 			if (ptpStatus != null) {
@@ -114,8 +114,8 @@ public class P0 extends Base1588 {
 			GeneralUtils.stopLevel();
 			reportOnPTPInterfaceStatus();
 			
-			report.report("Wait 60 seconds");
-			GeneralUtils.unSafeSleep(1000 * 60);
+			report.report("Wait 30 seconds");
+			GeneralUtils.unSafeSleep(1000 * 30);
 
 			GeneralUtils.startLevel("Searching for event");
 			generalToDate = new Date();
@@ -147,8 +147,8 @@ public class P0 extends Base1588 {
 			GeneralUtils.stopLevel();
 			
 			reportOnPTPInterfaceStatus();
-			report.report("Wait 60 seconds");
-			GeneralUtils.unSafeSleep(1000 * 60);
+			report.report("Wait 30 seconds");
+			GeneralUtils.unSafeSleep(1000 * 30);
 
 			ptpStatus = status.getPTPStatusViaNetspan(dut);
 			if (ptpStatus != null) {

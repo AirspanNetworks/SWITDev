@@ -40,16 +40,16 @@ public class IPerfLinuxMachine extends IPerfMachine{
 		}
 		boolean connected = sshSession.isConnected();
 		if(connected){
-			sendCommand("rm "+preAddressTpFile+"*clientOutputDL*");
-		    sendCommand("rm "+preAddressTpFile+"*tpUL*");
-			sendCommand("rm "+preAddressTpFile+"*DLclientSide.txt");
-			sendCommand("rm "+preAddressTpFile+"*ULserverSide.txt");
-			sendCommand("rm "+preAddressTpFile+"nohup*");
+			sendCommand("rm -f "+preAddressTpFile+"*clientOutputDL*");
+		    sendCommand("rm -f "+preAddressTpFile+"*tpUL*");
+			sendCommand("rm -f "+preAddressTpFile+"*DLclientSide.txt");
+			sendCommand("rm -f "+preAddressTpFile+"*ULserverSide.txt");
+			sendCommand("rm -f "+preAddressTpFile+"nohup*");
 		
-			sendCommand("rm "+preAddressTpFile+"*clientOutputUL*");
-			sendCommand("rm "+preAddressTpFile+"*tpDL*");
-			sendCommand("rm "+preAddressTpFile+"*ULclientSide.txt");
-			sendCommand("rm "+preAddressTpFile+"*DLserverSide.txt");
+			sendCommand("rm -f "+preAddressTpFile+"*clientOutputUL*");
+			sendCommand("rm -f "+preAddressTpFile+"*tpDL*");
+			sendCommand("rm -f "+preAddressTpFile+"*ULclientSide.txt");
+			sendCommand("rm -f "+preAddressTpFile+"*DLserverSide.txt");
 		}
 		return connected;
 	}

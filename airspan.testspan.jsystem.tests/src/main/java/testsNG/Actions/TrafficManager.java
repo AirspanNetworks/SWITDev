@@ -118,7 +118,7 @@ public class TrafficManager {
 				return;
 			}
 			if(Protocol.UDP == protocol){
-				setLoadPerStream(enb, loadType, DlLoad,UlLoad);					
+				setLoadPerStream(enb, loadType, DlLoad,UlLoad);
 			}
 			
 		}else{

@@ -38,7 +38,7 @@ public class Attenuator extends Action {
 	
 	protected String totalTime;
 	
-	protected String attenuatorSetName;
+	protected String attenuatorSetName = "rudat_set";
 	
 	protected String attenuatorValue;
 	
@@ -77,14 +77,14 @@ public class Attenuator extends Action {
 		this.attenuatorValue = attenuatorValue;
 	}
 	
-	@ParameterProperties(description = "Set ATTENUATOR_SET_NAME")
+	@ParameterProperties(description = "Set attenuatorSetName default=\"rudat_set\"")
 	public void setAttenuatorSetName(String attenuatorSetName) {
-		this.attenuatorSetName = attenuatorSetName;
+		if(attenuatorSetName != null && !attenuatorSetName.equals(""))
+			this.attenuatorSetName = attenuatorSetName;
 	}
 	
-	
 	@Test
-	@TestProperties(name = "Set attenuator", returnParam = "LastStatus", paramsInclude = { "ATTENUATOR_SET_NAME", "attenuatorValue" })
+	@TestProperties(name = "Set attenuator", returnParam = "LastStatus", paramsInclude = { "attenuatorSetName", "attenuatorValue" })
 	public void setAttenuator() {
 		float attValue = GeneralUtils.ERROR_VALUE;
 		try {
@@ -114,7 +114,7 @@ public class Attenuator extends Action {
 	
 	
 	@Test
-	@TestProperties(name = "Move attenuator", returnParam = "LastStatus", paramsInclude = { "ATTENUATOR_SET_NAME", "attenuatorMinValue", "attenuatorMaxValue", "attenuatorStep", "attenuatorStepTime", "totalTimeUnit", "totalTime" })
+	@TestProperties(name = "Move attenuator", returnParam = "LastStatus", paramsInclude = { "attenuatorSetName", "attenuatorMinValue", "attenuatorMaxValue", "attenuatorStep", "attenuatorStepTime", "totalTimeUnit", "totalTime" })
 	public void moveAttenuator() {		
 		float attMin = 0, attMax = 0, attStep = 0, stepTime = 0, totalTimeMilisec = 0;
 		AttenuatorSet attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(attenuatorSetName);
@@ -152,7 +152,7 @@ public class Attenuator extends Action {
 		}catch (Exception e) {
 			report.report("Could not accept all of the parameters. " + e.getMessage(), Reporter.FAIL);
 			e.printStackTrace();
-			report.report("ATTENUATOR_SET_NAME: " + attenuatorSetName + ", AttenuatorMinValue: " + attenuatorMinValue + ", attenuatorMaxValue: " + attenuatorMaxValue + ", attenuatorStep: " + attenuatorStep + ", attenuatorStepTime: " + attenuatorStepTime + ", attenuatorStepTime: " + totalTime);
+			report.report("attenuatorSetName: " + attenuatorSetName + ", AttenuatorMinValue: " + attenuatorMinValue + ", attenuatorMaxValue: " + attenuatorMaxValue + ", attenuatorStep: " + attenuatorStep + ", attenuatorStepTime: " + attenuatorStepTime + ", attenuatorStepTime: " + totalTime);
 			return;
 		}
 		

@@ -34,7 +34,7 @@ public class PeripheralsConfig {
 	boolean connectionWorking = false;
 
 	private ArrayList<UE> uesNotConnected = new ArrayList<UE>();
-	
+
 	private PeripheralsConfig() {
 		try {
 			netspanServer = NetspanServer.getInstance();
@@ -57,44 +57,46 @@ public class PeripheralsConfig {
 		return instance;
 	}
 
-	
 	public boolean setAttenuatorSetValue(AttenuatorSet attenuatorSetUnderTest, float attenuationValue) {
 
 		for (int i = 0; i < 3; i++) {
-			if(!attenuatorSetUnderTest.setAttenuation(attenuationValue)){
+			if (!attenuatorSetUnderTest.setAttenuation(attenuationValue)) {
 				continue;
 			}
 			GeneralUtils.unSafeSleep(70);
-			float[] attenuatorsValues  = attenuatorSetUnderTest.getAttenuation();
-			
+			float[] attenuatorsValues = attenuatorSetUnderTest.getAttenuation();
+
 			boolean tempStatus = true;
 			for (int j = 0; j < attenuatorsValues.length; j++) {
 				if (attenuatorsValues[j] != attenuationValue) {
-					if(i==2) 
-						report.report("Attenuator [" + j + "] has different value than expected value: "+attenuatorsValues[j] + ", expected: "+attenuationValue, Reporter.WARNING);
-					
+					if (i == 2)
+						report.report("Attenuator [" + j + "] has different value than expected value: "
+								+ attenuatorsValues[j] + ", expected: " + attenuationValue, Reporter.WARNING);
+
 					tempStatus = false;
 
 				} else {
-					GeneralUtils.printToConsole("Attenuator [" + j + "]: " + String.valueOf(attenuatorsValues[j]) + "[dB] s");
+					GeneralUtils.printToConsole(
+							"Attenuator [" + j + "]: " + String.valueOf(attenuatorsValues[j]) + "[dB] s");
 				}
 			}
-			if(!tempStatus) continue;
-			else return true;
+			if (!tempStatus)
+				continue;
+			else
+				return true;
 
-		}		
+		}
 		return false;
 	}
-	
 
-	public boolean setAPN(ArrayList<UE> ueList, String apnName){
+	public boolean setAPN(ArrayList<UE> ueList, String apnName) {
 		boolean action = true;
 		boolean actionToReturn = true;
 		for (UE ue : ueList) {
 			action = true;
 			action &= ue.setAPN(apnName);
-			if(!action){
-				report.report("Failed to set apn to UE "+ue.getName(),Reporter.WARNING);
+			if (!action) {
+				report.report("Failed to set apn to UE " + ue.getName(), Reporter.WARNING);
 			}
 			action &= ue.stop();
 			GeneralUtils.unSafeSleep(5000);
@@ -112,7 +114,7 @@ public class PeripheralsConfig {
 	 * @throws Exception
 	 * @author Shahaf Shuahmy
 	 */
-	public boolean checkUesConnectionEPC(ArrayList<UE> ueList){
+	public boolean checkUesConnectionEPC(ArrayList<UE> ueList) {
 		GeneralUtils.startLevel("EPC Log");
 		boolean ret = epc.CheckUeListConnection(ueList);
 
@@ -183,10 +185,11 @@ public class PeripheralsConfig {
 		uesUnderTest.add(ueUnderTest);
 		rebootUEs(uesUnderTest);
 	}
-	
+
 	public boolean rebootUEs(ArrayList<UE> uesUnderTest) {
 		return rebootUEs(uesUnderTest, 120000);
 	}
+
 	public boolean rebootUEs(ArrayList<UE> uesUnderTest, long restartDelay) {
 		boolean flag = true;
 		try {
@@ -200,12 +203,12 @@ public class PeripheralsConfig {
 				report.report("Turning on Ues with IP Power");
 				flag &= turnOnAllUEs(uesUnderTest);
 				GeneralUtils.stopLevel();
-			}else {
+			} else {
 				GeneralUtils.startLevel("Reboot Ues with SNMP command");
 				flag &= rebootUEsSNMP(uesUnderTest);
 				GeneralUtils.stopLevel();
 			}
-			report.report("Waiting "+ (restartDelay/1000) +" seconds for UEs after power on");
+			report.report("Waiting " + (restartDelay / 1000) + " seconds for UEs after power on");
 			flag &= GeneralUtils.unSafeSleep(restartDelay);
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -215,30 +218,30 @@ public class PeripheralsConfig {
 		}
 		return flag;
 	}
-	
-	private boolean rebootUEsSNMP(ArrayList<UE> uesUnderTest){
+
+	private boolean rebootUEsSNMP(ArrayList<UE> uesUnderTest) {
 		boolean action = true;
 		for (UE ue : uesUnderTest) {
-			if(ue.reboot()){
-				report.report("UE "+ue.getName()+" was rebooted");
-			}else{
-				report.report("Failed to reboot UE "+ue.getName(),Reporter.WARNING);
+			if (ue.reboot()) {
+				report.report("UE " + ue.getName() + " was rebooted");
+			} else {
+				report.report("Failed to reboot UE " + ue.getName(), Reporter.WARNING);
 				action = false;
 			}
 		}
 		return action;
-	}	
-	
-	public void preformHO(AttenuatorSet attenuatorSetUnderTest, int attenuatorMin, int attenuatorMax){
-		
+	}
+
+	public void preformHO(AttenuatorSet attenuatorSetUnderTest, int attenuatorMin, int attenuatorMax) {
+
 		GeneralUtils.startLevel("Moving attenuator to create Hand-Over");
-		moveAtt(attenuatorSetUnderTest, attenuatorMin,attenuatorMax);
+		moveAtt(attenuatorSetUnderTest, attenuatorMin, attenuatorMax);
 		GeneralUtils.stopLevel();
 		report.report("Wait for 5 minutes for Counter to update");
 		GeneralUtils.unSafeSleep(WAITTIME);
 	}
 
-	private boolean turnOffAllUEs(ArrayList<UE> uesUnderTest) throws NullPointerException, IOException{
+	private boolean turnOffAllUEs(ArrayList<UE> uesUnderTest) throws NullPointerException, IOException {
 		boolean action = true;
 		Set<PowerControllerPort> setToOff = new HashSet<PowerControllerPort>();
 		for (UE ue : uesUnderTest) {
@@ -246,20 +249,20 @@ public class PeripheralsConfig {
 			if (powerControllerPort != null)
 				setToOff.add(powerControllerPort);
 			else {
-				report.report("[ERROR]: Could not find port for Ue " + ue.getName().toString(),Reporter.WARNING);
+				report.report("[ERROR]: Could not find port for Ue " + ue.getName().toString(), Reporter.WARNING);
 				action = false;
 			}
 		}
 
 		for (PowerControllerPort pcp : setToOff) {
-			if(!pcp.powerOff()){
+			if (!pcp.powerOff()) {
 				action = false;
 			}
 		}
 		return action;
 	}
 
-	private boolean turnOnAllUEs(ArrayList<UE> uesUnderTest) throws NullPointerException, IOException{
+	private boolean turnOnAllUEs(ArrayList<UE> uesUnderTest) throws NullPointerException, IOException {
 		boolean action = true;
 		Set<PowerControllerPort> setToOn = new HashSet<PowerControllerPort>();
 		for (UE ue : uesUnderTest) {
@@ -267,13 +270,13 @@ public class PeripheralsConfig {
 			if (powerControllerPort != null)
 				setToOn.add(powerControllerPort);
 			else {
-				report.report("[ERROR]: Could not find port for Ue " + ue.getName().toString(),Reporter.WARNING);
+				report.report("[ERROR]: Could not find port for Ue " + ue.getName().toString(), Reporter.WARNING);
 				action = false;
 			}
 		}
 
 		for (PowerControllerPort pcp : setToOn) {
-			if(!pcp.powerOn()){
+			if (!pcp.powerOn()) {
 				action = false;
 			}
 		}
@@ -318,7 +321,7 @@ public class PeripheralsConfig {
 	 * how many are connected. * @Author Shuhamy Shahaf.
 	 */
 
-	public int howManyUEsConnectedToENb(EnodeB enb){
+	public int howManyUEsConnectedToENb(EnodeB enb) {
 		Integer result = 0;
 		GeneralUtils.startLevel("SNMP status");
 		GeneralUtils.startLevel("Checking UEs total number connected to ENodeBs");
@@ -330,36 +333,36 @@ public class PeripheralsConfig {
 	}
 
 	/**
-	 * checking if all the ues are connected to node - false if even one UE is not connected.
-	 * via snmp + netspan * @Author Shuhamy Shahaf.
+	 * checking if all the ues are connected to node - false if even one UE is
+	 * not connected. via snmp + netspan * @Author Shuhamy Shahaf.
 	 * 
 	 * @param numberOfRecoveryTrys
 	 * @param ueList
 	 * @param eNBList
 	 * @return true if either are true and false of neither.
-	 * @throws IOException 
+	 * @throws IOException
 	 * @throws Exception
 	 */
-	public boolean checkIfAllUEsAreConnectedToNode(ArrayList<UE> ueList, EnodeB enb){
-		uesNotConnected = new ArrayList<UE>() ;
+	public boolean checkIfAllUEsAreConnectedToNode(ArrayList<UE> ueList, EnodeB enb) {
+		uesNotConnected = new ArrayList<UE>();
 		boolean enbCommandStatus = true;
-		if(epc == null){
-			report.report("EPC is not initalized",Reporter.WARNING);
+		if (epc == null) {
+			report.report("EPC is not initalized", Reporter.WARNING);
 			return false;
 		}
-		
+
 		GeneralUtils.startLevel("Checking if the UEs are connected to the ENodeBs by the EPC");
-		
+
 		ArrayList<EnodeB> enbList = new ArrayList<EnodeB>();
 		enbList.add(enb);
 		for (UE ue : ueList) {
 			EnodeB currentEnb = epc.getCurrentEnodB(ue, enbList);
-			if(currentEnb == null){
+			if (currentEnb == null) {
 				enbCommandStatus = false;
-				
-				report.report("Checking who's node matches imsi : "+ue.getImsi());
+
+				report.report("Checking who's node matches imsi : " + ue.getImsi());
 				String connectImsi = epc.getNodeAccordingToImsi(ue.getImsi());
-				if(connectImsi != ""){
+				if (connectImsi != "") {
 					report.report(connectImsi);
 				}
 			}
@@ -379,70 +382,72 @@ public class PeripheralsConfig {
 			return false;
 		}
 	}
-	
+
 	/**
-	 * Checking with EPC if at least one ue is connected to node.
-	 * false will be returned if every single ue is not connected.
+	 * Checking with EPC if at least one ue is connected to node. false will be
+	 * returned if every single ue is not connected.
+	 * 
 	 * @param ueList
 	 * @param enb
 	 * @return
 	 */
-	public boolean checkIfAtLeastOneUEConnectedToNode(ArrayList<UE> ueList, EnodeB enb){
+	public boolean checkIfAtLeastOneUEConnectedToNode(ArrayList<UE> ueList, EnodeB enb) {
 		boolean atLeastOneUEConnected = false;
-		for(UE ue : ueList){
-			if(checkSingleUEConnectionToNode(ue, enb)){
+		for (UE ue : ueList) {
+			if (checkSingleUEConnectionToNode(ue, enb)) {
 				atLeastOneUEConnected = true;
 			}
 		}
 		return atLeastOneUEConnected;
 	}
-	
-	public boolean checkSingleUEConnectionToNode(UE ue, EnodeB enb){
+
+	public boolean checkSingleUEConnectionToNode(UE ue, EnodeB enb) {
 		boolean result = true;
-		String not ="";
-		if(epc.checkUEConnectedToNode(ue, enb)){
-		}else{
+		String not = "";
+		if (epc.checkUEConnectedToNode(ue, enb)) {
+		} else {
 			result = false;
 			not = "not";
 		}
-		report.report(String.format("[INFO]: Ue %s with IMSI %s is "+not+" connected to EnodeB %s.",ue.getName(),ue.getImsi(), enb.getName()));
+		report.report(String.format("[INFO]: Ue %s with IMSI %s is " + not + " connected to EnodeB %s.", ue.getName(),
+				ue.getImsi(), enb.getName()));
 		return result;
 	}
-	
-	public boolean WaitForUEsAndEnodebConnectivity(ArrayList<UE> ueList, EnodeB enb, long timeOut){
+
+	public boolean WaitForUEsAndEnodebConnectivity(ArrayList<UE> ueList, EnodeB enb, long timeOut) {
 		boolean status = false;
 		long startTime = System.currentTimeMillis(); // fetch starting time
-		
+
 		GeneralUtils.startLevel("Waiting for UEs to connect eNodeB.");
 		while ((System.currentTimeMillis() - startTime) < timeOut) {
-			if(checkIfAllUEsAreConnectedToNode(ueList, enb)){
+			if (checkIfAllUEsAreConnectedToNode(ueList, enb)) {
 				status = true;
 				break;
 			}
 			GeneralUtils.unSafeSleep(5 * 1000);
 		}
 		GeneralUtils.stopLevel();
-		
+
 		return status;
 	}
-	
-	public boolean WaitForUEsAndEnodebDisconnect(ArrayList<UE> ueList, EnodeB enb, long timeOut){
+
+	public boolean WaitForUEsAndEnodebDisconnect(ArrayList<UE> ueList, EnodeB enb, long timeOut) {
 		boolean status = false;
 		long startTime = System.currentTimeMillis(); // fetch starting time
-		
+
 		GeneralUtils.startLevel("Waiting for UEs to disconnect eNodeB.");
 		while ((System.currentTimeMillis() - startTime) < timeOut) {
-			if(!checkIfAllUEsAreConnectedToNode(ueList, enb)){
+			if (!checkIfAllUEsAreConnectedToNode(ueList, enb)) {
 				status = true;
 				break;
 			}
 			GeneralUtils.unSafeSleep(5 * 1000);
 		}
 		GeneralUtils.stopLevel();
-		
+
 		return status;
 	}
-	
+
 	public boolean epcAndEnodeBsConnection(ArrayList<UE> ueList, ArrayList<EnodeB> enbs) {
 		GeneralUtils.startLevel("Check UEs at the ENodeBs");
 		boolean res = true;
@@ -475,15 +480,14 @@ public class PeripheralsConfig {
 			e.printStackTrace();
 		}
 
-		if (numberOfUEsConnetedToENB >= currenUeList.size()){
+		if (numberOfUEsConnetedToENB >= currenUeList.size()) {
 			report.report(String.format("%s or more UEs connected to %s, verification passed.", currenUeList.size(),
 					enb.getName()));
 			return true;
-		}			
-		else{
+		} else {
 			report.report(String.format("less then %s UEs connected to %s, verification failed.", currenUeList.size(),
 					enb.getName()));
-			return false;			
+			return false;
 		}
 	}
 
@@ -496,18 +500,18 @@ public class PeripheralsConfig {
 		}
 		return false;
 	}
-	
+
 	public boolean changeEnbState(EnodeB enb, EnbStates enbState) {
 		if (enbState == EnbStates.UNKNOWN) {
 			report.report("Cant set enodeb state to unknown!");
 			return false;
 		}
 		boolean changedByNetspan = false;
-		synchronized (enb.inServiceStateLock){
-			try{
+		synchronized (enb.inServiceStateLock) {
+			try {
 				changedByNetspan = netspanServer.setNodeServiceState(enb, enbState);
 
-			}catch(Exception e){
+			} catch (Exception e) {
 				e.printStackTrace();
 				report.report("changeEnbState via netspan failed due to: " + e.getMessage(), Reporter.WARNING);
 				changedByNetspan = false;
@@ -516,54 +520,55 @@ public class PeripheralsConfig {
 			if (changedByNetspan) {
 				report.report("Action change status via Netspan has succeeded: EnodeB " + enb.getNetspanName()
 						+ " has been changed to " + enbState);
-				
+
 			} else {
 				// change with snmp
-				report.report("Cannot make action via Netspan: Cannot change " + enb.getNetspanName() + " to " + enbState
-						+ " - trying SNMP");
+				report.report("Cannot make action via Netspan: Cannot change " + enb.getNetspanName() + " to "
+						+ enbState + " - trying SNMP");
 				enb.setOperationalStatus(enbState);
-			}	
-			if(enbState == EnbStates.OUT_OF_SERVICE)
-				enb.expecteInServiceState = false;
+			}
+			enb.expecteInServiceState = enbState == EnbStates.OUT_OF_SERVICE;
+			// if(enbState == EnbStates.OUT_OF_SERVICE)
+			// enb.expecteInServiceState = false;
 			GeneralUtils.unSafeSleep(5000);
 			EnbStates state = null;
-			//cheacking that the enb state now is in service/ out of service according to expectations. 
+			// checking that the enb state now is in service/ out of service according to expectations.
 			state = enb.getServiceState();
-			enb.expecteInServiceState = state.equals(EnbStates.IN_SERVICE);
+			// enb.expecteInServiceState = state.equals(EnbStates.IN_SERVICE);
 			return state == enbState;
 		}
-		
+
 	}
 
 	/**
 	 * @author sshahaf 18/10/2016
-	 * @return false if not in idle mode and true if in idle mode = connected to EPC and not to ENB
+	 * @return false if not in idle mode and true if in idle mode = connected to
+	 *         EPC and not to ENB
 	 */
-	public Boolean checkForIdleMode(EnodeB enb,UE ue){
+	public Boolean checkForIdleMode(EnodeB enb, UE ue) {
 		Boolean connectToEnb = false;
 		Boolean connectToEpc = false;
-		try{
-		GeneralUtils.startLevel("Checking for Idle Mode");
-		ArrayList<UE> uesToCheck = new ArrayList<UE>();
-		uesToCheck.add(ue);
-		if(checkUesConnectionEPC(uesToCheck)){
-			connectToEpc = true;
-			report.report("UE is registered only in epc!");
-			
-			if(checkIfAllUEsAreConnectedToNode(uesToCheck,enb)){
-				connectToEnb = true;
-				report.report("UE is registered under some ENB ");
+		try {
+			GeneralUtils.startLevel("Checking for Idle Mode");
+			ArrayList<UE> uesToCheck = new ArrayList<UE>();
+			uesToCheck.add(ue);
+			if (checkUesConnectionEPC(uesToCheck)) {
+				connectToEpc = true;
+				report.report("UE is registered only in epc!");
+
+				if (checkIfAllUEsAreConnectedToNode(uesToCheck, enb)) {
+					connectToEnb = true;
+					report.report("UE is registered under some ENB ");
+				}
 			}
-		}
-		}catch(Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 			report.report("Exception In CheckForIdleMode method Check Console");
-		}
-		finally{
+		} finally {
 			GeneralUtils.stopLevel();
 		}
 		return connectToEpc && !connectToEnb;
-		
+
 	}
 
 	public ArrayList<UE> getUesNotConnected() {
@@ -573,13 +578,13 @@ public class PeripheralsConfig {
 	public void setUesNotConnected(ArrayList<UE> uesNotConnected) {
 		this.uesNotConnected = uesNotConnected;
 	}
-	
-	public boolean stopUEsOnlyIpPower(ArrayList<UE> ues){
+
+	public boolean stopUEsOnlyIpPower(ArrayList<UE> ues) {
 		boolean action = true;
 		GeneralUtils.startLevel("Stop all UEs via IP Power");
-		try{
+		try {
 			action &= turnOffAllUEs(ues);
-		}catch(Exception e){
+		} catch (Exception e) {
 			report.report("error trying to turn IP power OFF");
 			e.printStackTrace();
 			return false;
@@ -589,16 +594,16 @@ public class PeripheralsConfig {
 		GeneralUtils.stopLevel();
 		return action;
 	}
-	
-	public ArrayList<UE> stopUEsOnlySnmp(ArrayList<UE> ues){
+
+	public ArrayList<UE> stopUEsOnlySnmp(ArrayList<UE> ues) {
 		ArrayList<UE> snmpFailUEs = new ArrayList<UE>();
 		GeneralUtils.startLevel("Stop all UEs via snmp");
 		for (UE ue : ues) {
-			if(!ue.stop()){
+			if (!ue.stop()) {
 				snmpFailUEs.add(ue);
-				report.report("UE "+ue.getLanIpAddress()+" has not stopped via snmp");
-			}else{
-				report.report("UE "+ue.getLanIpAddress()+" has stopped via snmp");
+				report.report("UE " + ue.getLanIpAddress() + " has not stopped via snmp");
+			} else {
+				report.report("UE " + ue.getLanIpAddress() + " has stopped via snmp");
 			}
 		}
 		report.report("Wait 5 seconds");
@@ -606,86 +611,84 @@ public class PeripheralsConfig {
 		GeneralUtils.stopLevel();
 		return snmpFailUEs;
 	}
-		
-	public boolean stopUEs(ArrayList<UE> ues){
+
+	public boolean stopUEs(ArrayList<UE> ues) {
 		boolean res = true;
 		GeneralUtils.startLevel("Stop all UEs");
 		ArrayList<UE> snmpFailUEs = stopUEsOnlySnmp(ues);
-		if(!snmpFailUEs.isEmpty()){
+		if (!snmpFailUEs.isEmpty()) {
 			report.report("Failed to stop some UEs via snmp. Trying with IP Power");
 			res = stopUEsOnlyIpPower(snmpFailUEs);
 		}
 		GeneralUtils.stopLevel();
 		return res;
 	}
-	
-	public boolean startUEsOnlyIpPower(ArrayList<UE> ues){
+
+	public boolean startUEsOnlyIpPower(ArrayList<UE> ues) {
 		boolean action = true;
 		GeneralUtils.startLevel("Start all UEs via IP Power");
-		try{
+		try {
 			action &= turnOnAllUEs(ues);
-		}catch(Exception e){
+		} catch (Exception e) {
 			report.report("error trying to turn IP power ON");
 			e.printStackTrace();
 			return false;
 		}
 		report.report("Wait 2 minutes");
-		GeneralUtils.unSafeSleep(2*60*1000);
+		GeneralUtils.unSafeSleep(2 * 60 * 1000);
 		GeneralUtils.stopLevel();
 		return action;
 	}
-	
-	public ArrayList<UE> startUEsOnlySnmp(ArrayList<UE> ues){
+
+	public ArrayList<UE> startUEsOnlySnmp(ArrayList<UE> ues) {
 		ArrayList<UE> snmpFailUEs = new ArrayList<UE>();
 		GeneralUtils.startLevel("Start all UEs via snmp");
 		for (UE ue : ues) {
 			if (ue.getLanIpAddress() == null) {
 				report.report("Cant start ue " + ue.getImsi() + " because lanIPAdress is NULL", Reporter.WARNING);
 
-			}
-			else {
-				if(!ue.start()){
+			} else {
+				if (!ue.start()) {
 					snmpFailUEs.add(ue);
-					report.report("UE "+ue.getLanIpAddress()+" has not started via snmp");
-				}else{
-					report.report("UE "+ue.getLanIpAddress()+" has started via snmp");
+					report.report("UE " + ue.getLanIpAddress() + " has not started via snmp");
+				} else {
+					report.report("UE " + ue.getLanIpAddress() + " has started via snmp");
 				}
-			}	
+			}
 		}
 		report.report("Wait 10 seconds");
 		GeneralUtils.unSafeSleep(1000 * 10);
 		GeneralUtils.stopLevel();
 		return snmpFailUEs;
 	}
-		
-	public boolean startUEs(ArrayList<UE> ues){
+
+	public boolean startUEs(ArrayList<UE> ues) {
 		boolean res = true;
 		GeneralUtils.startLevel("Start all UEs");
 		ArrayList<UE> snmpFailUEs = startUEsOnlySnmp(ues);
-		if(!snmpFailUEs.isEmpty()){
+		if (!snmpFailUEs.isEmpty()) {
 			report.report("Failed to start some UEs via snmp. Trying with IP Power");
 			res = startUEsOnlyIpPower(snmpFailUEs);
 		}
 		GeneralUtils.stopLevel();
-		
+
 		return res;
 	}
 
-	
-	public void stopStartUes(ArrayList<UE> ueList){
+	public void stopStartUes(ArrayList<UE> ueList) {
 		stopUEs(ueList);
 		startUEs(ueList);
 	}
-	
+
 	public boolean moveAtt(AttenuatorSet attenuatorSetUnderTest, int from, int to) {
 		int multi = 1;
 		int attenuatorsCurrentValue = from;
 		if (from > to)
 			multi = -1;
-		int steps = Math.abs(from-to)/ATT_STEP;
-		for (;steps>=0;steps--){
+		int steps = Math.abs(from - to) / ATT_STEP;
+		for (; steps >= 0; steps--) {
 			long beforeAtt = System.currentTimeMillis();
-			if (!this.setAttenuatorSetValue(attenuatorSetUnderTest, attenuatorsCurrentValue)){
+			if (!this.setAttenuatorSetValue(attenuatorSetUnderTest, attenuatorsCurrentValue)) {
 				report.report("Failed to set attenuator value");
 				return false;
 			}
@@ -697,18 +700,18 @@ public class PeripheralsConfig {
 		}
 		return true;
 	}
-	
-	public String checkUesConnection(EnodeB dut, ArrayList<UE> UEs,int reporterStatus) {
-		String reason = "";		
+
+	public String checkUesConnection(EnodeB dut, ArrayList<UE> UEs, int reporterStatus) {
+		String reason = "";
 		GeneralUtils.startLevel("Check UEs connection to eNB");
 		EnbStates channelStatus = dut.getServiceState();
 		if (channelStatus == EnbStates.UNKNOWN) {
 			report.report("enodeB state is Unknown.");
 		}
 		boolean status = checkIfAllUEsAreConnectedToNode(UEs, dut);
-		
+
 		report.report("Ues are " + (status ? "" : "not ") + "connected.");
-		
+
 		if ((!status) && (channelStatus.equals(EnbStates.OUT_OF_SERVICE))) {
 			report.report(dut.getNetspanName() + " is Out_Of_Service and UEs wasn't connected", reporterStatus);
 			reason = dut.getNetspanName() + " is Out_Of_Service and UEs wasn't connected";
@@ -723,16 +726,16 @@ public class PeripheralsConfig {
 	public boolean SetAttenuatorToMin(AttenuatorSet attenuatorSet) {
 		return setAttenuatorSetValue(attenuatorSet, attenuatorSet.getMinAttenuation());
 	}
-	
+
 	public boolean SetAttenuatorToMax(AttenuatorSet attenuatorSet) {
 		return setAttenuatorSetValue(attenuatorSet, attenuatorSet.getMaxAttenuation());
 	}
-	
-	public boolean checkConnectionUEWithStopStart(UE ue, EnodeB enb){
+
+	public boolean checkConnectionUEWithStopStart(UE ue, EnodeB enb) {
 		ue.stop();
-		GeneralUtils.unSafeSleep(5*1000);
+		GeneralUtils.unSafeSleep(5 * 1000);
 		ue.start();
-		GeneralUtils.unSafeSleep(10*1000);
+		GeneralUtils.unSafeSleep(10 * 1000);
 		ArrayList<UE> ueList = new ArrayList<UE>();
 		ueList.add(ue);
 		return checkIfAllUEsAreConnectedToNode(ueList, enb);
@@ -742,25 +745,25 @@ public class PeripheralsConfig {
 		boolean result = false;
 		long timeStamp = System.currentTimeMillis();
 		boolean timeLoopCondition = true;
-		while(timeLoopCondition){
-			//timeout loop condition.
-			if(System.currentTimeMillis() - timeStamp > ueConnectTimeout){
+		while (timeLoopCondition) {
+			// timeout loop condition.
+			if (System.currentTimeMillis() - timeStamp > ueConnectTimeout) {
 				timeLoopCondition = false;
 				result = false;
 			}
-			//if ue is Connected.
-			if(isUEConnected(ue,enbInTest)){
+			// if ue is Connected.
+			if (isUEConnected(ue, enbInTest)) {
 				timeLoopCondition = false;
 				result = true;
 			}
-			
+
 			GeneralUtils.unSafeSleep(5 * 1000);
 		}
 		return result;
-		
+
 	}
-	
-	public boolean isUEConnected(UE ue,ArrayList<EnodeB> node){
+
+	public boolean isUEConnected(UE ue, ArrayList<EnodeB> node) {
 		EnodeB currentEnb = epc.getCurrentEnodB(ue, node);
 		return currentEnb != null;
 	}

@@ -530,7 +530,7 @@ public class PeripheralsConfig {
 			enb.expecteInServiceState = enbState == EnbStates.OUT_OF_SERVICE;
 			// if(enbState == EnbStates.OUT_OF_SERVICE)
 			// enb.expecteInServiceState = false;
-			GeneralUtils.unSafeSleep(5000);
+			GeneralUtils.unSafeSleep(10000);
 			EnbStates state = null;
 			// checking that the enb state now is in service/ out of service according to expectations.
 			state = enb.getServiceState();

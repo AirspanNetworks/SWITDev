@@ -24,7 +24,7 @@ public class CommandWatchInService extends Command {
 		if (enabled) {
 			GeneralUtils.printToConsole("CommandWatchInService on " + enb.getName() + " runs for the " + time + " time");
 			synchronized (enb.inServiceStateLock) {
-				GeneralUtils.printToConsole("CommandWatchInService on " + enb.getName() + " passed syncronized for the " + time + " time");
+				GeneralUtils.printToConsole("CommandWatchInService on " + enb.getName() + " passed synchronized for the " + time + " time");
 				if (enb.expecteInServiceState) {
 					GeneralUtils.printToConsole("CommandWatchInService on " + enb.getName() + " passed expecteInServiceState for the " + time + " time");
 					if (enb.getServiceState().equals(EnbStates.OUT_OF_SERVICE)) {

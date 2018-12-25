@@ -22,11 +22,11 @@ public class CommandWatchInService extends Command {
 	@Override
 	public void run() {
 		if (enabled) {
-			GeneralUtils.printToConsole("CommandWatchInService runs for the " + time + " time");
+			GeneralUtils.printToConsole("CommandWatchInService on " + enb.getName() + " runs for the " + time + " time");
 			synchronized (enb.inServiceStateLock) {
-				GeneralUtils.printToConsole("CommandWatchInService passed syncronized for the " + time + " time");
+				GeneralUtils.printToConsole("CommandWatchInService on " + enb.getName() + " passed syncronized for the " + time + " time");
 				if (enb.expecteInServiceState) {
-					GeneralUtils.printToConsole("CommandWatchInService passed expecteInServiceState for the " + time + " time");
+					GeneralUtils.printToConsole("CommandWatchInService on " + enb.getName() + " passed expecteInServiceState for the " + time + " time");
 					if (enb.getServiceState().equals(EnbStates.OUT_OF_SERVICE)) {
 						if (!wasFailPrinted) {
 							GeneralUtils.report.report(enb.getName() + " is in Out of service state", Reporter.FAIL);

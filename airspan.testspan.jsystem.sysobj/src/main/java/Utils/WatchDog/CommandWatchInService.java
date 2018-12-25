@@ -11,7 +11,6 @@ public class CommandWatchInService extends Command {
 	private EnodeB enb;
 	private boolean wasFailPrinted;
 	private volatile boolean enabled = true;
-	private int time = 1;
 
 	public CommandWatchInService(EnodeB enodeB) {
 		name = "CommandWatchInService";
@@ -21,11 +20,8 @@ public class CommandWatchInService extends Command {
 	@Override
 	public void run() {
 		if (enabled) {
-			GeneralUtils.printToConsole("CommandWatchInService on " + enb.getName() + " runs for the " + time + " time");
 			synchronized (enb.inServiceStateLock) {
-				GeneralUtils.printToConsole("CommandWatchInService on " + enb.getName() + " passed synchronized for the " + time + " time");
 				if (enb.expecteInServiceState) {
-					GeneralUtils.printToConsole("CommandWatchInService on " + enb.getName() + " passed expecteInServiceState for the " + time + " time");
 					if (enb.getServiceState().equals(EnbStates.OUT_OF_SERVICE)) {
 						if (!wasFailPrinted) {
 							GeneralUtils.report.report(enb.getName() + " is in Out of service state", Reporter.FAIL);
@@ -38,7 +34,6 @@ public class CommandWatchInService extends Command {
 					}
 				}
 			}
-			time++;
 		}
 	}
 

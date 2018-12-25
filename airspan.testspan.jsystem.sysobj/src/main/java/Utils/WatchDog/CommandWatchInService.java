@@ -11,12 +11,11 @@ public class CommandWatchInService extends Command {
 	private EnodeB enb;
 	private boolean wasFailPrinted;
 	private volatile boolean enabled = true;
-	int time = 1;
+	private int time = 1;
 
 	public CommandWatchInService(EnodeB enodeB) {
 		name = "CommandWatchInService";
 		enb = enodeB;
-
 	}
 
 	@Override

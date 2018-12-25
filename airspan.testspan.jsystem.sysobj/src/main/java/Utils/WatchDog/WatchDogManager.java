@@ -11,7 +11,7 @@ import Utils.GeneralUtils;
 public class WatchDogManager extends Thread {
 
 	public static final int infinityNumberOfTimesToRun = -1;
-	public static final long MAX_THREADS = 2;
+	public static final long MAX_THREADS = 3;
 
 	private static WatchDogManager instance;
 	private static Object instanceLock = new Object();

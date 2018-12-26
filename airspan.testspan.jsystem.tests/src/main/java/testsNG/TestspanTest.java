@@ -382,7 +382,7 @@ public class TestspanTest extends SystemTestCase4 {
 			String loggerUploadAllEnodebIP = eNodeB.getLoggerUploadAllEnodebIP();
 			if (loggerUploadAllEnodebIP != null) {
 				report.addLink(LOGGER_UPLOAD_ALL_DESC,
-						String.format(LOGGER_UPLOAD_ALL_LINK, dateFormat.format(date), loggerUploadAllEnodebIP));
+						String.format(LOGGER_UPLOAD_ALL_LINK, dateFormat.format(date), loggerUploadAllEnodebIP.replace(":", ".")));
 			} else {
 				report.report("Logger upload all not available, due to missing IP.");
 			}

@@ -824,7 +824,7 @@ public abstract class XLP extends EnodeBComponent {
             report.report(getName() + " - Got bad state from SNMP: State= " + swStatus + " Status String= " + statusString,
                     Reporter.WARNING);
             result = new Pair<Boolean, SwStatus>(false, swStatus);
-        } else if (!precent.equals("100") && swStatus == SwStatus.SW_STATUS_IDLE && !precent.trim().equals("")) {
+        } else if (!precent.equals("100") && swStatus == SwStatus.SW_STATUS_IDLE && !precent.trim().equals(String.valueOf(GeneralUtils.ERROR_VALUE))) {
             report.report(getName() + " - Software download failed while in process Download Precent was != 100 but status is Idle",
                     Reporter.WARNING);
             result = new Pair<Boolean, SwStatus>(false, swStatus);

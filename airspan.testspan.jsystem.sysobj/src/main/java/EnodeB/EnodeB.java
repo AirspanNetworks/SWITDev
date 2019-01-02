@@ -222,7 +222,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 	/**
 	 * Lte cli command
 	 *
-	 * @param commands
+	 * @param command
 	 *            the commands
 	 * @return the string
 	 */
@@ -233,7 +233,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 	/**
 	 * Lte cli commands.. separated by ";"
 	 *
-	 * @param commands
+	 * @param command
 	 *            the commands
 	 * @return the string
 	 */
@@ -1190,7 +1190,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 			this.waitForAllRunning(EnodeBWithDAN.SHORT_WAIT_FOR_ALL_RUNNING_TIME);
 		response = enb.XLP.lteCli("db set StackCfg [1] uploadUrl=" + url);
 		if (response == null) {
-			GeneralUtils.printToConsole("logger upload url faild to update");
+			GeneralUtils.printToConsole("logger upload url failed to update");
 			return false;
 		}
 
@@ -1198,7 +1198,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 			GeneralUtils.printToConsole("logger upload url updated!");
 			result = true;
 		} else {
-			GeneralUtils.printToConsole("logger upload url faild to update");
+			GeneralUtils.printToConsole("logger upload url failed to update");
 		}
 		GeneralUtils.printToConsole("------done with logger upload url------");
 		return result;
@@ -1503,7 +1503,12 @@ public abstract class EnodeB extends SystemObjectImpl {
 	public int getUnexpectedReboot(){
 		return XLP.getUnexpectedReboot();
 	}
-	
+
+	/**
+	 * define the number of unexpected reboots on the current EnodeB object.
+	 *
+	 * @param unexpectedReboot - number of unexpected reboot
+	 */
 	public void setUnexpectedReboot(int unexpectedReboot){
 		XLP.setUnexpectedReboot(unexpectedReboot);
 	}

@@ -13,9 +13,11 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.custommonkey.xmlunit.DetailedDiff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.After;
+import org.junit.Assume;
 import org.junit.Before;
 
 import EnodeB.EnodeB;
@@ -25,14 +27,11 @@ import Netspan.NetspanServer;
 import Netspan.API.Enums.EnbStates;
 import Netspan.API.Lte.AlarmInfo;
 import TestingServices.TestConfig;
-import UeSimulator.Amarisoft.AmariSoftServer;
 import Utils.DebugFtpServer;
 import Utils.GeneralUtils;
-import Utils.InetAddressesHelper;
 import Utils.ScenarioUtils;
 import Utils.ScpClient;
 import Utils.SetupUtils;
-import Utils.TunnelManager;
 import Utils.Reporters.GraphAdder;
 import Utils.Snmp.MibReader;
 import Utils.WatchDog.CommandMemoryCPU;
@@ -58,14 +57,12 @@ public class TestspanTest extends SystemTestCase4 {
 	private String basePath = System.getProperty("user.dir");
 	private String beforeTest = "BeforeTest";
 	private String afterTest = "AfterTest";
-	private Boolean gotDBFiles = false;
 	private ArrayList<CommandMemoryCPU> cpuCommands = new ArrayList<CommandMemoryCPU>();
 	private ArrayList<CommandWatchInService> inserviceCommands = new ArrayList<CommandWatchInService>();
 
 	private HashMap<String, ArrayList<String>> filesFromDBPerNode = new HashMap<String, ArrayList<String>>();
-	protected String myVersion = "";
 	/** The Constant SYSOBJ_STRING_DELIMITER. */
-	protected String reason = "";
+	protected String reason = StringUtils.EMPTY;
 	// must set enbInTest!!!!!!
 	protected ArrayList<EnodeB> enbInTest = null;
 	protected ArrayList<EnodeB> enbInSetup;
@@ -81,202 +78,333 @@ public class TestspanTest extends SystemTestCase4 {
 	 * JSYSTEM scenario. The following value must be returned by every test using
 	 * "returnValue" property testProperty notation.
 	 **/
-	protected String isTestWasSuccessful = "";
+	protected String isTestWasSuccessful = StringUtils.EMPTY;
 
 	public static final String DEFAULT_SOURCE_POM_PROPERTIES_FILE_NAME = "pom.properties";
 	public static final String PATH_TO_POM_PROPERTIES = System.getProperty("user.dir") + File.separator + "target"
 			+ File.separator + "maven-archiver" + File.separator + DEFAULT_SOURCE_POM_PROPERTIES_FILE_NAME;
 	private boolean enbsAreInService = true;
 
-	private static HashMap<String, Integer> testStats = new HashMap<String, Integer>();
+	private static HashMap<String, Integer> testStats;
 	private static HashMap<String, Integer> scenarioStats;
-	private static HashMap<String, Integer> unexpectedInScenario = null;
+
+	/**
+	 * Counts all the unexpected reboots, on all EnodeBs, while 1 scenario.
+	 * String - EnodeB name
+	 * Integer - Reboot status (0\1)
+	 */
+	private static HashMap<String, Integer> unexpectedRebootHash = null;
 	protected WatchDogManager wd;
 
 	/**
-	 * Inits the.
+	 * Initialize function
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception - exception
 	 */
 	@Before
 	public void init() throws Exception {
-		scenarioStats = ScenarioUtils.getInstance().getScenarioStats();
-		unexpectedInScenario = ScenarioUtils.getInstance().getUnexpectedInScenario();
-
-		initTestListener();
-		TunnelManager.seteNodeBInTestList(enbInTest);
-		//TunnelManager.failedTestIfNoTriesLeftForAnyDut();
-		GeneralUtils.startLevel("Initialize Components");
-		
-		//if ue simulator is connected, start log.
-		if (AmariSoftServer.getInstance() != null) {			
-			AmariSoftServer.getInstance().startLogger();
-		}
-		
-		testStats = new HashMap<String, Integer>();
-		if (enbInTest == null)
-			throw new Exception("must set enbInTest!!!!!!");
-
-		GeneralUtils.printToConsole(ScenarioUtils.getInstance().getMemoryConsumption());
-
-		myVersion = getVersion();
-		alarmsAndEvents = AlarmsAndEvents.getInstance();
-		report.setContainerProperties(0, "Version", myVersion);
+        testStats = new HashMap<String, Integer>();
+        scenarioStats = ScenarioUtils.getInstance().getScenarioStats();
 		netspanServer = NetspanServer.getInstance();
-		reason = "";
-		GeneralUtils.startLevel("Loading setup's enodeBs");
-		enbInSetup = SetupUtils.getInstance().getAllEnb();
-		GeneralUtils.stopLevel();
+        alarmsAndEvents = AlarmsAndEvents.getInstance();
+        wd = WatchDogManager.getInstance();
+        addToListenerManager();
+        initUnexpectedRebootMap();
+        GeneralUtils.startLevel("Initialize Components");
+        validateEnbIsSet();
+        GeneralUtils.printToConsole(ScenarioUtils.getInstance().getMemoryConsumption());
+		checkAutoVersion();
+		initAllEnodeBInSetupList();
 
+		//Loop on all the EnodeBs in the current test
 		for (EnodeB eNodeB : enbInTest) {
-			if (eNodeB == null) {
-				report.report("EnodeB is not initialized", Reporter.WARNING);
-				GeneralUtils.stopAllLevels();
-				return;
-			}
-
-			if (eNodeB.blackListed) {
-				enbsAreInService = false;
-				report.report(eNodeB.getName() + " is black listed for failing to reach all running. stopping test.",
-						Reporter.WARNING);
-				break;
-			}
-
-			if (unexpectedInScenario == null) {
-				unexpectedInScenario = new HashMap<String, Integer>();
-			}
-			GeneralUtils.printToConsole(String.format("Creating log files for test for eNondeB %s", eNodeB.getName()));
-			eNodeB.setUnexpectedReboot(0);
-			Logger[] loggers = eNodeB.getLoggers();
-			for (Logger logger : loggers) {
-				logger.startLog(String.format("%s_%s", getMethodName(), logger.getParent().getName()));
-				logger.clearTestCounters();
-				logger.setCountErrorBool(true);
-			}
-
-			String enbName = eNodeB.getNetspanName();
-			if (!unexpectedInScenario.containsKey(enbName)) {
-				unexpectedInScenario.put(enbName, 0);
-			}
-
-			EnodeBConfig.getInstance().isEnodebManaged(eNodeB);
-
-			eNodeB.setDeviceUnderTest(true);
-			// check if bank was swapped and swap it again
-			boolean bankSwapped = eNodeB.isBankSwaped();
-			if (bankSwapped) {
-				report.report("Bank was swapped on " + eNodeB.getNetspanName() + " Trying to swap bank back");
-				eNodeB.reboot(true);
-				eNodeB.waitForAllRunningAndInService(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);
-			}
-
-			alarmsAndEvents.deleteAllAlarmsNode(eNodeB);
-
-			// commandInService
-			wd = WatchDogManager.getInstance();
-			CommandWatchInService commandInService = new CommandWatchInService(eNodeB);
-			commandInService.name = eNodeB.getName() + "_commandInService";
-			wd.addCommand(commandInService);
-			inserviceCommands.add(commandInService);
-			// command CPU and Memory
-			CommandMemoryCPU cpuCommand = new CommandMemoryCPU(eNodeB);
-			cpuCommands.add(cpuCommand);
-			wd.addCommand(cpuCommand);
-			report.report("setting WD CPU and Memory Command for enodeB " + eNodeB.getName());
-
-			PeripheralsConfig.getInstance().changeEnbState(eNodeB, EnbStates.IN_SERVICE);
-			if(this instanceof SWUpgrade){
-				report.report(eNodeB.getNetspanName() + ": Wait for all Running (TimeOut="
-						+ 1 + " Minutes)");
-				if (!eNodeB.waitForAllRunningAndInService(60*1000)) {
-					report.report(eNodeB.getNetspanName() + " failed to reach all running.", Reporter.WARNING);
-					report.report("SW upgrade test. Trying to upgrade when enodeb in no all running state");
-				}
-			}else{
-				report.report(eNodeB.getNetspanName() + ": Wait for all Running (TimeOut="
-						+ (EnodeB.WAIT_FOR_ALL_RUNNING_TIME / 60000) + " Minutes)");
-				if (!eNodeB.waitForAllRunningAndInService(EnodeB.WAIT_FOR_ALL_RUNNING_TIME)) {
-					report.report(eNodeB.getNetspanName() + " failed to reach all running.", Reporter.WARNING);
-					enbsAreInService = false;
-					eNodeB.blackListed = true;
-				}				
-			}
-			if (eNodeB.isSkipCMP()) {
-				report.report("EnodeB " + eNodeB.getNetspanName() + " is working with SKIP CMPv2");
-			}
-			eNodeB.setCellContextNumber(1);
-			GeneralUtils.startLevel("Session connection status");
-			eNodeB.showLoginStatus();
-			GeneralUtils.stopLevel();
-
-			if (eNodeB.isMACtoPHYEnabled()) {
-				eNodeB.enableMACtoPHYcapture(SnifferFileLocation.Remote);
-			}
-			eNodeB.setNodeLoggerUrl(eNodeB, TestConfig.getInstace().getLoggerUploadAllUrl());
-			try {
-				netspanServer.checkAndSetDefaultProfiles(eNodeB, false);
-			} catch (Exception e) {
-				e.printStackTrace();
-				report.report("checkAndSetDefaultProfiles failed due to: " + e.getMessage(), Reporter.WARNING);
-			}
-
-			gotDBFiles = getDBFiles(eNodeB, beforeTest);
+			if (!isEnodeBObjectInitialized(eNodeB)) return;
+			if (isEnodeBInAllRunningBlackList(eNodeB)) break;
+			initEnodeB(eNodeB);
 		}
-
-		calledOnceInInitFunc();
+		setDebugFtpServer();
 		GeneralUtils.stopLevel();
+		verifyEnBsAreInService();
+	}
 
+	/** Init EnodeB
+	 *
+	 * @param eNodeB - eNodeB
+	 */
+	private void initEnodeB(EnodeB eNodeB) {
+		initUnexpectedRebootOfEnB(eNodeB);
+		createEnodeBLogFiles(eNodeB);
+		addEnodeBToUnexpectedRebootMap(eNodeB.getNetspanName());
+		EnodeBConfig.getInstance().isEnodebManaged(eNodeB);
+		eNodeB.setDeviceUnderTest(true);
+		swapBanksBackIfNeeded(eNodeB);
+		alarmsAndEvents.deleteAllAlarmsNode(eNodeB);
+		initCommandWatchInService(eNodeB);
+		initMemoryCPUCommand(eNodeB);
+		PeripheralsConfig.getInstance().changeEnbState(eNodeB, EnbStates.IN_SERVICE);
+		waitForAllRunningAndInService(eNodeB);
+		reportIfCMPWasSkipped(eNodeB);
+		eNodeB.setCellContextNumber(1);
+		showLoginStatus(eNodeB);
+		captureMACToPHY(eNodeB);
+		eNodeB.setNodeLoggerUrl(eNodeB, TestConfig.getInstace().getLoggerUploadAllUrl());
+		checkAndSetDefaultNetspanProfiles(eNodeB);
+		getDBFiles(eNodeB, beforeTest);
+	}
+
+	/**
+	 * Verify EnodeBs Are In Service, fail and stop test if not.
+	 */
+	private void verifyEnBsAreInService() {
 		if (!enbsAreInService)
 			report.report("One or more of the enbs failed to reach all running state, failing and stopping test.",
 					Reporter.FAIL);
-		org.junit.Assume.assumeTrue(enbsAreInService);
+		Assume.assumeTrue(enbsAreInService);
 	}
 
-	static boolean isCalledOnceInInitFunc = false;
-
-	private void calledOnceInInitFunc() {
-		if (!isCalledOnceInInitFunc) {
-			isCalledOnceInInitFunc = true;
-			setDebugFtpServer();
+	/** check And Set Default Netspan Profiles
+	 *
+	 * @param eNodeB - eNodeB
+	 */
+	private void checkAndSetDefaultNetspanProfiles(EnodeB eNodeB) {
+		try {
+			netspanServer.checkAndSetDefaultProfiles(eNodeB, false);
+		} catch (Exception e) {
+			e.printStackTrace();
+			report.report("checkAndSetDefaultProfiles failed due to: " + e.getMessage(), Reporter.WARNING);
 		}
 	}
 
+	/** capture MAC to PHY, "isMACtoPHYEnabled" param is being taken from the SUT, set to false by default.
+	 *
+	 * @param eNodeB - eNodeB
+	 */
+	private void captureMACToPHY(EnodeB eNodeB) {
+		if (eNodeB.isMACtoPHYEnabled()) {
+			eNodeB.enableMACtoPHYcapture(SnifferFileLocation.Remote);
+		}
+	}
+
+	/** start reporter level, show login status, and stop reporter level.
+	 *
+	 * @param eNodeB - eNodeB
+	 */
+	private void showLoginStatus(EnodeB eNodeB) {
+		GeneralUtils.startLevel("Session connection status");
+		eNodeB.showLoginStatus();
+		GeneralUtils.stopLevel();
+	}
+
+	/** print report if SKIP CMPv2
+	 *
+	 * @param eNodeB - eNodeB
+	 */
+	private void reportIfCMPWasSkipped(EnodeB eNodeB) {
+		if (eNodeB.isSkipCMP()) {
+			report.report("EnodeB " + eNodeB.getNetspanName() + " is working with SKIP CMPv2");
+		}
+	}
+
+	/** Wait For All Running - deal with 2 cases: SWUpgrade and the rest of the tests
+     *
+     * @param eNodeB - eNodeB
+     */
+    private void waitForAllRunningAndInService(EnodeB eNodeB) {
+        if(this instanceof SWUpgrade){
+            report.report(eNodeB.getNetspanName() + ": Wait for all Running (TimeOut=" + 1 + " Minutes)");
+            if (!eNodeB.waitForAllRunningAndInService(60*1000)) {
+                report.report(eNodeB.getNetspanName() + " failed to reach all running.", Reporter.WARNING);
+                report.report("SW upgrade test. Trying to upgrade when enodeb in no all running state");
+            }
+        }else{
+            report.report(eNodeB.getNetspanName() + ": Wait for all Running (TimeOut=" +
+                    (EnodeB.WAIT_FOR_ALL_RUNNING_TIME / 60000) + " Minutes)");
+            if (!eNodeB.waitForAllRunningAndInService(EnodeB.WAIT_FOR_ALL_RUNNING_TIME)) {
+                report.report(eNodeB.getNetspanName() + " failed to reach all running.", Reporter.WARNING);
+                enbsAreInService = false;
+                eNodeB.blackListed = true;
+            }
+        }
+    }
+
+    /** init Memory CPU Command
+     *
+     * @param eNodeB - eNodeB
+     */
+	private void initMemoryCPUCommand(EnodeB eNodeB) {
+		CommandMemoryCPU cpuCommand = new CommandMemoryCPU(eNodeB);
+		cpuCommands.add(cpuCommand);
+		wd.addCommand(cpuCommand);
+		report.report("setting WD CPU and Memory Command for enodeB " + eNodeB.getName());
+	}
+
+	/**
+	 * Init Command Watch In Service
+     *
+	 * @param eNodeB - eNodeB
+	 */
+	private void initCommandWatchInService(EnodeB eNodeB) {
+		CommandWatchInService commandInService = new CommandWatchInService(eNodeB);
+		commandInService.name = eNodeB.getName() + "_commandInService";
+		wd.addCommand(commandInService);
+		inserviceCommands.add(commandInService);
+	}
+
+	/**
+	 * Init Unexpected Reboot Of EnB to 0
+     *
+	 * @param eNodeB - current eNodeB
+	 */
+	private void initUnexpectedRebootOfEnB(EnodeB eNodeB) {
+		eNodeB.setUnexpectedReboot(0);
+	}
+
+	/**
+	 *  Check if bank was swapped and swap it again
+	 *
+	 * @param eNodeB - eNodeB
+	 */
+	private void swapBanksBackIfNeeded(EnodeB eNodeB) {
+		if (eNodeB.isBankSwaped()) {
+			report.report("Bank was swapped on " + eNodeB.getNetspanName() + ". Trying to swap bank back");
+			eNodeB.reboot(true);
+			eNodeB.waitForAllRunningAndInService(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);
+		}
+	}
+
+	/**
+	 * Adding the EnodeB to the "unexpected reboot hashMap" if it wan't added.
+	 *
+	 * @param enbName - enbName
+	 */
+	private void addEnodeBToUnexpectedRebootMap(String enbName) {
+		if (!unexpectedRebootHash.containsKey(enbName)) {
+			unexpectedRebootHash.put(enbName, 0);
+		}
+	}
+
+	/**
+	 * Recognize and define all the nodeBs in setup - (SUT)
+	 */
+	private void initAllEnodeBInSetupList() {
+		GeneralUtils.startLevel("Loading setup's enodeBs");
+		enbInSetup = SetupUtils.getInstance().getAllEnb();
+		GeneralUtils.stopLevel();
+	}
+
+	/**
+	 * Initialize the Hash map
+	 */
+	private void initUnexpectedRebootMap() {
+			unexpectedRebootHash = ScenarioUtils.getInstance().getUnexpectedRebootInScenario();
+	}
+
+	/**
+     * create EnodeB Log Files, initialize the EnodeB counters.
+     *
+     * @param eNodeB - eNodeB
+     */
+    private void createEnodeBLogFiles(EnodeB eNodeB) {
+        GeneralUtils.printToConsole(String.format("Creating log files for test for eNondeB %s", eNodeB.getName()));
+        Logger[] loggers = eNodeB.getLoggers();
+        for (Logger logger : loggers) {
+            logger.startLog(String.format("%s_%s", getMethodName(), logger.getParent().getName()));
+            logger.clearTestCounters();
+            logger.setCountErrorBool(true);
+        }
+    }
+
+    /**
+     * checks if the EnodeB is in black list, i.e. failed to reach all running.
+	 *
+	 * @param eNodeB - eNodeB
+	 * @return - true if it's in the black list
+	 */
+	private boolean isEnodeBInAllRunningBlackList(EnodeB eNodeB) {
+		if (eNodeB.blackListed) {
+			enbsAreInService = false;
+			report.report(eNodeB.getName() + " is black listed for failing to reach all running. stopping test.",
+					Reporter.WARNING);
+			return true;
+		}
+		return false;
+	}
+
+	/**
+     * validate EnodeB Initialization
+	 *
+	 * @param eNodeB - current enodeB
+	 * @return - true if it's initialize.
+	 */
+	private boolean isEnodeBObjectInitialized(EnodeB eNodeB) {
+		if (eNodeB == null) {
+			report.report("EnodeB is not initialized", Reporter.WARNING);
+			GeneralUtils.stopAllLevels();
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Check Automation Version and define it in the report prop file
+	 */
+	private void checkAutoVersion() {
+		String automationVersion = getVersion();
+		report.setContainerProperties(0, "Version", automationVersion);
+	}
+
+	/** Throws exception if the EnodeB was not set by the user.
+     *
+     * @throws Exception - Exception
+     */
+    private void validateEnbIsSet() throws Exception {
+        if (enbInTest == null)
+            throw new Exception("must set enbInTest!!!!!!");
+    }
+
+	private static boolean isFTPServerSet = false;
+
+	/**
+	 * Set the FTP server param to the every EnB in the setup. Once in run
+	 */
 	private void setDebugFtpServer() {
 		DebugFtpServer debugFtpServer = DebugFtpServer.getInstance();
-		for (EnodeB eNodeB : enbInSetup) {
-			try {
-				System.out.print("Set debug FTP server.");
-				eNodeB.lteCli("db add debugftpserver [1]");
-				String oid = MibReader.getInstance().resolveByName("asLteStkDebugFtpServerCfgFtpServerIp");
-				eNodeB.lteCli("db set debugFtpServer ftpAddress.type="+debugFtpServer.addressType+" [1]");
-				if (debugFtpServer.addressType.equals("1")) 					
-					eNodeB.snmpSet(oid, debugFtpServer.getDebugFtpServerIP());			
-				else{					
-					eNodeB.snmpSet(oid, ""); // set ipv4 field empty.					
+		if (!isFTPServerSet){
+			for (EnodeB eNodeB : enbInSetup) {
+				try {
+					System.out.print("Set debug FTP server.");
+					eNodeB.lteCli("db add debugftpserver [1]");
+					String oid = MibReader.getInstance().resolveByName("asLteStkDebugFtpServerCfgFtpServerIp");
+					eNodeB.lteCli("db set debugFtpServer ftpAddress.type=" + debugFtpServer.addressType + " [1]");
+					if (debugFtpServer.addressType.equals("1"))
+						eNodeB.snmpSet(oid, debugFtpServer.getDebugFtpServerIP());
+					else {
+						eNodeB.snmpSet(oid, ""); // set ipv4 field empty.
+					}
+
+					eNodeB.lteCli("db set debugFtpServer ftpAddress.address=" + debugFtpServer.getDebugFtpServerIP() + " [1]");
+
+					oid = MibReader.getInstance().resolveByName("asLteStkDebugFtpServerCfgFtpUser");
+					eNodeB.snmpSet(oid, debugFtpServer.getDebugFtpServerUser());
+
+					oid = MibReader.getInstance().resolveByName("asLteStkDebugFtpServerCfgFtpPassword");
+					eNodeB.snmpSet(oid, debugFtpServer.getDebugFtpServerPassword());
+					eNodeB.lteCli("db get debugFtpServer");
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
-				
-				oid = MibReader.getInstance().resolveByName("asLteStkDebugFtpServerCfgFtpAddress");
-
-				eNodeB.lteCli("db set debugFtpServer ftpAddress.address="+debugFtpServer.getDebugFtpServerIP()+" [1]");
-				//byte[] ipAddr = InetAddressesHelper.ipStringToBytes(debugFtpServer.getDebugFtpServerIP());
-				//eNodeB.snmpSet(oid, ipAddr);
-
-				oid = MibReader.getInstance().resolveByName("asLteStkDebugFtpServerCfgFtpUser");
-				eNodeB.snmpSet(oid, debugFtpServer.getDebugFtpServerUser());
-
-				oid = MibReader.getInstance().resolveByName("asLteStkDebugFtpServerCfgFtpPassword");
-				eNodeB.snmpSet(oid, debugFtpServer.getDebugFtpServerPassword());
-				eNodeB.lteCli("db get debugFtpServer");
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
+			isFTPServerSet = true;
 		}
 	}
 
+    /**
+	 * Get The automation version from pom file
+     *
+     * @return - String - version number
+     */
 	public String getVersion() {
-		String version = "";
+		String version = StringUtils.EMPTY;
 		// try to load from maven properties first
 		try {
 			// open containing file
@@ -298,7 +426,7 @@ public class TestspanTest extends SystemTestCase4 {
 		} catch (Exception e) {
 			// ignore
 		}
-		if ("" == version) {
+		if (StringUtils.EMPTY == version) {
 			version = "No version found";
 		}
 		return version;
@@ -330,7 +458,7 @@ public class TestspanTest extends SystemTestCase4 {
 
 	private void privateEnd() {
 		EnodeBConfig.getInstance().deleteClonedProfiles();
-		String coreFilesPath = "";
+		String coreFilesPath = StringUtils.EMPTY;
 		printMemoryTables(cpuCommands);
 		printMemoryGraph(cpuCommands);
 		WatchDogManager.getInstance().shutDown();
@@ -420,7 +548,7 @@ public class TestspanTest extends SystemTestCase4 {
 
 			// data base compare
 			eNodeB.loggerUploadAll();
-			
+
 		}
 
 		if (isCoreOccurDuringTest) {
@@ -455,15 +583,6 @@ public class TestspanTest extends SystemTestCase4 {
 			}
 			report.setContainerProperties(0, "LogCounter", logCounter);
 		}
-
-		//if ue simulator is connected, close log.
-		try {
-			if (AmariSoftServer.getInstance() != null) {	
-				AmariSoftServer.getInstance().closeLog();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 		GeneralUtils.printToConsole(ScenarioUtils.getInstance().getMemoryConsumption());
 	}
 
@@ -471,11 +590,11 @@ public class TestspanTest extends SystemTestCase4 {
 		if(cpuCommands2 == null) {
 			report.report("cpu and memory watchdog hasn't been initiated!");
 		}
-		
+
 		for(CommandMemoryCPU command : cpuCommands2) {
 			printGraphForCPUCommand(command);
 		}
-		
+
 	}
 
 	private void printGraphForCPUCommand(CommandMemoryCPU command) {
@@ -483,10 +602,10 @@ public class TestspanTest extends SystemTestCase4 {
 		ArrayList<Double> memoryDouble = turnIntArrayToDoubleArray(command.getMemoryValuesList());
 		ArrayList<Double> cpuDouble = turnIntArrayToDoubleArray(command.getCpuValuesList());
  		ArrayList<Long> time = new ArrayList<Long>();
- 		
+
  		//initialize time just for order of the graph
 		time = initTimeList(time,memoryDouble.size());
-		
+
 		try {
 			GraphAdder.AddGraph(String.format("%s %s", "graph Test", command.getNodeName()), "time stamp / sec", "node % usage", memoryDouble, cpuDouble, time, "memory","cpu",false);
 		}catch(Exception e) {
@@ -494,7 +613,7 @@ public class TestspanTest extends SystemTestCase4 {
 			report.report("problem while trying to create memory graphs! - check console");
 		}
 	}
-	
+
 	private ArrayList<Long> initTimeList(ArrayList<Long> time, int size) {
 		ArrayList<Long> returnList = new ArrayList<Long>();
 		for(int i=0; i<size; i++) {
@@ -510,10 +629,10 @@ public class TestspanTest extends SystemTestCase4 {
 		}
 		return doubleList;
 	}
-	
+
 
 	/**
-	 * 
+	 *
 	 * @author sshahaf
 	 */
 	private void printMemoryTables(ArrayList<CommandMemoryCPU> cpuCommands2) {
@@ -582,8 +701,8 @@ public class TestspanTest extends SystemTestCase4 {
 		}
 
 		String key = eNodeB.getNetspanName();
-		value += unexpectedInScenario.get(key);
-		unexpectedInScenario.put(key, value);
+		value += unexpectedRebootHash.get(key);
+		unexpectedRebootHash.put(key, value);
 		if (value != 0) {
 			GeneralUtils.printToConsole(
 					"----added unexpected reboots to scenario statistics----" + eNodeB.getNetspanName() + "----");
@@ -592,20 +711,21 @@ public class TestspanTest extends SystemTestCase4 {
 		}
 	}
 
-	private void initTestListener() {
-		if (null == testListener) {
-			testListener = new TestListener();
-			ListenerstManager.getInstance().addListener(testListener);
-		}
+	/**
+	 * Initialize Test Listener (Jsystem HTML logs) - singleton
+	 */
+	private void addToListenerManager() {
+		testListener = TestListener.getInstance();
+		ListenerstManager.getInstance().addListener(testListener);
 	}
 
 	/**
-	 * 
+	 *
 	 * dumping all db from node to /bs/db ,creating a scpClient and a local folder
 	 * with the name <enbName> + "BeforeTest" --> scpClient getting all files from
 	 * EnodeB with filters of what names feature needs. saves files names in a map
 	 * with enodeB.name -> arrayList of String --> filesFromDBPerNode
-	 * 
+	 *
 	 * @author sshahaf
 	 * @param eNodeB
 	 * @return
@@ -620,7 +740,7 @@ public class TestspanTest extends SystemTestCase4 {
 			report.report("could not get files from node!");
 			return false;
 		}
-																							
+
 		ArrayList<String> filesFromDB = filterFileNames(filesNames, ".*\\.xml", "Stat", "stat", "smonMeasurement.xml");
 		if (filesFromDB.isEmpty()) {
 			return false;
@@ -637,7 +757,6 @@ public class TestspanTest extends SystemTestCase4 {
 	}
 
 	private void initDBFilesFeature(EnodeB enb, String beforeTest) {
-		gotDBFiles = false;
 		GeneralUtils.deleteFolder(basePath + "\\" + enb.getName() + beforeTest);
 	}
 
@@ -687,7 +806,7 @@ public class TestspanTest extends SystemTestCase4 {
 	/**
 	 * chmod 777 on /bs/db ls -1a returning result if there is no 'not found' in it
 	 * -> else return null.
-	 * 
+	 *
 	 * @return
 	 */
 	private String getFileNamesFromNode(EnodeB dut) {
@@ -840,10 +959,10 @@ public class TestspanTest extends SystemTestCase4 {
 				int toWordIndex = str.indexOf(" to ");
 
 				if(toWordIndex > comparingIndex) {
-					String startToFirstSplit = str.substring(0, comparingIndex);					
+					String startToFirstSplit = str.substring(0, comparingIndex);
 					String firstSplitToSecondSplit = str.substring(comparingIndex, toWordIndex);
 					String secondSplitToEnd = str.substring(toWordIndex, str.length());
-					
+
 					report.report(startToFirstSplit);
 					report.report(firstSplitToSecondSplit);
 					report.report(secondSplitToEnd);
@@ -856,16 +975,16 @@ public class TestspanTest extends SystemTestCase4 {
 		}
 		GeneralUtils.stopLevel();
 	}
-	
+
 	protected void changeCPUWDStatus(boolean enabled) {
 		for(CommandMemoryCPU cmd : cpuCommands) {
-			cmd.setEnabled(enabled);	
+			cmd.setEnabled(enabled);
 		}
 	}
-	
+
 	protected void changeInServiceWDStatus(boolean enabled) {
 		for(CommandWatchInService cmd : inserviceCommands) {
-			cmd.setEnabled(enabled);	
+			cmd.setEnabled(enabled);
 		}
 	}
 

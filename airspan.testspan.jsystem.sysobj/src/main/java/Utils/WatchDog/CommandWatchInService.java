@@ -3,7 +3,6 @@ package Utils.WatchDog;
 import EnodeB.EnodeB;
 import Netspan.API.Enums.EnbStates;
 import Utils.GeneralUtils;
-import jsystem.framework.report.ListenerstManager;
 import jsystem.framework.report.Reporter;
 
 public class CommandWatchInService extends Command {
@@ -12,10 +11,15 @@ public class CommandWatchInService extends Command {
 	private boolean wasFailPrinted;
 	private volatile boolean enabled = true;
 
-	public CommandWatchInService(EnodeB enodeB) {
-		name = "CommandWatchInService";
-		enb = enodeB;
-	}
+    /**
+     * This object generates a thread that checks "In service" status.
+     *
+     * @param enodeB - enodeB
+     */
+    public CommandWatchInService(EnodeB enodeB) {
+        name = "CommandWatchInService";
+        enb = enodeB;
+    }
 
 	@Override
 	public void run() {

@@ -82,7 +82,7 @@ public class MibReader {
     /**
      * This function return SNMP OIDs Indicator which Identifies element.
      * 
-     * @param Mib Name
+     * @param name Name
      * 
      * @return OID string or empty String if not found
      * @exception NullPointerException

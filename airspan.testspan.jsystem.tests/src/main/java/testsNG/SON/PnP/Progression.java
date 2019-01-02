@@ -108,6 +108,7 @@ public class Progression extends TestspanTest{
 	public void init() throws Exception {
 		enbInTest = new ArrayList<EnodeB>();
 		enbInTest.add(dut);
+		TunnelManager.seteNodeBInTestList(enbInTest);
 		super.init();
 		if(dut instanceof EnodeBWithDonor){
 			isEnodeBWithDonor = true;

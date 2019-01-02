@@ -324,7 +324,7 @@ public class SoftwareUtiles {
      * swap Banks
      *
      * @param enodeB   - enodeB
-     * @param logLevel -logLevel
+     * @param logLevel - logLevel
      * @param build    - build
      * @return false if the action failed
      */
@@ -713,7 +713,7 @@ public class SoftwareUtiles {
         }
 
         public boolean copyVerToTftpServer(EnodeB.Architecture component, int tries) {
-            /**
+            /*
              * if the node is equals to fsm, then add "fsm." at the beginning
              * and ".tar.gz" at the end of the build else to add "enodeb." and
              * ".enc" et the end
@@ -737,9 +737,9 @@ public class SoftwareUtiles {
                 sourceFile = new File(sourceServer.getPath().toString() + File.separator + XLPBuild);
             }
 
-            /**
-             * copying the file from the server
-             **/
+
+            // copying the file from the server
+
             try {
                 if (!Files.exists(new File(destFile.getPath()).toPath())) {
                     report.report("Copying file " + type, Reporter.PASS);
@@ -1445,11 +1445,8 @@ public class SoftwareUtiles {
                         report.report("Relay Build Name Is: " + fileName);
                         File destFile = new File(destServer.getPath().toString() + File.separator + fileName);
                         File sourceFile = file;
-                        /**
-                         *
-                         * copying the file from the server
-                         **/
 
+                         //copying the file from the server
                         try {
                             if (!Files.exists(new File(destFile.getPath()).toPath())) {
                                 report.report("Copying file: Relay Build", Reporter.PASS);

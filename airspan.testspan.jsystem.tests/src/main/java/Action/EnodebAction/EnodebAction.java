@@ -28,7 +28,7 @@ public class EnodebAction extends Action {
 	public void init() {
 		scenarioUtils = ScenarioUtils.getInstance();
 		scenarioStats = scenarioUtils.getScenarioStats();
-		unexpectedInScenario = scenarioUtils.getUnexpectedInScenario();
+		unexpectedInScenario = scenarioUtils.getUnexpectedRebootInScenario();
 
 		for (EnodeB eNodeB : enbInTest) {
 			if (eNodeB == null) {
@@ -127,14 +127,11 @@ public class EnodebAction extends Action {
 	public void setUnexpectedRebootStatistics(EnodeB eNodeB) {
 		int value = eNodeB.getUnexpectedReboot();
 		eNodeB.setUnexpectedReboot(0);
-		if (value != 0) {
-			if (value > 1) {
+		if (value > 1) {
 				report.report(
 						"Number of unexpected reboots in test for EnodeB " + eNodeB.getName() + " was more than 1",
 						Reporter.FAIL);
 			}
-		}
-
 		String key = eNodeB.getNetspanName();
 		value += unexpectedInScenario.get(key);
 		unexpectedInScenario.put(key, value);
@@ -173,13 +170,13 @@ public class EnodebAction extends Action {
 		response = node.getSNMP(oid);
 		return response;
 	}
-	
+
 	/***************** Parallel Commands ********************/
 	protected void startingParallelCommands(EnodeB dut, List<String> commandList,int responseTimeout, int waitBetweenCommands) throws IOException{
 		syncCommands = new ParallelCommandsThread(commandList, dut, null, null,responseTimeout, waitBetweenCommands);
 		syncCommands.start();
 	}
-	
+
 	protected boolean stoppingParallelCommands() {
 		boolean flag = true;
 		report.report("Stopping Parallel Commands");

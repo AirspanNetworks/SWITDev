@@ -147,8 +147,8 @@ public class P0 extends Base1588 {
 			GeneralUtils.stopLevel();
 			
 			reportOnPTPInterfaceStatus();
-			report.report("Wait 60 seconds");
-			GeneralUtils.unSafeSleep(1000 * 60);
+			report.report("Wait 20 seconds");
+			GeneralUtils.unSafeSleep(1000 * 20);
 
 			ptpStatus = status.getPTPStatusViaNetspan(dut);
 			if (ptpStatus != null) {

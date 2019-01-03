@@ -532,7 +532,7 @@ public class PeripheralsConfig {
 			EnbStates state = null;
 			// checking that the enb state now is in service/ out of service according to expectations.
 			state = enb.getServiceState();
-
+			report.report("Actual state is " + state.toString());
 			return state == enbState;
 		}
 

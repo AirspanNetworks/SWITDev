@@ -374,9 +374,16 @@ public class TestspanTest extends SystemTestCase4 {
      * @throws Exception - Exception
      */
     private void validateEnbIsSet() throws Exception {
-        if (enbInTest == null || enbInTest.contains(null))
+        //todo Remove after debug
+        boolean b1 = enbInTest == null;
+        boolean b2 = enbInTest.contains(null);
+        System.out.print(String.valueOf(b1));
+        System.out.print(String.valueOf(b2));
+
+        if (enbInTest == null || enbInTest.contains(null)) {
             GeneralUtils.stopAllLevels();
-        throw new Exception("must set enbInTest!!!!!!");
+            throw new Exception("must set enbInTest!!!!!!");
+        }
     }
 
     private static boolean isFTPServerSet = false;
@@ -773,7 +780,8 @@ public class TestspanTest extends SystemTestCase4 {
         GeneralUtils.deleteFolder(basePath + "\\" + enb.getName() + beforeTest);
     }
 
-    private Boolean transferFilesToLocalComputer(ScpClient scpClientFromNode, ArrayList<String> filesNames, EnodeB enb,
+    private Boolean transferFilesToLocalComputer(ScpClient
+                                                         scpClientFromNode, ArrayList<String> filesNames, EnodeB enb,
                                                  String testExtention) {
         String[] filesArr;
         ArrayList<String> filesWithPaths = new ArrayList<String>();

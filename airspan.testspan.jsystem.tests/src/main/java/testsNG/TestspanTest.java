@@ -374,12 +374,6 @@ public class TestspanTest extends SystemTestCase4 {
      * @throws Exception - Exception
      */
     private void validateEnbIsSet() throws Exception {
-        //todo Remove after debug
-        boolean b1 = enbInTest == null;
-        boolean b2 = enbInTest.contains(null);
-        System.out.print(String.valueOf(b1));
-        System.out.print(String.valueOf(b2));
-
         if (enbInTest == null || enbInTest.contains(null)) {
             GeneralUtils.stopAllLevels();
             throw new Exception("must set enbInTest!!!!!!");

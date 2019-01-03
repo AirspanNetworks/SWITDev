@@ -1516,8 +1516,8 @@ public abstract class EnodeB extends SystemObjectImpl {
 		 XLP.updateTestedVer();
 	 }
 	 
-	 public boolean isBankSwaped() {
-		 return XLP.isBankSwaped();
+	 public boolean isBankSwapped() {
+		 return XLP.isBankSwapped();
 	 }
 	 
 	 public boolean setRSI(int value) {

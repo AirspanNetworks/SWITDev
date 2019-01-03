@@ -2220,7 +2220,12 @@ public abstract class XLP extends EnodeBComponent {
         }
     }
 
-    public boolean isBankSwaped() {
+    /**
+     * Checks if the banks were swapped by validating the running version.
+     *
+     * @return - true if swapped.
+     */
+    public boolean isBankSwapped() {
         if (testerVer == null || !testerVer.matches(".*\\d\\d.*"))
             return false;
         long timeout = 5 * 1000 * 60;

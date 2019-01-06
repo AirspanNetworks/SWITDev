@@ -374,6 +374,7 @@ public class TestspanTest extends SystemTestCase4 {
      * @throws Exception - Exception
      */
     private void validateEnbIsSet() throws Exception {
+        //todo - consider remove: I found no use for the condition: enbInTest.contains(null)
         if (enbInTest == null || enbInTest.contains(null)) {
             GeneralUtils.stopAllLevels();
             throw new Exception("must set enbInTest!!!!!!");

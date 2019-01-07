@@ -1186,9 +1186,6 @@ public abstract class EnodeB extends SystemObjectImpl {
 		Boolean result = false;
 		GeneralUtils.printToConsole("------Setting logger upload url------");
 		String response = enb.XLP.lteCli("db set StackCfg [1] uploadUrl=" + url);
-		if (response == null)
-			this.waitForAllRunning(EnodeBWithDAN.SHORT_WAIT_FOR_ALL_RUNNING_TIME);
-		response = enb.XLP.lteCli("db set StackCfg [1] uploadUrl=" + url);
 		if (response == null) {
 			GeneralUtils.printToConsole("logger upload url failed to update");
 			return false;

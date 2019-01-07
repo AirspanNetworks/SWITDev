@@ -108,34 +108,25 @@ public class TestspanTest extends SystemTestCase4 {
      */
     @Before
     public void init() throws Exception {
-        report.report("Initialize java global params: testStats, scenario, netspanServer, alarmsAndEvents, WatchDogManager. starts now:");
         testStats = new HashMap<String, Integer>();
         scenarioStats = ScenarioUtils.getInstance().getScenarioStats();
         netspanServer = NetspanServer.getInstance();
         alarmsAndEvents = AlarmsAndEvents.getInstance();
         wd = WatchDogManager.getInstance();
-        report.report("ListenerManager starts now:");
         addToListenerManager();
-        report.report("initUnexpectedRebootMap starts now:");
         initUnexpectedRebootMap();
         GeneralUtils.startLevel("Initialize Components");
-        report.report("validateEnbIsSet starts now:");
         validateEnbIsSet();
         GeneralUtils.printToConsole(ScenarioUtils.getInstance().getMemoryConsumption());
-        report.report("checkAutoVersion starts now:");
         checkAutoVersion();
-        report.report("initAllEnodeBInSetupList starts now:");
         initAllEnodeBInSetupList();
         //Loop on all the EnodeBs in the current test
         for (EnodeB eNodeB : enbInTest) {
-            report.report("isEnodeBBlackListed starts now:");
             if (isEnodeBBlackListed(eNodeB)) break;
             initEnodeB(eNodeB);
         }
-        report.report("setDebugFtpServer starts now:");
         setDebugFtpServer();
         GeneralUtils.stopLevel();
-        report.report("verifyEnBsAreInService starts now:");
         verifyEnBsAreInService();
     }
 
@@ -145,41 +136,23 @@ public class TestspanTest extends SystemTestCase4 {
      * @param eNodeB - eNodeB
      */
     private void initEnodeB(EnodeB eNodeB) {
-        report.report("initUnexpectedRebootOfEnB starts now:");
         initUnexpectedRebootOfEnB(eNodeB);
-        report.report("createEnodeBLogFiles starts now:");
         createEnodeBLogFiles(eNodeB);
-        report.report("addEnodeBToUnexpectedRebootMap starts now:");
         addEnodeBToUnexpectedRebootMap(eNodeB.getNetspanName());
-        report.report("isEnodebManaged starts now:");
         EnodeBConfig.getInstance().isEnodebManaged(eNodeB);
-        report.report("setDeviceUnderTest starts now:");
         eNodeB.setDeviceUnderTest(true);
-        report.report("swapBanksBackIfNeeded starts now:");
         swapBanksBackIfNeeded(eNodeB);
-        report.report("deleteAllAlarmsNode starts now:");
         alarmsAndEvents.deleteAllAlarmsNode(eNodeB);
-        report.report("initCommandWatchInService starts now:");
         initCommandWatchInService(eNodeB);
-        report.report("initMemoryCPUCommandInService starts now:");
         initMemoryCPUCommand(eNodeB);
-        report.report("changeEnbState starts now:");
         PeripheralsConfig.getInstance().changeEnbState(eNodeB, EnbStates.IN_SERVICE);
-        report.report("waitForAllRunningAndInService starts now:");
         waitForAllRunningAndInService(eNodeB);
-        report.report("reportIfCMPWasSkipped starts now:");
         reportIfCMPWasSkipped(eNodeB);
-        report.report("setCellContextNumber starts now:");
         eNodeB.setCellContextNumber(1);
-        report.report("showLoginStatus starts now:");
         showLoginStatus(eNodeB);
-        report.report("captureMACToPHY starts now:");
         captureMACToPHY(eNodeB);
-        report.report("setNodeLoggerUrl starts now:");
         eNodeB.setNodeLoggerUrl(eNodeB, TestConfig.getInstace().getLoggerUploadAllUrl());
-        report.report("checkAndSetDefaultNetspanProfiles starts now:");
         checkAndSetDefaultNetspanProfiles(eNodeB);
-        report.report("getDBFiles starts now:");
         getDBFiles(eNodeB, beforeTest);
     }
 

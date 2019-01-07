@@ -108,34 +108,25 @@ public class TestspanTest extends SystemTestCase4 {
      */
     @Before
     public void init() throws Exception {
-        GeneralUtils.printToConsole("Initialize java global params: testStats, scenario, netspanServer, alarmsAndEvents, WatchDogManager. start now:");
         testStats = new HashMap<String, Integer>();
         scenarioStats = ScenarioUtils.getInstance().getScenarioStats();
         netspanServer = NetspanServer.getInstance();
         alarmsAndEvents = AlarmsAndEvents.getInstance();
         wd = WatchDogManager.getInstance();
-        GeneralUtils.printToConsole("addToListenerManager starts now:");
         addToListenerManager();
-        GeneralUtils.printToConsole("initUnexpectedRebootMap starts now:");
         initUnexpectedRebootMap();
         GeneralUtils.startLevel("Initialize Components");
-        GeneralUtils.printToConsole("validateEnbIsSet starts now:");
         validateEnbIsSet();
         GeneralUtils.printToConsole(ScenarioUtils.getInstance().getMemoryConsumption());
-        GeneralUtils.printToConsole("checkAuto starts now:");
         checkAutoVersion();
-        GeneralUtils.printToConsole("initAllEnodeBInSetupList starts now:");
         initAllEnodeBInSetupList();
         //Loop on all the EnodeBs in the current test
         for (EnodeB eNodeB : enbInTest) {
-            GeneralUtils.printToConsole("isEnodeBBlackListed starts now:");
             if (isEnodeBBlackListed(eNodeB)) break;
             initEnodeB(eNodeB);
         }
-        GeneralUtils.printToConsole("setDebugFtpServer starts now:");
         setDebugFtpServer();
         GeneralUtils.stopLevel();
-        GeneralUtils.printToConsole("verifyEnBsAreInService starts now:");
         verifyEnBsAreInService();
     }
 
@@ -145,41 +136,23 @@ public class TestspanTest extends SystemTestCase4 {
      * @param eNodeB - eNodeB
      */
     private void initEnodeB(EnodeB eNodeB) {
-        GeneralUtils.printToConsole("initUnexpectedRebootOfEnB starts now:");
         initUnexpectedRebootOfEnB(eNodeB);
-        GeneralUtils.printToConsole("createEnodeBLogFiles starts now:");
         createEnodeBLogFiles(eNodeB);
-        GeneralUtils.printToConsole("addEnodeBToUnexpectedRebootMap starts now:");
         addEnodeBToUnexpectedRebootMap(eNodeB.getNetspanName());
-        GeneralUtils.printToConsole("isEnodebManaged starts now:");
         EnodeBConfig.getInstance().isEnodebManaged(eNodeB);
-        GeneralUtils.printToConsole("setDeviceUnderTest starts now:");
         eNodeB.setDeviceUnderTest(true);
-        GeneralUtils.printToConsole("swapBanksBackIfNeeded starts now:");
         swapBanksBackIfNeeded(eNodeB);
-        GeneralUtils.printToConsole("deleteAllAlarmsNode starts now:");
         alarmsAndEvents.deleteAllAlarmsNode(eNodeB);
-        GeneralUtils.printToConsole("initCommandWatchInService starts now:");
         initCommandWatchInService(eNodeB);
-        GeneralUtils.printToConsole("initMemoryCPUCommandInService starts now:");
         initMemoryCPUCommand(eNodeB);
-        GeneralUtils.printToConsole("changeEnbState starts now:");
         PeripheralsConfig.getInstance().changeEnbState(eNodeB, EnbStates.IN_SERVICE);
-        GeneralUtils.printToConsole("waitForAllRunningAndInService starts now:");
         waitForAllRunningAndInService(eNodeB);
-        GeneralUtils.printToConsole("reportIfCMPWasSkipped starts now:");
         reportIfCMPWasSkipped(eNodeB);
-        GeneralUtils.printToConsole("setCellContextNumber starts now:");
         eNodeB.setCellContextNumber(1);
-        GeneralUtils.printToConsole("showLoginStatus starts now:");
         showLoginStatus(eNodeB);
-        GeneralUtils.printToConsole("captureMACToPHY starts now:");
         captureMACToPHY(eNodeB);
-        GeneralUtils.printToConsole("setNodeLoggerUrl starts now:");
         eNodeB.setNodeLoggerUrl(eNodeB, TestConfig.getInstace().getLoggerUploadAllUrl());
-        GeneralUtils.printToConsole("checkAndSetDefaultNetspanProfiles starts now:");
         checkAndSetDefaultNetspanProfiles(eNodeB);
-        GeneralUtils.printToConsole("getDBFiles starts now:");
         getDBFiles(eNodeB, beforeTest);
     }
 

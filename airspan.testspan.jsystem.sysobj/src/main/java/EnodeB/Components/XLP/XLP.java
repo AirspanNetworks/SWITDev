@@ -869,7 +869,7 @@ public abstract class XLP extends EnodeBComponent {
             return String.valueOf(GeneralUtils.ERROR_VALUE);
         }
         for (String aHexArray : hexArray) {
-            if (Integer.parseInt("0" + aHexArray, 16) != 0)
+            if (aHexArray != String.valueOf(GeneralUtils.ERROR_VALUE) && Integer.parseInt("0" + aHexArray, 16) != 0)
                 result += (char) Integer.parseInt(aHexArray, 16);
         }
         return result;

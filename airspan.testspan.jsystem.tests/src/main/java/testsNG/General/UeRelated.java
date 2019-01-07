@@ -47,7 +47,7 @@ public class UeRelated extends TestspanTest {
 	NetspanServer netspanServer;
 	short numberOfRecoveryTrys = 0;
 	private EnodeB dut;
-	private ArrayList<EnodeB> dnuts;
+	private ArrayList<EnodeB> duts;
 	Traffic traffic;
 	ParallelCommandsThread commandsThread = null;
 
@@ -58,7 +58,7 @@ public class UeRelated extends TestspanTest {
 		enbInTest = new ArrayList<EnodeB>();
 		enbInTest.add(dut);
 		super.init();
-		setDNUTs();
+		setDUTs();
 		ArrayList<String> commands = new ArrayList<>();
 		commands.add("ue show link");
 		commands.add("ue show rate");
@@ -90,7 +90,7 @@ public class UeRelated extends TestspanTest {
 		}
 		GeneralUtils.startLevel("Prepare Setup for the test");
 		
-		for (EnodeB enb : dnuts) {
+		for (EnodeB enb : duts) {
 			peripheralsConfig.changeEnbState(enb, EnbStates.OUT_OF_SERVICE);
 		}
 		
@@ -110,7 +110,7 @@ public class UeRelated extends TestspanTest {
 	@Test
 	@TestProperties(name = "BasicNetworkEntry", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {
 			"IsTestWasSuccessful" })
-	public void BasicNetworkEntry() throws Exception {
+	public void BasicNetworkEntry()  {
 		ArrayList<UE> allUEs = new ArrayList<UE>();
 		ArrayList<UE> staticUE = SetupUtils.getInstance().getStaticUEs(dut);
 		ArrayList<UE> dynamicUE = SetupUtils.getInstance().getDynamicUEs();
@@ -175,12 +175,12 @@ public class UeRelated extends TestspanTest {
 		this.dut = temp.get(0);
 	}
 
-	public void setDNUTs() {
+	public void setDUTs() {
 		try {
-			this.dnuts = SetupUtils.getInstance().getAllEnb();
-			dnuts.remove(dut);
+			this.duts = SetupUtils.getInstance().getAllEnb();
+			duts.remove(dut);
 		} catch (Exception e) {
-			this.dnuts = null;
+			this.duts = null;
 		}
 	}
 
@@ -196,7 +196,7 @@ public class UeRelated extends TestspanTest {
 		commandsThread.moveFileToReporterAndAddLink();
 		GeneralUtils.startLevel("Returning system to status before the test");
 
-		for (EnodeB enb : dnuts) {
+		for (EnodeB enb : duts) {
 			peripheralsConfig.changeEnbState(enb, EnbStates.IN_SERVICE);
 		}
 		GeneralUtils.stopLevel();

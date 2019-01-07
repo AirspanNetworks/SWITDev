@@ -45,7 +45,7 @@ public class ScenarioUtils {
 		return scenarioStats;
 	}
 
-	public synchronized HashMap<String, Integer> getUnexpectedInScenario() {
+	public synchronized HashMap<String, Integer> getUnexpectedRebootInScenario() {
 		return unexpectedInScenario;
 	}
 

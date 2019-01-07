@@ -1,15 +1,11 @@
 package Action.UeAction;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 
 import org.junit.Test;
 
-import com.ziclix.python.sql.connect.Connect;
 
 import Action.Action;
 import EnodeB.EnodeB;
@@ -18,7 +14,6 @@ import UE.UE;
 import UeSimulator.Amarisoft.AmariSoftServer;
 import Utils.GeneralUtils;
 import Utils.SysObjUtils;
-import Utils.Iperf.AmarisoftIPerfStream;
 import jsystem.framework.ParameterProperties;
 import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
@@ -34,12 +29,11 @@ public class UeSimulatorActions extends Action {
 	private int cellId = 1;
 	private String groupName;
 	private UesOptions uesOptions = UesOptions.AMOUNT;
-	
-	
+
 	public enum UesOptions{
 		AMOUNT, GROUPNAME
 	}
-	
+
 
 	@ParameterProperties(description = "UE Selection Method - default = amount: 1 UE")
 	public void setUesOptions(UesOptions uesOptions) {

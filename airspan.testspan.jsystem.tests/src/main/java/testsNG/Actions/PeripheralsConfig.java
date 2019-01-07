@@ -35,6 +35,9 @@ public class PeripheralsConfig {
 
 	private ArrayList<UE> uesNotConnected = new ArrayList<UE>();
 
+	/**
+	 * This constructor create singleton of NetspanServer and EPC
+	 */
 	private PeripheralsConfig() {
 		try {
 			netspanServer = NetspanServer.getInstance();
@@ -108,7 +111,7 @@ public class PeripheralsConfig {
 
 	/**
 	 * checking if UEs connected to EPC via cli.
-	 * 
+	 *
 	 * @param ueList
 	 * @return
 	 * @throws Exception
@@ -126,7 +129,7 @@ public class PeripheralsConfig {
 	/**
 	 * Following function checks test result and will fail test if one of the
 	 * UEs is disconnected
-	 * 
+	 *
 	 * @param uesUnderTest
 	 *            - UE[] array of UEs under test
 	 * @return void
@@ -147,7 +150,7 @@ public class PeripheralsConfig {
 	/**
 	 * Following function walk over the UE array and check UE status by reading
 	 * name field of UE status property.
-	 * 
+	 *
 	 * @param uesUnderTest
 	 *            - UE[] array of UEs under test
 	 * @return boolean- if all UE connected (true), if one of the UEs is
@@ -173,8 +176,8 @@ public class PeripheralsConfig {
 
 	/**
 	 * Perform reboot for all UEs under test
-	 * 
-	 * @param uesUnderTest
+	 *
+	 * @param ueUnderTest
 	 *            - UE[] array of UEs under test
 	 * @return void
 	 * @author shaham
@@ -335,10 +338,9 @@ public class PeripheralsConfig {
 	/**
 	 * checking if all the ues are connected to node - false if even one UE is
 	 * not connected. via snmp + netspan * @Author Shuhamy Shahaf.
-	 * 
-	 * @param numberOfRecoveryTrys
+	 *
 	 * @param ueList
-	 * @param eNBList
+	 * @param enb
 	 * @return true if either are true and false of neither.
 	 * @throws IOException
 	 * @throws Exception
@@ -386,7 +388,7 @@ public class PeripheralsConfig {
 	/**
 	 * Checking with EPC if at least one ue is connected to node. false will be
 	 * returned if every single ue is not connected.
-	 * 
+	 *
 	 * @param ueList
 	 * @param enb
 	 * @return
@@ -469,7 +471,7 @@ public class PeripheralsConfig {
 	/**
 	 * method checking if The UE list is connected to any of the currect
 	 * EnodeB's via SNMP and by 90% success rate.
-	 * 
+	 *
 	 * @Author Shuhamy Shahaf.
 	 */
 	public boolean verifyEnodeBToUe(ArrayList<UE> currenUeList, EnodeB enb) {
@@ -501,6 +503,12 @@ public class PeripheralsConfig {
 		return false;
 	}
 
+	/** Change Enb State
+	 *
+	 * @param enb       - enb
+	 * @param enbState  - state to change
+	 * @return          - true if succeeded
+	 */
 	public boolean changeEnbState(EnodeB enb, EnbStates enbState) {
 		if (enbState == EnbStates.UNKNOWN) {
 			report.report("Cant set enodeb state to unknown!");

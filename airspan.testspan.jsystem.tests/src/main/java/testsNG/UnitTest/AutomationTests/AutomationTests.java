@@ -19,7 +19,7 @@ import testsNG.TestspanTest;
 import testsNG.Actions.Utils.ParallelCommandsThread;
 
 public class AutomationTests extends TestspanTest{
-    
+
 	private ArrayList<EnodeB> duts;
 	private EnodeB dut;
 	private ParallelCommandsThread commandsThread1;	
@@ -29,7 +29,6 @@ public class AutomationTests extends TestspanTest{
 		report.report("Init!");
 		enbInTest = new ArrayList<EnodeB>();
 		if (dut != null) {
-			
 			enbInTest.add(dut);
 		}
 		super.init();
@@ -191,12 +190,12 @@ public class AutomationTests extends TestspanTest{
 		ArrayList<EnodeB> temp=(ArrayList<EnodeB>)SysObjUtils.getInstnce().initSystemObject(EnodeB.class,false,dut);
 		this.dut = temp.get(0);
 	}
-	
+
 	@Test
 	@TestProperties(name = "amarisoft", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {"IsTestWasSuccessful" })
 	public void amarisoft() throws Exception {
 		report.report("Start amarisoft test.");
-		
+
 		AmariSoftServer as = AmariSoftServer.getInstance();
 		GeneralUtils.printToConsole("getImsiStartList: " + as.getImsiStartList());
 		GeneralUtils.printToConsole("getImsiStopList: " + as.getImsiStopList());
@@ -205,16 +204,9 @@ public class AutomationTests extends TestspanTest{
 		GeneralUtils.printToConsole("getTxgain: " + as.getTxgain());
 		GeneralUtils.printToConsole("getIp: " + as.getIp());
 		GeneralUtils.printToConsole("getusername: " + as.getusername());
-		
+
 		as.startServer(duts);
-		report.report("Finished amarisoft test.");		
+		report.report("Finished amarisoft test.");
 	}
-	
-//	@ParameterProperties(description = "DUTs")
-//	public void setDUTs(String duts) {
-//		GeneralUtils.printToConsole("Load DUTs " + duts);
-//        this.duts = (ArrayList<EnodeB>) SysObjUtils.getInstnce().initSystemObject(EnodeB.class, false, duts.split(","));
-//	}
+
 }
-
-

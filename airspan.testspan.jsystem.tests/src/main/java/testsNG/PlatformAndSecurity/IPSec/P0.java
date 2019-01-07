@@ -25,6 +25,7 @@ public class P0 extends TestspanTest {
 			dut.setIpsecTunnelEnabled("true");
 			enbInTest.add(dut);
 		}
+		TunnelManager.seteNodeBInTestList(enbInTest);
 		super.init();
 		
 	}

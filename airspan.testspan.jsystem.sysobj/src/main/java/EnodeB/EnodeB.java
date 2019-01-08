@@ -122,6 +122,10 @@ public abstract class EnodeB extends SystemObjectImpl {
 	protected int band;
 	/** The cellID. */
 	protected int cellId;
+	/** is managed by netspan flag. */
+	private boolean isManagedByNetspan;
+	/** is netspan profiles verified flag. */
+	private boolean isNetspanProfilesVerified;
 	public DefaultNetspanProfiles defaultNetspanProfiles;
 	private String[] staticUEs;
 	private NodeWebAccess webAccess;
@@ -2268,6 +2272,22 @@ public abstract class EnodeB extends SystemObjectImpl {
 	
 	public boolean setLoggerDebugCapEnable(boolean enable) {
 		return XLP.setLoggerDebugCapEnable(enable); 
+	}
+	
+	public boolean isManagedByNetspan() {
+		return isManagedByNetspan;
+	}
+
+	public void setManagedByNetspan(boolean isManagedByNetspan) {
+		this.isManagedByNetspan = isManagedByNetspan;
+	}
+	
+	public boolean isNetspanProfilesVerified() {
+		return isNetspanProfilesVerified;
+	}
+
+	public void setNetspanProfilesVerified(boolean isNetspanProfilesVerified) {
+		this.isNetspanProfilesVerified = isNetspanProfilesVerified;
 	}
 	
 	public int getNumberOfCells(){

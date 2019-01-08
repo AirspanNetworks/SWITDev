@@ -435,6 +435,9 @@ public class EnodeBConfig {
 	 * @return - true if it's managed
 	 */
 	public boolean isEnodebManaged(EnodeB enodeB) {
+		// Should happen only once in scenario
+		if(enodeB.isManagedByNetspan())
+			return true;
 		try {
 			NodeManagementModeType managed = netspanServer.getManagedMode(enodeB);
 			if (managed != NodeManagementModeType.MANAGED){
@@ -442,6 +445,7 @@ public class EnodeBConfig {
 						+ NetspanServer.getInstance().getHostname(), Reporter.WARNING);
 				return false;
 			}
+			enodeB.setManagedByNetspan(true);
 			return true;
 		} catch (Exception e) {
 			report.report("isEnodebManaged failed due to: " + e.getMessage(), Reporter.WARNING);

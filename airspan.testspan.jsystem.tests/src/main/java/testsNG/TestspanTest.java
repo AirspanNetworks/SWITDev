@@ -461,6 +461,7 @@ public class TestspanTest extends SystemTestCase4 {
      **/
     @After
     public void end() {
+        GeneralUtils.startLevel("Tears down");
         coreFilesPath = new StringBuilder(StringUtils.EMPTY);
         report.report("deleteClonedProfiles starts now:");
         EnodeBConfig.getInstance().deleteClonedProfiles();
@@ -478,6 +479,7 @@ public class TestspanTest extends SystemTestCase4 {
         uploadParamsToReporter();
         report.report("printMemoryConsumptionToConsole starts now:");
         printMemoryConsumptionToConsole();
+        GeneralUtils.stopLevel();
     }
 
     /**

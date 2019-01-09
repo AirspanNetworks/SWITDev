@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -394,24 +395,22 @@ public class TestspanTest extends SystemTestCase4 {
         if (!isFTPServerSet) {
             for (EnodeB eNodeB : enbInSetup) {
                 try {
-                    System.out.print("Set debug FTP server.");
-                    eNodeB.lteCli("db add debugftpserver [1]");
-                    String oid = MibReader.getInstance().resolveByName("asLteStkDebugFtpServerCfgFtpServerIp");
-                    eNodeB.lteCli("db set debugFtpServer ftpAddress.type=" + debugFtpServer.addressType + " [1]");
-                    if (debugFtpServer.addressType.equals("1"))
-                        eNodeB.snmpSet(oid, debugFtpServer.getDebugFtpServerIP());
-                    else {
-                        eNodeB.snmpSet(oid, ""); // set ipv4 field empty.
-                    }
-
-                    eNodeB.lteCli("db set debugFtpServer ftpAddress.address=" + debugFtpServer.getDebugFtpServerIP() + " [1]");
-
+                    GeneralUtils.printToConsole("Set debug FTP server.");
+                    String oid = MibReader.getInstance().resolveByName("asLteStkDebugFtpServerCfgFtpAddressType");
+                    if(eNodeB.getSNMP(oid).equals("noSuchInstance"))
+                    	eNodeB.lteCli("db add debugftpserver [1]");
+                    eNodeB.snmpSet(oid, debugFtpServer.addressType);
+                    oid = MibReader.getInstance().resolveByName("asLteStkDebugFtpServerCfgFtpServerIp");                
+                    eNodeB.snmpSet(oid, debugFtpServer.getDebugFtpServerIP());
+                    oid = MibReader.getInstance().resolveByName("asLteStkDebugFtpServerCfgFtpAddress");
+                    String dor = eNodeB.getSNMP(oid);
+                    eNodeB.snmpSet(oid, debugFtpServer.getDebugFtpServerIPInHex());
+                    /*eNodeB.snmpSet(oid, InetAddress.getByName(debugFtpServer.getDebugFtpServerIPInHex()));
+                    eNodeB.snmpSet(oid, InetAddress.getByAddress(new byte[] {(byte)100, (byte)100, (byte)0, (byte)251}));*/
                     oid = MibReader.getInstance().resolveByName("asLteStkDebugFtpServerCfgFtpUser");
                     eNodeB.snmpSet(oid, debugFtpServer.getDebugFtpServerUser());
-
                     oid = MibReader.getInstance().resolveByName("asLteStkDebugFtpServerCfgFtpPassword");
                     eNodeB.snmpSet(oid, debugFtpServer.getDebugFtpServerPassword());
-                    eNodeB.lteCli("db get debugFtpServer");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

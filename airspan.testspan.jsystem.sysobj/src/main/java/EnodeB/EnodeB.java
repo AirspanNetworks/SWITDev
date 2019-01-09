@@ -1456,6 +1456,10 @@ public abstract class EnodeB extends SystemObjectImpl {
 		return XLP.snmp.snmpSet(strOID, Value);
 	}
 	
+	public boolean snmpSet(String strOID,InetAddress Value) throws IOException{
+		return XLP.snmp.snmpSet(strOID, Value);
+	}
+	
 	public boolean snmpSet(String strOID, int Value) throws IOException{
 		return XLP.snmp.snmpSet(strOID, Value);
 	}

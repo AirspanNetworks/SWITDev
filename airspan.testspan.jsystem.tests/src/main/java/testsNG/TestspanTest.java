@@ -52,15 +52,17 @@ public class TestspanTest extends SystemTestCase4 {
 
     private static final String LOGGER_UPLOAD_ALL_LINK = "//asil-swit/upload/%s/%s";
     private static final String LOGGER_UPLOAD_ALL_DESC = "Logger upload all link";
-    private static TestListener testListener;
     private ScpClient scpCli;
-    private String basePath = System.getProperty("user.dir");
-    private String beforeTest = "BeforeTest";
-    private String afterTest = "AfterTest";
+    private final String basePath = System.getProperty("user.dir");
+    private final String beforeTest = "BeforeTest";
+    private final String afterTest = "AfterTest";
     private ArrayList<CommandMemoryCPU> cpuCommands = new ArrayList<CommandMemoryCPU>();
-    private ArrayList<CommandWatchInService> inserviceCommands = new ArrayList<CommandWatchInService>();
+    private ArrayList<CommandWatchInService> inServiceCommands = new ArrayList<CommandWatchInService>();
+    private StringBuilder coreFilesPath;
+    private boolean isCoreOccurDuringTest;
 
     private HashMap<String, ArrayList<String>> filesFromDBPerNode = new HashMap<String, ArrayList<String>>();
+
     /**
      * The Constant SYSOBJ_STRING_DELIMITER.
      */
@@ -117,7 +119,7 @@ public class TestspanTest extends SystemTestCase4 {
         initUnexpectedRebootMap();
         GeneralUtils.startLevel("Initialize Components");
         validateEnbIsSet();
-        GeneralUtils.printToConsole(ScenarioUtils.getInstance().getMemoryConsumption());
+        printMemoryConsumptionToConsole();
         checkAutoVersion();
         initAllEnodeBInSetupList();
         //Loop on all the EnodeBs in the current test
@@ -258,7 +260,7 @@ public class TestspanTest extends SystemTestCase4 {
         CommandWatchInService commandInService = new CommandWatchInService(eNodeB);
         commandInService.name = eNodeB.getName() + "_commandInService";
         wd.addCommand(commandInService);
-        inserviceCommands.add(commandInService);
+        inServiceCommands.add(commandInService);
     }
 
     /**
@@ -451,164 +453,309 @@ public class TestspanTest extends SystemTestCase4 {
         return version;
     }
 
+    /**
+     * End Method will be called after every test. The if statement will evaluate if the test was successful or not.
+     * If test failed for any reason something like assertion failure or Exception of any kind The
+     * <p>isTestWasSuccessful</p> will be assigned with default value that is "FAIL", if test was success it will be
+     * assigned with "PASS"
+     **/
     @After
-    public void after() {
-        if (enbsAreInService)
-            end();
-        else
-            privateEnd();
+    public void end() {
+        coreFilesPath = new StringBuilder(StringUtils.EMPTY);
+        EnodeBConfig.getInstance().deleteClonedProfiles();
+        printMemoryInformation();
+        WatchDogManager.getInstance().shutDown();
+        changeIsTestWasSuccessfulParam();
+        ScenarioUtils.getInstance().calledOnceInEndFunc(enbInTest);
+        for (EnodeB eNodeB : enbInTest) {
+            endEnodeB(eNodeB);
+        }
+        uploadParamsToReporter();
+        printMemoryConsumptionToConsole();
     }
 
     /**
-     * End Method will be called after every test. The if statement will evaluate if
-     * the test was successful or not. If test failed for any reason something like
-     * assertion failure or Exception of any kind The
-     * <p>
-     * isTestWasSuccessful
-     * </p>
-     * will be assigned with default value that is "FAIL", if test was success it
-     * will be assigned with "PASS"
-     **/
-
-    public void end() {
-        privateEnd();
+     * Upload Params To Reporter
+     */
+    private void uploadParamsToReporter() {
+        setReasonWhenCoreOccur(isCoreOccurDuringTest);
+        printFailReasonToPropFile();
+        printCoreFilesToPropFile(coreFilesPath);
+        handleLogCounter();
     }
 
-    private void privateEnd() {
-        EnodeBConfig.getInstance().deleteClonedProfiles();
-        String coreFilesPath = StringUtils.EMPTY;
-        printMemoryTables(cpuCommands);
-        printMemoryGraph(cpuCommands);
-        WatchDogManager.getInstance().shutDown();
+    /**
+     * Tear down EnodeB Params
+     *
+     * @param eNodeB - eNodeB
+     */
+    private void endEnodeB(EnodeB eNodeB) {
+        coreFilesPath.append(getCoreFilePathList(eNodeB));
+        isCoreOccurDuringTest |= eNodeB.isStateChangedToCoreDump();
+        printAlarmsInfo(eNodeB);
+        addRunningVersionProp(eNodeB);
+        getAndCompareDBFiles(eNodeB);
+        closeLog(eNodeB);
+        setUnexpectedRebootStatistics(eNodeB);
+        printAndCloseMACtoPHYCapture(eNodeB);
+        //If Core dump occurs once, then == true
+        eNodeB.clearTestParameters();
+        eNodeB.setDeviceUnderTest(false);
+        eNodeB.loggerUploadAll();
+    }
 
+    /**
+     * Print Memory Consumption
+     */
+    private void printMemoryConsumptionToConsole() {
+        GeneralUtils.printToConsole(ScenarioUtils.getInstance().getMemoryConsumption());
+    }
+
+    /**
+     * Add Log Test Counter, and print Log Scenario Counter To Prop File
+     */
+    private void handleLogCounter() {
+        addLogTestCounterToPropFile();
+        printLogScenarioCounterToPropFile();
+    }
+
+    /**
+     * Print Log Scenario Counter To Prop File
+     */
+    private void printLogScenarioCounterToPropFile() {
+        String scenarioStatsLogCounter = getLogCounter(scenarioStats);
+        if (!scenarioStatsLogCounter.isEmpty()) {
+            report.setContainerProperties(0, "LogCounter", scenarioStatsLogCounter);
+        }
+    }
+
+    /**
+     * Add Log Counter To Prop File
+     */
+    private void addLogTestCounterToPropFile() {
+        String testStatsLogCounter = getLogCounter(testStats);
+        if (!testStatsLogCounter.isEmpty()) {
+            report.addProperty("LogCounter", testStatsLogCounter);
+        }
+    }
+
+    /**
+     * GetLogCounter in order to print it and add it to prop file
+     */
+    private String getLogCounter(HashMap<String, Integer> hashMapStatus) {
+        if (hashMapStatus != null && !hashMapStatus.isEmpty()) {
+            StringBuilder logCounter = new StringBuilder(StringUtils.EMPTY);
+            for (String key : hashMapStatus.keySet()) {
+                logCounter.append(getLogCounterStringPattern(key, hashMapStatus));
+            }
+            return logCounter.toString();
+        }
+        return StringUtils.EMPTY;
+    }
+
+    /**
+     * Get Log Counter String Pattern, to be printed.
+     *
+     * @param key   - key
+     * @param entry - entry
+     * @return - Log Counter String Pattern
+     */
+    private String getLogCounterStringPattern(String key, HashMap<String, Integer> entry) {
+        return key + "," + entry.get(key) + ScenarioUtils.SYSOBJ_STRING_DELIMITER;
+    }
+
+    /**
+     * Print Core Files To Prop File
+     *
+     * @param coreFilesPath - coreFilesPath
+     */
+    private void printCoreFilesToPropFile(StringBuilder coreFilesPath) {
+        if (!coreFilesPath.toString().isEmpty()) {
+            report.addProperty("CoreFiles", coreFilesPath.toString());
+        }
+    }
+
+    /**
+     * Print Fail Reason To Prop File
+     */
+    private void printFailReasonToPropFile() {
+        if (!reason.isEmpty()) {
+            report.addProperty("failureReason", reason);
+            report.report("Fail reason: " + reason);
+        }
+    }
+
+    /**
+     * Set this.reason (of failed test) when isCoreOccurDuringTest=true
+     *
+     * @param isCoreOccurDuringTest - isCoreOccurDuringTest bool
+     */
+    private void setReasonWhenCoreOccur(boolean isCoreOccurDuringTest) {
+        if (isCoreOccurDuringTest) {
+            if (!reason.isEmpty()) {
+                reason += "<br>Core occurred during test.";
+            } else {
+                reason = "Core occurred during test.";
+            }
+        }
+    }
+
+    /**
+     * get Core File Path List
+     *
+     * @param eNodeB - eNodeB
+     * @return - coreFilesPath
+     */
+    private String getCoreFilePathList(EnodeB eNodeB) {
+        String coreFilesPath = StringUtils.EMPTY;
+        int coreIndex = 1;
+        String coreValue = StringUtils.EMPTY;
+        HashSet<String> corePathList = eNodeB.getCorePathList();
+        for (String corePath : corePathList) {
+            coreValue += (coreIndex + "," + eNodeB.getName() + "," + corePath
+                    + ScenarioUtils.SYSOBJ_STRING_DELIMITER);
+            coreIndex++;
+            coreFilesPath += coreValue;
+        }
+        return coreFilesPath;
+    }
+
+    /**
+     * Print MACtoPHYCapture And disable capture (if enabled before)
+     *
+     * @param eNodeB - eNodeB
+     */
+    private void printAndCloseMACtoPHYCapture(EnodeB eNodeB) {
+        if (eNodeB.isMACtoPHYEnabled()) {
+            eNodeB.disableMACtoPHYcapture();
+        }
+        eNodeB.showMACtoPHYCaptureFiles();
+    }
+
+    /**
+     * Close Logs - Auto & EnodeB
+     *
+     * @param eNodeB - eNodeB
+     */
+    private void closeLog(EnodeB eNodeB) {
+        Logger[] loggers = eNodeB.getLoggers();
+        closeEnBLogs(eNodeB, loggers);
+        closeAutomationLogs(eNodeB, loggers);
+    }
+
+    /**
+     * Close Automation Logs
+     *
+     * @param eNodeB  - eNodeB
+     * @param loggers - loggers
+     */
+    private void closeAutomationLogs(EnodeB eNodeB, Logger[] loggers) {
+        GeneralUtils.startLevel(String.format("eNodeB %s Automation logs", eNodeB.getName()));
+        for (Logger logger : loggers) {
+            logger.closeAutoLog(String.format("%s_%s", getMethodName(), logger.getParent().getName()));
+        }
+        GeneralUtils.stopLevel();
+    }
+
+    /**
+     * Close EnB Logs
+     *
+     * @param eNodeB  - eNodeB
+     * @param loggers - loggers
+     */
+    private void closeEnBLogs(EnodeB eNodeB, Logger[] loggers) {
+        log.info(String.format("Closing log files for test for eNondeB %s", eNodeB.getName()));
+        GeneralUtils.startLevel(String.format("eNodeB %s logs", eNodeB.getName()));
+
+        for (Logger logger : loggers) {
+            logger.setCountErrorBool(false);
+            logger.closeEnodeBLog(String.format("%s_%s", getMethodName(), logger.getParent().getName()));
+            testStatistics(logger, eNodeB);
+            ScenarioUtils.getInstance().scenarioStatistics(logger, eNodeB);
+        }
+
+        Date date = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yy");
+        String loggerUploadAllEnodebIP = eNodeB.getLoggerUploadAllEnodebIP();
+        if (loggerUploadAllEnodebIP != null) {
+            report.addLink(LOGGER_UPLOAD_ALL_DESC,
+                    String.format(LOGGER_UPLOAD_ALL_LINK, dateFormat.format(date), loggerUploadAllEnodebIP.replace(":", ".")));
+        } else {
+            report.report("Logger upload all not available, due to missing IP.");
+        }
+        GeneralUtils.stopLevel();
+    }
+
+    /**
+     * Get And Compare DB Files
+     *
+     * @param eNodeB - eNodeB
+     */
+    private void getAndCompareDBFiles(EnodeB eNodeB) {
+        ArrayList<String> fileNameList = filesFromDBPerNode.get(eNodeB.getName());
+        if ((fileNameList != null) && (!fileNameList.isEmpty())) {
+            getDBFiles(eNodeB, afterTest);
+            compareDBs(eNodeB);
+        }
+    }
+
+    /**
+     * Add Running Version Prop
+     *
+     * @param eNodeB - eNodeB
+     */
+    private void addRunningVersionProp(EnodeB eNodeB) {
+        report.addProperty(eNodeB.getNetspanName() + "_Version", eNodeB.getRunningVersion());
+    }
+
+    /**
+     * Print Alarms Info, for EnodeB, if there are any.
+     *
+     * @param eNodeB - eNodeB
+     */
+    private void printAlarmsInfo(EnodeB eNodeB) {
+        List<AlarmInfo> alarmsInfo = alarmsAndEvents.getAllAlarmsNode(eNodeB);
+        if (!alarmsInfo.isEmpty()) {
+            GeneralUtils.startLevel(eNodeB.getName() + "'s Alarms: ");
+            for (AlarmInfo alarmInfo : alarmsInfo) {
+                alarmsAndEvents.printAlarmInfo(alarmInfo);
+            }
+            GeneralUtils.stopLevel();
+        } else {
+            report.report(eNodeB.getName() + "'s Alarms list is empty");
+        }
+    }
+
+    /**
+     * change "IsTestWasSuccessful" Param according to "isPass" Jsystem param.
+     */
+    private void changeIsTestWasSuccessfulParam() {
         if (this.isPass) {
             isTestWasSuccessful = "PASS";
         } else {
             isTestWasSuccessful = "FAIL";
         }
-        GeneralUtils.printToConsole("Test Status :: " + isTestWasSuccessful);
-
-        ScenarioUtils.getInstance().calledOnceInEndFunc(enbInTest, this instanceof SWUpgrade);
-
-        boolean isCoreOccurDuringTest = false;
-
-        for (EnodeB eNodeB : enbInTest) {
-            List<AlarmInfo> alarmsInfo = alarmsAndEvents.getAllAlarmsNode(eNodeB);
-            if (!alarmsInfo.isEmpty()) {
-                GeneralUtils.startLevel(eNodeB.getName() + "'s Alarms: ");
-                for (AlarmInfo alarmInfo : alarmsInfo) {
-                    alarmsAndEvents.printAlarmInfo(alarmInfo);
-                }
-                GeneralUtils.stopLevel();
-            } else
-                report.report(eNodeB.getName() + "'s Alarms list is empty");
-
-            report.addProperty(eNodeB.getNetspanName() + "_Version", eNodeB.getRunningVersion());
-            ArrayList<String> fileNameList = null;
-            if ((fileNameList = filesFromDBPerNode.get(eNodeB.getName())) != null) {
-                if (!fileNameList.isEmpty()) {
-                    getDBFiles(eNodeB, afterTest);
-                    compareDBs(eNodeB);
-                }
-            }
-            Logger[] loggers = eNodeB.getLoggers();
-            log.info(String.format("Closing log files for test for eNondeB %s", eNodeB.getName()));
-
-            GeneralUtils.startLevel(String.format("eNodeB %s logs", eNodeB.getName()));
-
-            for (Logger logger : loggers) {
-                logger.setCountErrorBool(false);
-                logger.closeEnodeBLog(String.format("%s_%s", getMethodName(), logger.getParent().getName()));
-                testStatistics(logger, eNodeB);
-                ScenarioUtils.getInstance().scenarioStatistics(logger, eNodeB);
-            }
-
-            Date date = new Date();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yy");
-            String loggerUploadAllEnodebIP = eNodeB.getLoggerUploadAllEnodebIP();
-            if (loggerUploadAllEnodebIP != null) {
-                report.addLink(LOGGER_UPLOAD_ALL_DESC,
-                        String.format(LOGGER_UPLOAD_ALL_LINK, dateFormat.format(date), loggerUploadAllEnodebIP.replace(":", ".")));
-            } else {
-                report.report("Logger upload all not available, due to missing IP.");
-            }
-            GeneralUtils.stopLevel();
-
-            GeneralUtils.startLevel(String.format("eNodeB %s Automation logs", eNodeB.getName()));
-            for (Logger logger : loggers) {
-                logger.closeAutoLog(String.format("%s_%s", getMethodName(), logger.getParent().getName()));
-            }
-            GeneralUtils.stopLevel();
-
-            setUnexpectedRebootStatistics(eNodeB);
-
-            if (eNodeB.isMACtoPHYEnabled()) {
-                eNodeB.disableMACtoPHYcapture();
-            }
-            eNodeB.showMACtoPHYCaptureFiles();
-
-            HashSet<String> coreSet = eNodeB.getCorePathList();
-            int coreIndex = 1;
-            String coreValue = "";
-            for (String corePath : coreSet) {
-                coreValue += (coreIndex + "," + eNodeB.getName() + "," + corePath
-                        + ScenarioUtils.SYSOBJ_STRING_DELIMITER);
-                coreIndex++;
-                coreFilesPath += coreValue;
-            }
-
-            isCoreOccurDuringTest = (isCoreOccurDuringTest || eNodeB.isStateChangedToCoreDump());
-
-            // Initialize all the Parameters that refer each test individually.
-            eNodeB.clearTestPrameters();
-
-            eNodeB.setDeviceUnderTest(false);
-
-            // data base compare
-            eNodeB.loggerUploadAll();
-
-        }
-
-        if (isCoreOccurDuringTest) {
-            if (reason != "") {
-                reason += "<br>Core occured during test.";
-            } else {
-                reason = "Core occured during test.";
-            }
-        }
-
-        if (reason != "") {
-            report.addProperty("failureReason", reason);
-            report.report("Fail reason: " + reason);
-        }
-
-        if (coreFilesPath != "" && coreFilesPath != null) {
-            report.addProperty("CoreFiles", coreFilesPath);
-        }
-
-        if (!testStats.isEmpty() && testStats != null) {
-            String logCounter = "";
-            for (String key : testStats.keySet()) {
-                logCounter += (key + "," + testStats.get(key) + ScenarioUtils.SYSOBJ_STRING_DELIMITER);
-            }
-            report.addProperty("LogCounter", logCounter);
-        }
-
-        if (!scenarioStats.isEmpty() && scenarioStats != null) {
-            String logCounter = "";
-            for (String key : scenarioStats.keySet()) {
-                logCounter += (key + "," + scenarioStats.get(key) + ScenarioUtils.SYSOBJ_STRING_DELIMITER);
-            }
-            report.setContainerProperties(0, "LogCounter", logCounter);
-        }
-        GeneralUtils.printToConsole(ScenarioUtils.getInstance().getMemoryConsumption());
+        GeneralUtils.printToConsole("Test Status: " + isTestWasSuccessful);
     }
 
+    /**
+     * print Memory Information - Tables and graph
+     */
+    private void printMemoryInformation() {
+        printMemoryTables(cpuCommands);
+        printMemoryGraph(cpuCommands);
+    }
+
+    /**
+     * print Memory Graph
+     *
+     * @param cpuCommands2 - cpu Commands
+     */
     private void printMemoryGraph(ArrayList<CommandMemoryCPU> cpuCommands2) {
         if (cpuCommands2 == null) {
             report.report("cpu and memory watchdog hasn't been initiated!");
+            return;
         }
-
         for (CommandMemoryCPU command : cpuCommands2) {
             printGraphForCPUCommand(command);
         }
@@ -622,7 +769,7 @@ public class TestspanTest extends SystemTestCase4 {
         ArrayList<Long> time = new ArrayList<Long>();
 
         //initialize time just for order of the graph
-        time = initTimeList(time, memoryDouble.size());
+        time = initTimeList(memoryDouble.size());
 
         try {
             GraphAdder.AddGraph(String.format("%s %s", "graph Test", command.getNodeName()), "time stamp / sec", "node % usage", memoryDouble, cpuDouble, time, "memory", "cpu", false);
@@ -632,7 +779,7 @@ public class TestspanTest extends SystemTestCase4 {
         }
     }
 
-    private ArrayList<Long> initTimeList(ArrayList<Long> time, int size) {
+    private ArrayList<Long> initTimeList(int size) {
         ArrayList<Long> returnList = new ArrayList<Long>();
         for (int i = 0; i < size; i++) {
             returnList.add(new Long(i));
@@ -650,13 +797,15 @@ public class TestspanTest extends SystemTestCase4 {
 
 
     /**
+     * Print Memory Tables
+     *
      * @author sshahaf
      */
     private void printMemoryTables(ArrayList<CommandMemoryCPU> cpuCommands2) {
         if (cpuCommands2 == null) {
             report.report("cpu and memory watchdog hasn't been initiated!");
+            return;
         }
-
         for (CommandMemoryCPU command : cpuCommands2) {
             command.reportHTMLTableWithResults();
         }
@@ -703,6 +852,11 @@ public class TestspanTest extends SystemTestCase4 {
         }
     }
 
+    /**
+     * Set Unexpected Reboot Statistics of EnodeB
+     *
+     * @param eNodeB - eNodeB
+     */
     private void setUnexpectedRebootStatistics(EnodeB eNodeB) {
         int value = eNodeB.getUnexpectedReboot();
         eNodeB.setUnexpectedReboot(0);
@@ -731,7 +885,7 @@ public class TestspanTest extends SystemTestCase4 {
      * Initialize Test Listener (Jsystem HTML logs) - singleton
      */
     private void addToListenerManager() {
-        testListener = TestListener.getInstance();
+        TestListener testListener = TestListener.getInstance();
         ListenerstManager.getInstance().addListener(testListener);
     }
 
@@ -999,7 +1153,7 @@ public class TestspanTest extends SystemTestCase4 {
     }
 
     protected void changeInServiceWDStatus(boolean enabled) {
-        for (CommandWatchInService cmd : inserviceCommands) {
+        for (CommandWatchInService cmd : inServiceCommands) {
             cmd.setEnabled(enabled);
         }
     }

@@ -298,17 +298,18 @@ public class ScenarioUtils {
 
     /**
      * Method to be called once in @After
-     *
-     * @param enbInTest   - enbInTest.
-     * @param forceUpdate - if it's an instance of SW upgrade, then force update.
      */
-    public void calledOnceInEndFunc(List<EnodeB> enbInTest) {
+    public void calledOnceInEndFunc() {
         if (!isCalledOnceInEndFunc) {
             isCalledOnceInEndFunc = true;
             ArrayList<EnodeB> enbInSetup = SetupUtils.getInstance().getAllEnb();
+            report.report("getCostumer starts now:");
             getCostumer();
+            report.report("fillSetupTable starts now:");
             fillSetupTable();
+            report.report("setEnodeBIpsProp starts now:");
             setEnodeBIpsPropFile(enbInSetup);
+            report.report("updateTestVersion starts now:");
             updateTestVersion(enbInSetup);
         }
     }

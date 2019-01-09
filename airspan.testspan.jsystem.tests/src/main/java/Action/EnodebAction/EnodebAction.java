@@ -57,7 +57,7 @@ public class EnodebAction extends Action {
 	public void end() {
 		String coreFilesPath = "";
 		WatchDogManager.getInstance().shutDown();
-		scenarioUtils.calledOnceInEndFunc(enbInTest);
+		scenarioUtils.calledOnceInEndFunc();
 		boolean isCoreOccurDuringTest = false;
 
 		for (EnodeB eNodeB : enbInTest) {

@@ -462,15 +462,21 @@ public class TestspanTest extends SystemTestCase4 {
     @After
     public void end() {
         coreFilesPath = new StringBuilder(StringUtils.EMPTY);
+        report.report("deleteClonedProfiles starts now:");
         EnodeBConfig.getInstance().deleteClonedProfiles();
+        report.report("printMemoryInformation starts now:");
         printMemoryInformation();
+        report.report("WatchDogManager-shutDown starts now:");
         WatchDogManager.getInstance().shutDown();
+        report.report("changeIsTestWasSuccessfulParam starts now:");
         changeIsTestWasSuccessfulParam();
-        ScenarioUtils.getInstance().calledOnceInEndFunc(enbInTest);
+        ScenarioUtils.getInstance().calledOnceInEndFunc();
         for (EnodeB eNodeB : enbInTest) {
             endEnodeB(eNodeB);
         }
+        report.report("uploadParamsToReporter starts now:");
         uploadParamsToReporter();
+        report.report("printMemoryConsumptionToConsole starts now:");
         printMemoryConsumptionToConsole();
     }
 
@@ -490,17 +496,27 @@ public class TestspanTest extends SystemTestCase4 {
      * @param eNodeB - eNodeB
      */
     private void endEnodeB(EnodeB eNodeB) {
+        report.report("getCoreFilePathList starts now:");
         coreFilesPath.append(getCoreFilePathList(eNodeB));
+        report.report("isStateChangedToCoreDump starts now:");
         isCoreOccurDuringTest |= eNodeB.isStateChangedToCoreDump();
         printAlarmsInfo(eNodeB);
+        report.report("addRunningVersionProp starts now:");
         addRunningVersionProp(eNodeB);
+        report.report("getAndCompareDBFiles starts now:");
         getAndCompareDBFiles(eNodeB);
+        report.report("closeLog starts now:");
         closeLog(eNodeB);
+        report.report("setUnexpectedRebootStatistics starts now:");
         setUnexpectedRebootStatistics(eNodeB);
+        report.report("printAndCloseMACtoPHYCapture starts now:");
         printAndCloseMACtoPHYCapture(eNodeB);
+        report.report("clearTestParameters starts now:");
         //If Core dump occurs once, then == true
         eNodeB.clearTestParameters();
+        report.report("setDeviceUnderTest starts now:");
         eNodeB.setDeviceUnderTest(false);
+        report.report("loggerUploadAll starts now:");
         eNodeB.loggerUploadAll();
     }
 

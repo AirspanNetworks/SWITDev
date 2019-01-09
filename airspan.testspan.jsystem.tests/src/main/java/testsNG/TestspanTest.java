@@ -399,14 +399,13 @@ public class TestspanTest extends SystemTestCase4 {
                     String oid = MibReader.getInstance().resolveByName("asLteStkDebugFtpServerCfgFtpAddressType");
                     if(eNodeB.getSNMP(oid).equals("noSuchInstance"))
                     	eNodeB.lteCli("db add debugftpserver [1]");
-                    eNodeB.snmpSet(oid, debugFtpServer.addressType);
-                    oid = MibReader.getInstance().resolveByName("asLteStkDebugFtpServerCfgFtpServerIp");                
+                    if(!eNodeB.getSNMP(oid).equals(debugFtpServer.addressType))
+                    	eNodeB.snmpSet(oid, Integer.parseInt(debugFtpServer.addressType));
+                    eNodeB.snmpSet(oid, Integer.parseInt(debugFtpServer.addressType));
+                    oid = MibReader.getInstance().resolveByName("asLteStkDebugFtpServerCfgFtpServerIp");
                     eNodeB.snmpSet(oid, debugFtpServer.getDebugFtpServerIP());
                     oid = MibReader.getInstance().resolveByName("asLteStkDebugFtpServerCfgFtpAddress");
-                    String dor = eNodeB.getSNMP(oid);
-                    eNodeB.snmpSet(oid, debugFtpServer.getDebugFtpServerIPInHex());
-                    /*eNodeB.snmpSet(oid, InetAddress.getByName(debugFtpServer.getDebugFtpServerIPInHex()));
-                    eNodeB.snmpSet(oid, InetAddress.getByAddress(new byte[] {(byte)100, (byte)100, (byte)0, (byte)251}));*/
+                    eNodeB.snmpSet(oid, debugFtpServer.getDebugFtpServerIPInBytes());
                     oid = MibReader.getInstance().resolveByName("asLteStkDebugFtpServerCfgFtpUser");
                     eNodeB.snmpSet(oid, debugFtpServer.getDebugFtpServerUser());
                     oid = MibReader.getInstance().resolveByName("asLteStkDebugFtpServerCfgFtpPassword");

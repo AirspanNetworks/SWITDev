@@ -43,13 +43,15 @@ public class DebugFtpServer extends SystemObjectImpl{
 		return debugFtpServerUser;
 	}
 	
-	public String getDebugFtpServerIPInHex() {
-		String ipInHex = "";
+	public byte[] getDebugFtpServerIPInBytes() {
+		byte[] ipInHex;
 		String delimiter = addressType.equals(2) ? ":" : "\\.";
-		for(String octet : debugFtpServerIP.split(delimiter)){
-			ipInHex += Integer.toHexString(Integer.parseInt(octet)) + ":";
+		String[] octets = debugFtpServerIP.split(delimiter);
+		ipInHex = new byte[octets.length];
+		for(int i=0;i<octets.length ; i++){
+			ipInHex[i] = (byte) Integer.parseInt(octets[i]);
 		}
-		return ipInHex.substring(0, ipInHex.lastIndexOf(":"));
+		return ipInHex;
 	}
 	
 	public void setDebugFtpServerUser(String debugFtpServerUser) {

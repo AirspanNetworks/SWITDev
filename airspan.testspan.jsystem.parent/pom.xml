@@ -287,7 +287,6 @@
 				<configuration>
 					<source>${java.version}</source>
 					<target>${java.version}</target>
-					<argLine>-d64 -Xms512m -Xmx4g</argLine>
 				</configuration>
 			</plugin>
 			<plugin>

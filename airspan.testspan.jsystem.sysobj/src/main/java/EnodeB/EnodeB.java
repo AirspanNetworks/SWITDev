@@ -80,7 +80,23 @@ public abstract class EnodeB extends SystemObjectImpl {
 			new Pair<Long, String>((long)HALF_MIN, "eNodeb Software Activate Completed"),
 			new Pair<Long, String>((long)TWO_MIN, "All Running.")
 	};
-	
+
+	public boolean isNetspanProfilesVerified() {
+		return isNetspanProfilesVerified;
+	}
+
+	public void setNetspanProfilesVerified(boolean netspanProfilesVerified) {
+		isNetspanProfilesVerified = netspanProfilesVerified;
+	}
+
+	public boolean isManagedByNetspan() {
+		return isManagedByNetspan;
+	}
+
+	public void setManagedByNetspan(boolean managedByNetspan) {
+		isManagedByNetspan = managedByNetspan;
+	}
+
 	public enum Architecture {
 		XLP, FSM, FSMv4
 	}
@@ -125,6 +141,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 	private String[] staticUEs;
 	private NodeWebAccess webAccess;
 	public Object inServiceStateLock = new Object();
+
 	/**
 	 * The description of the eNodeB (example: AirSynergy 2000, Band 38/41M,
 	 * 2.5GHz TDD, Connectorized) or product code
@@ -1481,7 +1498,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 		XLP.setDeviceUnderTest(deviceUnderTest);
 	}
 	
-	public void clearTestPrameters(){
+	public void clearTestParameters(){
 		XLP.clearTestPrameters();
 	}
 	
@@ -2269,22 +2286,6 @@ public abstract class EnodeB extends SystemObjectImpl {
 		return XLP.setLoggerDebugCapEnable(enable); 
 	}
 	
-	public boolean isManagedByNetspan() {
-		return isManagedByNetspan;
-	}
-
-	public void setManagedByNetspan(boolean isManagedByNetspan) {
-		this.isManagedByNetspan = isManagedByNetspan;
-	}
-
-	public boolean isNetspanProfilesVerified() {
-		return isNetspanProfilesVerified;
-	}
-
-	public void setNetspanProfilesVerified(boolean isNetspanProfilesVerified) {
-		this.isNetspanProfilesVerified = isNetspanProfilesVerified;
-	}
-
 	public int getNumberOfCells(){
 		return XLP.getNumberOfCells();
 	}

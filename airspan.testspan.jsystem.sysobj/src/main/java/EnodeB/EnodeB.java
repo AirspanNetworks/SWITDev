@@ -1485,7 +1485,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 		XLP.setDeviceUnderTest(deviceUnderTest);
 	}
 	
-	public void clearTestPrameters(){
+	public void clearTestParameters(){
 		XLP.clearTestPrameters();
 	}
 	

@@ -174,8 +174,11 @@ public class TestspanTest extends SystemTestCase4 {
      * @param eNodeB - eNodeB
      */
     private void checkAndSetDefaultNetspanProfiles(EnodeB eNodeB) {
+    	if(eNodeB.isNetspanProfilesVerified())
+    		return;
         try {
-            netspanServer.checkAndSetDefaultProfiles(eNodeB, false);
+        	if(netspanServer.checkAndSetDefaultProfiles(eNodeB, false))
+        		eNodeB.setNetspanProfilesVerified(true);
         } catch (Exception e) {
             e.printStackTrace();
             report.report("checkAndSetDefaultProfiles failed due to: " + e.getMessage(), Reporter.WARNING);

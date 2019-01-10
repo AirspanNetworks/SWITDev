@@ -712,7 +712,9 @@ public class TestspanTest extends SystemTestCase4 {
     private void getAndCompareDBFiles(EnodeB eNodeB) {
         ArrayList<String> fileNameList = filesFromDBPerNode.get(eNodeB.getName());
         if ((fileNameList != null) && (!fileNameList.isEmpty())) {
+            report.report("getDBFiles starts now:");
             getDBFiles(eNodeB, afterTest);
+            report.report("compareDBs starts now:");
             compareDBs(eNodeB);
         }
     }

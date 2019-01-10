@@ -314,11 +314,15 @@ public class ScenarioUtils {
         }
     }
 
-    public void callITheEndOfSWUpgrade(List<EnodeB> enbInTest){
+    /**
+     * This method will be called in the End Of SW Upgrade
+     *
+     * @param enbInTest - enbInTest
+     */
+    public void callInTheEndOfSWUpgrade(List<EnodeB> enbInTest) {
         fillSetupTable();
         updateTestVersion(enbInTest);
     }
-
 
     /**
      * Update Test Version

@@ -1,15 +1,12 @@
 package testsNG.General;
 
 import EnodeB.EnodeB;
-import EnodeB.EnodeBUpgradeImage;
 import EnodeB.EnodeBUpgradeServer;
-import EnodeB.Components.XLP.XLP.SwStatus;
 import TestingServices.SWUpgradeConfig;
 import TestingServices.TestConfig;
 import Utils.*;
 import Netspan.API.Enums.HardwareCategory;
 import Netspan.API.Enums.ServerProtocolType;
-import Netspan.API.Lte.EventInfo;
 import Netspan.API.Software.RequestType;
 import jsystem.framework.ParameterProperties;
 import jsystem.framework.TestProperties;
@@ -17,7 +14,6 @@ import jsystem.framework.report.Reporter;
 import jsystem.framework.report.ReporterHelper;
 import org.junit.Test;
 
-import Action.EnodebAction.Enodeb;
 import testsNG.Actions.EnodeBConfig;
 import testsNG.Actions.SoftwareUtiles;
 import testsNG.Actions.SoftwareUtiles.EnodebResetWorker;
@@ -78,7 +74,7 @@ public class SWUpgrade extends TestspanTest {
      */
     @Override
     public void end() {
-        ScenarioUtils.getInstance().callITheEndOfSWUpgrade(enbInTest);
+        ScenarioUtils.getInstance().callInTheEndOfSWUpgrade(enbInTest);
         super.end();
     }
 

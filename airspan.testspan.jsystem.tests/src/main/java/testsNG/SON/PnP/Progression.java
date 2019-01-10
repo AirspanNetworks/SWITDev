@@ -3,6 +3,7 @@ package testsNG.SON.PnP;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -125,11 +126,9 @@ public class Progression extends TestspanTest{
 
 	@Override
 	public void end(){
-		 WatchDogManager.getInstance().shutDown();
 		 if(isEnodeBWithDonor){
 			 DNS.getInstance().closeConnection();
 		 }
-		//stopParallelCommands();
 		super.end();
 	}
 	
@@ -874,9 +873,7 @@ public class Progression extends TestspanTest{
 			this.eNodeB = eNodeB;
 			this.tmpEventListToFollow = new ArrayList<>();
 			this.uploadedEventListFromFollowList = new ArrayList<>();
-			for(int i = 0; i < eventListToFollow.length; i++){
-				this.tmpEventListToFollow.add(eventListToFollow[i]);
-			}
+			this.tmpEventListToFollow.addAll(Arrays.asList(eventListToFollow));
 			uploadedTime = null;
 			this.state = WatchdogState.INITIALIZED;
 		}

@@ -57,7 +57,7 @@ public class EnodebAction extends Action {
 	public void end() {
 		String coreFilesPath = "";
 		WatchDogManager.getInstance().shutDown();
-		scenarioUtils.calledOnceInEndFunc(enbInTest, false);
+		scenarioUtils.calledOnceInEndFunc();
 		boolean isCoreOccurDuringTest = false;
 
 		for (EnodeB eNodeB : enbInTest) {
@@ -104,7 +104,7 @@ public class EnodebAction extends Action {
 			isCoreOccurDuringTest = (isCoreOccurDuringTest || eNodeB.isStateChangedToCoreDump());
 
 			// Initialize all the Parameters that refer each test individually.
-			eNodeB.clearTestPrameters();
+			eNodeB.clearTestParameters();
 			eNodeB.setDeviceUnderTest(false);
 
 		}

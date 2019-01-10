@@ -24,7 +24,6 @@ public class StringTools {
         return StringUtils.join(strings, File.separator);
     }
 
-
     /**
      * Replace the "/" and the "\" with a file separator string compatible both to Windows and Linux
      *
@@ -33,7 +32,20 @@ public class StringTools {
      */
     public static String getStringWithUnifiedFileSeperator(String path) {
         String newPath = path.replaceAll("/", Matcher.quoteReplacement(File.separator));
-        newPath =  newPath.replaceAll("\\\\+", Matcher.quoteReplacement(File.separator));
+        newPath = newPath.replaceAll("\\\\+", Matcher.quoteReplacement(File.separator));
         return newPath;
+    }
+
+    /**
+     * Remove Last Char From String
+     *
+     * @param str - String
+     * @return - New String
+     */
+    public static String removeLastXCharsFromString(String str, int charsNumberToBeRemoved) {
+        if ((str != null) && (str.length() > 0)) {
+            str = str.substring(0, str.length() - charsNumberToBeRemoved);
+        }
+        return str;
     }
 }

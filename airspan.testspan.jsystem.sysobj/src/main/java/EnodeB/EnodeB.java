@@ -2,12 +2,7 @@ package EnodeB;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.snmp4j.smi.Variable;
 
@@ -2285,7 +2280,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 	public void setManagedByNetspan(boolean isManagedByNetspan) {
 		this.isManagedByNetspan = isManagedByNetspan;
 	}
-	
+
 	public boolean isNetspanProfilesVerified() {
 		return isNetspanProfilesVerified;
 	}
@@ -2293,7 +2288,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 	public void setNetspanProfilesVerified(boolean isNetspanProfilesVerified) {
 		this.isNetspanProfilesVerified = isNetspanProfilesVerified;
 	}
-	
+
 	public int getNumberOfCells(){
 		return XLP.getNumberOfCells();
 	}

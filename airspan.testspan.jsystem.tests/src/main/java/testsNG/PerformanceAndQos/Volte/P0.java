@@ -34,6 +34,7 @@ import jsystem.framework.report.Reporter;
 import testsNG.Actions.SoftwareUtiles;
 import testsNG.Actions.TrafficCapacity;
 import testsNG.Actions.Utils.CalculatorMap;
+import testsNG.Actions.Utils.StringTools;
 import testsNG.PerformanceAndQos.Throughput.TPTBase;
 
 public class P0 extends TPTBase{
@@ -1308,7 +1309,7 @@ public class P0 extends TPTBase{
 		for(String qci : qcisInList){
 			ret+=qci+", ";
 		}
-		ret = ret.substring(0, ret.length() - 2);
+		ret = StringTools.removeLastXCharsFromString(ret,2);
 		return ret;
 	}
 	

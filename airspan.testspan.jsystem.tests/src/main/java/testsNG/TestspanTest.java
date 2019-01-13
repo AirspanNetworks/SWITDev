@@ -37,6 +37,7 @@ import Utils.Snmp.MibReader;
 import Utils.WatchDog.CommandMemoryCPU;
 import Utils.WatchDog.CommandWatchInService;
 import Utils.WatchDog.WatchDogManager;
+import jsystem.framework.ParameterProperties;
 import jsystem.framework.report.ListenerstManager;
 import jsystem.framework.report.Reporter;
 import junit.framework.SystemTestCase4;
@@ -102,7 +103,7 @@ public class TestspanTest extends SystemTestCase4 {
      */
     private static HashMap<String, Integer> unexpectedRebootHash = null;
     protected WatchDogManager wd;
-
+    private boolean performDbComperison;
     /**
      * Initialize function
      *
@@ -396,24 +397,21 @@ public class TestspanTest extends SystemTestCase4 {
         if (!isFTPServerSet) {
             for (EnodeB eNodeB : enbInSetup) {
                 try {
-                    System.out.print("Set debug FTP server.");
-                    eNodeB.lteCli("db add debugftpserver [1]");
-                    String oid = MibReader.getInstance().resolveByName("asLteStkDebugFtpServerCfgFtpServerIp");
-                    eNodeB.lteCli("db set debugFtpServer ftpAddress.type=" + debugFtpServer.addressType + " [1]");
-                    if (debugFtpServer.addressType.equals("1"))
-                        eNodeB.snmpSet(oid, debugFtpServer.getDebugFtpServerIP());
-                    else {
-                        eNodeB.snmpSet(oid, ""); // set ipv4 field empty.
-                    }
-
-                    eNodeB.lteCli("db set debugFtpServer ftpAddress.address=" + debugFtpServer.getDebugFtpServerIP() + " [1]");
-
+                    GeneralUtils.printToConsole("Set debug FTP server.");
+                    String oid = MibReader.getInstance().resolveByName("asLteStkDebugFtpServerCfgFtpAddressType");
+                    if(eNodeB.getSNMP(oid).equals("noSuchInstance"))
+                    	eNodeB.lteCli("db add debugftpserver [1]");
+                    if(!eNodeB.getSNMP(oid).equals(debugFtpServer.addressType))
+                    	eNodeB.snmpSet(oid, Integer.parseInt(debugFtpServer.addressType));
+                    eNodeB.snmpSet(oid, Integer.parseInt(debugFtpServer.addressType));
+                    oid = MibReader.getInstance().resolveByName("asLteStkDebugFtpServerCfgFtpServerIp");
+                    eNodeB.snmpSet(oid, debugFtpServer.getDebugFtpServerIP());
+                    oid = MibReader.getInstance().resolveByName("asLteStkDebugFtpServerCfgFtpAddress");
+                    eNodeB.snmpSet(oid, debugFtpServer.getDebugFtpServerIPInBytes());
                     oid = MibReader.getInstance().resolveByName("asLteStkDebugFtpServerCfgFtpUser");
                     eNodeB.snmpSet(oid, debugFtpServer.getDebugFtpServerUser());
-
                     oid = MibReader.getInstance().resolveByName("asLteStkDebugFtpServerCfgFtpPassword");
                     eNodeB.snmpSet(oid, debugFtpServer.getDebugFtpServerPassword());
-                    eNodeB.lteCli("db get debugFtpServer");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -713,13 +711,15 @@ public class TestspanTest extends SystemTestCase4 {
      * @param eNodeB - eNodeB
      */
     private void getAndCompareDBFiles(EnodeB eNodeB) {
+    	if(performDbComperison){
         ArrayList<String> fileNameList = filesFromDBPerNode.get(eNodeB.getName());
-        if ((fileNameList != null) && (!fileNameList.isEmpty())) {
-            report.report("getDBFiles starts now:");
-            getDBFiles(eNodeB, afterTest);
-            report.report("compareDBs starts now:");
-            compareDBs(eNodeB);
-        }
+	        if ((fileNameList != null) && (!fileNameList.isEmpty())) {
+	            report.report("getDBFiles starts now:");
+	            getDBFiles(eNodeB, afterTest);
+	            report.report("compareDBs starts now:");
+	            compareDBs(eNodeB);
+	        }
+    	}
     }
 
     /**
@@ -923,28 +923,29 @@ public class TestspanTest extends SystemTestCase4 {
      * @author sshahaf
      */
     private Boolean getDBFiles(EnodeB eNodeB, String beforeTestExtention) {
-        initDBFilesFeature(eNodeB, beforeTestExtention);
-
-        dumpDBAndCreateLocalDirectory(eNodeB, eNodeB.getName() + beforeTestExtention);
-
-        String filesNames = getFileNamesFromNode(eNodeB);
-        if (filesNames == null) {
-            report.report("could not get files from node!");
-            return false;
+        if(performDbComperison){
+	    	initDBFilesFeature(eNodeB, beforeTestExtention);
+	
+	        dumpDBAndCreateLocalDirectory(eNodeB, eNodeB.getName() + beforeTestExtention);
+	
+	        String filesNames = getFileNamesFromNode(eNodeB);
+	        if (filesNames == null) {
+	            report.report("could not get files from node!");
+	            return false;
+	        }
+	
+	        ArrayList<String> filesFromDB = filterFileNames(filesNames, ".*\\.xml", "Stat", "stat", "smonMeasurement.xml");
+	        if (filesFromDB.isEmpty()) {
+	            return false;
+	        }
+	        GeneralUtils.printToConsole("add files names to map - node : " + eNodeB.getName());
+	        filesFromDBPerNode.put(eNodeB.getName(), filesFromDB);
+	
+	        if (!transferFilesToLocalComputer(scpCli, filesFromDB, eNodeB, beforeTestExtention)) {
+	            report.report("Could not get files from Node");
+	            return false;
+	        }
         }
-
-        ArrayList<String> filesFromDB = filterFileNames(filesNames, ".*\\.xml", "Stat", "stat", "smonMeasurement.xml");
-        if (filesFromDB.isEmpty()) {
-            return false;
-        }
-        GeneralUtils.printToConsole("add files names to map - node : " + eNodeB.getName());
-        filesFromDBPerNode.put(eNodeB.getName(), filesFromDB);
-
-        if (!transferFilesToLocalComputer(scpCli, filesFromDB, eNodeB, beforeTestExtention)) {
-            report.report("Could not get files from Node");
-            return false;
-        }
-
         return true;
     }
 
@@ -1181,4 +1182,8 @@ public class TestspanTest extends SystemTestCase4 {
         }
     }
 
+    @ParameterProperties(description = "Set Perform Db Comperison")
+	public void setPerformDbComperison(boolean performDbComperison) {
+		this.performDbComperison = performDbComperison;
+	}
 }

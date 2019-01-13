@@ -11,7 +11,7 @@ public class DebugFtpServer extends SystemObjectImpl{
 	public String addressType = "1";
 	
 	public DebugFtpServer(){
-		debugFtpServerIP="100.100.0.70";
+		debugFtpServerIP="100.100.0.251";
 		debugFtpServerUser="Airspan";
 		debugFtpServerPassword="Airspan";
 	}
@@ -42,6 +42,18 @@ public class DebugFtpServer extends SystemObjectImpl{
 	public String getDebugFtpServerUser() {
 		return debugFtpServerUser;
 	}
+	
+	public byte[] getDebugFtpServerIPInBytes() {
+		byte[] ipInHex;
+		String delimiter = addressType.equals(2) ? ":" : "\\.";
+		String[] octets = debugFtpServerIP.split(delimiter);
+		ipInHex = new byte[octets.length];
+		for(int i=0;i<octets.length ; i++){
+			ipInHex[i] = (byte) Integer.parseInt(octets[i]);
+		}
+		return ipInHex;
+	}
+	
 	public void setDebugFtpServerUser(String debugFtpServerUser) {
 		this.debugFtpServerUser = debugFtpServerUser;
 	}

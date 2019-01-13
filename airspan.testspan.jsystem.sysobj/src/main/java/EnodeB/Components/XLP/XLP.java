@@ -49,9 +49,9 @@ public abstract class XLP extends EnodeBComponent {
         SwStatus(String code) {
             value = code;
         }
-        
+
         public static SwStatus fromValue(String v) {
-            for (SwStatus c: SwStatus.values()) {
+            for (SwStatus c : SwStatus.values()) {
                 if (c.value.equals(v)) {
                     return c;
                 }
@@ -129,10 +129,15 @@ public abstract class XLP extends EnodeBComponent {
         }
     }
 
+    /**
+     * Prints EnodeB version to the Jenkins Console.
+     *
+     * @throws Exception -Exception
+     */
     public void printVersion() throws Exception {
         String version = getVersion();
         if (version != null)
-            report.report(String.format("%s(ver:%s) initialized!", getHardwareName(), version));
+            GeneralUtils.printToConsole(String.format("%s(ver:%s) initialized!", getHardwareName(), version));
         else
             throw new Exception("Initialization error: Can't get " + getHardwareName() + " version.");
     }

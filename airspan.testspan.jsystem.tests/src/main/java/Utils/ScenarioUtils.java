@@ -303,13 +303,9 @@ public class ScenarioUtils {
         if (!isCalledOnceInEndFunc) {
             isCalledOnceInEndFunc = true;
             ArrayList<EnodeB> enbInSetup = SetupUtils.getInstance().getAllEnb();
-            report.report("getCostumer starts now:");
             getCostumer();
-            report.report("fillSetupTable starts now:");
             fillSetupTable();
-            report.report("setEnodeBIpsProp starts now:");
             setEnodeBIpsPropFile(enbInSetup);
-            report.report("updateTestVersion starts now:");
             updateTestVersion(enbInSetup);
         }
     }

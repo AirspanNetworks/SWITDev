@@ -118,7 +118,7 @@ public class TestspanTest extends SystemTestCase4 {
         wd = WatchDogManager.getInstance();
         addToListenerManager();
         initUnexpectedRebootMap();
-        GeneralUtils.startLevel("Initialize Components");
+        GeneralUtils.startLevel("Per Test");
         validateEnbIsSet();
         printMemoryConsumptionToConsole();
         checkAutoVersion();
@@ -462,7 +462,7 @@ public class TestspanTest extends SystemTestCase4 {
      **/
     @After
     public void end() {
-        GeneralUtils.startLevel("Tears down");
+        GeneralUtils.startLevel("Post Test");
         coreFilesPath = new StringBuilder(StringUtils.EMPTY);
         EnodeBConfig.getInstance().deleteClonedProfiles();
         printMemoryInformation();

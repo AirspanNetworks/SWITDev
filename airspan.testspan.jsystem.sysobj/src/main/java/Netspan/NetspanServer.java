@@ -205,7 +205,7 @@ public abstract class NetspanServer extends SystemObjectImpl {
     /**
      * Sets the Ipv6Addrss.
      *
-     * @param Ipv6Addrss the new Ipv6Addrss
+     * @param ipv6Addrss the new Ipv6Addrss
      */
     public void setIpv6Addrss(String ipv6Addrss) {
         this.ipv6Addrss = ipv6Addrss;
@@ -252,7 +252,7 @@ public abstract class NetspanServer extends SystemObjectImpl {
      * Adds the neighbor.
      *
      * @param enodeB           the EnodeB
-     * @param neighborName     the neighbor name
+     * @param neighbor     the neighbor name
      * @param hoControlStatus  the ho control status
      * @param x2ControlStatus  the x2 control status
      * @param handoverType     the handover type
@@ -262,6 +262,29 @@ public abstract class NetspanServer extends SystemObjectImpl {
     public abstract boolean addNeighbor(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
                                         X2ControlStateTypes x2ControlStatus, HandoverType handoverType, boolean isStaticNeighbor,
                                         String qOffsetRange);
+
+    /**
+     * Adds the neighbor Multi Cell.
+     *
+     * @param enodeB           the EnodeB
+     * @param neighbor     the neighbor name
+     * @param hoControlStatus  the ho control status
+     * @param x2ControlStatus  the x2 control status
+     * @param handoverType     the handover type
+     * @param isStaticNeighbor the is static neighbor
+     * @return true, if successful
+     */
+    public abstract boolean addNeighbourMultiCell(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
+                                        X2ControlStateTypes x2ControlStatus, HandoverType handoverType, boolean isStaticNeighbor,
+                                        String qOffsetRange);
+
+    /**
+     * getNumberOfNetspanCells.
+     *
+     * @param enb           the EnodeB
+     * @return true, if successful
+     */
+    public abstract int getNumberOfNetspanCells(EnodeB enb);
 
     public abstract boolean checkCannotAddNeighbor(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
                                                    X2ControlStateTypes x2ControlStatus, HandoverType handoverType, boolean isStaticNeighbor,

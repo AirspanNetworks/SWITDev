@@ -66,33 +66,82 @@ public class Neighbors {
         return instance;
     }
 
-    public boolean addNeighbor(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
+    /**
+	 * Add Neighbor Multi Cell
+	 *
+     * @param enodeB
+     * @param neighbor
+     * @param hoControlStatus
+     * @param x2ControlStatus
+     * @param handoverType
+     * @param isStaticNeighbor
+     * @param qOffsetRange
+     * @return
+     */
+    public boolean addNeighborMultiCell(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
                                X2ControlStateTypes x2ControlStatus, HandoverType handoverType, boolean isStaticNeighbor,
                                String qOffsetRange) {
-        if (netspanServer != null && netspanServer.addNeighbor(enodeB, neighbor, hoControlStatus, x2ControlStatus,
+        //Try via Netspan
+        if (netspanServer != null && netspanServer.addNeighbourMultiCell(enodeB, neighbor, hoControlStatus, x2ControlStatus,
                 handoverType, isStaticNeighbor, qOffsetRange)) {
-            if (verifyNeighborExistsNSOrSNMP(enodeB, neighbor)) {
-                report.report("Netspan add Neighbor " + neighbor.getNetspanName() + " passed");
-                return true;
-            }
+            if (verifyAddNeighbourSucceed(enodeB, neighbor, "Netspan")) return true;
         }
         report.report("Didn't find neighbor. Wait 10 seconds and try again");
         GeneralUtils.unSafeSleep(10 * 1000);
-        if (verifyNeighborExistsNSOrSNMP(enodeB, neighbor)) {
-            report.report("Netspan add Neighbor " + neighbor.getNetspanName() + " passed");
-            return true;
-        }
+        if (verifyAddNeighbourSucceed(enodeB, neighbor, "Netspan")) return true;
         report.report("Netspan add Neighbor " + neighbor.getNetspanName() + " failed", Reporter.WARNING);
+        //todo impalement via SNMP (not available now)
+        return false;
+    }
+
+	/**
+	 *  Add Neighbor
+	 *
+	 * @param enodeB
+	 * @param neighbor
+	 * @param hoControlStatus
+	 * @param x2ControlStatus
+	 * @param handoverType
+	 * @param isStaticNeighbor
+	 * @param qOffsetRange
+	 * @return
+	 */
+    public boolean addNeighbor(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
+                               X2ControlStateTypes x2ControlStatus, HandoverType handoverType, boolean isStaticNeighbor,
+                               String qOffsetRange) {
+        //Try via Netspan
+        if (netspanServer != null && netspanServer.addNeighbor(enodeB, neighbor, hoControlStatus, x2ControlStatus,
+                handoverType, isStaticNeighbor, qOffsetRange)) {
+            if (verifyAddNeighbourSucceed(enodeB, neighbor, "Netspan")) return true;
+        }
+        report.report("Didn't find neighbor. Wait 10 seconds and try again");
+        GeneralUtils.unSafeSleep(10 * 1000);
+        if (verifyAddNeighbourSucceed(enodeB, neighbor, "Netspan")) return true;
+        report.report("Netspan add Neighbor " + neighbor.getNetspanName() + " failed", Reporter.WARNING);
+        //Try via SNMP
         try {
             enodeB.addNbr(enodeB, neighbor, hoControlStatus, x2ControlStatus, handoverType, isStaticNeighbor,
                     String.valueOf(convertQoffsetToCli(Integer.parseInt(qOffsetRange))));
-            if (verifyNeighborExistsNSOrSNMP(enodeB, neighbor)) {
-                report.report("SNMP add Neighbor  " + neighbor.getNetspanName() + " passed");
-                return true;
-            }
+            if (verifyAddNeighbourSucceed(enodeB, neighbor, "SNMP")) return true;
         } catch (Exception e) {
             e.printStackTrace();
             report.report("SNMP add Neighbor  " + neighbor.getNetspanName() + " verification failed");
+        }
+        return false;
+    }
+
+    /**
+     *  Verify Add Neighbour Succeed
+     *
+     * @param enodeB - enodeB
+     * @param neighbor - neighbor
+     * @param protocol - Netspan or SNMP - print to log
+     * @return - true if succeed
+     */
+    private boolean verifyAddNeighbourSucceed(EnodeB enodeB, EnodeB neighbor, String protocol) {
+        if (verifyNeighborExistsNSOrSNMP(enodeB, neighbor)) {
+            report.report( "Add neighbour via" +  protocol + ":" + neighbor.getNetspanName() + " passed");
+            return true;
         }
         return false;
     }
@@ -463,17 +512,4 @@ public class Neighbors {
 
         return status && correctState;
     }
-
-	/*
-	 * public boolean deleteRandomaly(EnodeB enodeB){ List<String> allNeighbors
-	 * = netspanServer.getNodeNeighborsName(enodeB); int numberOfNeighbors =
-	 * allNeighbors.size();
-	 * 
-	 * for (int i = 0; i<numberOfNeighbors; i++){ int random = new
-	 * Random().nextInt(allNeighbors.size()); String randomNbr =
-	 * allNeighbors.get(random);
-	 * 
-	 * netspanServer.deleteNeighbor(enodeB, neighborName)
-	 * allNeighbors.remove(random); } return false; }
-	 */
 };

@@ -19,8 +19,8 @@ import testsNG.Actions.Neighbors;
 public class NeighborManagement extends EnodebAction {
 	protected EnodeB dut;
 	protected EnodeB neighbour;
-	protected int sourceCell;
-	protected int targetCell;
+	protected Integer sourceCell;
+	protected Integer targetCell;
 	protected HoControlStateTypes hoControlState;
 	protected X2ControlStateTypes x2ControlState;
 	protected HandoverType handoverType;
@@ -44,12 +44,12 @@ public class NeighborManagement extends EnodebAction {
 	}
 
 	@ParameterProperties(description = "Cell number of the current EnodeB")
-	public void setSourceCell(int sourceCell) {
+	public void setSourceCell(Integer sourceCell) {
 		this.sourceCell = sourceCell;
 	}
 
 	@ParameterProperties(description = "Cell number of the neighbour EnodeB")
-	public void setTargetCell(int targetCell) {
+	public void setTargetCell(Integer targetCell) {
 		this.targetCell = targetCell;
 	}
 

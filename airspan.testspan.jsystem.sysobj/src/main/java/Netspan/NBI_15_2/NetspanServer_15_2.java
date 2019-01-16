@@ -2953,10 +2953,29 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
         neighbourConfig.setX2ControlState(factoryDetails.createLteAddNeighbourWsX2ControlState(x2ControlStatus));
         assignByCellNumber(enodeB, neighbor, neighbourConfig, factoryDetails);
         neighbourConfigList.add(neighbourConfig);
+        return addNeighboursRetries(enodeB, neighbor, neighbourConfigList,3);
+    }
 
+    /**
+     *  Loop of Retries to "add Neighbour" via netspan
+     *
+     * @param neighbourConfigList - neighbourConfigList
+     * @return - true if succeed
+     */
+    private boolean addNeighboursRetries(EnodeB enodeB, EnodeB neighbor, List<LteAddNeighbourWs> neighbourConfigList,
+                                         int numOfretries) {
         try {
-            Boolean isAddNeighbourSucceed = addNeighboursRetries(neighbourConfigList);
-            if (isAddNeighbourSucceed != null) return isAddNeighbourSucceed;
+            for (int i = 1; true; i++) {
+                LteNeighbourResponse result = soapHelper_15_2.getLteSoap()
+                    .lteNeighbourAddByCellNumber(neighbourConfigList, credentialsLte);
+                if (result.getErrorCode() != Netspan.NBI_15_2.Lte.ErrorCodes.OK) {
+                    report.report("lteNeighbourAdd via Netspan Failed : " + result.getErrorString(), Reporter.WARNING);
+                    if (i == numOfretries || !result.getErrorString().contains("deadlocked")) {
+                        return false;
+                    }
+                } else
+                    break;
+            }
         } catch (Exception e) {
             report.report("lteNeighbourAdd via Netspan Failed due to: " + e.getMessage(), Reporter.WARNING);
             e.printStackTrace();
@@ -2968,27 +2987,6 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
             + " with Cell ID=" + neighbor.getCellContextID() + " for eNodeB " + enodeB.getNetspanName()
             + " with Cell ID=" + enodeB.getCellContextID());
         return true;
-    }
-
-    /**
-     *  Loop of Retries to "add Neighbour" via netspan
-     *
-     * @param neighbourConfigList - neighbourConfigList
-     * @return - true if succeed
-     */
-    private Boolean addNeighboursRetries(List<LteAddNeighbourWs> neighbourConfigList) {
-        int maxRetries = 3;
-        for (int i = 1; true; i++) {
-            LteNeighbourResponse result = soapHelper_15_2.getLteSoap().lteNeighbourAddByCellNumber(neighbourConfigList, credentialsLte);
-            if (result.getErrorCode() != Netspan.NBI_15_2.Lte.ErrorCodes.OK) {
-                report.report("lteNeighbourAdd via Netspan Failed : " + result.getErrorString(), Reporter.WARNING);
-                if (i == maxRetries || !result.getErrorString().contains("deadlocked")) {
-                    return false;
-                }
-            } else
-                break;
-        }
-        return null;
     }
 
     /**

@@ -19,8 +19,8 @@ import testsNG.Actions.Neighbors;
 public class NeighborManagement extends EnodebAction {
 	protected EnodeB dut;
 	protected EnodeB neighbour;
-	protected Integer sourceCell;
-	protected Integer targetCell;
+	protected String sourceCell;
+	protected String targetCell;
 	protected HoControlStateTypes hoControlState;
 	protected X2ControlStateTypes x2ControlState;
 	protected HandoverType handoverType;
@@ -44,12 +44,12 @@ public class NeighborManagement extends EnodebAction {
 	}
 
 	@ParameterProperties(description = "Cell number of the current EnodeB")
-	public void setSourceCell(Integer sourceCell) {
+	public void setSourceCell(String sourceCell) {
 		this.sourceCell = sourceCell;
 	}
 
 	@ParameterProperties(description = "Cell number of the neighbour EnodeB")
-	public void setTargetCell(Integer targetCell) {
+	public void setTargetCell(String targetCell) {
 		this.targetCell = targetCell;
 	}
 
@@ -96,8 +96,8 @@ public class NeighborManagement extends EnodebAction {
 			"HoControlStateTypes", "X2ControlStateTypes", "HandoverType", "IsStaticNeighbor", "QOffsetRange"})
 	public void addNeighbour() {
 		printToReportAddNeighbourDetails();
-		dut.setCellContextNumber(sourceCell);
-		neighbour.setCellContextNumber(targetCell);
+		dut.setCellContextNumber(Integer.parseInt(sourceCell));
+		neighbour.setCellContextNumber(Integer.parseInt(targetCell));
 		boolean flag = Neighbors.getInstance().addNeighbor(this.dut, this.neighbour, this.hoControlState,
 				this.x2ControlState, this.handoverType, this.isStaticNeighbor, this.qOffsetRange);
 		report.reportHtml(dut.getName() + ": db get nghList", dut.lteCli("db get nghList"), true);

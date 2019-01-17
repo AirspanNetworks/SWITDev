@@ -118,7 +118,7 @@ public class TestspanTest extends SystemTestCase4 {
         wd = WatchDogManager.getInstance();
         addToListenerManager();
         initUnexpectedRebootMap();
-        GeneralUtils.startLevel("Per Test");
+        GeneralUtils.startLevel("Pre Test");
         validateEnbIsSet();
         printMemoryConsumptionToConsole();
         checkAutoVersion();

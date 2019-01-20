@@ -456,13 +456,13 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
 
     @Override
     public boolean verifyNeighbor(EnodeB enodeB, EnodeB neighbor) {
-        List<LteAnrStatusWs> allNeighbors = getNeighbourList(enodeB);
-        if (allNeighbors.isEmpty()) {
+        List<LteAnrStatusWs> neighbourStatusAnrState = getNeighbourList(enodeB);
+        if (neighbourStatusAnrState.isEmpty()) {
             report.report("The neighbor list is empty");
             return false;
         }
         try {
-            for (LteAnrStatusWs nbr : allNeighbors) {
+            for (LteAnrStatusWs nbr : neighbourStatusAnrState) {
                 String nbrName = nbr.getName();
                 String methodParamNeighbor = neighbor.getNetspanName();
                 if (nbrName.equals(methodParamNeighbor)) {
@@ -2953,7 +2953,7 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
         neighbourConfig.setX2ControlState(factoryDetails.createLteAddNeighbourWsX2ControlState(x2ControlStatus));
         assignByCellNumber(enodeB, neighbor, neighbourConfig, factoryDetails);
         neighbourConfigList.add(neighbourConfig);
-        return addNeighboursRetries(enodeB, neighbor, neighbourConfigList,3);
+        return addNeighbourRetries(enodeB, neighbor, neighbourConfigList,3);
     }
 
     /**
@@ -2962,8 +2962,8 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
      * @param neighbourConfigList - neighbourConfigList
      * @return - true if succeed
      */
-    private boolean addNeighboursRetries(EnodeB enodeB, EnodeB neighbor, List<LteAddNeighbourWs> neighbourConfigList,
-                                         int numOfretries) {
+    private boolean addNeighbourRetries(EnodeB enodeB, EnodeB neighbor, List<LteAddNeighbourWs> neighbourConfigList,
+										int numOfretries) {
         try {
             for (int i = 1; true; i++) {
                 LteNeighbourResponse result = soapHelper_15_2.getLteSoap()

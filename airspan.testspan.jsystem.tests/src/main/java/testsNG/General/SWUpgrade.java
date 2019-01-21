@@ -110,7 +110,6 @@ public class SWUpgrade extends TestspanTest {
             GeneralUtils.stopLevel();
         }
 
-
         long softwareActivateStartTimeInMili = System.currentTimeMillis();
         for (Pair<EnodeB, Triple<Integer, String, String>> eNodeB : eNodebList) {
             netspanServer.softwareConfigSet(eNodeB.getElement0().getNetspanName(), RequestType.ACTIVATE, eNodeB.getElement0().getDefaultNetspanProfiles().getSoftwareImage());

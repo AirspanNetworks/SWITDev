@@ -134,13 +134,16 @@ import jsystem.framework.report.Reporter;
 
 public class NetspanServer_14_5 extends Netspan.NetspanServer {
 
-	/** The Constant NBI_PATH. */
+	/**
+	 * The Constant NBI_PATH.
+	 */
 	private static final String NBI_PATH = "WS/14.5";
 	private static final int NO_CELL_ID_IS_NEEDED = -1;
 	public NBIHelper helper_14_50;
+
 	/**
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see Utils.TestspanSystemObject#init()
 	 */
 	@Override
@@ -156,11 +159,9 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 
 	/**
 	 * Sets the operational status.
-	 * 
-	 * @param node
-	 *            the node
-	 * @param serviceState
-	 *            the service state
+	 *
+	 * @param node         the node
+	 * @param serviceState the service state
 	 * @return true, if successful
 	 */
 	@IgnoreMethod
@@ -182,8 +183,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 	/**
 	 * Gets the neighbors name.
 	 *
-	 * @param node
-	 *            the node
+	 * @param node the node
 	 * @return the neighbors name
 	 */
 	public List<String> getNodeNeighborsName(EnodeB node) {
@@ -205,225 +205,190 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 	 * the same new configurations enter negative numbers / null in arguments to
 	 * use the current values of the cell
 	 *
-	 * @param node
-	 *            the node
-	 * @param cloneFromName
-	 *            the clone from name
-	 * @param band
-	 *            the band
-	 * @param bandwith
-	 *            the bandwith
-	 * @param earfcn
-	 *            the earfcn
-	 * @param downlink
-	 *            the downlink
-	 * @param uplink
-	 *            the uplink
-	 * @param mfbi
-	 *            the mfbi
-	 * @param txPower
-	 *            the tx power
-	 * @param sfr
-	 *            the sfr
-	 * @param fc
-	 *            the fc
+	 * @param node          the node
+	 * @param cloneFromName the clone from name
+	 * @param radioParams          radioParams
 	 * @return true, if successful
 	 */
-	public boolean cloneRadioProfile(EnodeB node, String cloneFromName, RadioParameters radioParams){
-		
-		if (cloneFromName != null){
+	public boolean cloneRadioProfile(EnodeB node, String cloneFromName, RadioParameters radioParams) {
+
+		if (cloneFromName != null) {
 			GeneralUtils.printToConsole("Trying to create automation radio profile \"%s\" via NBIF , creating an automation profiles for the run."
-					+cloneFromName);
-		}
-		else{
+					+ cloneFromName);
+		} else {
 			GeneralUtils.printToConsole("Trying to create automation radio profile from the current Profile that in use via NBIF ,"
 					+ " creating an automation profiles for the run.");
 			cloneFromName = node.getDefaultNetspanProfiles().getRadio();
 		}
 
 		EnbRadioProfile radioProfile = CreateEnbRadioProfile(radioParams);
-		if(radioProfile == null) return false;
-		
+		if (radioProfile == null) return false;
+
 		try {
-			ProfileResponse cloneResult = ( ProfileResponse ) helper_14_50.execute( "radioProfileClone", cloneFromName, radioProfile );
-			
-			if ( cloneResult == null){
-				report.report("Fail to get Radio profile cloning result", Reporter.WARNING );
+			ProfileResponse cloneResult = (ProfileResponse) helper_14_50.execute("radioProfileClone", cloneFromName, radioProfile);
+
+			if (cloneResult == null) {
+				report.report("Fail to get Radio profile cloning result", Reporter.WARNING);
 				return false;
-			}
-			else if( cloneResult.getErrorCode() == Netspan.NBI_14_50.API.Lte.ErrorCodes.OK ) {
+			} else if (cloneResult.getErrorCode() == Netspan.NBI_14_50.API.Lte.ErrorCodes.OK) {
 				report.report("Succeeded to clone Radio profile, new profile name: " + radioParams.getProfileName());
 				return true;
 			} else {
 				report.report("Failed to clone Radio profile, reason: " + cloneResult.getErrorString(), Reporter.WARNING);
 				return false;
 			}
-		} catch ( Exception e ) {
+		} catch (Exception e) {
 			GeneralUtils.printToConsole("Could not execute radioProfileClone on " + cloneFromName);
 		}
 		return false;
 	}
 
 	private EnbRadioProfile CreateEnbRadioProfile(RadioParameters radioParams) {
-		
+
 		ObjectFactory factoryDetails = new ObjectFactory();
 		EnbRadioProfile radioProfile = new EnbRadioProfile();
-		
-		if(radioParams.getProfileName() == null){return null;}
-		else{radioProfile.setName(radioParams.getProfileName());}
-		
-		if(radioParams.getBand() != null){radioProfile.setBand(factoryDetails.createEnbRadioProfileBand(radioParams.getBand()));}
-		
-		if(radioParams.getBandwidth() != null){radioProfile.setBandwidthMhz(factoryDetails.createEnbRadioProfileBandwidthMhz(radioParams.getBandwidth()));}
-		
-		if(radioParams.getDownLinkFrequency() != null){radioProfile.setDownlinkFreq(factoryDetails.createEnbRadioProfileDownlinkFreq(radioParams.getDownLinkFrequency()));}
-		
-		if(radioParams.getDuplex() != null){
+
+		if (radioParams.getProfileName() == null) {
+			return null;
+		} else {
+			radioProfile.setName(radioParams.getProfileName());
+		}
+
+		if (radioParams.getBand() != null) {
+			radioProfile.setBand(factoryDetails.createEnbRadioProfileBand(radioParams.getBand()));
+		}
+
+		if (radioParams.getBandwidth() != null) {
+			radioProfile.setBandwidthMhz(factoryDetails.createEnbRadioProfileBandwidthMhz(radioParams.getBandwidth()));
+		}
+
+		if (radioParams.getDownLinkFrequency() != null) {
+			radioProfile.setDownlinkFreq(factoryDetails.createEnbRadioProfileDownlinkFreq(radioParams.getDownLinkFrequency()));
+		}
+
+		if (radioParams.getDuplex() != null) {
 			RfProfileDuplexModes duplexMode = radioParams.getDuplex().contains("1") ? RfProfileDuplexModes.FDD : RfProfileDuplexModes.TDD;
 			radioProfile.setDuplexMode(factoryDetails.createEnbRadioProfileDuplexMode(duplexMode));
 		}
-		
-		if(radioParams.getEarfcn() != null){radioProfile.setEarfcn(factoryDetails.createEnbRadioProfileEarfcn(radioParams.getEarfcn()));}
-		
-		
-		if(radioParams.getFrameConfig() != null){
-			TddFrameConfigurationsSupported fc = radioParams.getFrameConfig().contains("1") ? 
-													TddFrameConfigurationsSupported.DL_40_UL_40_SP_20 :
-														TddFrameConfigurationsSupported.DL_60_UL_20_SP_20 ;
+
+		if (radioParams.getEarfcn() != null) {
+			radioProfile.setEarfcn(factoryDetails.createEnbRadioProfileEarfcn(radioParams.getEarfcn()));
+		}
+
+
+		if (radioParams.getFrameConfig() != null) {
+			TddFrameConfigurationsSupported fc = radioParams.getFrameConfig().contains("1") ?
+					TddFrameConfigurationsSupported.DL_40_UL_40_SP_20 :
+					TddFrameConfigurationsSupported.DL_60_UL_20_SP_20;
 			radioProfile.setFrameConfig(factoryDetails.createEnbRadioProfileFrameConfig(fc));
 		}
-		
-		if(radioParams.getTxpower() != null){radioProfile.setTxPower(factoryDetails.createEnbRadioProfileTxPower(radioParams.getTxpower()));}
-		
-		if(radioParams.getUpLinkFrequency() != null){radioProfile.setUplinkFreq(factoryDetails.createEnbRadioProfileUplinkFreq(radioParams.getUpLinkFrequency()));}
+
+		if (radioParams.getTxpower() != null) {
+			radioProfile.setTxPower(factoryDetails.createEnbRadioProfileTxPower(radioParams.getTxpower()));
+		}
+
+		if (radioParams.getUpLinkFrequency() != null) {
+			radioProfile.setUplinkFreq(factoryDetails.createEnbRadioProfileUplinkFreq(radioParams.getUpLinkFrequency()));
+		}
 		return radioProfile;
 	}
 
-	public boolean cloneProfile(EnodeB node, String cloneFromName, INetspanProfile profileParams){
-		try{
+	public boolean cloneProfile(EnodeB node, String cloneFromName, INetspanProfile profileParams) {
+		try {
 			switch (profileParams.getType()) {
 				case Management_Profile:
-					return cloneManagementProfile(node, cloneFromName, (ManagementParameters)profileParams);
-					
+					return cloneManagementProfile(node, cloneFromName, (ManagementParameters) profileParams);
+
 				case Mobility_Profile:
-					return cloneMobilityProfile(node, cloneFromName, (MobilityParameters)profileParams);
-					
+					return cloneMobilityProfile(node, cloneFromName, (MobilityParameters) profileParams);
+
 				case Network_Profile:
-					return cloneNetworkProfile(node, cloneFromName, (NetworkParameters)profileParams);
-					
+					return cloneNetworkProfile(node, cloneFromName, (NetworkParameters) profileParams);
+
 				case Radio_Profile:
-					return cloneRadioProfile(node, cloneFromName, (RadioParameters)profileParams);
-					
+					return cloneRadioProfile(node, cloneFromName, (RadioParameters) profileParams);
+
 				case Security_Profile:
-					return cloneSecurityProfile(node, cloneFromName, (SecurityParameters)profileParams);
-					
+					return cloneSecurityProfile(node, cloneFromName, (SecurityParameters) profileParams);
+
 				case Son_Profile:
-					return cloneSonProfile(node, cloneFromName, (SonParameters)profileParams);
-					
+					return cloneSonProfile(node, cloneFromName, (SonParameters) profileParams);
+
 				case Sync_Profile:
-					return cloneSyncProfile(node, cloneFromName, (SyncParameters)profileParams);
-					
+					return cloneSyncProfile(node, cloneFromName, (SyncParameters) profileParams);
+
 				case EnodeB_Advanced_Profile:
-					return cloneEnodeBAdvancedProfile(node, cloneFromName,(EnodeBAdvancedParameters)profileParams);
-					
+					return cloneEnodeBAdvancedProfile(node, cloneFromName, (EnodeBAdvancedParameters) profileParams);
+
 				case Neighbour_Management_Profile:
-					return cloneNeighborManagementProfile(node, cloneFromName, (NeighbourManagementParameters)profileParams);
-					
+					return cloneNeighborManagementProfile(node, cloneFromName, (NeighbourManagementParameters) profileParams);
+
 				case MultiCell_Profile:
-					return cloneMultiCellProfile(node, cloneFromName, (MultiCellParameters)profileParams);
-					
+					return cloneMultiCellProfile(node, cloneFromName, (MultiCellParameters) profileParams);
+
 				default:
 					report.report("Enum: No Such EnbProfile", Reporter.WARNING);
 					return false;
 			}
-		}
-		catch(Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 			report.report("Error in cloneProfile: " + e.getMessage(), Reporter.WARNING);
 			return false;
 		}
 	}
-	
 
-	public String getCurrentProfileName(EnodeB node, EnbProfiles profileType){
-		try{
+
+	public String getCurrentProfileName(EnodeB node, EnbProfiles profileType) {
+		try {
 			switch (profileType) {
 				case Management_Profile:
 					return getCurrentManagmentProfileName(node);
-					
+
 				case Mobility_Profile:
 					return getCurrentMobilityProfileName(node);
-					
+
 				case Network_Profile:
 					return getCurrentNetworkProfileName(node);
-					
+
 				case Radio_Profile:
 					return getCurrentRadioProfileName(node);
-					
+
 				case Security_Profile:
 					return getCurrentSecurityProfileName(node);
-					
+
 				case Son_Profile:
 					return getCurrentSonProfileName(node);
-					
+
 				case Sync_Profile:
 					return getCurrentSyncProfileName(node);
-					
+
 				case EnodeB_Advanced_Profile:
 					return getCurrentEnbAdvancedConfigurationProfileName(node);
-					
+
 				case Neighbour_Management_Profile:
 					return getNeighborManagmentProfile(node.getNetspanName());
-					
+
 				default:
 					report.report("Enum: No Such EnbProfile", Reporter.WARNING);
 					return "";
 			}
-		}
-		catch(Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 			report.report("Error in getCurrentProfileName: " + e.getMessage(), Reporter.WARNING);
 			return "";
 		}
 	}
-	
+
 	/**
 	 * Clone mobility profile via net span.
 	 *
-	 * @param node
-	 *            the node
-	 * @param intraFreqEventType
-	 *            the intra freq event type
-	 * @param intraFreqA3Offset
-	 *            the intra freq a3 offset
-	 * @param intraFreqHysteresis
-	 *            the intra freq hysteresis
-	 * @param intraFreqTimeToTrigger
-	 *            the intra freq time to trigger
-	 * @param cloneFromName
-	 *            the clone from name
-	 * @param UseIntraFrequencyProperties
-	 *            the use intra frequency properties
-	 * @param interFreqEventType
-	 *            the inter freq event type
-	 * @param interFreqA3Offset
-	 *            the inter freq a3 offset
-	 * @param interFreqHysteresis
-	 *            the inter freq hysteresis
-	 * @param interFreqTimeToTrigger
-	 *            the inter freq time to trigger
-	 * @param intraThreshold1
-	 *            the intra threshold1
-	 * @param intraThreshold2
-	 *            the intra threshold2
-	 * @param interThreshold1
-	 *            the inter threshold1
-	 * @param interThreshold2
-	 *            the inter threshold2
+	 * @param node                        the node
+	 * @param cloneFromName          cloneFromName
+	 * @param cloneFromName           cloneFromName
 	 * @return true, if successful
 	 */
 	public boolean cloneMobilityProfile(EnodeB node, String cloneFromName, MobilityParameters mobilityParams) {
-		try{
+		try {
 			ObjectFactory factoryDetails = new ObjectFactory();
 			EnbMobilityProfile mobilityProfile = new EnbMobilityProfile();
 			MobilityConnectedModeFreq mobilityConnectedMode = null;
@@ -432,33 +397,33 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 				mobilityConnectedMode.setEventType(factoryDetails
 						.createMobilityConnectedModeFreqEventType(mobilityParams.getEventType()));
 				switch (mobilityParams.getEventType()) {
-				case A_3:
-					if (mobilityParams.getA3Offset() != null) {
-						mobilityConnectedMode.setA3Offset(factoryDetails.createMobilityConnectedModeFreqA3Offset(
-								BigDecimal.valueOf(mobilityParams.getA3Offset())));
-					}
-					break;
-				case A_4:
-					if (mobilityParams.getRsrpEventThreshold1() != null) {
-						mobilityConnectedMode.setRsrpEventThreshold1(
-								factoryDetails.createMobilityConnectedModeFreqRsrpEventThreshold1(
-										mobilityParams.getRsrpEventThreshold1()));
-					}
-					break;
-				case A_5:
-					if (mobilityParams.getRsrpEventThreshold1() != null) {
-						mobilityConnectedMode.setRsrpEventThreshold1(
-								factoryDetails.createMobilityConnectedModeFreqRsrpEventThreshold1(
-										mobilityParams.getRsrpEventThreshold1()));
-					}
-					if (mobilityParams.getRsrpEventThreshold2() != null) {
-						mobilityConnectedMode.setRsrpEventThreshold2(
-								factoryDetails.createMobilityConnectedModeFreqRsrpEventThreshold2(
-										mobilityParams.getRsrpEventThreshold2()));
-					}
-					break;
-				default:
-					break;
+					case A_3:
+						if (mobilityParams.getA3Offset() != null) {
+							mobilityConnectedMode.setA3Offset(factoryDetails.createMobilityConnectedModeFreqA3Offset(
+									BigDecimal.valueOf(mobilityParams.getA3Offset())));
+						}
+						break;
+					case A_4:
+						if (mobilityParams.getRsrpEventThreshold1() != null) {
+							mobilityConnectedMode.setRsrpEventThreshold1(
+									factoryDetails.createMobilityConnectedModeFreqRsrpEventThreshold1(
+											mobilityParams.getRsrpEventThreshold1()));
+						}
+						break;
+					case A_5:
+						if (mobilityParams.getRsrpEventThreshold1() != null) {
+							mobilityConnectedMode.setRsrpEventThreshold1(
+									factoryDetails.createMobilityConnectedModeFreqRsrpEventThreshold1(
+											mobilityParams.getRsrpEventThreshold1()));
+						}
+						if (mobilityParams.getRsrpEventThreshold2() != null) {
+							mobilityConnectedMode.setRsrpEventThreshold2(
+									factoryDetails.createMobilityConnectedModeFreqRsrpEventThreshold2(
+											mobilityParams.getRsrpEventThreshold2()));
+						}
+						break;
+					default:
+						break;
 				}
 				if (mobilityParams.getHysteresis() != null) {
 					mobilityConnectedMode.setHysteresis(factoryDetails.createMobilityConnectedModeFreqHysteresis(
@@ -466,19 +431,18 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 				}
 				if (mobilityParams.getIsIntra()) {
 					mobilityProfile.setConnectedModeIntraFrequency(mobilityConnectedMode);
-				}
-				else{
+				} else {
 					mobilityProfile.setConnectedModeInterFrequency(mobilityConnectedMode);
 				}
 			}
-			
-			if(mobilityParams.getThresholdBasedMeasurement()!=null){
+
+			if (mobilityParams.getThresholdBasedMeasurement() != null) {
 				mobilityProfile.setIsThresholdBasedMeasurementEnabled(
 						factoryDetails.createEnbMobilityProfileIsThresholdBasedMeasurementEnabled(
 								mobilityParams.getThresholdBasedMeasurement()));
-				
+
 				//TODO:: remove HC values
-				if(mobilityParams.getThresholdBasedMeasurement()==EnabledDisabledStates.ENABLED){
+				if (mobilityParams.getThresholdBasedMeasurement() == EnabledDisabledStates.ENABLED) {
 					MobilityConnectedModeTriggerGaps triggerGap = new MobilityConnectedModeTriggerGaps();
 					triggerGap.setEventType(factoryDetails.createMobilityConnectedModeTriggerGapsEventType(TriggerGapEventTypes.A_2));
 					triggerGap.setTriggerQuantity(factoryDetails.createMobilityConnectedModeTriggerGapsTriggerQuantity(TriggerQuantityTypes.RSRP));
@@ -486,7 +450,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 					triggerGap.setHysteresis(factoryDetails.createMobilityConnectedModeTriggerGapsHysteresis(BigDecimal.valueOf(0.0)));
 					triggerGap.setTimeToTrigger(factoryDetails.createMobilityConnectedModeTriggerGapsTimeToTrigger("320"));
 					mobilityProfile.setConnectedModeThresholdTriggerGaps(triggerGap);
-					
+
 					MobilityConnectedModeStopGaps stopGap = new MobilityConnectedModeStopGaps();
 					stopGap.setEventType(factoryDetails.createMobilityConnectedModeStopGapsEventType(StopGapEventTypes.A_1));
 					stopGap.setTriggerQuantity(factoryDetails.createMobilityConnectedModeStopGapsTriggerQuantity(TriggerQuantityTypes.RSRP));
@@ -496,71 +460,57 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 					mobilityProfile.setConnectedModeThresholdStopGaps(stopGap);
 				}
 			}
-			
-			if(mobilityParams.getProfileName() == null){
+
+			if (mobilityParams.getProfileName() == null) {
 				return false;
-			}else{
+			} else {
 				mobilityProfile.setName(mobilityParams.getProfileName());
 			}
-						
-			ProfileResponse cloneResult = ( ProfileResponse ) helper_14_50.execute( "mobilityProfileClone", cloneFromName, mobilityProfile );
-			
-			if ( cloneResult == null){
-				report.report("Fail to get Mobility profile cloning result", Reporter.WARNING );
+
+			ProfileResponse cloneResult = (ProfileResponse) helper_14_50.execute("mobilityProfileClone", cloneFromName, mobilityProfile);
+
+			if (cloneResult == null) {
+				report.report("Fail to get Mobility profile cloning result", Reporter.WARNING);
 				return false;
-			}
-			else if( cloneResult.getErrorCode() == Netspan.NBI_14_50.API.Lte.ErrorCodes.OK ) {
+			} else if (cloneResult.getErrorCode() == Netspan.NBI_14_50.API.Lte.ErrorCodes.OK) {
 				report.report("Succeeded to clone Mobility profile, new profile name: " + mobilityParams.getProfileName());
 				return true;
 			} else {
 				report.report("Failed to clone Mobility profile, reason: " + cloneResult.getErrorString(), Reporter.WARNING);
 				return false;
 			}
-			
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
+
+
 		return false;
-		
+
 	}
 
 	/**
 	 * Clone son profile via netspan.
 	 *
-	 * @param node
-	 *            the node
-	 * @param cloneFromName
-	 *            the clone from name
-	 * @param sonEnabled
-	 *            the son enabled
-	 * @param pnpEnabled
-	 *            the pnp enabled
-	 * @param autoPCI
-	 *            the auto pci
-	 * @param ranges
-	 *            the ranges
-	 * @param anrState
-	 *            the anr state
-	 * @param anrFrequency
-	 *            the anr frequency
+	 * @param node          the node
+	 * @param cloneFromName the clone from name
+	 * @param sonParmas    the son enabled
 	 * @return true, if successful
 	 */
 	public boolean cloneSonProfile(EnodeB node, String cloneFromName, SonParameters sonParmas) {
-		
-		try{
+
+		try {
 			ObjectFactory factoryDetails = new ObjectFactory();
 			EnbSonProfile sonProfile = new EnbSonProfile();
-			
-			sonProfile.setName( sonParmas.getProfileName() );
-			
-			if (sonParmas.isSonCommissioning() != null && sonParmas.isSonCommissioning() ) {
-				sonProfile.setSonCommissioningEnabled( factoryDetails.createEnbSonProfileSonCommissioningEnabled(sonParmas.isSonCommissioning()));
+
+			sonProfile.setName(sonParmas.getProfileName());
+
+			if (sonParmas.isSonCommissioning() != null && sonParmas.isSonCommissioning()) {
+				sonProfile.setSonCommissioningEnabled(factoryDetails.createEnbSonProfileSonCommissioningEnabled(sonParmas.isSonCommissioning()));
 				//disable change of parameter due to NBI Change of param from boolean to enum
-				sonProfile.setPciEnabled( factoryDetails.createEnbSonProfilePciEnabled( sonParmas.isAutoPCIEnabled() ));
-				if ( sonParmas.isAutoPCIEnabled() != null && sonParmas.isAutoPCIEnabled() ) {
+				sonProfile.setPciEnabled(factoryDetails.createEnbSonProfilePciEnabled(sonParmas.isAutoPCIEnabled()));
+				if (sonParmas.isAutoPCIEnabled() != null && sonParmas.isAutoPCIEnabled()) {
 					PciRangeListContainer ranges = new PciRangeListContainer();
 					PciRange pciRange;
 					List<Pair<Integer, Integer>> rangesList = sonParmas.getRangesList();
@@ -574,15 +524,15 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 							ranges.getPciRange().add(pciRange);
 						}
 					}
-					sonProfile.setPciRangeList( ranges );
+					sonProfile.setPciRangeList(ranges);
 				}
 				SonAnrStates anrState = sonParmas.getAnrState() != null ? sonParmas.getAnrState() : SonAnrStates.DISABLED;
-				
-				sonProfile.setAnrState( factoryDetails.createEnbSonProfileAnrState(anrState) );
-				
+
+				sonProfile.setAnrState(factoryDetails.createEnbSonProfileAnrState(anrState));
+
 				sonProfile.setPnpMode(factoryDetails.createEnbSonProfilePnpMode(sonParmas.getPnpMode()));
-				
-				if ( anrState != SonAnrStates.DISABLED ) {
+
+				if (anrState != SonAnrStates.DISABLED) {
 					// getting the current list and add new freqs
 					AnrFreqListContainer anrFrequency = new AnrFreqListContainer();
 					AnrFreq anrFreq;
@@ -593,17 +543,17 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 							anrFreq.setFrequency(integer);
 							anrFrequency.getAnrFrequency().add(anrFreq);
 						}
-						sonProfile.setAnrFrequencyList( anrFrequency );
+						sonProfile.setAnrFrequencyList(anrFrequency);
 					}
 					if (anrState == SonAnrStates.HO_MEASUREMENT) {
-						if(sonParmas.getMinAllowedHoSuccessRate() != null){
+						if (sonParmas.getMinAllowedHoSuccessRate() != null) {
 							sonProfile.setMinAllowedHoSuccessRate(factoryDetails.createEnbSonProfileMinAllowedHoSuccessRate(sonParmas.getMinAllowedHoSuccessRate()));
 						}
 					}
 				}
 			}
-			if(sonParmas.isCSonEnabled() != null && sonParmas.isCSonEnabled()){
-				
+			if (sonParmas.isCSonEnabled() != null && sonParmas.isCSonEnabled()) {
+
 				LteSonCSonWs sonProfileCSon = factoryDetails.createLteSonCSonWs();
 				sonProfileCSon.setIsCSonEnabled(factoryDetails.createLteSonCSonWsIsCSonEnabled(sonParmas.isCSonEnabled()));
 				sonProfileCSon.setIsCSonRachEnabled(factoryDetails.createLteSonCSonWsIsCSonRachEnabled(sonParmas.iscSonRachMode()));
@@ -617,136 +567,130 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 				sonProfileCSon.setCSonMlbCpuLoadThresh(factoryDetails.createLteSonCSonWsCSonMlbCpuLoadThresh(sonParmas.getcSonCPUCHLoad()));
 				sonProfile.setCSon(sonProfileCSon);
 			}
-			ProfileResponse cloneResult = ( ProfileResponse ) helper_14_50.execute( "sonProfileClone", cloneFromName, sonProfile );
-			
-			if ( cloneResult == null){
-				report.report("Fail to get Son profile cloning resut", Reporter.WARNING );
+			ProfileResponse cloneResult = (ProfileResponse) helper_14_50.execute("sonProfileClone", cloneFromName, sonProfile);
+
+			if (cloneResult == null) {
+				report.report("Fail to get Son profile cloning resut", Reporter.WARNING);
 				return false;
-			}
-			else if( cloneResult.getErrorCode() == Netspan.NBI_14_50.API.Lte.ErrorCodes.OK ) {
+			} else if (cloneResult.getErrorCode() == Netspan.NBI_14_50.API.Lte.ErrorCodes.OK) {
 				report.report("Succeeded to clone Son profile, new profile name: " + sonParmas.getProfileName());
 				return true;
 			} else {
 				report.report("Failed to clone Son profile, reason: " + cloneResult.getErrorString(), Reporter.WARNING);
 				return false;
 			}
-			
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Clone sync profile via netspan.
 	 *
-	 * @param profile
-	 *            the profile
-	 * @param cloneFromName
-	 *            the clone from name
+	 * @param node       node
+	 * @param cloneFromName the clone from name
 	 * @return true, if successful
 	 */
 	public boolean cloneSyncProfile(EnodeB node, String cloneFromName, SyncParameters syncParams) {
-		
-			EnbSyncProfile syncProfile = new EnbSyncProfile();
-			syncProfile.setName(syncParams.getProfileName());
-			ObjectFactory objectFactory = new ObjectFactory();
-			
-			if(syncParams.getPrimaryMasterIpAddress() != null){
-				syncProfile.setPrimaryMasterIpAddress(syncParams.getPrimaryMasterIpAddress());
-			}
-			if(syncParams.getPrimaryMasterDomain()!=null){
-				syncProfile.setPrimaryMasterDomain(objectFactory.createEnbSyncProfilePrimaryMasterDomain(syncParams.getPrimaryMasterDomain()));
-			}
-			if(syncParams.getSecondaryMasterIpAddress() != null){
-				syncProfile.setSecondaryMasterIpAddress(syncParams.getSecondaryMasterIpAddress());
-				if(!syncParams.getSecondaryMasterIpAddress().equals("0.0.0.0")){
-					if(syncParams.getSecondaryMasterDomain()!=null){
-						syncProfile.setSecondaryMasterDomain(objectFactory.createEnbSyncProfileSecondaryMasterDomain(syncParams.getSecondaryMasterDomain()));
-					}
+
+		EnbSyncProfile syncProfile = new EnbSyncProfile();
+		syncProfile.setName(syncParams.getProfileName());
+		ObjectFactory objectFactory = new ObjectFactory();
+
+		if (syncParams.getPrimaryMasterIpAddress() != null) {
+			syncProfile.setPrimaryMasterIpAddress(syncParams.getPrimaryMasterIpAddress());
+		}
+		if (syncParams.getPrimaryMasterDomain() != null) {
+			syncProfile.setPrimaryMasterDomain(objectFactory.createEnbSyncProfilePrimaryMasterDomain(syncParams.getPrimaryMasterDomain()));
+		}
+		if (syncParams.getSecondaryMasterIpAddress() != null) {
+			syncProfile.setSecondaryMasterIpAddress(syncParams.getSecondaryMasterIpAddress());
+			if (!syncParams.getSecondaryMasterIpAddress().equals("0.0.0.0")) {
+				if (syncParams.getSecondaryMasterDomain() != null) {
+					syncProfile.setSecondaryMasterDomain(objectFactory.createEnbSyncProfileSecondaryMasterDomain(syncParams.getSecondaryMasterDomain()));
 				}
 			}
-			if(syncParams.getAnnounceRateInMsgPerSec()!=null){
-				syncProfile.setAnnounceRateInMsgPerSec(objectFactory.createEnbSyncProfileAnnounceRateInMsgPerSec(syncParams.getAnnounceRateInMsgPerSec().value()));
-			}
-			if(syncParams.getSyncRateInMsgPerSec()!=null){
-				syncProfile.setSyncRateInMsgPerSec(objectFactory.createEnbSyncProfileSyncRateInMsgPerSec(syncParams.getSyncRateInMsgPerSec().value()));
-			}
-			if(syncParams.getDelayRequestResponseRateInMsgPerSec()!=null){
-				syncProfile.setDelayRequestResponseRateInMsgPerSec(objectFactory.createEnbSyncProfileDelayRequestResponseRateInMsgPerSec(syncParams.getDelayRequestResponseRateInMsgPerSec().value()));
-			}
-			if(syncParams.getLeaseDurationInSec()!=null){
-				syncProfile.setLeaseDurationInSec(objectFactory.createEnbSyncProfileLeaseDurationInSec(syncParams.getLeaseDurationInSec()));
-			}
-			
-		try{
-			ProfileResponse cloneResult = ( ProfileResponse ) helper_14_50.execute( "syncProfileClone", cloneFromName, syncProfile);
-			
-			if ( cloneResult == null){
-				report.report("Fail to get Sync profile cloning result", Reporter.WARNING );
+		}
+		if (syncParams.getAnnounceRateInMsgPerSec() != null) {
+			syncProfile.setAnnounceRateInMsgPerSec(objectFactory.createEnbSyncProfileAnnounceRateInMsgPerSec(syncParams.getAnnounceRateInMsgPerSec().value()));
+		}
+		if (syncParams.getSyncRateInMsgPerSec() != null) {
+			syncProfile.setSyncRateInMsgPerSec(objectFactory.createEnbSyncProfileSyncRateInMsgPerSec(syncParams.getSyncRateInMsgPerSec().value()));
+		}
+		if (syncParams.getDelayRequestResponseRateInMsgPerSec() != null) {
+			syncProfile.setDelayRequestResponseRateInMsgPerSec(objectFactory.createEnbSyncProfileDelayRequestResponseRateInMsgPerSec(syncParams.getDelayRequestResponseRateInMsgPerSec().value()));
+		}
+		if (syncParams.getLeaseDurationInSec() != null) {
+			syncProfile.setLeaseDurationInSec(objectFactory.createEnbSyncProfileLeaseDurationInSec(syncParams.getLeaseDurationInSec()));
+		}
+
+		try {
+			ProfileResponse cloneResult = (ProfileResponse) helper_14_50.execute("syncProfileClone", cloneFromName, syncProfile);
+
+			if (cloneResult == null) {
+				report.report("Fail to get Sync profile cloning result", Reporter.WARNING);
 				return false;
-			}
-			else if( cloneResult.getErrorCode() == Netspan.NBI_14_50.API.Lte.ErrorCodes.OK ) {
+			} else if (cloneResult.getErrorCode() == Netspan.NBI_14_50.API.Lte.ErrorCodes.OK) {
 				report.report("Succeeded to clone Sync profile, new profile name: " + syncParams.getProfileName());
 				return true;
 			} else {
 				report.report("Failed to clone Sync profile, reason: " + cloneResult.getErrorString(), Reporter.WARNING);
 				return false;
 			}
-			
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			report.report("cloneSyncProfile Failed, reason: " + e.getMessage(), Reporter.WARNING);
 		}
-		
+
 		return false;
 	}
 
 	@Override
-	public PrimaryClockSourceEnum getPrimaryClockSource(EnodeB node){
+	public PrimaryClockSourceEnum getPrimaryClockSource(EnodeB node) {
 		String profile = getNodeConfig(node).getSyncProfile();
 		List<String> nameList = new ArrayList<String>();
 		nameList.add(profile);
-		try{
-			LteSyncProfileGetResult syncProfile = ( LteSyncProfileGetResult ) helper_14_50.execute("syncProfileGet", nameList);
+		try {
+			LteSyncProfileGetResult syncProfile = (LteSyncProfileGetResult) helper_14_50.execute("syncProfileGet", nameList);
 			JAXBElement<ClockSources> clockSource = syncProfile.getSyncProfileResult().get(FIRST_ELEMENT).getSyncProfile().getPrimaryClockSource();
-			if(clockSource.getValue() == ClockSources.NONE){
+			if (clockSource.getValue() == ClockSources.NONE) {
 				return PrimaryClockSourceEnum.NONE;
 			}
-			if(clockSource.getValue() == ClockSources.GNSS){
+			if (clockSource.getValue() == ClockSources.GNSS) {
 				return PrimaryClockSourceEnum.GNSS;
 			}
-			if(clockSource.getValue() == ClockSources.IEEE_1588){
+			if (clockSource.getValue() == ClockSources.IEEE_1588) {
 				return PrimaryClockSourceEnum.IEEE_1588;
 			}
-		}		
-		catch(Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 			report.report("getPrimaryClockSource Failed, reason: " + e.getMessage(), Reporter.WARNING);
 			return null;
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Gets the sync profile.
 	 *
-	 * @param node
-	 *            the node
+	 * @param node the node
 	 * @return the sync profile
 	 */
 	public LteSyncProfileResult getSyncProfile(EnodeB node) {
 		GeneralUtils.printToConsole("trying to get Sync profiles via NBI");
 		EnbDetailsGet nodeConfig = getNodeConfig(node);
 		String profile = "";
-		if(nodeConfig != null){
-			profile = nodeConfig.getSonProfile();			
+		if (nodeConfig != null) {
+			profile = nodeConfig.getSonProfile();
 		}
-		
+
 		try {
-			LteSyncProfileGetResult cloneResult = ( LteSyncProfileGetResult ) helper_14_50.execute( "syncProfileGet", profile );
+			LteSyncProfileGetResult cloneResult = (LteSyncProfileGetResult) helper_14_50.execute("syncProfileGet", profile);
 			return cloneResult.getSyncProfileResult().get(FIRST_ELEMENT);
 		} catch (Exception e) {
 			GeneralUtils.printToConsole(e.toString());
@@ -754,21 +698,20 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Populate node names.
-	 * 
-	 * @throws Exception
-	 *             the exception
+	 *
+	 * @throws Exception the exception
 	 */
 	private void populateNodeNames() throws Exception {
 		GeneralUtils.printToConsole("Stating to map eNodeB nodeName to eNodeB nodeID");
 		nodeNames = new Hashtable<String, String>();
 
 		Netspan.NBI_14_50.API.Inventory.NodeListResult result = null;
-		try{
+		try {
 			result = (Netspan.NBI_14_50.API.Inventory.NodeListResult) helper_14_50.execute("nodeList");
-		}catch(Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 			report.report("populateNodeNames via Netspan Failed due to: " + e.getMessage(), Reporter.WARNING);
 			return;
@@ -800,9 +743,8 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 
 	/**
 	 * Gets the EnodeB configuration.
-	 * 
-	 * @param enodeB
-	 *            the enode b
+	 *
+	 * @param enodeB the enode b
 	 * @return the node config
 	 */
 	public EnbDetailsGet getNodeConfig(String nodeName) {
@@ -817,7 +759,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 			Netspan.NBI_14_50.API.Lte.LteEnbConfigGetResult result = (Netspan.NBI_14_50.API.Lte.LteEnbConfigGetResult) helper_14_50
 					.execute("enbConfigGet", nodeList);
 
-			GeneralUtils.printToConsole(String.format("NBI method \"enbConfigGet\" for eNodeB %s returned value: %s", nodeName,result.getErrorCode().toString()));
+			GeneralUtils.printToConsole(String.format("NBI method \"enbConfigGet\" for eNodeB %s returned value: %s", nodeName, result.getErrorCode().toString()));
 
 			return result.getNodeResult().get(FIRST_ELEMENT).getEnbConfig();
 
@@ -843,9 +785,8 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 
 	/**
 	 * Gets the EnodeB node info.
-	 * 
-	 * @param enodeB
-	 *            the enode b
+	 *
+	 * @param enodeB the enode b
 	 * @return the node Details
 	 */
 	@Override
@@ -853,18 +794,18 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 		String nodeName = enodeB.getNetspanName();
 		ArrayList<String> nodeList = new ArrayList<String>();
 		nodeList.add(nodeName);
-		for (int i = 0; i < 3; i++) {	
+		for (int i = 0; i < 3; i++) {
 			try {
-				
-				NodeDetailGetResult result = (NodeDetailGetResult) helper_14_50.execute("nodeInfoGet", nodeList,new ArrayList<String>());
-				GeneralUtils.printToConsole("NBI method \"nodeInfoGet\" for eNodeB "+nodeName+" returned value: " + result.getErrorCode());
-				
+
+				NodeDetailGetResult result = (NodeDetailGetResult) helper_14_50.execute("nodeInfoGet", nodeList, new ArrayList<String>());
+				GeneralUtils.printToConsole("NBI method \"nodeInfoGet\" for eNodeB " + nodeName + " returned value: " + result.getErrorCode());
+
 				NodeInfo ni = new NodeInfo();
 				ni.productCode = result.getNodeDetail().get(FIRST_ELEMENT).getNodeInfo().getProductCode();
 				ni.hardwareType = result.getNodeDetail().get(FIRST_ELEMENT).getNodeInfo().getHardwareType();
 				ni.nodeID = result.getNodeDetail().get(FIRST_ELEMENT).getNodeInfo().getNodeId();
 				ni.snmpPort = result.getNodeDetail().get(FIRST_ELEMENT).getNodeInfo().getSnmpAgent().get(FIRST_ELEMENT).getSnmpPort();
-					
+
 				return ni;
 			} catch (Exception e) {
 				GeneralUtils.printToConsole("Netspan function Failed: " + e);
@@ -880,11 +821,9 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 
 	/**
 	 * Sets the EnodeB configuration.
-	 * 
-	 * @param enodeB
-	 *            the EnodeB
-	 * @param netspanConfig
-	 *            the netspan config
+	 *
+	 * @param nodeName        the EnodeB
+	 * @param netspanConfig the netspan config
 	 * @return true, if successful
 	 */
 	public boolean setNodeConfig(String nodeName, LteEnbDetailsSetWs netspanConfig) {
@@ -918,23 +857,17 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 	/**
 	 * Adds neighbor.
 	 *
-	 * @param enodeB
-	 *            the EnodeB
-	 * @param neighbor
-	 *            the neighbor
-	 * @param hoControlStatus
-	 *            the ho control status
-	 * @param x2ControlStatus
-	 *            the x2 control status
-	 * @param handoverType
-	 *            the handover type
-	 * @param isStaticNeighbor
-	 *            the is static neighbor
+	 * @param enodeB           the EnodeB
+	 * @param neighbor         the neighbor
+	 * @param hoControlStatus  the ho control status
+	 * @param x2ControlStatus  the x2 control status
+	 * @param handoverType     the handover type
+	 * @param isStaticNeighbor the is static neighbor
 	 * @return true, if successful
 	 */
 	public boolean addNeighbor(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
-			X2ControlStateTypes x2ControlStatus, HandoverType handoverType, boolean isStaticNeighbor,
-			String qOffsetRange) {
+							   X2ControlStateTypes x2ControlStatus, HandoverType handoverType, boolean isStaticNeighbor,
+							   String qOffsetRange) {
 		String sourceNodeName = enodeB.getNetspanName();
 		String neighborName = neighbor.getNetspanName();
 		GeneralUtils.printToConsole("Sending NBI requeset \"lteNeighbourAdd\" for eNodeB " + sourceNodeName);
@@ -956,14 +889,25 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 		return false;
 	}
 
+	@Override
+	public boolean addNeighbourMultiCell(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
+										 X2ControlStateTypes x2ControlStatus, HandoverType handoverType,
+										 boolean isStaticNeighbor, String qOffsetRange) {
+		report.report("addNeighbourMultiCell via NBI_14_5 Failed : Try to use correct NBI version", Reporter.WARNING);
+		return false;
+	}
+
+	@Override
+	public int getNumberOfNetspanCells(EnodeB enb) {
+		report.report("getNumberOfNetspanCells via NBI_14_5 Failed : Try to use correct NBI version", Reporter.WARNING);
+		return GeneralUtils.ERROR_VALUE;
+	}
 
 	/**
 	 * Delete neighbor.
-	 * 
-	 * @param enodeB
-	 *            the EnodeB
-	 * @param neighbor
-	 *            the neighbor
+	 *
+	 * @param enodeB   the EnodeB
+	 * @param neighbor the neighbor
 	 * @return true, if successful
 	 */
 	public boolean deleteNeighbor(EnodeB enodeB, EnodeB neighbor) {
@@ -973,10 +917,8 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 	/**
 	 * Delete neighbor.
 	 *
-	 * @param enodeB
-	 *            the EnodeB
-	 * @param neighborName
-	 *            the neighbor name
+	 * @param enodeB       the EnodeB
+	 * @param neighborName the neighbor name
 	 * @return true, if successful
 	 */
 	public boolean deleteNeighbor(EnodeB enodeB, String neighborName) {
@@ -997,9 +939,8 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 
 	/**
 	 * deleteAllNeighbors
-	 * 
-	 * @param enodeB
-	 *            the EnodeB
+	 *
+	 * @param enodeB the EnodeB
 	 * @return true, if successful
 	 */
 	public boolean deleteAllNeighbors(EnodeB enodeB) {
@@ -1010,12 +951,12 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 			Netspan.NBI_14_50.API.Lte.LteNeighbourResponse result = (Netspan.NBI_14_50.API.Lte.LteNeighbourResponse) helper_14_50
 					.execute("lteNeighbourDeleteAll", enodeB.getNetspanName());
 
-			GeneralUtils.printToConsole("NBI method \"lteNeighbourDeleteAll\" for eNodeB "+enodeB.getName()+" returned value: "+ result.getErrorCode().toString());
-			
+			GeneralUtils.printToConsole("NBI method \"lteNeighbourDeleteAll\" for eNodeB " + enodeB.getName() + " returned value: " + result.getErrorCode().toString());
+
 			boolean errorCode = result.getErrorCode() == Netspan.NBI_14_50.API.Lte.ErrorCodes.OK;
 			if (errorCode)
 				return true;
-			else 
+			else
 				return result.getErrorString().toLowerCase().contains("no neighbours to delete");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1025,15 +966,15 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 
 	/**
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see Netspan.NetspanServer#verifyNoNeighbors(EnodeB.EnodeB)
 	 */
 	@Override
 	public boolean verifyNoNeighbors(EnodeB enodeB) {
 		List<LteAnrStatusWs> allNeighbors = getNeighbourList(enodeB);
-		try{
+		try {
 			return allNeighbors.isEmpty();
-		}catch(Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 			report.report("Exception thrown");
 			return false;
@@ -1042,11 +983,11 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 
 	/**
 	 * verify that neighbor was added to the main EnodeB
-	 * 
+	 * <p>
 	 * For each parameter, if its value is "null", the test for the specific
 	 * parameter will not be evaluated. Only hoControlType, x2ControlType,
 	 * handoverType and qOffserRange can be sent as "null".
-	 * 
+	 *
 	 * @param enodeB
 	 * @param neighbor
 	 * @param hoControlType
@@ -1057,13 +998,13 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 	 * @return
 	 */
 	public boolean verifyNeighbor(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlType,
-			X2ControlStateTypes x2ControlType, HandoverType handoverType, boolean isStaticNeighbor,
-			String qOffsetRange) {
+								  X2ControlStateTypes x2ControlType, HandoverType handoverType, boolean isStaticNeighbor,
+								  String qOffsetRange) {
 		boolean wasadded = true;
 		boolean wasFound = false;
 		List<LteAnrStatusWs> allNeighbors = getNeighbourList(enodeB);
 
-		if(allNeighbors==null){
+		if (allNeighbors == null) {
 			report.report("Couldn't get neighbor list from eNodeB");
 			return false;
 		}
@@ -1108,7 +1049,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 					}
 				}
 
-				if(nbr.getIsStaticNeighbour() != null){
+				if (nbr.getIsStaticNeighbour() != null) {
 					if (nbr.getIsStaticNeighbour().getValue() != isStaticNeighbor) {
 						report.report("isStatic is set to " + nbr.getIsStaticNeighbour().getValue() + " and not to "
 								+ isStaticNeighbor + " as expected", Reporter.WARNING);
@@ -1116,7 +1057,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 					} else {
 						report.report("isStatic is set to " + nbr.getIsStaticNeighbour().getValue() + " as expected");
 					}
-				}else{
+				} else {
 					GeneralUtils.printToConsole("nbr.getIsStaticNeighbour is null!");
 				}
 
@@ -1143,7 +1084,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 
 	/**
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see Netspan.NetspanServer#verifyNeighbor(EnodeB.EnodeB, EnodeB.EnodeB)
 	 */
 	@Override
@@ -1188,8 +1129,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 	/**
 	 * Gets the neighbour list.
 	 *
-	 * @param enodeB
-	 *            the EnodeB
+	 * @param enodeB the EnodeB
 	 * @return the neighbour list
 	 */
 	public List<LteAnrStatusWs> getNeighbourList(EnodeB enodeB) {
@@ -1198,11 +1138,10 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 
 	/**
 	 * Get the neighbors details
-	 * 
-	 * @param enodeB
-	 *            the eNodeB
+	 *
+	 * @param enodeB the eNodeB
 	 * @return - list of neighbors details lists each internal list contains the
-	 *         name and the details of a single neighbor
+	 * name and the details of a single neighbor
 	 */
 	public ArrayList<ArrayList<String>> getNeighboursDetails(EnodeB enodeB) {
 		ArrayList<ArrayList<String>> neighboursResult = null;
@@ -1235,8 +1174,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 	/**
 	 * Gets the neighbour list.
 	 *
-	 * @param enodeBName
-	 *            the EnodeB name
+	 * @param enodeBName the EnodeB name
 	 * @return the neighbour list
 	 */
 	public List<LteAnrStatusWs> getNeighbourList(String enodeBName) {
@@ -1296,23 +1234,22 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 
 	/**
 	 * Gets the node service state.
-	 * 
-	 * @param enodeB
-	 *            the node
+	 *
+	 * @param enodeB the node
 	 * @return the node service state
 	 */
 	public ServiceState getNodeServiceState(EnodeB enodeB) {
 		try {
 			GeneralUtils.printToConsole(String.format("Sending NBI requeset \"enbStateGet\" for eNodeB %s (%s)", enodeB.getName(), enodeB.getNetspanName()));
 			Netspan.NBI_14_50.API.Lte.EnbStateGetResult result = (Netspan.NBI_14_50.API.Lte.EnbStateGetResult) helper_14_50
-					.execute("enbStateGet", Arrays.asList(new String[] { enodeB.getNetspanName() }));
+					.execute("enbStateGet", Arrays.asList(new String[]{enodeB.getNetspanName()}));
 
 			if (result.getErrorCode() != Netspan.NBI_14_50.API.Lte.ErrorCodes.OK) {
 				throw new Exception("Returned code result different from expected \"OK\" actual code:"
 						+ result.getErrorCode().toString() + " error :" + result.getErrorString());
 			}
 
-			GeneralUtils.printToConsole(String.format("NBI method \"enbStateGet\" for eNodeB %s returned value: %s %s", enodeB.getName(),result.getErrorCode().toString(), result.getErrorString()));
+			GeneralUtils.printToConsole(String.format("NBI method \"enbStateGet\" for eNodeB %s returned value: %s %s", enodeB.getName(), result.getErrorCode().toString(), result.getErrorString()));
 
 			// get enodB state
 			EnbStatesGet nodeState = EnbStatesGet.UNKNOWN;
@@ -1324,12 +1261,12 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 			}
 			// replace EnbStates to ServiceState
 			switch (nodeState.value()) {
-			case "InService":
-				return ServiceState.InService;
-			case "OutOfService":
-				return ServiceState.OutOfService;
-			default:
-				return ServiceState.Unknown;
+				case "InService":
+					return ServiceState.InService;
+				case "OutOfService":
+					return ServiceState.OutOfService;
+				default:
+					return ServiceState.Unknown;
 			}
 		} catch (Exception e) {
 			GeneralUtils.printToConsole(e.toString());
@@ -1341,10 +1278,8 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 	/**
 	 * Sets the node service state.
 	 *
-	 * @param enodeB
-	 *            the node
-	 * @param state
-	 *            the state
+	 * @param enodeB the node
+	 * @param state  the state
 	 * @return the node service state
 	 */
 	public boolean setNodeServiceState(EnodeB enodeB, Netspan.API.Enums.EnbStates state) {
@@ -1374,11 +1309,10 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 	/**
 	 * This function gets a name of EnodeB and verifies the node exists in
 	 * Netspan
-	 * 
-	 * @param nodeName
-	 *            the name of the node to verify
+	 *
+	 * @param nodeName the name of the node to verify
 	 * @return true - if node exist in Netspan false - if node doesn't exist in
-	 *         Netspan
+	 * Netspan
 	 */
 	public boolean isNodeExist(String nodeName) {
 		try {
@@ -1414,9 +1348,9 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 
 	/**
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see Netspan.NetspanServer#changeNbrAutoX2ControlFlag(EnodeB.EnodeB,
-	 *      boolean)
+	 * boolean)
 	 */
 	@Override
 	public boolean changeNbrAutoX2ControlFlag(EnodeB enodeB, boolean state) {
@@ -1430,9 +1364,9 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 
 	/**
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see Netspan.NetspanServer#changeNbrX2ConfiguratioUpdateFlag(EnodeB.EnodeB,
-	 *      boolean)
+	 * boolean)
 	 */
 	@Override
 	public boolean changeNbrX2ConfiguratioUpdateFlag(EnodeB enodeB, boolean state) {
@@ -1444,8 +1378,8 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 	}
 
 	public boolean Create3rdParty(String name, String ipAddress, int physicalLayerCellGroup, int physicalLayerIdentity,
-			int cellIdentity, int enbId, Netspan.API.Enums.EnbTypes enbType, int cellId, int tac, int dlEarfcn,
-			EnodeBChannelBandwidth bandwidth, String mcc, String mnc) {
+								  int cellIdentity, int enbId, Netspan.API.Enums.EnbTypes enbType, int cellId, int tac, int dlEarfcn,
+								  EnodeBChannelBandwidth bandwidth, String mcc, String mnc) {
 
 		GeneralUtils.printToConsole("Sending NBI requeset \"Lte3rdPartyCreate\" ");
 		Enb3RdParty soapDetails = new Enb3RdParty();
@@ -1491,7 +1425,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 			Netspan.NBI_14_50.API.Lte.Lte3RdPartyResponse result = (Netspan.NBI_14_50.API.Lte.Lte3RdPartyResponse) helper_14_50
 					.execute("lte3RdPartyDelete", name);
 
-			GeneralUtils.printToConsole(String.format("NBI method \"lte3rdPartyDelete\" for eNodeB %s returned value: %s", name,result.getErrorCode().toString()));
+			GeneralUtils.printToConsole(String.format("NBI method \"lte3rdPartyDelete\" for eNodeB %s returned value: %s", name, result.getErrorCode().toString()));
 			return result.getErrorCode() == Netspan.NBI_14_50.API.Lte.ErrorCodes.OK;
 		} catch (Exception e) {
 			GeneralUtils.printToConsole(e.toString());
@@ -1592,7 +1526,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 	@Override
 	public RadioParameters radioProfileGet(EnodeB enb) throws Exception {
 		String enbRadioProfileName = this.getCurrentRadioProfileName(enb);
-		if(enbRadioProfileName == null) {
+		if (enbRadioProfileName == null) {
 			report.report("Could not get Radio Profile name from Netspan - Going for SNMP");
 			throw new Exception();
 		}
@@ -1646,7 +1580,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 	@Override
 	public NodeManagementModeType getManagedMode(EnodeB enb) {
 		EnbDetailsGet result = getNodeConfig(enb);
-		if(result != null){
+		if (result != null) {
 			return result.getManagedMode().getValue();
 		}
 		return null;
@@ -1655,16 +1589,16 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 	@Override
 	public String getCurrentRadioProfileName(EnodeB enb) {
 		EnbDetailsGet nodeConfig = getNodeConfig(enb);
-		if(nodeConfig != null){
+		if (nodeConfig != null) {
 			return nodeConfig.getLteCell().get(0).getRadioProfile();
 		}
 		return "";
 	}
-	
+
 	@Override
 	public String getCurrentMobilityProfileName(EnodeB enb) {
 		EnbDetailsGet nodeConfig = getNodeConfig(enb);
-		if(nodeConfig != null){
+		if (nodeConfig != null) {
 			return nodeConfig.getLteCell().get(0).getMobilityProfile();
 		}
 		return "";
@@ -1673,16 +1607,16 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 	@Override
 	public String getCurrentEnbAdvancedConfigurationProfileName(EnodeB enb) {
 		EnbDetailsGet nodeConfig = getNodeConfig(enb);
-		if(nodeConfig != null){
-			return nodeConfig.getAdvancedConfigProfile();			
+		if (nodeConfig != null) {
+			return nodeConfig.getAdvancedConfigProfile();
 		}
 		return "";
 	}
-	
+
 	@Override
 	public String getCurrentSyncProfileName(EnodeB enb) {
 		EnbDetailsGet nodeConfig = getNodeConfig(enb);
-		if(nodeConfig != null){
+		if (nodeConfig != null) {
 			return nodeConfig.getSyncProfile();
 		}
 		return "";
@@ -1691,25 +1625,25 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 	@Override
 	public String getCurrentSecurityProfileName(EnodeB enb) {
 		EnbDetailsGet nodeConfig = getNodeConfig(enb);
-		if(nodeConfig != null){
+		if (nodeConfig != null) {
 			return nodeConfig.getSecurityProfile();
 		}
-		return "";		
+		return "";
 	}
 
 	@Override
 	public String getCurrentManagmentProfileName(EnodeB enb) {
 		EnbDetailsGet nodeConfig = getNodeConfig(enb);
-		if(nodeConfig != null){
+		if (nodeConfig != null) {
 			return nodeConfig.getManagementProfile();
 		}
 		return "";
 	}
-	
+
 	@Override
 	public String getCurrentNetworkProfileName(EnodeB enb) {
 		EnbDetailsGet nodeConfig = getNodeConfig(enb);
-		if(nodeConfig != null){
+		if (nodeConfig != null) {
 			return nodeConfig.getNetworkProfile();
 		}
 		return "";
@@ -1717,8 +1651,8 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 
 	/**
 	 * @author Gabriel Grunwald Name: isProfileExists Function: checks if a
-	 *         profile exists Restrictions: only works for these profiles: -
-	 *         Sync - Management - SON - Network - Security
+	 * profile exists Restrictions: only works for these profiles: -
+	 * Sync - Management - SON - Network - Security
 	 */
 	public boolean isProfileExists(String name, EnbProfiles profileType) {
 		ArrayList<String> names = new ArrayList<String>();
@@ -1750,12 +1684,14 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 
 	@Override
 	public boolean cloneNetworkProfile(EnodeB node, String cloneFromName, NetworkParameters networkParams) throws Exception {
-		
+
 		EnbNetworkProfile networkProfile = new EnbNetworkProfile();
 
-		if(networkParams.getProfileName() == null){return false;}
+		if (networkParams.getProfileName() == null) {
+			return false;
+		}
 		networkProfile.setName(networkParams.getProfileName());
-		
+
 		// incase of plmn item to change in the profile
 		if (networkParams.getPlmn() != null) {
 			PlmnListContainer containerPlmn = new PlmnListContainer();
@@ -1779,27 +1715,26 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 			// add IPG ip in the List
 			networkProfile.setS1X2List(tempContainer);
 		}
-		
-		
-		if(networkParams.getcSonConfig() != null){
-			
+
+
+		if (networkParams.getcSonConfig() != null) {
+
 			ObjectFactory factoryDetails = new ObjectFactory();
-			
+
 			LteCSonEntryWs cSonConfig = new LteCSonEntryWs();
 			cSonConfig.setIsCSonConfigured(factoryDetails.createLteCSonEntryWsIsCSonConfigured(networkParams.getIsCSonConfigured()));
 			cSonConfig.setCSonIpAddress(networkParams.getcSonIpAddress());
 			cSonConfig.setCSonServerPort(factoryDetails.createLteCSonEntryWsCSonServerPort(networkParams.getcSonServerPort()));
-			
+
 			networkProfile.setCSONConfig(cSonConfig);
 		}
 
 		ProfileResponse cloneResult = (ProfileResponse) helper_14_50.execute("networkProfileClone", cloneFromName, networkProfile);
-		
-		if ( cloneResult == null){
-			report.report("Fail to get Network profile cloning result", Reporter.WARNING );
+
+		if (cloneResult == null) {
+			report.report("Fail to get Network profile cloning result", Reporter.WARNING);
 			return false;
-		}
-		else if( cloneResult.getErrorCode() == Netspan.NBI_14_50.API.Lte.ErrorCodes.OK ) {
+		} else if (cloneResult.getErrorCode() == Netspan.NBI_14_50.API.Lte.ErrorCodes.OK) {
 			report.report("Succeeded to clone Network profile, new profile name: " + networkParams.getProfileName());
 			return true;
 		} else {
@@ -1809,10 +1744,9 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 	}
 
 	/**
-	 * @author Shahaf Shuhamy delete if the profile exists before trying to set
-	 *         it making a security profile with the suffix : "_Connectivity"
-	 * 
 	 * @throws Exception
+	 * @author Shahaf Shuhamy delete if the profile exists before trying to set
+	 * it making a security profile with the suffix : "_Connectivity"
 	 */
 	// TODO: check if the name doesn't exceed 64 chars (or some other value)
 	public boolean cloneSecurityProfile(EnodeB node, String cloneFromName, SecurityParameters securityParams) throws Exception {
@@ -1841,7 +1775,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 			//String securityProfileToClone = currentSecurityProfileName + profilePreFix;
 			EnbSecurityProfile newSecurityProfile = new EnbSecurityProfile();
 			newSecurityProfile = currentSecurityProfile.getSecurityProfileResult().get(0).getSecurityProfile();
-			
+
 			insertParamsToEnbSecurityObj(newSecurityProfile,
 					currentSecurityProfile.getSecurityProfileResult().get(0).getSecurityProfile().getHardwareCategory(),
 					securityParams.getProfileName(),
@@ -1853,25 +1787,23 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 					securityParams.getCipheringNullLevel(),
 					securityParams.getCipheringAESLevel(),
 					securityParams.getCipheringSNOWLevel());
-			
-			
-			
+
+
 			try {
 				// gives the method the name of the new profile and the profile
 				// as is that i would like to clone
-				 ProfileResponse cloneResult = (ProfileResponse) helper_14_50.execute("securityProfileClone", currentSecurityProfileName, newSecurityProfile);
-				 
-				 if ( cloneResult == null){
-						report.report("Fail to get Security profile cloning result", Reporter.WARNING );
-						return false;
-					}
-					else if( cloneResult.getErrorCode() == Netspan.NBI_14_50.API.Lte.ErrorCodes.OK ) {
-						report.report("Succeeded to clone Security profile, new profile name: " + securityParams.getProfileName());
-						return true;
-					} else {
-						report.report("Failed to clone Security profile, reason: " + cloneResult.getErrorString(), Reporter.WARNING);
-						return false;
-					}
+				ProfileResponse cloneResult = (ProfileResponse) helper_14_50.execute("securityProfileClone", currentSecurityProfileName, newSecurityProfile);
+
+				if (cloneResult == null) {
+					report.report("Fail to get Security profile cloning result", Reporter.WARNING);
+					return false;
+				} else if (cloneResult.getErrorCode() == Netspan.NBI_14_50.API.Lte.ErrorCodes.OK) {
+					report.report("Succeeded to clone Security profile, new profile name: " + securityParams.getProfileName());
+					return true;
+				} else {
+					report.report("Failed to clone Security profile, reason: " + cloneResult.getErrorString(), Reporter.WARNING);
+					return false;
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new Exception("Fail executing SecurityProfileClone in Netspan 14_5");
@@ -1880,19 +1812,17 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 		//return false;
 	}
 
-	
 
 	@Override
 	public String getCurrentSystemDefaultProfileName(EnodeB enb) {
 		EnbDetailsGet nodeConfig = getNodeConfig(enb);
-		if(nodeConfig != null){
-			return nodeConfig.getSystemDefaultProfile();			
+		if (nodeConfig != null) {
+			return nodeConfig.getSystemDefaultProfile();
 		}
 		return "";
 	}
 
 	/**
-	 * 
 	 * @param securityProfileToSendToClone
 	 * @param currentSecurityProfileName
 	 * @param integrityLevel
@@ -1905,10 +1835,10 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 	 * @param snowCipherLevel
 	 */
 	private void insertParamsToEnbSecurityObj(EnbSecurityProfile securityProfileToSendToClone,
-			JAXBElement<CategoriesLte> hardware, String currentSecurityProfileName,
-			SecurityProfileOptionalOrMandatory integrityLevel, int nullIntegriLevel, int aesIntegriLevel,
-			int showIntegriLevel, SecurityProfileOptionalOrMandatory cipheringLevel, int nullCipherLevel,
-			int aesCipherLevel, int snowCipherLevel) {
+											  JAXBElement<CategoriesLte> hardware, String currentSecurityProfileName,
+											  SecurityProfileOptionalOrMandatory integrityLevel, int nullIntegriLevel, int aesIntegriLevel,
+											  int showIntegriLevel, SecurityProfileOptionalOrMandatory cipheringLevel, int nullCipherLevel,
+											  int aesCipherLevel, int snowCipherLevel) {
 		// name
 		securityProfileToSendToClone.setName(currentSecurityProfileName);
 		// HardWare
@@ -1939,15 +1869,15 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 		EnbPnpConfig pnpConfig = getPnpNode(enodeB);
 		if (pnpConfig != null) {
 			actionSucceeded &= removePnPNode(enodeB.getNetspanName());
-			actionSucceeded &= createDiscoveryTaskV2(enodeB,"public","private");
+			actionSucceeded &= createDiscoveryTaskV2(enodeB, "public", "private");
 			try {
 				Thread.sleep(1000 * 60); // wait for the Node appearance in
-											// netspan.
+				// netspan.
 			} catch (InterruptedException e) {
 			}
 			actionSucceeded &= setNodeConfig(enodeB, EnbConfigGetToSet(pnpConfig.getLteEnbConfig()));
 		} else {
-			actionSucceeded &= createDiscoveryTaskV2(enodeB,"public","private");
+			actionSucceeded &= createDiscoveryTaskV2(enodeB, "public", "private");
 		}
 		actionSucceeded &= setManagedMode(enodeB.getNetspanName(), NodeManagementModeType.MANAGED);
 		return actionSucceeded;
@@ -1988,7 +1918,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 			result = (Netspan.NBI_14_50.API.Lte.NodeActionResult) helper_14_50.execute("pnpConfigUpdate",
 					enodeB.getNetspanName(), pnpConfig.getLtePnpConfig(),
 					EnbConfigGetToSet(pnpConfig.getLteEnbConfig()));
-			
+
 			GeneralUtils.printToConsole("NBI method \"pnpConfigUpdate\" returned value: " + result.getErrorCode().toString());
 			return result.getErrorCode() == Netspan.NBI_14_50.API.Lte.ErrorCodes.OK;
 		} catch (Exception e) {
@@ -2063,12 +1993,11 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 		return false;
 	}
 
-	
+
 	/**
-	 * 
 	 * @param enodeB
 	 * @param version
-	 * @param pswrdRead - if version is "V3" this param is "SnmpUsername"
+	 * @param pswrdRead  - if version is "V3" this param is "SnmpUsername"
 	 * @param pswrdWrite - if version is "V3" this param is "SnmpPassword"
 	 * @return
 	 */
@@ -2089,7 +2018,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 		}
 		return false;
 	}
-	
+
 	public boolean removePnPNode(String nodeName) {
 		ArrayList<String> nodeList = new ArrayList<String>();
 		nodeList.add(nodeName);
@@ -2291,25 +2220,25 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 		enbConfigSet.getLteCell().add(LteCellGetToSet(enbConfigGet.getLteCell().get(FIRST_ELEMENT)));
 		return enbConfigSet;
 	}
-	
-	public boolean setProfile(EnodeB node, EnbProfiles profileType, String profileName){
+
+	public boolean setProfile(EnodeB node, EnbProfiles profileType, String profileName) {
 		return setProfile(node, NO_CELL_ID_IS_NEEDED, profileType, profileName);
 	}
-	
-	public boolean setProfile(EnodeB node, int cellid, EnbProfiles profileType, String profileName){
-		
+
+	public boolean setProfile(EnodeB node, int cellid, EnbProfiles profileType, String profileName) {
+
 		ObjectFactory objectFactory = new ObjectFactory();
 		LteEnbDetailsSetWs enbConfigSet = new LteEnbDetailsSetWs();
 		LteCellSetWs lteCellSet = new LteCellSetWs();
 		lteCellSet.setCellID(objectFactory.createLteCellGetWsCellID(String.valueOf(cellid)));
-		
+
 		switch (profileType) {
 			case Management_Profile:
 				enbConfigSet.setManagementProfile(profileName);
 				break;
 			case Mobility_Profile:
 				lteCellSet.setMobilityProfile(profileName);
-				
+
 				break;
 			case Network_Profile:
 				enbConfigSet.setNetworkProfile(profileName);
@@ -2333,24 +2262,24 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 				report.report("Enum: No Such EnbProfile", Reporter.WARNING);
 				return false;
 		}
-		
-		if(cellid != NO_CELL_ID_IS_NEEDED){
+
+		if (cellid != NO_CELL_ID_IS_NEEDED) {
 			enbConfigSet.getLteCell().add(lteCellSet);
 		}
-		
+
 		try {
 			Netspan.NBI_14_50.API.Lte.NodeActionResult result = (Netspan.NBI_14_50.API.Lte.NodeActionResult) helper_14_50
 					.execute("enbConfigSet", node.getNetspanName(), enbConfigSet);
-			if(result.getErrorCode() == Netspan.NBI_14_50.API.Lte.ErrorCodes.OK){
-				report.report("Succeeded to set "+profileType.value()+" profile named "+profileName+" for " + node.getNetspanName());
+			if (result.getErrorCode() == Netspan.NBI_14_50.API.Lte.ErrorCodes.OK) {
+				report.report("Succeeded to set " + profileType.value() + " profile named " + profileName + " for " + node.getNetspanName());
 				return true;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		report.report("Failed to set "+enbConfigSet.getName()+" profile for " + node.getName(), Reporter.WARNING);
+		report.report("Failed to set " + enbConfigSet.getName() + " profile for " + node.getName(), Reporter.WARNING);
 		return false;
-		
+
 	}
 
 	@Override
@@ -2379,7 +2308,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 				temp.ConfiguredTxPowerDbm = GeneralUtils.tryParseStringToFloat(rfStatus.getConfiguredTxPowerDbm());
 				temp.ActualTxPower = rfStatus.getActualTxPowerDbm();
 				temp.ConfiguredTxPower = rfStatus.getConfiguredTxPowerDbm();
-				if(rfStatus.getMeasuredVswr().contains("("))
+				if (rfStatus.getMeasuredVswr().contains("("))
 					temp.MeasuredVswr = rfStatus.getMeasuredVswr().split("\\(")[0];
 				temp.OperationalStatus = rfStatus.getOperationalStatus();
 				temp.RfNumber = rfStatus.getRfNumber();
@@ -2387,7 +2316,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 			}
 		}
 		return ret;
-	}	
+	}
 
 	public boolean getNetworkProfileResult(String profileName, NetworkParameters np) throws Exception {
 		LteNetworkProfileGetResult result = null;
@@ -2419,23 +2348,23 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 	@Override
 	public String getPTPInterfaceIP(EnodeB enb) {
 		EnbDetailsGet result = this.getNodeConfig(enb);
-		if(result == null)
+		if (result == null)
 			return null;
-		
+
 		return result.getPtpSlaveIpAddress();
 	}
 
 	@Override
 	public String getGMIP(EnodeB dut) {
 		LteSyncProfileResult result = this.getSyncProfile(dut);
-		
-		if(result == null)
+
+		if (result == null)
 			return null;
-		
+
 		EnbSyncProfile sync = result.getSyncProfile();
-		if(sync == null)
+		if (sync == null)
 			return null;
-		
+
 		return sync.getPrimaryMasterIpAddress();
 	}
 
@@ -2447,80 +2376,80 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 		try {
 			ptpStatus = (NodePtpGetResult) helper_14_50.execute("nodePtpGet", dut.getNetspanName());
 		} catch (Exception e) {
-			report.report("getPTPStatus via Netspan Fail",Reporter.WARNING);
+			report.report("getPTPStatus via Netspan Fail", Reporter.WARNING);
 			e.printStackTrace();
 			return null;
 		}
-		
-		if(ptpStatus.getErrorCode()!=Netspan.NBI_14_50.API.Status.ErrorCodes.OK){
-			report.report("getPTPStatus via Netspan Fail",Reporter.WARNING);
-			report.report(ptpStatus.getErrorString(),Reporter.WARNING);
+
+		if (ptpStatus.getErrorCode() != Netspan.NBI_14_50.API.Status.ErrorCodes.OK) {
+			report.report("getPTPStatus via Netspan Fail", Reporter.WARNING);
+			report.report(ptpStatus.getErrorString(), Reporter.WARNING);
 			return null;
 		}
-		
+
 		returnObject.enbName = ptpStatus.getPtpStatus().getName();
 		returnObject.nodeId = ptpStatus.getPtpStatus().getNodeId();
 		returnObject.masterConnectivity = ptpStatus.getPtpStatus().getMasterConnectivity();
 		returnObject.syncStatus = ptpStatus.getPtpStatus().getSyncStatus();
-		
+
 		return returnObject;
 	}
-	
+
 	@Override
 	public boolean deleteAllAlarmsNode(EnodeB dut) {
 		//AlarmListNode
 		//AlarmDelete
 		AlarmResultList alarmsList;
 		AlarmActionResult deleteResult;
-        List<String> argsNodeName = new ArrayList<String>();
-        List<String> argsNodeId = new ArrayList<String>();
-        List<String> argsAlarmId;
-        argsNodeName.add(dut.getNetspanName());
+		List<String> argsNodeName = new ArrayList<String>();
+		List<String> argsNodeId = new ArrayList<String>();
+		List<String> argsAlarmId;
+		argsNodeName.add(dut.getNetspanName());
 		try {
 			alarmsList = (AlarmResultList) helper_14_50.execute("alarmListNode", argsNodeName, argsNodeId);
 			List<Alarm> alarms = alarmsList.getAlarm();
-			for(Alarm alarm : alarms) {
+			for (Alarm alarm : alarms) {
 				argsAlarmId = new ArrayList<String>();
 				argsAlarmId.add(alarm.getAlarmId().toString());
 				deleteResult = (AlarmActionResult) helper_14_50.execute("alarmDelete", argsAlarmId);
-				if(deleteResult.getErrorCode()!=Netspan.NBI_14_50.API.FaultManagement.ErrorCodes.OK) {
-					report.report("deleteAllAlarmsNode via Netspan Fail",Reporter.WARNING);
-					report.report(deleteResult.getErrorString(),Reporter.WARNING);
+				if (deleteResult.getErrorCode() != Netspan.NBI_14_50.API.FaultManagement.ErrorCodes.OK) {
+					report.report("deleteAllAlarmsNode via Netspan Fail", Reporter.WARNING);
+					report.report(deleteResult.getErrorString(), Reporter.WARNING);
 					return false;
 				}
 			}
 		} catch (Exception e) {
-			report.report("deleteAllAlarmsNode via Netspan Fail",Reporter.WARNING);
+			report.report("deleteAllAlarmsNode via Netspan Fail", Reporter.WARNING);
 			e.printStackTrace();
 			return false;
 		}
-		report.report("Deleting all alarms of "+dut.getNetspanName()+" via Netspan succeeded");
+		report.report("Deleting all alarms of " + dut.getNetspanName() + " via Netspan succeeded");
 		return true;
 	}
-	
+
 	@Override
 	public List<AlarmInfo> getAllAlarmsNode(EnodeB dut) {
 		//AlarmListNode
 		AlarmResultList alarmsList;
-        List<String> argsNodeName = new ArrayList<String>();
-        List<String> argsNodeId = new ArrayList<String>();
-        argsNodeName.add(dut.getNetspanName());
-        List<AlarmInfo> ret = new ArrayList<AlarmInfo>();
-        
-        try {
-        	alarmsList = (AlarmResultList) helper_14_50.execute("alarmListNode", argsNodeName, argsNodeId);
+		List<String> argsNodeName = new ArrayList<String>();
+		List<String> argsNodeId = new ArrayList<String>();
+		argsNodeName.add(dut.getNetspanName());
+		List<AlarmInfo> ret = new ArrayList<AlarmInfo>();
+
+		try {
+			alarmsList = (AlarmResultList) helper_14_50.execute("alarmListNode", argsNodeName, argsNodeId);
 		} catch (Exception e) {
-			report.report("getAllAlarmsNode via Netspan Fail due to: "+e.getMessage(),Reporter.WARNING);
+			report.report("getAllAlarmsNode via Netspan Fail due to: " + e.getMessage(), Reporter.WARNING);
 			e.printStackTrace();
 			return ret;
 		}
-		
-		if(alarmsList.getErrorCode()!=Netspan.NBI_14_50.API.FaultManagement.ErrorCodes.OK){
-			report.report("getAllAlarmsNode via Netspan Fail : "+alarmsList.getErrorString(),Reporter.WARNING);
+
+		if (alarmsList.getErrorCode() != Netspan.NBI_14_50.API.FaultManagement.ErrorCodes.OK) {
+			report.report("getAllAlarmsNode via Netspan Fail : " + alarmsList.getErrorString(), Reporter.WARNING);
 			return ret;
 		}
-		
-		for(Alarm alarm: alarmsList.getAlarm()) {
+
+		for (Alarm alarm : alarmsList.getAlarm()) {
 			AlarmInfo temp = new AlarmInfo();
 			temp.alarmId = alarm.getAlarmId();
 			temp.alarmType = alarm.getAlarmType();
@@ -2536,22 +2465,22 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 		}
 		return ret;
 	}
-	
+
 	@Override
 	public boolean deleteAlarmById(String alarmId) {
 		//AlarmDelete
 		AlarmActionResult deleteResult;
-        List<String> argsAlarmId = new ArrayList<>();
+		List<String> argsAlarmId = new ArrayList<>();
 		try {
 			argsAlarmId.add(alarmId);
 			deleteResult = (AlarmActionResult) helper_14_50.execute("alarmDelete", argsAlarmId);
-			if(deleteResult.getErrorCode()!=Netspan.NBI_14_50.API.FaultManagement.ErrorCodes.OK) {
-				report.report("deleteAlarmById via Netspan Fail",Reporter.WARNING);
-				report.report(deleteResult.getErrorString(),Reporter.WARNING);
+			if (deleteResult.getErrorCode() != Netspan.NBI_14_50.API.FaultManagement.ErrorCodes.OK) {
+				report.report("deleteAlarmById via Netspan Fail", Reporter.WARNING);
+				report.report(deleteResult.getErrorString(), Reporter.WARNING);
 				return false;
 			}
 		} catch (Exception e) {
-			report.report("deleteAlarmById via Netspan Fail",Reporter.WARNING);
+			report.report("deleteAlarmById via Netspan Fail", Reporter.WARNING);
 			e.printStackTrace();
 			return false;
 		}
@@ -2575,36 +2504,35 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 
 	@Override
 	public boolean changeCurrentRadioProfileWithoutClone(EnodeB dut, RadioParameters rp) {
-		
-		EnbRadioProfile radioProfile =CreateEnbRadioProfile(rp);
+
+		EnbRadioProfile radioProfile = CreateEnbRadioProfile(rp);
 		try {
-			ProfileResponse response = (ProfileResponse) helper_14_50.execute("radioProfileUpdate",rp.getProfileName(),radioProfile);
-			if(response.getErrorCode() != Netspan.NBI_14_50.API.Lte.ErrorCodes.OK){
-				report.report(response.getErrorString(),Reporter.WARNING);
+			ProfileResponse response = (ProfileResponse) helper_14_50.execute("radioProfileUpdate", rp.getProfileName(), radioProfile);
+			if (response.getErrorCode() != Netspan.NBI_14_50.API.Lte.ErrorCodes.OK) {
+				report.report(response.getErrorString(), Reporter.WARNING);
 				return false;
-			}
-			else
+			} else
 				return true;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
 	}
-	
+
 	@Override
 	public List<EventInfo> getAllEventsNode(EnodeB dut) {
 		report.report("getAllEventsNode via NBI_14_5 Failed : Try to use correct NBI version", Reporter.WARNING);
 		return null;
 	}
-	
+
 	@Override
 	public List<EventInfo> getAllEventsNode(EnodeB dut, Date startTime) {
 		report.report("getAllEventsNode via NBI_14_5 Failed : Try to use correct NBI version", Reporter.WARNING);
 		return null;
 	}
-	
+
 	@Override
-	public List<EventInfo> getEventsNodeByDateRange(EnodeB dut, Date from, Date to){
+	public List<EventInfo> getEventsNodeByDateRange(EnodeB dut, Date from, Date to) {
 		report.report("getEventsNodeByDateRange via NBI_14_5 Failed : Try to use correct NBI version", Reporter.WARNING);
 		return null;
 	}
@@ -2626,45 +2554,47 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 		report.report("performReProvision via NBI_14_5 Failed : Try to use correct NBI version", Reporter.WARNING);
 		return false;
 	}
-	
+
 	@Override
 	public SONStatus getSONStatus(EnodeB dut) {
 		report.report("getSONStatus via NBI_14_5 Failed : Try to use correct NBI version", Reporter.WARNING);
 		return null;
 	}
-	
+
 	@Override
 	public EnbCellProperties getEnbCellProperties(EnodeB enb) {
 		EnbDetailsGet enbDetails = getNodeConfig(enb);
 		for (LteCellGetWs lteCell : enbDetails.getLteCell()) {
-			if ((lteCell.getCellID()!=null) && (Integer.parseInt(lteCell.getCellID().getValue())==enb.getCellContextID())) {
+			if ((lteCell.getCellID() != null) && (Integer.parseInt(lteCell.getCellID().getValue()) == enb.getCellContextID())) {
 				EnbCellProperties res = new EnbCellProperties();
-				res.cellNumber = (lteCell.getCellID()!=null) ? lteCell.getCellID().getValue() : null;
-				res.cellIdentity28Bit = (lteCell.getCellIdentity28Bit()!=null) ? lteCell.getCellIdentity28Bit().getValue() : null;
-				res.physicalLayerCellGroup = (lteCell.getPhysicalLayerCellGroup()!=null) ? lteCell.getPhysicalLayerCellGroup().getValue() : null;
-				res.physicalLayerIdentity = (lteCell.getPhysicalLayerIdentity()!=null) ? lteCell.getPhysicalLayerIdentity().getValue() : null;
-				res.physicalCellId = (lteCell.getPhysicalCellId()!=null) ? lteCell.getPhysicalCellId().getValue() : null;
-				res.prachRsi = (lteCell.getPrachRsi()!=null) ? lteCell.getPrachRsi().getValue() : null;
-				res.trackingAreaCode = (lteCell.getTrackingAreaCode()!=null) ? lteCell.getTrackingAreaCode().getValue() : null;
-				res.emergencyAreaId = (lteCell.getEmergencyAreaId()!=null) ? lteCell.getEmergencyAreaId().getValue() : null;
-				res.prachFreqOffset = (lteCell.getPrachFreqOffset()!=null) ? lteCell.getPrachFreqOffset().getValue() : null;
+				res.cellNumber = (lteCell.getCellID() != null) ? lteCell.getCellID().getValue() : null;
+				res.cellIdentity28Bit = (lteCell.getCellIdentity28Bit() != null) ? lteCell.getCellIdentity28Bit().getValue() : null;
+				res.physicalLayerCellGroup = (lteCell.getPhysicalLayerCellGroup() != null) ? lteCell.getPhysicalLayerCellGroup().getValue() : null;
+				res.physicalLayerIdentity = (lteCell.getPhysicalLayerIdentity() != null) ? lteCell.getPhysicalLayerIdentity().getValue() : null;
+				res.physicalCellId = (lteCell.getPhysicalCellId() != null) ? lteCell.getPhysicalCellId().getValue() : null;
+				res.prachRsi = (lteCell.getPrachRsi() != null) ? lteCell.getPrachRsi().getValue() : null;
+				res.trackingAreaCode = (lteCell.getTrackingAreaCode() != null) ? lteCell.getTrackingAreaCode().getValue() : null;
+				res.emergencyAreaId = (lteCell.getEmergencyAreaId() != null) ? lteCell.getEmergencyAreaId().getValue() : null;
+				res.prachFreqOffset = (lteCell.getPrachFreqOffset() != null) ? lteCell.getPrachFreqOffset().getValue() : null;
 				res.cellAdvancedConfigurationProfile = lteCell.getCellAdvancedConfigurationProfile();
 				res.radioProfile = lteCell.getRadioProfile();
 				res.mobilityProfile = lteCell.getMobilityProfile();
 				res.embmsProfile = lteCell.getEmbmsProfile();
 				res.utranProfile = lteCell.getUtranProfile();
-				res.trafficManagementProfile = lteCell.getTrafficManagementProfile();				
-				res.isEnabled = (lteCell.getIsEnabled()!=null) ? lteCell.getIsEnabled().getValue() : null;
+				res.trafficManagementProfile = lteCell.getTrafficManagementProfile();
+				res.isEnabled = (lteCell.getIsEnabled() != null) ? lteCell.getIsEnabled().getValue() : null;
 				return res;
 			}
 		}
 		return null;
 	}
+
 	@Override
 	public boolean setPci(EnodeB dut, int pci) {
 		report.report("setPci via NBI_14_5 Failed : Try to use correct NBI version", Reporter.WARNING);
 		return false;
 	}
+
 	@Override
 	public boolean cloneManagementProfile(EnodeB node, String cloneFromName, ManagementParameters managementParmas) {
 		report.report("cloneManagementProfile via NBI_14_5 Failed : Try to use correct NBI version", Reporter.WARNING);
@@ -2673,7 +2603,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 
 	@Override
 	public boolean cloneSystemDefaultProfile(EnodeB node, String cloneFromName,
-			SystemDefaultParameters systemDefaultParmas) {
+											 SystemDefaultParameters systemDefaultParmas) {
 		report.report("cloneSystemDefaultProfile via NBI_14_5 Failed : Try to use correct NBI version", Reporter.WARNING);
 		return false;
 	}
@@ -2683,35 +2613,38 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 		report.report("isRebootRequestedMaintenanceWindowStatus via NBI_14_5 Failed : Try to use correct NBI version", Reporter.WARNING);
 		return false;
 	}
-	
+
 	@Override
 	public boolean cloneEnodeBAdvancedProfile(EnodeB node, String cloneFromName, EnodeBAdvancedParameters advancedParmas) {
 		report.report("cloneAdvancedProfile via NBI_14_5 Failed : Try to use correct NBI version", Reporter.WARNING);
 		return false;
 	}
+
 	@Override
 	public String getCurrentSonProfileName(EnodeB node) {
 		EnbDetailsGet nodeConfig = getNodeConfig(node);
-		if(nodeConfig != null){
-			return nodeConfig.getSonProfile();			
+		if (nodeConfig != null) {
+			return nodeConfig.getSonProfile();
 		}
 		return null;
 	}
+
 	@Override
 	public boolean setProfile(EnodeB node, HashMap<INetspanProfile, Integer> profilesPerCell) {
 		report.report("setProfile via NBI_14_5 Failed : Try to use correct NBI version", Reporter.WARNING);
 		return false;
 	}
+
 	@Override
 	public boolean updateNeighborManagementProfile(EnodeB node, String cloneFromName,
-			NeighbourManagementParameters neighbourManagementParams) {
+												   NeighbourManagementParameters neighbourManagementParams) {
 		report.report("updateNeighborManagementProfile via NBI_14_5 Failed : Try to use correct NBI version", Reporter.WARNING);
 		return false;
 	}
 
 	@Override
 	public boolean cloneNeighborManagementProfile(EnodeB node, String cloneFromName,
-			NeighbourManagementParameters neighbourManagementParams) {
+												  NeighbourManagementParameters neighbourManagementParams) {
 		report.report("cloneNeighborManagementProfile via NBI_14_5 Failed : Try to use correct NBI version", Reporter.WARNING);
 		return false;
 	}
@@ -2722,7 +2655,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 		return null;
 	}
 
-	
+
 	@Override
 	public boolean updateRadioProfile(EnodeB node, RadioParameters radioParmas) {
 		report.report("updateRadioProfile via NBI_14_5 Failed : Try to use correct NBI version", Reporter.WARNING);
@@ -2734,9 +2667,9 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
-	public boolean setEnbCellProperties(EnodeB dut, EnbCellProperties cellProperties){
+	public boolean setEnbCellProperties(EnodeB dut, EnbCellProperties cellProperties) {
 		report.report("setEnbCellProperties via NBI_14_5 Failed : Try to use correct NBI version", Reporter.WARNING);
 		return false;
 	}
@@ -2746,11 +2679,11 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
+
 	@Override
 	public boolean checkCannotAddNeighbor(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
-			X2ControlStateTypes x2ControlStatus, HandoverType handoverType, boolean isStaticNeighbor,
-			String qOffsetRange) {
+										  X2ControlStateTypes x2ControlStatus, HandoverType handoverType, boolean isStaticNeighbor,
+										  String qOffsetRange) {
 		String sourceNodeName = enodeB.getNetspanName();
 		String neighborName = neighbor.getNetspanName();
 		GeneralUtils.printToConsole("Sending NBI requeset \"lteNeighbourAdd\" for eNodeB " + sourceNodeName);
@@ -2763,10 +2696,9 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 			if (result.getErrorCode() != Netspan.NBI_14_50.API.Lte.ErrorCodes.OK) {
 				report.report("lteNeighbourAdd via Netspan Failed : " + result.getErrorString());
 				return true;
-			}
-			else {
+			} else {
 				report.report("lteNeighbourAdd via Netspan succeeded. added neighbor: " + neighbor.getNetspanName()
-				+ " for eNodeB: " + enodeB.getNetspanName(), Reporter.WARNING);
+						+ " for eNodeB: " + enodeB.getNetspanName(), Reporter.WARNING);
 				return false;
 			}
 		} catch (Exception e) {
@@ -2776,6 +2708,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 		}
 		return false;
 	}
+
 	public boolean createSoftwareServer(EnodeBUpgradeServer upgradeServer) {
 		report.report("createSoftwareServer via NBI_14_5 Failed : Try to use correct NBI version", Reporter.WARNING);
 		return false;
@@ -2852,6 +2785,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 		report.report("getDicicUnmanagedInterferenceStatus via NBI_14_5 Failed : Try to use correct NBI version", Reporter.WARNING);
 		return false;
 	}
+
 	@Override
 	public boolean updateSoftwareImage(EnodeBUpgradeImage upgradeImage) {
 		report.report("updateSoftwareImage via NBI_14_5 Failed : Try to use correct NBI version", Reporter.WARNING);
@@ -2893,6 +2827,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 		report.report("this Method IS NOT implemented for 14_5");
 		return false;
 	}
+
 	public String getMultiCellProfileName(EnodeB enb) {
 		// TODO Auto-generated method stub
 		return null;
@@ -2903,7 +2838,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 		report.report("cloneCellBAdvancedProfile via NBI_14_5 Failed : Try to use correct NBI version", Reporter.WARNING);
 		return false;
 	}
-	
+
 	@Override
 	public boolean updateCellAdvancedProfile(EnodeB node, CellAdvancedParameters advancedParmas) {
 		report.report("updateCellBAdvancedProfile via NBI_14_5 Failed : Try to use correct NBI version", Reporter.WARNING);
@@ -2921,9 +2856,9 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 		report.report("getSyncState method is not implemented for this netspan(14_5)!", Reporter.WARNING);
 		return null;
 	}
-	
+
 	@Override
-	public boolean checkAndSetDefaultProfiles(EnodeB node,boolean setProfile){
+	public boolean checkAndSetDefaultProfiles(EnodeB node, boolean setProfile) {
 		report.report("setDefualtProfiles method is not implemented for this netspan(14_5)!", Reporter.WARNING);
 		return false;
 	}
@@ -2939,7 +2874,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 		// TODO Auto-generated method stub
 		return true;
 	}
-	
+
 	@Override
 	public List<LteBackhaul> getBackhaulInterfaceStatus(EnodeB node) {
 		report.report("getBackhaulInterfaceStatus method is not implemented for this netspan(14_5)!");
@@ -2951,17 +2886,17 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 		report.report("getMMEIpAdresses method is not implemented for this netspan(14_5)!", Reporter.WARNING);
 		return null;
 	}
-	
+
 	@Override
 	public String getGPSStatus(EnodeB enb) {
 		report.report("getGPSStatus method is not implemented for this netspan(14_5)!", Reporter.WARNING);
 		return null;
 	}
-	
+
 	@Override
 	public String getMangementIp(EnodeB enb) {
 		report.report("getMangementIp method is not implemented for this netspan(14_5)!", Reporter.WARNING);
-		return GeneralUtils.ERROR_VALUE+"";
+		return GeneralUtils.ERROR_VALUE + "";
 	}
 
 	@Override
@@ -2974,7 +2909,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 		report.report("resetNode method is not implemented for this netspan(14_5)!", Reporter.WARNING);
 		return false;
 	}
-	
+
 	@Override
 	public boolean setEnbAccessClassBarring(EnodeB dut, CellBarringPolicyParameters cellBarringParams) {
 		report.report("setEnbAccessClassBarring method is not implemented for this netspan(14_5)!", Reporter.WARNING);
@@ -2986,7 +2921,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 		report.report("getImageType method is not implemented for this netspan(14_5)!", Reporter.WARNING);
 		return null;
 	}
-	
+
 	@Override
 	public int getMaxUeSupported(EnodeB enb) {
 		report.report("getMaxUeSupported method is not implemented for this netspan(14_5)!", Reporter.WARNING);
@@ -2999,7 +2934,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 	 * @param enodeB - enodeB
 	 * @return - Running version
 	 */
-	public  String getRunningVersionOfEnb(EnodeB enodeB){
+	public String getRunningVersionOfEnb(EnodeB enodeB) {
 		return null;
 	}
 
@@ -3009,7 +2944,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 	 * @param enodeB - enodeB
 	 * @return - StandBy version
 	 */
-	public  String getStandByVersionOfEnb(EnodeB enodeB){
+	public String getStandByVersionOfEnb(EnodeB enodeB) {
 		return null;
 	}
 

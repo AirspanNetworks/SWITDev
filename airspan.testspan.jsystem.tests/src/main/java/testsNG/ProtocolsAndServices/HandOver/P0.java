@@ -1,6 +1,3 @@
-/**
- * 
- */
 package testsNG.ProtocolsAndServices.HandOver;
 
 import java.io.File;
@@ -38,7 +35,6 @@ import testsNG.Actions.Utils.TrafficGeneratorType;
 
 /**
  * @author mgoldenberg
- *
  */
 public class P0 extends TestspanTest {
 
@@ -81,7 +77,7 @@ public class P0 extends TestspanTest {
 	private EnodeBConfig enodeBConfig;
 	private String neighbourMobilityProfile = null;
 	private String mainMobilityProfile = null;
-	
+
 	// results variables
 	public int numberOfDynamicUES;
 	private double HO_Per_Min_Per_UE;
@@ -95,11 +91,11 @@ public class P0 extends TestspanTest {
 	private int total_attCounter;
 	private double total_HO_Success_rate_out_of_attempts;
 	private double theoreticalAttempts;
-	private final int numOfMaxRetries = 1; 
-	
+	private final int numOfMaxRetries = 1;
+
 	private String reasons[];
 
-	
+
 	@Override
 	public void init() throws Exception {
 		if (dut1 == null)
@@ -111,7 +107,7 @@ public class P0 extends TestspanTest {
 		enbInTest.add(dut2);
 		neighbors = Neighbors.getInstance();
 		super.init();
-		
+
 		GeneralUtils.startLevel("preparing environment to test");
 		objectInit();
 		for (EnodeB enb : enbInTest) {
@@ -130,11 +126,12 @@ public class P0 extends TestspanTest {
 	}
 
 	/**
-	  * init of objects
+	 * init of objects
 	 * in case you need to declare objects without running the super init and traffic declaration
+	 *
 	 * @author Moran Goldenberg
 	 */
-	public void objectInit(){		
+	public void objectInit() {
 		enodeBConfig = EnodeBConfig.getInstance();
 		enodeB = dut1;
 		neighbor = dut2;
@@ -148,14 +145,16 @@ public class P0 extends TestspanTest {
 		ATT_STEP_TIME = attenuatorSetUnderTest.getStepTime();
 		ATT_STEP = attenuatorSetUnderTest.getAttenuationStep();
 		reasons = new String[numOfMaxRetries + 1];
-		for(int i=0;i<=numOfMaxRetries;i++){
+		for (int i = 0; i <= numOfMaxRetries; i++) {
 			reasons[i] = "";
 		}
 		commands();
 	}
+
 	/**
 	 * init command for WatchDog and start it
 	 * in case of a Fail - reporting with a warning and watchDog instance is null.
+	 *
 	 * @author Shahaf Shuhamy
 	 */
 	private void initWatchDog() {
@@ -173,8 +172,17 @@ public class P0 extends TestspanTest {
 		}
 	}
 
-	public boolean preTest(HoControlStateTypes HOControlTypes, X2ControlStateTypes X2Types, HandoverType HOType, ConnectedModeEventTypes hoEventType, int numOfTry) 
-	{
+	/**
+	 * Pre test of HO test
+	 *
+	 * @param HOControlTypes
+	 * @param X2Types
+	 * @param HOType
+	 * @param hoEventType
+	 * @param numOfTry
+	 * @return
+	 */
+	public boolean preTest(HoControlStateTypes HOControlTypes, X2ControlStateTypes X2Types, HandoverType HOType, ConnectedModeEventTypes hoEventType, int numOfTry) {
 		GeneralUtils.startLevel("HO Pre Test");
 		if (!skipAddNgh) {
 			GeneralUtils.startLevel("Deleting all neighbors");
@@ -185,9 +193,9 @@ public class P0 extends TestspanTest {
 		}
 		peripheralsConfig.SetAttenuatorToMin(attenuatorSetUnderTest);
 		GeneralUtils.unSafeSleep(5000);
-		
+
 		startTraffic();
-		
+
 		// making dynamic and static lists of all UEs
 		dynUEList = SetupUtils.getInstance().getDynamicUEs();
 		statUEList = SetupUtils.getInstance().getStaticUEs(enodeB);
@@ -198,12 +206,11 @@ public class P0 extends TestspanTest {
 			if (staticUEs != null)
 				statUEList.addAll(staticUEs);
 		}
-				
+
 		peripheralsConfig.stopUEs(dynUEList);
 		peripheralsConfig.startUEs(dynUEList);
-		
-		if (!findMainEnb())
-		{
+
+		if (!findMainEnb()) {
 			report.report("Cannot find main ENB, no dynamic ues are connecetd.", Reporter.FAIL);
 			reasons[numOfTry] = "Cannot find main ENB, no dynamic ues are connecetd.";
 			GeneralUtils.stopLevel(); // pretest stop level
@@ -211,17 +218,17 @@ public class P0 extends TestspanTest {
 		}
 		report.report("Main EnodeB: " + enodeB.getNetspanName());
 		report.report("Slave EnodeB: " + neighbor.getNetspanName());
-			
+
 		//change mobility profile for different event types (A3, A4, A5)
 		//changeMobilityProfile(hoEventType);
-		
+
 		// add neighbors
-		if (!addNeighbors(enodeB, neighbor, HOControlTypes, X2Types, HOType, true, "0")){
-			reasons[numOfTry] = "Neighbor wasn't added to EnodeB\n";	
+		if (!addNeighbours(enodeB, neighbor, HOControlTypes, X2Types, HOType, true, "0")) {
+			reasons[numOfTry] = "Neighbor wasn't added to EnodeB\n";
 			GeneralUtils.stopLevel(); // pretest stop level
 			return false;
 		}
-		
+
 		checkAllDynamicConnected();
 
 		if (dynUEList.isEmpty()) {
@@ -230,7 +237,7 @@ public class P0 extends TestspanTest {
 			GeneralUtils.stopLevel(); // pretest stop level
 			return false;
 		}
-		
+
 		GeneralUtils.startLevel("Checking if all static UEs are connected");
 		if (statUEList != null) {
 			if (!peripheralsConfig.epcAndEnodeBsConnection(statUEList, enbInTest)) {
@@ -241,9 +248,8 @@ public class P0 extends TestspanTest {
 			report.report("There are no static UEs to check");
 		}
 		GeneralUtils.stopLevel(); // checking if all static UEs connected stop level
-		
-		
-		
+
+
 		GeneralUtils.stopLevel(); // pretest stop level
 		return true;
 	}
@@ -252,7 +258,7 @@ public class P0 extends TestspanTest {
 		UE testUe = null;
 		for (UE dynUE : SetupUtils.getInstance().getDynamicUEs()) {
 			EnodeB currentEnb = epc.getCurrentEnodB(dynUE, enbInTest);
-			if (currentEnb ==  enodeB) {
+			if (currentEnb == enodeB) {
 				testUe = dynUE;
 				break;
 			}
@@ -268,18 +274,18 @@ public class P0 extends TestspanTest {
 		changingEventType(enodeB, RSRP1 + 3, hoEventType);
 	}
 
-	private void changingEventType(EnodeB enb  , int RSRPavg, ConnectedModeEventTypes hoEventType) {
-		
+	private void changingEventType(EnodeB enb, int RSRPavg, ConnectedModeEventTypes hoEventType) {
+
 		GeneralUtils.startLevel("Setting mobility profile for " + enb.getName());
 		MobilityParameters mobilityParas = new MobilityParameters();
-		
-		
+
+
 		report.report("Setting IsIntra: " + isIntra);
 		mobilityParas.setIsIntra(isIntra);
-		
+
 		report.report("Setting eventType: " + hoEventType);
 		mobilityParas.setEventType(hoEventType);
-		
+
 		report.report("Setting Hysteresis: " + 2);
 		mobilityParas.setHysteresis(2.0);
 		if (hoEventType == ConnectedModeEventTypes.A_3) {
@@ -304,15 +310,15 @@ public class P0 extends TestspanTest {
 			return; // False;?
 		}
 		GeneralUtils.stopLevel();
-		
+
 
 	}
 
 	private void startTraffic() {
 		GeneralUtils.startLevel("Starting traffic.");
-		try{
+		try {
 			traffic.startTraffic();
-		}catch(Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		GeneralUtils.stopLevel();
@@ -320,14 +326,14 @@ public class P0 extends TestspanTest {
 
 	private boolean findMainEnb() {
 		GeneralUtils.startLevel("Checking what is the main EnodeB");
-		
+
 		EnodeB currentEnb = getEnbConnectedToDynUe();
 		if (currentEnb == null) {
 			report.report("Cannot find main ENB, rebooting UEs and trying again.");
 			peripheralsConfig.rebootUEs(SetupUtils.getInstance().getDynamicUEs());
 			currentEnb = getEnbConnectedToDynUe();
 			if (currentEnb == null) {
-				report.report("No dynamic UEs connected",Reporter.FAIL);
+				report.report("No dynamic UEs connected", Reporter.FAIL);
 				GeneralUtils.stopLevel();// Checking what is the main EnodeB stop level
 				return false;
 			}
@@ -339,20 +345,19 @@ public class P0 extends TestspanTest {
 	}
 
 	private void checkAllDynamicConnected() {
-		
+
 		for (int retry = 1; retry <= 3; retry++) {
 			GeneralUtils.startLevel("Checking if all Dynamic UEs are connected try #" + retry);
 			if (peripheralsConfig.epcAndEnodeBsConnection(SetupUtils.getInstance().getDynamicUEs(), enbInTest)) {
 				GeneralUtils.stopLevel();
 				return;
-			}
-			else{
+			} else {
 				report.report("Not all dynamic Ue's are connected to EnodeB", Reporter.WARNING);
 				peripheralsConfig.rebootUEs(SetupUtils.getInstance().getDynamicUEs());
 				GeneralUtils.stopLevel();
 			}
 		}
-		
+
 		GeneralUtils.startLevel("Checking Dynamic UEs and removing any that are not connecetd.");
 		for (UE ue : SetupUtils.getInstance().getDynamicUEs()) {
 			ArrayList<UE> ueList = new ArrayList<>();
@@ -366,7 +371,7 @@ public class P0 extends TestspanTest {
 		}
 		GeneralUtils.stopLevel();
 	}
-	
+
 	private EnodeB getEnbConnectedToDynUe() {
 		EnodeB currentEnb = null;
 		for (UE dynUE : SetupUtils.getInstance().getDynamicUEs()) {
@@ -382,15 +387,15 @@ public class P0 extends TestspanTest {
 	public void postTest() {
 		stopCommandsAndAttachFiles();
 		GeneralUtils.startLevel("HO Post Test");
-		
+
 		report.report("Test reason: " + reason);
-		
+
 		report.report("Stopping traffic");
 		traffic.stopTraffic();
-		if (mainMobilityProfile != null)		
-			netspanServer.setProfile(enodeB, EnbProfiles.Mobility_Profile,mainMobilityProfile);
+		if (mainMobilityProfile != null)
+			netspanServer.setProfile(enodeB, EnbProfiles.Mobility_Profile, mainMobilityProfile);
 		if (neighbourMobilityProfile != null)
-			netspanServer.setProfile(neighbor, EnbProfiles.Mobility_Profile,neighbourMobilityProfile);
+			netspanServer.setProfile(neighbor, EnbProfiles.Mobility_Profile, neighbourMobilityProfile);
 		try {
 			neighbors.deleteAllNeighbors(dut1);
 		} catch (NullPointerException e) {
@@ -402,12 +407,12 @@ public class P0 extends TestspanTest {
 			report.report("Neighbors didnt deleted", Reporter.WARNING);
 		}
 		GeneralUtils.stopLevel();
-		}
-	
+	}
+
 	@Test
-	@TestProperties(name = "BasicHO_X2IntraFrequency", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {
-			"IsTestWasSuccessful" })
-	public void BasicHO_X2IntraFrequency(){
+	@TestProperties(name = "BasicHO_X2IntraFrequency", returnParam = {"IsTestWasSuccessful"}, paramsExclude = {
+			"IsTestWasSuccessful"})
+	public void BasicHO_X2IntraFrequency() {
 		isIntra = true;
 		reason = "";
 		if (enodeB.isInstanceOfXLP_15_2()) {
@@ -432,7 +437,7 @@ public class P0 extends TestspanTest {
 	// @Test
 	// @TestProperties(name = "BasicHO_X2ForwardIntraFrequency", returnParam =
 	// {"IsTestWasSuccessful" }, paramsExclude = { "IsTestWasSuccessful" })
-	public void BasicHO_X2ForwardIntraFrequency(){
+	public void BasicHO_X2ForwardIntraFrequency() {
 		passCriteria.put("HoX2IntraFreqInAttRnlRadioRsn", "asLteStatsHoX2IntraFreqInAttRnlRadioRsn");
 		passCriteria.put("HoX2IntraFreqInCompSuccRnlRadioRsn", "asLteStatsHoX2IntraFreqInCompSuccRnlRadioRsn");
 		isIntra = true;
@@ -450,9 +455,9 @@ public class P0 extends TestspanTest {
 	}
 
 	@Test
-	@TestProperties(name = "BasicHO_S1IntraFrequency", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {
-			"IsTestWasSuccessful" })
-	public void BasicHO_S1IntraFrequency(){
+	@TestProperties(name = "BasicHO_S1IntraFrequency", returnParam = {"IsTestWasSuccessful"}, paramsExclude = {
+			"IsTestWasSuccessful"})
+	public void BasicHO_S1IntraFrequency() {
 		isIntra = true;
 		reason = "";
 		if (enodeB.isInstanceOfXLP_15_2()) {
@@ -475,9 +480,9 @@ public class P0 extends TestspanTest {
 
 	/* Basic HO - X2 Inter Frequency */
 	@Test
-	@TestProperties(name = "BasicHO_X2InterFrequency", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {
-			"IsTestWasSuccessful" })
-	public void BasicHO_X2InterFrequency(){
+	@TestProperties(name = "BasicHO_X2InterFrequency", returnParam = {"IsTestWasSuccessful"}, paramsExclude = {
+			"IsTestWasSuccessful"})
+	public void BasicHO_X2InterFrequency() {
 		isIntra = false;
 		reason = "";
 		passCriteria.put("HoX2InterFreqInAttRnlRadioRsn", "HoX2InterFreqInAttRnlRadioRsn");
@@ -487,8 +492,8 @@ public class P0 extends TestspanTest {
 	}
 
 	@Test
-	@TestProperties(name = "BasicHO_S1InterFrequency", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {"IsTestWasSuccessful" })
-	public void BasicHO_S1InterFrequency(){
+	@TestProperties(name = "BasicHO_S1InterFrequency", returnParam = {"IsTestWasSuccessful"}, paramsExclude = {"IsTestWasSuccessful"})
+	public void BasicHO_S1InterFrequency() {
 		isIntra = false;
 		reason = "";
 		passCriteria.put("HoS1InterFreqInAttRnlRadioRsn", "HoS1InterFreqInAttRnlRadioRsn");
@@ -498,25 +503,25 @@ public class P0 extends TestspanTest {
 	}
 
 	@Test
-	@TestProperties(name = "MultipleHO_X2InterFrequency_Stability", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {
-			"IsTestWasSuccessful" })
+	@TestProperties(name = "MultipleHO_X2InterFrequency_Stability", returnParam = {"IsTestWasSuccessful"}, paramsExclude = {
+			"IsTestWasSuccessful"})
 	public void MultipleHO_X2InterFrequency_Stability() {
 		maxduration = STABILITY_TEST_DURATION;
 		MultipleHO_X2InterFrequency();
 	}
-	
+
 	private void helperPreTestAndHOLongTest(HoControlStateTypes hoControl, X2ControlStateTypes x2Control,
-			HandoverType hoType, ConnectedModeEventTypes hoEventType){		
-		
+											HandoverType hoType, ConnectedModeEventTypes hoEventType) {
+
 		// change frequency if needed.
 		if (!checkFrequency()) {
-			return ;
+			return;
 		}
 		boolean action = false;
 		boolean failedNumOfMaxRetries = false;
 		for (int i = 1; i <= numOfMaxRetries; i++) {
 			report.report("Run number " + i);
-			if (!preTest(hoControl, x2Control, hoType, hoEventType, i-1)) {
+			if (!preTest(hoControl, x2Control, hoType, hoEventType, i - 1)) {
 				if (i == numOfMaxRetries) {
 					failedNumOfMaxRetries = true;
 				} else {
@@ -525,9 +530,9 @@ public class P0 extends TestspanTest {
 				}
 				continue;
 			}
-			
-			action = HoLongTest(i-1);
-			setReason(i-1);
+
+			action = HoLongTest(i - 1);
+			setReason(i - 1);
 			if (!action) {
 				if (i == numOfMaxRetries) {
 					failedNumOfMaxRetries = true;
@@ -535,22 +540,22 @@ public class P0 extends TestspanTest {
 					report.report("Hand over test failed - retrying", Reporter.WARNING);
 					restartCommandsThread();
 				}
-			} else{
+			} else {
 				break;
 			}
 		}
-		if(reason == ""){
-			reason = reasons[numOfMaxRetries-1];
+		if (reason == "") {
+			reason = reasons[numOfMaxRetries - 1];
 		}
-		if(failedNumOfMaxRetries){
-			report.report("Tried "+numOfMaxRetries+" times - Failure reason: "+reason, Reporter.FAIL);
+		if (failedNumOfMaxRetries) {
+			report.report("Tried " + numOfMaxRetries + " times - Failure reason: " + reason, Reporter.FAIL);
 		}
 	}
-	
+
 	@Test
-	@TestProperties(name = "MultipleHO_X2InterFrequency", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {
-			"IsTestWasSuccessful" })
-	public void MultipleHO_X2InterFrequency(){
+	@TestProperties(name = "MultipleHO_X2InterFrequency", returnParam = {"IsTestWasSuccessful"}, paramsExclude = {
+			"IsTestWasSuccessful"})
+	public void MultipleHO_X2InterFrequency() {
 		isIntra = false;
 		reason = "";
 		if (enodeB.isInstanceOfXLP_15_2()) {
@@ -573,17 +578,17 @@ public class P0 extends TestspanTest {
 	}
 
 	@Test
-	@TestProperties(name = "MultipleHO_S1InterFrequency_Stability", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {
-			"IsTestWasSuccessful" })
-	public void MultipleHO_S1InterFrequency_Stability(){
+	@TestProperties(name = "MultipleHO_S1InterFrequency_Stability", returnParam = {"IsTestWasSuccessful"}, paramsExclude = {
+			"IsTestWasSuccessful"})
+	public void MultipleHO_S1InterFrequency_Stability() {
 		maxduration = STABILITY_TEST_DURATION;
 		MultipleHO_S1InterFrequency();
 	}
-	
+
 	@Test
-	@TestProperties(name = "MultipleHO_S1InterFrequency", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {
-			"IsTestWasSuccessful" })
-	public void MultipleHO_S1InterFrequency(){
+	@TestProperties(name = "MultipleHO_S1InterFrequency", returnParam = {"IsTestWasSuccessful"}, paramsExclude = {
+			"IsTestWasSuccessful"})
+	public void MultipleHO_S1InterFrequency() {
 		isIntra = false;
 		reason = "";
 		if (enodeB.isInstanceOfXLP_15_2()) {
@@ -598,7 +603,7 @@ public class P0 extends TestspanTest {
 			attCounterName = "S1InterFreqInPrepSuccRnlRadioRsn";
 			attCounterNameSNMP = "asLteStatsHoS1InterFreqInPrepSuccRnlRadioRsn";
 		}
-		
+
 		passCriteria.put(succCounterName, succCounterNameSNMP);
 		passCriteria.put(attCounterName, attCounterNameSNMP);
 
@@ -607,17 +612,17 @@ public class P0 extends TestspanTest {
 	}
 
 	@Test
-	@TestProperties(name = "MultipleHO_X2IntraFrequency_Stability", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {
-			"IsTestWasSuccessful" })
+	@TestProperties(name = "MultipleHO_X2IntraFrequency_Stability", returnParam = {"IsTestWasSuccessful"}, paramsExclude = {
+			"IsTestWasSuccessful"})
 	public void MultipleHO_X2IntraFrequency_Stability() {
 		maxduration = STABILITY_TEST_DURATION;
 		MultipleHO_X2IntraFrequency();
 	}
-	
+
 	@Test
-	@TestProperties(name = "MultipleHO_X2IntraFrequency", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {
-			"IsTestWasSuccessful" })
-	public void MultipleHO_X2IntraFrequency()  {
+	@TestProperties(name = "MultipleHO_X2IntraFrequency", returnParam = {"IsTestWasSuccessful"}, paramsExclude = {
+			"IsTestWasSuccessful"})
+	public void MultipleHO_X2IntraFrequency() {
 		isIntra = true;
 		reason = "";
 		setX2IntraCounters();
@@ -625,14 +630,14 @@ public class P0 extends TestspanTest {
 		helperPreTestAndHOLongTest(HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC, HandoverType.TRIGGER_X_2, ConnectedModeEventTypes.A_3);
 		postTest();
 	}
-	
+
 	@Test
-	@TestProperties(name = "MultipleHO_X2IntraFrequency_A4", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {
-			"IsTestWasSuccessful" })
-	public void MultipleHO_X2IntraFrequency_A4()  {
+	@TestProperties(name = "MultipleHO_X2IntraFrequency_A4", returnParam = {"IsTestWasSuccessful"}, paramsExclude = {
+			"IsTestWasSuccessful"})
+	public void MultipleHO_X2IntraFrequency_A4() {
 		isIntra = true;
 		reason = "";
-		
+
 		setX2IntraCounters();
 
 		helperPreTestAndHOLongTest(HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC, HandoverType.TRIGGER_X_2, ConnectedModeEventTypes.A_4);
@@ -656,17 +661,17 @@ public class P0 extends TestspanTest {
 	}
 
 	@Test
-	@TestProperties(name = "MultipleHO_S1IntraFrequency_Stability", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {
-			"IsTestWasSuccessful" })
-	public void MultipleHO_S1IntraFrequency_Stability(){
+	@TestProperties(name = "MultipleHO_S1IntraFrequency_Stability", returnParam = {"IsTestWasSuccessful"}, paramsExclude = {
+			"IsTestWasSuccessful"})
+	public void MultipleHO_S1IntraFrequency_Stability() {
 		maxduration = STABILITY_TEST_DURATION;
 		MultipleHO_S1IntraFrequency();
 	}
-	
+
 	@Test
-	@TestProperties(name = "MultipleHO_S1IntraFrequency", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {
-			"IsTestWasSuccessful" })
-	public void MultipleHO_S1IntraFrequency(){
+	@TestProperties(name = "MultipleHO_S1IntraFrequency", returnParam = {"IsTestWasSuccessful"}, paramsExclude = {
+			"IsTestWasSuccessful"})
+	public void MultipleHO_S1IntraFrequency() {
 		isIntra = true;
 		reason = "";
 		if (enodeB.isInstanceOfXLP_15_2()) {
@@ -683,7 +688,7 @@ public class P0 extends TestspanTest {
 		}
 		passCriteria.put(succCounterName, succCounterNameSNMP);
 		passCriteria.put(attCounterName, attCounterNameSNMP);
-		
+
 		helperPreTestAndHOLongTest(HoControlStateTypes.ALLOWED, X2ControlStateTypes.NOT_ALLOWED, HandoverType.S_1_ONLY, ConnectedModeEventTypes.A_3);
 		postTest();
 	}
@@ -725,40 +730,40 @@ public class P0 extends TestspanTest {
 	}
 
 	public void performHoUpto2Times(HoControlStateTypes HOControlTypes, X2ControlStateTypes X2Types,
-			HandoverType HOType, ConnectedModeEventTypes hoEventType) {
+									HandoverType HOType, ConnectedModeEventTypes hoEventType) {
 		for (int i = 1; i <= 1; i++) {
 			report.report("Run number " + i);
-			if (!preTest(HOControlTypes, X2Types, HOType, hoEventType, i-1)) {
+			if (!preTest(HOControlTypes, X2Types, HOType, hoEventType, i - 1)) {
 				report.report("Hand over test failed - retrying again", Reporter.WARNING);
 				restartCommandsThread();
 				continue;
 			}
-			boolean action = performHO(i-1);
-			setReason(i-1);
+			boolean action = performHO(i - 1);
+			setReason(i - 1);
 			if (!action) {
 				if (i == 1) {
-					report.report("Retried 2 times - Failure reason: "+reason, Reporter.FAIL);
-				} else{
+					report.report("Retried 2 times - Failure reason: " + reason, Reporter.FAIL);
+				} else {
 					report.report("Hand over test failed - retrying again", Reporter.WARNING);
 					restartCommandsThread();
 				}
-			} else{
+			} else {
 				break;
 			}
 		}
-		if("" == reason){
-			reason = reasons[numOfMaxRetries-1];
+		if ("" == reason) {
+			reason = reasons[numOfMaxRetries - 1];
 		}
 	}
 
-	private void setReason(int numTry){
-		if(numTry==numOfMaxRetries-1 && reasons[numTry]==""){
-			reasons[numTry] = "Pass on try: " +(numTry+1);
+	private void setReason(int numTry) {
+		if (numTry == numOfMaxRetries - 1 && reasons[numTry] == "") {
+			reasons[numTry] = "Pass on try: " + (numTry + 1);
 		}
 		reason = reasons[numTry];
 	}
-	
-	public boolean HoLongTest(int numOfTry){
+
+	public boolean HoLongTest(int numOfTry) {
 		boolean flag = true;
 
 		GeneralUtils.startLevel("getting counters value");
@@ -784,64 +789,119 @@ public class P0 extends TestspanTest {
 		while (System.currentTimeMillis() < endTime) {
 			moveAtt(attenuatorSetUnderTest, attenuatorMin, attenuatorMax);
 			counter++;
-			if(System.currentTimeMillis() > endTime){
+			if (System.currentTimeMillis() > endTime) {
 				break;
 			}
 			moveAtt(attenuatorSetUnderTest, attenuatorMax, attenuatorMin);
 			counter++;
-			if(System.currentTimeMillis()-resetCounters>=8*60*1000*waitingPeriodTime){
+			if (System.currentTimeMillis() - resetCounters >= 8 * 60 * 1000 * waitingPeriodTime) {
 				resetCounters = System.currentTimeMillis();
-				double temp = Math.floor(((System.currentTimeMillis() - startTime)/ 1000 / 60.0)*100);
-				double tempDouble = temp/100.0;
+				double temp = Math.floor(((System.currentTimeMillis() - startTime) / 1000 / 60.0) * 100);
+				double tempDouble = temp / 100.0;
 				report.report("Time elapsed: " + tempDouble + " minutes.");
 				updateResultsVariables(counter);
 				resetCounters();
 			}
 		}
 		GeneralUtils.stopLevel(); // moving attenuator stop level
-		report.report("Wait for "+waitingPeriodTime+" minutes for Counter to update");
-		GeneralUtils.unSafeSleep(waitingPeriodTime*60*1000);
+		report.report("Wait for " + waitingPeriodTime + " minutes for Counter to update");
+		GeneralUtils.unSafeSleep(waitingPeriodTime * 60 * 1000);
 
 		flag = LongHOResults(flag, counter, numOfTry);
 		return flag;
 	}
 
-	public boolean addNeighbors(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes HOControlTypes,
-			X2ControlStateTypes X2Types, HandoverType HOType, boolean isStaticNeighbor, String qOffsetRange)			 {
-		if (skipAddNgh) {
-			report.report("Skipping adding neighbor.");
-			return true;
-		}
+	/**
+	 * Main add Neighbours method - This method will add neighbour.
+	 * supports 2 cases:
+	 * a. the basic of Single cell
+	 * b. unique case of 2 cells on each EnodeB
+	 * Defined to 2 retries
+	 *
+	 * @param enodeB           - enodeB
+	 * @param neighbor         - neighbor
+	 * @param HOControlTypes   - HOControlTypes
+	 * @param X2Types          - X2Types
+	 * @param HOType           - HOType
+	 * @param isStaticNeighbor - isStaticNeighbor
+	 * @param qOffsetRange     - qOffsetRange
+	 * @return true if succeed
+	 */
+	public boolean addNeighbours(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes HOControlTypes,
+								 X2ControlStateTypes X2Types, HandoverType HOType, boolean isStaticNeighbor, String qOffsetRange) {
+		if (skipAddNeighbourIfNeeded()) return true;
 		GeneralUtils.startLevel("Adding neighbor " + neighbor.getName() + " to EnodeB " + enodeB.getName());
-		if (!neighbors.addNeighbor(enodeB, neighbor, HOControlTypes, X2Types, HOType, isStaticNeighbor, qOffsetRange)) {
-			report.report("Neighbor wasn't added to EnodeB", Reporter.WARNING);
-			GeneralUtils.stopLevel(); // adding neighbor stop level
-			return false;
+		int enbNumbersOfCells = netspanServer.getNumberOfNetspanCells(enodeB);
+		int nbrNumbersOfCells = netspanServer.getNumberOfNetspanCells(neighbor);
+		//Special case when we have multi cell -> add both of them.
+		if (enbNumbersOfCells == nbrNumbersOfCells && enbNumbersOfCells == 2) {
+			if (!addNeighboursSingleOrMultiCell(enodeB, neighbor, HOControlTypes, X2Types, HOType, isStaticNeighbor, qOffsetRange, true))
+				return false;
 		} else {
-			report.report("Neighbor was added to EnodeB");
-			report.report("HO control type: " + HOControlTypes);
-			report.report("X2 Type: " + X2Types);
-			report.report("HO Type: " + HOType);
+			//Default case of adding 1 neighbour
+			if (!addNeighboursSingleOrMultiCell(enodeB, neighbor, HOControlTypes, X2Types, HOType, isStaticNeighbor, qOffsetRange, false))
+				return false;
 		}
-		if (!neighbors.addNeighbor(neighbor, enodeB, HOControlTypes, X2Types, HOType, isStaticNeighbor, qOffsetRange)) {
-			report.report("Neighbor wasn't added to EnodeB", Reporter.WARNING);			
-			GeneralUtils.stopLevel(); // adding neighbor stop level
-			return false;
-		} else {
-			report.report("Neighbor was added to EnodeB");
-			report.report("HO control type: " + HOControlTypes);
-			report.report("X2 Type: " + X2Types);
-			report.report("HO Type: " + HOType);
-		}
-		
 		report.reportHtml(enodeB.getName() + ": db get nghList", enodeB.lteCli("db get nghList"), true);
 		report.reportHtml(neighbor.getName() + ": db get nghList", neighbor.lteCli("db get nghList"), true);
 		GeneralUtils.stopLevel();
 		return true;
 	}
-	
+
+	/**
+	 * skip Add Neighbour If Needed according to skipAddNgh param
+	 *
+	 * @return - true if skip is needed
+	 */
+	private boolean skipAddNeighbourIfNeeded() {
+		if (skipAddNgh) {
+			report.report("Skipping adding neighbor.");
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Added neighbour  - Defined to 2 retries.
+	 * Depend on the cell number - supports Multi and Single cell.
+	 *
+	 * @param enodeB           - enodeB
+	 * @param neighbor         - neighbor
+	 * @param HOControlTypes   - HOControlTypes
+	 * @param X2Types          - X2Types
+	 * @param HOType           - HOType
+	 * @param isStaticNeighbor - isStaticNeighbor
+	 * @param qOffsetRange     - qOffsetRange
+	 * @param isMultiCell      - qOffsetRange
+	 * @return - true if succeed
+	 */
+	private boolean addNeighboursSingleOrMultiCell(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes HOControlTypes, X2ControlStateTypes X2Types,
+												   HandoverType HOType, boolean isStaticNeighbor, String qOffsetRange, boolean isMultiCell) {
+		boolean isNeighbourAdded;
+		for (int numberOfRetries = 0; numberOfRetries < 2; numberOfRetries++) {
+			//Add neighbour - MultiCell \\ SingleCell
+			if (isMultiCell) {
+				isNeighbourAdded = neighbors.addNeighborMultiCell(enodeB, neighbor, HOControlTypes, X2Types, HOType, isStaticNeighbor, qOffsetRange);
+			} else {
+				isNeighbourAdded = neighbors.addNeighbor(enodeB, neighbor, HOControlTypes, X2Types, HOType, isStaticNeighbor, qOffsetRange);
+			}
+			//Verification
+			if (isNeighbourAdded) {
+				report.report("Neighbor was added to EnodeB");
+				report.report("HO control type: " + HOControlTypes);
+				report.report("X2 Type: " + X2Types);
+				report.report("HO Type: " + HOType);
+				return true;
+			} else {
+				report.report("Neighbor wasn't added to EnodeB", Reporter.WARNING);
+				GeneralUtils.stopLevel(); // adding neighbor stop level
+			}
+		}
+		return false;
+	}
+
 	private boolean verifyCountersSingleHO(EnodeB enb) {
-		GeneralUtils.startLevel("Counters value for EnodeB "+ enb.getNetspanName());
+		GeneralUtils.startLevel("Counters value for EnodeB " + enb.getNetspanName());
 		boolean isSucceeded = true;
 		for (String counter : passCriteria.values()) {
 			int counterSum = enb.getCountersValue(counter);
@@ -854,7 +914,7 @@ public class P0 extends TestspanTest {
 		}
 		GeneralUtils.stopLevel();
 		return isSucceeded;
-		
+
 	}
 
 	private boolean resetPassCriteriaCounters() {
@@ -864,12 +924,12 @@ public class P0 extends TestspanTest {
 			resetCounters();
 			enodeBConfig.waitGranularityPeriodTime(dut1);
 			isSucceeded = verifyCountersReset(i);
-			if (isSucceeded) 
+			if (isSucceeded)
 				break;
-			
+
 			if (i == 0)
 				report.report("Counters values are not 0, reseting counters to 0 again.");
-			else 
+			else
 				break;
 		}
 		first_ENB_succ = 0;
@@ -901,31 +961,31 @@ public class P0 extends TestspanTest {
 
 	private boolean verifyCountersReset(int i) {
 		boolean isSucceeded = true;
- 		for (String counter : passCriteria.values()) {
- 			int mainCounterValue = enodeB.getCountersValue(counter);
- 			if (mainCounterValue != 0) {
- 				if (i == 1) {
- 					report.report("Counter " + counter + " values are " + mainCounterValue + " instead of 0 in enodeB: " + enodeB.getName(),
- 							Reporter.WARNING);
- 					reason = "Counter values are not 0 in enodeB";
- 				}
- 				isSucceeded = false;
- 			} else
- 				report.report("Counter " + counter + " values are 0 in enodeB: " + enodeB.getName());
- 			int neighborCounterValue = neighbor.getCountersValue(counter);
- 			if (neighborCounterValue != 0) {
- 				if (i == 1) {
- 					report.report("Counter " + counter + " values are " + neighborCounterValue + " instead of 0 in enodeB: " + neighbor.getName(),
- 							Reporter.WARNING);
- 					reason = "Counter values are not 0 in enodeB";
- 				}
- 				isSucceeded = false;
+		for (String counter : passCriteria.values()) {
+			int mainCounterValue = enodeB.getCountersValue(counter);
+			if (mainCounterValue != 0) {
+				if (i == 1) {
+					report.report("Counter " + counter + " values are " + mainCounterValue + " instead of 0 in enodeB: " + enodeB.getName(),
+							Reporter.WARNING);
+					reason = "Counter values are not 0 in enodeB";
+				}
+				isSucceeded = false;
+			} else
+				report.report("Counter " + counter + " values are 0 in enodeB: " + enodeB.getName());
+			int neighborCounterValue = neighbor.getCountersValue(counter);
+			if (neighborCounterValue != 0) {
+				if (i == 1) {
+					report.report("Counter " + counter + " values are " + neighborCounterValue + " instead of 0 in enodeB: " + neighbor.getName(),
+							Reporter.WARNING);
+					reason = "Counter values are not 0 in enodeB";
+				}
+				isSucceeded = false;
 			} else
 				report.report("Counter " + counter + " values are 0 in enodeB: " + neighbor.getName());
 		}
 		return isSucceeded;
 	}
-	
+
 	private void moveAtt(AttenuatorSet attenuatorSetUnderTest, int from, int to) {
 		int multi = 1;
 		int attenuatorsCurrentValue = from;
@@ -1076,7 +1136,7 @@ public class P0 extends TestspanTest {
 	public void resetUes() {
 		GeneralUtils.startLevel("Reset dynamic Ues");
 		peripheralsConfig.rebootUEs(SetupUtils.getInstance().getAllUEs());
-		
+
 		GeneralUtils.unSafeSleep(10000);
 		if (!peripheralsConfig.epcAndEnodeBsConnection(SetupUtils.getInstance().getAllUEs(), enbInTest)) {
 			peripheralsConfig.rebootUEs(SetupUtils.getInstance().getAllUEs(), 120000);
@@ -1099,7 +1159,7 @@ public class P0 extends TestspanTest {
 	}
 
 	@Override
-	public void end(){
+	public void end() {
 		if (traffic != null && traffic.getGeneratorType() == TrafficGeneratorType.TestCenter) {
 			String TrafficFile = traffic.getTg().getDefaultConfigTccFile();
 			traffic.configFile = new File(TrafficFile);
@@ -1129,7 +1189,7 @@ public class P0 extends TestspanTest {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void commands() {
 
 		ArrayList<String> commands = new ArrayList<>();
@@ -1143,7 +1203,7 @@ public class P0 extends TestspanTest {
 		commands.add("enb show ngh");
 		commands.add("db get cellCfg");
 		commands.add("db get PTPStatus");
-		
+
 		try {
 			commandsThread1 = new ParallelCommandsThread(commands, dut1, null, null);
 			commandsThread2 = new ParallelCommandsThread(commands, dut2, null, null);
@@ -1155,26 +1215,26 @@ public class P0 extends TestspanTest {
 
 	}
 
-	private void stopCommandsAndAttachFiles(){
+	private void stopCommandsAndAttachFiles() {
 		commandsThread1.stopCommands();
 		commandsThread2.stopCommands();
 		commandsThread1.moveFileToReporterAndAddLink();
 		commandsThread2.moveFileToReporterAndAddLink();
 	}
-	
-	private void restartCommandsThread(){
+
+	private void restartCommandsThread() {
 		stopCommandsAndAttachFiles();
 		commands();
 	}
-	
+
 	private boolean checkFrequency() {
 		GeneralUtils.startLevel("Checking that frequencies match the test type.");
 		Integer enbEarfcn = enodeBConfig.getEARFCNforNode(enodeB);
 		Integer neighborEarfcn = enodeBConfig.getEARFCNforNode(neighbor);
-		
+
 		report.report(enodeB.getName() + " Earfcn: " + enbEarfcn);
 		report.report(neighbor.getName() + " Earfcn: " + neighborEarfcn);
-		
+
 		if (isIntra) {
 			if (!enbEarfcn.equals(neighborEarfcn)) {
 				report.report("EnodeB frequences are diffrent in an Intra test.", Reporter.FAIL);
@@ -1182,15 +1242,13 @@ public class P0 extends TestspanTest {
 				GeneralUtils.stopLevel();
 				return false;
 			}
+		} else if (enbEarfcn.equals(neighborEarfcn)) {
+			report.report("EnodeB frequences are equal in an Inter test.", Reporter.FAIL);
+			reason = "EnodeB frequences are equal in an Inter test.";
+			GeneralUtils.stopLevel();
+			return false;
 		}
-		else
-			if (enbEarfcn.equals(neighborEarfcn)) {
-				report.report("EnodeB frequences are equal in an Inter test.", Reporter.FAIL);
-				reason = "EnodeB frequences are equal in an Inter test.";
-				GeneralUtils.stopLevel();
-				return false;
-			}
-		
+
 		GeneralUtils.stopLevel(); // Checking that frequencies match SUT stop level		
 		return true;
 	}
@@ -1219,33 +1277,33 @@ public class P0 extends TestspanTest {
 		GeneralUtils.stopLevel(); // Getting Pass Criteria counters value stop level
 		return tempFlag;
 	}
-	
+
 
 	/**
-	 * 
 	 * in case of a Fail - reporting with a warning and watchDog instance is null.
+	 *
 	 * @author Moran Goldenberg
 	 */
-	public boolean BasicHO_X2IntraFrequency_negativeTest_RanShering(){
+	public boolean BasicHO_X2IntraFrequency_negativeTest_RanShering() {
 		UE dynUE = null;
 		dynUEList = SetupUtils.getInstance().getDynamicUEs();
-		for(UE ue: dynUEList){
-			if (peripheralsConfig.isUEConnected(ue, enbInTest)){
+		for (UE ue : dynUEList) {
+			if (peripheralsConfig.isUEConnected(ue, enbInTest)) {
 				dynUE = ue;
 				break;
 			}
 		}
-		if (dynUE == null){
+		if (dynUE == null) {
 			report.report("There are no active dynamic UEs in the test");
 			return false;
 		}
 		GeneralUtils.startLevel("Checking what is the main EnodeB");
 		EnodeB currentEnb = epc.getCurrentEnodB(dynUE, enbInTest);
 		if (currentEnb == null) {
-		report.report("Dynamic UE is not connected", Reporter.WARNING);
-		reason = "Dynamic UE is not connected";
-		GeneralUtils.stopLevel(); // Checking what is the main EnodeB stop
-									// level
+			report.report("Dynamic UE is not connected", Reporter.WARNING);
+			reason = "Dynamic UE is not connected";
+			GeneralUtils.stopLevel(); // Checking what is the main EnodeB stop
+			// level
 			return false;
 		} else {
 			enodeB = currentEnb;
@@ -1254,86 +1312,86 @@ public class P0 extends TestspanTest {
 			report.report("Neighbor EnodeB: " + neighbor.getNetspanName());
 		}
 		expectedNumOfHO = (int) Math.ceil(dynUEList.size());
-		
-			GeneralUtils.stopLevel();
-		
+
+		GeneralUtils.stopLevel();
+
 		GeneralUtils.startLevel("Deleting all neighbors");
-			neighbors.deleteAllNeighbors(dut1);
-			neighbors.deleteAllNeighbors(dut2);
+		neighbors.deleteAllNeighbors(dut1);
+		neighbors.deleteAllNeighbors(dut2);
 		GeneralUtils.stopLevel();//deleting all neighbors stop level
-			
+
 		GeneralUtils.startLevel("make enodeB's neighbors");
-		if (!addNeighbors(enodeB, neighbor, HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC, HandoverType.TRIGGER_X_2, true, "0"))
-		{
+		if (!addNeighbours(enodeB, neighbor, HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC, HandoverType.TRIGGER_X_2, true, "0")) {
 			report.report("Couldn't configure enodeB's as neighbors");
 			GeneralUtils.stopLevel();
 			reason = "Neighbor wasn't added to EnodeB\n";
 			return false;
 		}
 		GeneralUtils.stopLevel();
-			
-		GeneralUtils.startLevel("Performing 2 side HO.");
-			report.report("Moving attenuator up to create Hand-Over");
-			moveAtt(attenuatorSetUnderTest, attenuatorMin, attenuatorMax);
-			report.report("Moving attenuator down to create Hand-Over");
-			moveAtt(attenuatorSetUnderTest, attenuatorMax, attenuatorMin);
-	
-			enodeBConfig.waitGranularityPeriodTime(dut1);
-				
-			GeneralUtils.stopLevel();
 
-			GeneralUtils.startLevel("HO results");
-			boolean result1 = false;
-			boolean result2 = false;
-			if (isNegative){
-				result1 = negativeTestResults(enodeB);
-				result2 = negativeTestResults(neighbor);	
-			}
-			else{
-				dynUEList.clear();
-				ArrayList<UE> ues = null;
-				try {
-					ues = SetupUtils.getInstance().getDynamicUEs();
-				} catch (Exception e) {
-					report.report("Couldn't get dynamic list");
-					e.printStackTrace();
-					return false;
-				}
-				for(UE ue : ues){
-					if (peripheralsConfig.isUEConnected(ue, enbInTest) && !dynUEList.contains(ue))
-						dynUEList.add(ue);
-				}
-				result1 = verifyCountersSingleHO(dut1);
-				result2 = verifyCountersSingleHO(dut2);
-			}
-			if (!result1 || !result2){
-				GeneralUtils.stopLevel();
+		GeneralUtils.startLevel("Performing 2 side HO.");
+		report.report("Moving attenuator up to create Hand-Over");
+		moveAtt(attenuatorSetUnderTest, attenuatorMin, attenuatorMax);
+		report.report("Moving attenuator down to create Hand-Over");
+		moveAtt(attenuatorSetUnderTest, attenuatorMax, attenuatorMin);
+
+		enodeBConfig.waitGranularityPeriodTime(dut1);
+
+		GeneralUtils.stopLevel();
+
+		GeneralUtils.startLevel("HO results");
+		boolean result1 = false;
+		boolean result2 = false;
+		if (isNegative) {
+			result1 = negativeTestResults(enodeB);
+			result2 = negativeTestResults(neighbor);
+		} else {
+			dynUEList.clear();
+			ArrayList<UE> ues = null;
+			try {
+				ues = SetupUtils.getInstance().getDynamicUEs();
+			} catch (Exception e) {
+				report.report("Couldn't get dynamic list");
+				e.printStackTrace();
 				return false;
-			}	
+			}
+			for (UE ue : ues) {
+				if (peripheralsConfig.isUEConnected(ue, enbInTest) && !dynUEList.contains(ue))
+					dynUEList.add(ue);
+			}
+			result1 = verifyCountersSingleHO(dut1);
+			result2 = verifyCountersSingleHO(dut2);
+		}
+		if (!result1 || !result2) {
 			GeneralUtils.stopLevel();
-		
+			return false;
+		}
+		GeneralUtils.stopLevel();
+
 		return true;
 	}
-	private boolean negativeTestResults(EnodeB enb){
-			GeneralUtils.startLevel("Counters value for enodeB "+ enb.getNetspanName());
-		
+
+	private boolean negativeTestResults(EnodeB enb) {
+		GeneralUtils.startLevel("Counters value for enodeB " + enb.getNetspanName());
+
 		boolean isSucceeded = true;
 		for (String counter : passCriteria.values()) {
 			int counterSum = enb.getCountersValue(counter);
 			if (counterSum == 0) {
 				report.report("[Pass Criteria: ] EnodeB: " + enb.getName() + " counter " + counter + " value is: " + counterSum + " as expected");
 			} else {
-				report.report("[Pass Criteria: ] EnodeB: " + enb.getName() + " counter " + counter + " value is: "+ counterSum, Reporter.WARNING);
+				report.report("[Pass Criteria: ] EnodeB: " + enb.getName() + " counter " + counter + " value is: " + counterSum, Reporter.WARNING);
 				isSucceeded = false;
 			}
 		}
 		GeneralUtils.stopLevel();//counters value stop level
 		return isSucceeded;
 	}
-	public void deleteAllNeighbors(EnodeB enb){
+
+	public void deleteAllNeighbors(EnodeB enb) {
 		neighbors.deleteAllNeighbors(enb);
 	}
-	
+
 	public void LongIntraX2(String name, String name2, int durationInMinutes) {
 		setDUT1(name);
 		setDUT2(name2);
@@ -1341,8 +1399,8 @@ public class P0 extends TestspanTest {
 		maxduration = durationInMinutes * 60 * 1000;
 		isIntra = true;
 		setX2IntraCounters();
-		preTest(HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC, HandoverType.TRIGGER_X_2, ConnectedModeEventTypes.A_3 , 0);
+		preTest(HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC, HandoverType.TRIGGER_X_2, ConnectedModeEventTypes.A_3, 0);
 		HoLongTest(0);
-		
+
 	}
 }

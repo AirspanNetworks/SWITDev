@@ -187,9 +187,13 @@ public class NeighborManagement extends EnodebAction {
 	}
 
 	@Test
-	@TestProperties(name = "Delete Neighbour", returnParam = "LastStatus", paramsInclude = {"DUT", "Neighbour"})
+	@TestProperties(name = "Delete Neighbour", returnParam = "LastStatus",
+			paramsInclude = {"DUT", "sourceCell", "Neighbour", "targetCell",
+	})
 	public void deleteNeighbour() {
 		report.report("EnodeB " + this.dut.getName() + " delete Neighbour = " + this.neighbour.getName());
+		dut.setCellContextNumber(Integer.parseInt(sourceCell));
+		neighbour.setCellContextNumber(Integer.parseInt(targetCell));
 		boolean flag = Neighbors.getInstance().deleteNeighbor(this.dut, this.neighbour);
 		report.reportHtml(dut.getName() + ": db get nghList", dut.lteCli("db get nghList"), true);
 		if (!flag) {

@@ -33,9 +33,6 @@ public class DebugFtpServer extends SystemObjectImpl{
 	public void setDebugFtpServerIP(String debugFtpServerIP) {
 		if (debugFtpServerIP.contains(":")) {
 			addressType = "2";
-			if (!debugFtpServerIP.contains("[")) {
-				debugFtpServerIP= "[" + debugFtpServerIP + "]";
-			}
 		}		
 		this.debugFtpServerIP = debugFtpServerIP;
 	}

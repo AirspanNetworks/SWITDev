@@ -27,6 +27,8 @@ public class XLP_14_5 extends XLP {
 
 	@Override
 	public boolean addNbr(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,X2ControlStateTypes x2ControlStatus, HandoverType handoverType, boolean isStaticNeighbor,String qOffsetRange) throws IOException {
+		//Initialize qOffSet, in case the user doesn't want to fill it (It's optional)
+		int qOffSet = 0;
 		//create double valued instance.
 		String mnoBroadcastPlmn = neighbor.calculateMnoBroadcastPlmn();
 		String eutranCellId = neighbor.calculateEutranCellId();
@@ -59,7 +61,9 @@ public class XLP_14_5 extends XLP {
 		String ipAdd = neighbor.getIpAddress();
 		int neighborEarfcn = neighbor.getEarfcn();
 		int x2TrigHo = Integer.valueOf(handoverType.convertEnum());
-		int qOffSet = Integer.valueOf(qOffsetRange);
+		if (qOffsetRange != null) {
+			qOffSet = Integer.valueOf(qOffsetRange);
+		}
 		int x2Ctrl = Integer.valueOf(x2ControlStatus.convertEnum());
 		int hoCtrl = Integer.valueOf(hoControlStatus.convertEnum());
 		int myInt = (isStaticNeighbor) ? 1 : 0;
@@ -79,7 +83,9 @@ public class XLP_14_5 extends XLP {
 		snmp.snmpSet(pciOid+"."+instance, pci);
 		snmp.snmpSet(tacOid+"."+instance, tac);
 		snmp.snmpSet(x2TrigHoOid+"."+instance, x2TrigHo);
-		snmp.snmpSet(qOffOid+"."+instance, qOffSet);
+		if (qOffsetRange != null) {
+			snmp.snmpSet(qOffOid + "." + instance, qOffSet);
+		}
 		snmp.snmpSet(notRemoveOid+"."+instance, myInt);
 		snmp.snmpSet(X2CtrlOid+"."+instance, x2Ctrl);
 		snmp.snmpSet(HoCtrlOid+"."+instance, hoCtrl);

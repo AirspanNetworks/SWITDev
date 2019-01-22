@@ -97,14 +97,14 @@ public class Neighbors {
 	/**
 	 *  Add Neighbor
 	 *
-	 * @param enodeB
-	 * @param neighbor
-	 * @param hoControlStatus
-	 * @param x2ControlStatus
-	 * @param handoverType
-	 * @param isStaticNeighbor
-	 * @param qOffsetRange
-	 * @return
+	 * @param enodeB - enodeB
+	 * @param neighbor - neighbor
+	 * @param hoControlStatus - hoControlStatus
+	 * @param x2ControlStatus - x2ControlStatus
+	 * @param handoverType - handoverType
+	 * @param isStaticNeighbor - isStaticNeighbor
+	 * @param qOffsetRange - qOffsetRange
+	 * @return - true if succeed
 	 */
     public boolean addNeighbor(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
                                X2ControlStateTypes x2ControlStatus, HandoverType handoverType, boolean isStaticNeighbor,
@@ -121,13 +121,27 @@ public class Neighbors {
         //Try via SNMP
         try {
             enodeB.addNbr(enodeB, neighbor, hoControlStatus, x2ControlStatus, handoverType, isStaticNeighbor,
-                    String.valueOf(convertQoffsetToCli(Integer.parseInt(qOffsetRange))));
+                    getQOffsetCliCommand(qOffsetRange));
             if (verifyAddNeighbourSucceed(enodeB, neighbor, "SNMP")) return true;
         } catch (Exception e) {
             e.printStackTrace();
             report.report("SNMP add Neighbor  " + neighbor.getNetspanName() + " verification failed");
         }
         return false;
+    }
+
+    /**
+	 * Get QOffset Cli Command if != null
+     *
+     * @param qOffsetRange - qOffsetRange
+     * @return - QOffset Cli OR null if the user didn't choose to type
+     */
+    private String getQOffsetCliCommand(String qOffsetRange) {
+        if (qOffsetRange != null) {
+        	return  String.valueOf(convertQoffsetToCli(Integer.parseInt(qOffsetRange)));
+        } else {
+        	return null;
+        }
     }
 
     /**

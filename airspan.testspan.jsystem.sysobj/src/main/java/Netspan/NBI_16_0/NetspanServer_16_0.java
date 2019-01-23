@@ -13,6 +13,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import EnodeB.EnodeB;
 import EnodeB.EnodeBUpgradeImage;
 import EnodeB.EnodeBUpgradeServer;
+import Netspan.NBIVersion;
 import Netspan.API.Enums.CategoriesLte;
 import Netspan.API.Enums.EnabledDisabledStates;
 import Netspan.API.Enums.HardwareCategory;
@@ -74,10 +75,21 @@ public class NetspanServer_16_0 extends NetspanServer_15_5 implements Netspan_16
 	@Override
 	public void init() throws Exception {
 		if (NBI_VERSION == null) {
-			NBI_VERSION = "16_0";
+			NBI_VERSION = NBIVersion.NBI_16_0;
 		}
 		super.init();
-		this.soapHelper_16_0 = new SoapHelper(getHostname());
+		//populateNodeNames();
+	}
+	
+	/**
+     * Init soap  helper objects.
+     *
+     * @throws Exception the exception
+     */
+    @Override
+    public void initSoapHelper() throws Exception{
+    	super.initSoapHelper();
+    	this.soapHelper_16_0 = new SoapHelper(getHostname());
 		credentialsLte.setUsername(USERNAME);
 		credentialsLte.setPassword(PASSWORD);
 		credentialsInventory.setUsername(USERNAME);
@@ -94,8 +106,7 @@ public class NetspanServer_16_0 extends NetspanServer_15_5 implements Netspan_16
 		credentialsBackhaul.setPassword(PASSWORD);
 		credentialsSoftware.setUsername(USERNAME);
 		credentialsSoftware.setPassword(PASSWORD);
-		//populateNodeNames();
-	}
+    }
 	
 	@Override
 	public PrimaryClockSourceEnum getPrimaryClockSource(EnodeB node){

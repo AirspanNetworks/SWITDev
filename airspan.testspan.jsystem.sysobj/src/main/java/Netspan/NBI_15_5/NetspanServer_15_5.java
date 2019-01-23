@@ -12,6 +12,7 @@ import EnodeB.EnodeBUpgradeImage;
 import EnodeB.EnodeBUpgradeServer;
 import Netspan.CellProfiles;
 import Netspan.EnbProfiles;
+import Netspan.NBIVersion;
 import Netspan.API.Enums.CategoriesLte;
 import Netspan.API.Enums.DuplexType;
 import Netspan.API.Enums.EnabledDisabledStates;
@@ -148,10 +149,20 @@ public class NetspanServer_15_5 extends NetspanServer_15_2 implements Netspan_15
 	@Override
 	public void init() throws Exception {
 		if (NBI_VERSION == null) {
-			NBI_VERSION = "15_5";
+			NBI_VERSION = NBIVersion.NBI_15_5;
 		}
 		super.init();
-		this.soapHelper_15_5 = new SoapHelper(getHostname());
+	}
+	
+	/**
+     * Init soap  helper objects.
+     *
+     * @throws Exception the exception
+     */
+	@Override
+    public void initSoapHelper() throws Exception{
+		super.initSoapHelper();
+    	this.soapHelper_15_5 = new SoapHelper(getHostname());
 		credentialsLte.setUsername(USERNAME);
 		credentialsLte.setPassword(PASSWORD);
 		credentialsInventory.setUsername(USERNAME);
@@ -168,7 +179,7 @@ public class NetspanServer_15_5 extends NetspanServer_15_2 implements Netspan_15
 		credentialsBackhaul.setPassword(PASSWORD);
 		credentialsSoftware.setUsername(USERNAME);
 		credentialsSoftware.setPassword(PASSWORD);
-	}
+    }
 
 	private EnbNetworkProfile getNetworkProfile(String profileName) {
 		try {

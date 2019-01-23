@@ -6,6 +6,8 @@ import java.util.regex.Pattern;
 import org.junit.Test;
 
 import Action.Action;
+import Netspan.NBIVersion;
+import Netspan.NetspanServer;
 import PowerControllers.PowerController;
 import PowerControllers.PowerControllerPort;
 import Utils.GeneralUtils;
@@ -22,6 +24,7 @@ public class BasicAction extends Action {
 	private String userName;
 	private String password;
 	private String sleepTime;
+	private String netspan;
 	
 	@ParameterProperties(description = "Waiting time in seconds after sending last command. Default - no waiting")
 	public void setSleepTime(String sleepTime) {
@@ -43,6 +46,15 @@ public class BasicAction extends Action {
 
 	public String getTimeToWait() {
 		return timeToWait;
+	}
+	
+	public String getNetspan() {
+		return netspan;
+	}
+	
+	@ParameterProperties(description = "Netspan Object in SUT")
+	public void setNetspan(String netspan) {
+		this.netspan = netspan;
 	}
 	
 	@ParameterProperties(description = "Time To Wait In format HH:MM:SS")
@@ -170,6 +182,13 @@ public class BasicAction extends Action {
 			report.report("Failed to connect to device",Reporter.FAIL);
 		}
 	}
+	
+	@Test 
+    @TestProperties(name = "Change Netspan Server to Selected SUT object", returnParam = {"LastStatus", "Answer"}, paramsInclude = {"netspan"})
+    public void changeNetspan() throws Exception {
+    	NetspanServer nms = NetspanServer.getInstance(netspan);
+    	report.report("Netspan changed to " + netspan + ", Hostname is: " + nms.getHostname() + " NBI ver is: " + nms.getNBI());
+    }
 	
 	@ParameterProperties(description = "Run time in format HH:MM:SS (not mandatory)")
 	public Integer setRunTimeToMilliSeconds(String runTime) {

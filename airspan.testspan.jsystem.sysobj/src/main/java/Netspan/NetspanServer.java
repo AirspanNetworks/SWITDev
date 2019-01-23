@@ -76,7 +76,7 @@ public abstract class NetspanServer extends SystemObjectImpl {
     /**
      * The host name.
      */
-    private String hostname;
+    private static String hostname;
 
     /**
      * The web services path.
@@ -97,7 +97,11 @@ public abstract class NetspanServer extends SystemObjectImpl {
      * The password.
      */
     private String password;
-    //
+
+    /**
+     * The password.
+     */
+    private static String netspanObj = "NMS";
     /**
      * The node names key=nodeId , value=node name.
      */
@@ -108,7 +112,7 @@ public abstract class NetspanServer extends SystemObjectImpl {
      */
     protected String netspanVersion = null;
     protected static final int FIRST_ELEMENT = 0;
-    protected static String NBI_VERSION = null;
+    protected static NBIVersion NBI_VERSION = null;
 
     /**
      * Gets the single instance of NetspanServer.
@@ -117,13 +121,25 @@ public abstract class NetspanServer extends SystemObjectImpl {
      * @throws Exception the exception
      */
     public static NetspanServer getInstance() throws Exception {
-        return (NetspanServer) SystemManagerImpl.getInstance().getSystemObject("NMS");
+        return (NetspanServer) SystemManagerImpl.getInstance().getSystemObject(netspanObj);
     }
-
+    
+    /**
+     * Gets the single instance of NetspanServer.
+     *
+     * @return single instance of NetspanServer
+     * @throws Exception the exception
+     */
+    public static NetspanServer getInstance(String nms) throws Exception {
+    	netspanObj = nms;
+        return getInstance();
+    }
+    
     @Override
     public void init() throws Exception {
-        report.setContainerProperties(0, "Netspan_NBI", NBI_VERSION);
+        report.setContainerProperties(0, "Netspan_NBI", NBI_VERSION.toString());
         super.init();
+        initSoapHelper();
     }
 
     /**
@@ -134,6 +150,15 @@ public abstract class NetspanServer extends SystemObjectImpl {
     public String getHostname() {
         return hostname;
     }
+    
+    /**
+     * Gets the NBI version.
+     *
+     * @return the NBI version
+     */
+    public String getNBI() {
+        return NBI_VERSION.toString();
+    }
 
     /**
      * Sets the host name.
@@ -142,6 +167,24 @@ public abstract class NetspanServer extends SystemObjectImpl {
      */
     public void setHostname(String hostname) {
         this.hostname = hostname;
+    }
+    
+    /**
+     * Change the host name.
+     *
+     * @param hostname the new host name
+     */
+    public static void changeHostname(String newHostname) {
+        hostname = newHostname;
+    }
+    
+    /**
+     * Change the host name.
+     *
+     * @param hostname the new host name
+     */
+    public static void changeVersion(NBIVersion nbiVersion) {
+    	NBI_VERSION = nbiVersion;
     }
 
     /**
@@ -646,4 +689,6 @@ public abstract class NetspanServer extends SystemObjectImpl {
 	public abstract int getMaxUeSupported(EnodeB enb);
 
 	public abstract Pair<Integer,Integer> getUlDlTrafficValues(String nodeName);
+
+	public abstract void initSoapHelper() throws Exception; 
 }

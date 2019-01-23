@@ -28,8 +28,8 @@
 	<EPC>
 		<class>EPC.CiscoEPC</class>
 		<ipAddress>192.168.58.63</ipAddress>
-		<username>root</username>
-		<password>SWITcis</password>
+		<username>admin</username>
+		<password>SWIT!cis</password>
 		<MME index="0">
 		 <class>EPC.MME</class>
 			<s1IpAdress>172.23.52.4</s1IpAdress>
@@ -65,6 +65,11 @@
 		<class>Netspan.NBI_15_5.NetspanServer_15_5</class>
 		<hostname>192.168.58.47</hostname>
 	</NMS>
+	
+	<NMS1>
+		<class>Netspan.NBI_15_2.NetspanServer_15_2</class>
+		<hostname>192.168.58.49</hostname>
+	</NMS1>
 
 	<!-- DHCP -->
 	<DHCP>

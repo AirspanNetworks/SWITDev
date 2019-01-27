@@ -168,7 +168,7 @@ public class TestspanTest extends SystemTestCase4 {
         if (!enbsAreInService)
             report.report("One or more of the enbs failed to reach all running state, failing and stopping test.",
                     Reporter.FAIL);
-        Assume.assumeTrue(enbsAreInService);
+//        Assume.assumeTrue(enbsAreInService);
     }
 
     /**

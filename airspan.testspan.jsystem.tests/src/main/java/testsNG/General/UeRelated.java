@@ -58,6 +58,7 @@ public class UeRelated extends TestspanTest {
 		enbInTest = new ArrayList<EnodeB>();
 		enbInTest.add(dut);
 		super.init();
+		haltingTestWhenNeeded();
 		setDUTs();
 		ArrayList<String> commands = new ArrayList<>();
 		commands.add("ue show link");

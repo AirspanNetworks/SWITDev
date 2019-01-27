@@ -61,6 +61,7 @@ public class TestspanTest extends SystemTestCase4 {
     private ArrayList<CommandWatchInService> inServiceCommands = new ArrayList<CommandWatchInService>();
     private StringBuilder coreFilesPath;
     private boolean isCoreOccurDuringTest;
+    public boolean isHaltTestNeeded = false;
 
     private HashMap<String, ArrayList<String>> filesFromDBPerNode = new HashMap<String, ArrayList<String>>();
 
@@ -165,9 +166,11 @@ public class TestspanTest extends SystemTestCase4 {
      * Verify EnodeBs Are In Service, fail and stop test if not.
      */
     private void verifyEnBsAreInService() {
-        if (!enbsAreInService)
+        if (!enbsAreInService) {
             report.report("One or more of the enbs failed to reach all running state, failing and stopping test.",
                     Reporter.FAIL);
+            isHaltTestNeeded = true;
+        }
 //        Assume.assumeTrue(enbsAreInService);
     }
 
@@ -1166,8 +1169,17 @@ public class TestspanTest extends SystemTestCase4 {
         }
     }
 
-    @ParameterProperties(description = "Set Perform Db Comperison")
+    @ParameterProperties(description = "Set Perform Db Comparison")
 	public void setPerformDbComperison(boolean performDbComperison) {
 		this.performDbComperison = performDbComperison;
 	}
+
+    /**
+     * When param isHaltTestNeeded is true, the test will immediatly stop and ignored.
+     * This func should not be called in the supers.
+     */
+    public void haltingTestWhenNeeded(){
+        if (isHaltTestNeeded)
+            Assume.assumeTrue(false);
+    }
 }

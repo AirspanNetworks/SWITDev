@@ -148,7 +148,7 @@ public class TestspanTest extends SystemTestCase4 {
         alarmsAndEvents.deleteAllAlarmsNode(eNodeB);
         initCommandWatchInService(eNodeB);
         initMemoryCPUCommand(eNodeB);
-        PeripheralsConfig.getInstance().changeEnbState(eNodeB, EnbStates.IN_SERVICE);
+//        PeripheralsConfig.getInstance().changeEnbState(eNodeB, EnbStates.IN_SERVICE);
         //todo remove to debug.
         enbsAreInService = false;
 //        waitForAllRunningAndInService(eNodeB);

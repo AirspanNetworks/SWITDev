@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import Netspan.API.Enums.EnbStates;
 import org.apache.commons.lang3.StringUtils;
 import org.custommonkey.xmlunit.DetailedDiff;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -42,6 +43,7 @@ import jsystem.framework.report.Reporter;
 import junit.framework.SystemTestCase4;
 import testsNG.Actions.AlarmsAndEvents;
 import testsNG.Actions.EnodeBConfig;
+import testsNG.Actions.PeripheralsConfig;
 import testsNG.General.SWUpgrade;
 
 /**
@@ -135,7 +137,6 @@ public class TestspanTest extends SystemTestCase4 {
         setDebugFtpServer();
         GeneralUtils.stopLevel();
         verifyEnBsAreInService();
-        haltTestWhenNeeded();
     }
 
     /**
@@ -153,7 +154,7 @@ public class TestspanTest extends SystemTestCase4 {
         alarmsAndEvents.deleteAllAlarmsNode(eNodeB);
         initCommandWatchInService(eNodeB);
         initMemoryCPUCommand(eNodeB);
-//        PeripheralsConfig.getInstance().changeEnbState(eNodeB, EnbStates.IN_SERVICE);
+        PeripheralsConfig.getInstance().changeEnbState(eNodeB, EnbStates.IN_SERVICE);
         //todo remove to debug.
         enbsAreInService = false;
 //        waitForAllRunningAndInService(eNodeB);
@@ -1179,12 +1180,14 @@ public class TestspanTest extends SystemTestCase4 {
 	}
 
     /**
-     * When param isHaltTestNeeded is true, the test will immediatly stop and ignored.
+     * When param isHaltTestNeeded is true, the test will immediately stop and ignored.
      * This func should not be called in the supers.
      */
-    public void haltTestWhenNeeded(){
-        if (isHaltTestNeeded)
+    public boolean isHaltTestNeeded(){
+        if (isHaltTestNeeded) {
             GeneralUtils.stopAllLevels();
-            Assume.assumeTrue(false);
+            return true;
+        }
+        return false;
     }
 }

@@ -185,7 +185,7 @@ public class UeRelated extends TestspanTest {
 
 	@Override
 	public void end(){
-		haltTestWhenNeeded();
+		if (isHaltTestNeeded()) return;
 		if (traffic.getGeneratorType() == TrafficGeneratorType.TestCenter) {
 			String TrafficFile = traffic.getTg().getDefaultConfigTccFile();
 			traffic.configFile = new File(TrafficFile);

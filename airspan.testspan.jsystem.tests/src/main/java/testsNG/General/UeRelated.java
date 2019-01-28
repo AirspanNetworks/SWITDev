@@ -53,12 +53,10 @@ public class UeRelated extends TestspanTest {
 
 	@Override
 	public void init() throws Exception {
-
 		epc = EPC.getInstance();
 		enbInTest = new ArrayList<EnodeB>();
 		enbInTest.add(dut);
 		super.init();
-		haltingTestWhenNeeded();
 		setDUTs();
 		ArrayList<String> commands = new ArrayList<>();
 		commands.add("ue show link");
@@ -187,7 +185,7 @@ public class UeRelated extends TestspanTest {
 
 	@Override
 	public void end(){
-
+		haltTestWhenNeeded();
 		if (traffic.getGeneratorType() == TrafficGeneratorType.TestCenter) {
 			String TrafficFile = traffic.getTg().getDefaultConfigTccFile();
 			traffic.configFile = new File(TrafficFile);

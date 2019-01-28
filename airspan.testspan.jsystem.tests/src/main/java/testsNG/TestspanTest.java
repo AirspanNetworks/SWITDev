@@ -24,7 +24,6 @@ import EnodeB.EnodeB;
 import EnodeB.SnifferFileLocation;
 import EnodeB.Components.Log.Logger;
 import Netspan.NetspanServer;
-import Netspan.API.Enums.EnbStates;
 import Netspan.API.Lte.AlarmInfo;
 import TestingServices.TestConfig;
 import Utils.DebugFtpServer;
@@ -43,7 +42,6 @@ import jsystem.framework.report.Reporter;
 import junit.framework.SystemTestCase4;
 import testsNG.Actions.AlarmsAndEvents;
 import testsNG.Actions.EnodeBConfig;
-import testsNG.Actions.PeripheralsConfig;
 import testsNG.General.SWUpgrade;
 
 /**
@@ -61,7 +59,11 @@ public class TestspanTest extends SystemTestCase4 {
     private ArrayList<CommandWatchInService> inServiceCommands = new ArrayList<CommandWatchInService>();
     private StringBuilder coreFilesPath;
     private boolean isCoreOccurDuringTest;
-    public boolean isHaltTestNeeded = false;
+
+    /**
+     * isHaltTestNeeded will be set to true in order to halt and skip the test while the Init() func.
+     */
+    public boolean isHaltTestNeeded;
 
     private HashMap<String, ArrayList<String>> filesFromDBPerNode = new HashMap<String, ArrayList<String>>();
 
@@ -112,6 +114,7 @@ public class TestspanTest extends SystemTestCase4 {
      */
     @Before
     public void init() throws Exception {
+        isHaltTestNeeded = false;
         testStats = new HashMap<String, Integer>();
         scenarioStats = ScenarioUtils.getInstance().getScenarioStats();
         netspanServer = NetspanServer.getInstance();
@@ -132,6 +135,7 @@ public class TestspanTest extends SystemTestCase4 {
         setDebugFtpServer();
         GeneralUtils.stopLevel();
         verifyEnBsAreInService();
+        haltTestWhenNeeded();
     }
 
     /**
@@ -1178,8 +1182,9 @@ public class TestspanTest extends SystemTestCase4 {
      * When param isHaltTestNeeded is true, the test will immediatly stop and ignored.
      * This func should not be called in the supers.
      */
-    public void haltingTestWhenNeeded(){
+    public void haltTestWhenNeeded(){
         if (isHaltTestNeeded)
+            GeneralUtils.stopAllLevels();
             Assume.assumeTrue(false);
     }
 }

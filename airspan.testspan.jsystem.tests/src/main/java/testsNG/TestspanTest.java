@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import Netspan.API.Enums.EnbStates;
 import org.apache.commons.lang3.StringUtils;
 import org.custommonkey.xmlunit.DetailedDiff;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -150,9 +149,7 @@ public class TestspanTest extends SystemTestCase4 {
         initCommandWatchInService(eNodeB);
         initMemoryCPUCommand(eNodeB);
         PeripheralsConfig.getInstance().changeEnbState(eNodeB, EnbStates.IN_SERVICE);
-        //todo remove to debug.
-        enbsAreInService = false;
-//        waitForAllRunningAndInService(eNodeB);
+        waitForAllRunningAndInService(eNodeB);
         reportIfCMPWasSkipped(eNodeB);
         eNodeB.setCellContextNumber(1);
         showLoginStatus(eNodeB);
@@ -1171,16 +1168,4 @@ public class TestspanTest extends SystemTestCase4 {
 	public void setPerformDbComperison(boolean performDbComperison) {
 		this.performDbComperison = performDbComperison;
 	}
-
-    /**
-     * When param isHaltTestNeeded is true, the test will immediately stop and ignored.
-     * This func should not be called in the supers.
-     */
-    public boolean isHaltTestNeeded(){
-        if (isHaltTestNeeded) {
-            GeneralUtils.stopAllLevels();
-            return true;
-        }
-        return false;
-    }
 }

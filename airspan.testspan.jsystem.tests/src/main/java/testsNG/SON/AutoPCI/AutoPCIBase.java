@@ -70,20 +70,15 @@ public class AutoPCIBase extends TestspanTest {
     protected int pciStart;
     protected int pciEnd;
     protected final int threshold = 16;
-    protected boolean shouldReboot = false;
+    protected boolean shouldReboot;
 
     @SuppressWarnings("unchecked")
     @Override
     public void init() throws Exception {
+        shouldReboot = false;
         enbInTest = new ArrayList<>();
         enbInTest.add(dut);
-        super.init();
-        GeneralUtils.startLevel("Init");
         netspanServer = NetspanServer.getInstance();
-
-        otherEnb = (ArrayList<EnodeB>) enbInSetup.clone();
-        otherEnb.remove(dut);
-
         enodeBConfig = EnodeBConfig.getInstance();
         netspan = NetspanServer.getInstance();
         mibReader = MibReader.getInstance();
@@ -94,6 +89,14 @@ public class AutoPCIBase extends TestspanTest {
         alarmsAndEvents = AlarmsAndEvents.getInstance();
         peripheralsConfig = PeripheralsConfig.getInstance();
         testConfig = TestConfig.getInstace();
+        testUE = SetupUtils.getInstance().getDynamicUEs().get(0);
+
+        super.init();
+        GeneralUtils.startLevel("Init");
+
+        otherEnb = (ArrayList<EnodeB>) enbInSetup.clone();
+        otherEnb.remove(dut);
+
         if (attenuatorSetUnderTest == null) {
             attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(CommonConstants.ATTENUATOR_SET_NAME);
         }
@@ -116,7 +119,6 @@ public class AutoPCIBase extends TestspanTest {
             }
         }
         GeneralUtils.startLevel("Initialize UEs");
-        testUE = SetupUtils.getInstance().getDynamicUEs().get(0);
         GeneralUtils.stopLevel();
         testUeList = new ArrayList<UE>();
         testUeList.add(testUE);

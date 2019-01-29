@@ -20,6 +20,7 @@ import Netspan.API.Enums.CsgModes;
 import Netspan.API.Enums.DuplexType;
 import Netspan.API.Enums.EnabledDisabledStates;
 import Netspan.API.Enums.EnbStates;
+import Netspan.API.Enums.NodeManagementModeType;
 import Netspan.API.Enums.PrimaryClockSourceEnum;
 import Netspan.API.Lte.EnbCellProperties;
 import Netspan.API.Lte.LteBackhaul;
@@ -124,7 +125,8 @@ public class Enodeb extends EnodebAction {
     private Comparison comparison;
     private EnbProfiles enbProfile;
     private String profileName;
-
+    
+    private NodeManagementModeType managedMode;
     private boolean enableCell;
     private String physicalCellId;
     private String PRACHRootSequenceIndex;
@@ -151,6 +153,15 @@ public class Enodeb extends EnodebAction {
         this.granularityPeriod = Integer.valueOf(granularityPeriod);
     }
 
+    public NodeManagementModeType isManaged() {
+		return managedMode;
+	}
+
+    @ParameterProperties(description = "Set EnodeB to Managed or Unmanaged")
+	public void setManaged(NodeManagementModeType managed) {
+		this.managedMode = managed;
+	}
+	
     @ParameterProperties(description = "Set cell enable value")
     public void setEnableCell(boolean enableCell) {
         this.enableCell = enableCell;
@@ -811,6 +822,26 @@ public class Enodeb extends EnodebAction {
         setAnswer(testResponseFlag);
     }
 
+    @Test 
+    @TestProperties(name = "Set Managed Mode for EnodeB", returnParam = {"LastStatus", "Answer"}, paramsInclude = {"DUT", "managed"})
+    public void setManaged() throws Exception {
+    	boolean isModeAsExpected = NetspanServer.getInstance().getManagedMode(dut).equals(managedMode);
+        if (isModeAsExpected) {
+            setAnswer(true);
+            report.report(this.dut.getName() + " is in " + managedMode + " State Already");
+        } else {
+        	report.report(this.dut.getName() + " is not in " + managedMode + " mode. trying to set it via Netspan");
+        	if(NetspanServer.getInstance().setManagedMode(dut.getNetspanName(), managedMode)){
+        		setAnswer(true);
+        		report.report("Succeedded to set " + this.dut.getName() + " mode to " + managedMode);
+        	}
+        	else{
+        		setAnswer(false);
+        		report.report("Failed to set " + this.dut.getName() + " mode to " + managedMode, Reporter.FAIL);
+        	}        	
+        }
+    }
+    
     @Override
     public void init() {
         if (enbInTest == null) {

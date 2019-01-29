@@ -19,6 +19,7 @@ import EnodeB.EnodeBChannelBandwidth;
 import EnodeB.EnodeBUpgradeImage;
 import EnodeB.EnodeBUpgradeServer;
 import Netspan.EnbProfiles;
+import Netspan.NBIVersion;
 import Netspan.NBI_15_2.Software.*;
 import Netspan.NetspanServer;
 import Netspan.API.Enums.CategoriesLte;
@@ -164,6 +165,14 @@ import Utils.Pair;
 import Utils.Triple;
 import jsystem.framework.report.Reporter;
 
+/**
+ * @author dshalom
+ *
+ */
+/**
+ * @author dshalom
+ *
+ */
 public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_abilities {
     public SoapHelper soapHelper_15_2;
     private static final String USERNAME = "wsadmin";
@@ -179,10 +188,19 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
     @Override
     public void init() throws Exception {
         if (NBI_VERSION == null) {
-            NBI_VERSION = "15_2";
+            NBI_VERSION = NBIVersion.NBI_15_2;
         }
         super.init();
-        this.soapHelper_15_2 = new SoapHelper(getHostname());
+    }
+    
+    /**
+     * Init soap  helper objects.
+     *
+     * @throws Exception the exception
+     */
+    @Override
+    public void initSoapHelper() throws Exception{
+    	this.soapHelper_15_2 = new SoapHelper(getHostname());
         credentialsLte.setUsername(USERNAME);
         credentialsLte.setPassword(PASSWORD);
         credentialsInventory.setUsername(USERNAME);
@@ -198,7 +216,7 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
         credentialsSoftware.setUsername(USERNAME);
         credentialsSoftware.setPassword(PASSWORD);
     }
-
+    
     /**
      * Populate node names.
      *

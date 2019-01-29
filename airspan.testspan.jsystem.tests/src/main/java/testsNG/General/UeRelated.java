@@ -53,6 +53,7 @@ public class UeRelated extends TestspanTest {
 
 	@Override
 	public void init() throws Exception {
+
 		epc = EPC.getInstance();
 		enbInTest = new ArrayList<EnodeB>();
 		enbInTest.add(dut);

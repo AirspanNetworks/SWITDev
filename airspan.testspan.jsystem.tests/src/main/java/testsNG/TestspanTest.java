@@ -25,6 +25,7 @@ import EnodeB.EnodeB;
 import EnodeB.SnifferFileLocation;
 import EnodeB.Components.Log.Logger;
 import Netspan.NetspanServer;
+import Netspan.API.Enums.EnbStates;
 import Netspan.API.Lte.AlarmInfo;
 import TestingServices.TestConfig;
 import Utils.DebugFtpServer;
@@ -61,11 +62,6 @@ public class TestspanTest extends SystemTestCase4 {
     private ArrayList<CommandWatchInService> inServiceCommands = new ArrayList<CommandWatchInService>();
     private StringBuilder coreFilesPath;
     private boolean isCoreOccurDuringTest;
-
-    /**
-     * isHaltTestNeeded will be set to true in order to halt and skip the test while the Init() func.
-     */
-    public boolean isHaltTestNeeded;
 
     private HashMap<String, ArrayList<String>> filesFromDBPerNode = new HashMap<String, ArrayList<String>>();
 
@@ -116,7 +112,6 @@ public class TestspanTest extends SystemTestCase4 {
      */
     @Before
     public void init() throws Exception {
-        isHaltTestNeeded = false;
         testStats = new HashMap<String, Integer>();
         scenarioStats = ScenarioUtils.getInstance().getScenarioStats();
         netspanServer = NetspanServer.getInstance();
@@ -171,12 +166,10 @@ public class TestspanTest extends SystemTestCase4 {
      * Verify EnodeBs Are In Service, fail and stop test if not.
      */
     private void verifyEnBsAreInService() {
-        if (!enbsAreInService) {
+        if (!enbsAreInService)
             report.report("One or more of the enbs failed to reach all running state, failing and stopping test.",
                     Reporter.FAIL);
-            isHaltTestNeeded = true;
-        }
-//        Assume.assumeTrue(enbsAreInService);
+        Assume.assumeTrue(enbsAreInService);
     }
 
     /**
@@ -1174,7 +1167,7 @@ public class TestspanTest extends SystemTestCase4 {
         }
     }
 
-    @ParameterProperties(description = "Set Perform Db Comparison")
+    @ParameterProperties(description = "Set Perform Db Comperison")
 	public void setPerformDbComperison(boolean performDbComperison) {
 		this.performDbComperison = performDbComperison;
 	}

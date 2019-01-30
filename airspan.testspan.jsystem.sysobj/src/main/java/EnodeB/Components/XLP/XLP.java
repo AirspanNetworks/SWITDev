@@ -761,7 +761,7 @@ public abstract class XLP extends EnodeBComponent {
         // waiting for Done in the download
         //long timeout = EnodeB.UPGRADE_TIMEOUT; // 60 minutes
         long startTime = System.currentTimeMillis();
-        while (System.currentTimeMillis() - startTime <= EnodeB.UPGRADE_TIMEOUT / 3) {
+        while (System.currentTimeMillis() - startTime <= EnodeB.UPGRADE_TIMEOUT) {
             String precent = "", downloadStatus, statusString = "";
 
             precent = snmp.get(precentOid).trim();

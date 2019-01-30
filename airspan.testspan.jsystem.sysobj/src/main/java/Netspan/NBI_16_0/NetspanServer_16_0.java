@@ -237,7 +237,6 @@ public class NetspanServer_16_0 extends NetspanServer_15_5 implements Netspan_16
 		}
 
 		return softwareImage;
-
 	}
 	
 	private SwFileInfoWs createFileInfoObject(EnodeBUpgradeImage upgradeImage) {

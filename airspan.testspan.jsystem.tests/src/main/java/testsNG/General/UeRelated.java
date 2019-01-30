@@ -44,7 +44,6 @@ public class UeRelated extends TestspanTest {
 	private final int MAX_NUMBER_OF_RECOVERY_TRYS = 2;
 	EPC epc;
 	PeripheralsConfig peripheralsConfig;
-	NetspanServer netspanServer;
 	short numberOfRecoveryTrys = 0;
 	private EnodeB dut;
 	private ArrayList<EnodeB> duts;
@@ -57,6 +56,8 @@ public class UeRelated extends TestspanTest {
 		epc = EPC.getInstance();
 		enbInTest = new ArrayList<EnodeB>();
 		enbInTest.add(dut);
+		traffic = Traffic.getInstance(SetupUtils.getInstance().getAllUEs());
+		initPeripheralsConfig();
 		super.init();
 		setDUTs();
 		ArrayList<String> commands = new ArrayList<>();
@@ -76,17 +77,11 @@ public class UeRelated extends TestspanTest {
 
 		GeneralUtils.startLevel("Init");
 
-		traffic = Traffic.getInstance(SetupUtils.getInstance().getAllUEs());
 		if (traffic.getGeneratorType() == TrafficGeneratorType.TestCenter) {
 			String TrafficFile = traffic.getTg().getDefaultConfigTccFile();
 			int lastDot = TrafficFile.lastIndexOf('.');
 			String HOTrafficFile = TrafficFile.substring(0, lastDot) + "_HO" + TrafficFile.substring(lastDot);
 			traffic.configFile = new File(HOTrafficFile);
-		}
-		try {
-			peripheralsConfig = PeripheralsConfig.getInstance();
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 		GeneralUtils.startLevel("Prepare Setup for the test");
 		
@@ -105,6 +100,17 @@ public class UeRelated extends TestspanTest {
 
 		GeneralUtils.stopLevel();
 		GeneralUtils.stopLevel();
+	}
+
+	/**
+	 * try to get instance of PeripheralsConfig
+	 */
+	private void initPeripheralsConfig() {
+		try {
+			peripheralsConfig = PeripheralsConfig.getInstance();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Test
@@ -186,22 +192,43 @@ public class UeRelated extends TestspanTest {
 
 	@Override
 	public void end(){
+		super.end();
+		saveTraffic();
+		stopCommandThreadIfStarted();
+		changeDutsToInService();
+	}
 
-		if (traffic.getGeneratorType() == TrafficGeneratorType.TestCenter) {
+	/**
+	 * stop CommandThread If Started
+	 */
+	private void stopCommandThreadIfStarted() {
+		if (commandsThread != null) {
+			commandsThread.stopCommands();
+			commandsThread.moveFileToReporterAndAddLink();
+		}
+	}
+
+	/**
+	 * save Traffic
+	 */
+	private void saveTraffic() {
+		if ((traffic != null) &&
+				(traffic.getGeneratorType() == TrafficGeneratorType.TestCenter)) {
 			String TrafficFile = traffic.getTg().getDefaultConfigTccFile();
 			traffic.configFile = new File(TrafficFile);
 		}
+	}
 
-		commandsThread.stopCommands();
-		commandsThread.moveFileToReporterAndAddLink();
+	/**
+	 * change Duts To In Service
+	 */
+	private void changeDutsToInService() {
 		GeneralUtils.startLevel("Returning system to status before the test");
 
 		for (EnodeB enb : duts) {
 			peripheralsConfig.changeEnbState(enb, EnbStates.IN_SERVICE);
 		}
 		GeneralUtils.stopLevel();
-
-		super.end();
 	}
 
 	/**

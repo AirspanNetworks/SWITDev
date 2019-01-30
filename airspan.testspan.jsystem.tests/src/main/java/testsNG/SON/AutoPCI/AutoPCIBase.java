@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.List;
 
 import Utils.*;
-import com.sun.jna.platform.win32.ShellAPI.SHFILEOPSTRUCT;
 
 import Attenuators.AttenuatorSet;
 import EnodeB.EnodeB;
@@ -249,11 +248,20 @@ public class AutoPCIBase extends TestspanTest {
         SONStatus sonStatus = netspan.getSONStatus(dut);
         printRSIPCIDebug(sonStatus);
 
-        for (EnodeB enb : otherEnb) {
-            peripheralsConfig.changeEnbState(enb, EnbStates.IN_SERVICE);
-        }
+        changeStateToOtherEnbs();
         GeneralUtils.stopLevel();
         super.end();
+    }
+
+    /**
+     * change State to "In service" To the Other Enbs in the setup
+     */
+    private void changeStateToOtherEnbs() {
+        if (otherEnb != null) {
+            for (EnodeB enb : otherEnb) {
+                peripheralsConfig.changeEnbState(enb, EnbStates.IN_SERVICE);
+            }
+        }
     }
 
     private Boolean checkIfPciIsDefault() {

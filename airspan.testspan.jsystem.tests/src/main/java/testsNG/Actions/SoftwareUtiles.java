@@ -897,7 +897,7 @@ public class SoftwareUtiles {
 			report.report(
 					enodeB.getName() + " - Waiting for software download to finish and report \"" + doneMessage + "\"");
 			boolean doneMessageFound = Log.getInstance().waitForLogLine(enodeB, EnodeBComponentTypes.XLP, doneMessage,
-					EnodeB.UPGRADE_TIMEOUT / 3);
+					EnodeB.UPGRADE_TIMEOUT);
 			if (doneMessageFound) {
 				return true;
 			}
@@ -1632,7 +1632,7 @@ public class SoftwareUtiles {
 
 		} 
 		while ((!eNodebSwStausListTmp.isEmpty())
-				&& (System.currentTimeMillis() - softwareActivateStartTimeInMili <= (EnodeB.UPGRADE_TIMEOUT / 3)));
+				&& (System.currentTimeMillis() - softwareActivateStartTimeInMili <= (EnodeB.UPGRADE_TIMEOUT)));
 		for (EnodebSwStatus eNodebSwStaus : eNodebSwStausListTmp) {
 			if (!eNodebSwStaus.isSwDownloadCompleted) {
 				report.report(eNodebSwStaus.eNodeB.getName() + ": Software Download Didn't End.", Reporter.FAIL);

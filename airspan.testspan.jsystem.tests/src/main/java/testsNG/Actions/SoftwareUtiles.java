@@ -1424,6 +1424,9 @@ public class SoftwareUtiles {
 					}
 					upgradeImage.setBuildPath(buildFileName);
 					upgradeImage.setVersion(build);
+					// Set HW cat to fix Netspan bug!! NEED to remove.
+					upgradeImage.setHardwareCategory(netspanServer.getHardwareCategory(eNodeB));
+					
 					if (!updateSoftwareImage(upgradeImage)) {
 						report.report("FAILED To Update Software Image.", Reporter.FAIL);
 						numberOfExpectedReboots = GeneralUtils.ERROR_VALUE;

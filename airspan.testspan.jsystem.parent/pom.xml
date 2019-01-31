@@ -6,7 +6,7 @@
 	<version>1.21.90</version> 
 	<packaging>pom</packaging>
 	<properties>
-		<jsystem.version>6.1.06-beta1</jsystem.version>
+		<jsystem.version>6.1.11-SNAPSHOT</jsystem.version>
 		<java.version>1.8</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<internal.maven.repo>http://asil-swit:9010/repository/airspan-public/</internal.maven.repo>

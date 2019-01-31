@@ -148,9 +148,8 @@ public class TestspanTest extends SystemTestCase4 {
         alarmsAndEvents.deleteAllAlarmsNode(eNodeB);
         initCommandWatchInService(eNodeB);
         initMemoryCPUCommand(eNodeB);
-//        PeripheralsConfig.getInstance().changeEnbState(eNodeB, EnbStates.IN_SERVICE);
-//        waitForAllRunningAndInService(eNodeB);
-        enbsAreInService =false;
+        PeripheralsConfig.getInstance().changeEnbState(eNodeB, EnbStates.IN_SERVICE);
+        waitForAllRunningAndInService(eNodeB);
         reportIfCMPWasSkipped(eNodeB);
         eNodeB.setCellContextNumber(1);
         showLoginStatus(eNodeB);

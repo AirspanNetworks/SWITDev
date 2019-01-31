@@ -430,10 +430,12 @@ public class TestspanTest extends SystemTestCase4 {
         // try to load from maven properties first
         try {
             // open containing file
+        	GeneralUtils.printToConsole("Openning pom file to get auto version.");
             File file = new File(PATH_TO_POM_PROPERTIES);
             FileReader fileReader = new FileReader(file);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             // parsing file line by line
+            GeneralUtils.printToConsole("Reading pom file to get auto version.");
             String line = bufferedReader.readLine();
             while (line != null) {
                 if (line.contains("version")) {
@@ -444,6 +446,7 @@ public class TestspanTest extends SystemTestCase4 {
                 line = bufferedReader.readLine();
             }
             // close mapping file
+            GeneralUtils.printToConsole("Closing pom file.");
             fileReader.close();
         } catch (Exception e) {
             // ignore
@@ -451,6 +454,7 @@ public class TestspanTest extends SystemTestCase4 {
         if (StringUtils.EMPTY == version) {
             version = "No version found";
         }
+        GeneralUtils.printToConsole("Auto version == " + version);
         return version;
     }
 

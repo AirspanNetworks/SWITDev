@@ -7,8 +7,8 @@ public class TestConfig extends SystemObjectImpl {
 
     private static TestConfig instance = null;
 
-    public SWUpgradeConfig swUpgradeConfig;
-    private int[] defaultEarfcn;
+    private String defaultSwBulid = "";
+	private int[] defaultEarfcn;
     private int[] interEarfcn;
     private String UE_Restart = "IPPower";
 
@@ -95,10 +95,14 @@ public class TestConfig extends SystemObjectImpl {
         this.dynamicUEs = dynamicUEs.split(",");
     }
 
-    public SWUpgradeConfig getSwUpgradeConfig() {
-        return swUpgradeConfig;
+    public String getDefaultSwBulid() {
+        return defaultSwBulid;
     }
 
+    public void setDefaultSwBulid(String defaultSwBulid) {
+		this.defaultSwBulid = defaultSwBulid;
+	}
+    
     public int getDefaultEarfcn() {
         return defaultEarfcn[0];
     }

@@ -13,20 +13,11 @@ function getTestColors(){
     return colors;
 }
 
-function isTestShownInHtml(test) {
-    if ('hideInHtml' in test && test.hideInHtml === true && test.status === "success") {
-        return false;
-    }
-    return true;
-}
-
 function collectTestsFromScenario(children,tests){
     $(children).each(function(){
-       switch (this.type) {           
+       switch (this.type) {
            case "test":
-               if (isTestShownInHtml(this)){
-                   tests.push(this);
-               }
+               tests.push(this);
                break;
            case "scenario":
                collectTestsFromScenario(this.children,tests);

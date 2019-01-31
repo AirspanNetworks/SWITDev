@@ -365,12 +365,12 @@ public class Neighbors {
             InetAddress addr;
             addr = InetAddress.getLocalHost();
             String cmd = addr.getHostAddress();
-            String[] separated = cmd.split("\\.");
-
-            mcc = Integer.parseInt(separated[2]);
+            String separator = cmd.contains(":") ? ":" : "\\.";
+            String[] separated = cmd.split(separator);
+            mcc = Integer.parseInt(separated[separated.length - 2]);
             if (mcc == 0)
                 mcc++;
-            mnc = Integer.parseInt(separated[3]);
+            mnc = Integer.parseInt(separated[separated.length - 1]);
             if (mnc == 0)
                 mnc++;
             GeneralUtils.printToConsole("3rd Party MCC: " + mcc + ", MNC: " + mnc);

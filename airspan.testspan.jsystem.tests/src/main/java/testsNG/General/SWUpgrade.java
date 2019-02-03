@@ -138,6 +138,7 @@ public class SWUpgrade extends TestspanTest {
 			"IsTestWasSuccessful" }, paramsExclude = { "IsTestWasSuccessful" })
 	public void softwareUpgradeToDefault() {
 		buildPath = tc.getDefaultSwBulid();
+		relayBuildPath = tc.getDefaultRelayBulid();
 		if(!buildPath.equals("")){
 			build = getVersionFromPath(buildPath);
 			softwareUpgradeFromNetspan();

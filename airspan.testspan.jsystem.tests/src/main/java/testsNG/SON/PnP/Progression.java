@@ -104,6 +104,9 @@ public class Progression extends TestspanTest{
 	private HtmlTable htmlTable;
 	private HtmlTimelineStage[] htmlTimelineTable;
 	private Pair<Long, String>[] expectedDurationsAndStageNamesOrdered;
+	private String buildPath;
+	private String relayBuildPath;
+	private String build;
 	
 	@Override
 	public void init() throws Exception {
@@ -356,7 +359,7 @@ public class Progression extends TestspanTest{
 			rebootTime = System.currentTimeMillis();
 			if(eNodeB.isSwUpgradeDuringPnP()){
 				WAIT_FOR_ALL_RUNNING_TIME = 30 * 60 * 1000;
-				swActivationDetails = SoftwareUtiles.getInstance().updatDefaultSoftwareImage(eNodeB);
+				swActivationDetails = SoftwareUtiles.getInstance().updatDefaultSoftwareImage(eNodeB, buildPath, relayBuildPath);
 			}
 			watchAllRunningTimeout.startCounting(rebootTime, WAIT_FOR_ALL_RUNNING_TIME);
 			report.report("Convert To PnP Configuration in NMS.");
@@ -405,6 +408,14 @@ public class Progression extends TestspanTest{
 	
 	private boolean isNinjaAvailableViaDebugPort(EnodeBWithDonor eNodeBWithDonor) {
 		boolean isAvailable = false;
+		buildPath = System.getProperty("BuildMachineVerPath");
+		relayBuildPath = System.getProperty("BuildMachineRelayVerPath");
+		if (buildPath == null || buildPath.isEmpty()) {
+			report.report("No inputs for the test");
+			reason = "No inputs for the test";
+		} 
+		else
+			build = SoftwareUtiles.getVersionFromPath(buildPath);
 		try {
 			eNodeBWithDonor.debugPort.init();
 		} catch (Exception e) {

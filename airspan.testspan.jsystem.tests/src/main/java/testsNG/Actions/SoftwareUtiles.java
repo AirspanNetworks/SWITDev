@@ -31,6 +31,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static java.nio.file.StandardCopyOption.*;
 
@@ -1549,6 +1551,20 @@ public class SoftwareUtiles {
 		return result;
 	}
 
+	public static String getVersionFromPath(String path) {
+		path = path + "\\";
+		String version = "";
+		final String regex = "[\\\\]+[0-9,_]+[\\\\]+";
+		final Pattern pattern = Pattern.compile(regex);
+		final Matcher matcher = pattern.matcher(path);
+		if (matcher.find()) {
+			version = matcher.group(0);
+			version = version.replace("\\", "");
+			version = version.replaceAll("_", "\\.");
+		}
+		return version;
+	}
+	
 	public void printSoftwareImageDetails(EnodeB eNodeB) {
 		EnodeBUpgradeImage enodeBUpgradeImage = netspanServer
 				.getSoftwareImage(eNodeB.getDefaultNetspanProfiles().getSoftwareImage());

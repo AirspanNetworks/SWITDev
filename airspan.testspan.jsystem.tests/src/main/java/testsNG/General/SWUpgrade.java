@@ -60,7 +60,7 @@ public class SWUpgrade extends TestspanTest {
 			return;
 		} 
 		else
-			build = getVersionFromPath(buildPath);
+			build = SoftwareUtiles.getVersionFromPath(buildPath);
 
 		enbUpgrade = SysObjUtils.getInstnce().initSystemObject(EnodeBUpgradeServer.class, false, "UpgradeServer")
 				.get(0);
@@ -140,7 +140,7 @@ public class SWUpgrade extends TestspanTest {
 		buildPath = tc.getDefaultSwBulid();
 		relayBuildPath = tc.getDefaultRelayBulid();
 		if(!buildPath.equals("")){
-			build = getVersionFromPath(buildPath);
+			build = SoftwareUtiles.getVersionFromPath(buildPath);
 			softwareUpgradeFromNetspan();
 		}
 	}
@@ -429,17 +429,5 @@ public class SWUpgrade extends TestspanTest {
 						- TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(milis)));
 	}
 
-	private String getVersionFromPath(String path) {
-		path = path + "\\";
-		String version = "";
-		final String regex = "[\\\\]+[0-9,_]+[\\\\]+";
-		final Pattern pattern = Pattern.compile(regex);
-		final Matcher matcher = pattern.matcher(path);
-		if (matcher.find()) {
-			version = matcher.group(0);
-			version = version.replace("\\", "");
-			version = version.replaceAll("_", "\\.");
-		}
-		return version;
-	}
+	
 }

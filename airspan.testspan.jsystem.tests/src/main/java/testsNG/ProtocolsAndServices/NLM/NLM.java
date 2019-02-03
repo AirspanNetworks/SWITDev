@@ -49,13 +49,6 @@ public class NLM extends TestspanTest {
 	private PeripheralsConfig peripheralsConfig;
 	private final String localFileLocation = System.getProperty("user.dir");
 	private EnodeBConfig enbConfig;
-	private AttenuatorSet HO_attenuatorSetUnderTest;
-	private AttenuatorSet clksource_attenuatorSetUnderTest;
-	private String clksource_attenuatorSetName = "rudat_set2";
-	private int HO_attenuatorMin;
-	private int HO_attenuatorMax;
-	private int clksource_attenuatorMin;
-	private int clksource_attenuatorMax;
 	private ArrayList<EnodeB> sourceEnodeBs = new ArrayList<EnodeB>();
 	
 
@@ -69,25 +62,6 @@ public class NLM extends TestspanTest {
 		peripheralsConfig = PeripheralsConfig.getInstance();
 		enbConfig = EnodeBConfig.getInstance();
 		scpCli = new ScpClient(dut.getIpAddress(), dut.getUsername(), dut.getPassword());
-		
-		try {
-			HO_attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(CommonConstants.ATTENUATOR_SET_NAME);
-			HO_attenuatorMin = HO_attenuatorSetUnderTest.getMinAttenuation();
-			HO_attenuatorMax = HO_attenuatorSetUnderTest.getMaxAttenuation();
-		} catch (Exception e) {
-			report.report("Can't get first attenuator object from system");
-			e.printStackTrace();
-		}
-		
-		try {
-			clksource_attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(clksource_attenuatorSetName);
-			clksource_attenuatorMin = clksource_attenuatorSetUnderTest.getMinAttenuation();
-			clksource_attenuatorMax = clksource_attenuatorSetUnderTest.getMaxAttenuation();
-		}catch(Exception d){
-			report.report("Can't get Second attenuator object from system");
-			d.printStackTrace();
-		}
-		
 		GeneralUtils.stopAllLevels();
 	}
 

@@ -57,7 +57,7 @@ public class UeRelated extends TestspanTest {
 		enbInTest = new ArrayList<EnodeB>();
 		enbInTest.add(dut);
 		traffic = Traffic.getInstance(SetupUtils.getInstance().getAllUEs());
-		initPeripheralsConfig();
+		peripheralsConfig = PeripheralsConfig.getInstance();
 		super.init();
 		setDUTs();
 		ArrayList<String> commands = new ArrayList<>();
@@ -100,17 +100,6 @@ public class UeRelated extends TestspanTest {
 
 		GeneralUtils.stopLevel();
 		GeneralUtils.stopLevel();
-	}
-
-	/**
-	 * try to get instance of PeripheralsConfig
-	 */
-	private void initPeripheralsConfig() {
-		try {
-			peripheralsConfig = PeripheralsConfig.getInstance();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	@Test
@@ -192,7 +181,9 @@ public class UeRelated extends TestspanTest {
 
 	@Override
 	public void end() {
-		saveTraffic();
+		if(traffic != null) {
+			traffic.revertToDefault();
+		}
 		stopCommandThreadIfStarted();
 		changeDutsToInService();
 		super.end();
@@ -205,17 +196,6 @@ public class UeRelated extends TestspanTest {
 		if (commandsThread != null) {
 			commandsThread.stopCommands();
 			commandsThread.moveFileToReporterAndAddLink();
-		}
-	}
-
-	/**
-	 * save Traffic
-	 */
-	private void saveTraffic() {
-		if ((traffic != null) &&
-				(traffic.getGeneratorType() == TrafficGeneratorType.TestCenter)) {
-			String TrafficFile = traffic.getTg().getDefaultConfigTccFile();
-			traffic.configFile = new File(TrafficFile);
 		}
 	}
 

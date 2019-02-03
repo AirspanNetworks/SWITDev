@@ -88,7 +88,6 @@ public class AutoPCIBase extends TestspanTest {
         alarmsAndEvents = AlarmsAndEvents.getInstance();
         peripheralsConfig = PeripheralsConfig.getInstance();
         testConfig = TestConfig.getInstace();
-        testUE = SetupUtils.getInstance().getDynamicUEs().get(0);
 
         super.init();
         GeneralUtils.startLevel("Init");
@@ -118,6 +117,7 @@ public class AutoPCIBase extends TestspanTest {
             }
         }
         GeneralUtils.startLevel("Initialize UEs");
+        testUE = SetupUtils.getInstance().getDynamicUEs().get(0);
         GeneralUtils.stopLevel();
         testUeList = new ArrayList<UE>();
         testUeList.add(testUE);
@@ -257,10 +257,8 @@ public class AutoPCIBase extends TestspanTest {
      * change State to "In service" To the Other Enbs in the setup
      */
     private void changeStateToOtherEnbs() {
-        if (otherEnb != null) {
-            for (EnodeB enb : otherEnb) {
-                peripheralsConfig.changeEnbState(enb, EnbStates.IN_SERVICE);
-            }
+        for (EnodeB enb : otherEnb) {
+            peripheralsConfig.changeEnbState(enb, EnbStates.IN_SERVICE);
         }
     }
 

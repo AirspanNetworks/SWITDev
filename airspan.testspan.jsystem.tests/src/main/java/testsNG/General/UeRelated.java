@@ -28,23 +28,22 @@ import testsNG.Actions.Utils.TrafficGeneratorType;
 
 /**
  * UeRelated
- * 
+ * <p>
  * BasicNetworkEntry Test
- * 
+ * <p>
  * last update : 17/07/2016
- * 
+ *
  * @Author Shuhamy Shahaf.
- * 
- *         pre Test: Verifying ENodeBs. In Test : rebooting UE's. Epc Updating
- *         UE's states Epc checking using epc and checking all of the connection
- *         objects comparing to the UE's SIM getting from SUT
+ * <p>
+ * pre Test: Verifying ENodeBs. In Test : rebooting UE's. Epc Updating
+ * UE's states Epc checking using epc and checking all of the connection
+ * objects comparing to the UE's SIM getting from SUT
  */
 public class UeRelated extends TestspanTest {
 
 	private final int MAX_NUMBER_OF_RECOVERY_TRYS = 2;
 	EPC epc;
 	PeripheralsConfig peripheralsConfig;
-	NetspanServer netspanServer;
 	short numberOfRecoveryTrys = 0;
 	private EnodeB dut;
 	private ArrayList<EnodeB> duts;
@@ -57,6 +56,8 @@ public class UeRelated extends TestspanTest {
 		epc = EPC.getInstance();
 		enbInTest = new ArrayList<EnodeB>();
 		enbInTest.add(dut);
+		traffic = Traffic.getInstance(SetupUtils.getInstance().getAllUEs());
+		initPeripheralsConfig();
 		super.init();
 		setDUTs();
 		ArrayList<String> commands = new ArrayList<>();
@@ -76,24 +77,18 @@ public class UeRelated extends TestspanTest {
 
 		GeneralUtils.startLevel("Init");
 
-		traffic = Traffic.getInstance(SetupUtils.getInstance().getAllUEs());
 		if (traffic.getGeneratorType() == TrafficGeneratorType.TestCenter) {
 			String TrafficFile = traffic.getTg().getDefaultConfigTccFile();
 			int lastDot = TrafficFile.lastIndexOf('.');
 			String HOTrafficFile = TrafficFile.substring(0, lastDot) + "_HO" + TrafficFile.substring(lastDot);
 			traffic.configFile = new File(HOTrafficFile);
 		}
-		try {
-			peripheralsConfig = PeripheralsConfig.getInstance();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 		GeneralUtils.startLevel("Prepare Setup for the test");
-		
+
 		for (EnodeB enb : duts) {
 			peripheralsConfig.changeEnbState(enb, EnbStates.OUT_OF_SERVICE);
 		}
-		
+
 		startUEs(dut);
 
 		AttenuatorSet attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(CommonConstants.ATTENUATOR_SET_NAME);
@@ -107,10 +102,21 @@ public class UeRelated extends TestspanTest {
 		GeneralUtils.stopLevel();
 	}
 
+	/**
+	 * try to get instance of PeripheralsConfig
+	 */
+	private void initPeripheralsConfig() {
+		try {
+			peripheralsConfig = PeripheralsConfig.getInstance();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	@Test
-	@TestProperties(name = "BasicNetworkEntry", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {
-			"IsTestWasSuccessful" })
-	public void BasicNetworkEntry()  {
+	@TestProperties(name = "BasicNetworkEntry", returnParam = {"IsTestWasSuccessful"}, paramsExclude = {
+			"IsTestWasSuccessful"})
+	public void BasicNetworkEntry() {
 		ArrayList<UE> allUEs = new ArrayList<UE>();
 		ArrayList<UE> staticUE = SetupUtils.getInstance().getStaticUEs(dut);
 		ArrayList<UE> dynamicUE = SetupUtils.getInstance().getDynamicUEs();
@@ -148,16 +154,16 @@ public class UeRelated extends TestspanTest {
 			Long restartDelay = new Long(120 * 1000);
 			report.report("[RECOVERY]: rebooting All Ues!");
 			peripheralsConfig.rebootUEs(ueList, restartDelay);
-		} 
+		}
 		return true;
 	}
 
 	/**
 	 * Reboot UEs - using peripheralConfig : 30/05/16 * @Author Shahumy
-	 * 
+	 *
 	 * @throws Exception
 	 */
-	private void startUEs(EnodeB enb){
+	private void startUEs(EnodeB enb) {
 		ArrayList<UE> temp = new ArrayList<>();
 		ArrayList<UE> staticUEs = SetupUtils.getInstance().getStaticUEs(enb);
 		ArrayList<UE> DynamicUes = SetupUtils.getInstance().getDynamicUEs();
@@ -185,32 +191,54 @@ public class UeRelated extends TestspanTest {
 	}
 
 	@Override
-	public void end(){
-
-		if (traffic.getGeneratorType() == TrafficGeneratorType.TestCenter) {
-			String TrafficFile = traffic.getTg().getDefaultConfigTccFile();
-			traffic.configFile = new File(TrafficFile);
-		}
-
-		commandsThread.stopCommands();
-		commandsThread.moveFileToReporterAndAddLink();
-		GeneralUtils.startLevel("Returning system to status before the test");
-
-		for (EnodeB enb : duts) {
-			peripheralsConfig.changeEnbState(enb, EnbStates.IN_SERVICE);
-		}
-		GeneralUtils.stopLevel();
-
+	public void end() {
+		saveTraffic();
+		stopCommandThreadIfStarted();
+		changeDutsToInService();
 		super.end();
 	}
 
 	/**
-	 * @author Shahaf Shuhamy tests only to only category 6 UES.
+	 * stop CommandThread If Started
+	 */
+	private void stopCommandThreadIfStarted() {
+		if (commandsThread != null) {
+			commandsThread.stopCommands();
+			commandsThread.moveFileToReporterAndAddLink();
+		}
+	}
+
+	/**
+	 * save Traffic
+	 */
+	private void saveTraffic() {
+		if ((traffic != null) &&
+				(traffic.getGeneratorType() == TrafficGeneratorType.TestCenter)) {
+			String TrafficFile = traffic.getTg().getDefaultConfigTccFile();
+			traffic.configFile = new File(TrafficFile);
+		}
+	}
+
+	/**
+	 * change Duts To In Service
+	 */
+	private void changeDutsToInService() {
+		GeneralUtils.startLevel("Returning system to status before the test");
+		if (duts != null) {
+			for (EnodeB enb : duts) {
+				peripheralsConfig.changeEnbState(enb, EnbStates.IN_SERVICE);
+			}
+		}
+		GeneralUtils.stopLevel();
+	}
+
+	/**
 	 * @throws Exception
+	 * @author Shahaf Shuhamy tests only to only category 6 UES.
 	 */
 	@Test
-	@TestProperties(name = "Carrier Aggregation BasicNetworkEntry", returnParam = {"IsTestWasSuccessful" }, paramsExclude = { "IsTestWasSuccessful" })
-	public void CABasicNetworkEntry(){
+	@TestProperties(name = "Carrier Aggregation BasicNetworkEntry", returnParam = {"IsTestWasSuccessful"}, paramsExclude = {"IsTestWasSuccessful"})
+	public void CABasicNetworkEntry() {
 		ArrayList<UE> allUEs = SetupUtils.getInstance().getCat6UEs();
 
 		if (allUEs.size() == 0) {
@@ -219,41 +247,41 @@ public class UeRelated extends TestspanTest {
 		netWorkEntryBase(allUEs);
 	}
 
-	private void netWorkEntryBase(ArrayList<UE> allUEs){
+	private void netWorkEntryBase(ArrayList<UE> allUEs) {
 		boolean status;
-			while (numberOfRecoveryTrys <= MAX_NUMBER_OF_RECOVERY_TRYS) {
-				report.report("Starting traffic.");
-				traffic.startTraffic(allUEs);
-				report.report("Changing UE state from idle to connected using traffic.");
-				status = peripheralsConfig.checkIfAllUEsAreConnectedToNode(allUEs, dut);
-				report.report("Stopping traffic.");
-				traffic.stopTraffic();
-				if(status){
-					report.report("Status of test: BASIC NETWORK ENTRY test ended SUCCESSFULLY for version: "+dut.getRunningVersion()+","
-							+ " number of connected UEs: "+allUEs.size());
-					isPass = true;
+		while (numberOfRecoveryTrys <= MAX_NUMBER_OF_RECOVERY_TRYS) {
+			report.report("Starting traffic.");
+			traffic.startTraffic(allUEs);
+			report.report("Changing UE state from idle to connected using traffic.");
+			status = peripheralsConfig.checkIfAllUEsAreConnectedToNode(allUEs, dut);
+			report.report("Stopping traffic.");
+			traffic.stopTraffic();
+			if (status) {
+				report.report("Status of test: BASIC NETWORK ENTRY test ended SUCCESSFULLY for version: " + dut.getRunningVersion() + ","
+						+ " number of connected UEs: " + allUEs.size());
+				isPass = true;
+				return;
+			} else {
+				double numberOfNotConnectedUEs = peripheralsConfig.getUesNotConnected().size();
+				double totalNumberOfUEs = allUEs.size();
+				double result = numberOfNotConnectedUEs / totalNumberOfUEs;
+				if (result <= 0.4) {
+					int numberOfUesConnected = (int) (totalNumberOfUEs - numberOfNotConnectedUEs);
+					report.report("Status of test: BASIC NETWORK ENTRY test ended With a WARNING for version: " + dut.getRunningVersion() + ","
+							+ " number of connected UEs: " + numberOfUesConnected, Reporter.WARNING);
 					return;
-				}else{
-					double numberOfNotConnectedUEs = peripheralsConfig.getUesNotConnected().size();
-					double totalNumberOfUEs = allUEs.size();
-					double result = numberOfNotConnectedUEs/totalNumberOfUEs;
-					if(result <= 0.4){
-						int numberOfUesConnected =(int) (totalNumberOfUEs - numberOfNotConnectedUEs);
-						report.report("Status of test: BASIC NETWORK ENTRY test ended With a WARNING for version: "+dut.getRunningVersion()+","
-								+ " number of connected UEs: "+numberOfUesConnected,Reporter.WARNING);
-						return;
-					}else{
+				} else {
 					numberOfRecoveryTrys++;
-					if(numberOfRecoveryTrys <= MAX_NUMBER_OF_RECOVERY_TRYS) {
-						GeneralUtils.startLevel("Starting recovery actions #"+ String.valueOf(numberOfRecoveryTrys) +":");
-						recovery(numberOfRecoveryTrys,allUEs,dut);
+					if (numberOfRecoveryTrys <= MAX_NUMBER_OF_RECOVERY_TRYS) {
+						GeneralUtils.startLevel("Starting recovery actions #" + String.valueOf(numberOfRecoveryTrys) + ":");
+						recovery(numberOfRecoveryTrys, allUEs, dut);
 						GeneralUtils.stopLevel();
-						}
 					}
 				}
 			}
-		report.report("Status of test: BASIC NETWORK ENTRY test FAILED for version: "+dut.getRunningVersion()+", at least one UE isn't connected "+peripheralsConfig.getUesNotConnected(),Reporter.FAIL);
-		reason="At least one UE isn't connected";
+		}
+		report.report("Status of test: BASIC NETWORK ENTRY test FAILED for version: " + dut.getRunningVersion() + ", at least one UE isn't connected " + peripheralsConfig.getUesNotConnected(), Reporter.FAIL);
+		reason = "At least one UE isn't connected";
 		isPass = false;
- }
+	}
 }

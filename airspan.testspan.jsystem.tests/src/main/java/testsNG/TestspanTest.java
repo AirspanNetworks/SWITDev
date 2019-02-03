@@ -163,9 +163,11 @@ public class TestspanTest extends SystemTestCase4 {
      * Verify EnodeBs Are In Service, fail and stop test if not.
      */
     private void verifyEnBsAreInService() {
-        if (!enbsAreInService)
+        if (!enbsAreInService) {
             report.report("One or more of the enbs failed to reach all running state, failing and stopping test.",
                     Reporter.FAIL);
+            GeneralUtils.stopAllLevels();
+        }
         Assume.assumeTrue(enbsAreInService);
     }
 

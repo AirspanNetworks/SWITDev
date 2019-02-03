@@ -57,7 +57,6 @@ public class AutoRSIBase extends TestspanTest {
 		netspanServer = NetspanServer.getInstance();
 		enbInTest = new ArrayList<>();
 		enbInTest.add(dut);
-		super.init();
 		enodeBConfig = EnodeBConfig.getInstance();
 		netspan = NetspanServer.getInstance();
 		mibReader = MibReader.getInstance();
@@ -68,6 +67,11 @@ public class AutoRSIBase extends TestspanTest {
 		alarmsAndEvents = AlarmsAndEvents.getInstance();
 		peripheralsConfig = PeripheralsConfig.getInstance();
 		neighbors = Neighbors.getInstance();
+		testUE = SetupUtils.getInstance().getDynamicUEs().get(0);
+		initSonProfileName = netspan.getCurrentSonProfileName(dut);
+		rsiInitAutoStatus = true;
+
+		super.init();
 
 		dut.setCellContextNumber(1);
 		if (traffic.getGeneratorType() == TrafficGeneratorType.TestCenter) {
@@ -79,16 +83,17 @@ public class AutoRSIBase extends TestspanTest {
 
 		GeneralUtils.startLevel("Stop UEs");
 		for (UE ue : SetupUtils.getInstance().getAllUEs()) {
-			if (!ue.stop())
+			if (!ue.stop()) {
 				report.report("Failed to stop ue " + ue.getName());
-			else
+			}
+			else {
 				report.report("stopped ue " + ue.getName());
+			}
 		}
 		GeneralUtils.stopLevel();
 
 		GeneralUtils.unSafeSleep(5000);
 
-		testUE = SetupUtils.getInstance().getDynamicUEs().get(0);
 		if (!testUE.start())
 			report.report("Failed to start ue " + testUE.getName());
 		else
@@ -106,10 +111,8 @@ public class AutoRSIBase extends TestspanTest {
 		}
 
 		GeneralUtils.startLevel("Pre test");
-		rsiInitAutoStatus = true;
 		SONStatus sonStatus = netspan.getSONStatus(dut);
 
-		initSonProfileName = netspan.getCurrentSonProfileName(dut);
 		if (sonStatus != null) {
 			for (RsiStatusCell rsi : sonStatus.RSICell) {
 				GeneralUtils.startLevel("Cell ID: " + rsi.cellId);

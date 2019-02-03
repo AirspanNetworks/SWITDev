@@ -8,6 +8,7 @@ public class TestConfig extends SystemObjectImpl {
     private static TestConfig instance = null;
 
     private String defaultSwBulid = "";
+    private String defaultRelayBulid = "";
 	private int[] defaultEarfcn;
     private int[] interEarfcn;
     private String UE_Restart = "IPPower";
@@ -101,6 +102,14 @@ public class TestConfig extends SystemObjectImpl {
 
     public void setDefaultSwBulid(String defaultSwBulid) {
 		this.defaultSwBulid = defaultSwBulid;
+	}
+    
+    public String getDefaultRelayBulid() {
+        return defaultRelayBulid;
+    }
+
+    public void setDefaultRelayBulid(String defaultRelayBulid) {
+		this.defaultRelayBulid = defaultRelayBulid;
 	}
     
     public int getDefaultEarfcn() {

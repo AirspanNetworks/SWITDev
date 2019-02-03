@@ -36,7 +36,8 @@ public class SWUpgrade extends TestspanTest {
 	private String build;
 	private ArrayList<EnodeB> duts;
 	private TestConfig tc;
-	private String buildM;
+	private String buildPath;
+	private String relayBuildPath;
 	private String pathBySut;
 	private SoftwareUtiles softwareUtiles;
 	private EnodeBUpgradeServer enbUpgrade;
@@ -51,14 +52,15 @@ public class SWUpgrade extends TestspanTest {
 		enbInTest = (ArrayList<EnodeB>) duts.clone();
 		super.init();
 
-		buildM = System.getProperty("BuildMachineVerPath");
-		if (buildM == null) {
+		buildPath = System.getProperty("BuildMachineVerPath");
+		relayBuildPath = System.getProperty("BuildMachineRelayVerPath");
+		if (buildPath == null || buildPath.isEmpty()) {
 			report.report("No inputs for the test");
 			reason = "No inputs for the test";
 			return;
 		} 
 		else
-			build = getVersionFromPath(buildM);
+			build = getVersionFromPath(buildPath);
 
 		enbUpgrade = SysObjUtils.getInstnce().initSystemObject(EnodeBUpgradeServer.class, false, "UpgradeServer")
 				.get(0);
@@ -99,7 +101,7 @@ public class SWUpgrade extends TestspanTest {
 		ArrayList<Pair<EnodeB, Triple<Integer, String, String>>> eNodebList = new ArrayList<Pair<EnodeB, Triple<Integer, String, String>>>();
 		for (EnodeB dut : duts) {
 			GeneralUtils.startLevel("Update Default Software Image For " + dut.getName());
-			Triple<Integer, String, String> swActivationDetails = softwareUtiles.updatDefaultSoftwareImage(dut);
+			Triple<Integer, String, String> swActivationDetails = softwareUtiles.updatDefaultSoftwareImage(dut, buildPath, relayBuildPath);
 			if (swActivationDetails.getLeftElement() >= 0) {
 				eNodebList.add(new Pair<EnodeB, Triple<Integer, String, String>>(dut, swActivationDetails));
 			} else {
@@ -135,9 +137,9 @@ public class SWUpgrade extends TestspanTest {
 	@TestProperties(name = "Software Upgrade To Default Via Netspan", returnParam = {
 			"IsTestWasSuccessful" }, paramsExclude = { "IsTestWasSuccessful" })
 	public void softwareUpgradeToDefault() {
-		buildM = tc.getDefaultSwBulid();
-		if(!buildM.equals("")){
-			build = getVersionFromPath(buildM);
+		buildPath = tc.getDefaultSwBulid();
+		if(!buildPath.equals("")){
+			build = getVersionFromPath(buildPath);
 			softwareUpgradeFromNetspan();
 		}
 	}
@@ -391,10 +393,10 @@ public class SWUpgrade extends TestspanTest {
 	}
 
 	private boolean setSourcePath() {
-		if (buildM != null) {
-			buildM = softwareUtiles.correctPathForWindowsDoubleSlash(buildM);
-			softwareUtiles.setSourceServer(buildM);
-			report.report("Upgrading all components available to build Triggered By BuildMachine: " + buildM);
+		if (buildPath != null) {
+			buildPath = softwareUtiles.correctPathForWindowsDoubleSlash(buildPath);
+			softwareUtiles.setSourceServer(buildPath);
+			report.report("Upgrading all components available to build Triggered By BuildMachine: " + buildPath);
 			return true;
 		} else if (pathBySut != null) {
 			pathBySut = pathBySut.trim();

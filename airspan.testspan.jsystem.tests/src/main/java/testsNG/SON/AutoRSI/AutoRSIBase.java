@@ -67,8 +67,6 @@ public class AutoRSIBase extends TestspanTest {
 		alarmsAndEvents = AlarmsAndEvents.getInstance();
 		peripheralsConfig = PeripheralsConfig.getInstance();
 		neighbors = Neighbors.getInstance();
-		testUE = SetupUtils.getInstance().getDynamicUEs().get(0);
-		initSonProfileName = netspan.getCurrentSonProfileName(dut);
 		rsiInitAutoStatus = true;
 
 		super.init();
@@ -93,6 +91,7 @@ public class AutoRSIBase extends TestspanTest {
 		GeneralUtils.stopLevel();
 
 		GeneralUtils.unSafeSleep(5000);
+		testUE = SetupUtils.getInstance().getDynamicUEs().get(0);
 
 		if (!testUE.start())
 			report.report("Failed to start ue " + testUE.getName());
@@ -112,7 +111,7 @@ public class AutoRSIBase extends TestspanTest {
 
 		GeneralUtils.startLevel("Pre test");
 		SONStatus sonStatus = netspan.getSONStatus(dut);
-
+		initSonProfileName = netspan.getCurrentSonProfileName(dut);
 		if (sonStatus != null) {
 			for (RsiStatusCell rsi : sonStatus.RSICell) {
 				GeneralUtils.startLevel("Cell ID: " + rsi.cellId);

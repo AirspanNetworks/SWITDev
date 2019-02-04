@@ -134,14 +134,8 @@ public class TPTBase extends TestspanTest {
 		ulFromNetspan = new ArrayList<Integer>();
 		super.init();
 		GeneralUtils.startLevel("Test Init");
-		try {
-			attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(CommonConstants.ATTENUATOR_SET_NAME);
-		} catch (Exception e) {
-			attenuatorSetUnderTest = null;
-			report.report("Attenuator Fail to initialize");
-		}
+		attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(CommonConstants.ATTENUATOR_SET_NAME);
 		GeneralUtils.stopLevel();
-
 		TEST_TIME_MILLIS = setTime(TEST_TIME_SHORT);
 	}
 

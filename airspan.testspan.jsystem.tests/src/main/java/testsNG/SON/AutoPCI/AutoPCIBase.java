@@ -88,7 +88,6 @@ public class AutoPCIBase extends TestspanTest {
         alarmsAndEvents = AlarmsAndEvents.getInstance();
         peripheralsConfig = PeripheralsConfig.getInstance();
         testConfig = TestConfig.getInstace();
-        testUE = SetupUtils.getInstance().getDynamicUEs().get(0);
 
         super.init();
         GeneralUtils.startLevel("Init");
@@ -118,6 +117,7 @@ public class AutoPCIBase extends TestspanTest {
             }
         }
         GeneralUtils.startLevel("Initialize UEs");
+        testUE = SetupUtils.getInstance().getDynamicUEs().get(0);
         GeneralUtils.stopLevel();
         testUeList = new ArrayList<UE>();
         testUeList.add(testUE);

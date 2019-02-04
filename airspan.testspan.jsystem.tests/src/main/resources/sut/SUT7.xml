@@ -20,6 +20,7 @@
 		<passCriteriaTPT>70</passCriteriaTPT>    
 		<interEarfcn>39150</interEarfcn>
 		<defaultEarfcn>39350</defaultEarfcn>
+		<defaultSwBulid>\\FS4\Projects\Development\Internal\Builds\15.50\14_15_50_705\release</defaultSwBulid>
 		<pciStart>486</pciStart>
 		<pciEnd>490</pciEnd>
 	</TestConfig>

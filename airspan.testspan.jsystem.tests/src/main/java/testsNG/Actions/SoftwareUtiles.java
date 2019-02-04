@@ -31,6 +31,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static java.nio.file.StandardCopyOption.*;
 
@@ -1328,7 +1330,7 @@ public class SoftwareUtiles {
 		return this.notToValidateNodes;
 	}
 
-	public Triple<Integer, String, String> updatDefaultSoftwareImage(EnodeB eNodeB) {
+	public Triple<Integer, String, String> updatDefaultSoftwareImage(EnodeB eNodeB, String buildPath, String relayBuildPath) {
 		int numberOfExpectedReboots = 0;
 		String build = "";
 		String relayBuild = "";
@@ -1338,7 +1340,7 @@ public class SoftwareUtiles {
 			EnodeBUpgradeServer enodeBUpgradeServer = netspanServer
 					.getSoftwareServer(enodeBUpgradeImage.getUpgradeServerName());
 			setDestServer(softwareImage);
-			String buildsPath = System.getProperty("BuildMachineVerPath");
+			String buildsPath = buildPath;
 
 			if (buildsPath != null && buildsPath.startsWith("\\") && !buildsPath.startsWith("\\\\")) {
 				buildsPath = "\\" + buildsPath;
@@ -1353,7 +1355,7 @@ public class SoftwareUtiles {
 				String fsmBuildFileName = getFSMBuild();
 				String fsmv4BuildFileName = getFSMv4Build();
 				String xlpBuildFileName = getXLPBuild();
-				String relayBuildFileName = getRelayTargetBuildFileName();
+				String relayBuildFileName = getRelayTargetBuildFileName(relayBuildPath);
 
 				// when build not mention or not found, set the running version
 				// as version target.
@@ -1469,9 +1471,9 @@ public class SoftwareUtiles {
 		return new Triple<Integer, String, String>(numberOfExpectedReboots, build, relayBuild);
 	}
 
-	private String getRelayTargetBuildFileName() {
+	private String getRelayTargetBuildFileName(String relayVerPath) {
 		String fileName = "";
-		String relayBuildPath = System.getProperty("BuildMachineRelayVerPath");
+		String relayBuildPath = relayVerPath;
 		if (relayBuildPath != null) {
 			if (relayBuildPath.startsWith("\\") && !relayBuildPath.startsWith("\\\\")) {
 				relayBuildPath = "\\" + relayBuildPath;
@@ -1549,6 +1551,20 @@ public class SoftwareUtiles {
 		return result;
 	}
 
+	public static String getVersionFromPath(String path) {
+		path = path + "\\";
+		String version = "";
+		final String regex = "[\\\\]+[0-9,_]+[\\\\]+";
+		final Pattern pattern = Pattern.compile(regex);
+		final Matcher matcher = pattern.matcher(path);
+		if (matcher.find()) {
+			version = matcher.group(0);
+			version = version.replace("\\", "");
+			version = version.replaceAll("_", "\\.");
+		}
+		return version;
+	}
+	
 	public void printSoftwareImageDetails(EnodeB eNodeB) {
 		EnodeBUpgradeImage enodeBUpgradeImage = netspanServer
 				.getSoftwareImage(eNodeB.getDefaultNetspanProfiles().getSoftwareImage());

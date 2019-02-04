@@ -13,9 +13,7 @@ function populateChildren(source, destination) {
                 populateChildren(this.children, children);
                 break;
             case "test":
-            	if (isTestShownInHtml(this)){
-                    destination.push({'text': this.index + ". " + this.name, 'icon': testIcon(this.status), 'rel': this.status, 'type': this.status, 'a_attr': {'href': "tests/test_" + this.uid+"/test.html",'class':'s_' + this.status + "_text"}});
-                }
+                destination.push({'text': this.index + ". " + this.name, 'icon': testIcon(this.status), 'rel': this.status, 'type': this.status, 'a_attr': {'href': "tests/test_" + this.uid+"/test.html",'class':'s_' + this.status + "_text"}});
                 break;
         }
     });

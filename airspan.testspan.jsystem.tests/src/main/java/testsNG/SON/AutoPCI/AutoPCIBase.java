@@ -257,8 +257,10 @@ public class AutoPCIBase extends TestspanTest {
      * change State to "In service" To the Other Enbs in the setup
      */
     private void changeStateToOtherEnbs() {
-        for (EnodeB enb : otherEnb) {
-            peripheralsConfig.changeEnbState(enb, EnbStates.IN_SERVICE);
+        if (otherEnb != null) {
+            for (EnodeB enb : otherEnb) {
+                peripheralsConfig.changeEnbState(enb, EnbStates.IN_SERVICE);
+            }
         }
     }
 

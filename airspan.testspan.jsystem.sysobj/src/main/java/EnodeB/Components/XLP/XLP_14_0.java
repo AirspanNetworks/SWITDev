@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 
 import EnodeB.EnodeB;
-import Netspan.API.Enums.HandoverType;
+import Netspan.API.Enums.HandoverTypes;
 import Netspan.API.Enums.HoControlStateTypes;
 import Netspan.API.Enums.SonAnrStates;
 import Netspan.API.Enums.X2ControlStateTypes;
@@ -21,7 +21,7 @@ import jsystem.framework.report.Reporter;
 public class XLP_14_0 extends XLP{
 
 	public boolean verifyNbrList(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
-			X2ControlStateTypes x2ControlStatus, HandoverType handoverType, boolean isStaticNeighbor,
+			X2ControlStateTypes x2ControlStatus, HandoverTypes handoverType, boolean isStaticNeighbor,
 			String qOffsetRange){
 		// TODO Auto-generated method stub
 		return false;
@@ -112,7 +112,7 @@ public class XLP_14_0 extends XLP{
 
 	@Override
 	public boolean addNbr(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
-			X2ControlStateTypes x2ControlStatus, HandoverType handoverType, boolean isStaticNeighbor,
+			X2ControlStateTypes x2ControlStatus, HandoverTypes handoverType, boolean isStaticNeighbor,
 			String qOffsetRange) throws IOException {
 		// TODO Auto-generated method stub
 		return false;

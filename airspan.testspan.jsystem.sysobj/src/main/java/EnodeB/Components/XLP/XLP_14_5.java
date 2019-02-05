@@ -8,7 +8,7 @@ import java.util.HashMap;
 import org.snmp4j.smi.Variable;
 import java.util.Hashtable;
 import EnodeB.EnodeB;
-import Netspan.API.Enums.HandoverType;
+import Netspan.API.Enums.HandoverTypes;
 import Netspan.API.Enums.HoControlStateTypes;
 import Netspan.API.Enums.SonAnrStates;
 import Netspan.API.Enums.X2ControlStateTypes;
@@ -26,7 +26,7 @@ public class XLP_14_5 extends XLP {
 	String eutranCellId = null;
 
 	@Override
-	public boolean addNbr(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,X2ControlStateTypes x2ControlStatus, HandoverType handoverType, boolean isStaticNeighbor,String qOffsetRange) throws IOException {
+	public boolean addNbr(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,X2ControlStateTypes x2ControlStatus, HandoverTypes handoverType, boolean isStaticNeighbor,String qOffsetRange) throws IOException {
 		//Initialize qOffSet, in case the user doesn't want to fill it (It's optional)
 		int qOffSet = 0;
 		//create double valued instance.
@@ -229,7 +229,7 @@ public class XLP_14_5 extends XLP {
 	
 	
 	public boolean verifyNbrList(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
-			X2ControlStateTypes x2ControlStatus, HandoverType handoverType, boolean isStaticNeighbor,
+			X2ControlStateTypes x2ControlStatus, HandoverTypes handoverType, boolean isStaticNeighbor,
 			String qOffsetRange) throws IOException {
 		boolean wasAdded = true;
 		boolean wasFound = false;

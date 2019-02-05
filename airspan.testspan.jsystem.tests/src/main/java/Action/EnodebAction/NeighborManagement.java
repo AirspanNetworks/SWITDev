@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import EnodeB.EnodeB;
 import Netspan.NetspanServer;
-import Netspan.API.Enums.HandoverType;
+import Netspan.API.Enums.HandoverTypes;
 import Netspan.API.Enums.HoControlStateTypes;
 import Netspan.API.Enums.X2ControlStateTypes;
 import Utils.GeneralUtils;
@@ -23,7 +23,7 @@ public class NeighborManagement extends EnodebAction {
 	protected String targetCell;
 	protected HoControlStateTypes hoControlState;
 	protected X2ControlStateTypes x2ControlState;
-	protected HandoverType handoverType;
+	protected HandoverTypes handoverType;
 	protected boolean isStaticNeighbor;
 	protected String qOffsetRange;
 	protected int numberOfNeighbors;
@@ -64,7 +64,7 @@ public class NeighborManagement extends EnodebAction {
 	}
 
 	@ParameterProperties(description = "Set Handover Type")
-	public void setHandoverType(HandoverType handoverType) {
+	public void setHandoverType(HandoverTypes handoverType) {
 		this.handoverType = handoverType;
 	}
 
@@ -151,7 +151,7 @@ public class NeighborManagement extends EnodebAction {
 		GeneralUtils.startLevel("adding third party Nodes to dut : " + dut.getNetspanName());
 		for (EnodeB node : thirdPartyNeieghbors) {
 			try {
-				NetspanServer.getInstance().addNeighbor(dut, node, HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC, HandoverType.TRIGGER_X_2, true, "0");
+				NetspanServer.getInstance().addNeighbor(dut, node, HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC, HandoverTypes.TRIGGER_X_2, true, "0");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

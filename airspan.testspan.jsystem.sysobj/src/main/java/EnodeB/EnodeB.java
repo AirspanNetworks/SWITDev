@@ -23,9 +23,9 @@ import EnodeB.ProtoBuf.PbLteStatusOuterClass.PbLteNwElementStatus;
 import EnodeB.ProtoBuf.PbLteStatusOuterClass.PbLteRfStatus;
 import Entities.ITrafficGenerator.TransmitDirection;
 import Netspan.NetspanServer;
-import Netspan.API.Enums.EnabledDisabledStates;
+import Netspan.API.Enums.EnabledStates;
 import Netspan.API.Enums.EnbStates;
-import Netspan.API.Enums.HandoverType;
+import Netspan.API.Enums.HandoverTypes;
 import Netspan.API.Enums.HoControlStateTypes;
 import Netspan.API.Enums.ImageType;
 import Netspan.API.Enums.ServerProtocolType;
@@ -1664,7 +1664,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 	 }
 	 
 	 public boolean addNbr(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
-				X2ControlStateTypes x2ControlStatus, HandoverType handoverType, boolean isStaticNeighbor,
+				X2ControlStateTypes x2ControlStatus, HandoverTypes handoverType, boolean isStaticNeighbor,
 				String qOffsetRange) throws IOException{
 		 return XLP.addNbr(enodeB, neighbor, hoControlStatus, x2ControlStatus, handoverType, isStaticNeighbor, qOffsetRange);
 	 }
@@ -1698,7 +1698,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 	 }
 	 
 	 public boolean verifyNbrList(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
-				X2ControlStateTypes x2ControlStatus, HandoverType handoverType, boolean isStaticNeighbor,
+				X2ControlStateTypes x2ControlStatus, HandoverTypes handoverType, boolean isStaticNeighbor,
 				String qOffsetRange) throws IOException{
 		 return XLP.verifyNbrList(enodeB, neighbor, hoControlStatus, x2ControlStatus, handoverType, isStaticNeighbor, qOffsetRange);
 	 }
@@ -2256,7 +2256,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 		XLP.waitForExpectBootingValue(timeout, status);
 	}
 
-	public EnabledDisabledStates getOperateBehindHenbGw() {
+	public EnabledStates getOperateBehindHenbGw() {
 		return XLP.getOperateBehindHenbGw();
 	}
 	public String getSkipCMP() {

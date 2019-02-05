@@ -16,10 +16,10 @@ import EnodeB.EnodeBUpgradeServer;
 import Netspan.NBIVersion;
 import Netspan.API.Enums.CategoriesLte;
 import Netspan.API.Enums.ClockSources;
-import Netspan.API.Enums.EnabledDisabledStates;
+import Netspan.API.Enums.EnabledStates;
 import Netspan.API.Enums.HardwareCategory;
 import Netspan.API.Enums.ImageType;
-import Netspan.API.Enums.NodeManagementModeType;
+import Netspan.API.Enums.NodeManagementModes;
 import Netspan.API.Enums.PrimaryClockSourceEnum;
 import Netspan.API.Enums.ServerProtocolType;
 import Netspan.API.Lte.EventInfo;
@@ -418,7 +418,7 @@ public class NetspanServer_16_0 extends NetspanServer_15_5 implements Netspan_16
 			airSonWs.setPowerLevelTimeInterval(objectFactory.createAirSonWsPowerLevelTimeInterval(advancedParmas.getPowerLevelTimeInterval()));
 			airSonWs.setAnrTimer(objectFactory.createAirSonWsAnrTimer(advancedParmas.getAnrTimer()));
 			if(advancedParmas.getPciConfusionAllowed() != null) {
-				EnabledDisabledStates state = EnabledDisabledStates.fromValue(advancedParmas.getPciConfusionAllowed().value());
+				EnabledStates state = EnabledStates.fromValue(advancedParmas.getPciConfusionAllowed().value());
 				airSonWs.setPciConfusionAllowed(objectFactory.createAirSonWsPciConfusionAllowed(state));
 			}
 			
@@ -637,8 +637,8 @@ public class NetspanServer_16_0 extends NetspanServer_15_5 implements Netspan_16
 		
 		Boolean ecid = radioParams.getECIDMode();
 		if(ecid != null){
-			EnabledDisabledStates ecidParam;
-			ecidParam = ecid ? EnabledDisabledStates.ENABLED : EnabledDisabledStates.DISABLED;
+			EnabledStates ecidParam;
+			ecidParam = ecid ? EnabledStates.ENABLED : EnabledStates.DISABLED;
 			radio.setEcidMode(factoryObject.createEnbRadioProfileParamsEcidMode(ecidParam));
 		}
 		
@@ -649,8 +649,8 @@ public class NetspanServer_16_0 extends NetspanServer_15_5 implements Netspan_16
 		
 		Boolean otdoa = radioParams.getOTDOAMode();
 		if(otdoa != null){
-			EnabledDisabledStates otdoaParam;
-			otdoaParam = otdoa ? EnabledDisabledStates.ENABLED : EnabledDisabledStates.DISABLED;
+			EnabledStates otdoaParam;
+			otdoaParam = otdoa ? EnabledStates.ENABLED : EnabledStates.DISABLED;
 			radio.setOtdoaMode(factoryObject.createEnbRadioProfileParamsOtdoaMode(otdoaParam));
 		}
 		
@@ -663,34 +663,34 @@ public class NetspanServer_16_0 extends NetspanServer_15_5 implements Netspan_16
 					frame = frame.trim();
 					switch(frame){
 					case "0":
-						subFramesObj.setSubFrame0(factoryObject.createRfSubframeSubFrame0(EnabledDisabledStates.ENABLED));
+						subFramesObj.setSubFrame0(factoryObject.createRfSubframeSubFrame0(EnabledStates.ENABLED));
 						break;
 					case "1":
-						subFramesObj.setSubFrame1(factoryObject.createRfSubframeSubFrame1(EnabledDisabledStates.ENABLED));
+						subFramesObj.setSubFrame1(factoryObject.createRfSubframeSubFrame1(EnabledStates.ENABLED));
 						break;
 					case "2":
-						subFramesObj.setSubFrame2(factoryObject.createRfSubframeSubFrame2(EnabledDisabledStates.ENABLED));
+						subFramesObj.setSubFrame2(factoryObject.createRfSubframeSubFrame2(EnabledStates.ENABLED));
 						break;
 					case "3":
-						subFramesObj.setSubFrame3(factoryObject.createRfSubframeSubFrame3(EnabledDisabledStates.ENABLED));
+						subFramesObj.setSubFrame3(factoryObject.createRfSubframeSubFrame3(EnabledStates.ENABLED));
 						break;
 					case "4":
-						subFramesObj.setSubFrame4(factoryObject.createRfSubframeSubFrame4(EnabledDisabledStates.ENABLED));
+						subFramesObj.setSubFrame4(factoryObject.createRfSubframeSubFrame4(EnabledStates.ENABLED));
 						break;
 					case "5":
-						subFramesObj.setSubFrame5(factoryObject.createRfSubframeSubFrame5(EnabledDisabledStates.ENABLED));
+						subFramesObj.setSubFrame5(factoryObject.createRfSubframeSubFrame5(EnabledStates.ENABLED));
 						break;
 					case "6":
-						subFramesObj.setSubFrame6(factoryObject.createRfSubframeSubFrame6(EnabledDisabledStates.ENABLED));
+						subFramesObj.setSubFrame6(factoryObject.createRfSubframeSubFrame6(EnabledStates.ENABLED));
 						break;
 					case "7":
-						subFramesObj.setSubFrame7(factoryObject.createRfSubframeSubFrame7(EnabledDisabledStates.ENABLED));
+						subFramesObj.setSubFrame7(factoryObject.createRfSubframeSubFrame7(EnabledStates.ENABLED));
 						break;
 					case "8":
-						subFramesObj.setSubFrame8(factoryObject.createRfSubframeSubFrame8(EnabledDisabledStates.ENABLED));
+						subFramesObj.setSubFrame8(factoryObject.createRfSubframeSubFrame8(EnabledStates.ENABLED));
 						break;
 					case "9":
-						subFramesObj.setSubFrame9(factoryObject.createRfSubframeSubFrame9(EnabledDisabledStates.ENABLED));
+						subFramesObj.setSubFrame9(factoryObject.createRfSubframeSubFrame9(EnabledStates.ENABLED));
 						break;
 					default:
 						break;	
@@ -827,7 +827,7 @@ public class NetspanServer_16_0 extends NetspanServer_15_5 implements Netspan_16
 	}
 	
 	@Override
-	public NodeManagementModeType getManagedMode(EnodeB enb){
+	public NodeManagementModes getManagedMode(EnodeB enb){
 		EnbDetailsGet result = getNodeConfig(enb);
 		if(result == null ){
 			return null;

@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import EnodeB.EnodeB;
 import Netspan.EnbProfiles;
-import Netspan.API.Enums.EnabledDisabledStates;
+import Netspan.API.Enums.EnabledStates;
 import Netspan.Profiles.MobilityParameters;
 import Utils.SysObjUtils;
 import jsystem.framework.ParameterProperties;
@@ -57,7 +57,7 @@ public class ProtoBuf extends TestspanTest {
 
 	private void changeMobility() {
 		MobilityParameters mobilityParams = new MobilityParameters();
-		mobilityParams.setThresholdBasedMeasurement(EnabledDisabledStates.ENABLED);
+		mobilityParams.setThresholdBasedMeasurement(EnabledStates.ENABLED);
 		mobilityParams.setThresholdBasedMeasurementDual(true);
 		int numOfCellsInNode = dut.getNumberOfActiveCells();
 		while(numOfCellsInNode > 0) {

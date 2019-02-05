@@ -3,7 +3,7 @@ package Netspan.Profiles;
 import java.util.ArrayList;
 
 import Netspan.EnbProfiles;
-import Netspan.API.Enums.EnabledDisabledStates;
+import Netspan.API.Enums.EnabledStates;
 import Netspan.API.Enums.NrtHoTypes;
 
 public class NeighbourManagementParameters implements INetspanProfile{
@@ -55,7 +55,7 @@ public class NeighbourManagementParameters implements INetspanProfile{
 	public class NrtPci{
 		public int pciStart;
 		public int pciEnd;
-		public EnabledDisabledStates allowX2;
+		public EnabledStates allowX2;
 		public NrtHoTypes hoType;
 	}
 	

@@ -105,7 +105,8 @@ public abstract class EnodeB extends SystemObjectImpl {
 	private static final String CONTROL_COMPONENT_HW_NAME = "XLP";
 	public static final int BOOTING_TIMOUT = 2 * 60 * 1000;// 120 sec
 	public static final int MAX_NBI_TOTAL_TRYOUTS = 8;
-	public static final long UPGRADE_TIMEOUT = 25 * 1000 * 60;
+	public static final long DOWNLOAD_TIMEOUT = 30 * 1000 * 60;
+	public static final long ACTIVATE_TIMEOUT = 20 * 1000 * 60;
 	public static long WAIT_FOR_ALL_RUNNING_TIME = 30 * 1000 * 60;
 	public static long SHORT_WAIT_FOR_ALL_RUNNING_TIME = 2 * 1000 * 60;
 	/** The netspan name. */

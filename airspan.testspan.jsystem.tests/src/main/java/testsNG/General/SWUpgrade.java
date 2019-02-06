@@ -253,7 +253,7 @@ public class SWUpgrade extends TestspanTest {
 		}
 		executorService.shutdown();
 		try {
-			if (!executorService.awaitTermination(EnodeB.UPGRADE_TIMEOUT, TimeUnit.MILLISECONDS)) {
+			if (!executorService.awaitTermination(EnodeB.DOWNLOAD_TIMEOUT, TimeUnit.MILLISECONDS)) {
 				report.report("Upgrade Worker not finished, will wait 10 more mintues");
 				executorService.awaitTermination((long) 10 * 60 * 1000, TimeUnit.MILLISECONDS);
 			}

@@ -899,7 +899,7 @@ public class SoftwareUtiles {
 			report.report(
 					enodeB.getName() + " - Waiting for software download to finish and report \"" + doneMessage + "\"");
 			boolean doneMessageFound = Log.getInstance().waitForLogLine(enodeB, EnodeBComponentTypes.XLP, doneMessage,
-					EnodeB.UPGRADE_TIMEOUT);
+					EnodeB.DOWNLOAD_TIMEOUT);
 			if (doneMessageFound) {
 				return true;
 			}
@@ -1632,7 +1632,7 @@ public class SoftwareUtiles {
 				Pair<Boolean, SwStatus> swStatus = eNodebSwStaus.eNodeB.isSoftwareDownloadCompletedSuccessfully();
 				eNodebSwStaus.swStatus = swStatus.getElement1();
 				if ((eNodebSwStaus.swUpgradeEventInfoList.length <= eNodebSwStaus.receivedEventIndex)
-						|| (swStatus.getElement0())) {
+						&& (swStatus.getElement0())) {
 					eNodebSwStaus.isSwDownloadCompleted = true;
 					eNodebSwStausListToRemove.add(eNodebSwStaus);
 				} else if ((eNodebSwStaus.swStatus == SwStatus.SW_STATUS_INSTALL_FAILURE
@@ -1651,7 +1651,7 @@ public class SoftwareUtiles {
 
 		} 
 		while ((!eNodebSwStausListTmp.isEmpty())
-				&& (System.currentTimeMillis() - softwareActivateStartTimeInMili <= (EnodeB.UPGRADE_TIMEOUT)));
+				&& (System.currentTimeMillis() - softwareActivateStartTimeInMili <= (EnodeB.DOWNLOAD_TIMEOUT)));
 		for (EnodebSwStatus eNodebSwStaus : eNodebSwStausListTmp) {
 			if (!eNodebSwStaus.isSwDownloadCompleted) {
 				report.report(eNodebSwStaus.eNodeB.getName() + ": Software Download Didn't End.", Reporter.FAIL);
@@ -1697,7 +1697,7 @@ public class SoftwareUtiles {
 		ArrayList<EnodebSwStatus> eNodebSwStausListTmp = (ArrayList<EnodebSwStatus>) eNodebSwStausList.clone();
 		GeneralUtils.startLevel("Wait For ALL RUNNING And In Service.");
 		while ((!eNodebSwStausListTmp.isEmpty())
-				&& (System.currentTimeMillis() - softwareActivateStartTimeInMili <= (EnodeB.UPGRADE_TIMEOUT))) {
+				&& (System.currentTimeMillis() - softwareActivateStartTimeInMili <= (EnodeB.ACTIVATE_TIMEOUT))) {
 			ArrayList<EnodebSwStatus> eNodebSwStausListToRemove = new ArrayList<EnodebSwStatus>();
 			for (EnodebSwStatus eNodebSwStaus : eNodebSwStausListTmp) {
 				if (eNodebSwStaus.eNodeB.isInOperationalStatus()) {

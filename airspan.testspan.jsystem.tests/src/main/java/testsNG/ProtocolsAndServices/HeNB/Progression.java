@@ -10,7 +10,7 @@ import EPC.EPC;
 import EPC.MME;
 import EnodeB.EnodeB;
 import Netspan.EnbProfiles;
-import Netspan.API.Enums.EnabledStates;
+import Netspan.API.Enums.EnabledDisabledStates;
 import Netspan.API.Enums.EnbTypes;
 import Netspan.API.Enums.NetworkElementStatus;
 import Netspan.NBI_15_5.Netspan_15_5_abilities;
@@ -32,7 +32,7 @@ public class Progression extends TestspanTest {
 	private EnodeBConfig enodeBConfig;
 	private boolean skipReboot;
 	private boolean isRedundency;
-	private EnabledStates henbGwEnabled;
+	private EnabledDisabledStates henbGwEnabled;
 	private EPC epc;
 	MME mme1, mme2;
 	
@@ -61,7 +61,7 @@ public class Progression extends TestspanTest {
 		report.report("Home EnodeB X2 HO");
 		if(!checkEnodeBEarfcn())
 			return;
-		henbGwEnabled = EnabledStates.DISABLED;
+		henbGwEnabled = EnabledDisabledStates.DISABLED;
 		preTest();
 		report.startLevel("X2 HO Test.");
 		HO.BasicHO_X2IntraFrequency();
@@ -76,7 +76,7 @@ public class Progression extends TestspanTest {
 		report.report("Home EnodeB S1 HO");
 		if(!checkEnodeBEarfcn())
 			return;
-		henbGwEnabled = EnabledStates.DISABLED;
+		henbGwEnabled = EnabledDisabledStates.DISABLED;
 		preTest();
 		report.startLevel("S1 HO Test.");
 		HO.BasicHO_S1IntraFrequency();
@@ -91,7 +91,7 @@ public class Progression extends TestspanTest {
 		report.report("Home EnodeB X2 HO Behind GW");
 		if(!checkEnodeBEarfcn())
 			return;
-		henbGwEnabled = EnabledStates.ENABLED;
+		henbGwEnabled = EnabledDisabledStates.ENABLED;
 		preTest();
 		report.startLevel("X2 HO Test.");
 		HO.BasicHO_X2IntraFrequency();
@@ -106,7 +106,7 @@ public class Progression extends TestspanTest {
 		report.report("Home EnodeB S1 HO Behind GW");
 		if(!checkEnodeBEarfcn())
 			return;
-		henbGwEnabled = EnabledStates.ENABLED;
+		henbGwEnabled = EnabledDisabledStates.ENABLED;
 		preTest();
 		report.startLevel("S1 HO Test.");
 		HO.BasicHO_S1IntraFrequency();
@@ -119,7 +119,7 @@ public class Progression extends TestspanTest {
 			"IsTestWasSuccessful", "DUT2" })
 	public void homeEnbRedundencyWithoutGw() throws Exception {
 		report.report("Home EnodeB Redundency Without GW");
-		henbGwEnabled = EnabledStates.DISABLED;
+		henbGwEnabled = EnabledDisabledStates.DISABLED;
 		isRedundency = true;
 		preTest();
 		redundencyTest();
@@ -131,7 +131,7 @@ public class Progression extends TestspanTest {
 			"IsTestWasSuccessful", "DUT2"})
 	public void homeEnbRedundencyBehindGw() throws Exception {
 		report.report("Home EnodeB Redundency Behind GW");
-		henbGwEnabled = EnabledStates.ENABLED;
+		henbGwEnabled = EnabledDisabledStates.ENABLED;
 		isRedundency = true;
 		preTest();
 		redundencyTest();
@@ -265,7 +265,7 @@ public class Progression extends TestspanTest {
 		}
 		printDebugData();
 		report.report("STEP 1: Get initial MME statuses");
-		NetworkElementStatus expectedStatus = henbGwEnabled == EnabledStates.ENABLED ? NetworkElementStatus.SCTP_ONLY : NetworkElementStatus.ACTIVE;
+		NetworkElementStatus expectedStatus = henbGwEnabled == EnabledDisabledStates.ENABLED ? NetworkElementStatus.SCTP_ONLY : NetworkElementStatus.ACTIVE;
 		verifyMmesStatus(NetworkElementStatus.ACTIVE, expectedStatus);
 		report.report("STEP 2: Block connection to " + mme1.getS1IpAddress() + " and wait 2 min");
 		dut1.shell("route add -host " + mme1.getS1IpAddress() + " reject");

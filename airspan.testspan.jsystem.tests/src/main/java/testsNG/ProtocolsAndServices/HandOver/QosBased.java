@@ -11,9 +11,9 @@ import Attenuators.AttenuatorSet;
 import EnodeB.EnodeB;
 import Netspan.EnbProfiles;
 import Netspan.API.Enums.ConnectedModeEventTypes;
-import Netspan.API.Enums.EnabledStates;
+import Netspan.API.Enums.EnabledDisabledStates;
 import Netspan.API.Enums.EnbStates;
-import Netspan.API.Enums.HandoverTypes;
+import Netspan.API.Enums.HandoverType;
 import Netspan.API.Enums.HoControlStateTypes;
 import Netspan.API.Enums.X2ControlStateTypes;
 import Netspan.Profiles.MobilityParameters;
@@ -455,10 +455,10 @@ public class QosBased extends TestspanTest {
 
 	private boolean configreQosBasedParams() {
 		boolean actionSucceeded = true;
-		EnabledStates isAccessEnabled = isAccess ? EnabledStates.ENABLED
-				: EnabledStates.DISABLED;
+		EnabledDisabledStates isAccessEnabled = isAccess ? EnabledDisabledStates.ENABLED
+				: EnabledDisabledStates.DISABLED;
 		MobilityParameters mobilityParams = new MobilityParameters();
-		mobilityParams.setQosBasedMeasurement(EnabledStates.ENABLED);
+		mobilityParams.setQosBasedMeasurement(EnabledDisabledStates.ENABLED);
 		mobilityParams.setQosHoAccessAdmin(isAccessEnabled);
 		if (isHoTest) {
 			mobilityParams.setQosBasedEventType(ConnectedModeEventTypes.A_3);
@@ -678,7 +678,7 @@ public class QosBased extends TestspanTest {
 	private boolean addNeighbors() {
 		boolean actionState = true;
 		X2ControlStateTypes X2State = isX2 ? X2ControlStateTypes.AUTOMATIC : X2ControlStateTypes.NOT_ALLOWED;
-		HandoverTypes hoType = isX2 ? HandoverTypes.TRIGGER_X_2 : HandoverTypes.S_1_ONLY;
+		HandoverType hoType = isX2 ? HandoverType.TRIGGER_X_2 : HandoverType.S_1_ONLY;
 		GeneralUtils.startLevel("Add Neighbors.");
 		actionState &= neighbors.addNeighbor(dut1, dut2, HoControlStateTypes.ALLOWED, X2State, hoType, true, "0");
 		actionState &= neighbors.addNeighbor(dut2, dut1, HoControlStateTypes.ALLOWED, X2State, hoType, true, "0");

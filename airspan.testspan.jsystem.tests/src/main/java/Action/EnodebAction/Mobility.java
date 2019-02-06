@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import EnodeB.EnodeB;
 import Netspan.API.Enums.ConnectedModeEventTypes;
-import Netspan.API.Enums.EnabledStates;
+import Netspan.API.Enums.EnabledDisabledStates;
 import Netspan.Profiles.MobilityParameters;
 import Utils.GeneralUtils;
 import Utils.SysObjUtils;
@@ -27,13 +27,13 @@ public class Mobility extends EnodebAction {
 	protected Double a3Offset = null;
 	protected Integer rsrpEventThreshold1 = null;
 	protected Integer rsrpEventThreshold2 = null;
-	protected EnabledStates qosBasedMeasurement = null;
-	protected EnabledStates qosHoAccessAdmin = null;
+	protected EnabledDisabledStates qosBasedMeasurement = null;
+	protected EnabledDisabledStates qosHoAccessAdmin = null;
 	protected ConnectedModeEventTypes qosBasedEventType = null;
 	protected Integer qosBasedThreshold1 = null;
 	protected Integer qosBasedThreshold2 = null;
 	protected ArrayList<Integer> qosBasedEarfcnList = new ArrayList<Integer>();
-	protected EnabledStates thresholdBasedMeasurement = null;
+	protected EnabledDisabledStates thresholdBasedMeasurement = null;
 	protected Integer stopGap = null;
 	protected Integer startGap = null;
 	protected Boolean thresholdBasedMeasurementDual = null;
@@ -106,12 +106,12 @@ public class Mobility extends EnodebAction {
 	}
 
 	@ParameterProperties(description = "Set QosBasedMeasurement")
-	public void setQosBasedMeasurement(EnabledStates qosBasedMeasurement) {
+	public void setQosBasedMeasurement(EnabledDisabledStates qosBasedMeasurement) {
 		this.qosBasedMeasurement = qosBasedMeasurement;
 	}
 
 	@ParameterProperties(description = "Set QosHoAccessAdmin")
-	public void setQosHoAccessAdmin(EnabledStates qosHoAccessAdmin) {
+	public void setQosHoAccessAdmin(EnabledDisabledStates qosHoAccessAdmin) {
 		this.qosHoAccessAdmin = qosHoAccessAdmin;
 	}
 
@@ -150,7 +150,7 @@ public class Mobility extends EnodebAction {
 	}
 
 	@ParameterProperties(description = "Set ThresholdBasedMeasurement")
-	public void setThresholdBasedMeasurement(EnabledStates thresholdBasedMeasurement) {
+	public void setThresholdBasedMeasurement(EnabledDisabledStates thresholdBasedMeasurement) {
 		this.thresholdBasedMeasurement = thresholdBasedMeasurement;
 	}
 
@@ -274,7 +274,7 @@ public class Mobility extends EnodebAction {
 		Parameter eventType = map.get("EventType");
 		Parameter thresholdBasedMeasurement = map.get("ThresholdBasedMeasurement");
 
-		if (thresholdBasedMeasurement.getValue() != null && thresholdBasedMeasurement.getValue().toString().equals(EnabledStates.ENABLED.toString())) {
+		if (thresholdBasedMeasurement.getValue() != null && thresholdBasedMeasurement.getValue().toString().equals(EnabledDisabledStates.ENABLED.toString())) {
 			map.get("ThresholdBasedMeasurementDual").setVisible(true);
 			map.get("StopGap").setVisible(true);
 			map.get("StartGap").setVisible(true);

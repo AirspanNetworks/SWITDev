@@ -17,11 +17,11 @@ import Netspan.API.Lte.EnbCellProperties;
 import Netspan.API.Enums.CategoriesLte;
 import Netspan.API.Enums.EnbStates;
 import Netspan.API.Enums.EnbTypes;
-import Netspan.API.Enums.HandoverTypes;
+import Netspan.API.Enums.HandoverType;
 import Netspan.API.Enums.HardwareCategory;
 import Netspan.API.Enums.HoControlStateTypes;
 import Netspan.API.Enums.ImageType;
-import Netspan.API.Enums.NodeManagementModes;
+import Netspan.API.Enums.NodeManagementModeType;
 import Netspan.API.Enums.PrimaryClockSourceEnum;
 import Netspan.API.Enums.X2ControlStateTypes;
 import Netspan.API.Lte.EventInfo;
@@ -303,7 +303,7 @@ public abstract class NetspanServer extends SystemObjectImpl {
      * @return true, if successful
      */
     public abstract boolean addNeighbor(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
-                                        X2ControlStateTypes x2ControlStatus, HandoverTypes handoverType, boolean isStaticNeighbor,
+                                        X2ControlStateTypes x2ControlStatus, HandoverType handoverType, boolean isStaticNeighbor,
                                         String qOffsetRange);
 
     /**
@@ -318,7 +318,7 @@ public abstract class NetspanServer extends SystemObjectImpl {
      * @return true, if successful
      */
     public abstract boolean addNeighbourMultiCell(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
-                                        X2ControlStateTypes x2ControlStatus, HandoverTypes handoverType, boolean isStaticNeighbor,
+                                        X2ControlStateTypes x2ControlStatus, HandoverType handoverType, boolean isStaticNeighbor,
                                         String qOffsetRange);
 
     /**
@@ -330,7 +330,7 @@ public abstract class NetspanServer extends SystemObjectImpl {
     public abstract int getNumberOfNetspanCells(EnodeB enb);
 
     public abstract boolean checkCannotAddNeighbor(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
-                                                   X2ControlStateTypes x2ControlStatus, HandoverTypes handoverType, Boolean isStaticNeighbor,
+                                                   X2ControlStateTypes x2ControlStatus, HandoverType handoverType, boolean isStaticNeighbor,
                                                    String qOffsetRange);
 
     /**
@@ -348,7 +348,7 @@ public abstract class NetspanServer extends SystemObjectImpl {
      * found.
      */
     public abstract boolean verifyNeighbor(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
-                                           X2ControlStateTypes x2ControlStatus, HandoverTypes handoverType, boolean isStaticNeighbor,
+                                           X2ControlStateTypes x2ControlStatus, HandoverType handoverType, boolean isStaticNeighbor,
                                            String qOffsetRange);
 
     /**
@@ -486,7 +486,7 @@ public abstract class NetspanServer extends SystemObjectImpl {
 
     public abstract RadioParameters radioProfileGet(EnodeB enb) throws Exception;
 
-    public abstract NodeManagementModes getManagedMode(EnodeB enb) throws Exception;
+    public abstract NodeManagementModeType getManagedMode(EnodeB enb) throws Exception;
 
     /**
      * verify that there are no ANR neighbors in the neighbor list on netspan
@@ -572,7 +572,7 @@ public abstract class NetspanServer extends SystemObjectImpl {
 
     public abstract boolean setEnbType(String nodeName, EnbTypes type);
 
-    public abstract boolean setManagedMode(String nodeName, NodeManagementModes managedMode);
+    public abstract boolean setManagedMode(String nodeName, NodeManagementModeType managedMode);
 
     public abstract boolean performReProvision(String nodeName);
 

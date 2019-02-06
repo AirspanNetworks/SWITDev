@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Netspan.EnbProfiles;
-import Netspan.API.Enums.EnabledStates;
+import Netspan.API.Enums.EnabledDisabledStates;
 
 
 public class NetworkParameters implements INetspanProfile{
@@ -12,19 +12,19 @@ public class NetworkParameters implements INetspanProfile{
 	private ArrayList<String> MMEIPS=null;
 	public ArrayList<Plmn> plmnList= null;
 	private CSonConfig cSonConfig = new CSonConfig();
-	private EnabledStates backhaulQosAdmin = null;
+	private EnabledDisabledStates backhaulQosAdmin = null;
 	private Integer backhaulQosMinReservedForCalls = null;
 	private String bhQosBwReservationServerFqdn = null;
 	private String bhQosFtpFqdn = null;
 	private String bhQosFtpPassword = null;
 	private String bhQosFtpUsername = null;
 	private List<String> bhQosReservationServerIpAddressList = new ArrayList<String>();
-	private EnabledStates etwsEnabled;
+	private EnabledDisabledStates etwsEnabled;
 	private Integer etwsUploadPeriod;
 	private Integer etwsUploadPeriodNoData;
 	private String etwsFileServerName;
-	private EnabledStates cdrxConnectedMode = null;
-	private EnabledStates operateBehindHenbGw = null;
+	private EnabledDisabledStates cdrxConnectedMode = null;
+	private EnabledDisabledStates operateBehindHenbGw = null;
 	
 	public NetworkParameters(){}
 	
@@ -40,10 +40,10 @@ public class NetworkParameters implements INetspanProfile{
 		}
 	}
 	
-	public EnabledStates getEtwsEnabled() {
+	public EnabledDisabledStates getEtwsEnabled() {
 		return etwsEnabled;
 	}
-	public void setEtwsEnabled(EnabledStates etwsEnabled) {
+	public void setEtwsEnabled(EnabledDisabledStates etwsEnabled) {
 		this.etwsEnabled = etwsEnabled;
 	}
 	public Integer getEtwsUploadPeriod() {
@@ -64,10 +64,10 @@ public class NetworkParameters implements INetspanProfile{
 	public void setEtwsFileServerName(String etwsFileServerName) {
 		this.etwsFileServerName = etwsFileServerName;
 	}
-	public EnabledStates getBackhaulQosAdmin() {
+	public EnabledDisabledStates getBackhaulQosAdmin() {
 		return backhaulQosAdmin;
 	}
-	public void setBackhaulQosAdmin(EnabledStates backhaulQosAdmin) {
+	public void setBackhaulQosAdmin(EnabledDisabledStates backhaulQosAdmin) {
 		this.backhaulQosAdmin = backhaulQosAdmin;
 	}
 	public Integer getBackhaulQosMinReservedForCalls() {
@@ -202,18 +202,18 @@ public class NetworkParameters implements INetspanProfile{
 		setMMEIPS(mmeip);
 	}
 	
-	public EnabledStates getCdrxConnectedMode() {
+	public EnabledDisabledStates getCdrxConnectedMode() {
 		return cdrxConnectedMode;
 	}
-	public void setCdrxConnectedMode(EnabledStates cdrxConnectedMode) {
+	public void setCdrxConnectedMode(EnabledDisabledStates cdrxConnectedMode) {
 		this.cdrxConnectedMode = cdrxConnectedMode;
 	}
 	
-	public EnabledStates getOperateBehindHenbGw() {
+	public EnabledDisabledStates getOperateBehindHenbGw() {
 		return operateBehindHenbGw;
 	}
 	
-	public void setOperateBehindHenbGw(EnabledStates operateBehindHenbGw) {
+	public void setOperateBehindHenbGw(EnabledDisabledStates operateBehindHenbGw) {
 		this.operateBehindHenbGw = operateBehindHenbGw;
 	}
 	

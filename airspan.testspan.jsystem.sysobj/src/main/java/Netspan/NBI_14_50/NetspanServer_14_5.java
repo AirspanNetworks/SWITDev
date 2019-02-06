@@ -21,13 +21,13 @@ import Netspan.NBIVersion;
 import Netspan.API.Lte.AlarmInfo;
 import Netspan.API.Enums.CategoriesLte;
 import Netspan.API.Enums.ClockSources;
-import Netspan.API.Enums.EnabledStates;
+import Netspan.API.Enums.EnabledDisabledStates;
 import Netspan.API.Enums.EnbTypes;
-import Netspan.API.Enums.HandoverTypes;
+import Netspan.API.Enums.HandoverType;
 import Netspan.API.Enums.HardwareCategory;
 import Netspan.API.Enums.HoControlStateTypes;
 import Netspan.API.Enums.ImageType;
-import Netspan.API.Enums.NodeManagementModes;
+import Netspan.API.Enums.NodeManagementModeType;
 import Netspan.API.Enums.PrimaryClockSourceEnum;
 import Netspan.API.Enums.SecurityProfileOptionalOrMandatory;
 import Netspan.API.Enums.SnmpAgentVersion;
@@ -469,7 +469,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 								mobilityParams.getThresholdBasedMeasurement()));
 
 				// TODO:: remove HC values
-				if (mobilityParams.getThresholdBasedMeasurement() == EnabledStates.ENABLED) {
+				if (mobilityParams.getThresholdBasedMeasurement() == EnabledDisabledStates.ENABLED) {
 					MobilityConnectedModeTriggerGaps triggerGap = new MobilityConnectedModeTriggerGaps();
 					triggerGap.setEventType(
 							factoryDetails.createMobilityConnectedModeTriggerGapsEventType(TriggerGapEventTypes.A_2));
@@ -956,7 +956,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 	 * @return true, if successful
 	 */
 	public boolean addNeighbor(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
-			X2ControlStateTypes x2ControlStatus, HandoverTypes handoverType, boolean isStaticNeighbor,
+			X2ControlStateTypes x2ControlStatus, HandoverType handoverType, boolean isStaticNeighbor,
 			String qOffsetRange) {
 		String sourceNodeName = enodeB.getNetspanName();
 		String neighborName = neighbor.getNetspanName();
@@ -980,7 +980,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 
 	@Override
 	public boolean addNeighbourMultiCell(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
-			X2ControlStateTypes x2ControlStatus, HandoverTypes handoverType, boolean isStaticNeighbor,
+			X2ControlStateTypes x2ControlStatus, HandoverType handoverType, boolean isStaticNeighbor,
 			String qOffsetRange) {
 		report.report("addNeighbourMultiCell via NBI_14_5 Failed : Try to use correct NBI version", Reporter.WARNING);
 		return false;
@@ -1094,7 +1094,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 	 * @return
 	 */
 	public boolean verifyNeighbor(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlType,
-			X2ControlStateTypes x2ControlType, HandoverTypes handoverType, boolean isStaticNeighbor,
+			X2ControlStateTypes x2ControlType, HandoverType handoverType, boolean isStaticNeighbor,
 			String qOffsetRange) {
 		boolean wasadded = true;
 		boolean wasFound = false;
@@ -1686,7 +1686,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 	}
 
 	@Override
-	public NodeManagementModes getManagedMode(EnodeB enb) {
+	public NodeManagementModeType getManagedMode(EnodeB enb) {
 		EnbDetailsGet result = getNodeConfig(enb);
 		if (result != null) {
 			return result.getManagedMode().getValue();
@@ -1990,7 +1990,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 		} else {
 			actionSucceeded &= createDiscoveryTaskV2(enodeB, "public", "private");
 		}
-		actionSucceeded &= setManagedMode(enodeB.getNetspanName(), NodeManagementModes.MANAGED);
+		actionSucceeded &= setManagedMode(enodeB.getNetspanName(), NodeManagementModeType.MANAGED);
 		return actionSucceeded;
 	}
 
@@ -2155,7 +2155,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 		return false;
 	}
 
-	public boolean setManagedMode(String nodeName, NodeManagementModes managedMode) {
+	public boolean setManagedMode(String nodeName, NodeManagementModeType managedMode) {
 		ObjectFactory factoryDetails = new ObjectFactory();
 		EnbDetailsGet enbConfigGet = getNodeConfig(nodeName);
 		LteEnbDetailsSetWs enbConfigSet = EnbConfigGetToSet(enbConfigGet);
@@ -2168,7 +2168,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 		ArrayList<String> nodeList = new ArrayList<String>();
 		nodeList.add(nodeName);
 		try {
-			setManagedMode(nodeName, NodeManagementModes.UNMANAGED);
+			setManagedMode(nodeName, NodeManagementModeType.UNMANAGED);
 
 			GeneralUtils.printToConsole("Sending NBI requeset \"nodeDelete\" for eNodeB " + nodeName);
 			NodeActionResult result = (NodeActionResult) helper_14_50.execute("nodeDelete", nodeList,
@@ -2816,7 +2816,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 
 	@Override
 	public boolean checkCannotAddNeighbor(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
-			X2ControlStateTypes x2ControlStatus, HandoverTypes handoverType, Boolean isStaticNeighbor,
+			X2ControlStateTypes x2ControlStatus, HandoverType handoverType, boolean isStaticNeighbor,
 			String qOffsetRange) {
 		String sourceNodeName = enodeB.getNetspanName();
 		String neighborName = neighbor.getNetspanName();

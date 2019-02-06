@@ -18,9 +18,9 @@ import Netspan.NetspanServer;
 import Netspan.API.Enums.CellBarringPolicies;
 import Netspan.API.Enums.CsgModes;
 import Netspan.API.Enums.DuplexType;
-import Netspan.API.Enums.EnabledStates;
+import Netspan.API.Enums.EnabledDisabledStates;
 import Netspan.API.Enums.EnbStates;
-import Netspan.API.Enums.NodeManagementModes;
+import Netspan.API.Enums.NodeManagementModeType;
 import Netspan.API.Enums.PrimaryClockSourceEnum;
 import Netspan.API.Lte.EnbCellProperties;
 import Netspan.API.Lte.LteBackhaul;
@@ -126,7 +126,7 @@ public class Enodeb extends EnodebAction {
     private EnbProfiles enbProfile;
     private String profileName;
     
-    private NodeManagementModes managedMode;
+    private NodeManagementModeType managedMode;
     private boolean enableCell;
     private String physicalCellId;
     private String PRACHRootSequenceIndex;
@@ -142,10 +142,10 @@ public class Enodeb extends EnodebAction {
     protected DuplexType ethernetDuplex;
     protected EthernetRate ethernetRate;
     protected PortType portType;
-    protected EnabledStates autoNegConfig;
+    protected EnabledDisabledStates autoNegConfig;
     protected PortStatus portStatus;
     protected PortSpeed portSpeed;
-    protected EnabledStates flowControlStatus;
+    protected EnabledDisabledStates flowControlStatus;
 
     private int granularityPeriod = GeneralUtils.ERROR_VALUE;
 
@@ -153,12 +153,12 @@ public class Enodeb extends EnodebAction {
         this.granularityPeriod = Integer.valueOf(granularityPeriod);
     }
 
-    public NodeManagementModes isManaged() {
+    public NodeManagementModeType isManaged() {
 		return managedMode;
 	}
 
     @ParameterProperties(description = "Set EnodeB to Managed or Unmanaged")
-	public void setManaged(NodeManagementModes managed) {
+	public void setManaged(NodeManagementModeType managed) {
 		this.managedMode = managed;
 	}
 	
@@ -326,7 +326,7 @@ public class Enodeb extends EnodebAction {
     }
 
     @ParameterProperties(description = "Auto-Neg Configuration")
-    public void setAutoNegConfig(EnabledStates autoNegConfig) {
+    public void setAutoNegConfig(EnabledDisabledStates autoNegConfig) {
         this.autoNegConfig = autoNegConfig;
     }
 
@@ -341,7 +341,7 @@ public class Enodeb extends EnodebAction {
     }
 
     @ParameterProperties(description = "Flow Control Status")
-    public void setFlowControlStatus(EnabledStates flowControlStatus) {
+    public void setFlowControlStatus(EnabledDisabledStates flowControlStatus) {
         this.flowControlStatus = flowControlStatus;
     }
 

@@ -4,14 +4,14 @@ import java.util.ArrayList;
 
 import Netspan.EnbProfiles;
 import Netspan.API.Enums.ConnectedModeEventTypes;
-import Netspan.API.Enums.EnabledStates;
+import Netspan.API.Enums.EnabledDisabledStates;
 
 
 public class MobilityParameters implements INetspanProfile{
 	private String profileName = null;
 	private Boolean isIntra= null;
 	private ConnectedModeEventTypes eventType = null;
-	private EnabledStates thresholdBasedMeasurement = null;
+	private EnabledDisabledStates thresholdBasedMeasurement = null;
 	private Boolean thresholdBasedMeasurementDual = null;
 	private Integer stopGap = null;
 	private Integer startGap = null;
@@ -24,8 +24,8 @@ public class MobilityParameters implements INetspanProfile{
 	private Double Hysteresis = null;
 	
 	// Qos Based Params.
-	private EnabledStates QosBasedMeasurement = null;
-	private EnabledStates QosHoAccessAdmin = null;
+	private EnabledDisabledStates QosBasedMeasurement = null;
+	private EnabledDisabledStates QosHoAccessAdmin = null;
 	private ConnectedModeEventTypes QosBasedEventType = null;
 	private ArrayList<Integer> QosBasedEarfcnList = null;
 	private Integer QosBasedThreshold1 = null;
@@ -47,19 +47,19 @@ public class MobilityParameters implements INetspanProfile{
 		QosBasedThreshold2 = qosBasedThreshold2;
 	}
 	
-	public EnabledStates getQosBasedMeasurement() {
+	public EnabledDisabledStates getQosBasedMeasurement() {
 		return QosBasedMeasurement;
 	}
 
-	public void setQosBasedMeasurement(EnabledStates qosBasedMeasurement) {
+	public void setQosBasedMeasurement(EnabledDisabledStates qosBasedMeasurement) {
 		QosBasedMeasurement = qosBasedMeasurement;
 	}
 	
-	public EnabledStates getQosHoAccessAdmin() {
+	public EnabledDisabledStates getQosHoAccessAdmin() {
 		return QosHoAccessAdmin;
 	}
 
-	public void setQosHoAccessAdmin(EnabledStates qosHoAccessAdmin) {
+	public void setQosHoAccessAdmin(EnabledDisabledStates qosHoAccessAdmin) {
 		QosHoAccessAdmin = qosHoAccessAdmin;
 	}
 
@@ -126,11 +126,11 @@ public class MobilityParameters implements INetspanProfile{
 		return "MobilityParameters profileName:" + profileName + ", intraFreqEventType:" + eventType;
 	}
 
-	public EnabledStates getThresholdBasedMeasurement() {
+	public EnabledDisabledStates getThresholdBasedMeasurement() {
 		return thresholdBasedMeasurement;
 	}
 	
-	public void setThresholdBasedMeasurement(EnabledStates thresholdBasedMeasurement) {
+	public void setThresholdBasedMeasurement(EnabledDisabledStates thresholdBasedMeasurement) {
 		this.thresholdBasedMeasurement = thresholdBasedMeasurement;
 	}
 

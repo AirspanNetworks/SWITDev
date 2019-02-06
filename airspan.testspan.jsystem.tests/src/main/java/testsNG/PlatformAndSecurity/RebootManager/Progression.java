@@ -10,7 +10,7 @@ import org.junit.Test;
 import EnodeB.EnodeB;
 import Netspan.EnbProfiles;
 import Netspan.NetspanServer;
-import Netspan.API.Enums.HandoverTypes;
+import Netspan.API.Enums.HandoverType;
 import Netspan.API.Enums.HoControlStateTypes;
 import Netspan.API.Enums.X2ControlStateTypes;
 import Netspan.NBI_15_5.Lte.AutonomousRebootValues;
@@ -381,7 +381,7 @@ public class Progression extends TestspanTest{
 		
 		report.report("Adding neighbor with the same PCI to cause Collision, PCI = " + neighborPci);
 
-		if(!ngh.addNeighbor(dut, neighbor, HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC, HandoverTypes.TRIGGER_X_2, true, "0")){report.report("Faild to add neighbor.", Reporter.WARNING);}
+		if(!ngh.addNeighbor(dut, neighbor, HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC, HandoverType.TRIGGER_X_2, true, "0")){report.report("Faild to add neighbor.", Reporter.WARNING);}
 		
 		GeneralUtils.stopLevel();
 	}

@@ -24,14 +24,14 @@ import Netspan.NBI_15_2.Software.*;
 import Netspan.NetspanServer;
 import Netspan.API.Enums.CategoriesLte;
 import Netspan.API.Enums.ClockSources;
-import Netspan.API.Enums.EnabledStates;
+import Netspan.API.Enums.EnabledDisabledStates;
 import Netspan.API.Enums.EnbStates;
 import Netspan.API.Enums.EnbTypes;
-import Netspan.API.Enums.HandoverTypes;
+import Netspan.API.Enums.HandoverType;
 import Netspan.API.Enums.HardwareCategory;
 import Netspan.API.Enums.HoControlStateTypes;
 import Netspan.API.Enums.ImageType;
-import Netspan.API.Enums.NodeManagementModes;
+import Netspan.API.Enums.NodeManagementModeType;
 import Netspan.API.Enums.PrimaryClockSourceEnum;
 import Netspan.API.Enums.SecurityProfileOptionalOrMandatory;
 import Netspan.API.Enums.ServerProtocolType;
@@ -64,6 +64,7 @@ import Netspan.NBI_15_2.Inventory.ErrorCodes;
 import Netspan.NBI_15_2.Inventory.NodeActionResult;
 import Netspan.NBI_15_2.Inventory.NodeDetailGetResult;
 import Netspan.NBI_15_2.Inventory.NodeManagementMode;
+import Netspan.NBI_15_2.Inventory.NodeManagementModes;
 import Netspan.NBI_15_2.Inventory.WsResponse;
 import Netspan.NBI_15_2.Lte.AddlSpectrumEmissions;
 import Netspan.NBI_15_2.Lte.AirSonWs;
@@ -389,7 +390,7 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
 
     @Override
     public boolean verifyNeighbor(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
-                                  X2ControlStateTypes x2ControlStatus, HandoverTypes handoverType, boolean isStaticNeighbor,
+                                  X2ControlStateTypes x2ControlStatus, HandoverType handoverType, boolean isStaticNeighbor,
                                   String qOffsetRange) {
 
         boolean wasAdded = true;
@@ -1414,7 +1415,7 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
                 mobilityProfile.setIsThresholdBasedMeasurementEnabled(
                     factoryDetails.createEnbMobilityProfileParamsIsThresholdBasedMeasurementEnabled(
                         mobilityParams.getThresholdBasedMeasurement()));
-                if (mobilityParams.getThresholdBasedMeasurement() == EnabledStates.ENABLED) {
+                if (mobilityParams.getThresholdBasedMeasurement() == EnabledDisabledStates.ENABLED) {
                     MobilityConnectedModeTriggerGaps triggerGap = new MobilityConnectedModeTriggerGaps();
                     triggerGap.setRsrpEventThreshold1(factoryDetails
                         .createMobilityConnectedModeTriggerGapsRsrpEventThreshold1(mobilityParams.getStartGap()));
@@ -1610,7 +1611,7 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
         ArrayList<String> nodeList = new ArrayList<String>();
         nodeList.add(nodeName);
         try {
-            setManagedMode(nodeName, NodeManagementModes.UNMANAGED);
+            setManagedMode(nodeName, NodeManagementModeType.UNMANAGED);
 
             GeneralUtils.printToConsole("Sending NBI requeset \"nodeDelete\" for eNodeB " + nodeName);
             NodeActionResult result = soapHelper_15_2.getInventorySoap().nodeDelete(nodeList, null,
@@ -1666,7 +1667,7 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
     }
 
     @Override
-    public boolean setManagedMode(String nodeName, NodeManagementModes managedMode) {
+    public boolean setManagedMode(String nodeName, NodeManagementModeType managedMode) {
         Netspan.NBI_15_2.Inventory.ObjectFactory factory = new Netspan.NBI_15_2.Inventory.ObjectFactory();
         ArrayList<NodeManagementMode> nodeList = new ArrayList<NodeManagementMode>();
         NodeManagementMode node = new NodeManagementMode();
@@ -1724,7 +1725,7 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
         } else {
             actionSucceeded &= createDiscoveryTaskV2(node, "public", "private");
         }
-        actionSucceeded &= setManagedMode(node.getNetspanName(), NodeManagementModes.MANAGED);
+        actionSucceeded &= setManagedMode(node.getNetspanName(), NodeManagementModeType.MANAGED);
         return actionSucceeded;
     }
 
@@ -2309,7 +2310,7 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
     }
 
     @Override
-    public NodeManagementModes getManagedMode(EnodeB enb) {
+    public NodeManagementModeType getManagedMode(EnodeB enb) {
         EnbDetailsGet result = getNodeConfig(enb);
         if (result == null) {
             return null;
@@ -2786,13 +2787,13 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
         }
         for (Event event : events.getEvent()) {
             EventInfo newEvent = new EventInfo();
-            newEvent.setEventId(event.getEventId().getValue());
+            newEvent.setEventId(event.getEventId());
             newEvent.setEventInfo(event.getEventInfo());
             newEvent.setEventType(event.getEventType());
-            newEvent.setEventTypeId(event.getEventTypeId().getValue());
-            newEvent.setReceivedTime(event.getReceivedTime().getValue());
+            newEvent.setEventTypeId(event.getEventTypeId());
+            newEvent.setReceivedTime(event.getReceivedTime());
             newEvent.setSourceId(event.getSourceId());
-            newEvent.setSourceIfIndex(event.getSourceIfIndex().getValue());
+            newEvent.setSourceIfIndex(event.getSourceIfIndex());
             newEvent.setSourceMacAddress(event.getSourceMacAddress());
             newEvent.setSourceName(event.getSourceName());
             newEvent.setSourceType(event.getSourceType());
@@ -2906,7 +2907,7 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
         if (radioParams.getRmMode() != null) {
             ResourceManagementTypes rmMode = radioParams.getRmMode() ? ResourceManagementTypes.SFR
                 : ResourceManagementTypes.DISABLED;
-            radioProfile.setRmMode(factoryDetails.createEnbRadioProfileRmMode(rmMode));
+            radioProfile.setRmMode(rmMode);
 
             if (radioParams.getRmMode()) {
                 if (radioParams.getSFRSegment() != null) {
@@ -2941,8 +2942,8 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
         }
 
         if (radioParams.getECIDMode() != null) {
-            EnabledStates state = radioParams.getECIDMode() ? EnabledStates.ENABLED
-                : EnabledStates.DISABLED;
+            EnabledDisabledStates state = radioParams.getECIDMode() ? EnabledDisabledStates.ENABLED
+                : EnabledDisabledStates.DISABLED;
             radioProfile.setEcidMode(factoryDetails.createEnbRadioProfileEcidMode(state));
             if (radioParams.getECIDMode()) {
                 radioProfile.setEcidTimer(
@@ -2954,7 +2955,7 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
 
     @Override
     public boolean addNeighbor(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
-                               X2ControlStateTypes x2ControlStatus, HandoverTypes handoverType, boolean isStaticNeighbor,
+                               X2ControlStateTypes x2ControlStatus, HandoverType handoverType, boolean isStaticNeighbor,
                                String qOffsetRange) {
         List<LteAddNeighbourWs> neighbourConfigList = new ArrayList<>();
         LteAddNeighbourWs neighbourConfig = new LteAddNeighbourWs();
@@ -3038,7 +3039,7 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
 
     @Override
     public boolean checkCannotAddNeighbor(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
-                                          X2ControlStateTypes x2ControlStatus, HandoverTypes handoverType, Boolean isStaticNeighbor,
+                                          X2ControlStateTypes x2ControlStatus, HandoverType handoverType, boolean isStaticNeighbor,
                                           String qOffsetRange) {
         int enbNumbersOfCells = this.getNumberOfNetspanCells(enodeB);
         int nbrNumbersOfCells = this.getNumberOfNetspanCells(neighbor);
@@ -3086,7 +3087,7 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
      */
     @Override
     public boolean addNeighbourMultiCell(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
-                                         X2ControlStateTypes x2ControlStatus, HandoverTypes handoverType, boolean isStaticNeighbor,
+                                         X2ControlStateTypes x2ControlStatus, HandoverType handoverType, boolean isStaticNeighbor,
                                          String qOffsetRange) {
         ObjectFactory factoryDetails = new ObjectFactory();
         List<LteAddNeighbourWs> neighbourConfigList = new ArrayList<>();
@@ -3458,7 +3459,7 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
                 objectFactory.createAirSonWsPowerLevelTimeInterval(advancedParmas.getPowerLevelTimeInterval()));
             airSonWs.setAnrTimer(objectFactory.createAirSonWsAnrTimer(advancedParmas.getAnrTimer()));
             if (advancedParmas.getPciConfusionAllowed() != null) {
-                EnabledStates state = EnabledStates
+                EnabledDisabledStates state = EnabledDisabledStates
                     .fromValue(advancedParmas.getPciConfusionAllowed().value());
                 airSonWs.setPciConfusionAllowed(objectFactory.createAirSonWsPciConfusionAllowed(state));
             }
@@ -3704,7 +3705,7 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
                         multiCellParams.getIntraEnbLoadBalanceMode()));
             }
 
-            if (multiCellParams.getIntraEnbLoadBalanceMode() == EnabledStates.ENABLED) {
+            if (multiCellParams.getIntraEnbLoadBalanceMode() == EnabledDisabledStates.ENABLED) {
                 // compositeLoadMax
                 multiCellProfile.setCompositeLoadDiffMax(factoryObject
                     .createEnbMultiCellProfileCompositeLoadDiffMax(multiCellParams.getCompositeLoadDiffMax()));
@@ -3759,12 +3760,12 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
     private Netspan.NBI_15_2.Software.SwImageWs createSoftwareImageObject(EnodeBUpgradeImage upgradeImage) {
 
         Netspan.NBI_15_2.Software.SwImageWs softwareImage = new Netspan.NBI_15_2.Software.SwImageWs();
-        Netspan.NBI_15_2.Software.ObjectFactory objectFactory = new Netspan.NBI_15_2.Software.ObjectFactory();
+
         if (upgradeImage.getUpgradeServerName() != null) {
             softwareImage.setName(upgradeImage.getName());
         }
         if (upgradeImage.getHardwareCategory() != null) {
-            softwareImage.setHardwareCategory(objectFactory.createSwImageWsHardwareCategory(upgradeImage.getHardwareCategory()));
+            softwareImage.setHardwareCategory(upgradeImage.getHardwareCategory());
         }
         if (upgradeImage.getUpgradeServerName() != null) {
             softwareImage.setSoftwareServer(upgradeImage.getUpgradeServerName());
@@ -3811,7 +3812,7 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
             Netspan.NBI_15_2.Software.SwImageWs imageResult = result.getSoftwareImageResult().get(0).getSoftwareImage();
             EnodeBUpgradeImage image = new EnodeBUpgradeImage();
             image.setName(imageResult.getName());
-            image.setHardwareCategory(imageResult.getHardwareCategory().getValue());
+            image.setHardwareCategory(imageResult.getHardwareCategory());
             image.setUpgradeServerName(imageResult.getSoftwareServer());
             image.setBuildPath(imageResult.getSoftwareFileInfo().get(0).getFileNameWithPath());
             image.setVersion(imageResult.getSoftwareFileInfo().get(0).getVersion());

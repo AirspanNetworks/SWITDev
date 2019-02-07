@@ -1632,7 +1632,7 @@ public class SoftwareUtiles {
 				Pair<Boolean, SwStatus> swStatus = eNodebSwStaus.eNodeB.isSoftwareDownloadCompletedSuccessfully();
 				eNodebSwStaus.swStatus = swStatus.getElement1();
 				if ((eNodebSwStaus.swUpgradeEventInfoList.length <= eNodebSwStaus.receivedEventIndex)
-						&& (swStatus.getElement0())) {
+						|| (swStatus.getElement0())) {
 					eNodebSwStaus.isSwDownloadCompleted = true;
 					eNodebSwStausListToRemove.add(eNodebSwStaus);
 				} else if ((eNodebSwStaus.swStatus == SwStatus.SW_STATUS_INSTALL_FAILURE

@@ -10,6 +10,9 @@ import UeSimulator.Amarisoft.JsonObjects.ConfigFile.SimEvent;
 import UeSimulator.Amarisoft.JsonObjects.ConfigFile.UeList;
 
 
+/**
+ * Todo Moran Unfinished class - delete from master
+ */
 public class Program {
 
 	public static AmariSoftServer clientEndPoint;

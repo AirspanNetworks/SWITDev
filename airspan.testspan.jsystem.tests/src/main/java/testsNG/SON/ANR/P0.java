@@ -158,8 +158,8 @@ public class P0 extends TestspanTest {
 		enbInTest.add(dut1);
 		enbInTest.add(dut2);
 
-		super.init();
 		attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(CommonConstants.ATTENUATOR_SET_NAME);
+		super.init();
 		GeneralUtils.stopLevel();
 	}
 

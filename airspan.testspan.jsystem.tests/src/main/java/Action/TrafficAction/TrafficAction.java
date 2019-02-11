@@ -12,7 +12,6 @@ import jsystem.framework.ParameterProperties;
 import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
 import jsystem.framework.scenario.Parameter;
-import testsNG.Actions.Traffic;
 import testsNG.Actions.Traffic.GeneratorType;
 import testsNG.Actions.TrafficManager;
 import Action.Action;

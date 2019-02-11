@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>airspan.testspan.jsystem</groupId>
 	<artifactId>airspan.testspan.jsystem.parent</artifactId>
-	<version>1.21.86</version> 
+	<version>1.21.92</version> 
 	<packaging>pom</packaging>
 	<properties>
 		<jsystem.version>6.1.06-beta1</jsystem.version>
@@ -287,7 +287,6 @@
 				<configuration>
 					<source>${java.version}</source>
 					<target>${java.version}</target>
-					<argLine>-d64 -Xms512m -Xmx4g</argLine>
 				</configuration>
 			</plugin>
 			<plugin>

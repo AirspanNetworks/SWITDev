@@ -17,9 +17,9 @@ public class TunnelManager extends Thread{
 	private static ArrayList<EnodeB> eNodeBInTestList;
 	private IPSecServer ipSecServer;
 	private Reporter report;
-	
+
 	/**************Infra Functions*******************/
-	
+
 	public synchronized static TunnelManager getInstance(ArrayList<EnodeB> eNodeBs, Reporter report) throws Exception {
 		if (instance == null){
 			instance = new TunnelManager(eNodeBs, report);
@@ -30,7 +30,7 @@ public class TunnelManager extends Thread{
 		}
 		return instance;
 	}
-	
+
 	private TunnelManager(ArrayList<EnodeB> eNodeBs, Reporter report) throws Exception{
 		super();
 		this.report = report;
@@ -42,7 +42,7 @@ public class TunnelManager extends Thread{
 			this.eNodebIPSecDetailsList.add(new EnodebIPSecDetails(eNodeB, eNodeB.getIpsecCertificateMacAddress(), eNodeB.getIpAddress(), eNodeB.getS1IpAddress(), ""));
 		}
 	}
-	
+
 	public void addEnodeBsToENodebIPSecDetailsList(EnodeB eNodeB) throws IOException{
 		boolean isEnodbInList = false;
 		for(EnodebIPSecDetails enodebIPSecDetails : this.eNodebIPSecDetailsList){
@@ -54,7 +54,7 @@ public class TunnelManager extends Thread{
 			this.eNodebIPSecDetailsList.add(new EnodebIPSecDetails(eNodeB, eNodeB.getIpsecCertificateMacAddress(), eNodeB.getIpAddress(), eNodeB.getS1IpAddress(), ""));
 		}
 	}
-	
+
 	public synchronized TunnelManagerThreadState safeStart(){
 		if(this.isRunning == TunnelManagerThreadState.NOT_STARTED){
 			this.isThreadNeeded = true;
@@ -63,7 +63,7 @@ public class TunnelManager extends Thread{
 		}
 		return isRunning;
 	}
-	
+
 	public synchronized TunnelManagerThreadState safeSuspend(){
 		if(this.isRunning == TunnelManagerThreadState.RUNNING){
 			instance.suspend();
@@ -71,7 +71,7 @@ public class TunnelManager extends Thread{
 		}
 		return isRunning;
 	}
-	
+
 	public synchronized TunnelManagerThreadState safeResume(){
 		if(this.isRunning == TunnelManagerThreadState.SUSPENDED){
 			instance.resume();
@@ -79,8 +79,8 @@ public class TunnelManager extends Thread{
 		}
 		return isRunning;
 	}
-	
-	public synchronized TunnelManagerThreadState safeEnd(){ 
+
+	public synchronized TunnelManagerThreadState safeEnd(){
 		this.isThreadNeeded = false;
 		if(isRunning == TunnelManagerThreadState.SUSPENDED){
 			safeResume();
@@ -100,7 +100,7 @@ public class TunnelManager extends Thread{
 		}
 		return isRunning;
 	}
-	
+
 	public boolean waitForIPSecTunnelToOpen(long timeoutInMili, EnodeB eNodeB){
 		EnodebIPSecDetails eNodebIPSecDetails = null;
 		for(EnodebIPSecDetails eNodebIPSecDetailsIterator : this.eNodebIPSecDetailsList){
@@ -132,7 +132,7 @@ public class TunnelManager extends Thread{
 		}
 		return isIPSecTunnelOpend;
 	}
-	
+
 	public TunnelManagerResult openTunnel() throws TunnelManagerException{
 		GeneralUtils.startLevel("Opening IPSec Tunnel");
 		for(EnodebIPSecDetails eNodebIPSecDetails : eNodebIPSecDetailsList){
@@ -161,7 +161,7 @@ public class TunnelManager extends Thread{
 			throw new TunnelManagerException(TunnelManagerResult.COULD_NOT_OPEN_IPSEC_TUNNEL);
 		}
 	}
-	
+
 	public TunnelManagerResult closeTunnel(){
 		report.report("Closing IPSec Tunnel");
 		GeneralUtils.printToConsole("Disable IPSec and Reboot.");
@@ -188,7 +188,7 @@ public class TunnelManager extends Thread{
 		report.report("IPSec Tunnel closed, but not all eNodeBs reached to ALL RUNNING state.");
 		return TunnelManagerResult.IPSEC_TUNNEL_CLOSED_BUT_DID_NOT_REACH_ALL_RUNNING_STATE;
 	}
-	
+
 	public void run(){
 		this.isRunning = TunnelManagerThreadState.RUNNING;
 		while(this.isThreadNeeded){
@@ -228,10 +228,10 @@ public class TunnelManager extends Thread{
 		}
 		this.isRunning = TunnelManagerThreadState.ENDED;
 	}
-	
+
 	/************Helper Functions
 	 * @throws TunnelManagerException **************/
-	
+
 	private synchronized boolean setVirtualIPsAsPublicIPs(ArrayList<EnodebIPSecDetails> eNodebIPSecDetailsList){
 		ArrayList<Integer> eNodeBsIndexes = new ArrayList<>();
 		for(int i = 0; i < eNodebIPSecDetailsList.size(); i++){eNodeBsIndexes.add(i);}
@@ -272,7 +272,7 @@ public class TunnelManager extends Thread{
 							eNodebIPSecDetailsList.get(j).setTunnelOpenedBefore(true);
 							indexesToRemove.add(j);
 						}
-						
+
 					}
 				}
 				for(Integer indexToRemove : indexesToRemove){eNodeBsIndexes.remove(indexToRemove);}
@@ -291,7 +291,7 @@ public class TunnelManager extends Thread{
 		}
 		return false;
 	}
-	
+
 	private boolean areThereAnyTriesLeft(ArrayList<EnodebIPSecDetails> eNodebIPSecDetailsList){
 		for(EnodebIPSecDetails eNodebIPSecDetails : eNodebIPSecDetailsList){
 			if(eNodebIPSecDetails.getNumberOfTriesToSetVirtualIP() < MAX_NUMBER_OF_TRIES_TO_SET_VIRTUAL_IP){
@@ -300,7 +300,7 @@ public class TunnelManager extends Thread{
 		}
 		return false;
 	}
-	
+
 	private void areThereAnyTriesLeftStatus(){
 		for(EnodebIPSecDetails eNodebIPSecDetails : eNodebIPSecDetailsList){
 			if(eNodebIPSecDetails.getNumberOfTriesToSetVirtualIP() >= MAX_NUMBER_OF_TRIES_TO_SET_VIRTUAL_IP){
@@ -311,13 +311,13 @@ public class TunnelManager extends Thread{
 			}
 		}
 	}
-	
+
 	public static void failedTestIfNoTriesLeftForAnyDut(){
 		if(instance != null){
 			instance.areThereAnyTriesLeftStatus();
 		}
 	}
-	
+
 	private void setAddressToPublicIp(ArrayList<EnodebIPSecDetails> eNodebIPSecDetailsList) {
 		GeneralUtils.printToConsole("Change managment IP to public IP.");
 		for(EnodebIPSecDetails eNodebIPSecDetails : eNodebIPSecDetailsList){
@@ -327,7 +327,7 @@ public class TunnelManager extends Thread{
 			eNodeB.initSNMP();
 		}
 	}
-	
+
 	private boolean isAllENodeBsInAllRunning(ArrayList<EnodebIPSecDetails> eNodebIPSecDetailsList){
 		for(EnodebIPSecDetails eNodebIPSecDetails : eNodebIPSecDetailsList){
 			if (!eNodebIPSecDetails.geteNodeB().isAllRunning()) {
@@ -336,10 +336,10 @@ public class TunnelManager extends Thread{
 		}
 		return true;
 	}
-	
+
 	void generateClassicSnmpdFile(EnodebIPSecDetails eNodebIPSecDetails){
 		EnodeB eNodeB = eNodebIPSecDetails.geteNodeB();
-		
+
 		eNodeB.shell("rwcommunity  private > /bsdata/snmpd.conf");
 		eNodeB.shell("rocommunity  public >> /bsdata/snmpd.conf");
 		eNodeB.shell("agentuser  root >> /bsdata/snmpd.conf");
@@ -347,21 +347,21 @@ public class TunnelManager extends Thread{
 		eNodeB.shell("agentaddress UDP:"+ eNodebIPSecDetails.getPublicIP() +":161 >> /bsdata/snmpd.conf");
 		eNodeB.shell("trapsink  127.0.0.1  3232 >> /bsdata/snmpd.conf");
 	}
-	
+
 	/***************Results Values****************/
-	
+
 	public enum TunnelManagerResult{IPSEC_TUNNEL_OPENED_SUCCESSFULLY, IPSEC_TUNNEL_CLOSED_SUCCESSFULLY,
 		COULD_NOT_OPEN_IPSEC_TUNNEL, IPSEC_TUNNEL_OPENED_BUT_DID_NOT_REACH_ALL_RUNNING_STATE,
 		IPSEC_TUNNEL_CLOSED_BUT_DID_NOT_REACH_ALL_RUNNING_STATE}
-	
+
 	public class TunnelManagerException extends Exception{
 		private static final long serialVersionUID = 1L;
 		private TunnelManagerResult result;
-		
+
 		TunnelManagerException(TunnelManagerResult result){
 			this.result = result;
 		}
-		
+
 		public TunnelManagerResult getResult() {
 			return result;
 		}
@@ -369,9 +369,9 @@ public class TunnelManager extends Thread{
 			this.result = result;
 		}
 	}
-	
+
 	/***************Helper Nested Class****************/
-	
+
 	private class EnodebIPSecDetails{
 		private EnodeB eNodeB;
 		private String macAddress;
@@ -380,7 +380,7 @@ public class TunnelManager extends Thread{
 		private String virtualIP;
 		private boolean tunnelOpenedBefore;
 		private int numberOfTriesToSetVirtualIP;
-		
+
 		public EnodebIPSecDetails(EnodeB eNodeB, String macAddress, String publicIP, String s1IpAddress, String virtualIP){
 			this.eNodeB = eNodeB;
 			this.macAddress = macAddress;
@@ -390,7 +390,7 @@ public class TunnelManager extends Thread{
 			this.tunnelOpenedBefore = false;
 			numberOfTriesToSetVirtualIP = 0;
 		}
-		
+
 		public EnodeB geteNodeB() {
 			return eNodeB;
 		}
@@ -437,15 +437,19 @@ public class TunnelManager extends Thread{
 		public void setS1IpAddress(String s1IpAddress) {
 			this.s1IpAddress = s1IpAddress;
 		}
-		
+
 	}
 
 	/*************Getters And Setters************/
-	
+
 	public static ArrayList<EnodeB> geteNodeBInTestList() {
 		return eNodeBInTestList;
 	}
 
+	/** Set eNodeB In Test List - taken from the user's Jsystem input.
+     *
+	 * @param eNodeBInTestList - eNodeB In Test List
+	 */
 	public static void seteNodeBInTestList(ArrayList<EnodeB> eNodeBInTestList) {
 		TunnelManager.eNodeBInTestList = eNodeBInTestList;
 	}

@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.List;
 
 import Utils.*;
-import com.sun.jna.platform.win32.ShellAPI.SHFILEOPSTRUCT;
 
 import Attenuators.AttenuatorSet;
 import EnodeB.EnodeB;
@@ -70,20 +69,15 @@ public class AutoPCIBase extends TestspanTest {
     protected int pciStart;
     protected int pciEnd;
     protected final int threshold = 16;
-    protected boolean shouldReboot = false;
+    protected boolean shouldReboot;
 
     @SuppressWarnings("unchecked")
     @Override
     public void init() throws Exception {
+        shouldReboot = false;
         enbInTest = new ArrayList<>();
         enbInTest.add(dut);
-        super.init();
-        GeneralUtils.startLevel("Init");
         netspanServer = NetspanServer.getInstance();
-
-        otherEnb = (ArrayList<EnodeB>) enbInSetup.clone();
-        otherEnb.remove(dut);
-
         enodeBConfig = EnodeBConfig.getInstance();
         netspan = NetspanServer.getInstance();
         mibReader = MibReader.getInstance();
@@ -94,6 +88,13 @@ public class AutoPCIBase extends TestspanTest {
         alarmsAndEvents = AlarmsAndEvents.getInstance();
         peripheralsConfig = PeripheralsConfig.getInstance();
         testConfig = TestConfig.getInstace();
+
+        super.init();
+        GeneralUtils.startLevel("Init");
+
+        otherEnb = (ArrayList<EnodeB>) enbInSetup.clone();
+        otherEnb.remove(dut);
+
         if (attenuatorSetUnderTest == null) {
             attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(CommonConstants.ATTENUATOR_SET_NAME);
         }
@@ -247,11 +248,20 @@ public class AutoPCIBase extends TestspanTest {
         SONStatus sonStatus = netspan.getSONStatus(dut);
         printRSIPCIDebug(sonStatus);
 
-        for (EnodeB enb : otherEnb) {
-            peripheralsConfig.changeEnbState(enb, EnbStates.IN_SERVICE);
-        }
+        changeStateToOtherEnbs();
         GeneralUtils.stopLevel();
         super.end();
+    }
+
+    /**
+     * change State to "In service" To the Other Enbs in the setup
+     */
+    private void changeStateToOtherEnbs() {
+        if (otherEnb != null) {
+            for (EnodeB enb : otherEnb) {
+                peripheralsConfig.changeEnbState(enb, EnbStates.IN_SERVICE);
+            }
+        }
     }
 
     private Boolean checkIfPciIsDefault() {

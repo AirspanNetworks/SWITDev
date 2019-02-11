@@ -256,8 +256,9 @@ public class EnodeBConfig {
 	/**
 	 * @author Shahaf Shahumy get Current enodeb Security Profile Save the new
 	 *         profile in map change the cloned one and set in netspan
-	 * @param securitySimulator
-	 * @param dut
+	 * @param node
+	 * @param cloneFromName
+	 * @param securityPramas
 	 * @throws Exception
 	 */
 	public boolean cloneAndSetSecurityProfileViaNetSpan(EnodeB node, String cloneFromName,
@@ -426,15 +427,25 @@ public class EnodeBConfig {
 		radioParamsSnmp = this.radioProfileGetSnmp(dutENB);
 		return radioParamsSnmp;
 	}
-	
+
+	/**
+	 *  checks if the EnodeB is managed in NetSPan
+	 *
+	 * @param enodeB  - enodeB
+	 * @return - true if it's managed
+	 */
 	public boolean isEnodebManaged(EnodeB enodeB) {
+		// Should happen only once in scenario
+		if(enodeB.isManagedByNetspan())
+			return true;
 		try {
 			NodeManagementModeType managed = netspanServer.getManagedMode(enodeB);
-			if(managed != NodeManagementModeType.MANAGED){
+			if (managed != NodeManagementModeType.MANAGED){
 				report.report("EnodeB: " + enodeB.getNetspanName() + " Is Not Managed in Netspan: "
 						+ NetspanServer.getInstance().getHostname(), Reporter.WARNING);
 				return false;
 			}
+			enodeB.setManagedByNetspan(true);
 			return true;
 		} catch (Exception e) {
 			report.report("isEnodebManaged failed due to: " + e.getMessage(), Reporter.WARNING);
@@ -513,7 +524,7 @@ public class EnodeBConfig {
 	 * user want to change (the name of the profile will set automatically in
 	 * the function)
 	 * 
-	 * @param enb
+	 * @param dut
 	 * @param np
 	 * @return
 	 * @throws IOException

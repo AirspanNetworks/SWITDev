@@ -164,10 +164,7 @@ public class Traffic {
 		if (instance == null){
 			instance = new Traffic(ues);
 		}
-		if(instance == null){
-			return null;
-		}
-		instance.revertToDefault(instance.generatorType);
+		instance.revertToDefault();
 		return instance;
 	}
 	
@@ -175,25 +172,25 @@ public class Traffic {
 		if (instance == null){
 			instance = new Traffic(ues, type);
 		}
-		if(instance == null){
-			return null;
-		}
-		instance.revertToDefault(instance.generatorType);
+        if(instance != null) {
+            instance.revertToDefault();
+        }
 		return instance;
 	}
-	
-	private void revertToDefault(TrafficGeneratorType type){
-		
-		switch(instance.generatorType){
-		case ITraffic:
-			instance.configFile = new File(instance.trafficGenerator.getDefultConfigFile());
-			instance.trafficGenerator.setCurrentConfigFile(instance.trafficGenerator.getDefultConfigFile());
-			break;
-			
-		case TestCenter:
-			instance.configFile = new File(instance.tg.getDefaultConfigTccFile());
-			break;
-			}
+
+    /**
+     * revert Traffic Generator config file to its default state
+     */
+	public void revertToDefault(){
+        switch (instance.generatorType) {
+            case ITraffic:
+                instance.configFile = new File(instance.trafficGenerator.getDefultConfigFile());
+                instance.trafficGenerator.setCurrentConfigFile(instance.trafficGenerator.getDefultConfigFile());
+                break;
+            case TestCenter:
+                instance.configFile = new File(instance.tg.getDefaultConfigTccFile());
+                break;
+        }
 	}
 
     /**

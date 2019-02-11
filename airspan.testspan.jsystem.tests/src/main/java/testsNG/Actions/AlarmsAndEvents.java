@@ -43,7 +43,13 @@ public class AlarmsAndEvents {
 	public List<EventInfo> getAllEventsNode(EnodeB dut, Date startTime, Date endTime){
 		return netspanServer.getEventsNodeByDateRange(dut, startTime, endTime);
 	}
-	
+
+	/**
+	 * Initialize the alarms for the input dut
+	 *
+	 * @param dut - dut
+	 * @return - response to the "delete all alarms" request
+	 */
 	public boolean deleteAllAlarmsNode(EnodeB dut) {
 		boolean response = false;
 		try{
@@ -174,8 +180,7 @@ public class AlarmsAndEvents {
 	 * created by Moran Goldenberg
 	 * @param dut
 	 * @param alarmType
-	 * @param eventMessage 
-	 * @param timeout
+	 * @param timeOutInMinutes
 	 * @return true if the events appears until timeout
 	 */
 	public EventInfo waitForEventShowUp(EnodeB dut, String alarmType, int timeOutInMinutes) {

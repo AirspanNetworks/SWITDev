@@ -297,14 +297,19 @@ public class AmariSoftServer extends SystemObjectImpl{
 		
 		
 		this.dlMachineNetworks = ips;
-	} 
-    
-	public static AmariSoftServer getInstance() throws Exception {
+	}
+
+	/** getInstance of Amarisoft
+	 * @return - Instance(
+	 */
+	public static AmariSoftServer getInstance()  {
 		try {
 			if (instance == null) {				
 				instance = (AmariSoftServer) SystemManagerImpl.getInstance().getSystemObject("amariSoftServer");
 			}
 		} catch (Exception e) {
+			ListenerstManager.getInstance().report("Amarisoft server SUT object is missing.");
+			GeneralUtils.printToConsole(e.getMessage());
 		}
 		return instance;
 	}
@@ -580,17 +585,17 @@ public class AmariSoftServer extends SystemObjectImpl{
 
 	public void startLogger() {	
 		if (!connected) {
-			GeneralUtils.printToConsole("Cant start amarisoft log file when not connected.");
+			GeneralUtils.printToConsole("Cant start Amarisoft log file when not connected.");
 			return;
 		}
 		if (saveLogFile) {
-			GeneralUtils.printToConsole("Cant start amarisoft log file logging is already running.");
+			GeneralUtils.printToConsole("Cant start Amarisoft log file logging is already running.");
 			return;
 		}
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				GeneralUtils.printToConsole("Starting amarisoft log to file: " + logFileName);
+				GeneralUtils.printToConsole("Starting Amarisoft log to file: " + logFileName);
 				saveLogFile = true;
 				while (saveLogFile) {
 					try {

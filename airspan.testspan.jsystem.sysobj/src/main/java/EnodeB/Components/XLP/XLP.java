@@ -49,9 +49,9 @@ public abstract class XLP extends EnodeBComponent {
         SwStatus(String code) {
             value = code;
         }
-        
+
         public static SwStatus fromValue(String v) {
-            for (SwStatus c: SwStatus.values()) {
+            for (SwStatus c : SwStatus.values()) {
                 if (c.value.equals(v)) {
                     return c;
                 }
@@ -129,10 +129,15 @@ public abstract class XLP extends EnodeBComponent {
         }
     }
 
+    /**
+     * Prints EnodeB version to the Jenkins Console.
+     *
+     * @throws Exception -Exception
+     */
     public void printVersion() throws Exception {
         String version = getVersion();
         if (version != null)
-            report.report(String.format("%s(ver:%s) initialized!", getHardwareName(), version));
+            GeneralUtils.printToConsole(String.format("%s(ver:%s) initialized!", getHardwareName(), version));
         else
             throw new Exception("Initialization error: Can't get " + getHardwareName() + " version.");
     }
@@ -754,9 +759,9 @@ public abstract class XLP extends EnodeBComponent {
                 + SWTypeInstnace;
 
         // waiting for Done in the download
-        //long timeout = EnodeB.UPGRADE_TIMEOUT; // 60 minutes
+        //long timeout = EnodeB.DOWNLOAD_TIMEOUT; // 30 minutes
         long startTime = System.currentTimeMillis();
-        while (System.currentTimeMillis() - startTime <= EnodeB.UPGRADE_TIMEOUT / 3) {
+        while (System.currentTimeMillis() - startTime <= EnodeB.DOWNLOAD_TIMEOUT) {
             String precent = "", downloadStatus, statusString = "";
 
             precent = snmp.get(precentOid).trim();
@@ -869,7 +874,7 @@ public abstract class XLP extends EnodeBComponent {
             return String.valueOf(GeneralUtils.ERROR_VALUE);
         }
         for (String aHexArray : hexArray) {
-            if (Integer.parseInt("0" + aHexArray, 16) != 0)
+            if (aHexArray != String.valueOf(GeneralUtils.ERROR_VALUE) && Integer.parseInt("0" + aHexArray, 16) != 0)
                 result += (char) Integer.parseInt(aHexArray, 16);
         }
         return result;
@@ -2220,7 +2225,12 @@ public abstract class XLP extends EnodeBComponent {
         }
     }
 
-    public boolean isBankSwaped() {
+    /**
+     * Checks if the banks were swapped by validating the running version.
+     *
+     * @return - true if swapped.
+     */
+    public boolean isBankSwapped() {
         if (testerVer == null || !testerVer.matches(".*\\d\\d.*"))
             return false;
         long timeout = 5 * 1000 * 60;

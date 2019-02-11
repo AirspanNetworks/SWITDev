@@ -155,7 +155,7 @@ public class Progression extends TestspanTest {
 			boolean rebootRequired = Integer.parseInt(dut1.getEnbType()) != EnbTypes.HOME.ordinal();
 			rebootRequired |= !dut1.getOperateBehindHenbGw().equals(henbGwEnabled);
 			if(isRedundency)
-				rebootRequired |= verifyMmesConfig();
+				rebootRequired |= !verifyMmesConfig();
 			if ( rebootRequired ) {
 				if(isRedundency)
 					setMmes();

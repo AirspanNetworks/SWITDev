@@ -83,13 +83,11 @@ public class SysObjUtils {
 		try {
 			ArrayList<T> sysObjArrayList = new ArrayList<T>();
 			for (String sysObjName : sysObjNames) {
-				boolean openLevelForSystemObject = false;
 				sysObjName = sysObjName.trim();
 				// Check if the system object was already initialized.
 				if (!initializedSystemObjects.contains(sysObjName)) {
 					initializedSystemObjects += sysObjName + SYSOBJ_STRING_DELIMITER;
-					openLevelForSystemObject = true;
-					GeneralUtils.startLevel(String.format("Initializing \"%s\"", sysObjName));
+					GeneralUtils.printToConsole(String.format("Initializing \"%s\"", sysObjName));
 				}
 
 				try {
@@ -97,7 +95,6 @@ public class SysObjUtils {
 					if (sysObjClass.isAssignableFrom(sysObj.getClass()))
 						sysObjArrayList.add((T) system.getSystemObject(sysObjName));
 					else {
-						GeneralUtils.stopLevel();
 						report.report(
 								String.format(
 										"You are trying to initialize \"%s\" (%s) as \"%s\" but they are not related. Failing test.",
@@ -117,19 +114,11 @@ public class SysObjUtils {
 						sysObjName += SYSOBJ_STRING_DELIMITER;
 						initializedSystemObjects = initializedSystemObjects.replaceAll(sysObjName, "");
 					} else {
-						if (openLevelForSystemObject)
-							GeneralUtils.stopLevel();
-						Assert.fail("check initalization level to see why the test failed");
+						Assert.fail("check initialization level to see why the test failed");
 					}
-
 				}
-
-				if (openLevelForSystemObject)
-					GeneralUtils.stopLevel();
 			}
-
 			return sysObjArrayList;
-
 		} catch (Exception e) {
 			report.report("Error initializing the test system objects", e);
 		}

@@ -122,27 +122,21 @@ public class TPTBase extends TestspanTest {
 			enbInTest = new ArrayList<EnodeB>();
 		}
 		enbInTest.add(dut);
-		super.init();
-		GeneralUtils.startLevel("Test Init");
 		peripheralsConfig = PeripheralsConfig.getInstance();
 		enbConfig = EnodeBConfig.getInstance();
-		try {
-			attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(CommonConstants.ATTENUATOR_SET_NAME);
-		} catch (Exception e) {
-			attenuatorSetUnderTest = null;
-			report.report("Attenuator Fail to initialize");
-		}
 		trafficSTC = Traffic.getInstance(SetupUtils.getInstance().getAllUEs());
-		GeneralUtils.stopLevel();
 		runWithDynamicCFI = TestConfig.getInstace().getDynamicCFI();
 		isCaTest = false;
 		numberParallelStreams = null;
 		windowSizeInKbits = null;
-
-		TEST_TIME_MILLIS = setTime(TEST_TIME_SHORT);
 		this.protocol = Protocol.UDP;
 		dlFromNetspan = new ArrayList<Integer>();
 		ulFromNetspan = new ArrayList<Integer>();
+		super.init();
+		GeneralUtils.startLevel("Test Init");
+		attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(CommonConstants.ATTENUATOR_SET_NAME);
+		GeneralUtils.stopLevel();
+		TEST_TIME_MILLIS = setTime(TEST_TIME_SHORT);
 	}
 
 	protected void watchDogInit() {

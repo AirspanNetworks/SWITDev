@@ -3,6 +3,7 @@ package testsNG.SON.PnP;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -103,11 +104,15 @@ public class Progression extends TestspanTest{
 	private HtmlTable htmlTable;
 	private HtmlTimelineStage[] htmlTimelineTable;
 	private Pair<Long, String>[] expectedDurationsAndStageNamesOrdered;
+	private String buildPath;
+	private String relayBuildPath;
+	private String build;
 	
 	@Override
 	public void init() throws Exception {
 		enbInTest = new ArrayList<EnodeB>();
 		enbInTest.add(dut);
+		TunnelManager.seteNodeBInTestList(enbInTest);
 		super.init();
 		if(dut instanceof EnodeBWithDonor){
 			isEnodeBWithDonor = true;
@@ -124,11 +129,9 @@ public class Progression extends TestspanTest{
 
 	@Override
 	public void end(){
-		 WatchDogManager.getInstance().shutDown();
 		 if(isEnodeBWithDonor){
 			 DNS.getInstance().closeConnection();
 		 }
-		//stopParallelCommands();
 		super.end();
 	}
 	
@@ -356,7 +359,7 @@ public class Progression extends TestspanTest{
 			rebootTime = System.currentTimeMillis();
 			if(eNodeB.isSwUpgradeDuringPnP()){
 				WAIT_FOR_ALL_RUNNING_TIME = 30 * 60 * 1000;
-				swActivationDetails = SoftwareUtiles.getInstance().updatDefaultSoftwareImage(eNodeB);
+				swActivationDetails = SoftwareUtiles.getInstance().updatDefaultSoftwareImage(eNodeB, buildPath, relayBuildPath);
 			}
 			watchAllRunningTimeout.startCounting(rebootTime, WAIT_FOR_ALL_RUNNING_TIME);
 			report.report("Convert To PnP Configuration in NMS.");
@@ -405,6 +408,14 @@ public class Progression extends TestspanTest{
 	
 	private boolean isNinjaAvailableViaDebugPort(EnodeBWithDonor eNodeBWithDonor) {
 		boolean isAvailable = false;
+		buildPath = System.getProperty("BuildMachineVerPath");
+		relayBuildPath = System.getProperty("BuildMachineRelayVerPath");
+		if (buildPath == null || buildPath.isEmpty()) {
+			report.report("No inputs for the test");
+			reason = "No inputs for the test";
+		} 
+		else
+			build = SoftwareUtiles.getVersionFromPath(buildPath);
 		try {
 			eNodeBWithDonor.debugPort.init();
 		} catch (Exception e) {
@@ -873,9 +884,7 @@ public class Progression extends TestspanTest{
 			this.eNodeB = eNodeB;
 			this.tmpEventListToFollow = new ArrayList<>();
 			this.uploadedEventListFromFollowList = new ArrayList<>();
-			for(int i = 0; i < eventListToFollow.length; i++){
-				this.tmpEventListToFollow.add(eventListToFollow[i]);
-			}
+			this.tmpEventListToFollow.addAll(Arrays.asList(eventListToFollow));
 			uploadedTime = null;
 			this.state = WatchdogState.INITIALIZED;
 		}

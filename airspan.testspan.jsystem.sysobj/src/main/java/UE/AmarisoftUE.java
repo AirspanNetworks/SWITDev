@@ -22,11 +22,6 @@ public class AmarisoftUE extends UE implements Comparable{
 		this.server = server;
 		setName("AmarisoftUE" + (10000 + ueId));
 	}
-	
-	@Override
-	public void init() throws Exception {
-		super.init();
-	}
 
 	@Override
 	public boolean start() {

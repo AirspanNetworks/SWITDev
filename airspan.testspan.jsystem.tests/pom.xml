@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>airspan.testspan.jsystem</groupId>
 		<artifactId>airspan.testspan.jsystem.parent</artifactId>
-		<version>1.21.86</version>
+		<version>1.21.92</version>
 		<relativePath>../airspan.testspan.jsystem.parent</relativePath>
 	</parent>
 
@@ -16,14 +16,13 @@
 			<artifactId>poi</artifactId>
 		</dependency>
 
-		<!-- pcap paraser --> 
-			<dependency>
-      			<groupId>io.pkts</groupId>
-     			<artifactId>pkts-core</artifactId>
-      			<version>2.0.4</version>
-     			<type>jar</type>
- 			</dependency>
- 			
+		<!-- pcap paraser -->
+		<dependency>
+			<groupId>io.pkts</groupId>
+			<artifactId>pkts-core</artifactId>
+			<type>jar</type>
+		</dependency>
+
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
@@ -105,21 +104,19 @@
 			<groupId>airspan</groupId>
 			<artifactId>netspan</artifactId>
 		</dependency>
-			<dependency>
+		<dependency>
 			<groupId>airspan</groupId>
 			<artifactId>dmtool</artifactId>
 		</dependency>
 		<dependency>
-   	 		<groupId>org.jsoup</groupId>
-    		<artifactId>jsoup</artifactId>
-    		<version>1.7.2</version>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
 		</dependency>
 
 
 		<dependency>
 			<groupId>xmlunit</groupId>
 			<artifactId>xmlunit</artifactId>
-			<version>1.4</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -129,7 +126,6 @@
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.3</version>
 				<configuration>
-					<argLine>-d64 -Xms512m -Xmx4g</argLine>
 				</configuration>
 				<executions>
 					<execution>

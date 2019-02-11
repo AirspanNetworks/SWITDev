@@ -67,7 +67,6 @@ public class P0 extends TestspanTest {
 	public String attCounterName;
 	public String succCounterNameSNMP;
 	public String attCounterNameSNMP;
-	String lastNumericReason = "";
 	public EnodeB dut1;
 	public EnodeB dut2;
 	ParallelCommandsThread commandsThread1 = null;
@@ -177,44 +176,37 @@ public class P0 extends TestspanTest {
 	public boolean preTest(HoControlStateTypes HOControlTypes, X2ControlStateTypes X2Types, HandoverType HOType,
 			ConnectedModeEventTypes hoEventType) {
 		GeneralUtils.startLevel("HO Pre Test");
-		deleteNeighbours();
-		peripheralsConfig.SetAttenuatorToMin(attenuatorSetUnderTest);
-		GeneralUtils.unSafeSleep(5000);
-		startTraffic();
-		initUes();
-
-		if (!findMainEnb()) {
-			report.report("Cannot find main ENB, no dynamic ues are connecetd.", Reporter.FAIL);
-			reason = "Cannot find main ENB, no dynamic ues are connecetd.";
-			GeneralUtils.stopLevel(); // pretest stop level
-			return false;
+		try {
+			deleteNeighbours();
+			peripheralsConfig.SetAttenuatorToMin(attenuatorSetUnderTest);
+			GeneralUtils.unSafeSleep(5000);
+			startTraffic();
+			initUes();
+			if (!findMainEnb())
+				return false;
+			if (!addNeighbours(enodeB, neighbor, HOControlTypes, X2Types, HOType, true, "0"))
+				return false;
+			if (!checkAllDynamicConnected())
+				return false;
+			if (!checkStaticUesConnected())
+				return false;
+		} finally {
+			GeneralUtils.stopAllLevels();
 		}
-		report.report("Main EnodeB: " + enodeB.getNetspanName());
-		report.report("Slave EnodeB: " + neighbor.getNetspanName());
+		return true;
+	}
 
-		// add neighbors
-		if (!addNeighbours(enodeB, neighbor, HOControlTypes, X2Types, HOType, true, "0")) {
-			reason = "Neighbor wasn't added to EnodeB\n";
-			GeneralUtils.stopLevel(); // pretest stop level
-			return false;
-		}
-
-		checkAllDynamicConnected();
-		if (dynUEList.isEmpty()) {
-			report.report("There are no connected dynamic ues.", Reporter.FAIL);
-			reason = "There are no connected dynamic ues.";
-			GeneralUtils.stopLevel(); // pretest stop level
-			return false;
-		}
-
+	private boolean checkStaticUesConnected() {
 		GeneralUtils.startLevel("Checking if all static UEs are connected");
-		if (statUEList != null && !peripheralsConfig.epcAndEnodeBsConnection(statUEList, enbInTest)) {
-			report.report("Not all static UEs are connected to EnodeB", Reporter.FAIL);
-			reason = "Not all static UEs are connected to EnodeB";
+		if (statUEList != null) {
+			if (!peripheralsConfig.epcAndEnodeBsConnection(statUEList, enbInTest)) {
+				report.report("Not all static UEs are connected to EnodeB", Reporter.FAIL);
+				reason = "Not all static UEs are connected to EnodeB";
+				return false;
+			}
 		} else {
 			report.report("There are no static UEs to check");
 		}
-		GeneralUtils.stopAllLevels();
 		return true;
 	}
 
@@ -244,6 +236,7 @@ public class P0 extends TestspanTest {
 		peripheralsConfig.startUEs(dynUEList);
 	}
 
+	@SuppressWarnings("unused")
 	private void changeMobilityProfile(ConnectedModeEventTypes hoEventType) {
 		UE testUe = null;
 		for (UE dynUE : SetupUtils.getInstance().getDynamicUEs()) {
@@ -320,7 +313,8 @@ public class P0 extends TestspanTest {
 			peripheralsConfig.rebootUEs(SetupUtils.getInstance().getDynamicUEs());
 			currentEnb = getEnbConnectedToDynUe();
 			if (currentEnb == null) {
-				report.report("No dynamic UEs connected", Reporter.FAIL);
+				report.report("Cannot find main ENB, no dynamic ues are connecetd.", Reporter.FAIL);
+				reason = "Cannot find main ENB, no dynamic ues are connecetd.";
 				GeneralUtils.stopLevel();// Checking what is the main EnodeB
 											// stop level
 				return false;
@@ -328,17 +322,19 @@ public class P0 extends TestspanTest {
 		}
 		enodeB = currentEnb;
 		neighbor = enodeB == dut1 ? dut2 : dut1;
+		report.report("Main EnodeB: " + enodeB.getNetspanName());
+		report.report("Slave EnodeB: " + neighbor.getNetspanName());
 		GeneralUtils.stopLevel();// Checking what is the main EnodeB stop level
 		return true;
 	}
 
-	private void checkAllDynamicConnected() {
+	private boolean checkAllDynamicConnected() {
 
 		for (int retry = 1; retry <= 3; retry++) {
 			GeneralUtils.startLevel("Checking if all Dynamic UEs are connected ");
 			if (peripheralsConfig.epcAndEnodeBsConnection(SetupUtils.getInstance().getDynamicUEs(), enbInTest)) {
 				GeneralUtils.stopLevel();
-				return;
+				return true;
 			} else {
 				report.report("Not all dynamic Ue's are connected to EnodeB", Reporter.WARNING);
 				peripheralsConfig.rebootUEs(SetupUtils.getInstance().getDynamicUEs());
@@ -357,7 +353,13 @@ public class P0 extends TestspanTest {
 				dynUEList.remove(ue);
 			}
 		}
+		if (dynUEList.isEmpty()) {
+			report.report("There are no connected dynamic ues.", Reporter.FAIL);
+			reason = "There are no connected dynamic ues.";
+			return false;
+		}
 		GeneralUtils.stopLevel();
+		return true;
 	}
 
 	private EnodeB getEnbConnectedToDynUe() {
@@ -791,13 +793,17 @@ public class P0 extends TestspanTest {
 		// Special case when we have multi cell -> add both of them.
 		if (enbNumbersOfCells == nbrNumbersOfCells && enbNumbersOfCells == 2) {
 			if (!addNeighboursSingleOrMultiCell(enodeB, neighbor, HOControlTypes, X2Types, HOType, isStaticNeighbor,
-					qOffsetRange, true))
+					qOffsetRange, true)) {
+				reason = "Neighbor wasn't added to EnodeB\n";
 				return false;
+			}
 		} else {
 			// Default case of adding 1 neighbour
 			if (!addNeighboursSingleOrMultiCell(enodeB, neighbor, HOControlTypes, X2Types, HOType, isStaticNeighbor,
-					qOffsetRange, false))
+					qOffsetRange, false)) {
+				reason = "Neighbor wasn't added to EnodeB\n";
 				return false;
+			}
 		}
 		report.reportHtml(enodeB.getName() + ": db get nghList", enodeB.lteCli("db get nghList"), true);
 		report.reportHtml(neighbor.getName() + ": db get nghList", neighbor.lteCli("db get nghList"), true);

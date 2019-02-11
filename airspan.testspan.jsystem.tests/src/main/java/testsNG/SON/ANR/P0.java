@@ -734,8 +734,11 @@ public class P0 extends TestspanTest {
 		COMMS_STATUS x2Status = COMMS_STATUS.get(asLteStkNghListCommsStatusValue);
 		report.report("asLteStkNghListCommsStatus's value = " + asLteStkNghListCommsStatusValue + " ("+x2Status+").");
 		report.report("Adding static route to "+neighbor.getName()+"("+neighbor.getS1IpAddress()+") that reject sending packets to "+enodeB.getName()+" ("+dutX2IpAddress+") for avoiding X2 update message (route add -host " + dutX2IpAddress + " reject).");
-		neighbor.shell("route add -host " + dutX2IpAddress + " reject");
-		GeneralUtils.startLevel("Wainting for X2 status will be INACTIVE (5 minutes timeout).");
+//		neighbor.shell("route add -host " + dutX2IpAddress + " reject");
+		
+		neighbor.routeRejectHost(dutX2IpAddress, EnodeB.RouteOperations.add);
+		
+		GeneralUtils.startLevel("Waiting for X2 status will be INACTIVE (5 minutes timeout).");
 		for(int i = 1; i <= 30; i++){
 			GeneralUtils.startLevel("Try Number #" + i);
 			GeneralUtils.unSafeSleep(10 * 1000);
@@ -762,6 +765,7 @@ public class P0 extends TestspanTest {
 		String dutX2IpAddress = enodeB.getS1IpAddress();
 		report.report("Removing static route from "+neighbor.getName()+" that reject sending packets to "+enodeB.getName()+"("+dutX2IpAddress+"), (route del -host " + dutX2IpAddress + " reject).");
 		neighbor.shell("route del -host " + dutX2IpAddress + " reject");
+		neighbor.routeRejectHost(dutX2IpAddress, EnodeB.RouteOperations.del);
 	}
 
 	private void setRemoveThreshold(EnodeB enodeB, int value) {

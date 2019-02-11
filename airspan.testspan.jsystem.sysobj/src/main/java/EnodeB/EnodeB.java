@@ -46,7 +46,6 @@ import Utils.Snmp.SNMP;
 import jsystem.framework.IgnoreMethod;
 import jsystem.framework.report.Reporter;
 import jsystem.framework.system.SystemObjectImpl;
-import net.bytebuddy.asm.Advice.Return;
 
 /**
  * The Class EnodeB.
@@ -81,7 +80,23 @@ public abstract class EnodeB extends SystemObjectImpl {
 			new Pair<Long, String>((long)HALF_MIN, "eNodeb Software Activate Completed"),
 			new Pair<Long, String>((long)TWO_MIN, "All Running.")
 	};
-	
+
+	public boolean isNetspanProfilesVerified() {
+		return isNetspanProfilesVerified;
+	}
+
+	public void setNetspanProfilesVerified(boolean netspanProfilesVerified) {
+		isNetspanProfilesVerified = netspanProfilesVerified;
+	}
+
+	public boolean isManagedByNetspan() {
+		return isManagedByNetspan;
+	}
+
+	public void setManagedByNetspan(boolean managedByNetspan) {
+		isManagedByNetspan = managedByNetspan;
+	}
+
 	public enum Architecture {
 		XLP, FSM, FSMv4
 	}
@@ -90,7 +105,8 @@ public abstract class EnodeB extends SystemObjectImpl {
 	private static final String CONTROL_COMPONENT_HW_NAME = "XLP";
 	public static final int BOOTING_TIMOUT = 2 * 60 * 1000;// 120 sec
 	public static final int MAX_NBI_TOTAL_TRYOUTS = 8;
-	public static final long UPGRADE_TIMEOUT = 60 * 1000 * 60;
+	public static final long DOWNLOAD_TIMEOUT = 30 * 1000 * 60;
+	public static final long ACTIVATE_TIMEOUT = 20 * 1000 * 60;
 	public static long WAIT_FOR_ALL_RUNNING_TIME = 30 * 1000 * 60;
 	public static long SHORT_WAIT_FOR_ALL_RUNNING_TIME = 2 * 1000 * 60;
 	/** The netspan name. */
@@ -118,10 +134,15 @@ public abstract class EnodeB extends SystemObjectImpl {
 	protected int band;
 	/** The cellID. */
 	protected int cellId;
+	/** is managed by netspan flag. */
+	private boolean isManagedByNetspan;
+	/** is netspan profiles verified flag. */
+	private boolean isNetspanProfilesVerified;
 	public DefaultNetspanProfiles defaultNetspanProfiles;
 	private String[] staticUEs;
 	private NodeWebAccess webAccess;
 	public Object inServiceStateLock = new Object();
+
 	/**
 	 * The description of the eNodeB (example: AirSynergy 2000, Band 38/41M,
 	 * 2.5GHz TDD, Connectorized) or product code
@@ -218,7 +239,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 	/**
 	 * Lte cli command
 	 *
-	 * @param commands
+	 * @param command
 	 *            the commands
 	 * @return the string
 	 */
@@ -229,7 +250,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 	/**
 	 * Lte cli commands.. separated by ";"
 	 *
-	 * @param commands
+	 * @param command
 	 *            the commands
 	 * @return the string
 	 */
@@ -1182,11 +1203,8 @@ public abstract class EnodeB extends SystemObjectImpl {
 		Boolean result = false;
 		GeneralUtils.printToConsole("------Setting logger upload url------");
 		String response = enb.XLP.lteCli("db set StackCfg [1] uploadUrl=" + url);
-		if (response == null)
-			this.waitForAllRunning(EnodeBWithDAN.SHORT_WAIT_FOR_ALL_RUNNING_TIME);
-		response = enb.XLP.lteCli("db set StackCfg [1] uploadUrl=" + url);
 		if (response == null) {
-			GeneralUtils.printToConsole("logger upload url faild to update");
+			GeneralUtils.printToConsole("logger upload url failed to update");
 			return false;
 		}
 
@@ -1194,7 +1212,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 			GeneralUtils.printToConsole("logger upload url updated!");
 			result = true;
 		} else {
-			GeneralUtils.printToConsole("logger upload url faild to update");
+			GeneralUtils.printToConsole("logger upload url failed to update");
 		}
 		GeneralUtils.printToConsole("------done with logger upload url------");
 		return result;
@@ -1451,6 +1469,10 @@ public abstract class EnodeB extends SystemObjectImpl {
 		return XLP.snmp.snmpSet(strOID, Value);
 	}
 	
+	public boolean snmpSet(String strOID,InetAddress Value) throws IOException{
+		return XLP.snmp.snmpSet(strOID, Value);
+	}
+	
 	public boolean snmpSet(String strOID, int Value) throws IOException{
 		return XLP.snmp.snmpSet(strOID, Value);
 	}
@@ -1472,9 +1494,6 @@ public abstract class EnodeB extends SystemObjectImpl {
 	
 	public int getCellBarredMibValue(int cellNum){
 		return XLP.getCellBarredValue(cellNum);
-	}
-	public String shell(String command){
-		return XLP.shell(command);
 	}
 	
 	/*
@@ -1511,11 +1530,15 @@ public abstract class EnodeB extends SystemObjectImpl {
 	}
 	
 	
+	public String shell(String command){
+		return XLP.shell(command);
+	}
+	
 	public void setDeviceUnderTest(Boolean deviceUnderTest){
 		XLP.setDeviceUnderTest(deviceUnderTest);
 	}
 	
-	public void clearTestPrameters(){
+	public void clearTestParameters(){
 		XLP.clearTestPrameters();
 	}
 	
@@ -1533,7 +1556,12 @@ public abstract class EnodeB extends SystemObjectImpl {
 	public int getUnexpectedReboot(){
 		return XLP.getUnexpectedReboot();
 	}
-	
+
+	/**
+	 * define the number of unexpected reboots on the current EnodeB object.
+	 *
+	 * @param unexpectedReboot - number of unexpected reboot
+	 */
 	public void setUnexpectedReboot(int unexpectedReboot){
 		XLP.setUnexpectedReboot(unexpectedReboot);
 	}
@@ -1541,8 +1569,8 @@ public abstract class EnodeB extends SystemObjectImpl {
 		 XLP.updateTestedVer();
 	 }
 	 
-	 public boolean isBankSwaped() {
-		 return XLP.isBankSwaped();
+	 public boolean isBankSwapped() {
+		 return XLP.isBankSwapped();
 	 }
 	 
 	 public boolean setRSI(int value) {

@@ -282,12 +282,13 @@ public abstract class EnodeBComponent extends SystemObjectImpl implements LogLis
                                     String managementIp = NetspanServer.getInstance().getMangementIp((EnodeB) getParent());
                                     if ((managementIp != null) && (!managementIp.equals("")) && (!managementIp.equals(String.valueOf(GeneralUtils.ERROR_VALUE))) && (!managementIp.equalsIgnoreCase(ip))) {
                                         setIpAddress(managementIp);
+                                        ((EnodeB) getParent()).setS1IpAddress(managementIp);
                                         GeneralUtils.unSafeSleep(2000);
                                         initSNMP();
                                     }
 
                                 } catch (Exception e) {
-                                    GeneralUtils.printToConsole("Cant get managementIp from netspan.");
+                                    GeneralUtils.printToConsole("Can't get managementIp from netspan.");
                                     e.printStackTrace();
                                 }
                                 GeneralUtils.printToConsole(getName() + " is unreachable.");

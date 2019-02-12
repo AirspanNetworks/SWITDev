@@ -547,8 +547,7 @@ public class P0 extends TestspanTest {
 		GeneralUtils.stopLevel();
 		GeneralUtils.stopLevel();
 		GeneralUtils.startLevel("Deleting neighbors");
-		HO.deleteAllNeighbors(dut1);
-		HO.deleteAllNeighbors(dut2);
+		HO.deleteNeighbours();
 		GeneralUtils.stopLevel();
 	}
 
@@ -652,8 +651,7 @@ public class P0 extends TestspanTest {
 		GeneralUtils.stopLevel();
 		GeneralUtils.stopLevel();
 		GeneralUtils.startLevel("Deleting neighbors");
-		HO.deleteAllNeighbors(dut1);
-		HO.deleteAllNeighbors(dut2);
+		HO.deleteNeighbours();
 		GeneralUtils.stopLevel();
 	}
 

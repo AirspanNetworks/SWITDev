@@ -121,7 +121,7 @@ public abstract class EnodeBWithDonor extends AirVelocity{
 	@Override
 	@IgnoreMethod
 	public Logger[] getLoggers() {
-		return new Logger[] {XLP.getLogger(), donor.XLP.getLogger()};
+		return new Logger[] { XLP.getLogger(), donor != null? donor.XLP.getLogger() : null};
 	}
 	
 	@Override

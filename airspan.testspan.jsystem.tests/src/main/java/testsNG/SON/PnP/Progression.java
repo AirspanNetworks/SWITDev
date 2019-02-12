@@ -32,6 +32,7 @@ import Utils.WatchDog.WatchDogManager;
 import jsystem.framework.ParameterProperties;
 import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
+import testsNG.Actions.Utils.EnodebSwStatus;
 import testsNG.TestspanTest;
 import testsNG.Actions.PeripheralsConfig;
 import testsNG.Actions.SoftwareUtiles;
@@ -182,8 +183,11 @@ public class Progression extends TestspanTest{
 		report.report(dut.getName() + "'s Running Version: " + dut.getRunningVersion());
 		suspendIpsecTunnelManagerIfEnabled(dut); 
 		//openLogs(dut);
-		Pair<Long, Triple<Integer, String, String>> rebootTimeAndSwActivationDetails = performColdRebootAndConvertNmsProfileToPnP(step++, timelineStageIndex++, dut, watchAllRunningTimeout);
+//		Pair<Long, Triple<Integer, String, String>> rebootTimeAndSwActivationDetails = performColdRebootAndConvertNmsProfileToPnP(step++, timelineStageIndex++, dut, watchAllRunningTimeout);
+//		final long rebootTime = rebootTimeAndSwActivationDetails.getElement0();
+		Pair<Long, EnodebSwStatus> rebootTimeAndSwActivationDetails = performColdRebootAndConvertNmsProfileToPnP(step++, timelineStageIndex++, dut, watchAllRunningTimeout);
 		final long rebootTime = rebootTimeAndSwActivationDetails.getElement0();
+
 		if(rebootTime == 0){
 			return;
 		}
@@ -216,9 +220,10 @@ public class Progression extends TestspanTest{
 		if(dut.isSwUpgradeDuringPnP()){
 			GeneralUtils.startLevel(step++ + ". For Cold eNodeB PnP & Software Download see Appendix E1.");
 			suspendIpsecTunnelManagerIfEnabled(dut);
-			ArrayList<Pair<EnodeB, Triple<Integer, String, String>>> dutInArray = new ArrayList<Pair<EnodeB, Triple<Integer, String, String>>>();
-			dutInArray.add(new Pair<EnodeB, Triple<Integer, String, String>>(dut, rebootTimeAndSwActivationDetails.getElement1()));
-			SoftwareUtiles.getInstance().followSoftwareActivationProgressViaNetspan(System.currentTimeMillis(), dutInArray);
+			ArrayList<EnodebSwStatus> enbSWDetailsList = new  ArrayList<>();
+			enbSWDetailsList.add(rebootTimeAndSwActivationDetails.getElement1());
+
+			SoftwareUtiles.getInstance().followSoftwareActivationProgressViaNetspan(System.currentTimeMillis(), enbSWDetailsList);
 			GeneralUtils.stopLevel();
 			watchNmsEventsEnodebColdRebootSoftwareDownload = startFollowNmsEvents(timelineStageIndex++, COLD_ENODEB_PNP_EVENTS_EXPECTED_DURATION_IN_MILI, dut, rebootTime, COLLECT_EVENTS_FROM_NMS_TIMEOUT, "Cold eNodeB PnP & Software Download.", eNodebColdRebootPnpSoftwareDownloadEventListToFollow, 0, false);//Doesn't Wait, uses WatchDog
 			rebootTimeAfterSoftwareDownload = System.currentTimeMillis();
@@ -270,7 +275,7 @@ public class Progression extends TestspanTest{
 		if(dut.isSwUpgradeDuringPnP()){
 			SoftwareUtiles softwareUtiles = SoftwareUtiles.getInstance();
 			softwareUtiles.isVersionUpdated(dut, Reporter.FAIL);
-			softwareUtiles.isRelayVersionUpdated(dut, rebootTimeAndSwActivationDetails.getElement1().getRightElement(), Reporter.FAIL);
+			softwareUtiles.isRelayVersionUpdated(dut, rebootTimeAndSwActivationDetails.getElement1().getRelayTargetVersion(), Reporter.FAIL);
 		}
 		checkIfUEsAreConnectedToEnodeB(step++, dut);
 		waitForAllProcessesToEnd(waitForFirstPtrRequest, watchNmsEventsRelayColdReboot, watchNmsEventsRelayScanList, waitForSecondPtrRequest, watchNmsEventsRelayWarmReboot, watchNmsEventsEnodebColdRebootSoftwareDownload);
@@ -350,16 +355,18 @@ public class Progression extends TestspanTest{
 
 	/***************** Test Helper Functions ********************/
 	
-	private Pair<Long, Triple<Integer, String, String>> performColdRebootAndConvertNmsProfileToPnP(int step, int timelineStageIndex, EnodeB eNodeB, WatchAllRunningTimeout watchAllRunningTimeout) {
+	private Pair<Long, EnodebSwStatus> performColdRebootAndConvertNmsProfileToPnP(int step, int timelineStageIndex, EnodeB eNodeB, WatchAllRunningTimeout watchAllRunningTimeout) {
 		GeneralUtils.startLevel(step + ". Start Up.");
 		report.report("Perform Cold Reboot.");
 		long rebootTime = 0;
-		Triple<Integer, String, String> swActivationDetails = null;
+//		Triple<Integer, String, String> swActivationDetails = null;
+		EnodebSwStatus enodebSwStatus = null;
 		if(eNodeB.reboot(RebootType.COLD_REBOOT)){
 			rebootTime = System.currentTimeMillis();
 			if(eNodeB.isSwUpgradeDuringPnP()){
 				WAIT_FOR_ALL_RUNNING_TIME = 30 * 60 * 1000;
-				swActivationDetails = SoftwareUtiles.getInstance().updatDefaultSoftwareImage(eNodeB, buildPath, relayBuildPath);
+				enodebSwStatus = SoftwareUtiles.getInstance().updatDefaultSoftwareImage(eNodeB, buildPath, relayBuildPath);
+//				swActivationDetails = new Triple<>(enodebSwStatus.numberOfExpectedReboots, enodebSwStatus.targetVersion, enodebSwStatus.relayTargetVersion);
 			}
 			watchAllRunningTimeout.startCounting(rebootTime, WAIT_FOR_ALL_RUNNING_TIME);
 			report.report("Convert To PnP Configuration in NMS.");
@@ -372,8 +379,7 @@ public class Progression extends TestspanTest{
 		saveStageTimeForHtmlTable(timelineStageIndex, "Cold Reboot.", rebootTime, rebootTime, 1, true);
 		GeneralUtils.unSafeSleep(1*60*1000);
 		GeneralUtils.stopLevel();
-		
-		return new Pair<Long, Triple<Integer, String, String>>(rebootTime, swActivationDetails);
+		return new Pair<>(rebootTime, enodebSwStatus);
 	}
 	
 	private long performWarmReboot(int step, int timelineStageIndex, EnodeB eNodeB, WatchAllRunningTimeout watchAllRunningTimeout) {

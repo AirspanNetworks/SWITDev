@@ -106,17 +106,6 @@ public class P0 extends TestspanTest {
 
 		GeneralUtils.startLevel("preparing environment to test");
 		objectInit();
-		for (EnodeB enb : enbInTest) {
-			report.report("Set Son Profile:" + enb.defaultNetspanProfiles.getSON() + " For Enodeb:" + enb.getName());
-			String SON = enb.defaultNetspanProfiles.getSON();
-			if (SON != null) {
-				enodeBConfig.setProfile(enb, EnbProfiles.Son_Profile, SON);
-			} else {
-				report.report("There is no SON profile name in SUT", Reporter.FAIL);
-				reason = "There is no SON profile name in SUT";
-				return;
-			}
-		}
 		initWatchDog();
 		GeneralUtils.stopLevel();
 	}
@@ -179,6 +168,11 @@ public class P0 extends TestspanTest {
 		GeneralUtils.startLevel("HO Pre Test");
 		try {
 			if (isConfigNedded) {
+				// change frequency if needed.
+				if (!checkFrequency()) {
+					return false;
+				}
+				setDefaultSonProfile();
 				deleteNeighbours();
 				peripheralsConfig.SetAttenuatorToMin(attenuatorSetUnderTest);
 				GeneralUtils.unSafeSleep(5000);
@@ -199,6 +193,20 @@ public class P0 extends TestspanTest {
 		return true;
 	}
 
+	private void setDefaultSonProfile(){
+		for (EnodeB enb : enbInTest) {
+			report.report("Set Son Profile:" + enb.defaultNetspanProfiles.getSON() + " For Enodeb:" + enb.getName());
+			String SON = enb.defaultNetspanProfiles.getSON();
+			if (SON != null) {
+				enodeBConfig.setProfile(enb, EnbProfiles.Son_Profile, SON);
+			} else {
+				report.report("There is no SON profile name in SUT", Reporter.FAIL);
+				reason = "There is no SON profile name in SUT";
+				return;
+			}
+		}
+	}
+	
 	private boolean checkStaticUesConnected() {
 		GeneralUtils.startLevel("Checking if all static UEs are connected");
 		if (statUEList != null) {
@@ -506,10 +514,6 @@ public class P0 extends TestspanTest {
 	private void helperPreTestAndHOLongTest(HoControlStateTypes hoControl, X2ControlStateTypes x2Control,
 			HandoverType hoType, ConnectedModeEventTypes hoEventType) {
 
-		// change frequency if needed.
-		if (!checkFrequency()) {
-			return;
-		}
 		boolean action = true;
 		report.report("HO Test");
 		action &= preTest(hoControl, x2Control, hoType, hoEventType);

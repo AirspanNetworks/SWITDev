@@ -1,19 +1,32 @@
 package testsNG.General;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+import org.junit.Test;
+
 import EnodeB.EnodeB;
 import EnodeB.EnodeBUpgradeServer;
-import TestingServices.SWUpgradeConfig;
-import TestingServices.TestConfig;
-import Utils.*;
 import Netspan.API.Enums.HardwareCategory;
 import Netspan.API.Enums.ServerProtocolType;
 import Netspan.API.Software.RequestType;
+import TestingServices.TestConfig;
+import Utils.GeneralUtils;
+import Utils.Pair;
+import Utils.ScenarioUtils;
+import Utils.ScpClient;
+import Utils.SysObjUtils;
+import Utils.Triple;
 import jsystem.framework.ParameterProperties;
 import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
 import jsystem.framework.report.ReporterHelper;
-import org.junit.Test;
-
+import testsNG.TestspanTest;
 import testsNG.Actions.EnodeBConfig;
 import testsNG.Actions.SoftwareUtiles;
 import testsNG.Actions.SoftwareUtiles.EnodebResetWorker;
@@ -21,15 +34,6 @@ import testsNG.Actions.SoftwareUtiles.EnodebSwStatus;
 import testsNG.Actions.SoftwareUtiles.EnodebUpgradeWorker;
 import testsNG.Actions.SoftwareUtiles.SWUpgradeConnectionMethod;
 import testsNG.Actions.SoftwareUtiles.VersionCopyWorker;
-import testsNG.TestspanTest;
-
-import java.io.File;
-import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class SWUpgrade extends TestspanTest {
 

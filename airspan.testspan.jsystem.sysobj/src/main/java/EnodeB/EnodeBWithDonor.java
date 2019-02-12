@@ -106,11 +106,11 @@ public abstract class EnodeBWithDonor extends AirVelocity{
 		try {
 			this.donor = (EnodeB) SystemManagerImpl.getInstance().getSystemObject(donorName);
 			hasDonor = true;
+			GeneralUtils.printToConsole("Donor loaded" + this.donor.getName());
 		} catch (Exception e) {
 			report.report("Failed to set Donor.", Reporter.WARNING);
 			e.printStackTrace();
 		}
-		GeneralUtils.printToConsole("Donor loaded" + this.donor.getName());
 	}
 	
 	/**

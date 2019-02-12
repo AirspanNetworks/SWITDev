@@ -24,7 +24,7 @@ public class NeighborManagement extends EnodebAction {
 	protected HoControlStateTypes hoControlState;
 	protected X2ControlStateTypes x2ControlState;
 	protected HandoverType handoverType;
-	protected boolean isStaticNeighbor;
+	protected boolean isStaticNeighbor = false;
 	protected String qOffsetRange;
 	protected int numberOfNeighbors;
 	protected int earfcn;

@@ -1677,15 +1677,15 @@ public class SoftwareUtiles {
 
 	public void waitForAllRunningAndInService(long softwareActivateStartTimeInMili,
 											  ArrayList<EnodebSwStatus> eNodebSwStatusList) {
-		//todo cahnge to While & clone the arrayList
 		GeneralUtils.startLevel("Wait For ALL RUNNING And In Service.");
-		while ((!eNodebSwStatusList.isEmpty())
+		ArrayList<EnodebSwStatus> eNodebSwStatusListDuplicate = new ArrayList<>(eNodebSwStatusList);
+		while ((!eNodebSwStatusListDuplicate.isEmpty())
 				&& (System.currentTimeMillis() - softwareActivateStartTimeInMili <= (EnodeB.UPGRADE_TIMEOUT))) {
-			ArrayList<EnodebSwStatus> eNodebSwStatusListDuplicate = new ArrayList<>(eNodebSwStatusList);
 			Iterator<EnodebSwStatus> iter;
 			iter = eNodebSwStatusListDuplicate.iterator();
 			while (iter.hasNext()) {
 				EnodebSwStatus eNodebSwStatus = iter.next();
+				// todo add here the condition || eNodebSwStatus.isRunningEqualTarget
 				if (eNodebSwStatus.geteNodeB().isInOperationalStatus()) {
 					eNodebSwStatus.setInRunningState(true);
 					report.report(eNodebSwStatus.geteNodeB().getName() + " is in Running State.", Reporter.PASS);
@@ -1695,6 +1695,7 @@ public class SoftwareUtiles {
 			GeneralUtils.unSafeSleep(5 * 1000);
 		}
 		for (EnodebSwStatus eNodebSwStatus : eNodebSwStatusList) {
+			//todo looks like a bug. check why it samples isSwDownloadCompleted instead of setInRunningState.
 			if (!eNodebSwStatus.isSwDownloadCompleted()) {
 				report.report(eNodebSwStatus.geteNodeB().getName() + ": Didn't Reach To Running State.", Reporter.FAIL);
 			}

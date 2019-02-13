@@ -1698,7 +1698,7 @@ public class SoftwareUtiles {
 		ArrayList<EnodebSwStatus> eNodebSwStausListTmp = (ArrayList<EnodebSwStatus>) eNodebSwStausList.clone();
 		GeneralUtils.startLevel("Wait For ALL RUNNING And In Service.");
 		while ((!eNodebSwStausListTmp.isEmpty())
-				&& (System.currentTimeMillis() - softwareActivateStartTimeInMili <= (EnodeB.ACTIVATE_TIMEOUT))) {
+				&& (System.currentTimeMillis() - softwareActivateStartTimeInMili <= (EnodeB.ACTIVATE_TIMEOUT + EnodeB.DOWNLOAD_TIMEOUT))) {
 			ArrayList<EnodebSwStatus> eNodebSwStausListToRemove = new ArrayList<EnodebSwStatus>();
 			for (EnodebSwStatus eNodebSwStaus : eNodebSwStausListTmp) {
 				if (eNodebSwStaus.eNodeB.isInOperationalStatus()) {

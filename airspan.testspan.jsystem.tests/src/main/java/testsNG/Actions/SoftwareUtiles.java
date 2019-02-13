@@ -167,6 +167,7 @@ public class SoftwareUtiles {
 			report.report("FSMv4 Build Name is:" + FSMv4Build);
 			report.report("XLP Build Name is:" + XLPBuild);
 		} catch (Exception e) {
+			GeneralUtils.printToConsole(e.getMessage());
 			report.report("The Path provided does not contain the relevant files", Reporter.WARNING);
 			reason = Pair.createPair("The Path provided does not contain the relevant files", Reporter.WARNING);
 		}

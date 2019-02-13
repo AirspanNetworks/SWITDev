@@ -164,6 +164,7 @@ public class P0 extends TestspanTest {
 			ConnectedModeEventTypes hoEventType) {
 		GeneralUtils.startLevel("HO Pre Test");
 		try {
+			initUes();
 			if (isConfigNedded) {
 				// change frequency if needed.
 				if (!checkFrequency()) {
@@ -174,7 +175,6 @@ public class P0 extends TestspanTest {
 				peripheralsConfig.SetAttenuatorToMin(attenuatorSetUnderTest);
 				GeneralUtils.unSafeSleep(5000);
 				startTraffic();
-				initUes();
 				if (!addNeighbours(enodeB, neighbor, HOControlTypes, X2Types, HOType, true, "0"))
 					return false;
 				if (!checkAllDynamicConnected())
@@ -190,7 +190,7 @@ public class P0 extends TestspanTest {
 		return true;
 	}
 
-	private void setDefaultSonProfile(){
+	private void setDefaultSonProfile() {
 		GeneralUtils.startLevel("Setting default SON profiles");
 		for (EnodeB enb : enbInTest) {
 			report.report("Set Son Profile:" + enb.defaultNetspanProfiles.getSON() + " For Enodeb:" + enb.getName());
@@ -205,7 +205,7 @@ public class P0 extends TestspanTest {
 		}
 		GeneralUtils.stopLevel();
 	}
-	
+
 	private boolean checkStaticUesConnected() {
 		GeneralUtils.startLevel("Checking if all static UEs are connected");
 		if (statUEList != null) {
@@ -514,7 +514,8 @@ public class P0 extends TestspanTest {
 			HandoverType hoType, ConnectedModeEventTypes hoEventType) {
 		boolean action = true;
 		action &= preTest(hoControl, x2Control, hoType, hoEventType);
-		action &= HoLongTest();
+		if(action)
+			action &= HoLongTest();
 		if (!action)
 			report.report("Failure reason: " + reason, Reporter.FAIL);
 	}
@@ -666,32 +667,32 @@ public class P0 extends TestspanTest {
 	}
 
 	@Test
-	@TestProperties(name = "MultipleHO_S1IntraFrequencyNoPreConfig", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {
-			"IsTestWasSuccessful" })
+	@TestProperties(name = "MultipleHO_S1IntraFrequencyNoPreConfig", returnParam = {
+			"IsTestWasSuccessful" }, paramsExclude = { "IsTestWasSuccessful" })
 	public void MultipleHO_S1IntraFrequencyNoPreConfig() {
 		isConfigNedded = false;
 		MultipleHO_S1IntraFrequency();
 	}
-	
+
 	@Test
-	@TestProperties(name = "MultipleHO_X2IntraFrequencyNoPreConfig", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {
-			"IsTestWasSuccessful" })
+	@TestProperties(name = "MultipleHO_X2IntraFrequencyNoPreConfig", returnParam = {
+			"IsTestWasSuccessful" }, paramsExclude = { "IsTestWasSuccessful" })
 	public void MultipleHO_X2IntraFrequencyNoPreConfig() {
 		isConfigNedded = false;
 		MultipleHO_X2IntraFrequency();
 	}
-	
+
 	@Test
-	@TestProperties(name = "MultipleHO_S1InterFrequencyNoPreConfig", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {
-			"IsTestWasSuccessful" })
+	@TestProperties(name = "MultipleHO_S1InterFrequencyNoPreConfig", returnParam = {
+			"IsTestWasSuccessful" }, paramsExclude = { "IsTestWasSuccessful" })
 	public void MultipleHO_S1InterFrequencyNoPreConfig() {
 		isConfigNedded = false;
 		MultipleHO_S1InterFrequency();
 	}
-	
+
 	@Test
-	@TestProperties(name = "MultipleHO_X2InterFrequencyNoPreConfig", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {
-			"IsTestWasSuccessful" })
+	@TestProperties(name = "MultipleHO_X2InterFrequencyNoPreConfig", returnParam = {
+			"IsTestWasSuccessful" }, paramsExclude = { "IsTestWasSuccessful" })
 	public void MultipleHO_X2InterFrequencyNoPreConfig() {
 		isConfigNedded = false;
 		MultipleHO_X2InterFrequency();
@@ -738,7 +739,8 @@ public class P0 extends TestspanTest {
 		boolean action = true;
 		report.report("HO Test");
 		action &= preTest(HOControlTypes, X2Types, HOType, hoEventType);
-		action &= performHO();
+		if(action)
+			action &= performHO();
 		if (!action) {
 			report.report("HO Test Falied. Failure reason: " + reason, Reporter.FAIL);
 		}
@@ -1233,31 +1235,29 @@ public class P0 extends TestspanTest {
 	}
 
 	private boolean checkFrequency() {
-		if (isConfigNedded) {
-			GeneralUtils.startLevel("Checking that frequencies match the test type.");
-			Integer enbEarfcn = enodeBConfig.getEARFCNforNode(enodeB);
-			Integer neighborEarfcn = enodeBConfig.getEARFCNforNode(neighbor);
+		GeneralUtils.startLevel("Checking that frequencies match the test type.");
+		Integer enbEarfcn = enodeBConfig.getEARFCNforNode(enodeB);
+		Integer neighborEarfcn = enodeBConfig.getEARFCNforNode(neighbor);
 
-			report.report(enodeB.getName() + " Earfcn: " + enbEarfcn);
-			report.report(neighbor.getName() + " Earfcn: " + neighborEarfcn);
+		report.report(enodeB.getName() + " Earfcn: " + enbEarfcn);
+		report.report(neighbor.getName() + " Earfcn: " + neighborEarfcn);
 
-			if (isIntra) {
-				if (!enbEarfcn.equals(neighborEarfcn)) {
-					report.report("EnodeB frequences are diffrent in an Intra test.", Reporter.FAIL);
-					reason = "EnodeB frequences are diffrent in an Intra test.";
-					GeneralUtils.stopLevel();
-					return false;
-				}
-			} else if (enbEarfcn.equals(neighborEarfcn)) {
-				report.report("EnodeB frequences are equal in an Inter test.", Reporter.FAIL);
-				reason = "EnodeB frequences are equal in an Inter test.";
+		if (isIntra) {
+			if (!enbEarfcn.equals(neighborEarfcn)) {
+				report.report("EnodeB frequences are diffrent in an Intra test.", Reporter.FAIL);
+				reason = "EnodeB frequences are diffrent in an Intra test.";
 				GeneralUtils.stopLevel();
 				return false;
 			}
-
-			GeneralUtils.stopLevel(); // Checking that frequencies match SUT
-										// stop level
+		} else if (enbEarfcn.equals(neighborEarfcn)) {
+			report.report("EnodeB frequences are equal in an Inter test.", Reporter.FAIL);
+			reason = "EnodeB frequences are equal in an Inter test.";
+			GeneralUtils.stopLevel();
+			return false;
 		}
+
+		GeneralUtils.stopLevel(); // Checking that frequencies match SUT
+									// stop level
 		return true;
 	}
 

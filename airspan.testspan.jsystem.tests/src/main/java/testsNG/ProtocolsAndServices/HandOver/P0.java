@@ -103,11 +103,8 @@ public class P0 extends TestspanTest {
 		enbInTest.add(dut2);
 		neighbors = Neighbors.getInstance();
 		super.init();
-
-		GeneralUtils.startLevel("preparing environment to test");
 		objectInit();
 		initWatchDog();
-		GeneralUtils.stopLevel();
 	}
 
 	/**
@@ -194,6 +191,7 @@ public class P0 extends TestspanTest {
 	}
 
 	private void setDefaultSonProfile(){
+		GeneralUtils.startLevel("Setting default SON profiles");
 		for (EnodeB enb : enbInTest) {
 			report.report("Set Son Profile:" + enb.defaultNetspanProfiles.getSON() + " For Enodeb:" + enb.getName());
 			String SON = enb.defaultNetspanProfiles.getSON();
@@ -205,6 +203,7 @@ public class P0 extends TestspanTest {
 				return;
 			}
 		}
+		GeneralUtils.stopLevel();
 	}
 	
 	private boolean checkStaticUesConnected() {
@@ -513,9 +512,7 @@ public class P0 extends TestspanTest {
 
 	private void helperPreTestAndHOLongTest(HoControlStateTypes hoControl, X2ControlStateTypes x2Control,
 			HandoverType hoType, ConnectedModeEventTypes hoEventType) {
-
 		boolean action = true;
-		report.report("HO Test");
 		action &= preTest(hoControl, x2Control, hoType, hoEventType);
 		action &= HoLongTest();
 		if (!action)
@@ -1402,16 +1399,4 @@ public class P0 extends TestspanTest {
 		GeneralUtils.stopLevel();// counters value stop level
 		return isSucceeded;
 	}
-
-	/*public void LongIntraX2(String name, String name2, int durationInMinutes) {
-		setDUT1(name);
-		setDUT2(name2);
-		objectInit();
-		maxduration = durationInMinutes * 60 * 1000;
-		isIntra = true;
-		setX2IntraCounters();
-		preTest(HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC, HandoverType.TRIGGER_X_2,
-				ConnectedModeEventTypes.A_3);
-		HoLongTest();
-	}*/
 }

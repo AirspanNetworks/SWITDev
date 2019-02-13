@@ -99,7 +99,7 @@ public class SWUpgrade extends TestspanTest {
 		for (EnodeB dut : duts) {
 			GeneralUtils.startLevel("Update Default Software Image For " + dut.getName());
 			EnodebSwStatus enbSWDetails = softwareUtiles.updatDefaultSoftwareImage(dut, buildPath, relayBuildPath);
-			enbSWDetailsList = createEnbSwDetailsList(enbSWDetails);
+			createEnbSwDetailsList(enbSWDetailsList,enbSWDetails);
 			GeneralUtils.stopLevel();
 		}
 		long softwareActivateStartTimeInMili = System.currentTimeMillis();
@@ -124,11 +124,11 @@ public class SWUpgrade extends TestspanTest {
 	/**
 	 * 	 Add enB object to list, ignore it in case of failing to upgrade SW version + reports as FAILED
 	 *
-	 * 	 @param enbSWDetails - enbSWDetails
-	 * 	 @return EnodebSwStatus ArrayList
+	 * @param enbSWDetails - enbSWDetails
+	 * @param enbSWDetailsList - enbSWDetailsList
+	 * @return EnodebSwStatus ArrayList
 	 */
-	private ArrayList<EnodebSwStatus> createEnbSwDetailsList(EnodebSwStatus enbSWDetails) {
-		ArrayList<EnodebSwStatus> enbSWDetailsList = new ArrayList<> ();
+	private ArrayList<EnodebSwStatus> createEnbSwDetailsList(ArrayList<EnodebSwStatus> enbSWDetailsList, EnodebSwStatus enbSWDetails) {
 		if (enbSWDetails.getNumberOfExpectedReboots() ==  GeneralUtils.ERROR_VALUE){
 			report.report("Failed to Update Software Image - Ignoring " + enbSWDetails.geteNodeB().getName() + " for the rest of test.", Reporter.FAIL);
 			isPass = false;

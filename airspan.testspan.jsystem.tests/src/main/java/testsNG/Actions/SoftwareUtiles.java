@@ -1678,14 +1678,12 @@ public class SoftwareUtiles {
 	public void waitForAllRunningAndInService(long softwareActivateStartTimeInMili,
 											  ArrayList<EnodebSwStatus> eNodebSwStatusList) {
 		GeneralUtils.startLevel("Wait For ALL RUNNING And In Service.");
-		ArrayList<EnodebSwStatus> eNodebSwStatusListDuplicate = new ArrayList<>(eNodebSwStatusList);
-		while ((!eNodebSwStatusListDuplicate.isEmpty())
+		while ((!eNodebSwStatusList.isEmpty())
 				&& (System.currentTimeMillis() - softwareActivateStartTimeInMili <= (EnodeB.UPGRADE_TIMEOUT))) {
 			Iterator<EnodebSwStatus> iter;
-			iter = eNodebSwStatusListDuplicate.iterator();
+			iter = eNodebSwStatusList.iterator();
 			while (iter.hasNext()) {
 				EnodebSwStatus eNodebSwStatus = iter.next();
-				// todo add here the condition || eNodebSwStatus.isRunningEqualTarget
 				if (eNodebSwStatus.geteNodeB().isInOperationalStatus()) {
 					eNodebSwStatus.setInRunningState(true);
 					report.report(eNodebSwStatus.geteNodeB().getName() + " is in Running State.", Reporter.PASS);

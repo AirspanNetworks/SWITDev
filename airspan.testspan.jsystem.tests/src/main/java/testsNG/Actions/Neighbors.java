@@ -355,12 +355,6 @@ public class Neighbors {
         String IPAdress;
         ArrayList<EnodeB> neighborsList = new ArrayList<>();
         boolean added = false;
-        int earfcn = -1;
-        try {
-            earfcn = enodeB.getEarfcn();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         try {
             InetAddress addr;
             addr = InetAddress.getLocalHost();
@@ -377,7 +371,10 @@ public class Neighbors {
             // report.report("3rd Party MCC: "+mcc+", MNC: "+mnc );
             for (int j = 0; j < NumberOfNeighbors; j++) {
                 name = addr.getHostName() + "_" + enbID;
-                IPAdress = "" + j + ".99." + separated[2] + "." + separated[3];
+                if(enodeB.getIpAddress().contains(":"))
+                	IPAdress = "abcd::" + j + ":99:" + separated[2] + ":" + separated[3];
+                else
+                	IPAdress = "" + j + ".99." + separated[2] + "." + separated[3];
                 // report.report(IPAdress);
                 if (differentEearfcn) {
                     added = netspanServer.Create3rdParty(name, IPAdress, 0, 0, 0, j, EnbTypes.MACRO, 1, enbID, create.get(j),

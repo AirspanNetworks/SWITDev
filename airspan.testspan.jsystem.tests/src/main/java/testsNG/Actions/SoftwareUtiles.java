@@ -259,9 +259,8 @@ public class SoftwareUtiles {
 		// If the running version wasn't updated. go to the standby bank, checks
 		// if it was updated there.
 		if (build.contains(standby) || standby.contains(build)) {
-			report.report(
-					"The Standby Bank contains target version: " + build + " on Enodeb: " + enodeB.getNetspanName(),
-					logLevel);
+			report.report("The Standby Bank contains target version: " + build + " on Enodeb: " + enodeB.getNetspanName()
+			+", about to swap banks.");
 			// Takes the requested version from the standby bank if it necessary
 			return swapBanks(enodeB, logLevel, build);
 		} else {

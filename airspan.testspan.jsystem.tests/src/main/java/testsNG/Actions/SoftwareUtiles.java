@@ -1450,12 +1450,15 @@ public class SoftwareUtiles {
 			report.report(enbSWDetails.geteNodeB().getName() + "'s Running Version: " + softwareStatus.RunningVersion);
 			if (softwareStatus.RunningVersion.equals(build)) {
 				enbSWDetails.setTargetEqualRunning(true);
+				enbSWDetails.setSwDownloadCompleted(true);
 				report.report("Running Version equals Target Version - No Need To Upgrade.");
-			} else if (softwareStatus.StandbyVersion.equals(build)) {
+				return;
+			}
+			enbSWDetails.increaseNumberOfExpectedReboots();
+			if (softwareStatus.StandbyVersion.equals(build)) {
 				enbSWDetails.setTargetEqualStandby(true);
+				enbSWDetails.setSwDownloadCompleted(true);
 				report.report("Standby Version equals Target Version - No Need To Upgrade.");
-			} else {
-				enbSWDetails.increaseNumberOfExpectedReboots();
 			}
 		}
 	}
@@ -1621,13 +1624,7 @@ public class SoftwareUtiles {
 			iter = eNodebSwStatusList.iterator();
 			while (iter.hasNext()) {
 				EnodebSwStatus eNodebSwStatus = iter.next();
-
-				//If Running\StandBy==Target - there's no download to track
-				if (eNodebSwStatus.isTargetEqualRunning() || eNodebSwStatus.isTargetEqualStandby() ) {
-					report.report(eNodebSwStatus.geteNodeB().getNetspanName() + ": No need to download version since it's already in the bank.");
-					iter.remove();
-					continue;
-				}
+				if (isSkipTrackingNeeded(iter, eNodebSwStatus)) continue;
 				//Track download progress
 				Pair<Boolean, SwStatus> swStatusPair = eNodebSwStatus.geteNodeB().isSoftwareDownloadCompletedSuccessfully();
 				eNodebSwStatus.setSwDownloadCompleted(swStatusPair.getElement0());
@@ -1660,6 +1657,21 @@ public class SoftwareUtiles {
 			}
 		}
 		GeneralUtils.stopLevel();
+	}
+
+	/**
+	 * If Running\StandBy==Target - there's no download to track
+	 * @param iter - iter
+	 * @param eNodebSwStatus - eNodebSwStatus
+	 * @return - true if skip is needed
+	 */
+	private boolean isSkipTrackingNeeded(Iterator<EnodebSwStatus> iter, EnodebSwStatus eNodebSwStatus) {
+		if (eNodebSwStatus.isTargetEqualRunning() || eNodebSwStatus.isTargetEqualStandby() ) {
+			report.report(eNodebSwStatus.geteNodeB().getNetspanName() + ": No need to download version since it's already in the bank.");
+			iter.remove();
+			return true;
+		}
+		return false;
 	}
 
 	private void waitForRebootAndSetExpectedBootingForSecondReboot(ArrayList<EnodebSwStatus> eNodebSwStatusList,

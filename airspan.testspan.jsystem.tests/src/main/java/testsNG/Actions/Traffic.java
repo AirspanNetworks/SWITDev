@@ -52,6 +52,7 @@ import testsNG.Actions.Utils.*;
 
 public class Traffic {
 
+	public static GeneratorType typeGen = null;
     public static String FILE_NAME = "CalculatorTpt.xlsx";
     private static Traffic instance;
     private static ExecutorService executorService;
@@ -101,6 +102,7 @@ public class Traffic {
             GeneralUtils.printToConsole("before trying to set RestSTC");
             trafficGenerator = (ITrafficGenerator) system.getSystemObject("RestSTC");
             generatorType = TrafficGeneratorType.ITraffic;
+            typeGen = GeneratorType.STC;
             GeneralUtils.printToConsole("done setting RestSTC");
         } catch (Exception e) {
             GeneralUtils.printToConsole("Could not init Rest Object , " + e.getMessage());
@@ -113,6 +115,7 @@ public class Traffic {
                 GeneralUtils.printToConsole("Could not init Gen Object , " + e1.getMessage());
                 GeneralUtils.printToConsole("trying to set IPERF");
                 trafficGenerator = IPerf.getInstance(ues);
+                typeGen = GeneratorType.Iperf;
                 if (trafficGenerator == null) {
                     report.report("There is no Traffic instance in SUT!", Reporter.WARNING);
                     instance = null;
@@ -375,6 +378,10 @@ public class Traffic {
                 return true;
 
             case CUSTOM:
+            	// if traffic instance is iperf, use default of 10M/1M
+            	if(typeGen == GeneratorType.Iperf){
+            		return startTraffic(TrafficCapacity.LOWTPT);
+            	}
                 subscribeToSTCFile();
                 startArpNd("DL", "UL");
                 startTrafficSTC();

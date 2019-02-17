@@ -184,12 +184,8 @@ public class Progression extends TestspanTest{
 		}
 		report.report(dut.getName() + "'s Running Version: " + dut.getRunningVersion());
 		suspendIpsecTunnelManagerIfEnabled(dut); 
-		//openLogs(dut);
-//		Pair<Long, Triple<Integer, String, String>> rebootTimeAndSwActivationDetails = performColdRebootAndConvertNmsProfileToPnP(step++, timelineStageIndex++, dut, watchAllRunningTimeout);
-//		final long rebootTime = rebootTimeAndSwActivationDetails.getElement0();
 		Pair<Long, EnodebSwStatus> rebootTimeAndSwActivationDetails = performColdRebootAndConvertNmsProfileToPnP(step++, timelineStageIndex++, dut, watchAllRunningTimeout);
 		final long rebootTime = rebootTimeAndSwActivationDetails.getElement0();
-
 		if(rebootTime == 0){
 			return;
 		}
@@ -224,7 +220,6 @@ public class Progression extends TestspanTest{
 			suspendIpsecTunnelManagerIfEnabled(dut);
 			ArrayList<EnodebSwStatus> enbSWDetailsList = new  ArrayList<>();
 			enbSWDetailsList.add(rebootTimeAndSwActivationDetails.getElement1());
-
 			SoftwareUtiles.getInstance().followSoftwareActivationProgressViaNetspan(System.currentTimeMillis(), enbSWDetailsList);
 			GeneralUtils.stopLevel();
 			watchNmsEventsEnodebColdRebootSoftwareDownload = startFollowNmsEvents(timelineStageIndex++, COLD_ENODEB_PNP_EVENTS_EXPECTED_DURATION_IN_MILI, dut, rebootTime, COLLECT_EVENTS_FROM_NMS_TIMEOUT, "Cold eNodeB PnP & Software Download.", eNodebColdRebootPnpSoftwareDownloadEventListToFollow, 0, false);//Doesn't Wait, uses WatchDog
@@ -361,14 +356,12 @@ public class Progression extends TestspanTest{
 		GeneralUtils.startLevel(step + ". Start Up.");
 		report.report("Perform Cold Reboot.");
 		long rebootTime = 0;
-//		Triple<Integer, String, String> swActivationDetails = null;
 		EnodebSwStatus enodebSwStatus = null;
 		if(eNodeB.reboot(RebootType.COLD_REBOOT)){
 			rebootTime = System.currentTimeMillis();
 			if(eNodeB.isSwUpgradeDuringPnP()){
 				WAIT_FOR_ALL_RUNNING_TIME = 30 * 60 * 1000;
 				enodebSwStatus = SoftwareUtiles.getInstance().updatDefaultSoftwareImage(eNodeB, buildPath, relayBuildPath);
-//				swActivationDetails = new Triple<>(enodebSwStatus.numberOfExpectedReboots, enodebSwStatus.targetVersion, enodebSwStatus.relayTargetVersion);
 			}
 			watchAllRunningTimeout.startCounting(rebootTime, WAIT_FOR_ALL_RUNNING_TIME);
 			report.report("Convert To PnP Configuration in NMS.");

@@ -185,5 +185,4 @@ public class EnodebSwStatus {
 	public void increaseNumberOfReboots() {
 		numberOfActualReboot++;
 	}
-
 }

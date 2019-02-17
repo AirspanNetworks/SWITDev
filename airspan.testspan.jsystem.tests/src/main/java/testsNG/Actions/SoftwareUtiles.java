@@ -29,6 +29,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -882,7 +883,7 @@ public class SoftwareUtiles {
 			report.report(
 					enodeB.getName() + " - Waiting for software download to finish and report \"" + doneMessage + "\"");
 			boolean doneMessageFound = Log.getInstance().waitForLogLine(enodeB, EnodeBComponentTypes.XLP, doneMessage,
-					EnodeB.UPGRADE_TIMEOUT);
+					EnodeB.DOWNLOAD_TIMEOUT);
 			if (doneMessageFound) {
 				return true;
 			}
@@ -1315,7 +1316,6 @@ public class SoftwareUtiles {
 
 	public EnodebSwStatus updatDefaultSoftwareImage(EnodeB eNodeB, String buildPath, String relayBuildPath) {
 		EnodebSwStatus enbSWDetails = new EnodebSwStatus(eNodeB);
-//		int numberOfExpectedReboots = 0;
 		String build = "";
 		String relayBuild = "";
 		String softwareImage = eNodeB.defaultNetspanProfiles.getSoftwareImage();

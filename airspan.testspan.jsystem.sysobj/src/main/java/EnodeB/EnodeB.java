@@ -168,7 +168,6 @@ public abstract class EnodeB extends SystemObjectImpl {
 	public boolean blackListed = false;
 	public boolean expecteInServiceState = true;
 	private String SkipCMP = "false";
-	
 
 	public EnodeB() {
 		super();

@@ -1,39 +1,32 @@
 package testsNG.General;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
-import org.junit.Test;
-
 import EnodeB.EnodeB;
 import EnodeB.EnodeBUpgradeServer;
+import TestingServices.TestConfig;
+import Utils.*;
 import Netspan.API.Enums.HardwareCategory;
 import Netspan.API.Enums.ServerProtocolType;
 import Netspan.API.Software.RequestType;
-import TestingServices.TestConfig;
-import Utils.GeneralUtils;
-import Utils.Pair;
-import Utils.ScenarioUtils;
-import Utils.ScpClient;
-import Utils.SysObjUtils;
-import Utils.Triple;
 import jsystem.framework.ParameterProperties;
 import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
 import jsystem.framework.report.ReporterHelper;
-import testsNG.TestspanTest;
+import org.junit.Test;
+
 import testsNG.Actions.EnodeBConfig;
 import testsNG.Actions.SoftwareUtiles;
 import testsNG.Actions.SoftwareUtiles.EnodebResetWorker;
-import testsNG.Actions.SoftwareUtiles.EnodebSwStatus;
 import testsNG.Actions.SoftwareUtiles.EnodebUpgradeWorker;
 import testsNG.Actions.SoftwareUtiles.SWUpgradeConnectionMethod;
 import testsNG.Actions.SoftwareUtiles.VersionCopyWorker;
+import testsNG.Actions.Utils.EnodebSwStatus;
+import testsNG.TestspanTest;
+
+import java.io.File;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class SWUpgrade extends TestspanTest {
 
@@ -62,7 +55,7 @@ public class SWUpgrade extends TestspanTest {
 			report.report("No inputs for the test");
 			reason = "No inputs for the test";
 			return;
-		} 
+		}
 		else
 			build = SoftwareUtiles.getVersionFromPath(buildPath);
 
@@ -102,32 +95,23 @@ public class SWUpgrade extends TestspanTest {
 			"IsTestWasSuccessful" })
 	public void softwareUpgradeFromNetspan() {
 		isPass = true;
-		ArrayList<Pair<EnodeB, Triple<Integer, String, String>>> eNodebList = new ArrayList<Pair<EnodeB, Triple<Integer, String, String>>>();
+		ArrayList<EnodebSwStatus> enbSWDetailsList = new ArrayList<> ();
 		for (EnodeB dut : duts) {
 			GeneralUtils.startLevel("Update Default Software Image For " + dut.getName());
-			Triple<Integer, String, String> swActivationDetails = softwareUtiles.updatDefaultSoftwareImage(dut, buildPath, relayBuildPath);
-			if (swActivationDetails.getLeftElement() >= 0) {
-				eNodebList.add(new Pair<EnodeB, Triple<Integer, String, String>>(dut, swActivationDetails));
-			} else {
-				report.report("Failed to Update Software Image - Ignoring " + dut.getName() + " for the rest of test.",
-						Reporter.FAIL);
-				isPass = false;
-			}
+			EnodebSwStatus enbSWDetails = softwareUtiles.updatDefaultSoftwareImage(dut, buildPath, relayBuildPath);
+			createEnbSwDetailsList(enbSWDetailsList,enbSWDetails);
 			GeneralUtils.stopLevel();
 		}
-
 		long softwareActivateStartTimeInMili = System.currentTimeMillis();
-		for (Pair<EnodeB, Triple<Integer, String, String>> eNodeB : eNodebList) {
-			netspanServer.softwareConfigSet(eNodeB.getElement0().getNetspanName(), RequestType.ACTIVATE,
-					eNodeB.getElement0().getDefaultNetspanProfiles().getSoftwareImage());
+		for (EnodebSwStatus enbSWDetails : enbSWDetailsList) {
+			netspanServer.softwareConfigSet(
+					enbSWDetails.geteNodeB().getNetspanName(), RequestType.ACTIVATE,
+					enbSWDetails.geteNodeB().getDefaultNetspanProfiles().getSoftwareImage());
 		}
 		GeneralUtils.unSafeSleep(10 * 1000);
-		ArrayList<EnodebSwStatus> eNodebSwStausList = softwareUtiles
-				.followSoftwareActivationProgressViaNetspan(softwareActivateStartTimeInMili, eNodebList);
-
-		softwareUtiles.waitForAllRunningAndInService(softwareActivateStartTimeInMili, eNodebSwStausList);
-
-		isPass = softwareUtiles.validateRunningVersion(eNodebSwStausList);
+		ArrayList<EnodebSwStatus> eNodebSwStatusList = softwareUtiles.followSoftwareActivationProgressViaNetspan(softwareActivateStartTimeInMili, enbSWDetailsList);
+		softwareUtiles.waitForAllRunningAndInService(softwareActivateStartTimeInMili, new ArrayList<>(eNodebSwStatusList));
+		isPass = softwareUtiles.validateRunningVersion(eNodebSwStatusList);
 		if (isPass) {
 			report.addProperty("SoftwareUpgradeType", SWUpgradeConnectionMethod.Netspan.toString());
 			report.report("SW upgrade test passed successfully");
@@ -135,6 +119,23 @@ public class SWUpgrade extends TestspanTest {
 			report.report("One or more of the enodeBs hasn't been updated", Reporter.FAIL);
 			reason += "One or more of the enodeBs hasn't been updated";
 		}
+	}
+
+	/**
+	 * 	 Add enB object to list, ignore it in case of failing to upgrade SW version + reports as FAILED
+	 *
+	 * @param enbSWDetails - enbSWDetails
+	 * @param enbSWDetailsList - enbSWDetailsList
+	 * @return EnodebSwStatus ArrayList
+	 */
+	private ArrayList<EnodebSwStatus> createEnbSwDetailsList(ArrayList<EnodebSwStatus> enbSWDetailsList, EnodebSwStatus enbSWDetails) {
+		if (enbSWDetails.getNumberOfExpectedReboots() ==  GeneralUtils.ERROR_VALUE){
+			report.report("Failed to Update Software Image - Ignoring " + enbSWDetails.geteNodeB().getName() + " for the rest of test.", Reporter.FAIL);
+			isPass = false;
+		} else{
+			enbSWDetailsList.add(enbSWDetails);
+		}
+		return enbSWDetailsList;
 	}
 
 	@Test
@@ -432,6 +433,4 @@ public class SWUpgrade extends TestspanTest {
 				TimeUnit.MILLISECONDS.toSeconds(milis)
 						- TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(milis)));
 	}
-
-	
 }

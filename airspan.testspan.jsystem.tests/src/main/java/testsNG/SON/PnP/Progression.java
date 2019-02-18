@@ -183,7 +183,7 @@ public class Progression extends TestspanTest{
 			}
 		}
 		report.report(dut.getName() + "'s Running Version: " + dut.getRunningVersion());
-		suspendIpsecTunnelManagerIfEnabled(dut); 
+		suspendIpsecTunnelManagerIfEnabled(dut);
 		Pair<Long, EnodebSwStatus> rebootTimeAndSwActivationDetails = performColdRebootAndConvertNmsProfileToPnP(step++, timelineStageIndex++, dut, watchAllRunningTimeout);
 		final long rebootTime = rebootTimeAndSwActivationDetails.getElement0();
 		if(rebootTime == 0){
@@ -361,7 +361,7 @@ public class Progression extends TestspanTest{
 			rebootTime = System.currentTimeMillis();
 			if(eNodeB.isSwUpgradeDuringPnP()){
 				WAIT_FOR_ALL_RUNNING_TIME = 30 * 60 * 1000;
-				enodebSwStatus = SoftwareUtiles.getInstance().updatDefaultSoftwareImage(eNodeB, buildPath, relayBuildPath);
+				enodebSwStatus = SoftwareUtiles.getInstance().updateDefaultSoftwareImage(eNodeB, buildPath, relayBuildPath);
 			}
 			watchAllRunningTimeout.startCounting(rebootTime, WAIT_FOR_ALL_RUNNING_TIME);
 			report.report("Convert To PnP Configuration in NMS.");

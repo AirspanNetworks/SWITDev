@@ -262,9 +262,8 @@ public class SoftwareUtiles {
 		// If the running version wasn't updated. go to the standby bank, checks
 		// if it was updated there.
 		if (build.contains(standby) || standby.contains(build)) {
-			report.report(
-					"The Standby Bank contains target version: " + build + " on Enodeb: " + enodeB.getNetspanName(),
-					logLevel);
+			report.report("The Standby Bank contains target version: " + build + " on Enodeb: " + enodeB.getNetspanName()
+			+", about to swap banks.");
 			// Takes the requested version from the standby bank if it necessary
 			return swapBanks(enodeB, logLevel, build);
 		} else {
@@ -1314,7 +1313,7 @@ public class SoftwareUtiles {
 		return this.notToValidateNodes;
 	}
 
-	public EnodebSwStatus updatDefaultSoftwareImage(EnodeB eNodeB, String buildPath, String relayBuildPath) {
+	public EnodebSwStatus updateDefaultSoftwareImage(EnodeB eNodeB, String buildPath, String relayBuildPath) {
 		EnodebSwStatus enbSWDetails = new EnodebSwStatus(eNodeB);
 		String build = "";
 		String relayBuild = "";
@@ -1386,18 +1385,9 @@ public class SoftwareUtiles {
 
 				build = build.replaceAll("_", ".");
 				if (buildFileName != null && !buildFileName.equals(StringUtils.EMPTY)) {
-					SoftwareStatus softwareStatus = netspanServer.getSoftwareStatus(eNodeB.getNetspanName(),
-							eNodeB.getImageType());
-					if (softwareStatus != null) {
-						report.report(eNodeB.getName() + "'s Running Version: " + softwareStatus.RunningVersion);
-						if (!softwareStatus.RunningVersion.equals(build)) {
-							enbSWDetails.increaseNumberOfExpectedReboots();
-						} else {
-							//todo implement a FLAG isTargetEqualRunning = true;
-							enbSWDetails.setTargetEqualRunning(true);
-							report.report("Running Version equals Target Version - No Need To Upgrade eNodeB Version.");
-						}
-					}
+					SoftwareStatus softwareStatus = netspanServer.getSoftwareStatus(eNodeB.getNetspanName(), eNodeB.getImageType());
+					report.report("Checking EnB version on banks");
+					checkVersionsOnBanks(enbSWDetails, build, softwareStatus);
 
 					EnodeBUpgradeImage upgradeImage = new EnodeBUpgradeImage();
 					upgradeImage.setName(softwareImage);
@@ -1420,16 +1410,9 @@ public class SoftwareUtiles {
 					}
 				}
 				if ((eNodeB instanceof AirUnity) && (relayBuild != "")) {
-					SoftwareStatus softwareStatus = netspanServer.getSoftwareStatus(eNodeB.getNetspanName(),
-							ImageType.RELAY);
-					if (softwareStatus != null) {
-						report.report(eNodeB.getName() + "'s Relay Running Version: " + softwareStatus.RunningVersion);
-						if (!softwareStatus.RunningVersion.equals(relayBuild)) {
-							enbSWDetails.increaseNumberOfExpectedReboots();
-						} else {
-							report.report("Running Version equals Target Version - No Need To Upgrade Relay Version.");
-						}
-					}
+					SoftwareStatus softwareStatus = netspanServer.getSoftwareStatus(eNodeB.getNetspanName(), ImageType.RELAY);
+					report.report("Checking Relay version on banks");
+					checkVersionsOnBanks(enbSWDetails, relayBuild, softwareStatus);
 					EnodeBUpgradeImage upgradeImage = new EnodeBUpgradeImage();
 					upgradeImage.setName(softwareImage);
 					upgradeImage.setImageType(ImageType.RELAY.value());
@@ -1456,6 +1439,31 @@ public class SoftwareUtiles {
 		enbSWDetails.setTargetVersion(build);
 		enbSWDetails.setRelayTargetVersion(relayBuild);
 		return enbSWDetails;
+	}
+
+	/**
+	 * check Versions On the Banks and set flags accordingly
+	 *
+	 * @param enbSWDetails
+	 * @param build
+	 * @param softwareStatus
+	 */
+	private void checkVersionsOnBanks(EnodebSwStatus enbSWDetails, String build, SoftwareStatus softwareStatus) {
+		if (softwareStatus != null) {
+			report.report(enbSWDetails.geteNodeB().getName() + "'s Running Version: " + softwareStatus.RunningVersion);
+			if (softwareStatus.RunningVersion.equals(build)) {
+				enbSWDetails.setTargetEqualRunning(true);
+				enbSWDetails.setSwDownloadCompleted(true);
+				report.report("Running Version equals Target Version - No Need To Upgrade.");
+				return;
+			}
+			enbSWDetails.increaseNumberOfExpectedReboots();
+			if (softwareStatus.StandbyVersion.equals(build)) {
+				enbSWDetails.setTargetEqualStandby(true);
+				enbSWDetails.setSwDownloadCompleted(true);
+				report.report("Standby Version equals Target Version - No Need To Upgrade.");
+			}
+		}
 	}
 
 	private String getRelayTargetBuildFileName(String relayVerPath) {
@@ -1570,6 +1578,13 @@ public class SoftwareUtiles {
 		GeneralUtils.stopLevel();
 	}
 
+	/**
+	 * follow SW Activation Progress (and download if needed)  Via Netspan
+	 *
+	 * @param softwareActivateStartTimeInMili - softwareActivateStartTimeInMili
+	 * @param enbSWDetailsList - enbSWDetailsList
+	 * @return
+	 */
 	public ArrayList<EnodebSwStatus> followSoftwareActivationProgressViaNetspan(
 			long softwareActivateStartTimeInMili,
 			ArrayList<EnodebSwStatus> enbSWDetailsList) {
@@ -1589,8 +1604,8 @@ public class SoftwareUtiles {
 			if (numberOfEnbThatHaveToReboot-- > 0) {
 				Date softwareActivateStartTimeInDate = new Date(softwareActivateStartTimeInMili);
 				GeneralUtils.startLevel("Verify Software Activation.");
-				followSoftwareDownloadProgressViaNetspan(enbSWDetailsList, softwareActivateStartTimeInMili);
-				waitForRebootAndSetExpectedBootingForSecondReboot(enbSWDetailsList, softwareActivateStartTimeInDate);
+				followSoftwareDownloadProgressViaNetspan(new ArrayList<>(enbSWDetailsList), softwareActivateStartTimeInMili);
+				waitForRebootAndSetExpectedBootingForSecondReboot(new ArrayList<>(enbSWDetailsList), softwareActivateStartTimeInDate);
 				GeneralUtils.stopLevel();
 				enbSWDetailsList.removeIf(eNodebSwStatus -> eNodebSwStatus.getNumberOfExpectedReboots() <= 1);
 			}
@@ -1598,22 +1613,21 @@ public class SoftwareUtiles {
 		return enbSWDetailsList;
 	}
 
+	/** follow Software Download Progress Via Netspan
+	 *
+	 * @param eNodebSwStatusList - eNodebSwStatusList
+	 * @param softwareActivateStartTimeInMili - softwareActivateStartTimeInMili
+	 */
 	private void followSoftwareDownloadProgressViaNetspan(ArrayList<EnodebSwStatus> eNodebSwStatusList,
 														  long softwareActivateStartTimeInMili) {
 		Date softwareActivateStartTimeInDate = new Date(softwareActivateStartTimeInMili);
 		GeneralUtils.startLevel("Verify Software Download.");
-		ArrayList<EnodebSwStatus> eNodebSwStatusListDuplicate = new ArrayList<>(eNodebSwStatusList);
 		Iterator<EnodebSwStatus> iter;
 		do {
-			iter = eNodebSwStatusListDuplicate.iterator();
+			iter = eNodebSwStatusList.iterator();
 			while (iter.hasNext()) {
 				EnodebSwStatus eNodebSwStatus = iter.next();
-
-				//If RunningVersion==TargetVersion - no need to track download
-				if (eNodebSwStatus.isTargetEqualRunning()) { //todo add || eNodebSwStatus.isTargetEqualStandby
-					iter.remove();
-					continue;
-				}
+				if (isSkipTrackingNeeded(iter, eNodebSwStatus)) continue;
 				//Track download progress
 				Pair<Boolean, SwStatus> swStatusPair = eNodebSwStatus.geteNodeB().isSoftwareDownloadCompletedSuccessfully();
 				eNodebSwStatus.setSwDownloadCompleted(swStatusPair.getElement0());
@@ -1638,9 +1652,9 @@ public class SoftwareUtiles {
 				eNodebSwStatus.reportUploadedNetspanEvent(softwareActivateStartTimeInDate);
 			}
 		}
-		while ((!eNodebSwStatusListDuplicate.isEmpty())
+		while ((!eNodebSwStatusList.isEmpty())
 				&& (System.currentTimeMillis() - softwareActivateStartTimeInMili <= (EnodeB.DOWNLOAD_TIMEOUT)));
-		for (EnodebSwStatus eNodebSwStaus : eNodebSwStatusListDuplicate) {
+		for (EnodebSwStatus eNodebSwStaus : eNodebSwStatusList) {
 			if (!eNodebSwStaus.isSwDownloadCompleted()) {
 				report.report(eNodebSwStaus.geteNodeB().getName() + ": Software Download Didn't End.", Reporter.FAIL);
 			}
@@ -1648,14 +1662,28 @@ public class SoftwareUtiles {
 		GeneralUtils.stopLevel();
 	}
 
+	/**
+	 * If Running\StandBy==Target - there's no download to track
+	 * @param iter - iter
+	 * @param eNodebSwStatus - eNodebSwStatus
+	 * @return - true if skip is needed
+	 */
+	private boolean isSkipTrackingNeeded(Iterator<EnodebSwStatus> iter, EnodebSwStatus eNodebSwStatus) {
+		if (eNodebSwStatus.isTargetEqualRunning() || eNodebSwStatus.isTargetEqualStandby() ) {
+			report.report(eNodebSwStatus.geteNodeB().getNetspanName() + ": No need to download version since it's already in the bank.");
+			iter.remove();
+			return true;
+		}
+		return false;
+	}
+
 	private void waitForRebootAndSetExpectedBootingForSecondReboot(ArrayList<EnodebSwStatus> eNodebSwStatusList,
 																   Date softwareActivateStartTimeInDate) {
 		GeneralUtils.startLevel("Verify Software Activation.");
 		final long waitForRebootStartTime = System.currentTimeMillis();
-		ArrayList<EnodebSwStatus> eNodebSwStatusListDuplicate = new ArrayList<>(eNodebSwStatusList);
 		Iterator<EnodebSwStatus> iter;
 		do {
-			iter = eNodebSwStatusListDuplicate.iterator();
+			iter = eNodebSwStatusList.iterator();
 			while (iter.hasNext()) {
 				EnodebSwStatus eNodebSwStatus = iter.next();
 				eNodebSwStatus.reportUploadedAllNetspanEvents(softwareActivateStartTimeInDate);
@@ -1670,8 +1698,8 @@ public class SoftwareUtiles {
 			}
 			GeneralUtils.unSafeSleep(5000);
 		}
-		while ((!eNodebSwStatusListDuplicate.isEmpty()) && (System.currentTimeMillis() - waitForRebootStartTime <= timeout));
-		for (EnodebSwStatus eNodebSwStaus : eNodebSwStatusListDuplicate) {
+		while ((!eNodebSwStatusList.isEmpty()) && (System.currentTimeMillis() - waitForRebootStartTime <= timeout));
+		for (EnodebSwStatus eNodebSwStaus : eNodebSwStatusList) {
 			report.report(eNodebSwStaus.geteNodeB().getName() + " has NOT been rebooted.", Reporter.WARNING);
 		}
 		GeneralUtils.stopLevel();

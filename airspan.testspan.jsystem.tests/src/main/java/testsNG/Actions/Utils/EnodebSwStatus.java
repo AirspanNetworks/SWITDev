@@ -36,6 +36,7 @@ public class EnodebSwStatus {
 	private String targetVersion;
 	private String relayTargetVersion;
 	private boolean isTargetEqualRunning;
+	private boolean isTargetEqualStandby;
 	private boolean isUpgradeRequired;
 
 	private AlarmsAndEvents alarmsAndEvents;
@@ -64,9 +65,7 @@ public class EnodebSwStatus {
 		this.swStatus = swStatus;
 	}
 
-	public void setSwDownloadCompleted(Boolean swDownloadCompleted) {
-		isSwDownloadCompleted = swDownloadCompleted;
-	}
+	public void setSwDownloadCompleted(Boolean swDownloadCompleted) { isSwDownloadCompleted = swDownloadCompleted; }
 
 	public void setInRunningState(boolean inRunningState) {
 		isInRunningState = inRunningState;
@@ -76,13 +75,11 @@ public class EnodebSwStatus {
 		this.receivedEventIndex = receivedEventIndex;
 	}
 
-	public void setNumberOfExpectedReboots(int numberOfExpectedReboots) {
-		this.numberOfExpectedReboots = numberOfExpectedReboots;
-	}
+	public void setNumberOfExpectedReboots(int numberOfExpectedReboots) { this.numberOfExpectedReboots = numberOfExpectedReboots; }
 
-	public void setTargetEqualRunning(boolean targetEqualRunning) {
-		isTargetEqualRunning = targetEqualRunning;
-	}
+	public void setTargetEqualRunning(boolean targetEqualRunning) { isTargetEqualRunning = targetEqualRunning; }
+
+	public void setTargetEqualStandby(boolean targetEqualStandby) { isTargetEqualStandby = targetEqualStandby; }
 
 	public void setUpgradeRequired(boolean upgradeRequired) {
 		isUpgradeRequired = upgradeRequired;
@@ -110,9 +107,7 @@ public class EnodebSwStatus {
 		return swStatus;
 	}
 
-	public Boolean isSwDownloadCompleted() {
-		return isSwDownloadCompleted;
-	}
+	public Boolean isSwDownloadCompleted() { return isSwDownloadCompleted; }
 
 	public boolean isInRunningState() {
 		return isInRunningState;
@@ -130,9 +125,9 @@ public class EnodebSwStatus {
 		return numberOfActualReboot;
 	}
 
-	public boolean isTargetEqualRunning() {
-		return isTargetEqualRunning;
-	}
+	public boolean isTargetEqualRunning() { return isTargetEqualRunning; }
+
+	public boolean isTargetEqualStandby() { return isTargetEqualStandby; }
 
 	public boolean isUpgradeRequired() {
 		return isUpgradeRequired;

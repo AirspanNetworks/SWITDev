@@ -98,17 +98,12 @@ public class SWUpgrade extends TestspanTest {
 		ArrayList<EnodebSwStatus> enbSWDetailsList = new ArrayList<> ();
 		for (EnodeB dut : duts) {
 			GeneralUtils.startLevel("Update Default Software Image For " + dut.getName());
-			EnodebSwStatus enbSWDetails = softwareUtiles.updatDefaultSoftwareImage(dut, buildPath, relayBuildPath);
-			createEnbSwDetailsList(enbSWDetailsList,enbSWDetails);
+			EnodebSwStatus enbSWDetails = softwareUtiles.updateDefaultSoftwareImage(dut, buildPath, relayBuildPath);
+			createEnbSwDetailsList(enbSWDetailsList, enbSWDetails);
 			GeneralUtils.stopLevel();
 		}
 		long softwareActivateStartTimeInMili = System.currentTimeMillis();
-		for (EnodebSwStatus enbSWDetails : enbSWDetailsList) {
-			netspanServer.softwareConfigSet(
-					enbSWDetails.geteNodeB().getNetspanName(), RequestType.ACTIVATE,
-					enbSWDetails.geteNodeB().getDefaultNetspanProfiles().getSoftwareImage());
-		}
-		GeneralUtils.unSafeSleep(10 * 1000);
+		activateSwVersion(enbSWDetailsList);
 		ArrayList<EnodebSwStatus> eNodebSwStatusList = softwareUtiles.followSoftwareActivationProgressViaNetspan(softwareActivateStartTimeInMili, enbSWDetailsList);
 		softwareUtiles.waitForAllRunningAndInService(softwareActivateStartTimeInMili, new ArrayList<>(eNodebSwStatusList));
 		isPass = softwareUtiles.validateRunningVersion(eNodebSwStatusList);
@@ -119,6 +114,20 @@ public class SWUpgrade extends TestspanTest {
 			report.report("One or more of the enodeBs hasn't been updated", Reporter.FAIL);
 			reason += "One or more of the enodeBs hasn't been updated";
 		}
+	}
+
+	/**
+	 * activate Sw Version
+	 *
+	 * @param enbSWDetailsList - enb SW Details List
+	 */
+	private void activateSwVersion(ArrayList<EnodebSwStatus> enbSWDetailsList) {
+		for (EnodebSwStatus enbSWDetails : enbSWDetailsList) {
+			netspanServer.softwareConfigSet(
+					enbSWDetails.geteNodeB().getNetspanName(), RequestType.ACTIVATE,
+					enbSWDetails.geteNodeB().getDefaultNetspanProfiles().getSoftwareImage());
+		}
+		GeneralUtils.unSafeSleep(10 * 1000);
 	}
 
 	/**

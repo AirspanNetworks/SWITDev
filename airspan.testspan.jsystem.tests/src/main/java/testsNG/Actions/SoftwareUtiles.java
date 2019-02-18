@@ -1310,7 +1310,7 @@ public class SoftwareUtiles {
 		return this.notToValidateNodes;
 	}
 
-	public EnodebSwStatus updatDefaultSoftwareImage(EnodeB eNodeB, String buildPath, String relayBuildPath) {
+	public EnodebSwStatus updateDefaultSoftwareImage(EnodeB eNodeB, String buildPath, String relayBuildPath) {
 		EnodebSwStatus enbSWDetails = new EnodebSwStatus(eNodeB);
 		String build = "";
 		String relayBuild = "";

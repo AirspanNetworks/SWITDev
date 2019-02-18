@@ -365,7 +365,7 @@ public class Progression extends TestspanTest{
 			rebootTime = System.currentTimeMillis();
 			if(eNodeB.isSwUpgradeDuringPnP()){
 				WAIT_FOR_ALL_RUNNING_TIME = 30 * 60 * 1000;
-				enodebSwStatus = SoftwareUtiles.getInstance().updatDefaultSoftwareImage(eNodeB, buildPath, relayBuildPath);
+				enodebSwStatus = SoftwareUtiles.getInstance().updateDefaultSoftwareImage(eNodeB, buildPath, relayBuildPath);
 //				swActivationDetails = new Triple<>(enodebSwStatus.numberOfExpectedReboots, enodebSwStatus.targetVersion, enodebSwStatus.relayTargetVersion);
 			}
 			watchAllRunningTimeout.startCounting(rebootTime, WAIT_FOR_ALL_RUNNING_TIME);

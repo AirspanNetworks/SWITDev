@@ -98,7 +98,7 @@ public class SWUpgrade extends TestspanTest {
 		ArrayList<EnodebSwStatus> enbSWDetailsList = new ArrayList<> ();
 		for (EnodeB dut : duts) {
 			GeneralUtils.startLevel("Update Default Software Image For " + dut.getName());
-			EnodebSwStatus enbSWDetails = softwareUtiles.updatDefaultSoftwareImage(dut, buildPath, relayBuildPath);
+			EnodebSwStatus enbSWDetails = softwareUtiles.updateDefaultSoftwareImage(dut, buildPath, relayBuildPath);
 			createEnbSwDetailsList(enbSWDetailsList, enbSWDetails);
 			GeneralUtils.stopLevel();
 		}

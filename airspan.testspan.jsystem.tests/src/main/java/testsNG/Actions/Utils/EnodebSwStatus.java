@@ -21,8 +21,8 @@ public class EnodebSwStatus {
 	 */
 	private Reporter report = ListenerstManager.getInstance();
 
-	public final String[] swUpgradeEventInfoList = new String[]{"Download in progress", "Download completed",
-			"Activate in progress", "Activate completed"};
+	public final String[] swUpgradeEventInfoList =
+			new String[]{"Download in progress", "Download completed", "Activate in progress", "Activate completed"};
 
 	//todo add getters and setters
 	private EnodeB eNodeB;
@@ -148,8 +148,7 @@ public class EnodebSwStatus {
 	 * @param softwareActivateStartTimeInDate - softwareActivateStartTimeInDate
 	 */
 	public void reportUploadedNetspanEvent(Date softwareActivateStartTimeInDate) {
-		List<EventInfo> eventInfoListFromNMS = alarmsAndEvents.getAllEventsNode(geteNodeB(),
-				softwareActivateStartTimeInDate, new Date(System.currentTimeMillis()));
+		List<EventInfo> eventInfoListFromNMS = alarmsAndEvents.getAllEventsNode(geteNodeB(), softwareActivateStartTimeInDate, new Date(System.currentTimeMillis()));
 		for (EventInfo eventInfo : eventInfoListFromNMS) {
 			if (swUpgradeEventInfoList.length > receivedEventIndex) {
 				if (eventInfo.getEventInfo().contains(swUpgradeEventInfoList[receivedEventIndex])) {
@@ -164,12 +163,6 @@ public class EnodebSwStatus {
 					break;
 				}
 			}
-		}
-	}
-
-	public void reportUploadedAllNetspanEvents(Date softwareActivateStartTimeInDate) {
-		for (int i = 1; i <= swUpgradeEventInfoList.length; i++) {
-			reportUploadedNetspanEvent(softwareActivateStartTimeInDate);
 		}
 	}
 

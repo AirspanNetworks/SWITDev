@@ -105,7 +105,6 @@ public class SWUpgrade extends TestspanTest {
 		long softwareActivateStartTimeInMili = System.currentTimeMillis();
 		activateSwVersion(enbSWDetailsList);
 		ArrayList<EnodebSwStatus> eNodebSwStatusList = softwareUtiles.followSoftwareActivationProgressViaNetspan(softwareActivateStartTimeInMili, enbSWDetailsList);
-		softwareUtiles.waitForAllRunningAndInService(softwareActivateStartTimeInMili, new ArrayList<>(eNodebSwStatusList));
 		isPass = softwareUtiles.validateRunningVersion(eNodebSwStatusList);
 		if (isPass) {
 			report.addProperty("SoftwareUpgradeType", SWUpgradeConnectionMethod.Netspan.toString());

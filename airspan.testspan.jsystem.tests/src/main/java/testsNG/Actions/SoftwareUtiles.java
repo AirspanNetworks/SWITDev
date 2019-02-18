@@ -1600,13 +1600,22 @@ public class SoftwareUtiles {
 		for (int i = 1; i <= maxNumberOfReboots; i++) {
 			if (numberOfEnbThatHaveToReboot-- > 0) {
 				Date softwareActivateStartTimeInDate = new Date(softwareActivateStartTimeInMili);
-				GeneralUtils.startLevel("Verify Software Activation.");
+				GeneralUtils.startLevel("Verify Software Upgrade Process.");
 				followSoftwareDownloadProgressViaNetspan(new ArrayList<>(enbSWDetailsList), softwareActivateStartTimeInMili);
+				//todo move to method
+				for (EnodebSwStatus enodebSwStatus : enbSWDetailsList) {
+					enodebSwStatus.setReceivedEventIndex(2);
+				}
 				waitForRebootAndSetExpectedBootingForSecondReboot(new ArrayList<>(enbSWDetailsList), softwareActivateStartTimeInDate);
 				GeneralUtils.stopLevel();
 				enbSWDetailsList.removeIf(eNodebSwStatus -> eNodebSwStatus.getNumberOfExpectedReboots() <= 1);
 			}
 		}
+		//todo move to method
+		for (EnodebSwStatus enodebSwStatus : enbSWDetailsList) {
+			enodebSwStatus.setReceivedEventIndex(3);
+		}
+		waitForAllRunningAndInService(softwareActivateStartTimeInMili, new ArrayList<>(enbSWDetailsList));
 		return enbSWDetailsList;
 	}
 
@@ -1630,10 +1639,8 @@ public class SoftwareUtiles {
 				Pair<Boolean, SwStatus> swStatusPair = eNodebSwStatus.geteNodeB().isSoftwareDownloadCompletedSuccessfully();
 				eNodebSwStatus.setSwDownloadCompleted(swStatusPair.getElement0());
 				eNodebSwStatus.setSwStatus(swStatusPair.getElement1());
-				//If download succeeded but there are not 4 events -> false + remove from retry
-				//Todo this is a bug - need to change and adjust the condition below: receivedEventIndex
-				if (eNodebSwStatus.swUpgradeEventInfoList.length <= eNodebSwStatus.getReceivedEventIndex() || eNodebSwStatus.isSwDownloadCompleted()) {
-					eNodebSwStatus.setSwDownloadCompleted(true);
+				//Wait for download completion + receiving 2 Netspan events ("Download in progress", "Download completed")
+				if (2 <= eNodebSwStatus.getReceivedEventIndex() && eNodebSwStatus.isSwDownloadCompleted()) {
 					iter.remove();
 				}
 				//If status=failed -> remove from retry
@@ -1645,9 +1652,9 @@ public class SoftwareUtiles {
 					//This case is for relay. When it get into this method in the second iteration
 					eNodebSwStatus.setSwDownloadCompleted(false);
 				}
+				eNodebSwStatus.reportUploadedNetspanEvent(softwareActivateStartTimeInDate);
 				//Pause before next iteration
 				GeneralUtils.unSafeSleep(10 * 1000);
-				eNodebSwStatus.reportUploadedNetspanEvent(softwareActivateStartTimeInDate);
 			}
 		}
 		while ((!eNodebSwStatusList.isEmpty())
@@ -1679,16 +1686,16 @@ public class SoftwareUtiles {
 
 	private void waitForRebootAndSetExpectedBootingForSecondReboot(ArrayList<EnodebSwStatus> eNodebSwStatusList,
 																   Date softwareActivateStartTimeInDate) {
-		GeneralUtils.startLevel("Verify Software Activation.");
+		GeneralUtils.startLevel("Verify Software Activation Started.");
 		final long waitForRebootStartTime = System.currentTimeMillis();
 		Iterator<EnodebSwStatus> iter;
 		do {
 			iter = eNodebSwStatusList.iterator();
 			while (iter.hasNext()) {
 				EnodebSwStatus eNodebSwStatus = iter.next();
-				eNodebSwStatus.reportUploadedAllNetspanEvents(softwareActivateStartTimeInDate);
+				eNodebSwStatus.reportUploadedNetspanEvent(softwareActivateStartTimeInDate);
 				GeneralUtils.printToConsole(eNodebSwStatus.geteNodeB().getName() + ".isExpectBooting() = " + eNodebSwStatus.geteNodeB().isExpectBooting());
-				if (!eNodebSwStatus.geteNodeB().isExpectBooting()) {
+				if (3 <= eNodebSwStatus.getReceivedEventIndex() && !eNodebSwStatus.geteNodeB().isExpectBooting()) {
 					eNodebSwStatus.increaseNumberOfReboots();
 					if (eNodebSwStatus.getNumberOfActualReboot() < eNodebSwStatus.getNumberOfExpectedReboots()) {
 						eNodebSwStatus.geteNodeB().setExpectBooting(true);
@@ -1707,6 +1714,7 @@ public class SoftwareUtiles {
 
 	public void waitForAllRunningAndInService(long softwareActivateStartTimeInMili,
 											  ArrayList<EnodebSwStatus> eNodebSwStatusList) {
+		Date softwareActivateStartTimeInDate = new Date(softwareActivateStartTimeInMili);
 		GeneralUtils.startLevel("Wait For ALL RUNNING And In Service.");
 		while ((!eNodebSwStatusList.isEmpty())
 				&& (System.currentTimeMillis() - softwareActivateStartTimeInMili <= (EnodeB.ACTIVATE_TIMEOUT + EnodeB.DOWNLOAD_TIMEOUT))) {
@@ -1714,7 +1722,8 @@ public class SoftwareUtiles {
 			iter = eNodebSwStatusList.iterator();
 			while (iter.hasNext()) {
 				EnodebSwStatus eNodebSwStatus = iter.next();
-				if (eNodebSwStatus.geteNodeB().isInOperationalStatus()) {
+				eNodebSwStatus.reportUploadedNetspanEvent(softwareActivateStartTimeInDate);
+				if (4 == eNodebSwStatus.getReceivedEventIndex() && eNodebSwStatus.geteNodeB().isInOperationalStatus()) {
 					eNodebSwStatus.setInRunningState(true);
 					report.report(eNodebSwStatus.geteNodeB().getName() + " is in Running State.", Reporter.PASS);
 					iter.remove();

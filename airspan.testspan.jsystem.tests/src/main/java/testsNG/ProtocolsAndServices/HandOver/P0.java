@@ -30,6 +30,7 @@ import testsNG.Actions.Neighbors;
 import testsNG.Actions.PeripheralsConfig;
 import testsNG.Actions.Traffic;
 import testsNG.Actions.Traffic.TrafficType;
+import testsNG.Actions.TrafficCapacity;
 import testsNG.Actions.Utils.ParallelCommandsThread;
 import testsNG.Actions.Utils.TrafficGeneratorType;
 
@@ -308,7 +309,7 @@ public class P0 extends TestspanTest {
 	private void startTraffic() {
 		GeneralUtils.startLevel("Starting traffic.");
 		try {
-			traffic.startTraffic();
+			traffic.startTraffic(TrafficCapacity.CUSTOM);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

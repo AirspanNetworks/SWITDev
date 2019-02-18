@@ -1612,8 +1612,8 @@ public class SoftwareUtiles {
 
 	/** follow Software Download Progress Via Netspan
 	 *
-	 * @param eNodebSwStatusList
-	 * @param softwareActivateStartTimeInMili
+	 * @param eNodebSwStatusList - eNodebSwStatusList
+	 * @param softwareActivateStartTimeInMili - softwareActivateStartTimeInMili
 	 */
 	private void followSoftwareDownloadProgressViaNetspan(ArrayList<EnodebSwStatus> eNodebSwStatusList,
 														  long softwareActivateStartTimeInMili) {

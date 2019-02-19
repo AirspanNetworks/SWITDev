@@ -1084,18 +1084,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 	}
 
 	public boolean waitForReachable(long timeout) {
-		if (this.XLP.isReachable()) {
-			return true;
-		}
-		GeneralUtils.printToConsole("will wait for reachable " + timeout + " millis");
-		long startTime = System.currentTimeMillis(); // fetch starting time
-		while ((System.currentTimeMillis() - startTime) < timeout) {
-			if (this.XLP.isReachable()) {
-				return true;
-			}
-			GeneralUtils.unSafeSleep(3000);
-		}
-		return false;
+		return this.XLP.waitForReachable(timeout);
 	}
 
 	public boolean downPTPInterface(int tries) {

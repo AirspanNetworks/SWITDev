@@ -11,7 +11,7 @@ import DMTool.DMtool;
 import DMTool.sqnCellMeasReport;
 import EnodeB.EnodeB;
 import Netspan.API.Enums.EnbStates;
-import Netspan.API.Enums.HandoverType;
+import Netspan.API.Enums.HandoverTypes;
 import Netspan.API.Enums.HoControlStateTypes;
 import Netspan.API.Enums.X2ControlStateTypes;
 import UE.UE;
@@ -117,7 +117,7 @@ public class Progression extends TestspanTest{
 	returnParam = { "IsTestWasSuccessful"},
 	paramsExclude = {"IsTestWasSuccessful"})
 	public void testTpmCountersAfterForwardHO() {
-		if(!netspanServer.addNeighbor(dut, neighbor, HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC, HandoverType.TRIGGER_X_2, true, "0")){report.report("Faild to add neighbor.", Reporter.WARNING);}
+		if(!netspanServer.addNeighbor(dut, neighbor, HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC, HandoverTypes.TRIGGER_X_2, true, "0")){report.report("Faild to add neighbor.", Reporter.WARNING);}
 		GeneralUtils.startLevel("Performing Forward HO");
 		final int intraHoTooLatePoorCoverageOriginal = dut.GetIntraHoTooLatePoorCoverage(CellIndex.FORTY);
 		final int intraHoTooLateGoodCoverageUnpreparedOriginal = dut.GetIntraHoTooLateGoodCoverageUnprepared(CellIndex.FORTY);
@@ -160,7 +160,7 @@ public class Progression extends TestspanTest{
 	returnParam = { "IsTestWasSuccessful"},
 	paramsExclude = {"IsTestWasSuccessful"})
 	public void testTpmCountersAfterNormalHOs() {
-		if(!netspanServer.addNeighbor(dut, neighbor, HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC, HandoverType.TRIGGER_X_2, true, "0")){report.report("Faild to add neighbor.", Reporter.WARNING);}
+		if(!netspanServer.addNeighbor(dut, neighbor, HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC, HandoverTypes.TRIGGER_X_2, true, "0")){report.report("Faild to add neighbor.", Reporter.WARNING);}
 		GeneralUtils.startLevel("Performing 3 times regular HOs");
 		
 		int outgoingIntraFreqHoAttemptOriginal = dut.getOutgoingIntraFreqHoAttempt(CellIndex.FORTY);

@@ -1,13 +1,13 @@
 package Netspan.Profiles;
 
 import Netspan.EnbProfiles;
-import Netspan.API.Enums.EnabledDisabledStates;
+import Netspan.API.Enums.EnabledStates;
 
 public class MultiCellParameters implements INetspanProfile {
 	
 	private String profileName = null;
 	private boolean carrierAggMode = false;
-	private EnabledDisabledStates intraEnbLoadBalanceMode = null;
+	private EnabledStates intraEnbLoadBalanceMode = null;
 	private Integer compositeLoadDiffMax = null;
 	private Integer compositeLoadDiffMin = null;
 	private Integer calculationInterval = null;
@@ -20,11 +20,11 @@ public class MultiCellParameters implements INetspanProfile {
 		this.carrierAggMode = carrierAggMode;
 	}
 
-	public EnabledDisabledStates getIntraEnbLoadBalanceMode() {
+	public EnabledStates getIntraEnbLoadBalanceMode() {
 		return intraEnbLoadBalanceMode;
 	}
 
-	public void setIntraEnbLoadBalanceMode(EnabledDisabledStates intraEnbLoadBalanceMode) {
+	public void setIntraEnbLoadBalanceMode(EnabledStates intraEnbLoadBalanceMode) {
 		this.intraEnbLoadBalanceMode = intraEnbLoadBalanceMode;
 	}
 

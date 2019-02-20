@@ -12,7 +12,7 @@ import org.junit.Test;
 
 import EnodeB.EnodeB;
 import Netspan.NetspanServer;
-import Netspan.API.Enums.HandoverType;
+import Netspan.API.Enums.HandoverTypes;
 import Netspan.API.Enums.HoControlStateTypes;
 import Netspan.API.Enums.X2ControlStateTypes;
 import Utils.GeneralUtils;
@@ -39,7 +39,7 @@ public class P0 extends NeighborManagementBase {
 		
 		GeneralUtils.startLevel("Adding new neighbor");
 		status = neighbor.addNeighbor(tempEnodeB, tempNeighbor, HoControlStateTypes.ALLOWED,
-				X2ControlStateTypes.AUTOMATIC, HandoverType.TRIGGER_X_2, true, "0");
+				X2ControlStateTypes.AUTOMATIC, HandoverTypes.TRIGGER_X_2, true, "0");
 		GeneralUtils.stopLevel();
 		
 		if(!checkAndPrintStatusOfAdding(tempNeighbor, tempEnodeB, status)){
@@ -47,7 +47,7 @@ public class P0 extends NeighborManagementBase {
 		}
 		GeneralUtils.unSafeSleep(20000);
 		GeneralUtils.startLevel("Verifying that neighbor was added with the right parameters");
-		status = neighbor.verifyNeighborParametersNMSandSNMP(tempEnodeB, tempNeighbor, HoControlStateTypes.ALLOWED,X2ControlStateTypes.AUTOMATIC, HandoverType.TRIGGER_X_2, true, "0");
+		status = neighbor.verifyNeighborParametersNMSandSNMP(tempEnodeB, tempNeighbor, HoControlStateTypes.ALLOWED,X2ControlStateTypes.AUTOMATIC, HandoverTypes.TRIGGER_X_2, true, "0");
 		
 		GeneralUtils.stopLevel();
 		
@@ -105,7 +105,7 @@ public class P0 extends NeighborManagementBase {
 		getDebugInfo(tempNeighbor);
 		
 		GeneralUtils.startLevel("Adding new neighbor");
-		status = neighbor.addNeighbor(tempEnodeB, tempNeighbor, HoControlStateTypes.ALLOWED,X2ControlStateTypes.AUTOMATIC, HandoverType.S_1_ONLY, true, "0");
+		status = neighbor.addNeighbor(tempEnodeB, tempNeighbor, HoControlStateTypes.ALLOWED,X2ControlStateTypes.AUTOMATIC, HandoverTypes.S_1_ONLY, true, "0");
 		GeneralUtils.stopLevel();
 
 		if(!checkAndPrintStatusOfAdding(tempNeighbor, tempEnodeB, status)){
@@ -114,7 +114,7 @@ public class P0 extends NeighborManagementBase {
 		GeneralUtils.unSafeSleep(20000);
 		GeneralUtils.startLevel("Verifying that neighbor was added with the right parameters");
 		status = neighbor.verifyNeighborParametersNMSandSNMP(tempEnodeB, tempNeighbor, HoControlStateTypes.ALLOWED,
-				X2ControlStateTypes.AUTOMATIC, HandoverType.S_1_ONLY, true, "0");
+				X2ControlStateTypes.AUTOMATIC, HandoverTypes.S_1_ONLY, true, "0");
 		GeneralUtils.stopLevel();
 
 		checkAndPrintStatusOfVerification(status);
@@ -168,7 +168,7 @@ public class P0 extends NeighborManagementBase {
 		getDebugInfo(tempNeighbor);
 		
 		GeneralUtils.startLevel("Adding new neighbor");
-		status = neighbor.addNeighbor(tempEnodeB, tempNeighbor, HoControlStateTypes.ALLOWED,X2ControlStateTypes.NOT_ALLOWED, HandoverType.S_1_ONLY, true, "0");
+		status = neighbor.addNeighbor(tempEnodeB, tempNeighbor, HoControlStateTypes.ALLOWED,X2ControlStateTypes.NOT_ALLOWED, HandoverTypes.S_1_ONLY, true, "0");
 		GeneralUtils.stopLevel();
 
 		if(!checkAndPrintStatusOfAdding(tempNeighbor, tempEnodeB, status)){
@@ -177,7 +177,7 @@ public class P0 extends NeighborManagementBase {
 		GeneralUtils.unSafeSleep(20000);
 		GeneralUtils.startLevel("Verifying that neighbor was added with the right parameters");
 		status = neighbor.verifyNeighborParametersNMSandSNMP(tempEnodeB, tempNeighbor, HoControlStateTypes.ALLOWED,
-				X2ControlStateTypes.NOT_ALLOWED, HandoverType.S_1_ONLY, true, "0");
+				X2ControlStateTypes.NOT_ALLOWED, HandoverTypes.S_1_ONLY, true, "0");
 		GeneralUtils.stopLevel();
 		
 		checkAndPrintStatusOfVerification(status);
@@ -234,7 +234,7 @@ public class P0 extends NeighborManagementBase {
 		
 		GeneralUtils.startLevel("Adding new neighbor");
 		status = neighbor.addNeighbor(tempEnodeB, tempNeighbor, HoControlStateTypes.PROHIBITED,
-				X2ControlStateTypes.AUTOMATIC, HandoverType.TRIGGER_X_2, true, "0");
+				X2ControlStateTypes.AUTOMATIC, HandoverTypes.TRIGGER_X_2, true, "0");
 		GeneralUtils.stopLevel();
 
 		if(!checkAndPrintStatusOfAdding(tempNeighbor, tempEnodeB, status)){
@@ -243,7 +243,7 @@ public class P0 extends NeighborManagementBase {
 		GeneralUtils.unSafeSleep(20000);
 		GeneralUtils.startLevel("Verifying that neighbor was added with the right parameters");
 		status = neighbor.verifyNeighborParametersNMSandSNMP(tempEnodeB, tempNeighbor, HoControlStateTypes.PROHIBITED,
-				X2ControlStateTypes.AUTOMATIC, HandoverType.TRIGGER_X_2, true, "0");
+				X2ControlStateTypes.AUTOMATIC, HandoverTypes.TRIGGER_X_2, true, "0");
 		GeneralUtils.stopLevel();
 		
 		checkAndPrintStatusOfVerification(status);
@@ -300,7 +300,7 @@ public class P0 extends NeighborManagementBase {
 		
 		GeneralUtils.startLevel("Adding new neighbor");
 		status = neighbor.addNeighbor(tempEnodeB, tempNeighbor, HoControlStateTypes.PROHIBITED,
-				X2ControlStateTypes.NOT_ALLOWED, HandoverType.TRIGGER_X_2, true, "0");
+				X2ControlStateTypes.NOT_ALLOWED, HandoverTypes.TRIGGER_X_2, true, "0");
 		GeneralUtils.stopLevel();
 
 		if(!checkAndPrintStatusOfAdding(tempNeighbor, tempEnodeB, status)){
@@ -309,7 +309,7 @@ public class P0 extends NeighborManagementBase {
 		GeneralUtils.unSafeSleep(20000);
 		GeneralUtils.startLevel("Verifying that neighbor was added with the right parameters");
 		status = neighbor.verifyNeighborParametersNMSandSNMP(tempEnodeB, tempNeighbor, HoControlStateTypes.PROHIBITED,
-				X2ControlStateTypes.NOT_ALLOWED, HandoverType.TRIGGER_X_2, true, "0");
+				X2ControlStateTypes.NOT_ALLOWED, HandoverTypes.TRIGGER_X_2, true, "0");
 		GeneralUtils.stopLevel();
 		
 		checkAndPrintStatusOfVerification(status);
@@ -497,7 +497,7 @@ public class P0 extends NeighborManagementBase {
 		
 		for (EnodeB enb : virtualNeighborsList) {
 			if (!neighbor.addNeighborOnlyNetspan(tempEnodeB, enb, HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC,
-					HandoverType.TRIGGER_X_2, true, "0")) {
+					HandoverTypes.TRIGGER_X_2, true, "0")) {
 				report.report("Neighbor " + enb.getNetspanName() + " was not added to the neighbor list",
 						Reporter.WARNING);
 				reason = "At least one neighbor was not added to the neighbor list\n";
@@ -520,7 +520,7 @@ public class P0 extends NeighborManagementBase {
 			GeneralUtils.stopLevel();
 			return;
 		}
-		boolean flag = neighbor.checkCannotAddNeighbor(tempEnodeB, newParty, HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC, HandoverType.TRIGGER_X_2, true, "0");
+		boolean flag = neighbor.checkCannotAddNeighbor(tempEnodeB, newParty, HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC, HandoverTypes.TRIGGER_X_2, true, "0");
 		GeneralUtils.stopLevel();
 		
 		if(!flag) {

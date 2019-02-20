@@ -19,9 +19,9 @@ import DMTool.Measurement.TriggerEvents;
 import ESon.EsonServer;
 import EnodeB.EnodeB;
 import Netspan.EnbProfiles;
-import Netspan.API.Enums.EnabledDisabledStates;
+import Netspan.API.Enums.EnabledStates;
 import Netspan.API.Enums.EnbStates;
-import Netspan.API.Enums.HandoverType;
+import Netspan.API.Enums.HandoverTypes;
 import Netspan.API.Enums.HoControlStateTypes;
 import Netspan.API.Enums.SonAnrStates;
 import Netspan.API.Enums.X2ControlStateTypes;
@@ -2245,11 +2245,11 @@ public class P0 extends TestspanTest {
 	}
 
 	private void setDicicState(SonParameters sonParams, boolean state) {
-		EnabledDisabledStates stateToConfigure = null;
+		EnabledStates stateToConfigure = null;
 		if (state) {
-			stateToConfigure = EnabledDisabledStates.ENABLED;
+			stateToConfigure = EnabledStates.ENABLED;
 		} else {
-			stateToConfigure = EnabledDisabledStates.DISABLED;
+			stateToConfigure = EnabledStates.DISABLED;
 		}
 		sonParams.setOptimizationMode(stateToConfigure);
 		sonParams.setIcicMode(stateToConfigure);
@@ -2311,7 +2311,7 @@ public class P0 extends TestspanTest {
 	 */
 	private boolean setTBGEnable(boolean dualMode) {
 		MobilityParameters mobilityParams = new MobilityParameters();
-		mobilityParams.setThresholdBasedMeasurement(EnabledDisabledStates.ENABLED);
+		mobilityParams.setThresholdBasedMeasurement(EnabledStates.ENABLED);
 		report.report("A1 threshold configured: " + stopGap);
 		mobilityParams.setStopGap(stopGap);
 		report.report("A2 threshold configured: " + triggerGap);
@@ -2332,7 +2332,7 @@ public class P0 extends TestspanTest {
 
 	private boolean setTBGDisable() {
 		MobilityParameters mobilityParams = new MobilityParameters();
-		mobilityParams.setThresholdBasedMeasurement(EnabledDisabledStates.DISABLED);
+		mobilityParams.setThresholdBasedMeasurement(EnabledStates.DISABLED);
 		int numOfCellsInNode = dutInTest.getNumberOfActiveCells();
 		while (numOfCellsInNode > 0) {
 			dutInTest.setCellContextNumber(numOfCellsInNode);
@@ -2358,7 +2358,7 @@ public class P0 extends TestspanTest {
 		if (allNeighborsList.size() >= 1) {
 			for (EnodeB enb : allNeighborsList) {
 				if (!neighbors.addNeighbor(dutInTest, enb, HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC,
-						HandoverType.TRIGGER_X_2, true, "0")) {
+						HandoverTypes.TRIGGER_X_2, true, "0")) {
 					return false;
 				}
 			}
@@ -2725,7 +2725,7 @@ public class P0 extends TestspanTest {
 	}
 
 	private void configureNetworkWithCdrx(NetworkParameters params) {
-		params.setCdrxConnectedMode(EnabledDisabledStates.ENABLED);
+		params.setCdrxConnectedMode(EnabledStates.ENABLED);
 	}
 
 	private void objectToReport(ArrayList<MeasurementCfgObject> object) {

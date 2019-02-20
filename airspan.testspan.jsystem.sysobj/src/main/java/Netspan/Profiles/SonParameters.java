@@ -5,7 +5,7 @@ import java.util.List;
 
 import Netspan.EnbProfiles;
 import Netspan.API.Enums.DicicSchemeType;
-import Netspan.API.Enums.EnabledDisabledStates;
+import Netspan.API.Enums.EnabledStates;
 import Netspan.API.Enums.PnpModes;
 import Netspan.API.Enums.SonAnrStates;
 import Netspan.API.Lte.LteSonDynIcic;
@@ -67,13 +67,13 @@ public class SonParameters implements INetspanProfile {
 	private Integer MinAllowedHoSuccessRate;
 	private Boolean autoRSIEnabled;
 	private List<Triple<Integer, Integer, Integer>> rangesRSIList = new ArrayList<Triple<Integer, Integer, Integer>>();
-	private EnabledDisabledStates optimizationMode;
+	private EnabledStates optimizationMode;
 	private LteSonDynIcic dynamicIcic;
-	private EnabledDisabledStates icicMode;
+	private EnabledStates icicMode;
 	private DicicSchemeType icicSchemeType;
 	private Integer minThresholdCeu;
 	private Integer maxThresholdCeu;
-	private EnabledDisabledStates unmanagedInterferenceHandling;
+	private EnabledStates unmanagedInterferenceHandling;
 
 	public Boolean getIsSonCommissioningEnabled() {
 		return isSonCommissioningEnabled;
@@ -83,11 +83,11 @@ public class SonParameters implements INetspanProfile {
 		this.isSonCommissioningEnabled = isSonCommissioningEnabled;
 	}
 
-	public EnabledDisabledStates getIcicMode() {
+	public EnabledStates getIcicMode() {
 		return icicMode;
 	}
 
-	public void setIcicMode(EnabledDisabledStates icicMode) {
+	public void setIcicMode(EnabledStates icicMode) {
 		this.icicMode = icicMode;
 	}
 
@@ -115,11 +115,11 @@ public class SonParameters implements INetspanProfile {
 		this.maxThresholdCeu = maxThresholdCeu;
 	}
 
-	public EnabledDisabledStates getUnmanagedInterferenceHandling() {
+	public EnabledStates getUnmanagedInterferenceHandling() {
 		return unmanagedInterferenceHandling;
 	}
 
-	public void setUnmanagedInterferenceHandling(EnabledDisabledStates unmanagedInterferenceHandling) {
+	public void setUnmanagedInterferenceHandling(EnabledStates unmanagedInterferenceHandling) {
 		this.unmanagedInterferenceHandling = unmanagedInterferenceHandling;
 	}
 
@@ -342,11 +342,11 @@ public class SonParameters implements INetspanProfile {
 		this.dynamicIcic = dynamicIcic;
 	}
 
-	public EnabledDisabledStates getOptimizationMode() {
+	public EnabledStates getOptimizationMode() {
 		return optimizationMode;
 	}
 
-	public void setOptimizationMode(EnabledDisabledStates optimizationMode) {
+	public void setOptimizationMode(EnabledStates optimizationMode) {
 		this.optimizationMode = optimizationMode;
 	}
 }

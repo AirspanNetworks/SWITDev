@@ -407,6 +407,10 @@ public class GeneralUtils {
         }
     }
 
+    public enum RebootTypesNetspan{
+    	Reset_Node, Cold_Reset_Node, Forced_Reset_Node, Forced_Cold_Reset_Node; 
+    }
+    
     /**
      * extract gz file to a new file with the given prefix
      *

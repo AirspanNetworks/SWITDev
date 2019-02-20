@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import Netspan.NBI_15_5.Inventory.ErrorCodes;
 import Netspan.NBI_15_5.Inventory.NodeProvisioningGetResult;
 
 import EnodeB.EnodeB;
@@ -15,7 +16,7 @@ import Netspan.EnbProfiles;
 import Netspan.NBIVersion;
 import Netspan.API.Enums.CategoriesLte;
 import Netspan.API.Enums.DuplexType;
-import Netspan.API.Enums.EnabledDisabledStates;
+import Netspan.API.Enums.EnabledStates;
 import Netspan.API.Enums.EnbTypes;
 import Netspan.API.Enums.HardwareCategory;
 import Netspan.API.Enums.ServerProtocolType;
@@ -131,6 +132,7 @@ import Utils.GeneralUtils;
 import Utils.Pair;
 import Utils.Triple;
 import Utils.GeneralUtils.RebootType;
+import Utils.GeneralUtils.RebootTypesNetspan;
 import jsystem.framework.report.Reporter;
 
 public class NetspanServer_15_5 extends NetspanServer_15_2 implements Netspan_15_5_abilities {
@@ -787,7 +789,7 @@ public class NetspanServer_15_5 extends NetspanServer_15_2 implements Netspan_15
 								multiCellParams.getIntraEnbLoadBalanceMode()));
 			}
 
-			if (multiCellParams.getIntraEnbLoadBalanceMode() == EnabledDisabledStates.ENABLED) {
+			if (multiCellParams.getIntraEnbLoadBalanceMode() == EnabledStates.ENABLED) {
 				multiCellProfile
 						.setCompositeLoadDiffMax(factoryObject.createEnbMultiCellProfileParamsCompositeLoadDiffMax(
 								multiCellParams.getCompositeLoadDiffMax()));
@@ -1064,21 +1066,21 @@ public class NetspanServer_15_5 extends NetspanServer_15_2 implements Netspan_15
 				mobilityProfile.setIsQosBasedMeasurementEnabled(
 						factoryDetails.createEnbMobilityProfileParamsIsQosBasedMeasurementEnabled(
 								mobilityParams.getQosBasedMeasurement()));
-				if (mobilityParams.getQosBasedMeasurement().equals(EnabledDisabledStates.ENABLED)) {
-					if (mobilityParams.getQosHoAccessAdmin().equals(EnabledDisabledStates.ENABLED)) {
+				if (mobilityParams.getQosBasedMeasurement().equals(EnabledStates.ENABLED)) {
+					if (mobilityParams.getQosHoAccessAdmin().equals(EnabledStates.ENABLED)) {
 						mobilityProfile.setIsQosHoAccessAdminEnabled(
 								factoryDetails.createEnbMobilityProfileParamsIsQosHoAccessAdminEnabled(
 										mobilityParams.getQosHoAccessAdmin()));
 						mobilityProfile.setIsQosHoBwCapcityAdminEnabled(
 								factoryDetails.createEnbMobilityProfileParamsIsQosHoBwCapcityAdminEnabled(
-										EnabledDisabledStates.DISABLED));
+										EnabledStates.DISABLED));
 					} else {
 						mobilityProfile.setIsQosHoAccessAdminEnabled(
 								factoryDetails.createEnbMobilityProfileParamsIsQosHoAccessAdminEnabled(
 										mobilityParams.getQosHoAccessAdmin()));
 						mobilityProfile.setIsQosHoBwCapcityAdminEnabled(
 								factoryDetails.createEnbMobilityProfileParamsIsQosHoBwCapcityAdminEnabled(
-										EnabledDisabledStates.ENABLED));
+										EnabledStates.ENABLED));
 					}
 					for (Integer earfcn : mobilityParams.getQosBasedEarfcnList()) {
 						QosEarfcn qosEarfcn = new QosEarfcn();
@@ -1155,7 +1157,7 @@ public class NetspanServer_15_5 extends NetspanServer_15_2 implements Netspan_15
 				mobilityProfile.setIsThresholdBasedMeasurementEnabled(
 						factoryDetails.createEnbMobilityProfileParamsIsThresholdBasedMeasurementEnabled(
 								mobilityParams.getThresholdBasedMeasurement()));
-				if (mobilityParams.getThresholdBasedMeasurement() == EnabledDisabledStates.ENABLED) {
+				if (mobilityParams.getThresholdBasedMeasurement() == EnabledStates.ENABLED) {
 					MobilityConnectedModeTriggerGaps triggerGap = new MobilityConnectedModeTriggerGaps();
 					triggerGap.setRsrpEventThreshold1(factoryDetails
 							.createMobilityConnectedModeTriggerGapsRsrpEventThreshold1(mobilityParams.getStartGap()));
@@ -1398,9 +1400,9 @@ public class NetspanServer_15_5 extends NetspanServer_15_2 implements Netspan_15
 		if (sonParmas.getOptimizationMode() != null) {
 			sonProfile.setOptimizationMode(
 					factoryDetails.createEnbSonProfileParamsOptimizationMode(sonParmas.getOptimizationMode()));
-			if (sonParmas.getOptimizationMode().equals(EnabledDisabledStates.ENABLED)) {
+			if (sonParmas.getOptimizationMode().equals(EnabledStates.ENABLED)) {
 				LteSonDynIcic lteSonDynIcic = new LteSonDynIcic();
-				if (sonParmas.getIcicMode() != null && sonParmas.getIcicMode().equals(EnabledDisabledStates.ENABLED)) {
+				if (sonParmas.getIcicMode() != null && sonParmas.getIcicMode().equals(EnabledStates.ENABLED)) {
 					lteSonDynIcic.setIcicMode(factoryDetails.createLteSonDynIcicIcicMode(sonParmas.getIcicMode()));
 					lteSonDynIcic.setIcicSchemeType(
 							factoryDetails.createLteSonDynIcicIcicSchemeType(sonParmas.getIcicSchemeType()));
@@ -1548,7 +1550,7 @@ public class NetspanServer_15_5 extends NetspanServer_15_2 implements Netspan_15
 			nghData.mnc = ngh.getMnc();
 			nghData.hoControlStatus = ngh.getHoControlStatus().getValue();
 			nghData.x2ControlStatus = ngh.getX2ControlStatus().getValue();
-			nghData.handoverType = ngh.getHandoverType().getValue();
+			nghData.HandoverTypes = ngh.getHandoverType().getValue();
 			nghData.discoveredBy = ngh.getDiscoveredBy().getValue();
 			nghData.isStaticNeighbour = ngh.getIsStaticNeighbour().getValue();
 			nghData.hoSuccessRate = ngh.getHoSuccessRate().getValue();
@@ -1882,7 +1884,7 @@ public class NetspanServer_15_5 extends NetspanServer_15_2 implements Netspan_15
 		profile.setName(advancedParmas.getProfileName());
 		ObjectFactory factoryDetails = new ObjectFactory();
 		EtwsWs etwsWs = new EtwsWs();
-		if (advancedParmas.getEtwsUserMode() == EnabledDisabledStates.ENABLED) {
+		if (advancedParmas.getEtwsUserMode() == EnabledStates.ENABLED) {
 			etwsWs.setEtwsModeIsDefault(factoryDetails.createEtwsWsEtwsModeIsDefault(false));
 			etwsWs.setEtwsMode(factoryDetails.createEtwsWsEtwsMode(EtwsModes.USER));
 			if (advancedParmas.getSib10Duration() != null) {
@@ -2403,10 +2405,10 @@ public class NetspanServer_15_5 extends NetspanServer_15_2 implements Netspan_15
 			curr.ethernetDuplex = DuplexType.fromValue(backaul.getEthernetDuplex().getValue().value());
 			curr.ethernetRate = backaul.getEthernetRate().getValue();
 			curr.portType = backaul.getPortType().getValue();
-			curr.autoNegConfig = EnabledDisabledStates.fromValue(backaul.getAutoNegConfig().getValue().value());
+			curr.autoNegConfig = EnabledStates.fromValue(backaul.getAutoNegConfig().getValue().value());
 			curr.portStatus = backaul.getPortStatus().getValue();
 			curr.portSpeed = backaul.getPortSpeed().getValue();
-			curr.flowControlStatus = EnabledDisabledStates.fromValue(backaul.getFlowControlStatus().getValue().value());
+			curr.flowControlStatus = EnabledStates.fromValue(backaul.getFlowControlStatus().getValue().value());
 			res.add(curr);
 		}
 		return res;
@@ -2468,5 +2470,25 @@ public class NetspanServer_15_5 extends NetspanServer_15_2 implements Netspan_15
 			report.report("Failed to get Actual Max UE Supported Cell 1", Reporter.WARNING);
 		}
 		return maxUeSupported;
+	}
+	
+	@Override
+	public boolean resetNodeRebootAction(String nodeName, RebootTypesNetspan rebootType) {
+		Netspan.NBI_15_5.Inventory.NodeActionResult result = null;
+		ArrayList<String> listEnb = new ArrayList<String>();
+		listEnb.add(nodeName);
+		if(rebootType == RebootTypesNetspan.Reset_Node 
+				|| rebootType == RebootTypesNetspan.Forced_Reset_Node){
+			return super.resetNodeRebootAction(nodeName, rebootType);
+		}else if(rebootType == RebootTypesNetspan.Forced_Cold_Reset_Node){
+			result = soapHelper_15_5.getInventorySoap().nodeResetForcedCold(listEnb, null, credentialsInventory);
+		}else{
+			report.report("Reboot type is not available in version 15.5", Reporter.FAIL);
+			soapHelper_15_5.endInventorySoap();
+			return false;
+		}
+		boolean rebooted = result.getErrorCode() == ErrorCodes.OK;
+		soapHelper_15_5.endInventorySoap();
+		return rebooted;
 	}
 }

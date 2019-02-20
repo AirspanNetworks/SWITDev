@@ -14,7 +14,7 @@ import EnodeB.EnodeB;
 import IPG.IPG;
 import Netspan.EnbProfiles;
 import Netspan.NetspanServer;
-import Netspan.API.Enums.HandoverType;
+import Netspan.API.Enums.HandoverTypes;
 import Netspan.API.Enums.HoControlStateTypes;
 import Netspan.API.Enums.SonAnrStates;
 import Netspan.API.Enums.X2ControlStateTypes;
@@ -443,7 +443,7 @@ public class NeighborManagementBase extends TestspanTest{
 		GeneralUtils.startLevel("Adding Neighbors to EnodeB " + tempEnodeB.getNetspanName());
 		for (EnodeB neihbor : neihbors) {
 			if (!neighbor.addNeighborOnlyNetspan(tempEnodeB, neihbor, HoControlStateTypes.ALLOWED,
-					X2ControlStateTypes.AUTOMATIC, HandoverType.TRIGGER_X_2, true, "0")) {
+					X2ControlStateTypes.AUTOMATIC, HandoverTypes.TRIGGER_X_2, true, "0")) {
 				report.report("Neighbor " + neihbor.getNetspanName() + " was not added to the neighbor list",
 						Reporter.WARNING);
 				reason = "At least one neighbor was not added to the neighbor list\n";

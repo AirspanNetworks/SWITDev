@@ -30,6 +30,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -1602,18 +1603,10 @@ public class SoftwareUtiles {
 				Date softwareActivateStartTimeInDate = new Date(softwareActivateStartTimeInMili);
 				GeneralUtils.startLevel("Verify Software Upgrade Process.");
 				followSoftwareDownloadProgressViaNetspan(new ArrayList<>(enbSWDetailsList), softwareActivateStartTimeInMili);
-				//todo move to method
-				for (EnodebSwStatus enodebSwStatus : enbSWDetailsList) {
-					enodebSwStatus.setReceivedEventIndex(2);
-				}
 				waitForRebootAndSetExpectedBootingForSecondReboot(new ArrayList<>(enbSWDetailsList), softwareActivateStartTimeInDate);
 				GeneralUtils.stopLevel();
 				enbSWDetailsList.removeIf(eNodebSwStatus -> eNodebSwStatus.getNumberOfExpectedReboots() <= 1);
 			}
-		}
-		//todo move to method
-		for (EnodebSwStatus enodebSwStatus : enbSWDetailsList) {
-			enodebSwStatus.setReceivedEventIndex(3);
 		}
 		waitForAllRunningAndInService(softwareActivateStartTimeInMili, new ArrayList<>(enbSWDetailsList));
 		return enbSWDetailsList;
@@ -1639,32 +1632,85 @@ public class SoftwareUtiles {
 				Pair<Boolean, SwStatus> swStatusPair = eNodebSwStatus.geteNodeB().isSoftwareDownloadCompletedSuccessfully();
 				eNodebSwStatus.setSwDownloadCompleted(swStatusPair.getElement0());
 				eNodebSwStatus.setSwStatus(swStatusPair.getElement1());
-				//Wait for download completion + receiving 2 Netspan events ("Download in progress", "Download completed")
-				if (2 <= eNodebSwStatus.getReceivedEventIndex() && eNodebSwStatus.isSwDownloadCompleted()) {
-					iter.remove();
-				}
-				//If status=failed -> remove from retry
-				else if (eNodebSwStatus.getSwStatus() == SwStatus.SW_STATUS_INSTALL_FAILURE
-						|| eNodebSwStatus.getSwStatus() == SwStatus.SW_STATUS_ACTIVATION_FAILURE) {
-					eNodebSwStatus.setSwDownloadCompleted(false);
-					iter.remove();
-				} else {
-					//This case is for relay. When it get into this method in the second iteration
-					eNodebSwStatus.setSwDownloadCompleted(false);
-				}
-				eNodebSwStatus.reportUploadedNetspanEvent(softwareActivateStartTimeInDate);
+				//Wait for download completion
+				checkIfDownloadCompleted(iter, eNodebSwStatus);
+				printDownloadProgressEventIfReceived(softwareActivateStartTimeInDate, eNodebSwStatus);
 				//Pause before next iteration
 				GeneralUtils.unSafeSleep(10 * 1000);
 			}
 		}
 		while ((!eNodebSwStatusList.isEmpty())
 				&& (System.currentTimeMillis() - softwareActivateStartTimeInMili <= (EnodeB.DOWNLOAD_TIMEOUT)));
-		for (EnodebSwStatus eNodebSwStaus : eNodebSwStatusList) {
-			if (!eNodebSwStaus.isSwDownloadCompleted()) {
-				report.report(eNodebSwStaus.geteNodeB().getName() + ": Software Download Didn't End.", Reporter.FAIL);
+		for (EnodebSwStatus eNodebSwStatus : eNodebSwStatusList) {
+			if (!eNodebSwStatus.isSwDownloadCompleted()) {
+				report.report(eNodebSwStatus.geteNodeB().getName() + ": Software Download Didn't End.", Reporter.FAIL);
+			} else {
+				//check if the event of downloadCompleted received. if so, print details about it.
+				eNodebSwStatus.getReceivedEvent().downloadCompleted =
+						printDownloadProgressEventIfReceived(eNodebSwStatus, NetspanEvents.DOWNLOAD_IN_PROGRESS, softwareActivateStartTimeInDate);
 			}
 		}
 		GeneralUtils.stopLevel();
+	}
+
+	/**
+	 * Check If Download Completed + update flag + remove from tracking list
+	 *
+	 * @param iter           - current iter pointer
+	 * @param eNodebSwStatus - eNodebSwStatus
+	 */
+	private void checkIfDownloadCompleted(Iterator<EnodebSwStatus> iter, EnodebSwStatus eNodebSwStatus) {
+		if (eNodebSwStatus.isSwDownloadCompleted()) {
+			iter.remove();
+		}
+		//If status=failed -> remove from retry
+		else if (eNodebSwStatus.getSwStatus() == SwStatus.SW_STATUS_INSTALL_FAILURE
+				|| eNodebSwStatus.getSwStatus() == SwStatus.SW_STATUS_ACTIVATION_FAILURE) {
+			eNodebSwStatus.setSwDownloadCompleted(false);
+			iter.remove();
+		} else {
+			//This case is for relay. When it get into this method in the second iteration
+			eNodebSwStatus.setSwDownloadCompleted(false);
+		}
+	}
+
+	/**
+	 * Print Netspan Event If Received - downloadProgress + update the relevant EnB flag
+	 *
+	 * @param softwareActivateStartTimeInDate - softwareActivateStartTimeInDate
+	 * @param eNodebSwStatus                  - eNodebSwStatus
+	 */
+	private void printDownloadProgressEventIfReceived(Date softwareActivateStartTimeInDate, EnodebSwStatus eNodebSwStatus) {
+		if (!eNodebSwStatus.getReceivedEvent().downloadProgress) {
+			eNodebSwStatus.getReceivedEvent().downloadProgress = printDownloadProgressEventIfReceived(eNodebSwStatus,
+					NetspanEvents.DOWNLOAD_IN_PROGRESS, softwareActivateStartTimeInDate);
+		}
+	}
+
+	/**
+	 * Print Netspan Event If Received - activateProgress + update the relevant EnB flag
+	 *
+	 * @param softwareActivateStartTimeInDate - softwareActivateStartTimeInDate
+	 * @param eNodebSwStatus                  - eNodebSwStatus
+	 */
+	private void printActivateProgressEventIfReceived(Date softwareActivateStartTimeInDate, EnodebSwStatus eNodebSwStatus) {
+		if (!eNodebSwStatus.getReceivedEvent().activateProgress) {
+			eNodebSwStatus.getReceivedEvent().activateProgress = printDownloadProgressEventIfReceived(eNodebSwStatus,
+					NetspanEvents.ACTIVATE_IN_PROGRESS, softwareActivateStartTimeInDate);
+		}
+	}
+
+	/**
+	 * Print Netspan Event If Received - activateCompleted + update the relevant EnB flag
+	 *
+	 * @param softwareActivateStartTimeInDate - softwareActivateStartTimeInDate
+	 * @param eNodebSwStatus                  - eNodebSwStatus
+	 */
+	private void printActivateCompletedEventIfReceived(Date softwareActivateStartTimeInDate, EnodebSwStatus eNodebSwStatus) {
+		if (!eNodebSwStatus.getReceivedEvent().activateCompleted) {
+			eNodebSwStatus.getReceivedEvent().activateCompleted = printDownloadProgressEventIfReceived(eNodebSwStatus,
+					NetspanEvents.ACTIVATE_COMPLETED, softwareActivateStartTimeInDate);
+		}
 	}
 
 	/**
@@ -1693,9 +1739,9 @@ public class SoftwareUtiles {
 			iter = eNodebSwStatusList.iterator();
 			while (iter.hasNext()) {
 				EnodebSwStatus eNodebSwStatus = iter.next();
-				eNodebSwStatus.reportUploadedNetspanEvent(softwareActivateStartTimeInDate);
+				printActivateProgressEventIfReceived(softwareActivateStartTimeInDate, eNodebSwStatus);
 				GeneralUtils.printToConsole(eNodebSwStatus.geteNodeB().getName() + ".isExpectBooting() = " + eNodebSwStatus.geteNodeB().isExpectBooting());
-				if (3 <= eNodebSwStatus.getReceivedEventIndex() && !eNodebSwStatus.geteNodeB().isExpectBooting()) {
+				if (!eNodebSwStatus.geteNodeB().isExpectBooting()) {
 					eNodebSwStatus.increaseNumberOfReboots();
 					if (eNodebSwStatus.getNumberOfActualReboot() < eNodebSwStatus.getNumberOfExpectedReboots()) {
 						eNodebSwStatus.geteNodeB().setExpectBooting(true);
@@ -1722,12 +1768,8 @@ public class SoftwareUtiles {
 			iter = eNodebSwStatusList.iterator();
 			while (iter.hasNext()) {
 				EnodebSwStatus eNodebSwStatus = iter.next();
-				eNodebSwStatus.reportUploadedNetspanEvent(softwareActivateStartTimeInDate);
-				if (4 == eNodebSwStatus.getReceivedEventIndex() && eNodebSwStatus.geteNodeB().isInOperationalStatus()) {
-					eNodebSwStatus.setInRunningState(true);
-					report.report(eNodebSwStatus.geteNodeB().getName() + " is in Running State.", Reporter.PASS);
-					iter.remove();
-				}
+				printActivateCompletedEventIfReceived(softwareActivateStartTimeInDate, eNodebSwStatus);
+				checkOperationalStatus(iter, eNodebSwStatus);
 			}
 			GeneralUtils.unSafeSleep(5 * 1000);
 		}
@@ -1738,6 +1780,20 @@ public class SoftwareUtiles {
 			}
 		}
 		GeneralUtils.stopLevel();
+	}
+
+	/**
+	 * Check Operational Status - AllRunning+InService, update flags + remove from tracking list
+	 *
+	 * @param iter           - iter pointer
+	 * @param eNodebSwStatus - current eNodebSwStatus object
+	 */
+	private void checkOperationalStatus(Iterator<EnodebSwStatus> iter, EnodebSwStatus eNodebSwStatus) {
+		if (eNodebSwStatus.geteNodeB().isInOperationalStatus()) {
+			eNodebSwStatus.setInRunningState(true);
+			report.report(eNodebSwStatus.geteNodeB().getName() + " is in Running State.", Reporter.PASS);
+			iter.remove();
+		}
 	}
 
 	public boolean validateRunningVersion(ArrayList<EnodebSwStatus> eNodebSwStatusList) {
@@ -1753,5 +1809,69 @@ public class SoftwareUtiles {
 		}
 		GeneralUtils.stopLevel();
 		return res;
+	}
+
+	/**
+	 * String Enums represent the 4 netspan events while upgrading SW version
+	 */
+	public enum NetspanEvents {
+		DOWNLOAD_IN_PROGRESS("Download in progress"),
+		DOWNLOAD_COMPLETED("Download completed"),
+		ACTIVATE_IN_PROGRESS("Activate in progress"),
+		ACTIVATE_COMPLETED("Activate completed");
+
+		/**
+		 * Empty Constructor to represent the enum with Strings
+		 *
+		 * @param netspanEvent - netspanEvent
+		 */
+		NetspanEvents(String netspanEvent) {
+		}
+	}
+
+	/**
+	 * Loop on all the received events from netspan and check it has received.
+	 * Print all its details in cas it received.
+	 *
+	 * @param startTime            - software Activate Start Time
+	 * @param requiredNetspanEvent - incoming Netspan Event
+	 */
+	public boolean printDownloadProgressEventIfReceived(EnodebSwStatus eNodebSwStatus, NetspanEvents requiredNetspanEvent, Date startTime) {
+		List<EventInfo> allNetspanEvents = AlarmsAndEvents.getInstance().getAllEventsNode(eNodebSwStatus.geteNodeB(), startTime, new Date(System.currentTimeMillis()));
+		boolean isIncomingEventReceived = false;
+		for (EventInfo currentEvent : allNetspanEvents) {
+			if (isEventReceived(currentEvent, requiredNetspanEvent)) {
+				printEventDetails(eNodebSwStatus.geteNodeB(), currentEvent, requiredNetspanEvent);
+				isIncomingEventReceived = true;
+				break;
+			}
+		}
+		return isIncomingEventReceived;
+	}
+
+	/**
+	 * checks if the current event is the requested one
+	 *
+	 * @param requiredNetspanEvent - requiredNetspanEvent
+	 * @param currentEvent         - currentEvent in loop
+	 * @return - true if it is received
+	 */
+	private boolean isEventReceived(EventInfo currentEvent, NetspanEvents requiredNetspanEvent) {
+		return currentEvent.getEventInfo().contains(requiredNetspanEvent.toString());
+	}
+
+	/**
+	 * print Event Details
+	 *
+	 * @param currentEvent         - current Event in loop
+	 * @param incomingNetspanEvent - incoming Netspan Event
+	 */
+	private void printEventDetails(EnodeB enodeb, EventInfo currentEvent, NetspanEvents incomingNetspanEvent) {
+		GeneralUtils.startLevel(enodeb.getName() + ": " + incomingNetspanEvent.toString());
+		report.report("Event Type: " + currentEvent.getEventType());
+		report.report("Source Type: " + currentEvent.getSourceType());
+		report.report("Event Info: " + currentEvent.getEventInfo());
+		report.report("Received Time: " + currentEvent.getReceivedTime().toString());
+		GeneralUtils.stopLevel();
 	}
 }

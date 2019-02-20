@@ -30,7 +30,6 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -263,7 +262,7 @@ public class SoftwareUtiles {
 		// if it was updated there.
 		if (build.contains(standby) || standby.contains(build)) {
 			report.report("The Standby Bank contains target version: " + build + " on Enodeb: " + enodeB.getNetspanName()
-			+", about to swap banks.");
+					+ ", about to swap banks.");
 			// Takes the requested version from the standby bank if it necessary
 			return swapBanks(enodeB, logLevel, build);
 		} else {
@@ -1386,9 +1385,8 @@ public class SoftwareUtiles {
 				build = build.replaceAll("_", ".");
 				if (buildFileName != null && !buildFileName.equals(StringUtils.EMPTY)) {
 					SoftwareStatus softwareStatus = netspanServer.getSoftwareStatus(eNodeB.getNetspanName(), eNodeB.getImageType());
-					report.report("Checking EnB version on banks");
-					checkVersionsOnBanks(enbSWDetails, build, softwareStatus);
-
+					report.report("Checking EnodeB - Running and Standby SW version");
+					updateCurrentSwStatus(enbSWDetails, build, softwareStatus);
 					EnodeBUpgradeImage upgradeImage = new EnodeBUpgradeImage();
 					upgradeImage.setName(softwareImage);
 					if (softwareStatus != null)
@@ -1411,8 +1409,8 @@ public class SoftwareUtiles {
 				}
 				if ((eNodeB instanceof AirUnity) && (relayBuild != "")) {
 					SoftwareStatus softwareStatus = netspanServer.getSoftwareStatus(eNodeB.getNetspanName(), ImageType.RELAY);
-					report.report("Checking Relay version on banks");
-					checkVersionsOnBanks(enbSWDetails, relayBuild, softwareStatus);
+					report.report("Checking Relay - Running and Standby SW version");
+					updateCurrentSwStatus(enbSWDetails, relayBuild, softwareStatus);
 					EnodeBUpgradeImage upgradeImage = new EnodeBUpgradeImage();
 					upgradeImage.setName(softwareImage);
 					upgradeImage.setImageType(ImageType.RELAY.value());
@@ -1442,25 +1440,24 @@ public class SoftwareUtiles {
 	}
 
 	/**
-	 * check Versions On the Banks and set flags accordingly
+	 * updating flags:  isTargetEqualRunning, isTargetEqualStandby according to the current SW states.
 	 *
-	 * @param enbSWDetails
-	 * @param build
-	 * @param softwareStatus
+	 * @param enbSWDetails   - enb SW Details
+	 * @param build          - build
+	 * @param softwareStatus - software Status
 	 */
-	private void checkVersionsOnBanks(EnodebSwStatus enbSWDetails, String build, SoftwareStatus softwareStatus) {
+	private void updateCurrentSwStatus(EnodebSwStatus enbSWDetails, String build, SoftwareStatus softwareStatus) {
 		if (softwareStatus != null) {
 			report.report(enbSWDetails.geteNodeB().getName() + "'s Running Version: " + softwareStatus.RunningVersion);
 			if (softwareStatus.RunningVersion.equals(build)) {
 				enbSWDetails.setTargetEqualRunning(true);
-				enbSWDetails.setSwDownloadCompleted(true);
-				report.report("Running Version equals Target Version - No Need To Upgrade.");
+				report.step("Running Version equals Target Version - No Need To Upgrade.");
 				return;
 			}
+			//Increase NumberOfExpectedReboots in case Running != Target
 			enbSWDetails.increaseNumberOfExpectedReboots();
 			if (softwareStatus.StandbyVersion.equals(build)) {
 				enbSWDetails.setTargetEqualStandby(true);
-				enbSWDetails.setSwDownloadCompleted(true);
 				report.report("Standby Version equals Target Version - No Need To Upgrade.");
 			}
 		}
@@ -1582,8 +1579,8 @@ public class SoftwareUtiles {
 	 * follow SW Activation Progress (and download if needed)  Via Netspan
 	 *
 	 * @param softwareActivateStartTimeInMili - softwareActivateStartTimeInMili
-	 * @param enbSWDetailsList - enbSWDetailsList
-	 * @return
+	 * @param enbSWDetailsList                - enbSWDetailsList
+	 * @return - enbSWDetailsList
 	 */
 	public ArrayList<EnodebSwStatus> followSoftwareActivationProgressViaNetspan(
 			long softwareActivateStartTimeInMili,
@@ -1613,9 +1610,10 @@ public class SoftwareUtiles {
 		return enbSWDetailsList;
 	}
 
-	/** follow Software Download Progress Via Netspan
+	/**
+	 * follow Software Download Progress Via Netspan
 	 *
-	 * @param eNodebSwStatusList - eNodebSwStatusList
+	 * @param eNodebSwStatusList              - eNodebSwStatusList
 	 * @param softwareActivateStartTimeInMili - softwareActivateStartTimeInMili
 	 */
 	private void followSoftwareDownloadProgressViaNetspan(ArrayList<EnodebSwStatus> eNodebSwStatusList,
@@ -1627,7 +1625,7 @@ public class SoftwareUtiles {
 			iter = eNodebSwStatusList.iterator();
 			while (iter.hasNext()) {
 				EnodebSwStatus eNodebSwStatus = iter.next();
-				if (isSkipTrackingNeeded(iter, eNodebSwStatus)) continue;
+				if (isSkipTrackingDownload(iter, eNodebSwStatus)) continue;
 				//Track download progress
 				Pair<Boolean, SwStatus> swStatusPair = eNodebSwStatus.geteNodeB().isSoftwareDownloadCompletedSuccessfully();
 				eNodebSwStatus.setSwDownloadCompleted(swStatusPair.getElement0());
@@ -1643,8 +1641,8 @@ public class SoftwareUtiles {
 						|| eNodebSwStatus.getSwStatus() == SwStatus.SW_STATUS_ACTIVATION_FAILURE) {
 					eNodebSwStatus.setSwDownloadCompleted(false);
 					iter.remove();
-					//todo for relay
 				} else {
+					//This case is for relay. When it get into this method in the second iteration
 					eNodebSwStatus.setSwDownloadCompleted(false);
 				}
 				//Pause before next iteration
@@ -1664,12 +1662,14 @@ public class SoftwareUtiles {
 
 	/**
 	 * If Running\StandBy==Target - there's no download to track
-	 * @param iter - iter
+	 * Removes from EnodebSwStatus list
+	 *
+	 * @param iter           - iter
 	 * @param eNodebSwStatus - eNodebSwStatus
 	 * @return - true if skip is needed
 	 */
-	private boolean isSkipTrackingNeeded(Iterator<EnodebSwStatus> iter, EnodebSwStatus eNodebSwStatus) {
-		if (eNodebSwStatus.isTargetEqualRunning() || eNodebSwStatus.isTargetEqualStandby() ) {
+	private boolean isSkipTrackingDownload(Iterator<EnodebSwStatus> iter, EnodebSwStatus eNodebSwStatus) {
+		if (eNodebSwStatus.isTargetEqualRunning() || eNodebSwStatus.isTargetEqualStandby()) {
 			report.report(eNodebSwStatus.geteNodeB().getNetspanName() + ": No need to download version since it's already in the bank.");
 			iter.remove();
 			return true;

@@ -310,6 +310,9 @@ public abstract class EnodeB extends SystemObjectImpl {
 
 	public boolean rebootViaNetspan(RebootTypesNetspan RTNetspan){
 		boolean action = false;
+		expecteInServiceState = false;
+		XLP.setExpectBooting(true);
+
 		try {
 			action = NetspanServer.getInstance().resetNodeRebootAction(getNetspanName(), RTNetspan);
 		} catch (Exception e) {

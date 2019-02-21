@@ -321,6 +321,9 @@ public abstract class EnodeB extends SystemObjectImpl {
 		}
 		if(action){
 			GeneralUtils.unSafeSleep(60000);
+		}else{
+			expecteInServiceState = true;
+			XLP.setExpectBooting(false);
 		}
 		return action;
 	}

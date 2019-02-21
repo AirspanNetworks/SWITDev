@@ -576,7 +576,7 @@ public abstract class XLP extends EnodeBComponent {
     }
 
     public abstract boolean addNbr(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
-                                   X2ControlStateTypes x2ControlStatus, HandoverType handoverType, boolean isStaticNeighbor,
+                                   X2ControlStateTypes x2ControlStatus, HandoverTypes HandoverTypes, boolean isStaticNeighbor,
                                    String qOffsetRange) throws IOException;
 
     public abstract boolean add3PartyNbrs(int numberOfNbr, final long mnoBroadcastPlmn, long startEutranCellId,
@@ -612,14 +612,14 @@ public abstract class XLP extends EnodeBComponent {
      * @param neighbor
      * @param hoControlStatus
      * @param x2ControlStatus
-     * @param handoverType
+     * @param HandoverTypes
      * @param isStaticNeighbor
      * @param qOffsetRange
      * @return
      * @throws IOException
      */
     public abstract boolean verifyNbrList(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
-                                          X2ControlStateTypes x2ControlStatus, HandoverType handoverType, boolean isStaticNeighbor,
+                                          X2ControlStateTypes x2ControlStatus, HandoverTypes HandoverTypes, boolean isStaticNeighbor,
                                           String qOffsetRange) throws IOException;
 
     public abstract boolean verifyNbrList(EnodeB neighbor) throws IOException;
@@ -3641,10 +3641,10 @@ public abstract class XLP extends EnodeBComponent {
         serialCom.setPort(port);
     }
 
-    public EnabledDisabledStates getOperateBehindHenbGw() {
+    public EnabledStates getOperateBehindHenbGw() {
         String oid = MibReader.getInstance().resolveByName("asLteStkStackCfgOperateBehindHenbGw");
         try {
-            return snmp.get(oid).equals("1") ? EnabledDisabledStates.ENABLED : EnabledDisabledStates.DISABLED;
+            return snmp.get(oid).equals("1") ? EnabledStates.ENABLED : EnabledStates.DISABLED;
         } catch (Exception e) {
             GeneralUtils.printToConsole("Error getting OperateBehindHenbGw: " + e.getMessage());
             e.printStackTrace();

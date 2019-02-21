@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import EnodeB.EnodeB;
 import Netspan.EnbProfiles;
-import Netspan.API.Enums.EnabledDisabledStates;
+import Netspan.API.Enums.EnabledStates;
 import Netspan.API.Lte.RFStatus;
 import Netspan.API.Lte.SONStatus;
 import Utils.GeneralUtils;
@@ -98,7 +98,7 @@ public class P1 extends AutoPCIBase {
 		}
 		changeTxPowerViaNms(14);
 		configureInitListSizeOnEnbAdvancedConfigurationProfile(START_POWER_ADVANCED_PROFILE, 1, 20, 100,
-				EnabledDisabledStates.ENABLED, 2);
+				EnabledStates.ENABLED, 2);
 
 		configureOnlyANRtoEnableViaNms(interEarfcn, defaultEarfcn);
 

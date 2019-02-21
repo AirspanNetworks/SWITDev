@@ -1,7 +1,7 @@
 package Netspan.Profiles;
 
 import Netspan.EnbProfiles;
-import Netspan.API.Enums.EnabledDisabledStates;
+import Netspan.API.Enums.EnabledStates;
 
 public class EnodeBAdvancedParameters implements INetspanProfile{
 	private String profileName = null;
@@ -9,7 +9,7 @@ public class EnodeBAdvancedParameters implements INetspanProfile{
 	private Integer powerStep = null; //AirSON->Auto PCI
 	private Integer powerLevelTimeInterval = null; //AirSON->Auto PCI
 	private Integer anrTimer = null; //AirSON->Auto PCI
-	private EnabledDisabledStates pciConfusionAllowed = null; //AirSON->Auto PCI
+	private EnabledStates pciConfusionAllowed = null; //AirSON->Auto PCI
 	private Integer initialPciListSize = null; //AirSON->Auto PCI
 	private Integer startPCI = null; //NLM->PCI start
 	private Integer stopPCI = null; //NLM-> PCI stop
@@ -48,10 +48,10 @@ public class EnodeBAdvancedParameters implements INetspanProfile{
 	public void setAnrTimer(Integer anrTimer) {
 		this.anrTimer = anrTimer;
 	}
-	public EnabledDisabledStates getPciConfusionAllowed() {
+	public EnabledStates getPciConfusionAllowed() {
 		return pciConfusionAllowed;
 	}
-	public void setPciConfusionAllowed(EnabledDisabledStates pciConfusionAllowed) {
+	public void setPciConfusionAllowed(EnabledStates pciConfusionAllowed) {
 		this.pciConfusionAllowed = pciConfusionAllowed;
 	}
 	public Integer getInitialPciListSize() {

@@ -1,13 +1,13 @@
 package Netspan.Profiles;
 
 import Netspan.EnbProfiles;
-import Netspan.API.Enums.EnabledDisabledStates;
+import Netspan.API.Enums.EnabledStates;
 
 public class CellAdvancedParameters implements INetspanProfile{
 	private String profileName = null;	
 	private Integer sib10Duration = null;
 	private Integer sib11Duration = null;
-	private EnabledDisabledStates etwsUserMode = null;
+	private EnabledStates etwsUserMode = null;
 	
 	public Integer getSib10Duration() {
 		return sib10Duration;
@@ -21,10 +21,10 @@ public class CellAdvancedParameters implements INetspanProfile{
 	public void setSib11Duration(Integer sib11Duration) {
 		this.sib11Duration = sib11Duration;
 	}
-	public EnabledDisabledStates getEtwsUserMode() {
+	public EnabledStates getEtwsUserMode() {
 		return etwsUserMode;
 	}
-	public void setEtwsUserMode(EnabledDisabledStates etwsUserMode) {
+	public void setEtwsUserMode(EnabledStates etwsUserMode) {
 		this.etwsUserMode = etwsUserMode;
 	}
 	public String getProfileName() {

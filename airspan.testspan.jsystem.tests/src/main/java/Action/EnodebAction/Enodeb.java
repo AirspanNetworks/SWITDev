@@ -18,13 +18,14 @@ import Netspan.NetspanServer;
 import Netspan.API.Enums.CellBarringPolicies;
 import Netspan.API.Enums.CsgModes;
 import Netspan.API.Enums.DuplexType;
-import Netspan.API.Enums.EnabledDisabledStates;
+import Netspan.API.Enums.EnabledStates;
 import Netspan.API.Enums.EnbStates;
-import Netspan.API.Enums.NodeManagementModeType;
+import Netspan.API.Enums.NodeManagementModes;
 import Netspan.API.Enums.PrimaryClockSourceEnum;
 import Netspan.API.Lte.EnbCellProperties;
 import Netspan.API.Lte.LteBackhaul;
 import Utils.GeneralUtils;
+import Utils.GeneralUtils.RebootTypesNetspan;
 import Utils.SysObjUtils;
 import jsystem.framework.ParameterProperties;
 import jsystem.framework.TestProperties;
@@ -126,7 +127,7 @@ public class Enodeb extends EnodebAction {
     private EnbProfiles enbProfile;
     private String profileName;
     
-    private NodeManagementModeType managedMode;
+    private NodeManagementModes managedMode;
     private boolean enableCell;
     private String physicalCellId;
     private String PRACHRootSequenceIndex;
@@ -142,10 +143,10 @@ public class Enodeb extends EnodebAction {
     protected DuplexType ethernetDuplex;
     protected EthernetRate ethernetRate;
     protected PortType portType;
-    protected EnabledDisabledStates autoNegConfig;
+    protected EnabledStates autoNegConfig;
     protected PortStatus portStatus;
     protected PortSpeed portSpeed;
-    protected EnabledDisabledStates flowControlStatus;
+    protected EnabledStates flowControlStatus;
 
     private int granularityPeriod = GeneralUtils.ERROR_VALUE;
 
@@ -153,12 +154,12 @@ public class Enodeb extends EnodebAction {
         this.granularityPeriod = Integer.valueOf(granularityPeriod);
     }
 
-    public NodeManagementModeType isManaged() {
+    public NodeManagementModes isManaged() {
 		return managedMode;
 	}
 
     @ParameterProperties(description = "Set EnodeB to Managed or Unmanaged")
-	public void setManaged(NodeManagementModeType managed) {
+	public void setManaged(NodeManagementModes managed) {
 		this.managedMode = managed;
 	}
 	
@@ -326,7 +327,7 @@ public class Enodeb extends EnodebAction {
     }
 
     @ParameterProperties(description = "Auto-Neg Configuration")
-    public void setAutoNegConfig(EnabledDisabledStates autoNegConfig) {
+    public void setAutoNegConfig(EnabledStates autoNegConfig) {
         this.autoNegConfig = autoNegConfig;
     }
 
@@ -341,7 +342,7 @@ public class Enodeb extends EnodebAction {
     }
 
     @ParameterProperties(description = "Flow Control Status")
-    public void setFlowControlStatus(EnabledDisabledStates flowControlStatus) {
+    public void setFlowControlStatus(EnabledStates flowControlStatus) {
         this.flowControlStatus = flowControlStatus;
     }
 
@@ -385,20 +386,31 @@ public class Enodeb extends EnodebAction {
             report.report("Wait For All Running And In Service Succeeded");
         }
     }
+    
+    private RebootTypesNetspan netspanRebootType = RebootTypesNetspan.Reset_Node;
+    
+    public RebootTypesNetspan getNetspanRebootType() {
+		return netspanRebootType;
+	}
 
-    @Test // 2
-    @TestProperties(name = "Reboot EnodeB", returnParam = "LastStatus", paramsInclude = {"DUT"})
+	public void setNetspanRebootType(RebootTypesNetspan netspanRebootType) {
+		this.netspanRebootType = netspanRebootType;
+	}
+    
+	@Test // 2
+    @TestProperties(name = "Reboot EnodeB", returnParam = "LastStatus", paramsInclude = {"DUT","NetspanRebootType"})
     public void reboot() {
-        report.report("Reboot EnodeB " + this.dut.getName());
+        report.report("Reboot EnodeB: " + this.dut.getName());
+        report.report("Reboot type: "+netspanRebootType);
 
-        if (!this.dut.reboot()) {
+        if (!this.dut.rebootViaNetspan(netspanRebootType)) {
             report.report("Reboot Failed", Reporter.FAIL);
         } else {
             report.report("Reboot Succeeded");
         }
     }
 
-    @Test // 3
+	@Test // 3
     @TestProperties(name = "Reset Counters", returnParam = "LastStatus", paramsInclude = {"DUT"})
     public void resetCounters() {
         report.report(this.dut.getName() + " Reset Counters");

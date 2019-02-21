@@ -12,7 +12,7 @@ import EnodeB.EnodeB;
 import EnodeB.EnodeBChannelBandwidth;
 import Netspan.NetspanServer;
 import Netspan.API.Enums.EnbTypes;
-import Netspan.API.Enums.HandoverType;
+import Netspan.API.Enums.HandoverTypes;
 import Netspan.API.Enums.HoControlStateTypes;
 import Netspan.API.Enums.SonAnrStates;
 import Netspan.API.Enums.X2ControlStateTypes;
@@ -73,17 +73,17 @@ public class Neighbors {
      * @param neighbor
      * @param hoControlStatus
      * @param x2ControlStatus
-     * @param handoverType
+     * @param HandoverTypes
      * @param isStaticNeighbor
      * @param qOffsetRange
      * @return
      */
     public boolean addNeighborMultiCell(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
-                               X2ControlStateTypes x2ControlStatus, HandoverType handoverType, boolean isStaticNeighbor,
+                               X2ControlStateTypes x2ControlStatus, HandoverTypes HandoverTypes, boolean isStaticNeighbor,
                                String qOffsetRange) {
         //Try via Netspan
         if (netspanServer != null && netspanServer.addNeighbourMultiCell(enodeB, neighbor, hoControlStatus, x2ControlStatus,
-                handoverType, isStaticNeighbor, qOffsetRange)) {
+                HandoverTypes, isStaticNeighbor, qOffsetRange)) {
             if (verifyAddNeighbourSucceed(enodeB, neighbor, "Netspan")) return true;
         }
         report.report("Didn't find neighbor. Wait 10 seconds and try again");
@@ -101,17 +101,17 @@ public class Neighbors {
 	 * @param neighbor - neighbor
 	 * @param hoControlStatus - hoControlStatus
 	 * @param x2ControlStatus - x2ControlStatus
-	 * @param handoverType - handoverType
+	 * @param HandoverTypes - HandoverTypes
 	 * @param isStaticNeighbor - isStaticNeighbor
 	 * @param qOffsetRange - qOffsetRange
 	 * @return - true if succeed
 	 */
     public boolean addNeighbor(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
-                               X2ControlStateTypes x2ControlStatus, HandoverType handoverType, boolean isStaticNeighbor,
+                               X2ControlStateTypes x2ControlStatus, HandoverTypes HandoverTypes, boolean isStaticNeighbor,
                                String qOffsetRange) {
         //Try via Netspan
         if (netspanServer != null && netspanServer.addNeighbor(enodeB, neighbor, hoControlStatus, x2ControlStatus,
-                handoverType, isStaticNeighbor, qOffsetRange)) {
+                HandoverTypes, isStaticNeighbor, qOffsetRange)) {
             if (verifyAddNeighbourSucceed(enodeB, neighbor, "Netspan")) return true;
         }
         report.report("Didn't find neighbor. Wait 10 seconds and try again");
@@ -120,7 +120,7 @@ public class Neighbors {
         report.report("Netspan add Neighbor " + neighbor.getNetspanName() + " failed", Reporter.WARNING);
         //Try via SNMP
         try {
-            enodeB.addNbr(enodeB, neighbor, hoControlStatus, x2ControlStatus, handoverType, isStaticNeighbor,
+            enodeB.addNbr(enodeB, neighbor, hoControlStatus, x2ControlStatus, HandoverTypes, isStaticNeighbor,
                     getQOffsetCliCommand(qOffsetRange));
             if (verifyAddNeighbourSucceed(enodeB, neighbor, "SNMP")) return true;
         } catch (Exception e) {
@@ -161,10 +161,10 @@ public class Neighbors {
     }
 
     public boolean addNeighborOnlyNetspan(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
-                                          X2ControlStateTypes x2ControlStatus, HandoverType handoverType, boolean isStaticNeighbor,
+                                          X2ControlStateTypes x2ControlStatus, HandoverTypes HandoverTypes, boolean isStaticNeighbor,
                                           String qOffsetRange) {
         if (netspanServer != null && !netspanServer.addNeighbor(enodeB, neighbor, hoControlStatus, x2ControlStatus,
-                handoverType, isStaticNeighbor, qOffsetRange)) {
+                HandoverTypes, isStaticNeighbor, qOffsetRange)) {
             report.report("Netspan add Neighbor " + neighbor.getNetspanName() + " failed", Reporter.WARNING);
             return false;
         }
@@ -173,9 +173,9 @@ public class Neighbors {
     }
 
     public Boolean checkCannotAddNeighbor(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
-                                          X2ControlStateTypes x2ControlStatus, HandoverType handoverType, boolean isStaticNeighbor,
+                                          X2ControlStateTypes x2ControlStatus, HandoverTypes HandoverTypes, boolean isStaticNeighbor,
                                           String qOffsetRange) {
-        boolean addNeighborFlag = netspanServer.checkCannotAddNeighbor(enodeB, neighbor, hoControlStatus, x2ControlStatus, handoverType, isStaticNeighbor, qOffsetRange);
+        boolean addNeighborFlag = netspanServer.checkCannotAddNeighbor(enodeB, neighbor, hoControlStatus, x2ControlStatus, HandoverTypes, isStaticNeighbor, qOffsetRange);
         if (netspanServer != null && addNeighborFlag) {
             report.report("Netspan add Neighbor " + neighbor.getNetspanName() + " failed");
             return true;
@@ -186,8 +186,8 @@ public class Neighbors {
             return null;
     }
 
-    public boolean verifyNeighborNMS(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus, X2ControlStateTypes x2ControlStatus, HandoverType handoverType, boolean isStaticNeighbor, String qOffsetRange) {
-        return netspanServer.verifyNeighbor(enodeB, neighbor, hoControlStatus, x2ControlStatus, handoverType, isStaticNeighbor, qOffsetRange);
+    public boolean verifyNeighborNMS(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus, X2ControlStateTypes x2ControlStatus, HandoverTypes HandoverTypes, boolean isStaticNeighbor, String qOffsetRange) {
+        return netspanServer.verifyNeighbor(enodeB, neighbor, hoControlStatus, x2ControlStatus, HandoverTypes, isStaticNeighbor, qOffsetRange);
     }
 
     public boolean verifyNeighbor(EnodeB enodeB, EnodeB neighbor) {
@@ -199,14 +199,14 @@ public class Neighbors {
     }
 
     public boolean verifyNeighborParametersNMSandSNMP(EnodeB tempEnodeB, EnodeB tempNeighbor,
-                                                      HoControlStateTypes hoControlStatus, X2ControlStateTypes x2ControlStatus, HandoverType handoverType,
+                                                      HoControlStateTypes hoControlStatus, X2ControlStateTypes x2ControlStatus, HandoverTypes HandoverTypes,
                                                       boolean isStaticNeighbor, String qOffsetRange) throws NumberFormatException {
         if (!verifyNeighborNMS(tempEnodeB, tempNeighbor, hoControlStatus, x2ControlStatus,
-                handoverType, isStaticNeighbor, qOffsetRange)) {
+                HandoverTypes, isStaticNeighbor, qOffsetRange)) {
             report.report("Verification failed by Netspan. Trying with SNMP", Reporter.WARNING);
             try {
                 if (!tempEnodeB.verifyNbrList(tempEnodeB, tempNeighbor, hoControlStatus, x2ControlStatus,
-                        handoverType, isStaticNeighbor, qOffsetRange)) {
+                        HandoverTypes, isStaticNeighbor, qOffsetRange)) {
                     report.report("Verification failed by SNMP");
                     return false;
                 }
@@ -219,9 +219,9 @@ public class Neighbors {
     }
 
     public boolean verifyNeighborParametersOnlySNMP(EnodeB tempEnodeB, EnodeB tempNeighbor,
-                                                    HoControlStateTypes hoControlStatus, X2ControlStateTypes x2ControlStatus, HandoverType handoverType,
+                                                    HoControlStateTypes hoControlStatus, X2ControlStateTypes x2ControlStatus, HandoverTypes HandoverTypes,
                                                     boolean isStaticNeighbor, String qOffsetRange) throws NumberFormatException, IOException {
-        return tempEnodeB.verifyNbrList(tempEnodeB, tempNeighbor, hoControlStatus, x2ControlStatus, handoverType,
+        return tempEnodeB.verifyNbrList(tempEnodeB, tempNeighbor, hoControlStatus, x2ControlStatus, HandoverTypes,
                 isStaticNeighbor, String.valueOf(convertQoffsetToCli(Integer.parseInt(qOffsetRange))));
     }
 

@@ -12,11 +12,11 @@ import EnodeB.EnodeB;
 import EnodeB.Ninja;
 import Netspan.EnbProfiles;
 import Netspan.NetspanServer;
-import Netspan.API.Enums.EnabledDisabledStates;
+import Netspan.API.Enums.EnabledStates;
 import Netspan.API.Enums.EnbStates;
 import Netspan.API.Enums.EnbTypes;
 import Netspan.API.Enums.HardwareCategory;
-import Netspan.API.Enums.NodeManagementModeType;
+import Netspan.API.Enums.NodeManagementModes;
 import Netspan.API.Enums.NrtHoTypes;
 import Netspan.API.Enums.PnpModes;
 import Netspan.API.Enums.SonAnrStates;
@@ -272,8 +272,8 @@ public class EnodeBConfig {
 		int value = warmResetEnable ? 1 : 0;
 		int mask = warmResetEnable ? 4067 : 1059;
 		/*
-		 * EnabledDisabledStates state = warmResetEnable ?
-		 * EnabledDisabledStates.ENABLED : EnabledDisabledStates.DISABLED; if
+		 * EnabledStates state = warmResetEnable ?
+		 * EnabledStates.ENABLED : EnabledStates.DISABLED; if
 		 * (netspanServer.setPnPWarmResetMode(node, state)) { report.report(
 		 * "Set PnP warm reset mode Via Netspan Succeeded.");
 		 * clonedProfiles.put(addCloneSuffix(node,
@@ -439,8 +439,8 @@ public class EnodeBConfig {
 		if(enodeB.isManagedByNetspan())
 			return true;
 		try {
-			NodeManagementModeType managed = netspanServer.getManagedMode(enodeB);
-			if (managed != NodeManagementModeType.MANAGED){
+			NodeManagementModes managed = netspanServer.getManagedMode(enodeB);
+			if (managed != NodeManagementModes.MANAGED){
 				report.report("EnodeB: " + enodeB.getNetspanName() + " Is Not Managed in Netspan: "
 						+ NetspanServer.getInstance().getHostname(), Reporter.WARNING);
 				return false;
@@ -711,7 +711,7 @@ public class EnodeBConfig {
 	 * 
 	 * @author Dor Shalom
 	 */
-	public boolean setOperateBehindHenbGw(EnodeB dut, EnabledDisabledStates isEnabled) {
+	public boolean setOperateBehindHenbGw(EnodeB dut, EnabledStates isEnabled) {
 		try {
 			report.report("Setting Operate Behind Henb Gw via netspan.");
 			NetworkParameters networkParams = new NetworkParameters();
@@ -1269,7 +1269,7 @@ public class EnodeBConfig {
 		NrtPci nrtPci = neighbourManagementParameters.new NrtPci();
 		nrtPci.pciStart = startPci;
 		nrtPci.pciEnd = endPci;
-		nrtPci.allowX2 = x2Allowed ? EnabledDisabledStates.ENABLED : EnabledDisabledStates.DISABLED;
+		nrtPci.allowX2 = x2Allowed ? EnabledStates.ENABLED : EnabledStates.DISABLED;
 		nrtPci.hoType = hoType == 0 ? NrtHoTypes.BLOCK_HO
 				: hoType == 1 ? NrtHoTypes.X_2_PREFERRED : NrtHoTypes.S_1_ONLY;
 		switch (configType) {

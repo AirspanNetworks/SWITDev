@@ -22,7 +22,6 @@ public class EnodebSwStatus {
 	private boolean isTargetEqualRunning;
 	private boolean isTargetEqualStandby;
 	private boolean isUpgradeRequired;
-	private AlarmsAndEvents alarmsAndEvents;
 	private ReceivedEvent receivedEvent;
 
 
@@ -41,7 +40,6 @@ public class EnodebSwStatus {
 		this.isUpgradeRequired = false;
 		this.numberOfActualReboot = 0;
 		this.numberOfExpectedReboots = 0;
-		this.alarmsAndEvents = AlarmsAndEvents.getInstance();
 	}
 
 	//Setters
@@ -72,10 +70,6 @@ public class EnodebSwStatus {
 
 	public void setUpgradeRequired(boolean upgradeRequired) {
 		isUpgradeRequired = upgradeRequired;
-	}
-
-	public void setAlarmsAndEvents(AlarmsAndEvents alarmsAndEvents) {
-		this.alarmsAndEvents = alarmsAndEvents;
 	}
 
 	public void setRelayTargetVersion(String realyTargetVersion) {
@@ -122,10 +116,6 @@ public class EnodebSwStatus {
 
 	public boolean isUpgradeRequired() {
 		return isUpgradeRequired;
-	}
-
-	public AlarmsAndEvents getAlarmsAndEvents() {
-		return alarmsAndEvents;
 	}
 
 	public String getRelayTargetVersion() {

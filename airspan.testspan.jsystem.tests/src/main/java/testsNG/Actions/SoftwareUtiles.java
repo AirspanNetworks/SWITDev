@@ -1675,7 +1675,7 @@ public class SoftwareUtiles {
 	}
 
 	/**
-	 * Print Netspan Event If Received - downloadProgress + update the relevant EnB flag
+	 * Print Netspan "downloadProgress" Event If Received - + update the relevant EnB flag
 	 *
 	 * @param softwareActivateStartTimeInDate - softwareActivateStartTimeInDate
 	 * @param eNodebSwStatus                  - eNodebSwStatus
@@ -1813,6 +1813,7 @@ public class SoftwareUtiles {
 
 	/**
 	 * String Enums represent the 4 netspan events while upgrading SW version
+	 * Implemented as Enum type represent a set of strings
 	 */
 	public enum NetspanEvents {
 		DOWNLOAD_IN_PROGRESS("Download in progress"),
@@ -1820,12 +1821,22 @@ public class SoftwareUtiles {
 		ACTIVATE_IN_PROGRESS("Activate in progress"),
 		ACTIVATE_COMPLETED("Activate completed");
 
+		private final String text;
+
 		/**
-		 * Empty Constructor to represent the enum with Strings
+		 * constructor to set string to Enum
 		 *
-		 * @param netspanEvent - netspanEvent
+		 * @param string - netspanEvent
 		 */
-		NetspanEvents(String netspanEvent) {
+		NetspanEvents(final String string) {
+			this.text = string;
+		}
+
+		/** get the enum string
+		 * @return
+		 */
+		public String convertToString() {
+			return text;
 		}
 	}
 
@@ -1857,7 +1868,7 @@ public class SoftwareUtiles {
 	 * @return - true if it is received
 	 */
 	private boolean isEventReceived(EventInfo currentEvent, NetspanEvents requiredNetspanEvent) {
-		return currentEvent.getEventInfo().contains(requiredNetspanEvent.toString());
+		return currentEvent.getEventInfo().contains(requiredNetspanEvent.convertToString());
 	}
 
 	/**
@@ -1867,7 +1878,7 @@ public class SoftwareUtiles {
 	 * @param incomingNetspanEvent - incoming Netspan Event
 	 */
 	private void printEventDetails(EnodeB enodeb, EventInfo currentEvent, NetspanEvents incomingNetspanEvent) {
-		GeneralUtils.startLevel(enodeb.getName() + ": " + incomingNetspanEvent.toString());
+		GeneralUtils.startLevel(enodeb.getName() + ": " + incomingNetspanEvent.convertToString());
 		report.report("Event Type: " + currentEvent.getEventType());
 		report.report("Source Type: " + currentEvent.getSourceType());
 		report.report("Event Info: " + currentEvent.getEventInfo());

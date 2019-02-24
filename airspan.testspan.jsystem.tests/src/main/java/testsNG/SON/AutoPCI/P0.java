@@ -176,6 +176,9 @@ public class P0 extends AutoPCIBase {
 		String[] separated = cmd.split("\\.");
 		String IPAdress = "" + 0 + ".99." + separated[2] + "." + separated[3];
 
+		if(dut.getIpAddress().contains(":"))
+        	IPAdress = "abcd::" + 0 + ":99:" + separated[2] + ":" + separated[3];
+		
 		if(!addingToEnbViaNmsNeighborWithStaticPCI(dut, addr.getHostName() + "_AutoPCI_A", IPAdress, pciStart+3, 0)){
 			report.report("Failed to add neighbor",Reporter.FAIL);
 			return;

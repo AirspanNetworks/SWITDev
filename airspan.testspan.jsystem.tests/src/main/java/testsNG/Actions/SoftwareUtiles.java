@@ -1583,27 +1583,27 @@ public class SoftwareUtiles {
 	 * @return - enbSWDetailsList
 	 */
 	public void followSoftwareActivationProgressViaNetspan(long softwareActivateStartTimeInMili, ArrayList<EnodebSwStatus> enbSWDetailsList) {
-		int numberOfEnbThatHaveToReboot = getNumberOfEnbThatHaveToReboot(enbSWDetailsList);
-		followProgress(softwareActivateStartTimeInMili, new ArrayList<>(enbSWDetailsList), numberOfEnbThatHaveToReboot);
+		ArrayList<EnodebSwStatus> enbThatHaveToRebootList = getEnbsThatHaveToReboot(enbSWDetailsList);
+		followProgress(softwareActivateStartTimeInMili, new ArrayList<>(enbSWDetailsList), enbThatHaveToRebootList);
 	}
 
 	/**
-	 * Get Number Of Enb That Have To Reboot
+	 * Get  Enb That Have To Reboot
 	 * *This method changes the original List*
 	 *
 	 * @param enbSWDetailsList - enbSWDetailsList
 	 * @return - numberOfEnbThatHaveToReboot
 	 */
-	private int getNumberOfEnbThatHaveToReboot(ArrayList<EnodebSwStatus> enbSWDetailsList) {
-		int numberOfEnbThatHaveToReboot = 0;
+	private ArrayList<EnodebSwStatus> getEnbsThatHaveToReboot(ArrayList<EnodebSwStatus> enbSWDetailsList) {
+		ArrayList<EnodebSwStatus> enbThatHaveToRebootList = new ArrayList<>();
 		for (EnodebSwStatus enbSWDetails : enbSWDetailsList) {
 			printSoftwareImageDetails(enbSWDetails.geteNodeB());
 			if (enbSWDetails.getNumberOfExpectedReboots() > 0) {
 				enbSWDetails.geteNodeB().setExpectBooting(true);
-				numberOfEnbThatHaveToReboot++;
+				enbThatHaveToRebootList.add(enbSWDetails);
 			}
 		}
-		return numberOfEnbThatHaveToReboot;
+		return enbThatHaveToRebootList;
 	}
 
 	/**
@@ -1611,21 +1611,21 @@ public class SoftwareUtiles {
 	 *
 	 * @param softwareActivateStartTimeInMili - softwareActivateStartTimeInMili
 	 * @param enbSWDetailsList - enbSWDetailsList
-	 * @param numberOfEnbThatHaveToReboot - numberOfEnbThatHaveToReboot
+	 * @param enbThatHaveToRebootList - numberOfEnbThatHaveToReboot
 	 */
-	private void followProgress(long softwareActivateStartTimeInMili, ArrayList<EnodebSwStatus> enbSWDetailsList, int numberOfEnbThatHaveToReboot) {
+	private void followProgress(long softwareActivateStartTimeInMili, ArrayList<EnodebSwStatus> enbSWDetailsList, ArrayList<EnodebSwStatus> enbThatHaveToRebootList) {
 		int maxNumberOfReboots = 2;
+		GeneralUtils.startLevel("Verify Software Upgrade Process.");
 		//todo - remove loop and replace. this loop is just for relay product.
 		for (int i = 1; i <= maxNumberOfReboots; i++) {
-			if (numberOfEnbThatHaveToReboot-- > 0) {
+			if (!enbThatHaveToRebootList.isEmpty()) {
 				Date softwareActivateStartTimeInDate = new Date(softwareActivateStartTimeInMili);
-				GeneralUtils.startLevel("Verify Software Upgrade Process.");
 				followSoftwareDownloadProgressViaNetspan(new ArrayList<>(enbSWDetailsList), softwareActivateStartTimeInMili);
 				waitForRebootAndSetExpectedBootingForSecondReboot(new ArrayList<>(enbSWDetailsList), softwareActivateStartTimeInDate);
-				GeneralUtils.stopLevel();
-				enbSWDetailsList.removeIf(eNodebSwStatus -> eNodebSwStatus.getNumberOfExpectedReboots() <= 1);
+				enbThatHaveToRebootList.removeIf(enbThatHaveToReboot -> enbThatHaveToReboot.getNumberOfExpectedReboots() <= 1);
 			}
 		}
+		GeneralUtils.stopLevel();
 	}
 
 	/**

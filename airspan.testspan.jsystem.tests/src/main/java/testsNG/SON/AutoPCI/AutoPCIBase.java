@@ -1,7 +1,6 @@
 package testsNG.SON.AutoPCI;
 
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -146,13 +145,6 @@ public class AutoPCIBase extends TestspanTest {
         }
         report.reportHtml("db get nghList", dut.lteCli("db get nghList"), true);
         GeneralUtils.stopLevel();
-        try {
-        	neighborsUtils.deleteAll3rdParty();
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-			report.report("Exception while deleting 3rd party EnodeBs", Reporter.WARNING);
-		}
-		GeneralUtils.unSafeSleep(5 * 1000);
         GeneralUtils.stopLevel();
         generatePciStartAndEnd();
         startDate = new Date();

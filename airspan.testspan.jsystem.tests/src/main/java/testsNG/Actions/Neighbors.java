@@ -467,16 +467,20 @@ public class Neighbors {
             return;
         }
 
-        if (names.isEmpty())
+        if (names.isEmpty()){
+        	report.report("No 3rd party enodeb at all");
             return;
+        }
 
         for (String name : names)
             if (name.contains(hostSplit[0]))
                 toDelete.add(name);
 
-        if (toDelete.isEmpty())
-            return;
-
+        if (toDelete.isEmpty()){
+        	report.report("No 3rd party enodeb for this setup");
+        	return;
+        }
+        
         boolean status = netspanServer.delete3rdParty(toDelete);
 
         if (!status)

@@ -102,10 +102,10 @@ public class SWUpgrade extends TestspanTest {
 			createEnbSwDetailsList(enbSWDetailsList, enbSWDetails);
 			GeneralUtils.stopLevel();
 		}
-		long softwareActivateStartTimeInMili = System.currentTimeMillis();
+		softwareUtiles.setSoftwareActivateStartTimeInMili(System.currentTimeMillis());
 		activateSwVersion(enbSWDetailsList);
-		softwareUtiles.followSoftwareActivationProgressViaNetspan(softwareActivateStartTimeInMili, enbSWDetailsList);
-		softwareUtiles.waitForAllRunningAndInService(softwareActivateStartTimeInMili, new ArrayList<>(enbSWDetailsList));
+		softwareUtiles.followSoftwareActivationProgressViaNetspan( enbSWDetailsList);
+		softwareUtiles.waitForAllRunningAndInService(new ArrayList<>(enbSWDetailsList));
 		isPass = softwareUtiles.validateRunningVersion(enbSWDetailsList);
 		if (isPass) {
 			report.addProperty("SoftwareUpgradeType", SWUpgradeConnectionMethod.Netspan.toString());

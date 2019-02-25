@@ -1657,9 +1657,9 @@ public class SoftwareUtiles {
 				eNodebSwStatus.setSwStatus(swStatusPair.getElement1());
 				//Wait for download completion
 				checkIfDownloadCompleted(iter, eNodebSwStatus);
-				printNetspanEventIfReceived(eNodebSwStatus, NetspanSWEvents.NetspanEvents.DOWNLOAD_IN_PROGRESS);
 				//Pause before next iteration
 				GeneralUtils.unSafeSleep(10 * 1000);
+				printNetspanEventIfReceived(eNodebSwStatus, NetspanSWEvents.NetspanEvents.DOWNLOAD_IN_PROGRESS);
 			}
 		}
 		while ((!eNodebSwStatusList.isEmpty())

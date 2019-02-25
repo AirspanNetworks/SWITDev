@@ -1631,7 +1631,7 @@ public class SoftwareUtiles {
 		//todo - remove loop and replace. this loop is just for relay product.
 		for (int i = 1; i <= maxNumberOfReboots; i++) {
 			if (!enbThatHaveToRebootList.isEmpty()) {
-				followSoftwareDownloadProgressViaNetspan(new ArrayList<>(enbSWDetailsList));
+				followSoftwareDownloadProgress(enbSWDetailsList);
 				followSoftwareActivateProgress(enbSWDetailsList);
 				enbThatHaveToRebootList.removeIf(enbThatHaveToReboot -> enbThatHaveToReboot.getNumberOfExpectedReboots() <= 1);
 			}
@@ -1645,7 +1645,6 @@ public class SoftwareUtiles {
 	 * @param eNodebSwStatusList - eNodebSwStatusList
 	 */
 	private void followSoftwareDownloadProgressViaNetspan(ArrayList<EnodebSwStatus> eNodebSwStatusList) {
-		GeneralUtils.startLevel("Verify Software Download.");
 		Iterator<EnodebSwStatus> iter;
 		do {
 			iter = eNodebSwStatusList.iterator();
@@ -1665,17 +1664,24 @@ public class SoftwareUtiles {
 		}
 		while ((!eNodebSwStatusList.isEmpty())
 				&& (System.currentTimeMillis() - softwareActivateStartTimeInMili <= (EnodeB.DOWNLOAD_TIMEOUT)));
+		printDownloadProcessTime();
 		for (EnodebSwStatus eNodebSwStatus : eNodebSwStatusList) {
 			if (!eNodebSwStatus.isSwDownloadCompleted()) {
 				report.report(eNodebSwStatus.geteNodeB().getName() + ": Software Download Didn't End.", Reporter.FAIL);
-			} else {
-				long eventTimeoutStart = System.currentTimeMillis();
-				while (System.currentTimeMillis() - eventTimeoutStart <= (EnodeB.DOWNLOAD_COMPLETED_TIMEOUT)) {
-					printNetspanEventIfReceived(eNodebSwStatus, NetspanSWEvents.NetspanEvents.DOWNLOAD_COMPLETED);
-				}
 			}
 		}
-		GeneralUtils.stopLevel();
+	}
+
+	/**
+	 * Print Download Process Time and warning if it's more than 20 minutes
+	 */
+	private void printDownloadProcessTime() {
+		long downloadTime = System.currentTimeMillis() - softwareActivateStartTimeInMili;
+		if (downloadTime >= EnodeB.DOWNLOAD_WARNING_TIME) {
+			report.report("Download process took more than 20 minutes. Actual time in minutes:" + GeneralUtils.milisToMinutes(downloadTime), Reporter.WARNING);
+		} else {
+			report.report("Download process took: " + GeneralUtils.milisToMinutes(downloadTime) + " minutes");
+		}
 	}
 
 	/**
@@ -1717,7 +1723,7 @@ public class SoftwareUtiles {
 	}
 
 	/**
-	 * follow Software Activate Progress And wait for all running
+	 * follow Software Activate Progress And wait for all running + wait for the relevant 2 Netspan events
 	 *
 	 * @param eNodebSwStatusList - eNodebSwStatusList
 	 */
@@ -1726,6 +1732,32 @@ public class SoftwareUtiles {
 		verifyActivateInProgress(new ArrayList<>(eNodebSwStatusList));
 		waitForAllRunningAndInService(new ArrayList<>(eNodebSwStatusList));
 		GeneralUtils.stopLevel();
+	}
+
+	/**
+	 * follow Software Download Progress + wait for the relevant 2 Netspan events
+	 *
+	 * @param eNodebSwStatusList - eNodebSwStatusList
+	 */
+	private void followSoftwareDownloadProgress(ArrayList<EnodebSwStatus> eNodebSwStatusList) {
+		GeneralUtils.startLevel("Verify Software Download.");
+		followSoftwareDownloadProgressViaNetspan(new ArrayList<>(eNodebSwStatusList));
+		followSoftwareDownloadCompletedEvent(eNodebSwStatusList);
+		GeneralUtils.stopLevel();
+	}
+
+	/**
+	 * follow Software Download Progress Via Netspan
+	 *
+	 * @param eNodebSwStatusList - eNodebSwStatusList
+	 */
+	private void followSoftwareDownloadCompletedEvent(ArrayList<EnodebSwStatus> eNodebSwStatusList) {
+		for (EnodebSwStatus enodebSwStatus : eNodebSwStatusList) {
+			long eventTimeoutStart = System.currentTimeMillis();
+			while (System.currentTimeMillis() - eventTimeoutStart <= (EnodeB.DOWNLOAD_COMPLETED_TIMEOUT)) {
+				printNetspanEventIfReceived(enodebSwStatus, NetspanSWEvents.NetspanEvents.DOWNLOAD_COMPLETED);
+			}
+		}
 	}
 
 	/**

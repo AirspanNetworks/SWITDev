@@ -1632,7 +1632,7 @@ public class SoftwareUtiles {
 		for (int i = 1; i <= maxNumberOfReboots; i++) {
 			if (!enbThatHaveToRebootList.isEmpty()) {
 				followSoftwareDownloadProgressViaNetspan(new ArrayList<>(enbSWDetailsList));
-				waitForRebootAndSetExpectedBootingForSecondReboot(new ArrayList<>(enbSWDetailsList));
+				followSoftwareActivateProgress(enbSWDetailsList);
 				enbThatHaveToRebootList.removeIf(enbThatHaveToReboot -> enbThatHaveToReboot.getNumberOfExpectedReboots() <= 1);
 			}
 		}
@@ -1669,7 +1669,8 @@ public class SoftwareUtiles {
 			if (!eNodebSwStatus.isSwDownloadCompleted()) {
 				report.report(eNodebSwStatus.geteNodeB().getName() + ": Software Download Didn't End.", Reporter.FAIL);
 			} else {
-				while (System.currentTimeMillis() - softwareActivateStartTimeInMili <= (EnodeB.DOWNLOAD_COMPLETED_TIMEOUT)) {
+				long eventTimeoutStart = System.currentTimeMillis();
+				while (System.currentTimeMillis() - eventTimeoutStart <= (EnodeB.DOWNLOAD_COMPLETED_TIMEOUT)) {
 					printNetspanEventIfReceived(eNodebSwStatus, NetspanSWEvents.NetspanEvents.DOWNLOAD_COMPLETED);
 				}
 			}
@@ -1715,8 +1716,25 @@ public class SoftwareUtiles {
 		return false;
 	}
 
-	private void waitForRebootAndSetExpectedBootingForSecondReboot(ArrayList<EnodebSwStatus> eNodebSwStatusList) {
+	/**
+	 * follow Software Activate Progress And wait for all running
+	 *
+	 * @param eNodebSwStatusList - eNodebSwStatusList
+	 */
+	private void followSoftwareActivateProgress(ArrayList<EnodebSwStatus> eNodebSwStatusList) {
 		GeneralUtils.startLevel("Verify Software Activation.");
+		verifyActivateInProgress(new ArrayList<>(eNodebSwStatusList));
+		waitForAllRunningAndInService(new ArrayList<>(eNodebSwStatusList));
+		GeneralUtils.stopLevel();
+	}
+
+	/**
+	 * Verify Activate In Progress
+	 * Wait For Reboot And Set Expected Booting For Second Reboot
+	 *
+	 * @param eNodebSwStatusList - eNodebSwStatusList
+	 */
+	private void verifyActivateInProgress(ArrayList<EnodebSwStatus> eNodebSwStatusList) {
 		final long waitForRebootStartTime = System.currentTimeMillis();
 		Iterator<EnodebSwStatus> iter;
 		do {
@@ -1727,6 +1745,7 @@ public class SoftwareUtiles {
 				GeneralUtils.printToConsole(eNodebSwStatus.geteNodeB().getName() + ".isExpectBooting() = " + eNodebSwStatus.geteNodeB().isExpectBooting());
 				if (!eNodebSwStatus.geteNodeB().isExpectBooting()) {
 					eNodebSwStatus.increaseNumberOfReboots();
+					//if we expect another reboot due to relay
 					if (eNodebSwStatus.getNumberOfActualReboot() < eNodebSwStatus.getNumberOfExpectedReboots()) {
 						eNodebSwStatus.geteNodeB().setExpectBooting(true);
 					}
@@ -1739,7 +1758,6 @@ public class SoftwareUtiles {
 		for (EnodebSwStatus eNodebSwStaus : eNodebSwStatusList) {
 			report.report(eNodebSwStaus.geteNodeB().getName() + " has NOT been rebooted.", Reporter.WARNING);
 		}
-		GeneralUtils.stopLevel();
 	}
 
 	public void waitForAllRunningAndInService(ArrayList<EnodebSwStatus> eNodebSwStatusList) {

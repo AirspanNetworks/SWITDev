@@ -760,7 +760,7 @@ public abstract class EnodeBComponent extends SystemObjectImpl implements LogLis
     		String nmsHostName = NetspanServer.getInstance().getHostname();
     		String currentNmsIp = snmp.get(oid + ".3.4");
     		GeneralUtils.printToConsole(this.getName() +  " - setTrapDestination thread currentNmsIp = " + currentNmsIp);
-    		if(currentNmsIp.equals("noSuchInstance")){
+    		if(currentNmsIp.contains("noSuch")){
     			GeneralUtils.printToConsole(this.getName() +  " - setTrapDestination thread add row number 4");
     			snmp.addNewEntry(oid + ".5", 4, false);
     			updateTrapDestTable(nmsHostName);

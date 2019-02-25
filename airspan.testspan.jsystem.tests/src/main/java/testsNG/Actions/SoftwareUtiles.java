@@ -1431,6 +1431,8 @@ public class SoftwareUtiles {
 					upgradeImage.setImageType(ImageType.RELAY.value());
 					upgradeImage.setBuildPath(relayBuildFileName);
 					upgradeImage.setVersion(relayBuild);
+					// Set HW cat to fix Netspan bug!! NEED to remove.
+					upgradeImage.setHardwareCategory(netspanServer.getHardwareCategory(eNodeB));
 					if (softwareStatus != null) {
 						if (!updateSoftwareImage(upgradeImage)) {
 							report.report("FAILED To Update Software Image with Relay Version.", Reporter.FAIL);

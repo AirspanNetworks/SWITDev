@@ -1664,7 +1664,7 @@ public class SoftwareUtiles {
 		}
 		while ((!eNodebSwStatusList.isEmpty())
 				&& (System.currentTimeMillis() - softwareActivateStartTimeInMili <= (EnodeB.DOWNLOAD_TIMEOUT)));
-		printDownloadProcessTime();
+//		printDownloadProcessTime();
 		for (EnodebSwStatus eNodebSwStatus : eNodebSwStatusList) {
 			if (!eNodebSwStatus.isSwDownloadCompleted()) {
 				report.report(eNodebSwStatus.geteNodeB().getName() + ": Software Download Didn't End.", Reporter.FAIL);

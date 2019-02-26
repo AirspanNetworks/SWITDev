@@ -221,7 +221,7 @@ public class Progression extends TestspanTest{
 			ArrayList<EnodebSwStatus> enbSWDetailsList = new  ArrayList<>();
 			enbSWDetailsList.add(rebootTimeAndSwActivationDetails.getElement1());
 			SoftwareUtiles.getInstance().setSoftwareActivateStartTimeInMili(System.currentTimeMillis());
-			SoftwareUtiles.getInstance().followSoftwareActivationProgressViaNetspan(enbSWDetailsList);
+			SoftwareUtiles.getInstance().followSwUpgradeProgressViaNetspan(enbSWDetailsList);
 			GeneralUtils.stopLevel();
 			watchNmsEventsEnodebColdRebootSoftwareDownload = startFollowNmsEvents(timelineStageIndex++, COLD_ENODEB_PNP_EVENTS_EXPECTED_DURATION_IN_MILI, dut, rebootTime, COLLECT_EVENTS_FROM_NMS_TIMEOUT, "Cold eNodeB PnP & Software Download.", eNodebColdRebootPnpSoftwareDownloadEventListToFollow, 0, false);//Doesn't Wait, uses WatchDog
 			rebootTimeAfterSoftwareDownload = System.currentTimeMillis();

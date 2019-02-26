@@ -1595,7 +1595,7 @@ public class SoftwareUtiles {
 	 *
 	 * @param enbSWDetailsList - enbSWDetailsList
 	 */
-	public void followSoftwareActivationProgressViaNetspan(ArrayList<EnodebSwStatus> enbSWDetailsList) {
+	public void followSwUpgradeProgressViaNetspan(ArrayList<EnodebSwStatus> enbSWDetailsList) {
 		ArrayList<EnodebSwStatus> enbThatHaveToRebootList = getEnbsThatHaveToReboot(enbSWDetailsList);
 		followProgress(new ArrayList<>(enbSWDetailsList), enbThatHaveToRebootList);
 	}
@@ -1660,11 +1660,11 @@ public class SoftwareUtiles {
 				//Pause before next iteration
 				GeneralUtils.unSafeSleep(10 * 1000);
 				printNetspanEventIfReceived(eNodebSwStatus, NetspanSWEvents.NetspanEvents.DOWNLOAD_IN_PROGRESS);
+				printDownloadProcessTime(eNodebSwStatus);
 			}
 		}
 		while ((!eNodebSwStatusList.isEmpty())
 				&& (System.currentTimeMillis() - softwareActivateStartTimeInMili <= (EnodeB.DOWNLOAD_TIMEOUT)));
-//		printDownloadProcessTime();
 		for (EnodebSwStatus eNodebSwStatus : eNodebSwStatusList) {
 			if (!eNodebSwStatus.isSwDownloadCompleted()) {
 				report.report(eNodebSwStatus.geteNodeB().getName() + ": Software Download Didn't End.", Reporter.FAIL);
@@ -1673,14 +1673,18 @@ public class SoftwareUtiles {
 	}
 
 	/**
-	 * Print Download Process Time and warning if it's more than 20 minutes
+	 * Print Download Process Time and warns if it's more than 20 minutes
 	 */
-	private void printDownloadProcessTime() {
+	private void printDownloadProcessTime(EnodebSwStatus eNodebSwStatus) {
 		long downloadTime = System.currentTimeMillis() - softwareActivateStartTimeInMili;
-		if (downloadTime >= EnodeB.DOWNLOAD_WARNING_TIME) {
-			report.report("Download process took more than 20 minutes. Actual time in minutes:" + GeneralUtils.milisToMinutes(downloadTime), Reporter.WARNING);
-		} else {
-			report.report("Download process took: " + GeneralUtils.milisToMinutes(downloadTime) + " minutes");
+		if (eNodebSwStatus.isSwDownloadCompleted()) {
+			if (downloadTime >= EnodeB.DOWNLOAD_WARNING_TIME) {
+				report.report(eNodebSwStatus.geteNodeB().getNetspanName() + ": Download process took more than 20 minutes. Actual time in minutes:"
+						+ GeneralUtils.milisToMinutes(downloadTime), Reporter.WARNING);
+			} else {
+				report.report(eNodebSwStatus.geteNodeB().getNetspanName() + ": Download process lasted (in minutes): " +
+						GeneralUtils.milisToMinutes(downloadTime));
+			}
 		}
 	}
 

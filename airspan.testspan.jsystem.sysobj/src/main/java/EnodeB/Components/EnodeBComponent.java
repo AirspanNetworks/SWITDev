@@ -756,34 +756,39 @@ public abstract class EnodeBComponent extends SystemObjectImpl implements LogLis
      */
     private void setTrapDestenationIfNeeded(){
     	String oid = MibReader.getInstance().resolveByName("wmanDevCmnSnmpV1V2TrapDest");
+    	boolean actionPassed = true;
     	try {
     		String nmsHostName = NetspanServer.getInstance().getHostname();
     		String currentNmsIp = snmp.get(oid + ".3.4");
     		GeneralUtils.printToConsole(this.getName() +  " - setTrapDestination thread currentNmsIp = " + currentNmsIp);
     		if(currentNmsIp.contains("noSuch")){
     			GeneralUtils.printToConsole(this.getName() +  " - setTrapDestination thread add row number 4");
-    			snmp.addNewEntry(oid + ".5", 4, false);
-    			updateTrapDestTable(nmsHostName);
+    			actionPassed &= snmp.addNewEntry(oid + ".5", 4, false);
+    			actionPassed &= updateTrapDestTable(nmsHostName);
     		}
     		else if(!InetAddressesHelper.toDecimalIp(currentNmsIp, 16).equals(nmsHostName)){
-    			snmp.snmpSet(oid + ".5.4", 2);
-    			updateTrapDestTable(nmsHostName);
+    			actionPassed &= snmp.snmpSet(oid + ".5.4", 2);
+    			actionPassed &= updateTrapDestTable(nmsHostName);
 	    	}
     		else
     			GeneralUtils.printToConsole(this.getName() +  " - setTrapDestination is already updated");
+    		GeneralUtils.printToConsole(this.getName() +  " - setTrapDestination action" +
+    			(actionPassed ? " passed" : " failed"));
     	} catch (Exception e) {
     		report.report("Set Trap Destination Failed", Reporter.WARNING);
     		e.printStackTrace();
     	}
     }
     
-    private void updateTrapDestTable(String nmsHostName) throws IOException{
+    private boolean updateTrapDestTable(String nmsHostName) throws IOException{
+    	boolean actionPassed = true;
     	String oid = MibReader.getInstance().resolveByName("wmanDevCmnSnmpV1V2TrapDest");
     	GeneralUtils.printToConsole(this.getName() +  " - setTrapDestination thread update trapDest params");
-		snmp.snmpSet(oid + ".2.4", nmsHostName.contains(":") ? "2" : "1");
-		snmp.snmpSet(oid + ".3.4", InetAddressesHelper.ipStringToBytes(nmsHostName));
-		snmp.snmpSet(oid + ".4.4", 162);
-		snmp.snmpSet(oid + ".5.4", 1);
+    	actionPassed &= snmp.snmpSet(oid + ".2.4", nmsHostName.contains(":") ? "2" : "1");
+    	actionPassed &= snmp.snmpSet(oid + ".3.4", InetAddressesHelper.ipStringToBytes(nmsHostName));
+    	actionPassed &= snmp.snmpSet(oid + ".4.4", 162);
+    	actionPassed &= snmp.snmpSet(oid + ".5.4", 1);
+    	return actionPassed;
     }
     
     private void handleSkipCMP(){

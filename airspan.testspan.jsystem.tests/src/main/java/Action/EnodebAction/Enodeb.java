@@ -877,29 +877,26 @@ public class Enodeb extends EnodebAction {
 	}
 
 	@Test
-	@TestProperties(name = "Re-Provision Node", returnParam = { "IsTestWasSuccessful" }, paramsInclude = { "DUTs", "performReboot" })
-	public void reProvision() {
+	@TestProperties(name = "Re-Provision Node", returnParam = { "IsTestWasSuccessful" }, paramsInclude = { "DUTs",
+			"performReboot" })
+	public void reProvision() throws Exception {
 		boolean status;
 		NetspanServer netspan;
-		try {
-			netspan = NetspanServer.getInstance();
-			for (EnodeB dut : duts) {
-				report.report(String.format("%s - Trying to perform Re-Provision", dut.getNetspanName()));
-				status = netspan.performReProvision(dut.getNetspanName());
-				if (!status) {
-					report.report("Re-Provision Failed", Reporter.FAIL);
-					return;
-				} else
-					report.step(String.format("%s - Succeeded to perform Re-Provision", dut.getNetspanName()));
+		netspan = NetspanServer.getInstance();
+		for (EnodeB dut : duts) {
+			report.report(String.format("%s - Trying to perform Re-Provision", dut.getNetspanName()));
+			status = netspan.performReProvision(dut.getNetspanName());
+			if (!status) {
+				report.report("Re-Provision Failed", Reporter.FAIL);
+				return;
+			} else
+				report.step(String.format("%s - Succeeded to perform Re-Provision", dut.getNetspanName()));
+		}
+		if (performReboot) {
+			status = rebootAndWaitForAllrunning();
+			if (status) {
+				report.report("Enodeb Reached all running and in service successfully");
 			}
-			if (performReboot) {
-				status = rebootAndWaitForAllrunning();
-				if (status) {
-					report.report("Enodeb Reached all running and in service successfully");
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 

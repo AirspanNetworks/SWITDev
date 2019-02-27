@@ -373,7 +373,7 @@ public class TestspanTest extends SystemTestCase4 {
      */
     private void checkAutoVersion() {
         String automationVersion = getVersion();
-        report.setContainerProperties(0, "Version", automationVersion);
+        report.setContainerProperties(0, "AutoVersion", automationVersion);
     }
 
     /**

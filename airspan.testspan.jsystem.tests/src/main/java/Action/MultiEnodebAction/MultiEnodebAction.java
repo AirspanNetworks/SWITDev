@@ -99,6 +99,33 @@ public class MultiEnodebAction extends EnodebAction {
 		ATT_STEP = attenuatorSetUnderTest.getAttenuationStep();
 	}
 
+	public FrequencyType freqType = FrequencyType.Intra;
+	public HandOverType hoType = HandOverType.S1;
+
+	public HandOverType getHoType() {
+		return hoType;
+	}
+
+	public void setHoType(HandOverType hoType) {
+		this.hoType = hoType;
+	}
+
+	public FrequencyType getFreqType() {
+		return freqType;
+	}
+
+	public void setFreqType(FrequencyType freqType) {
+		this.freqType = freqType;
+	}
+
+	public enum FrequencyType {
+        Intra, Inter;
+    }
+	
+	public enum HandOverType {
+        S1, X2;
+    }
+	
 	static Integer timeToHO = null; 
 	
 	public Integer getTimeToHO() {
@@ -110,9 +137,10 @@ public class MultiEnodebAction extends EnodebAction {
 		this.timeToHO = Integer.valueOf(timeToHO);
 	}
 	static Integer defaultTimeHO = 10;
+	
 	@Test
     @TestProperties(name = "Start HO", returnParam = {"LastStatus"}, paramsInclude = {"TimeToHO"})
-    public void startHO() {
+	public void startHO() {
 		if(timeToHO == null){
 			report.report("No time was set. Default of " + defaultTimeHO + " minutes");
 			timeToHO = defaultTimeHO;

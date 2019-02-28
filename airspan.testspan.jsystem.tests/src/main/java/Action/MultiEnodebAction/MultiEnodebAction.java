@@ -188,7 +188,7 @@ public class MultiEnodebAction extends EnodebAction {
 		@Override
 		public void run() {
 			long startTime = System.currentTimeMillis();
-			long endTime = System.currentTimeMillis() + timeToHO*1000;
+			long endTime = System.currentTimeMillis() + timeToHO*60*1000;
 			long resetCounters = startTime;
 			int counter = 0;
 			GeneralUtils.startLevel("Moving attenuator for " + maxduration / 60000 + " minutes to create Hand-Over");

@@ -185,6 +185,7 @@ public class MultiEnodebAction extends EnodebAction {
 				}
 			}
 			GeneralUtils.stopLevel(); // moving attenuator stop level
+			report.report("Finished moving attenuator");
 		}
 	}
 

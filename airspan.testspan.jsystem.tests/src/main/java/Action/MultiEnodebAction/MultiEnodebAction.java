@@ -66,18 +66,18 @@ public class MultiEnodebAction extends EnodebAction {
 	public void init() {
 		enbInTest = new ArrayList<EnodeB>();
         
-        if (dut1 == null){
+        /*if (dut1 == null){
         	report.report("DUT1 is not loaded",Reporter.FAIL);
         	Assume.assumeTrue(false);        	
         }
 		if (dut2 == null){
 			report.report("DUT2 is not loaded",Reporter.FAIL);
 			Assume.assumeTrue(false);			
-		}
-		enbInTest = new ArrayList<>();
-		enbInTest.add(dut1);
-		enbInTest.add(dut2);
-        super.init();
+		}*/
+		//enbInTest = new ArrayList<>();
+		//enbInTest.add(dut1);
+		//enbInTest.add(dut2);
+        //super.init();
 		objectInit();
 	}
 	

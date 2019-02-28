@@ -264,8 +264,8 @@ public class Traffic {
         }
 
         if (!configFile.exists()) {
-            configFile = null;
             Assert.fail("No such tcc file (" + configFile + ") exist, please reconfigure defaultConfigTccFile to the right path");
+            configFile = null;
         }
     }
 
@@ -278,7 +278,6 @@ public class Traffic {
         tg.getTraffic().getShell().setPureTclLogFile(null);
         tg.getTraffic().getShell().setPrintCommand(false);
         tg.getTraffic().getShell().setPrintReturn(false);
-
     }
 
     /**

@@ -50,6 +50,10 @@ import jsystem.framework.system.SystemObjectImpl;
  * @author shaham
  * @version 1.3
  */
+/**
+ * @author dshalom
+ *
+ */
 public class SNMP extends SystemObjectImpl {
 
 	// ============================== Static variables =======================//
@@ -668,6 +672,13 @@ public class SNMP extends SystemObjectImpl {
 		return retStat;		
 	}
 	
+	
+	/**
+	 * Add new entry at the next available index
+	 * @param rowStatusOid
+	 * @return 
+	 * @throws IOException
+	 */
 	public boolean addNewEntry(String rowStatusOid) throws IOException{
 		int newValue = 0;
 		String newowStatusOid = "";
@@ -677,6 +688,20 @@ public class SNMP extends SystemObjectImpl {
 		newValue++;
 		newowStatusOid = rowStatusOid + "." + newValue;
 		return snmpSet(newowStatusOid, 4);
+	}
+	
+	/**
+	 * Add new entry at a specific index
+	 * @param rowStatusOid
+	 * @param index
+	 * @return
+	 * @throws IOException
+	 */
+	public boolean addNewEntry(String rowStatusOid, int index, boolean activate) throws IOException{
+		String newRowStatusOid = "";
+		int activationId = activate ? 4 : 5;
+		newRowStatusOid = rowStatusOid + "." + index;
+		return snmpSet(newRowStatusOid, activationId);
 	}
 	
 	public boolean addRowInTable(String rowStatusOid, HashMap<String,String> params) throws IOException{

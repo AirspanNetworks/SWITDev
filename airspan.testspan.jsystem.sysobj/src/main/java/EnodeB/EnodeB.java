@@ -107,6 +107,8 @@ public abstract class EnodeB extends SystemObjectImpl {
 	public static final int BOOTING_TIMOUT = 2 * 60 * 1000;// 120 sec
 	public static final int MAX_NBI_TOTAL_TRYOUTS = 8;
 	public static final long DOWNLOAD_TIMEOUT = 30 * 1000 * 60;
+	public static final long DOWNLOAD_WARNING_TIME = 20 * 1000 * 60;
+	public static final long DOWNLOAD_COMPLETED_TIMEOUT = 1 * 1000 * 60;
 	public static final long ACTIVATE_TIMEOUT = 20 * 1000 * 60;
 	public static long WAIT_FOR_ALL_RUNNING_TIME = 30 * 1000 * 60;
 	public static long SHORT_WAIT_FOR_ALL_RUNNING_TIME = 2 * 1000 * 60;
@@ -1084,18 +1086,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 	}
 
 	public boolean waitForReachable(long timeout) {
-		if (this.XLP.isReachable()) {
-			return true;
-		}
-		GeneralUtils.printToConsole("will wait for reachable " + timeout + " millis");
-		long startTime = System.currentTimeMillis(); // fetch starting time
-		while ((System.currentTimeMillis() - startTime) < timeout) {
-			if (this.XLP.isReachable()) {
-				return true;
-			}
-			GeneralUtils.unSafeSleep(3000);
-		}
-		return false;
+		return this.XLP.waitForReachable(timeout);
 	}
 
 	public boolean downPTPInterface(int tries) {

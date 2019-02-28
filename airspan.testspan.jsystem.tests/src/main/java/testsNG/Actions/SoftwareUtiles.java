@@ -1424,8 +1424,14 @@ public class SoftwareUtiles {
 				}
 				if ((eNodeB instanceof AirUnity) && (relayBuild != "")) {
 					SoftwareStatus softwareStatus = netspanServer.getSoftwareStatus(eNodeB.getNetspanName(), ImageType.RELAY);
-					report.report("Checking Relay - Running and Standby SW version");
-					updateCurrentSwStatus(enbSWDetails, relayBuild, softwareStatus);
+					if (softwareStatus != null) {
+						report.report(eNodeB.getName() + "'s Relay Running Version: " + softwareStatus.RunningVersion);
+						if (!softwareStatus.RunningVersion.equals(relayBuild)) {
+							enbSWDetails.increaseNumberOfExpectedReboots();
+						} else {
+							report.report("Running Version equals Target Version - No Need To Upgrade Relay Version.");
+						}
+					}
 					EnodeBUpgradeImage upgradeImage = new EnodeBUpgradeImage();
 					upgradeImage.setName(softwareImage);
 					upgradeImage.setImageType(ImageType.RELAY.value());

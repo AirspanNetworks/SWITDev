@@ -111,8 +111,7 @@ public class MultiEnodebAction extends EnodebAction {
 	}
 	static Integer defaultTimeHO = 10;
 	@Test
-    @TestProperties(name = "Start HO", returnParam = {"LastStatus"}, paramsInclude = {"DUT1","DUT2","TimeToHO",
-    		"FreqType","HoType"})
+    @TestProperties(name = "Start HO", returnParam = {"LastStatus"}, paramsInclude = {"TimeToHO"})
     public void startHO() {
 		if(timeToHO == null){
 			report.report("No time was set. Default of " + defaultTimeHO + " minutes");

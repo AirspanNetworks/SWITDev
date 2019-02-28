@@ -191,9 +191,10 @@ public class MultiEnodebAction extends EnodebAction {
 			long endTime = System.currentTimeMillis() + timeToHO*60*1000;
 			long resetCounters = startTime;
 			int counter = 0;
+			maxduration = timeToHO*60*1000;
 			GeneralUtils.startLevel("Moving attenuator for " + maxduration / 60000 + " minutes to create Hand-Over");
 			report.report("Attenuator IP: " + attenuatorSetUnderTest.getName());
-			int waitingPeriodTime = dut1.getGranularityPeriod();
+			//int waitingPeriodTime = dut1.getGranularityPeriod();
 			while (System.currentTimeMillis() < endTime) {
 				moveAtt(attenuatorSetUnderTest, attenuatorMin, attenuatorMax);
 				counter++;
@@ -202,14 +203,14 @@ public class MultiEnodebAction extends EnodebAction {
 				}
 				moveAtt(attenuatorSetUnderTest, attenuatorMax, attenuatorMin);
 				counter++;
-				if (System.currentTimeMillis() - resetCounters >= 8 * 60 * 1000 * waitingPeriodTime) {
+				/*if (System.currentTimeMillis() - resetCounters >= 8 * 60 * 1000 * waitingPeriodTime) {
 					resetCounters = System.currentTimeMillis();
 					double temp = Math.floor(((System.currentTimeMillis() - startTime) / 1000 / 60.0) * 100);
 					double tempDouble = temp / 100.0;
 					report.report("Time elapsed: " + tempDouble + " minutes.");
 					updateResultsVariables(counter);
 					resetCounters();
-				}
+				}*/
 			}
 			GeneralUtils.stopLevel(); // moving attenuator stop level
 			report.report("Finished moving attenuator");
@@ -644,7 +645,7 @@ public class MultiEnodebAction extends EnodebAction {
 
 	@Override
 	public void end() {
-		super.end();
+		//super.end();
 	}
 
 	private boolean gettingPassCratiriaValue() {

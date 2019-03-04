@@ -211,6 +211,7 @@ public class MultiEnodebAction extends EnodebAction {
 				
 		if (!gettingPassCratiriaValue()) {
 			report.report("Failed to reset counters", Reporter.FAIL);
+			return;
 		}
 		
 		/*attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(CommonConstants.ATTENUATOR_SET_NAME);

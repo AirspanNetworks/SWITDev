@@ -15,11 +15,9 @@ import Utils.CommonConstants;
 import Utils.GeneralUtils;
 import Utils.SetupUtils;
 import Utils.SysObjUtils;
-import jsystem.extensions.report.html.Report;
 import jsystem.framework.ParameterProperties;
 import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
-import testsNG.Actions.EnodeBConfig;
 import testsNG.Actions.PeripheralsConfig;
 
 public class MultiEnodebAction extends EnodebAction {
@@ -39,15 +37,11 @@ public class MultiEnodebAction extends EnodebAction {
 	public static HashMap<String, String> passCriteria = new HashMap<>();
 	static ArrayList<UE> dynUEList = new ArrayList<>();
 	ArrayList<UE> statUEList = new ArrayList<>();
-	//public String succCounterName;
-	//public String attCounterName;
-	//public static String succCounterNameSNMP;
-	//public static String attCounterNameSNMP;
+
 	public static EnodeB dut1;
 	public static EnodeB dut2;
 	private static int attenuatorMin;
 	private static int attenuatorMax;
-	private EnodeBConfig enodeBConfig;
 
 	static String counterAttempt;
 	static String counterSuccess;
@@ -105,17 +99,6 @@ public class MultiEnodebAction extends EnodebAction {
 		enbInTest.add(dut1);
 		enbInTest.add(dut2);
         super.init();
-		objectInit();
-	}
-	
-	/**
-	 * init of objects in case you need to declare objects without running the
-	 * super init and traffic declaration
-	 *
-	 * @author Moran Goldenberg
-	 */
-	public void objectInit() {
-		enodeBConfig = EnodeBConfig.getInstance();
 	}
 
 	public FrequencyType freqType = FrequencyType.Intra;
@@ -195,13 +178,8 @@ public class MultiEnodebAction extends EnodebAction {
 		
 		preTest();
 		
-		counterSuccess = "HoS1IntraFreqInCompSuccRnlRadioRsn";
-		counterSuccesssnmp = "HoS1IntraFreqInCompSuccRnlRadioRsn";
-		counterAttempt = "HoS1IntraFreqInPrepSuccRnlRadioRsn";
-		counterAttemptsnmp = "HoS1IntraFreqInPrepSuccRnlRadioRsn";
-
-		passCriteria.put(counterSuccess, counterSuccesssnmp);
-		passCriteria.put(counterAttempt, counterAttemptsnmp);
+		setCounters();
+		
 
 		/*counterAttempt = hoType.toString() + freqType + "FreqInCompSuccRnlRadioRsn";
 		counterSuccess = hoType.toString() + freqType + "FreqInAttRnlRadioRsn";;
@@ -226,8 +204,40 @@ public class MultiEnodebAction extends EnodebAction {
 
     }
 
+	private void setCounters() {
+		if(freqType == FrequencyType.Intra){
+			if(hoType == HandOverType.S1){
+				counterSuccess = "HoS1IntraFreqInCompSuccRnlRadioRsn";
+				counterSuccesssnmp = "HoS1IntraFreqInCompSuccRnlRadioRsn";
+				counterAttempt = "HoS1IntraFreqInPrepSuccRnlRadioRsn";
+				counterAttemptsnmp = "HoS1IntraFreqInPrepSuccRnlRadioRsn";
+			}else{
+				counterSuccess = "HoX2IntraFreqInCompSuccRnlRadioRsn";
+				counterSuccesssnmp = "HoX2IntraFreqInCompSuccRnlRadioRsn";
+				counterAttempt = "HoX2IntraFreqInAttRnlRadioRsn";
+				counterAttemptsnmp = "HoX2IntraFreqInAttRnlRadioRsn";
+			}
+		}else{
+			if(hoType == HandOverType.S1){
+				counterSuccess = "HoS1InterFreqInCompSuccRnlRadioRsn";
+				counterSuccesssnmp = "HoS1InterFreqInCompSuccRnlRadioRsn";
+				counterAttempt = "HoS1InterFreqInPrepSuccRnlRadioRsn";
+				counterAttemptsnmp = "HoS1InterFreqInPrepSuccRnlRadioRsn";
+			}else{
+				counterSuccess = "HoX2InterFreqInCompSuccRnlRadioRsn";
+				counterSuccesssnmp = "HoX2InterFreqInCompSuccRnlRadioRsn";
+				counterAttempt = "HoX2InterFreqInPrepSuccRnlRadioRsn";
+				counterAttemptsnmp = "HoX2InterFreqInPrepSuccRnlRadioRsn";
+			}
+		}
+		
+		passCriteria.put(counterSuccess, counterSuccesssnmp);
+		passCriteria.put(counterAttempt, counterAttemptsnmp);
+	}
+
 	private void preTest() {
 		dynUEList = SetupUtils.getInstance().getDynamicUEs();
+		report.report("Number of dynamic UES: "+dynUEList.size());
 		enodeB = dut1;
 		neighbor = dut2;
 		peripheralsConfig = PeripheralsConfig.getInstance();
@@ -284,232 +294,6 @@ public class MultiEnodebAction extends EnodebAction {
 		}
 	}
 
-
-
-	/*@Test
-	@TestProperties(name = "BasicHO_X2IntraFrequency", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {
-			"IsTestWasSuccessful" })
-	public void BasicHO_X2IntraFrequency() {
-		if (enodeB.isInstanceOfXLP_15_2()) {
-			succCounterName = "HoX2IntraFreqInCompSuccRnlRadioRsn";
-			succCounterNameSNMP = "HoX2IntraFreqInCompSuccRnlRadioRsn";
-			attCounterName = "HoX2IntraFreqInAttRnlRadioRsn";
-			attCounterNameSNMP = "HoX2IntraFreqInAttRnlRadioRsn";
-
-		} else {
-			succCounterName = "X2IntraFreqInCompSuccRnlRadioRsn";
-			succCounterNameSNMP = "asLteStatsHoX2IntraFreqInCompSuccRnlRadioRsn";
-			attCounterName = "X2IntraFreqInAttRnlRadioRsn";
-			attCounterNameSNMP = "asLteStatsHoX2IntraFreqInAttRnlRadioRsn";
-		}
-
-		passCriteria.put(succCounterName, succCounterNameSNMP);
-		passCriteria.put(attCounterName, attCounterNameSNMP);
-	}
-
-
-
-	@Test
-	@TestProperties(name = "BasicHO_S1IntraFrequency", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {
-			"IsTestWasSuccessful" })
-	public void BasicHO_S1IntraFrequency() {
-		if (enodeB.isInstanceOfXLP_15_2()) {
-			succCounterName = "HoS1IntraFreqInCompSuccRnlRadioRsn";
-			succCounterNameSNMP = "HoS1IntraFreqInCompSuccRnlRadioRsn";
-			attCounterName = "HoS1IntraFreqInPrepSuccRnlRadioRsn";
-			attCounterNameSNMP = "HoS1IntraFreqInPrepSuccRnlRadioRsn";
-
-		} else {
-			succCounterName = "S1IntraFreqInCompSuccRnlRadioRsn";
-			succCounterNameSNMP = "asLteStatsHoS1IntraFreqInCompSuccRnlRadioRsn";
-			attCounterName = "S1IntraFreqInPrepSuccRnlRadioRsn";
-			attCounterNameSNMP = "asLteStatsHoS1IntraFreqInPrepSuccRnlRadioRsn";
-		}
-		passCriteria.put(succCounterName, succCounterNameSNMP);
-		passCriteria.put(attCounterName, attCounterNameSNMP);
-	}*/
-
-	/* Basic HO - X2 Inter Frequency */
-	@Test
-	@TestProperties(name = "BasicHO_X2InterFrequency", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {
-			"IsTestWasSuccessful" })
-	public void BasicHO_X2InterFrequency() {
-		passCriteria.put("HoX2InterFreqInAttRnlRadioRsn", "HoX2InterFreqInAttRnlRadioRsn");
-		passCriteria.put("HoX2InterFreqInCompSuccRnlRadioRsn", "HoX2InterFreqInCompSuccRnlRadioRsn");
-	}
-
-	/*@Test
-	@TestProperties(name = "MultipleHO_X2InterFrequency", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {
-			"IsTestWasSuccessful" })
-	public void MultipleHO_X2InterFrequency() {
-		if (enodeB.isInstanceOfXLP_15_2()) {
-			succCounterName = "HoX2InterFreqInCompSuccRnlRadioRsn";
-			succCounterNameSNMP = "HoX2InterFreqInCompSuccRnlRadioRsn";
-			attCounterName = "HoX2InterFreqInPrepSuccRnlRadioRsn";
-			attCounterNameSNMP = "HoX2InterFreqInPrepSuccRnlRadioRsn";
-		} else {
-			succCounterName = "X2InterFreqInCompSuccRnlRadioRsn";
-			succCounterNameSNMP = "asLteStatsHoX2InterFreqInCompSuccRnlRadioRsn";
-			attCounterName = "X2InterFreqInPrepSuccRnlRadioRsn";
-			attCounterNameSNMP = "asLteStatsHoX2InterFreqInPrepSuccRnlRadioRsn";
-		}
-
-		passCriteria.put(succCounterName, succCounterNameSNMP);
-		passCriteria.put(attCounterName, attCounterNameSNMP);
-
-	}
-
-
-
-	@Test
-	@TestProperties(name = "MultipleHO_S1InterFrequency", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {
-			"IsTestWasSuccessful" })
-	public void MultipleHO_S1InterFrequency() {
-		if (enodeB.isInstanceOfXLP_15_2()) {
-			succCounterName = "HoS1InterFreqInCompSuccRnlRadioRsn";
-			succCounterNameSNMP = "HoS1InterFreqInCompSuccRnlRadioRsn";
-			attCounterName = "HoS1InterFreqInPrepSuccRnlRadioRsn";
-			attCounterNameSNMP = "HoS1InterFreqInPrepSuccRnlRadioRsn";
-
-		} else {
-			succCounterName = "S1InterFreqInCompSuccRnlRadioRsn";
-			succCounterNameSNMP = "asLteStatsHoS1InterFreqInCompSuccRnlRadioRsn";
-			attCounterName = "S1InterFreqInPrepSuccRnlRadioRsn";
-			attCounterNameSNMP = "asLteStatsHoS1InterFreqInPrepSuccRnlRadioRsn";
-		}
-
-		passCriteria.put(succCounterName, succCounterNameSNMP);
-		passCriteria.put(attCounterName, attCounterNameSNMP);
-
-	}
-
-	private void setX2IntraCounters() {
-		if (enodeB.isInstanceOfXLP_15_2()) {
-			succCounterName = "HoX2IntraFreqInCompSuccRnlRadioRsn";
-			succCounterNameSNMP = "HoX2IntraFreqInCompSuccRnlRadioRsn";
-			attCounterName = "HoX2IntraFreqInAttRnlRadioRsn";
-			attCounterNameSNMP = "HoX2IntraFreqInAttRnlRadioRsn";
-		} else {
-			succCounterName = "X2IntraFreqInCompSuccRnlRadioRsn";
-			succCounterNameSNMP = "asLteStatsHoX2IntraFreqInCompSuccRnlRadioRsn";
-			attCounterName = "X2IntraFreqInAttRnlRadioRsn";
-			attCounterNameSNMP = "asLteStatsHoX2IntraFreqInAttRnlRadioRsn";
-		}
-		passCriteria.put(succCounterName, succCounterNameSNMP);
-		passCriteria.put(attCounterName, attCounterNameSNMP);
-	}
-
-	@Test
-	@TestProperties(name = "MultipleHO_S1IntraFrequency", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {
-			"IsTestWasSuccessful" })
-	public void MultipleHO_S1IntraFrequency() {
-		if (enodeB.isInstanceOfXLP_15_2()) {
-			succCounterName = "HoS1IntraFreqInCompSuccRnlRadioRsn";
-			succCounterNameSNMP = "HoS1IntraFreqInCompSuccRnlRadioRsn";
-			attCounterName = "HoS1IntraFreqInPrepSuccRnlRadioRsn";
-			attCounterNameSNMP = "HoS1IntraFreqInPrepSuccRnlRadioRsn";
-
-		} else {
-			succCounterName = "S1IntraFreqInCompSuccRnlRadioRsn";
-			succCounterNameSNMP = "asLteStatsHoS1IntraFreqInCompSuccRnlRadioRsn";
-			attCounterName = "S1IntraFreqInPrepSuccRnlRadioRsn";
-			attCounterNameSNMP = "asLteStatsHoS1IntraFreqInPrepSuccRnlRadioRsn";
-		}
-		passCriteria.put(succCounterName, succCounterNameSNMP);
-		passCriteria.put(attCounterName, attCounterNameSNMP);
-	}*/
-
-	public boolean HoLongTest() {
-		boolean flag = true;
-
-		GeneralUtils.startLevel("getting counters value");
-		resetPassCriteriaCounters();
-
-		if (!gettingPassCratiriaValue()) {
-			report.report("Retrying to reset pass criteria counters");
-			resetPassCriteriaCounters();
-			enodeBConfig.waitGranularityPeriodTime(dut1);
-			if (!gettingPassCratiriaValue()) {
-				GeneralUtils.stopLevel(); // getting counters value stop level
-				return false;
-			}
-		}
-		GeneralUtils.stopLevel(); // getting counters value stop level
-		long startTime = System.currentTimeMillis();
-		long endTime = System.currentTimeMillis() + maxduration;
-		long resetCounters = startTime;
-		int counter = 0;
-		GeneralUtils.startLevel("Moving attenuator for " + maxduration / 60000 + " minutes to create Hand-Over");
-		report.report("Attenuator IP: " + attenuatorSetUnderTest.getName());
-		int waitingPeriodTime = dut1.getGranularityPeriod();
-		while (System.currentTimeMillis() < endTime) {
-			moveAtt(attenuatorSetUnderTest, attenuatorMin, attenuatorMax);
-			counter++;
-			if (System.currentTimeMillis() > endTime) {
-				break;
-			}
-			moveAtt(attenuatorSetUnderTest, attenuatorMax, attenuatorMin);
-			counter++;
-			if (System.currentTimeMillis() - resetCounters >= 8 * 60 * 1000 * waitingPeriodTime) {
-				resetCounters = System.currentTimeMillis();
-				double temp = Math.floor(((System.currentTimeMillis() - startTime) / 1000 / 60.0) * 100);
-				double tempDouble = temp / 100.0;
-				report.report("Time elapsed: " + tempDouble + " minutes.");
-				updateResultsVariables(counter);
-				resetCounters();
-			}
-		}
-		GeneralUtils.stopLevel(); // moving attenuator stop level
-		report.report("Wait for " + waitingPeriodTime + " minutes for Counter to update");
-		GeneralUtils.unSafeSleep(waitingPeriodTime * 60 * 1000);
-
-		//flag = LongHOResults(flag, counter);
-		return flag;
-	}
-
-	private boolean verifyCountersSingleHO(EnodeB enb) {
-		GeneralUtils.startLevel("Counters value for EnodeB " + enb.getNetspanName());
-		boolean isSucceeded = true;
-		for (String counter : passCriteria.values()) {
-			int counterSum = enb.getCountersValue(counter);
-			if (counterSum >= expectedNumOfHO) {
-				report.report("[Pass Criteria: ] EnodeB: " + enb.getName() + " counter " + counter + " value is: "
-						+ counterSum + " as expected");
-			} else {
-				report.report("[Pass Criteria: ] EnodeB: " + enb.getName() + " counter " + counter + " value is: "
-						+ counterSum + " instead of " + expectedNumOfHO, Reporter.WARNING);
-				isSucceeded = false;
-			}
-		}
-		GeneralUtils.stopLevel();
-		return isSucceeded;
-
-	}
-
-	private boolean resetPassCriteriaCounters() {
-		GeneralUtils.startLevel("changing counters value to 0");
-		boolean isSucceeded = true;
-		for (int i = 0; i < 2; i++) {
-			resetCounters();
-			enodeBConfig.waitGranularityPeriodTime(dut1);
-			isSucceeded = verifyCountersReset(i);
-			if (isSucceeded)
-				break;
-
-			if (i == 0)
-				report.report("Counters values are not 0, reseting counters to 0 again.");
-			else
-				break;
-		}
-		first_ENB_succ = 0;
-		first_ENB_att = 0;
-
-		second_ENB_succ = 0;
-		second_ENB_att = 0;
-		GeneralUtils.stopLevel();
-		return isSucceeded;
-	}
-
 	private static void resetCounters() {
 		for (String counter : passCriteria.keySet()) {
 			HashMap<String, String> counterValue = new HashMap<>();
@@ -526,31 +310,6 @@ public class MultiEnodebAction extends EnodebAction {
 			GeneralUtils.printToConsole(enodeB.getName() + " set value: " + String.valueOf(result1));
 			GeneralUtils.printToConsole(neighbor.getName() + " set value: " + String.valueOf(result2));
 		}
-	}
-
-	private boolean verifyCountersReset(int i) {
-		boolean isSucceeded = true;
-		for (String counter : passCriteria.values()) {
-			int mainCounterValue = enodeB.getCountersValue(counter);
-			if (mainCounterValue != 0) {
-				if (i == 1) {
-					report.report("Counter " + counter + " values are " + mainCounterValue + " instead of 0 in enodeB: "
-							+ enodeB.getName(), Reporter.WARNING);
-				}
-				isSucceeded = false;
-			} else
-				report.report("Counter " + counter + " values are 0 in enodeB: " + enodeB.getName());
-			int neighborCounterValue = neighbor.getCountersValue(counter);
-			if (neighborCounterValue != 0) {
-				if (i == 1) {
-					report.report("Counter " + counter + " values are " + neighborCounterValue
-							+ " instead of 0 in enodeB: " + neighbor.getName(), Reporter.WARNING);
-				}
-				isSucceeded = false;
-			} else
-				report.report("Counter " + counter + " values are 0 in enodeB: " + neighbor.getName());
-		}
-		return isSucceeded;
 	}
 
 	private static void moveAtt(AttenuatorSet attenuatorSetUnderTest, int from, int to) {

@@ -241,6 +241,7 @@ public class MultiEnodebAction extends EnodebAction {
 
 	static class HandOverClass implements Runnable{
 		public void start() {
+			maxduration = timeToHO*60*1000;
 			GeneralUtils.startLevel("Moving attenuator for " + maxduration / 60000 + " minutes to create Hand-Over");
 			report.report("Attenuator IP: " + attenuatorSetUnderTest.getName());
 			GeneralUtils.stopLevel();
@@ -255,7 +256,6 @@ public class MultiEnodebAction extends EnodebAction {
 			long endTime = System.currentTimeMillis() + timeToHO*60*1000;
 			long resetCounters = startTime;
 			int counter = 0;
-			maxduration = timeToHO*60*1000;
 			int waitingPeriodTime = dut1.getGranularityPeriod();
 			while (System.currentTimeMillis() < endTime) {
 				moveAtt(attenuatorSetUnderTest, attenuatorMin, attenuatorMax);

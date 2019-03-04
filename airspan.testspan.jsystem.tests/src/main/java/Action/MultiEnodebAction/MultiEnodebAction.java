@@ -195,10 +195,10 @@ public class MultiEnodebAction extends EnodebAction {
 		
 		preTest();
 		
-		counterSuccess = "S1IntraFreqInCompSuccRnlRadioRsn";
-		counterSuccesssnmp = "asLteStatsHoS1IntraFreqInCompSuccRnlRadioRsn";
-		counterAttempt = "S1IntraFreqInPrepSuccRnlRadioRsn";
-		counterAttemptsnmp = "asLteStatsHoS1IntraFreqInPrepSuccRnlRadioRsn";
+		counterSuccess = "HoS1IntraFreqInCompSuccRnlRadioRsn";
+		counterSuccesssnmp = "HoS1IntraFreqInCompSuccRnlRadioRsn";
+		counterAttempt = "HoS1IntraFreqInPrepSuccRnlRadioRsn";
+		counterAttemptsnmp = "HoS1IntraFreqInPrepSuccRnlRadioRsn";
 
 		passCriteria.put(counterSuccess, counterSuccesssnmp);
 		passCriteria.put(counterAttempt, counterAttemptsnmp);

@@ -133,7 +133,9 @@ public abstract class NetspanServer extends SystemObjectImpl {
      */
     public static NetspanServer getInstance(String nms) throws Exception {
     	netspanObj = nms;
-        return getInstance();
+    	changeVersion(null);
+    	NetspanServer netspan = getInstance();
+        return netspan;
     }
     
     @Override

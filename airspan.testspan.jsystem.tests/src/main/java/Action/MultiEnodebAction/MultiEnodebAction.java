@@ -244,7 +244,7 @@ public class MultiEnodebAction extends EnodebAction {
 			GeneralUtils.startLevel("Moving attenuator for " + maxduration / 60000 + " minutes to create Hand-Over");
 			report.report("Attenuator IP: " + attenuatorSetUnderTest.getName());
 			GeneralUtils.stopLevel();
-			startedHO = true;
+			setStartedHO(true);
 			Thread runnableThread = new Thread(this);
 			runnableThread.start();
 		}

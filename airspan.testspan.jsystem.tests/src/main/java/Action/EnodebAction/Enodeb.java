@@ -11,8 +11,10 @@ import org.junit.Test;
 
 import EnodeB.EnodeB;
 import EnodeB.EnodeB.Architecture;
+import EnodeB.Components.Session.Session;
 import EnodeB.EnodeBWithDAN;
 import EnodeB.Components.DAN;
+import EnodeB.Components.EnodeBComponent;
 import Netspan.EnbProfiles;
 import Netspan.NetspanServer;
 import Netspan.API.Enums.CellBarringPolicies;
@@ -841,6 +843,108 @@ public class Enodeb extends EnodebAction {
         	}        	
         }
     }
+    
+    private String serialCommand;
+	private int CommandTimeout = 1;
+	private String serialOutput = null;
+	private boolean lteCliRequired;    
+   
+
+	public String getSerialCommand() {
+		return serialCommand;
+	}
+
+	public void setSerialCommand(String serialCommand) {
+		this.serialCommand = serialCommand;
+	}
+    
+
+	public String getSerialOutput() {
+		return serialOutput;
+	}
+
+	public void setSerialOutput(String serialOutput) {
+		this.serialOutput = serialOutput;
+	}
+
+	public int getCommandTimeout() {
+		return CommandTimeout;
+	}
+	
+	@ParameterProperties(description = "Command timeout (in minutes)")
+	public void setCommandTimeout(int commandTimeout) {
+		CommandTimeout = commandTimeout;
+	}
+
+	public boolean getLteCliRequired() {
+		return lteCliRequired;
+	}
+
+	public void setLteCliRequired(boolean lteCliRequired) {
+		this.lteCliRequired = lteCliRequired;
+	}
+   
+
+	@Test
+    @TestProperties(name = "sendCommandToSerial"
+    					, returnParam = { "IsTestWasSuccessful" }
+    					, paramsInclude = { "DUT", "SerialCommand", "SerialOutput" , "LteCliRequired", "CommandTimeout"})
+    public void sendCommandToSerial() {
+    	
+    	String command = this.getSerialCommand();
+    	String output = this.getSerialOutput();
+    	int timeout = this.CommandTimeout;
+    	Session session = this.dut.getSerialSession();
+    	
+    	if(!session.isConnected()) {
+    		if(!session.connectSession()) {
+    			report.report("Can't connect to serial host " + dut.getName(), Reporter.FAIL);
+                return;
+    		}
+    		else
+    			report.report("Serial host " + dut.getName() + " connected", Reporter.PASS);
+    	}
+    	
+    	if(!session.isLoggedSession()) {
+    		if(!session.loginSerial()) {
+    			report.report("Can't login to serial host " + dut.getName(), Reporter.FAIL);
+                return;
+    		}
+    		else
+    			report.report("LoggedIn to serial host " + dut.getName(), Reporter.FAIL);
+    		
+    		if(this.lteCliRequired) {
+        		if(session.isShouldStayInCli()) {
+        			if(!session.sendCommands("", "lte_cli:>>"))
+					{
+						GeneralUtils.printToConsole(dut.getName() + " is out of lte_cli, trying to enter.");
+						if(session.sendCommands("/bs/lteCli", "lte_cli:>>"))
+						{
+							GeneralUtils.printToConsole("update log level from stay in cli");
+							session.updateLogLevel();
+						}
+						else
+						{
+							GeneralUtils.printToConsole(dut.getName() + " is still out of lte_cli, disconnecting session.");
+							session.disconnectSession();
+							report.report(dut.getName() + " is still out of lte_cli, disconnecting session", Reporter.FAIL);
+			                return;
+						}
+					}
+        		}
+        	}
+    	}
+    	
+    	String response_text = session.sendCommands(EnodeBComponent.SHELL_PROMPT, command, null, timeout);
+    	
+    	if(output != null) {
+    		if(response_text.indexOf(output) > 0)
+    			report.report("Real output match expected pattern", Reporter.PASS);
+    		else
+    			report.report("Real output not match expected pattern", Reporter.FAIL);
+    	}
+    }
+
     
     @Override
     public void init() {

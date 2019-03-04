@@ -890,11 +890,13 @@ public class Enodeb extends EnodebAction {
     					, returnParam = { "IsTestWasSuccessful" }
     					, paramsInclude = { "DUT", "SerialCommand", "SerialOutput" , "LteCliRequired", "CommandTimeout"})
     public void sendCommandToSerial() {
-    	
+    			
     	String command = this.getSerialCommand();
     	String output = this.getSerialOutput();
     	int timeout = this.CommandTimeout;
     	Session session = this.dut.getSerialSession();
+    	
+    	
     	
     	if(!session.isConnected()) {
     		if(!session.connectSession()) {

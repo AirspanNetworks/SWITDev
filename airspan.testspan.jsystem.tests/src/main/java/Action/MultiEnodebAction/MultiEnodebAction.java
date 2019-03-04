@@ -200,7 +200,9 @@ public class MultiEnodebAction extends EnodebAction {
 		counterAttempt = "S1IntraFreqInPrepSuccRnlRadioRsn";
 		counterAttemptsnmp = "asLteStatsHoS1IntraFreqInPrepSuccRnlRadioRsn";
 
-		
+		passCriteria.put(counterSuccess, counterSuccesssnmp);
+		passCriteria.put(counterAttempt, counterAttemptsnmp);
+
 		/*counterAttempt = hoType.toString() + freqType + "FreqInCompSuccRnlRadioRsn";
 		counterSuccess = hoType.toString() + freqType + "FreqInAttRnlRadioRsn";;
 		
@@ -599,7 +601,7 @@ public class MultiEnodebAction extends EnodebAction {
 			if (theoreticalAttempts < 60) {
 				GeneralUtils.startLevel("Number of attempts out of real attenuator moves is: "
 						+ new DecimalFormat("##.##").format(theoreticalAttempts) + "%");
-				report.report("Number of attempts is less then 60%", Reporter.WARNING);
+				report.report("Number of attempts is less then 60%", Reporter.FAIL);
 				report.report("Number of attempts / attenuator moves");
 				GeneralUtils.stopLevel();
 			} else {
@@ -623,7 +625,7 @@ public class MultiEnodebAction extends EnodebAction {
 				if (total_HO_Success_rate_out_of_attempts < WARNING_LEVEL) {
 					report.report(
 							"Success rate lower then Threshold (" + GeneralUtils.fractureToPercent(PASS_LEVEL) + ")",
-							Reporter.WARNING);
+							Reporter.FAIL);
 				}
 				if (total_HO_Success_rate_out_of_attempts > WARNING_LEVEL
 						&& total_HO_Success_rate_out_of_attempts < PASS_LEVEL) {

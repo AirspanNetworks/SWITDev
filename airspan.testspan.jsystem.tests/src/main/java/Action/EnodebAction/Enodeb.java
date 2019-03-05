@@ -1086,6 +1086,8 @@ public class Enodeb extends EnodebAction {
     	int timeout = this.commandTimeout;
     	Session session = this.dut.getSerialSession();
     	
+    	GeneralUtils.startLevel("Sent command: '" + command + "'");
+    	
     	if(!session.isConnected()) {
     		if(!session.connectSession()) {
     			report.report("Can't connect to serial host " + dut.getName(), Reporter.FAIL);
@@ -1101,17 +1103,17 @@ public class Enodeb extends EnodebAction {
                 return false;
     		}
     		else
-    			report.report("LoggedIn to serial host " + dut.getName(), Reporter.FAIL);
+    			report.report("LoggedIn to serial host " + dut.getName(), Reporter.PASS);
     		
     		if(this.lteCliRequired) {
         		if(session.isShouldStayInCli()) {
         			if(!session.sendCommands("", "lte_cli:>>"))
 					{
-						GeneralUtils.printToConsole(dut.getName() + " is out of lte_cli, trying to enter.");
+        				report.report(dut.getName() + " is out of lte_cli, trying to enter.");
 						if(session.sendCommands("/bs/lteCli", "lte_cli:>>"))
 						{
-							GeneralUtils.printToConsole("update log level from stay in cli");
-							session.updateLogLevel();
+							report.report("update log level from stay in cli");
+//							session.updateLogLevel();
 						}
 						else
 						{
@@ -1127,7 +1129,7 @@ public class Enodeb extends EnodebAction {
     	int status = Reporter.PASS;
     	String text_status = "";
     	String response_text = session.sendCommands(EnodeBComponent.SHELL_PROMPT, command, null, timeout);
-    	GeneralUtils.startLevel("Sent command: '" + command + "'");
+    	
     	
     	if(output != null) {
     		if(response_text.indexOf(output) > 0) {

@@ -1081,9 +1081,9 @@ public class Enodeb extends EnodebAction {
     					, paramsInclude = { "DUT", "SerialCommand", "SerialOutput" , "LteCliRequired", "CommandTimeout"})
     public boolean sendCommandToSerial() throws Exception {
     			
-    	String command = this.serialCommand;
-    	String output = this.serialOutput;
-    	int timeout = this.commandTimeout;
+    	String command = this.getSerialCommand();
+    	String output = this.getSerialOutput();
+    	int timeout = this.getCommandTimeout();
     	Session session = this.dut.getSerialSession();
     	
     	GeneralUtils.startLevel("Sent command: '" + command + "'");
@@ -1105,7 +1105,7 @@ public class Enodeb extends EnodebAction {
     		else
     			report.report("LoggedIn to serial host " + dut.getName(), Reporter.PASS);
     		
-    		if(this.lteCliRequired) {
+    		if(this.isLteCliRequired()) {
         		if(session.isShouldStayInCli()) {
         			if(!session.sendCommands("", "lte_cli:>>"))
 					{
@@ -1146,6 +1146,22 @@ public class Enodeb extends EnodebAction {
     	GeneralUtils.stopLevel();
     	return status == Reporter.PASS;
     }
+
+	public String getSerialCommand() {
+		return serialCommand;
+	}
+
+	public String getSerialOutput() {
+		return serialOutput;
+	}
+
+	public int getCommandTimeout() {
+		return commandTimeout;
+	}
+
+	public boolean isLteCliRequired() {
+		return lteCliRequired;
+	}
 
 	
 	

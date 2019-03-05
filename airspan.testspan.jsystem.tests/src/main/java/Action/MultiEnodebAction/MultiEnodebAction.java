@@ -33,7 +33,6 @@ public class MultiEnodebAction extends EnodebAction {
 	static EnodeB enodeB;
 	static EnodeB neighbor;
 	int expectedNumOfHO = 30;
-	HashMap<String, String> counters = new HashMap<>();
 	public static HashMap<String, String> passCriteria = new HashMap<>();
 	static ArrayList<UE> dynUEList = new ArrayList<>();
 	ArrayList<UE> statUEList = new ArrayList<>();
@@ -162,7 +161,7 @@ public class MultiEnodebAction extends EnodebAction {
 	private void afterGetStats(){
 		setStartedHO(false);
 		setFinishedHO(false);
-		counters.clear();
+		passCriteria.clear();
 		first_ENB_succ = 0;
 		first_ENB_att = 0;
 		second_ENB_succ = 0;

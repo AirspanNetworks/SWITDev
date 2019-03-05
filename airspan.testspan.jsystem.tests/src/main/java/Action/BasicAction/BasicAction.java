@@ -12,6 +12,9 @@ import PowerControllers.PowerController;
 import PowerControllers.PowerControllerPort;
 import Utils.GeneralUtils;
 import Utils.SSHConnector;
+import Utils.ConnectionManager.ConnectionInfo;
+import Utils.ConnectionManager.ConnectorTypes;
+import Utils.ConnectionManager.TelnetConnector;
 import jsystem.framework.ParameterProperties;
 import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
@@ -21,6 +24,15 @@ public class BasicAction extends Action {
 	private String ipPowerPort;
 	private String debugCommands;
 	private String ip;
+	private int port;
+	public int getPort() {
+		return port;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
+	}
+
 	private String userName;
 	private String password;
 	private String sleepTime;
@@ -132,6 +144,63 @@ public class BasicAction extends Action {
 		}catch(Exception e) {
 			report.report("Failed to init Ip Power System - check SUT");
 			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	@TestProperties(name = "Send Commands To Serial", returnParam = "LastStatus", paramsInclude = { "Ip", "Port", "Password",
+			"UserName", "DebugCommands", "SleepTime" })
+	public void sendCommandsToSerial() {
+		boolean isNull = false;
+		try {
+			
+			if(ip == null){
+				report.report("IP cannot be empty",Reporter.FAIL);
+				isNull = true;
+			}
+			if(port == 0){
+				report.report("Port cannot be empty",Reporter.FAIL);
+				isNull = true;
+			}
+			if(userName == null){
+				report.report("UserName cannot be empty",Reporter.FAIL);
+				isNull = true;
+			}
+			if(password == null){
+				report.report("Password cannot be empty",Reporter.FAIL);
+				isNull = true;
+			}
+			if(debugCommands == null){
+				report.report("DebugCommands cannot be empty",Reporter.FAIL);
+				isNull = true;
+			}
+			
+			if(isNull){
+				return;
+			}
+			
+			GeneralUtils.startLevel("Command sent to serial");
+			
+			ConnectionInfo conn_info = new ConnectionInfo("Serial", ip, port, userName, password, ConnectorTypes.Telnet);
+			
+			TelnetConnector tlnt = new TelnetConnector(conn_info);
+			tlnt.initConnection();
+			
+			if(tlnt.terminal.isConnected()){
+				for (String cmd : this.debugCommands.split(",")) {
+					String output = tlnt.sendCommand(cmd, 1000);
+					GeneralUtils.unSafeSleep(1000);
+					report.report("Response for "+cmd+":"+output);
+				}
+				int wait = sleepTime == null ? 0 : Integer.valueOf(sleepTime)*1000;
+				GeneralUtils.unSafeSleep(wait);
+				tlnt.disconnect();
+			}else{
+				report.report("Failed to connect to device",Reporter.FAIL);
+			}
+		}
+		finally {
+			GeneralUtils.stopLevel();
 		}
 	}
 	

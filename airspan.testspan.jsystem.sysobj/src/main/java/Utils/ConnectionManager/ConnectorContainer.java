@@ -18,7 +18,7 @@ public final class ConnectorContainer {
 		collection.put(connection_info.name, new HashMap<ConnectorTypes,IRemoteConnector>());
 	}
 	
-	public IRemoteConnector  init_connection(ConnectionInfo connection_info) {
+	public IRemoteConnector init_connection(ConnectionInfo connection_info) {
 		IRemoteConnector result_connector = null;
 		switch (connection_info.type) {
 			case SSH:
@@ -32,7 +32,7 @@ public final class ConnectorContainer {
 		return result_connector;
 	}
 	
-	public final IRemoteConnector Init(ConnectionInfo connection_info) {
+	public final IRemoteConnector getConnnection(ConnectionInfo connection_info) {
 		
 		IRemoteConnector result_connector = null;
 		
@@ -42,27 +42,17 @@ public final class ConnectorContainer {
 			}
 			else {
 				result_connector = init_connection(connection_info);
-				Map<ConnectorTypes, IRemoteConnector> date_module = new HashMap<ConnectorTypes, IRemoteConnector>();  
-				this.collection.put(connection_info.name, date_module);
+				Map<ConnectorTypes, IRemoteConnector> sub_module = new HashMap<ConnectorTypes, IRemoteConnector>();  
+				sub_module.put(connection_info.type, result_connector);
+				this.collection.replace(connection_info.name, sub_module);
 			}
 		}
 		else {
-			
+			result_connector = init_connection(connection_info);
+			Map<ConnectorTypes, IRemoteConnector> sub_module = new HashMap<ConnectorTypes, IRemoteConnector>();  
+			sub_module.put(connection_info.type, result_connector);
+			this.collection.put(connection_info.name, sub_module);
 		}
-		
-		
-		
-		
-		
-		switch (connection_info.type) {
-			case SSH:
-				result_connector = new SSHConnector(connection_info);
-				break;
-			case Telnet:
-				result_connector = new TelnetConnector(connection_info);
-				break;
-		}
-		
 		return result_connector;
 	}
 	

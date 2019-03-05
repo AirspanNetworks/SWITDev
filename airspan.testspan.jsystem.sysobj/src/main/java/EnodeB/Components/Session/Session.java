@@ -538,6 +538,8 @@ public class Session implements Runnable {
 		}
 	}
 	
+	
+	
 	public boolean isShouldStayInCli() {
 		return shouldStayInCli;
 	}

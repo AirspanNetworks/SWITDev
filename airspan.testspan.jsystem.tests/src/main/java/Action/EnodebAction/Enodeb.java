@@ -1067,7 +1067,7 @@ public class Enodeb extends EnodebAction {
 
 	@ParameterProperties(description = "Command Timeout (1m - default)")
 	public void setCommandTimeout(int commandTimeout) {
-		this.commandTimeout = commandTimeout;
+		this.commandTimeout = commandTimeout * 1000;
 	}
 	
 	@ParameterProperties(description = "True - if command require lteCli shell")
@@ -1127,7 +1127,7 @@ public class Enodeb extends EnodebAction {
     	int status = Reporter.PASS;
     	String text_status = "";
     	String response_text = session.sendCommands(EnodeBComponent.SHELL_PROMPT, command, null, timeout);
-    	report.startLevel("Sent command: '" + command + "'");
+    	GeneralUtils.startLevel("Sent command: '" + command + "'");
     	
     	if(output != null) {
     		if(response_text.indexOf(output) > 0) {
@@ -1140,8 +1140,8 @@ public class Enodeb extends EnodebAction {
     		}
     		report.report("Real output " + (status == Reporter.PASS ? "not" : "") + "match expected pattern", status);
     	}
-    	
-    	report.endReport(response_text, text_status);
+    	report.report(response_text);
+    	GeneralUtils.stopLevel();
     	return status == Reporter.PASS;
     }
 

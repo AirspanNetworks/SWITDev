@@ -1051,8 +1051,8 @@ public class Enodeb extends EnodebAction {
 	}
 	
 	private String serialCommand;
-	private String serialOutput;
-	private int commandTimeout  = 1;
+	private String expectedOutput;
+	private int commandTimeout  = 1000;
 	private boolean lteCliRequired = false;
 	
 	@ParameterProperties(description = "Commmand to be send via serial")
@@ -1060,29 +1060,45 @@ public class Enodeb extends EnodebAction {
 		this.serialCommand = serialCommand;
 	}
 
-	@ParameterProperties(description = "Expected Command output; If exists recieved output will be evaluated for matching")
-	public void setSerialOutput(String serialOutput) {
-		this.serialOutput = serialOutput;
+	public String getSerialCommand() {
+		return serialCommand;
 	}
 
-	@ParameterProperties(description = "Command Timeout (1m - default)")
+	@ParameterProperties(description = "Expected Command output; If exists recieved output will be evaluated for matching")
+	public void setExpectedOutput(String expectedOutput) {
+		this.expectedOutput = expectedOutput;
+	}
+
+	public String getExpectedOutput() {
+		return this.expectedOutput;
+	}
+
+	@ParameterProperties(description = "Command Timeout (In minutes; Default: 1)")
 	public void setCommandTimeout(int commandTimeout) {
 		this.commandTimeout = commandTimeout * 1000;
+	}
+	
+	public int getCommandTimeout() {
+		return commandTimeout;
 	}
 	
 	@ParameterProperties(description = "True - if command require lteCli shell")
 	public void setLteCliRequired(boolean lteCliRequired) {
 		this.lteCliRequired = lteCliRequired;
 	}
+	
+	public boolean getLteCliRequired() {
+		return lteCliRequired;
+	}
 
 	@Test
     @TestProperties(name = "sendCommandToSerial"
     					, returnParam = { "IsTestWasSuccessful" }
-    					, paramsInclude = { "DUT", "SerialCommand", "SerialOutput" , "LteCliRequired", "CommandTimeout"})
-    public boolean sendCommandToSerial() throws Exception {
+    					, paramsInclude = { "DUT", "SerialCommand", "ExpectedOutput" , "LteCliRequired", "CommandTimeout"})
+    public void sendCommandToSerial() throws Exception {
     			
     	String command = this.getSerialCommand();
-    	String output = this.getSerialOutput();
+    	String output = this.getExpectedOutput();
     	int timeout = this.getCommandTimeout();
     	Session session = this.dut.getSerialSession();
     	
@@ -1091,7 +1107,7 @@ public class Enodeb extends EnodebAction {
     	if(!session.isConnected()) {
     		if(!session.connectSession()) {
     			report.report("Can't connect to serial host " + dut.getName(), Reporter.FAIL);
-                return false;
+                return;
     		}
     		else
     			report.report("Serial host " + dut.getName() + " connected", Reporter.PASS);
@@ -1100,12 +1116,12 @@ public class Enodeb extends EnodebAction {
     	if(!session.isLoggedSession()) {
     		if(!session.loginSerial()) {
     			report.report("Can't login to serial host " + dut.getName(), Reporter.FAIL);
-                return false;
+                return;
     		}
     		else
     			report.report("LoggedIn to serial host " + dut.getName(), Reporter.PASS);
     		
-    		if(this.isLteCliRequired()) {
+    		if(this.getLteCliRequired()) {
         		if(session.isShouldStayInCli()) {
         			if(!session.sendCommands("", "lte_cli:>>"))
 					{
@@ -1120,7 +1136,7 @@ public class Enodeb extends EnodebAction {
 							GeneralUtils.printToConsole(dut.getName() + " is still out of lte_cli, disconnecting session.");
 							session.disconnectSession();
 							report.report(dut.getName() + " is still out of lte_cli, disconnecting session", Reporter.FAIL);
-			                return false;
+			                return;
 						}
 					}
         		}
@@ -1144,25 +1160,10 @@ public class Enodeb extends EnodebAction {
     	}
     	report.report(response_text);
     	GeneralUtils.stopLevel();
-    	return status == Reporter.PASS;
+//    	return status == Reporter.PASS;
     }
 
-	public String getSerialCommand() {
-		return serialCommand;
-	}
-
-	public String getSerialOutput() {
-		return serialOutput;
-	}
-
-	public int getCommandTimeout() {
-		return commandTimeout;
-	}
-
-	public boolean isLteCliRequired() {
-		return lteCliRequired;
-	}
-
+	
 	
 	
 }

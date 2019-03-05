@@ -1112,6 +1112,9 @@ public class Enodeb extends EnodebAction {
     		else
     			report.report("Serial host " + dut.getName() + " connected", Reporter.PASS);
     	}
+    	else {
+    		report.report("Connected to serial host " + dut.getName(), Reporter.PASS);
+    	}
     	
     	if(!session.isLoggedSession()) {
     		if(!session.loginSerial()) {
@@ -1129,6 +1132,7 @@ public class Enodeb extends EnodebAction {
 						if(session.sendCommands("/bs/lteCli", "lte_cli:>>"))
 						{
 							report.report("update log level from stay in cli");
+							
 //							session.updateLogLevel();
 						}
 						else
@@ -1142,6 +1146,10 @@ public class Enodeb extends EnodebAction {
         		}
         	}
     	}
+    	else {
+    		report.report("LoggedIn to serial host " + dut.getName(), Reporter.PASS);
+    	}
+    	
     	int status = Reporter.PASS;
     	String text_status = "";
     	String response_text = session.sendCommands(EnodeBComponent.SHELL_PROMPT, command, null, timeout);
@@ -1158,7 +1166,7 @@ public class Enodeb extends EnodebAction {
     		}
     		report.report("Real output " + (status == Reporter.PASS ? "not" : "") + "match expected pattern", status);
     	}
-    	report.report(response_text);
+    	report.report("Command output: -------------------\n" +  response_text + "\n----------------------");
     	GeneralUtils.stopLevel();
 //    	return status == Reporter.PASS;
     }

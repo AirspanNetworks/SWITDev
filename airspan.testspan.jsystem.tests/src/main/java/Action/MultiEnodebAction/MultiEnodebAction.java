@@ -149,6 +149,7 @@ public class MultiEnodebAction extends EnodebAction {
 			LongHOResults();
 			setStartedHO(false);
 			setFinishedHO(false);
+			counters.clear();
 		}else{
 			while(true){
 				report.report("Hand Over did not finish. Wait more 5 minutes");
@@ -157,6 +158,7 @@ public class MultiEnodebAction extends EnodebAction {
 					LongHOResults();
 					setStartedHO(false);
 					setFinishedHO(false);
+					counters.clear();
 					return;
 				}
 			}
@@ -180,28 +182,13 @@ public class MultiEnodebAction extends EnodebAction {
 		
 		setCounters();
 		
-
-		/*counterAttempt = hoType.toString() + freqType + "FreqInCompSuccRnlRadioRsn";
-		counterSuccess = hoType.toString() + freqType + "FreqInAttRnlRadioRsn";;
-		
-		counterAttemptsnmp = "asLteStatsHo" + counterAttempt;
-		counterSuccesssnmp = "asLteStatsHo" + counterSuccess;*/
-				
 		if (!gettingPassCratiriaValue()) {
 			report.report("Failed to reset counters", Reporter.FAIL);
 			return;
 		}
-		
-		/*attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(CommonConstants.ATTENUATOR_SET_NAME);
-		attenuatorMin = attenuatorSetUnderTest.getMinAttenuation();
-		attenuatorMax = attenuatorSetUnderTest.getMaxAttenuation();
-		ATT_STEP_TIME = attenuatorSetUnderTest.getStepTime();
-		ATT_STEP = attenuatorSetUnderTest.getAttenuationStep();*/
-		
+				
 		HandOverClass hoclass = new HandOverClass();
 		hoclass.start();
-		
-
     }
 
 	private void setCounters() {

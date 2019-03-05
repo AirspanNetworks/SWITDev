@@ -7,7 +7,7 @@ import Entities.StreamParams;
 import Entities.ITrafficGenerator.CounterUnit;
 import Entities.ITrafficGenerator.Protocol;
 import Entities.ITrafficGenerator.TransmitDirection;
-import Netspan.API.Enums.HandoverTypes;
+import Netspan.API.Enums.HandoverType;
 import Netspan.API.Enums.HoControlStateTypes;
 import Netspan.API.Enums.X2ControlStateTypes;
 import UE.UE;
@@ -90,9 +90,9 @@ public class PacketForwarding extends TPTBase {
 	public void stream1MDLPacketsInBothAMAndUMERABsAndPerformMultipleX2HOs() {
 		String hoCounterString = "HoX2IntraFreqInCompSuccRnlRadioRsn";
 		neighborsUtils.addNeighbor(dut, dut2, HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC,
-				HandoverTypes.TRIGGER_X_2, true, "0");
+				HandoverType.TRIGGER_X_2, true, "0");
 		neighborsUtils.addNeighbor(dut2, dut, HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC,
-				HandoverTypes.TRIGGER_X_2, true, "0");
+				HandoverType.TRIGGER_X_2, true, "0");
 		testName = "Stream_1Mbps_DL_Packets_In_both_AM_and_UM_ERABs_and_perform_multiple_X2_HOs";
 		packetForwardingTest(1, 1, 800, hoCounterString);
 		neighborsUtils.deleteNeighbor(dut, dut2);
@@ -104,9 +104,9 @@ public class PacketForwarding extends TPTBase {
 	public void stream1MDLPacketsInBothAMAndUMERABsAndPerformMultipleS1HOs() {
 		String hoCounterString = "HoS1IntraFreqInCompSuccRnlRadioRsn";
 		neighborsUtils.addNeighbor(dut, dut2, HoControlStateTypes.ALLOWED, X2ControlStateTypes.NOT_ALLOWED,
-				HandoverTypes.S_1_ONLY, true, "0");
+				HandoverType.S_1_ONLY, true, "0");
 		neighborsUtils.addNeighbor(dut2, dut, HoControlStateTypes.ALLOWED, X2ControlStateTypes.NOT_ALLOWED,
-				HandoverTypes.S_1_ONLY, true, "0");
+				HandoverType.S_1_ONLY, true, "0");
 		testName = "Stream_1Mbps_DL_Packets_In_both_AM_and_UM_ERABs_and_perform_multiple_S1_HOs";
 		packetForwardingTest(1, 1, 800, hoCounterString);
 		neighborsUtils.deleteNeighbor(dut, dut2);
@@ -118,9 +118,9 @@ public class PacketForwarding extends TPTBase {
 	public void stream10MDLPacketsInBothAMAndUMERABsAndPerformMultipleX2HOs() {
 		String hoCounterString = "HoX2IntraFreqInCompSuccRnlRadioRsn";
 		neighborsUtils.addNeighbor(dut, dut2, HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC,
-				HandoverTypes.TRIGGER_X_2, true, "0");
+				HandoverType.TRIGGER_X_2, true, "0");
 		neighborsUtils.addNeighbor(dut2, dut, HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC,
-				HandoverTypes.TRIGGER_X_2, true, "0");
+				HandoverType.TRIGGER_X_2, true, "0");
 		testName = "Stream_10Mbps_DL_Packets_In_both_AM_and_UM_ERABs_and_perform_multiple_X2_HOs";
 		packetForwardingTest(10, 1, 800, hoCounterString);
 		neighborsUtils.deleteNeighbor(dut, dut2);
@@ -132,9 +132,9 @@ public class PacketForwarding extends TPTBase {
 	public void stream10MDLPacketsInBothAMAndUMERABsAndPerformMultipleS1HOs() {
 		String hoCounterString = "HoS1IntraFreqInCompSuccRnlRadioRsn";
 		neighborsUtils.addNeighbor(dut, dut2, HoControlStateTypes.ALLOWED, X2ControlStateTypes.NOT_ALLOWED,
-				HandoverTypes.S_1_ONLY, true, "0");
+				HandoverType.S_1_ONLY, true, "0");
 		neighborsUtils.addNeighbor(dut2, dut, HoControlStateTypes.ALLOWED, X2ControlStateTypes.NOT_ALLOWED,
-				HandoverTypes.S_1_ONLY, true, "0");
+				HandoverType.S_1_ONLY, true, "0");
 		testName = "Stream_10Mbps_DL_Packets_In_both_AM_and_UM_ERABs_and_perform_multiple_S1_HOs";
 		packetForwardingTest(10, 1, 800, hoCounterString);
 		neighborsUtils.deleteNeighbor(dut, dut2);
@@ -146,9 +146,9 @@ public class PacketForwarding extends TPTBase {
 	public void stream35MDLPacketsInBothAMAndUMERABsAndPerformMultipleX2HOs() {
 		String hoCounterString = "HoX2IntraFreqInCompSuccRnlRadioRsn";
 		neighborsUtils.addNeighbor(dut, dut2, HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC,
-				HandoverTypes.TRIGGER_X_2, true, "0");
+				HandoverType.TRIGGER_X_2, true, "0");
 		neighborsUtils.addNeighbor(dut2, dut, HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC,
-				HandoverTypes.TRIGGER_X_2, true, "0");
+				HandoverType.TRIGGER_X_2, true, "0");
 		testName = "Stream_35Mbps_DL_Packets_In_both_AM_and_UM_ERABs_and_perform_multiple_X2_HOs";
 		packetForwardingTest(35, 5, 1400, hoCounterString);
 		neighborsUtils.deleteNeighbor(dut, dut2);
@@ -160,9 +160,9 @@ public class PacketForwarding extends TPTBase {
 	public void stream35MDLPacketsInBothAMAndUMERABsAndPerformMultipleS1HOs() {
 		String hoCounterString = "HoS1IntraFreqInCompSuccRnlRadioRsn";
 		neighborsUtils.addNeighbor(dut, dut2, HoControlStateTypes.ALLOWED, X2ControlStateTypes.NOT_ALLOWED,
-				HandoverTypes.S_1_ONLY, true, "0");
+				HandoverType.S_1_ONLY, true, "0");
 		neighborsUtils.addNeighbor(dut2, dut, HoControlStateTypes.ALLOWED, X2ControlStateTypes.NOT_ALLOWED,
-				HandoverTypes.S_1_ONLY, true, "0");
+				HandoverType.S_1_ONLY, true, "0");
 		testName = "Stream_35Mbps_DL_Packets_In_both_AM_and_UM_ERABs_and_perform_multiple_S1_HOs";
 		packetForwardingTest(35, 5, 1400, hoCounterString);
 		neighborsUtils.deleteNeighbor(dut, dut2);

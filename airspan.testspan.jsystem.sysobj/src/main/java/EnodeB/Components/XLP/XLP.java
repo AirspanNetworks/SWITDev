@@ -576,7 +576,7 @@ public abstract class XLP extends EnodeBComponent {
     }
 
     public abstract boolean addNbr(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
-                                   X2ControlStateTypes x2ControlStatus, HandoverTypes HandoverTypes, boolean isStaticNeighbor,
+                                   X2ControlStateTypes x2ControlStatus, HandoverType HandoverType, boolean isStaticNeighbor,
                                    String qOffsetRange) throws IOException;
 
     public abstract boolean add3PartyNbrs(int numberOfNbr, final long mnoBroadcastPlmn, long startEutranCellId,
@@ -612,14 +612,14 @@ public abstract class XLP extends EnodeBComponent {
      * @param neighbor
      * @param hoControlStatus
      * @param x2ControlStatus
-     * @param HandoverTypes
+     * @param HandoverType
      * @param isStaticNeighbor
      * @param qOffsetRange
      * @return
      * @throws IOException
      */
     public abstract boolean verifyNbrList(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
-                                          X2ControlStateTypes x2ControlStatus, HandoverTypes HandoverTypes, boolean isStaticNeighbor,
+                                          X2ControlStateTypes x2ControlStatus, HandoverType HandoverType, boolean isStaticNeighbor,
                                           String qOffsetRange) throws IOException;
 
     public abstract boolean verifyNbrList(EnodeB neighbor) throws IOException;

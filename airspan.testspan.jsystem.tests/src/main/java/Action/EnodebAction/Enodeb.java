@@ -889,14 +889,12 @@ public class Enodeb extends EnodebAction {
     @TestProperties(name = "sendCommandToSerial"
     					, returnParam = { "IsTestWasSuccessful" }
     					, paramsInclude = { "DUT", "SerialCommand", "SerialOutput" , "LteCliRequired", "CommandTimeout"})
-    public void sendCommandToSerial() {
+    public void sendCommandToSerial() throws IOException {
     			
     	String command = this.getSerialCommand();
     	String output = this.getSerialOutput();
     	int timeout = this.CommandTimeout;
     	Session session = this.dut.getSerialSession();
-    	
-    	
     	
     	if(!session.isConnected()) {
     		if(!session.connectSession()) {
@@ -936,15 +934,25 @@ public class Enodeb extends EnodebAction {
         		}
         	}
     	}
-    	
+    	int status = Reporter.PASS;
+    	String text_status = "";
     	String response_text = session.sendCommands(EnodeBComponent.SHELL_PROMPT, command, null, timeout);
     	
     	if(output != null) {
-    		if(response_text.indexOf(output) > 0)
-    			report.report("Real output match expected pattern", Reporter.PASS);
-    		else
-    			report.report("Real output not match expected pattern", Reporter.FAIL);
+    		if(response_text.indexOf(output) > 0) {
+    			status = Reporter.PASS;
+    			text_status = "PASS";
+//    			report.report("Real output match expected pattern", Reporter.PASS);
+    		}
+    		else {
+    			status = Reporter.FAIL;
+    			text_status = "FAIL";
+//    			report.report("Real output not match expected pattern", Reporter.FAIL);
+    		}
     	}
+    	
+    	report.startLevel("Sent command: '" + command + "'");
+    	report.endReport(response_text, text_status);
     }
 
     

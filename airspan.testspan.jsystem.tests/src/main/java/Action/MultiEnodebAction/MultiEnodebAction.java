@@ -286,6 +286,7 @@ public class MultiEnodebAction extends EnodebAction {
 			}
 			 // moving attenuator stop level
 			report.report("Finished moving attenuator");
+			attenuatorSetUnderTest.close();
 			report.report("Wait for " + waitingPeriodTime + " minutes for Counter to update");
 			GeneralUtils.unSafeSleep(waitingPeriodTime * 60 * 1000);
 			updateResultsVariables(counter);

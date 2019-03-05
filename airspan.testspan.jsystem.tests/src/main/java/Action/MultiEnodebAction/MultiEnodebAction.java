@@ -69,6 +69,7 @@ public class MultiEnodebAction extends EnodebAction {
 	private static int finalCounter = 0;
 	
 	
+	
 	public static synchronized boolean isStartedHO() {
 		return startedHO;
 	}
@@ -145,24 +146,27 @@ public class MultiEnodebAction extends EnodebAction {
 	public void getStatisticsHO() {
 		if(!isStartedHO()){
 			report.report("Hand Over was not started. No results", Reporter.FAIL);
-		}else if(isFinishedHO()){
-			LongHOResults();
-			setStartedHO(false);
-			setFinishedHO(false);
-			counters.clear();
 		}else{
 			while(true){
-				report.report("Hand Over did not finish. Wait more 5 minutes");
-				GeneralUtils.unSafeSleep(5*60*1000);
 				if(isFinishedHO()){
 					LongHOResults();
-					setStartedHO(false);
-					setFinishedHO(false);
-					counters.clear();
+					afterGetStats();
 					return;
 				}
+				report.report("Hand Over did not finish. Wait more 5 minutes");
+				GeneralUtils.unSafeSleep(5*60*1000);
 			}
 		}
+	}
+	
+	private void afterGetStats(){
+		setStartedHO(false);
+		setFinishedHO(false);
+		counters.clear();
+		first_ENB_succ = 0;
+		first_ENB_att = 0;
+		second_ENB_succ = 0;
+		second_ENB_att = 0;
 	}
 	
 	@Test

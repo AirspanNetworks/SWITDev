@@ -23,9 +23,9 @@ import EnodeB.ProtoBuf.PbLteStatusOuterClass.PbLteNwElementStatus;
 import EnodeB.ProtoBuf.PbLteStatusOuterClass.PbLteRfStatus;
 import Entities.ITrafficGenerator.TransmitDirection;
 import Netspan.NetspanServer;
-import Netspan.API.Enums.EnabledDisabledStates;
+import Netspan.API.Enums.EnabledStates;
 import Netspan.API.Enums.EnbStates;
-import Netspan.API.Enums.HandoverType;
+import Netspan.API.Enums.HandoverTypes;
 import Netspan.API.Enums.HoControlStateTypes;
 import Netspan.API.Enums.ImageType;
 import Netspan.API.Enums.ServerProtocolType;
@@ -38,6 +38,7 @@ import Utils.DefaultNetspanProfiles;
 import Utils.GeneralUtils;
 import Utils.GeneralUtils.CellIndex;
 import Utils.GeneralUtils.RebootType;
+import Utils.GeneralUtils.RebootTypesNetspan;
 import Utils.InetAddressesHelper;
 import Utils.Pair;
 import Utils.TunnelManager;
@@ -106,6 +107,8 @@ public abstract class EnodeB extends SystemObjectImpl {
 	public static final int BOOTING_TIMOUT = 2 * 60 * 1000;// 120 sec
 	public static final int MAX_NBI_TOTAL_TRYOUTS = 8;
 	public static final long DOWNLOAD_TIMEOUT = 30 * 1000 * 60;
+	public static final long DOWNLOAD_WARNING_TIME = 20 * 1000 * 60;
+	public static final long DOWNLOAD_COMPLETED_TIMEOUT = 1 * 1000 * 60;
 	public static final long ACTIVATE_TIMEOUT = 20 * 1000 * 60;
 	public static long WAIT_FOR_ALL_RUNNING_TIME = 30 * 1000 * 60;
 	public static long SHORT_WAIT_FOR_ALL_RUNNING_TIME = 2 * 1000 * 60;
@@ -168,7 +171,6 @@ public abstract class EnodeB extends SystemObjectImpl {
 	public boolean blackListed = false;
 	public boolean expecteInServiceState = true;
 	private String SkipCMP = "false";
-	
 
 	public EnodeB() {
 		super();
@@ -308,6 +310,26 @@ public abstract class EnodeB extends SystemObjectImpl {
 		return XLP.waitForReboot(timeout);
 	}
 
+	public boolean rebootViaNetspan(RebootTypesNetspan RTNetspan){
+		boolean action = false;
+		expecteInServiceState = false;
+		XLP.setExpectBooting(true);
+
+		try {
+			action = NetspanServer.getInstance().resetNodeRebootAction(getNetspanName(), RTNetspan);
+		} catch (Exception e) {
+			e.printStackTrace();
+			//report.report("Failed to reboot e",Reporter.WARNING);
+		}
+		if(action){
+			GeneralUtils.unSafeSleep(60000);
+		}else{
+			expecteInServiceState = true;
+			XLP.setExpectBooting(false);
+		}
+		return action;
+	}
+	
 	/*
 	 * the method reboot the EnodeB. its changes the state of xlp and dan to
 	 * booting, disconnecting UES & reboot
@@ -1064,18 +1086,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 	}
 
 	public boolean waitForReachable(long timeout) {
-		if (this.XLP.isReachable()) {
-			return true;
-		}
-		GeneralUtils.printToConsole("will wait for reachable " + timeout + " millis");
-		long startTime = System.currentTimeMillis(); // fetch starting time
-		while ((System.currentTimeMillis() - startTime) < timeout) {
-			if (this.XLP.isReachable()) {
-				return true;
-			}
-			GeneralUtils.unSafeSleep(3000);
-		}
-		return false;
+		return this.XLP.waitForReachable(timeout);
 	}
 
 	public boolean downPTPInterface(int tries) {
@@ -1700,9 +1711,9 @@ public abstract class EnodeB extends SystemObjectImpl {
 	 }
 	 
 	 public boolean addNbr(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
-				X2ControlStateTypes x2ControlStatus, HandoverType handoverType, boolean isStaticNeighbor,
+				X2ControlStateTypes x2ControlStatus, HandoverTypes HandoverTypes, boolean isStaticNeighbor,
 				String qOffsetRange) throws IOException{
-		 return XLP.addNbr(enodeB, neighbor, hoControlStatus, x2ControlStatus, handoverType, isStaticNeighbor, qOffsetRange);
+		 return XLP.addNbr(enodeB, neighbor, hoControlStatus, x2ControlStatus, HandoverTypes, isStaticNeighbor, qOffsetRange);
 	 }
 	 
 	 public boolean deleteAllNeighborsByCli(){
@@ -1734,9 +1745,9 @@ public abstract class EnodeB extends SystemObjectImpl {
 	 }
 	 
 	 public boolean verifyNbrList(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
-				X2ControlStateTypes x2ControlStatus, HandoverType handoverType, boolean isStaticNeighbor,
+				X2ControlStateTypes x2ControlStatus, HandoverTypes HandoverTypes, boolean isStaticNeighbor,
 				String qOffsetRange) throws IOException{
-		 return XLP.verifyNbrList(enodeB, neighbor, hoControlStatus, x2ControlStatus, handoverType, isStaticNeighbor, qOffsetRange);
+		 return XLP.verifyNbrList(enodeB, neighbor, hoControlStatus, x2ControlStatus, HandoverTypes, isStaticNeighbor, qOffsetRange);
 	 }
 	 
 	 public boolean verifyNbrList(EnodeB neighbor) throws IOException{
@@ -2292,7 +2303,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 		XLP.waitForExpectBootingValue(timeout, status);
 	}
 
-	public EnabledDisabledStates getOperateBehindHenbGw() {
+	public EnabledStates getOperateBehindHenbGw() {
 		return XLP.getOperateBehindHenbGw();
 	}
 	public String getSkipCMP() {

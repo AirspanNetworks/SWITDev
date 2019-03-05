@@ -16,7 +16,7 @@ import EnodeB.EnodeB;
 import EnodeB.Components.EnodeBComponent;
 import Netspan.EnbProfiles;
 import Netspan.API.Enums.EnbStates;
-import Netspan.API.Enums.HandoverType;
+import Netspan.API.Enums.HandoverTypes;
 import Netspan.API.Enums.HoControlStateTypes;
 import Netspan.API.Lte.AlarmInfo;
 import Netspan.API.Lte.EventInfo;
@@ -882,7 +882,7 @@ public class P0 extends TestspanTest {
 
 	private boolean HOInit() {
 			GeneralUtils.startLevel("init HandOver Properties");
-			if(neighborManager.addNeighbor(dut, dut2, HoControlStateTypes.ALLOWED,Netspan.API.Enums.X2ControlStateTypes.AUTOMATIC, HandoverType.TRIGGER_X_2, true, "0")){
+			if(neighborManager.addNeighbor(dut, dut2, HoControlStateTypes.ALLOWED,Netspan.API.Enums.X2ControlStateTypes.AUTOMATIC, HandoverTypes.TRIGGER_X_2, true, "0")){
 				report.report("moved attenuator");
 			 	peripheralsConfig.preformHO(attenuatorSetUnderTest, attenuatorSetUnderTest.getMinAttenuation(), attenuatorSetUnderTest.getMaxAttenuation());
 			 	peripheralsConfig.preformHO(attenuatorSetUnderTest, attenuatorSetUnderTest.getMaxAttenuation(), attenuatorSetUnderTest.getMinAttenuation());

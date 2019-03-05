@@ -106,11 +106,11 @@ public abstract class EnodeBWithDonor extends AirVelocity{
 		try {
 			this.donor = (EnodeB) SystemManagerImpl.getInstance().getSystemObject(donorName);
 			hasDonor = true;
+			GeneralUtils.printToConsole("Donor loaded" + this.donor.getName());
 		} catch (Exception e) {
 			report.report("Failed to set Donor.", Reporter.WARNING);
 			e.printStackTrace();
 		}
-		GeneralUtils.printToConsole("Donor loaded" + this.donor.getName());
 	}
 	
 	/**
@@ -121,7 +121,14 @@ public abstract class EnodeBWithDonor extends AirVelocity{
 	@Override
 	@IgnoreMethod
 	public Logger[] getLoggers() {
-		return new Logger[] {XLP.getLogger(), donor.XLP.getLogger()};
+		Logger[] loggers;
+		if(donor != null ){
+			loggers = new Logger[] { XLP.getLogger(), donor.XLP.getLogger()};	
+		}
+		else{
+			loggers = new Logger[] { XLP.getLogger()};
+		}
+		return loggers;
 	}
 	
 	@Override

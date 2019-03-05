@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -29,6 +30,10 @@ import jsystem.framework.system.SystemObjectImpl;
 /**
  * Implements a basic eNodeB component.
  */
+/**
+ * @author dshalom
+ *
+ */
 public abstract class EnodeBComponent extends SystemObjectImpl implements LogListener {
 
     public static final String SECURED_USERNAME = "op";
@@ -47,6 +52,7 @@ public abstract class EnodeBComponent extends SystemObjectImpl implements LogLis
     public static final long CHECK_STATE_REST_TIME = 200;
     public static final long CHECK_STATE_DEFUALT_TIMEOUT = 720000;
     public static final long WAIT_FOR_SERIAL_PROMPT = 2 * 60 * 1000;
+    public static final long WAIT_FOR_REACHABILITY =  5 * 60 * 1000;
     public static final int PING_RETRIES = 3;
     public static final String SHELL_PROMPT_OP = "$ ";
     public static final String SHELL_PROMPT = "# ";
@@ -282,12 +288,13 @@ public abstract class EnodeBComponent extends SystemObjectImpl implements LogLis
                                     String managementIp = NetspanServer.getInstance().getMangementIp((EnodeB) getParent());
                                     if ((managementIp != null) && (!managementIp.equals("")) && (!managementIp.equals(String.valueOf(GeneralUtils.ERROR_VALUE))) && (!managementIp.equalsIgnoreCase(ip))) {
                                         setIpAddress(managementIp);
+                                        ((EnodeB) getParent()).setS1IpAddress(managementIp);
                                         GeneralUtils.unSafeSleep(2000);
                                         initSNMP();
                                     }
 
                                 } catch (Exception e) {
-                                    GeneralUtils.printToConsole("Cant get managementIp from netspan.");
+                                    GeneralUtils.printToConsole("Can't get managementIp from netspan.");
                                     e.printStackTrace();
                                 }
                                 GeneralUtils.printToConsole(getName() + " is unreachable.");
@@ -646,6 +653,21 @@ public abstract class EnodeBComponent extends SystemObjectImpl implements LogLis
         return rebooted;
     }
 
+    public boolean waitForReachable(long timeout) {
+		if (isReachable()) {
+			return true;
+		}
+		GeneralUtils.printToConsole("will wait for reachable " + timeout + " millis");
+		long startTime = System.currentTimeMillis(); // fetch starting time
+		while ((System.currentTimeMillis() - startTime) < timeout) {
+			if (isReachable()) {
+				return true;
+			}
+			GeneralUtils.unSafeSleep(3000);
+		}
+		return false;
+	}
+    
     private boolean waitForUnreachable(long timeout) {
         long startTime = System.currentTimeMillis();
         GeneralUtils.printToConsole("Waiting for EnodeB " + this.getName() + " to be unreachable to detect a reboot.");
@@ -659,6 +681,7 @@ public abstract class EnodeBComponent extends SystemObjectImpl implements LogLis
         return false;
     }
 
+    
     public boolean waitForExpectBootingValue(long timeout, boolean status) {
         long startTime = System.currentTimeMillis();
         GeneralUtils.printToConsole("Waiting for EnodeB " + this.getName() + " to detect reboot log line.");
@@ -686,29 +709,114 @@ public abstract class EnodeBComponent extends SystemObjectImpl implements LogLis
     @IgnoreMethod
     public void getLogLine(LoggerEvent e) {
         String line = e.getLine();
-
-        if (deviceUnderTest) {
-            if (!isExpectBooting() && checkCoreStrings(line)) {
-                parseCoreFilesPath(line);
-                report.report(getName() + " - Corecare detected!", Reporter.FAIL);
-            } else if (!isExpectBooting() && line.contains("PHY ASSERT DETECTED")) {
-                report.report(getName() + " - Phy assert detected!", Reporter.FAIL);
-            } else if (checkRebootStrings(line)) {
-                if (isExpectBooting()) {
-                    setExpectBooting(false);
-                    report.report(getName() + " - reboot detected");
-                } else {
-                    unexpectedReboot++;
-                    report.report(getName() + " - unexpected reboot detected!", Reporter.FAIL);
-                }
-                if (SkipCMP && (!this.waitForSrialPromptAndEchoToSkipCMP.isAlive())) {
-                    this.waitForSrialPromptAndEchoToSkipCMP = new WaitForSrialPromptAndEchoToSkipCMP(WAIT_FOR_SERIAL_PROMPT);
-                    this.waitForSrialPromptAndEchoToSkipCMP.start();
-                }
+        handleLogEvents(line);
+    }
+    
+    private void handleLogEvents(String line){
+    	if (deviceUnderTest) {
+            if (!isExpectBooting()) {
+            	failTestInCaseOfCoreOrPhyAssert(line);
+            }  else if (checkRebootStrings(line)) {
+            	handleReboots();
             }
         }
     }
-
+    
+    private void handleReboots(){
+    	 failOrReportOverReboot();
+         handleSkipCMP();
+         setTrapDestenation();
+    }
+    
+    private void setTrapDestenation(){
+    	GeneralUtils.printToConsole(this.getName() +  " - setTrapDestination thread after reboot started");
+    	WaitForSNMPAndSetTrapDest setTrapThread = new WaitForSNMPAndSetTrapDest();
+    	setTrapThread.start();
+    }
+    
+    private class WaitForSNMPAndSetTrapDest extends Thread {
+        public void run() {
+            waitForReachable(WAIT_FOR_REACHABILITY);
+            long startTime = System.currentTimeMillis();
+            while ((System.currentTimeMillis() - startTime) < WAIT_FOR_REACHABILITY) {
+                if (snmp.isAvailable()) {
+                	GeneralUtils.printToConsole(this.getName() +  " - setTrapDestination thread, snmp available");
+                    setTrapDestenationIfNeeded();
+                    break;
+                }
+                GeneralUtils.unSafeSleep(5000);
+            }
+            return;
+        }
+    }
+    
+    
+    /**
+     * Set trap destination in index 4 in case it is not configured.
+     */
+    private void setTrapDestenationIfNeeded(){
+    	String oid = MibReader.getInstance().resolveByName("wmanDevCmnSnmpV1V2TrapDest");
+    	boolean actionPassed = true;
+    	try {
+    		String nmsHostName = NetspanServer.getInstance().getHostname();
+    		String currentNmsIp = snmp.get(oid + ".3.4");
+    		GeneralUtils.printToConsole(this.getName() +  " - setTrapDestination thread currentNmsIp = " + currentNmsIp);
+    		if(currentNmsIp.contains("noSuch")){
+    			GeneralUtils.printToConsole(this.getName() +  " - setTrapDestination thread add row number 4");
+    			actionPassed &= snmp.addNewEntry(oid + ".5", 4, false);
+    			actionPassed &= updateTrapDestTable(nmsHostName);
+    		}
+    		else if(!InetAddressesHelper.toDecimalIp(currentNmsIp, 16).equals(nmsHostName)){
+    			actionPassed &= snmp.snmpSet(oid + ".5.4", 2);
+    			actionPassed &= updateTrapDestTable(nmsHostName);
+	    	}
+    		else
+    			GeneralUtils.printToConsole(this.getName() +  " - setTrapDestination is already updated");
+    		GeneralUtils.printToConsole(this.getName() +  " - setTrapDestination action" +
+    			(actionPassed ? " passed" : " failed"));
+    	} catch (Exception e) {
+    		report.report("Set Trap Destination Failed", Reporter.WARNING);
+    		e.printStackTrace();
+    	}
+    }
+    
+    private boolean updateTrapDestTable(String nmsHostName) throws IOException{
+    	boolean actionPassed = true;
+    	String oid = MibReader.getInstance().resolveByName("wmanDevCmnSnmpV1V2TrapDest");
+    	GeneralUtils.printToConsole(this.getName() +  " - setTrapDestination thread update trapDest params");
+    	actionPassed &= snmp.snmpSet(oid + ".2.4", nmsHostName.contains(":") ? "2" : "1");
+    	actionPassed &= snmp.snmpSet(oid + ".3.4", InetAddressesHelper.ipStringToBytes(nmsHostName));
+    	actionPassed &= snmp.snmpSet(oid + ".4.4", 162);
+    	actionPassed &= snmp.snmpSet(oid + ".5.4", 1);
+    	return actionPassed;
+    }
+    
+    private void handleSkipCMP(){
+    	if (SkipCMP && (!this.waitForSrialPromptAndEchoToSkipCMP.isAlive())) {
+            this.waitForSrialPromptAndEchoToSkipCMP = new WaitForSrialPromptAndEchoToSkipCMP(WAIT_FOR_SERIAL_PROMPT);
+            this.waitForSrialPromptAndEchoToSkipCMP.start();
+        }
+    }
+    
+    private void failOrReportOverReboot(){
+    	if (isExpectBooting()) {
+            setExpectBooting(false);
+            report.report(getName() + " - reboot detected");
+        } else {
+            unexpectedReboot++;
+            report.report(getName() + " - unexpected reboot detected!", Reporter.FAIL);
+        }
+    }
+    
+    private void failTestInCaseOfCoreOrPhyAssert(String line){
+    	if(checkCoreStrings(line)){
+    		parseCoreFilesPath(line);
+    		report.report(getName() + " - Corecare detected!", Reporter.FAIL);            		
+    	}else if (line.contains("PHY ASSERT DETECTED")) {
+            report.report(getName() + " - Phy assert detected!", Reporter.FAIL);
+        }
+    }
+    
     private class WaitForSrialPromptAndEchoToSkipCMP extends Thread {
         private final long timeout;
 

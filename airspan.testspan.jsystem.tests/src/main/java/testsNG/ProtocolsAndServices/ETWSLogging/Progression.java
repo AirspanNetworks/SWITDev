@@ -13,7 +13,7 @@ import org.junit.Test;
 import EnodeB.EnodeB;
 import IPG.IPG;
 import Netspan.EnbProfiles;
-import Netspan.API.Enums.EnabledDisabledStates;
+import Netspan.API.Enums.EnabledStates;
 import Netspan.NBI_15_5.Netspan_15_5_abilities;
 import Netspan.Profiles.CellAdvancedParameters;
 import Netspan.Profiles.NetworkParameters;
@@ -151,7 +151,7 @@ public class Progression extends TestspanTest {
 		GeneralUtils.startLevel(String.format("Enable ETWS: uploadPeriod - %s, uploadPeriodNoData - %s", uploadPeriod, uploadPeriodNoData));
 		boolean actionState = true;
 		NetworkParameters params = new NetworkParameters();
-		params.setEtwsEnabled(EnabledDisabledStates.ENABLED);
+		params.setEtwsEnabled(EnabledStates.ENABLED);
 		boolean isExists = ((Netspan_15_5_abilities) netspanServer).isFileServerExists(fileServer.getName());
 		if (!isExists)
 			((Netspan_15_5_abilities) netspanServer).createFileServer(fileServer);
@@ -167,7 +167,7 @@ public class Progression extends TestspanTest {
 		boolean actionState = true;
 		GeneralUtils.startLevel(String.format("Enable user mode: sib10Duration - %s, sib11Duration - %s", sib10Duration, sib11Duration));
 		CellAdvancedParameters params = new CellAdvancedParameters();
-		params.setEtwsUserMode(EnabledDisabledStates.ENABLED);
+		params.setEtwsUserMode(EnabledStates.ENABLED);
 		params.setSib10Duration(sib10Duration);
 		params.setSib11Duration(sib11Duration);
 		actionState = enodeBConfig.changeCellAdvancedProfile(dut, params);
@@ -180,7 +180,7 @@ public class Progression extends TestspanTest {
 		GeneralUtils.startLevel("Disable ETWS");
 		boolean actionState = true;
 		NetworkParameters params = new NetworkParameters();
-		params.setEtwsEnabled(EnabledDisabledStates.DISABLED);
+		params.setEtwsEnabled(EnabledStates.DISABLED);
 		actionState = enodeBConfig.changeNetworkProfile(dut, params);
 		GeneralUtils.stopLevel();
 		return actionState;

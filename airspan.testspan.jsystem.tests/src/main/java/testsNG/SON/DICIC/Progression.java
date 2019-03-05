@@ -9,8 +9,8 @@ import org.junit.Test;
 import Attenuators.AttenuatorSet;
 import EnodeB.EnodeB;
 import Netspan.EnbProfiles;
-import Netspan.API.Enums.EnabledDisabledStates;
-import Netspan.API.Enums.HandoverType;
+import Netspan.API.Enums.EnabledStates;
+import Netspan.API.Enums.HandoverTypes;
 import Netspan.API.Enums.HoControlStateTypes;
 import Netspan.API.Enums.SonAnrStates;
 import Netspan.API.Enums.X2ControlStateTypes;
@@ -367,7 +367,7 @@ public class Progression extends TestspanTest {
 				report.report(String.format("Some Ues are %sconnected.", text), Reporter.WARNING);
 			// verify Ngh & x2 state
 			X2ControlStateTypes X2State = isX2 ? X2ControlStateTypes.AUTOMATIC : X2ControlStateTypes.NOT_ALLOWED;
-			HandoverType hoType = isX2 ? HandoverType.TRIGGER_X_2 : HandoverType.S_1_ONLY;
+			HandoverTypes hoType = isX2 ? HandoverTypes.TRIGGER_X_2 : HandoverTypes.S_1_ONLY;
 			actionState2 = neighbors.verifyNeighborParametersOnlySNMP(dut1, dut2, HoControlStateTypes.ALLOWED, X2State,
 					hoType, !isAnr, "0");
 			if (!actionState2)
@@ -412,7 +412,7 @@ public class Progression extends TestspanTest {
 			actionState = addAnrNgh();
 		else {
 			X2ControlStateTypes X2State = isX2 ? X2ControlStateTypes.AUTOMATIC : X2ControlStateTypes.NOT_ALLOWED;
-			HandoverType hoType = isX2 ? HandoverType.TRIGGER_X_2 : HandoverType.S_1_ONLY;
+			HandoverTypes hoType = isX2 ? HandoverTypes.TRIGGER_X_2 : HandoverTypes.S_1_ONLY;
 			GeneralUtils.startLevel("Add Neighbors.");
 			actionState &= neighbors.addNeighbor(dut1, dut2, HoControlStateTypes.ALLOWED, X2State, hoType, true, "0");
 			actionState &= neighbors.addNeighbor(dut2, dut1, HoControlStateTypes.ALLOWED, X2State, hoType, true, "0");
@@ -499,8 +499,8 @@ public class Progression extends TestspanTest {
 		try {
 			GeneralUtils.startLevel(enb.getName() + " Enable D-ICIC Feature.");
 			SonParameters sonParams = new SonParameters();
-			sonParams.setOptimizationMode(EnabledDisabledStates.ENABLED);
-			sonParams.setIcicMode(EnabledDisabledStates.ENABLED);
+			sonParams.setOptimizationMode(EnabledStates.ENABLED);
+			sonParams.setIcicMode(EnabledStates.ENABLED);
 			actionState &= enodeBConfig.setDicicState(enb, sonParams);
 			if (!actionState)
 				report.report(enb.getName() + " Failed to enable D-ICIC", Reporter.WARNING);

@@ -20,13 +20,14 @@ import Netspan.EnbProfiles;
 import Netspan.NBIVersion;
 import Netspan.API.Lte.AlarmInfo;
 import Netspan.API.Enums.CategoriesLte;
-import Netspan.API.Enums.EnabledDisabledStates;
+import Netspan.API.Enums.ClockSources;
+import Netspan.API.Enums.EnabledStates;
 import Netspan.API.Enums.EnbTypes;
-import Netspan.API.Enums.HandoverType;
+import Netspan.API.Enums.HandoverTypes;
 import Netspan.API.Enums.HardwareCategory;
 import Netspan.API.Enums.HoControlStateTypes;
 import Netspan.API.Enums.ImageType;
-import Netspan.API.Enums.NodeManagementModeType;
+import Netspan.API.Enums.NodeManagementModes;
 import Netspan.API.Enums.PrimaryClockSourceEnum;
 import Netspan.API.Enums.SecurityProfileOptionalOrMandatory;
 import Netspan.API.Enums.SnmpAgentVersion;
@@ -64,7 +65,6 @@ import Netspan.NBI_14_50.API.Inventory.NodeActionResult;
 import Netspan.NBI_14_50.API.Inventory.NodeDetailGetResult;
 import Netspan.NBI_14_50.API.Inventory.WsResponse;
 import Netspan.NBI_14_50.API.Lte.AnrFreqListContainer;
-import Netspan.NBI_14_50.API.Lte.ClockSources;
 import Netspan.NBI_14_50.API.Lte.Enb3RdParty;
 import Netspan.NBI_14_50.API.Lte.EnbDetailsGet;
 import Netspan.NBI_14_50.API.Lte.EnbMobilityProfile;
@@ -129,6 +129,7 @@ import Netspan.Profiles.SyncParameters;
 import Netspan.Profiles.SystemDefaultParameters;
 import Utils.GeneralUtils;
 import Utils.GeneralUtils.RebootType;
+import Utils.GeneralUtils.RebootTypesNetspan;
 import Utils.Pair;
 import jsystem.framework.IgnoreMethod;
 import jsystem.framework.report.Reporter;
@@ -469,7 +470,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 								mobilityParams.getThresholdBasedMeasurement()));
 
 				// TODO:: remove HC values
-				if (mobilityParams.getThresholdBasedMeasurement() == EnabledDisabledStates.ENABLED) {
+				if (mobilityParams.getThresholdBasedMeasurement() == EnabledStates.ENABLED) {
 					MobilityConnectedModeTriggerGaps triggerGap = new MobilityConnectedModeTriggerGaps();
 					triggerGap.setEventType(
 							factoryDetails.createMobilityConnectedModeTriggerGapsEventType(TriggerGapEventTypes.A_2));
@@ -949,21 +950,21 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 	 *            the ho control status
 	 * @param x2ControlStatus
 	 *            the x2 control status
-	 * @param handoverType
+	 * @param HandoverTypes
 	 *            the handover type
 	 * @param isStaticNeighbor
 	 *            the is static neighbor
 	 * @return true, if successful
 	 */
 	public boolean addNeighbor(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
-			X2ControlStateTypes x2ControlStatus, HandoverType handoverType, boolean isStaticNeighbor,
+			X2ControlStateTypes x2ControlStatus, HandoverTypes HandoverTypes, boolean isStaticNeighbor,
 			String qOffsetRange) {
 		String sourceNodeName = enodeB.getNetspanName();
 		String neighborName = neighbor.getNetspanName();
 		GeneralUtils.printToConsole("Sending NBI requeset \"lteNeighbourAdd\" for eNodeB " + sourceNodeName);
 		try {
 			LteNeighbourResponse result = (LteNeighbourResponse) helper_14_50.execute("lteNeighbourAdd", sourceNodeName,
-					neighborName, hoControlStatus, x2ControlStatus, handoverType, isStaticNeighbor, qOffsetRange);
+					neighborName, hoControlStatus, x2ControlStatus, HandoverTypes, isStaticNeighbor, qOffsetRange);
 			GeneralUtils.printToConsole(String.format("NBI method \"lteNeighbourAdd\" for eNodeB %s returned value: %s",
 					sourceNodeName, result.getErrorCode().toString()));
 			if (result.getErrorCode() == Netspan.NBI_14_50.API.Lte.ErrorCodes.ERROR) {
@@ -980,7 +981,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 
 	@Override
 	public boolean addNeighbourMultiCell(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
-			X2ControlStateTypes x2ControlStatus, HandoverType handoverType, boolean isStaticNeighbor,
+			X2ControlStateTypes x2ControlStatus, HandoverTypes HandoverTypes, boolean isStaticNeighbor,
 			String qOffsetRange) {
 		report.report("addNeighbourMultiCell via NBI_14_5 Failed : Try to use correct NBI version", Reporter.WARNING);
 		return false;
@@ -1082,19 +1083,19 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 	 * <p>
 	 * For each parameter, if its value is "null", the test for the specific
 	 * parameter will not be evaluated. Only hoControlType, x2ControlType,
-	 * handoverType and qOffserRange can be sent as "null".
+	 * HandoverTypes and qOffserRange can be sent as "null".
 	 *
 	 * @param enodeB
 	 * @param neighbor
 	 * @param hoControlType
 	 * @param x2ControlType
-	 * @param handoverType
+	 * @param HandoverTypes
 	 * @param isStaticNeighbor
 	 * @param qOffsetRange
 	 * @return
 	 */
 	public boolean verifyNeighbor(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlType,
-			X2ControlStateTypes x2ControlType, HandoverType handoverType, boolean isStaticNeighbor,
+			X2ControlStateTypes x2ControlType, HandoverTypes HandoverTypes, boolean isStaticNeighbor,
 			String qOffsetRange) {
 		boolean wasadded = true;
 		boolean wasFound = false;
@@ -1135,10 +1136,10 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 					}
 				}
 
-				if (null != handoverType) {
-					if (nbr.getHandoverType().getValue() != handoverType) {
+				if (null != HandoverTypes) {
+					if (nbr.getHandoverType().getValue() != HandoverTypes) {
 						report.report("HandOver Type is " + nbr.getHandoverType().getValue() + " and not "
-								+ handoverType.value() + " as expected", Reporter.WARNING);
+								+ HandoverTypes.value() + " as expected", Reporter.WARNING);
 						wasadded = false;
 					} else {
 						report.report("HandOver Type is " + nbr.getHandoverType().getValue() + " as expected");
@@ -1686,7 +1687,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 	}
 
 	@Override
-	public NodeManagementModeType getManagedMode(EnodeB enb) {
+	public NodeManagementModes getManagedMode(EnodeB enb) {
 		EnbDetailsGet result = getNodeConfig(enb);
 		if (result != null) {
 			return result.getManagedMode().getValue();
@@ -1990,7 +1991,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 		} else {
 			actionSucceeded &= createDiscoveryTaskV2(enodeB, "public", "private");
 		}
-		actionSucceeded &= setManagedMode(enodeB.getNetspanName(), NodeManagementModeType.MANAGED);
+		actionSucceeded &= setManagedMode(enodeB.getNetspanName(), NodeManagementModes.MANAGED);
 		return actionSucceeded;
 	}
 
@@ -2155,7 +2156,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 		return false;
 	}
 
-	public boolean setManagedMode(String nodeName, NodeManagementModeType managedMode) {
+	public boolean setManagedMode(String nodeName, NodeManagementModes managedMode) {
 		ObjectFactory factoryDetails = new ObjectFactory();
 		EnbDetailsGet enbConfigGet = getNodeConfig(nodeName);
 		LteEnbDetailsSetWs enbConfigSet = EnbConfigGetToSet(enbConfigGet);
@@ -2168,7 +2169,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 		ArrayList<String> nodeList = new ArrayList<String>();
 		nodeList.add(nodeName);
 		try {
-			setManagedMode(nodeName, NodeManagementModeType.UNMANAGED);
+			setManagedMode(nodeName, NodeManagementModes.UNMANAGED);
 
 			GeneralUtils.printToConsole("Sending NBI requeset \"nodeDelete\" for eNodeB " + nodeName);
 			NodeActionResult result = (NodeActionResult) helper_14_50.execute("nodeDelete", nodeList,
@@ -2816,14 +2817,14 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 
 	@Override
 	public boolean checkCannotAddNeighbor(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
-			X2ControlStateTypes x2ControlStatus, HandoverType handoverType, boolean isStaticNeighbor,
+			X2ControlStateTypes x2ControlStatus, HandoverTypes HandoverTypes, boolean isStaticNeighbor,
 			String qOffsetRange) {
 		String sourceNodeName = enodeB.getNetspanName();
 		String neighborName = neighbor.getNetspanName();
 		GeneralUtils.printToConsole("Sending NBI requeset \"lteNeighbourAdd\" for eNodeB " + sourceNodeName);
 		try {
 			LteNeighbourResponse result = (LteNeighbourResponse) helper_14_50.execute("lteNeighbourAdd", sourceNodeName,
-					neighborName, hoControlStatus, x2ControlStatus, handoverType, isStaticNeighbor, qOffsetRange);
+					neighborName, hoControlStatus, x2ControlStatus, HandoverTypes, isStaticNeighbor, qOffsetRange);
 			GeneralUtils.printToConsole(String.format("NBI method \"lteNeighbourAdd\" for eNodeB %s returned value: %s",
 					sourceNodeName, result.getErrorCode().toString()));
 			if (result.getErrorCode() != Netspan.NBI_14_50.API.Lte.ErrorCodes.OK) {
@@ -3093,5 +3094,11 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 	public Pair<Integer, Integer> getUlDlTrafficValues(String nodeName) {
 		GeneralUtils.printToConsole("getUlDlTrafficValues function is not implemented for this netspan(14_5)!");
 		return null;
+	}
+
+	@Override
+	public boolean resetNodeRebootAction(String nodeName, RebootTypesNetspan rebootType) {
+		GeneralUtils.printToConsole("resetNodeRebootAction function is not implemented for this netspan(14_5)!");
+		return false;
 	}
 }

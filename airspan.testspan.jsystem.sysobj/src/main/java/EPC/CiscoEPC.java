@@ -120,6 +120,8 @@ public class CiscoEPC extends EPC{
 					String buffer = sendCommand(String.format("show subscribers enodeb-address %s |grep %s",enb.getS1IpAddress(),ue.getImsi()), true);
 					String[] lines = buffer.split("\n");
 					for (String line : lines) {
+						if (line.contains("subscribers") || line.contains("grep"))
+							continue;
 						if (line.contains(ue.getImsi())){
 							report.report(String.format("[INFO]: Ue %s with IMSI %s is connected to EnodeB %s.",ue.getName(),ue.getImsi(), enb.getName()));							
 							return enb;
@@ -143,7 +145,9 @@ public class CiscoEPC extends EPC{
 				for(MME mme : possibleMmes){
 					mme.setMMEName();
 					allMMEs+=(mme.getS1IpAddress()+" ");
-					String buffer = sendCommand(String.format("show subscribers mme-service %s imsi %s",mme.getName(),ue.getImsi()), true);
+					String cmd = String.format("show subscribers mme-service %s imsi %s",mme.getName(),ue.getImsi());
+					String buffer = sendCommand(cmd , true);
+					buffer.replace(cmd, "");
 					if (buffer.contains(ue.getImsi())){
 						report.report(String.format("[INFO]: Ue %s with IMSI %s is connected to EnodeB %s.",ue.getName(),ue.getImsi(), mme.getName()));							
 						return mme;

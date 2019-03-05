@@ -187,6 +187,7 @@ public class BasicAction extends Action {
     @TestProperties(name = "Change Netspan Server to Selected SUT object", returnParam = {"LastStatus", "Answer"}, paramsInclude = {"netspan"})
     public void changeNetspan() throws Exception {
     	NetspanServer nms = NetspanServer.getInstance(netspan);
+    	nms.init();
     	report.report("Netspan changed to " + netspan + ", Hostname is: " + nms.getHostname() + " NBI ver is: " + nms.getNBI());
     }
 	

@@ -1,6 +1,7 @@
 package testsNG.SON.AutoPCI;
 
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -12,9 +13,9 @@ import EnodeB.EnodeB;
 import EnodeB.EnodeB.Architecture;
 import Netspan.EnbProfiles;
 import Netspan.NetspanServer;
-import Netspan.API.Enums.EnabledDisabledStates;
+import Netspan.API.Enums.EnabledStates;
 import Netspan.API.Enums.EnbStates;
-import Netspan.API.Enums.HandoverType;
+import Netspan.API.Enums.HandoverTypes;
 import Netspan.API.Enums.HoControlStateTypes;
 import Netspan.API.Enums.SonAnrStates;
 import Netspan.API.Enums.X2ControlStateTypes;
@@ -145,6 +146,12 @@ public class AutoPCIBase extends TestspanTest {
         }
         report.reportHtml("db get nghList", dut.lteCli("db get nghList"), true);
         GeneralUtils.stopLevel();
+        try {
+        	neighborsUtils.deleteAll3rdParty();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+			report.report("Exception while deleting 3rd party EnodeBs", Reporter.WARNING);
+		}
         GeneralUtils.stopLevel();
         generatePciStartAndEnd();
         startDate = new Date();
@@ -389,7 +396,7 @@ public class AutoPCIBase extends TestspanTest {
             report.report("3rd party enb was created successfully");
         }
         boolean add = neighborsUtils.addNeighbor(dut, newParty, HoControlStateTypes.ALLOWED,
-                X2ControlStateTypes.AUTOMATIC, HandoverType.TRIGGER_X_2, true, "0");
+                X2ControlStateTypes.AUTOMATIC, HandoverTypes.TRIGGER_X_2, true, "0");
         if (add) {
             report.report("3rd party enb was added as neighbor");
             list3Party.add(newParty);
@@ -444,7 +451,7 @@ public class AutoPCIBase extends TestspanTest {
     }
 
     protected void configureInitListSizeOnEnbAdvancedConfigurationProfile(int lowPower, int powerStep,
-                                                                          int powerLevelTimeInterval, int anrTimer, EnabledDisabledStates pciConfusionAllowed,
+                                                                          int powerLevelTimeInterval, int anrTimer, EnabledStates pciConfusionAllowed,
                                                                           int initialPciListSize) {
         GeneralUtils.startLevel("Configure 'eNodeB Advanced Configuration Profile'");
         this.printAdvancedProfile(lowPower, powerStep, powerLevelTimeInterval, anrTimer, pciConfusionAllowed,
@@ -463,7 +470,7 @@ public class AutoPCIBase extends TestspanTest {
     }
 
     protected void printAdvancedProfile(int lowPower, int powerStep, int powerLevelTimeInterval, int anrTimer,
-                                        EnabledDisabledStates pciConfusionAllowed, int initialPciListSize) {
+                                        EnabledStates pciConfusionAllowed, int initialPciListSize) {
 
         report.report("Low Power: " + lowPower);
         report.report("Power Step: " + powerStep);
@@ -693,7 +700,7 @@ public class AutoPCIBase extends TestspanTest {
         }
 
         report.report("Adding neighbor with the same PCI to cause Collision, PCI = " + neighborPci);
-        if (!ngh.addNeighbor(eNodeB, neighbor, HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC, HandoverType.TRIGGER_X_2, true, "0")) {
+        if (!ngh.addNeighbor(eNodeB, neighbor, HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC, HandoverTypes.TRIGGER_X_2, true, "0")) {
             report.report("Failed to add neighbor.", Reporter.FAIL);
             ngh.delete3rdParty(neighbor.getNetspanName());
             GeneralUtils.stopLevel();

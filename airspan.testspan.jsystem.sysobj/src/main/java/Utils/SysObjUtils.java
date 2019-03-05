@@ -134,7 +134,7 @@ public class SysObjUtils {
 	 * @throws Exception
 	 *             the exception
 	 */
-	protected void closeSystemObjects(SystemObject... systemObjects) throws Exception {
+	public void closeSystemObjects(SystemObject... systemObjects) throws Exception {
 		for (SystemObject sysObj : systemObjects) {
 			String sysObjName = sysObj.getName();
 			if (initializedSystemObjects.contains(sysObjName)) {

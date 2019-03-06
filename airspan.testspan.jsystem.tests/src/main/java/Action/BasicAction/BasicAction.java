@@ -176,28 +176,28 @@ public class BasicAction extends Action {
 		try {
 			
 			if(ip == null){
-				report.report("IP cannot be empty",Reporter.FAIL);
+				GeneralUtils.logToLevel("IP cannot be empty",Reporter.FAIL);
 				isNull = true;
 			}
 			if(port == 0){
-				report.report("Port cannot be empty",Reporter.FAIL);
+				GeneralUtils.logToLevel("Port cannot be empty",Reporter.FAIL);
 				isNull = true;
 			}
 			if(userName == null){
-				report.report("UserName cannot be empty",Reporter.FAIL);
+				GeneralUtils.logToLevel("UserName cannot be empty",Reporter.FAIL);
 				isNull = true;
 			}
 			if(password == null){
-				report.report("Password cannot be empty",Reporter.FAIL);
+				GeneralUtils.logToLevel("Password cannot be empty",Reporter.FAIL);
 				isNull = true;
 			}
 			if(serialCommand == null){
-				report.report("Serial Command cannot be empty",Reporter.FAIL);
+				GeneralUtils.logToLevel("Serial Command cannot be empty",Reporter.FAIL);
 				isNull = true;
 			}
 			
 			if(isNull){
-				GeneralUtils.printToConsole("Parameters not comleted");
+				GeneralUtils.logToLevel("Parameters not comleted");
 				return;
 			}
 			
@@ -209,11 +209,11 @@ public class BasicAction extends Action {
 			
 			ConnectionInfo conn_info = new ConnectionInfo("Serial", ip, port, userName, password, ConnectorTypes.Telnet);
 			
-			GeneralUtils.printToConsole("Connection: " + conn_info.toString());
+			GeneralUtils.logToLevel("Connection: " + conn_info.toString());
 			
 			Terminal terminal = new Telnet(conn_info.host, conn_info.port);
 			terminal.connect();
-			GeneralUtils.printToConsole("Connected: " + (terminal.isConnected() ? "Yes" : "No"));
+			GeneralUtils.logToLevel("Connected: " + (terminal.isConnected() ? "Yes" : "No"));
 //			Cli cli = new Cli(terminal);
 			
 			Prompt admin_login = new Utils.ConnectionManager.terminal.Prompt("login:", true);
@@ -236,7 +236,7 @@ public class BasicAction extends Action {
 			GeneralUtils.startLevel("Read current prompt");
 			Prompt active_prompt = terminal.waitForPrompt(timeOut);
 			
-			GeneralUtils.printToConsole("Active prompt: " + active_prompt.toString());
+			GeneralUtils.logToLevel("Active prompt: " + active_prompt.toString());
 			GeneralUtils.stopLevel();
 			
 		} catch (IOException e) {

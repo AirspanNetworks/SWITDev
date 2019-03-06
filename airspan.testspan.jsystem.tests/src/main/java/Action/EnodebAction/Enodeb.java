@@ -1145,6 +1145,12 @@ public class Enodeb extends EnodebAction {
 					}
         		}
         	}
+    		else {
+    			if(session.isShouldStayInCli()) {
+    				session.setShouldStayInCli(false);
+    				report.report("Disable CLI to serial host " + dut.getName(), Reporter.PASS);
+    			}
+    		}
     	}
     	else {
     		report.report("In CLI to serial host " + dut.getName(), Reporter.PASS);

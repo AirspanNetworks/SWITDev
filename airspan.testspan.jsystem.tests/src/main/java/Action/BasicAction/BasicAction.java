@@ -183,13 +183,18 @@ public class BasicAction extends Action {
 			
 			ConnectionInfo conn_info = new ConnectionInfo("Serial", ip, port, userName, password, ConnectorTypes.Telnet);
 			
+			report.report("Connection: " + conn_info.toString());
+			
 			TelnetConnector tlnt = new TelnetConnector(conn_info);
 			tlnt.initConnection();
 			
+			report.report("IsConnected: " + (tlnt.terminal.isConnected() ? "Yes" : "No"));
+			
 			if(tlnt.terminal.isConnected()){
 				for (String cmd : this.debugCommands.split(",")) {
-					String output = tlnt.sendCommand(cmd, 1000);
+					String output = tlnt.sendCommand(cmd + "\n", 1000);
 					GeneralUtils.unSafeSleep(1000);
+					GeneralUtils.printToConsole("Response for "+cmd+":"+output);
 					report.report("Response for "+cmd+":"+output);
 				}
 				int wait = sleepTime == null ? 0 : Integer.valueOf(sleepTime)*1000;

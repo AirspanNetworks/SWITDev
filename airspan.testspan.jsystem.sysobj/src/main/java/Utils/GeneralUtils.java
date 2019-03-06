@@ -252,7 +252,7 @@ public class GeneralUtils {
      * @param message
      * @param status
      */
-    public static void logToLevel(String message, boolean status) {
+    public static void logToLevel(String message, int status) {
     	GeneralUtils.printToConsole(message);
         report.report(message, status);
     }

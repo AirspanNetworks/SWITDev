@@ -52,7 +52,7 @@ public class TelnetConnector implements IRemoteConnector {
 				isConnected = true;
 				break; // out of the loop if get connected
 			} catch ( Exception e ) {
-				GeneralUtils.printToConsole( String.format( "Could not connect to %s SSH server, reason: %s", this.connect_info.host, e.getMessage() ) );
+				GeneralUtils.printToConsole( String.format( "Could not connect to %s Telnet server, reason: %s", this.connect_info.host, e.getMessage() ) );
 				try {
 					Thread.sleep( RECONNECT_TIMEOUT );
 				} catch ( InterruptedException e1 ) {
@@ -91,10 +91,13 @@ public class TelnetConnector implements IRemoteConnector {
 		String result = "";
 		try {
 			this.terminal.sendString(command, false);
-			result = this.terminal.getResult();
+			result = this.terminal.readInputBuffer();
 		
 		} catch (IOException | InterruptedException e) {
 			 e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		return result;

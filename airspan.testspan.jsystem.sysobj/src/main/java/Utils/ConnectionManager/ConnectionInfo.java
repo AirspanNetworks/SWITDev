@@ -35,4 +35,9 @@ public class ConnectionInfo {
 		this.user = user;
 		this.password = password;
 	}
+	
+	@Override
+	public String toString() {
+		return String.format("Host: %s:%d, Login: %s:%s", host, port, user, password);
+	}
 }

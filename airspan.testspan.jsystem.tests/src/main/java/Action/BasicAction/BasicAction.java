@@ -1,5 +1,7 @@
 package Action.BasicAction;
 
+import java.io.Console;
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,6 +17,10 @@ import Utils.SSHConnector;
 import Utils.ConnectionManager.ConnectionInfo;
 import Utils.ConnectionManager.ConnectorTypes;
 import Utils.ConnectionManager.TelnetConnector;
+import Utils.ConnectionManager.terminal.Cli;
+import Utils.ConnectionManager.terminal.Telnet;
+import Utils.ConnectionManager.terminal.Terminal;
+import Utils.ConnectionManager.terminal.Prompt;
 import jsystem.framework.ParameterProperties;
 import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
@@ -23,6 +29,17 @@ public class BasicAction extends Action {
 	private String timeToWait = "00:00:00";
 	private String ipPowerPort;
 	private String debugCommands;
+	private String serialCommand;
+	
+	public String getSerialCommand() {
+		return serialCommand;
+	}
+	
+	@ParameterProperties(description = "Command to be send to serial")
+	public void setSerialCommand(String serialCommand) {
+		this.serialCommand = serialCommand;
+	}
+
 	private String ip;
 	private int port;
 	public int getPort() {
@@ -149,9 +166,13 @@ public class BasicAction extends Action {
 	
 	@Test
 	@TestProperties(name = "Send Commands To Serial", returnParam = "LastStatus", paramsInclude = { "Ip", "Port", "Password",
-			"UserName", "DebugCommands", "SleepTime" })
+			"UserName", "SerialCommand", "SleepTime" })
 	public void sendCommandsToSerial() {
 		boolean isNull = false;
+		
+//		System.out.println("Starting my test");
+		GeneralUtils.printToConsole("Starting my test");
+		
 		try {
 			
 			if(ip == null){
@@ -170,42 +191,66 @@ public class BasicAction extends Action {
 				report.report("Password cannot be empty",Reporter.FAIL);
 				isNull = true;
 			}
-			if(debugCommands == null){
-				report.report("DebugCommands cannot be empty",Reporter.FAIL);
+			if(serialCommand == null){
+				report.report("Serial Command cannot be empty",Reporter.FAIL);
 				isNull = true;
 			}
 			
 			if(isNull){
+				GeneralUtils.printToConsole("Parameters not comleted");
 				return;
 			}
+			
+			Long timeOut; 
+			timeOut = Long.parseLong(timeToWait);
 			
 			GeneralUtils.startLevel("Command sent to serial");
 			
 			ConnectionInfo conn_info = new ConnectionInfo("Serial", ip, port, userName, password, ConnectorTypes.Telnet);
 			
-			report.report("Connection: " + conn_info.toString());
+			GeneralUtils.printToConsole("Connection: " + conn_info.toString());
 			
-			TelnetConnector tlnt = new TelnetConnector(conn_info);
-			tlnt.initConnection();
+			Terminal terminal = new Telnet(conn_info.host, conn_info.port);
+			terminal.connect();
+			GeneralUtils.printToConsole("Connected: " + (terminal.isConnected() ? "Yes" : "No"));
+//			Cli cli = new Cli(terminal);
 			
-			report.report("IsConnected: " + (tlnt.terminal.isConnected() ? "Yes" : "No"));
+			Prompt admin_login = new Utils.ConnectionManager.terminal.Prompt("login:", true);
+			admin_login.setStringToSend(userName);
+			admin_login.setCommandEnd(true);
 			
-			if(tlnt.terminal.isConnected()){
-				for (String cmd : this.debugCommands.split(",")) {
-					String output = tlnt.sendCommand(cmd + "\n", 1000);
-					GeneralUtils.unSafeSleep(1000);
-					GeneralUtils.printToConsole("Response for "+cmd+":"+output);
-					report.report("Response for "+cmd+":"+output);
-				}
-				int wait = sleepTime == null ? 0 : Integer.valueOf(sleepTime)*1000;
-				GeneralUtils.unSafeSleep(wait);
-				tlnt.disconnect();
-			}else{
-				report.report("Failed to connect to device",Reporter.FAIL);
-			}
+			Prompt password_prompt = new Prompt("Password:", false);
+			password_prompt.setStringToSend(password);
+			password_prompt.setCommandEnd(true);
+			
+			Prompt sudo_su = new Prompt("#", false);
+			sudo_su.setStringToSend("sudo su");
+			sudo_su.setAddEnter(true);
+			
+			Prompt admin_prompt = new Prompt("#", false);
+			Prompt sudo_prompt = new Prompt("$", false);
+			Prompt lteCli = new Prompt("lteCli:>>", false);
+			
+			Prompt active_prompt = terminal.waitForPrompt(timeOut);
+			
+			
+			GeneralUtils.printToConsole("Active prompt: " + active_prompt.toString());
+			
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			GeneralUtils.printToConsole(e.getMessage());
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			GeneralUtils.printToConsole(e.getMessage());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			GeneralUtils.printToConsole(e.getMessage());
 		}
 		finally {
 			GeneralUtils.stopLevel();
+			System.out.println("Completed my test");
+			report.report("Completed my test; Parameters set is: " + !isNull);
 		}
 	}
 	

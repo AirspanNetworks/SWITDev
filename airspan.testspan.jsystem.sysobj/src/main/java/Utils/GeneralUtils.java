@@ -245,7 +245,18 @@ public class GeneralUtils {
             return false;
         }
     }
-
+    
+    /*
+     * Logging to console and to reporter
+     * @author Dmitry Oguz
+     * @param message
+     * @param status
+     */
+    public static void logToLevel(String message, boolean status) {
+    	GeneralUtils.printToConsole(message);
+        report.report(message, status);
+    }
+    
     public static void stopAllLevels() {
         while (levelCounter > 0) {
             if (!stopLevel()) {
@@ -298,7 +309,7 @@ public class GeneralUtils {
         String today = formatter.format(date);
         return today.replaceAll("\\/", "_");
     }
-
+    
     /**
      * gets Long number (currentTimeMillis)
      *

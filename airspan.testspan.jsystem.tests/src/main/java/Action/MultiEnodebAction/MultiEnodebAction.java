@@ -103,6 +103,9 @@ public class MultiEnodebAction extends EnodebAction {
 			report.report("Failed to reset counters", Reporter.FAIL);
 			return;
 		}
+		report.report("Number of dynamic UES: "+dynUEList.size());
+		report.report("Frequency type: "+freqType);
+		report.report("Hand Over type: "+hoType);
 		HandOverClass hoclass = new HandOverClass();
 		hoclass.start();
     }
@@ -168,7 +171,6 @@ public class MultiEnodebAction extends EnodebAction {
 
 	private void preTest() {
 		dynUEList = SetupUtils.getInstance().getDynamicUEs();
-		report.report("Number of dynamic UES: "+dynUEList.size());
 		peripheralsConfig = PeripheralsConfig.getInstance();
 		attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(CommonConstants.ATTENUATOR_SET_NAME);
 		attenuatorMin = attenuatorSetUnderTest.getMinAttenuation();

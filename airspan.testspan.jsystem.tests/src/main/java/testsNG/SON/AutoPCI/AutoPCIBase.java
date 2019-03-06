@@ -15,7 +15,7 @@ import Netspan.EnbProfiles;
 import Netspan.NetspanServer;
 import Netspan.API.Enums.EnabledStates;
 import Netspan.API.Enums.EnbStates;
-import Netspan.API.Enums.HandoverTypes;
+import Netspan.API.Enums.HandoverType;
 import Netspan.API.Enums.HoControlStateTypes;
 import Netspan.API.Enums.SonAnrStates;
 import Netspan.API.Enums.X2ControlStateTypes;
@@ -396,7 +396,7 @@ public class AutoPCIBase extends TestspanTest {
             report.report("3rd party enb was created successfully");
         }
         boolean add = neighborsUtils.addNeighbor(dut, newParty, HoControlStateTypes.ALLOWED,
-                X2ControlStateTypes.AUTOMATIC, HandoverTypes.TRIGGER_X_2, true, "0");
+                X2ControlStateTypes.AUTOMATIC, HandoverType.TRIGGER_X_2, true, "0");
         if (add) {
             report.report("3rd party enb was added as neighbor");
             list3Party.add(newParty);
@@ -700,7 +700,7 @@ public class AutoPCIBase extends TestspanTest {
         }
 
         report.report("Adding neighbor with the same PCI to cause Collision, PCI = " + neighborPci);
-        if (!ngh.addNeighbor(eNodeB, neighbor, HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC, HandoverTypes.TRIGGER_X_2, true, "0")) {
+        if (!ngh.addNeighbor(eNodeB, neighbor, HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC, HandoverType.TRIGGER_X_2, true, "0")) {
             report.report("Failed to add neighbor.", Reporter.FAIL);
             ngh.delete3rdParty(neighbor.getNetspanName());
             GeneralUtils.stopLevel();

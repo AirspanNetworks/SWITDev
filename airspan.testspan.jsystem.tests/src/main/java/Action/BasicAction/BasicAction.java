@@ -170,8 +170,8 @@ public class BasicAction extends Action {
 	public void sendCommandsToSerial() {
 		boolean isNull = false;
 		
-//		System.out.println("Starting my test");
-		GeneralUtils.printToConsole("Starting my test");
+//		
+		GeneralUtils.startLevel("Starting parameters");
 		
 		try {
 			
@@ -204,7 +204,8 @@ public class BasicAction extends Action {
 			Long timeOut; 
 			timeOut = Long.parseLong(timeToWait);
 			
-			GeneralUtils.startLevel("Command sent to serial");
+			GeneralUtils.stopLevel();
+			GeneralUtils.startLevel("Create connection items");
 			
 			ConnectionInfo conn_info = new ConnectionInfo("Serial", ip, port, userName, password, ConnectorTypes.Telnet);
 			
@@ -231,11 +232,12 @@ public class BasicAction extends Action {
 			Prompt sudo_prompt = new Prompt("$", false);
 			Prompt lteCli = new Prompt("lteCli:>>", false);
 			
+			GeneralUtils.stopLevel();
+			GeneralUtils.startLevel("Read current prompt");
 			Prompt active_prompt = terminal.waitForPrompt(timeOut);
 			
-			
 			GeneralUtils.printToConsole("Active prompt: " + active_prompt.toString());
-			
+			GeneralUtils.stopLevel();
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -248,9 +250,7 @@ public class BasicAction extends Action {
 			GeneralUtils.printToConsole(e.getMessage());
 		}
 		finally {
-			GeneralUtils.stopLevel();
-			System.out.println("Completed my test");
-			report.report("Completed my test; Parameters set is: " + !isNull);
+			GeneralUtils.stopAllLevels();
 		}
 	}
 	

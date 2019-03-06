@@ -24,8 +24,8 @@ public class MultiEnodebAction extends EnodebAction {
 	
 	private static int ATT_STEP_TIME = 500;
 	private static int ATT_STEP = 2;
-	private static final float WARNING_LEVEL = 0.9f;
-	private static final float PASS_LEVEL = 0.98f;
+	private final float WARNING_LEVEL = 0.9f;
+	private final float PASS_LEVEL = 0.98f;
 
 	public static long maxduration;
 	private static PeripheralsConfig peripheralsConfig;
@@ -35,19 +35,21 @@ public class MultiEnodebAction extends EnodebAction {
 	int expectedNumOfHO = 30;
 	public static HashMap<String, String> passCriteria = new HashMap<>();
 	static ArrayList<UE> dynUEList = new ArrayList<>();
-	ArrayList<UE> statUEList = new ArrayList<>();
 
-	public static EnodeB dut1;
-	public static EnodeB dut2;
+	//public static EnodeB dut1;
+	//public static EnodeB dut2;
 	private static int attenuatorMin;
 	private static int attenuatorMax;
 
-	static String counterAttempt;
-	static String counterSuccess;
-	
-	static String counterAttemptsnmp;
-	static String counterSuccesssnmp;
+	public static String counterAttempt;
+	public static String counterSuccess;
+	public static String counterAttemptsnmp;
+	public static String counterSuccesssnmp;
 
+	private FrequencyType freqType = FrequencyType.Intra;
+	private HandOverType hoType = HandOverType.S1;
+	static Integer timeToHO = null;
+	private Integer defaultTimeHO = 10;
 	
 	// results variables
 	public static int numberOfDynamicUES;
@@ -67,78 +69,43 @@ public class MultiEnodebAction extends EnodebAction {
 	private static boolean finishedHO = false;
 	private static int finalCounter = 0;
 	
-	
-	
-	public static synchronized boolean isStartedHO() {
-		return startedHO;
-	}
-
-	public static synchronized void setStartedHO(boolean startedHO) {
-		MultiEnodebAction.startedHO = startedHO;
-	}
-
-	public static synchronized boolean isFinishedHO() {
-		return finishedHO;
-	}
-
-	public static synchronized void setFinishedHO(boolean finishedHO) {
-		MultiEnodebAction.finishedHO = finishedHO;
-	}
-
 	@Override
 	public void init() {
-        if (dut1 == null){
+        if (enodeB == null){
         	report.report("DUT1 is not loaded",Reporter.FAIL);
         	Assume.assumeTrue(false);        	
         }
-		if (dut2 == null){
+		if (neighbor == null){
 			report.report("DUT2 is not loaded",Reporter.FAIL);
 			Assume.assumeTrue(false);			
 		}
 		enbInTest = new ArrayList<>();
-		enbInTest.add(dut1);
-		enbInTest.add(dut2);
+		enbInTest.add(enodeB);
+		enbInTest.add(neighbor);
         super.init();
 	}
-
-	public FrequencyType freqType = FrequencyType.Intra;
-	public HandOverType hoType = HandOverType.S1;
-
-	public HandOverType getHoType() {
-		return hoType;
-	}
-
-	public void setHoType(HandOverType hoType) {
-		this.hoType = hoType;
-	}
-
-	public FrequencyType getFreqType() {
-		return freqType;
-	}
-
-	public void setFreqType(FrequencyType freqType) {
-		this.freqType = freqType;
-	}
-
-	public enum FrequencyType {
-        Intra, Inter;
+	
+	@Test
+    @TestProperties(name = "Start HandOver", returnParam = {"LastStatus"}, paramsInclude = {"DUT1","DUT2","TimeToHO",
+    		"FreqType","HoType"})
+	public void startHO() {
+		if(isStartedHO()){
+			report.report("HO has already been started and cannot be started again", Reporter.FAIL);
+			return;
+		}
+		if(timeToHO == null){
+			report.report("No time was set. Default of " + defaultTimeHO + " minutes");
+			timeToHO = defaultTimeHO;
+		}
+		preTest();		
+		setCounters();
+		if (!gettingPassCratiriaValue()) {
+			report.report("Failed to reset counters", Reporter.FAIL);
+			return;
+		}
+		HandOverClass hoclass = new HandOverClass();
+		hoclass.start();
     }
-	
-	public enum HandOverType {
-        S1, X2;
-    }
-	
-	static Integer timeToHO = null; 
-	
-	public Integer getTimeToHO() {
-		return timeToHO;
-	}
-
-	@ParameterProperties(description = "Time of performing HO in minutes")
-	public void setTimeToHO(String timeToHO) {
-		this.timeToHO = Integer.valueOf(timeToHO);
-	}
-	static Integer defaultTimeHO = 10;
 	
 	@Test
     @TestProperties(name = "Get Statistics Hand Over", returnParam = {"LastStatus"}, paramsInclude = {})
@@ -168,32 +135,6 @@ public class MultiEnodebAction extends EnodebAction {
 		second_ENB_att = 0;
 	}
 	
-	@Test
-    @TestProperties(name = "Start HO", returnParam = {"LastStatus"}, paramsInclude = {"DUT1","DUT2","TimeToHO",
-    		"FreqType","HoType"})
-	public void startHO() {
-		if(isStartedHO()){
-			report.report("HO has already been started and cannot be started again", Reporter.FAIL);
-			return;
-		}
-		if(timeToHO == null){
-			report.report("No time was set. Default of " + defaultTimeHO + " minutes");
-			timeToHO = defaultTimeHO;
-		}
-		
-		preTest();
-		
-		setCounters();
-		
-		if (!gettingPassCratiriaValue()) {
-			report.report("Failed to reset counters", Reporter.FAIL);
-			return;
-		}
-				
-		HandOverClass hoclass = new HandOverClass();
-		hoclass.start();
-    }
-
 	private void setCounters() {
 		if(freqType == FrequencyType.Intra){
 			if(hoType == HandOverType.S1){
@@ -228,8 +169,6 @@ public class MultiEnodebAction extends EnodebAction {
 	private void preTest() {
 		dynUEList = SetupUtils.getInstance().getDynamicUEs();
 		report.report("Number of dynamic UES: "+dynUEList.size());
-		enodeB = dut1;
-		neighbor = dut2;
 		peripheralsConfig = PeripheralsConfig.getInstance();
 		attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(CommonConstants.ATTENUATOR_SET_NAME);
 		attenuatorMin = attenuatorSetUnderTest.getMinAttenuation();
@@ -237,53 +176,6 @@ public class MultiEnodebAction extends EnodebAction {
 		ATT_STEP_TIME = attenuatorSetUnderTest.getStepTime();
 		ATT_STEP = attenuatorSetUnderTest.getAttenuationStep();
 		
-	}
-
-	static class HandOverClass implements Runnable{
-		public void start() {
-			maxduration = timeToHO*60*1000;
-			GeneralUtils.startLevel("Moving attenuator for " + maxduration / 60000 + " minutes to create Hand-Over");
-			report.report("Attenuator IP: " + attenuatorSetUnderTest.getName());
-			GeneralUtils.stopLevel();
-			setStartedHO(true);
-			Thread runnableThread = new Thread(this);
-			runnableThread.start();
-		}
-		
-		@Override
-		public void run() {
-			long startTime = System.currentTimeMillis();
-			long endTime = System.currentTimeMillis() + timeToHO*60*1000;
-			long resetCounters = startTime;
-			int counter = 0;
-			int waitingPeriodTime = dut1.getGranularityPeriod();
-			while (System.currentTimeMillis() < endTime) {
-				moveAtt(attenuatorSetUnderTest, attenuatorMin, attenuatorMax);
-				counter++;
-				if (System.currentTimeMillis() > endTime) {
-					break;
-				}
-				moveAtt(attenuatorSetUnderTest, attenuatorMax, attenuatorMin);
-				counter++;
-				if (System.currentTimeMillis() - resetCounters >= 8 * 60 * 1000 * waitingPeriodTime) {
-					resetCounters = System.currentTimeMillis();
-					double temp = Math.floor(((System.currentTimeMillis() - startTime) / 1000 / 60.0) * 100);
-					double tempDouble = temp / 100.0;
-					report.report("Time elapsed: " + tempDouble + " minutes.");
-					updateResultsVariables(counter);
-					resetCounters();
-				}
-			}
-			 // moving attenuator stop level
-			report.report("Finished moving attenuator");
-			attenuatorSetUnderTest.close();
-			attenuatorSetUnderTest = null;
-			report.report("Wait for " + waitingPeriodTime + " minutes for Counter to update");
-			GeneralUtils.unSafeSleep(waitingPeriodTime * 60 * 1000);
-			updateResultsVariables(counter);
-			setFinishedHO(true);
-			finalCounter = counter;
-		}
 	}
 
 	private static void resetCounters() {
@@ -415,33 +307,54 @@ public class MultiEnodebAction extends EnodebAction {
 		theoreticalAttempts = (total_attCounter * 1.0) / (counter * numberOfDynamicUES) * 100;
 	}
 
-	@ParameterProperties(description = "First DUT")
-	public void setDUT1(String dut) {
-		GeneralUtils.printToConsole("Load DUT1" + dut);
-		MultiEnodebAction.dut1 = (EnodeB) SysObjUtils.getInstnce().initSystemObject(EnodeB.class, false, dut).get(0);
-		GeneralUtils.printToConsole("DUT loaded" + this.dut1.getNetspanName());
+	
+	static class HandOverClass implements Runnable{
+		public void start() {
+			maxduration = timeToHO*60*1000;
+			GeneralUtils.startLevel("Moving attenuator for " + maxduration / 60000 + " minutes to create Hand-Over");
+			report.report("Attenuator IP: " + attenuatorSetUnderTest.getName());
+			GeneralUtils.stopLevel();
+			setStartedHO(true);
+			Thread runnableThread = new Thread(this);
+			runnableThread.start();
+		}
+		
+		@Override
+		public void run() {
+			long startTime = System.currentTimeMillis();
+			long endTime = System.currentTimeMillis() + timeToHO*60*1000;
+			long resetCounters = startTime;
+			int counter = 0;
+			int waitingPeriodTime = enodeB.getGranularityPeriod();
+			while (System.currentTimeMillis() < endTime) {
+				moveAtt(attenuatorSetUnderTest, attenuatorMin, attenuatorMax);
+				counter++;
+				if (System.currentTimeMillis() > endTime) {
+					break;
+				}
+				moveAtt(attenuatorSetUnderTest, attenuatorMax, attenuatorMin);
+				counter++;
+				if (System.currentTimeMillis() - resetCounters >= 8 * 60 * 1000 * waitingPeriodTime) {
+					resetCounters = System.currentTimeMillis();
+					double temp = Math.floor(((System.currentTimeMillis() - startTime) / 1000 / 60.0) * 100);
+					double tempDouble = temp / 100.0;
+					report.report("Time elapsed: " + tempDouble + " minutes.");
+					updateResultsVariables(counter);
+					resetCounters();
+				}
+			}
+			 // moving attenuator stop level
+			report.report("Finished moving attenuator");
+			attenuatorSetUnderTest.close();
+			attenuatorSetUnderTest = null;
+			report.report("Wait for " + waitingPeriodTime + " minutes for Counter to update");
+			GeneralUtils.unSafeSleep(waitingPeriodTime * 60 * 1000);
+			updateResultsVariables(counter);
+			setFinishedHO(true);
+			finalCounter = counter;
+		}
 	}
-
-	@ParameterProperties(description = "Second DUT")
-	public void setDUT2(String dut) {
-		GeneralUtils.printToConsole("Load DUT2" + dut);
-		MultiEnodebAction.dut2 = (EnodeB) SysObjUtils.getInstnce().initSystemObject(EnodeB.class, false, dut).get(0);
-		GeneralUtils.printToConsole("DUT loaded" + this.dut2.getNetspanName());
-	}
-
-	public EnodeB getDut1() {
-		return dut1;
-	}
-
-	public EnodeB getDut2() {
-		return dut2;
-	}
-
-	@Override
-	public void end() {
-		super.end();
-	}
-
+	
 	private boolean gettingPassCratiriaValue() {
 		boolean tempFlag = true;
 		GeneralUtils.startLevel("Getting Pass Criteria counters value");
@@ -464,5 +377,81 @@ public class MultiEnodebAction extends EnodebAction {
 		GeneralUtils.stopLevel(); // Getting Pass Criteria counters value stop
 									// level
 		return tempFlag;
+	}
+	
+	public static synchronized boolean isStartedHO() {
+		return startedHO;
+	}
+
+	public static synchronized void setStartedHO(boolean startedHO) {
+		MultiEnodebAction.startedHO = startedHO;
+	}
+
+	public static synchronized boolean isFinishedHO() {
+		return finishedHO;
+	}
+
+	public static synchronized void setFinishedHO(boolean finishedHO) {
+		MultiEnodebAction.finishedHO = finishedHO;
+	}
+
+	public HandOverType getHoType() {
+		return hoType;
+	}
+
+	public void setHoType(HandOverType hoType) {
+		this.hoType = hoType;
+	}
+
+	public FrequencyType getFreqType() {
+		return freqType;
+	}
+
+	public void setFreqType(FrequencyType freqType) {
+		this.freqType = freqType;
+	}
+
+	public enum FrequencyType {
+        Intra, Inter;
+    }
+	
+	public enum HandOverType {
+        S1, X2;
+    }
+	
+	public Integer getTimeToHO() {
+		return timeToHO;
+	}
+
+	@ParameterProperties(description = "Time of performing HO in minutes")
+	public void setTimeToHO(String timeToHO) {
+		this.timeToHO = Integer.valueOf(timeToHO);
+	}
+	
+	@ParameterProperties(description = "First DUT")
+	public void setDUT1(String dut) {
+		GeneralUtils.printToConsole("Load DUT1" + dut);
+		MultiEnodebAction.enodeB = (EnodeB) SysObjUtils.getInstnce().initSystemObject(EnodeB.class, false, dut).get(0);
+		GeneralUtils.printToConsole("DUT loaded" + this.enodeB.getNetspanName());
+	}
+
+	@ParameterProperties(description = "Second DUT")
+	public void setDUT2(String dut) {
+		GeneralUtils.printToConsole("Load DUT2" + dut);
+		MultiEnodebAction.neighbor = (EnodeB) SysObjUtils.getInstnce().initSystemObject(EnodeB.class, false, dut).get(0);
+		GeneralUtils.printToConsole("DUT loaded" + this.neighbor.getNetspanName());
+	}
+
+	public EnodeB getDut1() {
+		return enodeB;
+	}
+
+	public EnodeB getDut2() {
+		return neighbor;
+	}
+
+	@Override
+	public void end() {
+		super.end();
 	}
 }

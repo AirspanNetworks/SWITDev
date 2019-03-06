@@ -1174,7 +1174,8 @@ public class Enodeb extends EnodebAction {
     		}
     		report.report("Real output " + (status == Reporter.PASS ? "not" : "") + "match expected pattern", status);
     	}
-    	report.report("Command output: -------------------\n" +  response_text + "\n----------------------");
+//    	report.report("Command output: -------------------\n" +  response_text + "\n----------------------");
+    	GeneralUtils.reportHtmlLink("Command output:", response_text);
     	GeneralUtils.stopLevel();
 //    	return status == Reporter.PASS;
     }

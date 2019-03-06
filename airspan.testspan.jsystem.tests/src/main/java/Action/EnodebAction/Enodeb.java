@@ -1052,7 +1052,7 @@ public class Enodeb extends EnodebAction {
 	
 	private String serialCommand;
 	private String expectedOutput;
-	private int commandTimeout  = 1000;
+	private int commandTimeout  = 1;
 	private boolean lteCliRequired = false;
 	
 	@ParameterProperties(description = "Commmand to be send via serial")
@@ -1102,7 +1102,7 @@ public class Enodeb extends EnodebAction {
     	int timeout = this.getCommandTimeout();
     	Session session = this.dut.getSerialSession();
     	
-    	GeneralUtils.startLevel("Sent command: '" + command + "'");
+    	GeneralUtils.startLevel("Start keyword sent command: '" + command + "'");
     	
     	if(!session.isConnected()) {
     		if(!session.connectSession()) {
@@ -1147,13 +1147,15 @@ public class Enodeb extends EnodebAction {
         	}
     	}
     	else {
-    		report.report("LoggedIn to serial host " + dut.getName(), Reporter.PASS);
+    		report.report("In CLI to serial host " + dut.getName(), Reporter.PASS);
     	}
     	
     	int status = Reporter.PASS;
     	String text_status = "";
+    	GeneralUtils.startLevel("Sent command: '" + command + "'; Timeout: " + timeout + "ms");
+    	session.getCliBuffer();
     	String response_text = session.sendCommands(EnodeBComponent.SHELL_PROMPT, command, null, timeout);
-    	
+    	GeneralUtils.stopLevel();
     	
     	if(output != null) {
     		if(response_text.indexOf(output) > 0) {

@@ -257,6 +257,10 @@ public class GeneralUtils {
         report.report(message, status);
     }
     
+    public static void logToLevel(String message) {
+    	logToLevel(message, Reporter.PASS);
+    }
+    
     public static void stopAllLevels() {
         while (levelCounter > 0) {
             if (!stopLevel()) {

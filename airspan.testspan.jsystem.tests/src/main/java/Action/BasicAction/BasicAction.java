@@ -36,7 +36,7 @@ public class BasicAction extends Action {
 	private String sleepTime;
 	private String netspan;
 	private EnodeB dut;
-	private static Map<String,Date> startDate = null;
+	private static Map<String,Date> startDate;
 	private final int eventStartDeafult = 20;
 	
 	@ParameterProperties(description = "Name of Enodeb Which the test will be run On")
@@ -71,6 +71,7 @@ public class BasicAction extends Action {
 		}
 		Date dateFrom = new Date();
 		startDate.put(dut.getNetspanName(), dateFrom);
+		GeneralUtils.printToConsole(startDate.toString());
 	}
 	
 	@Test

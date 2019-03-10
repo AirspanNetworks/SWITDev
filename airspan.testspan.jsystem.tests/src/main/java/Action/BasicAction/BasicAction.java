@@ -1,20 +1,30 @@
 package Action.BasicAction;
 
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 
 import Action.Action;
-import Netspan.NBIVersion;
+import EnodeB.EnodeB;
 import Netspan.NetspanServer;
+import Netspan.API.Lte.AlarmInfo;
+import Netspan.API.Lte.EventInfo;
 import PowerControllers.PowerController;
 import PowerControllers.PowerControllerPort;
 import Utils.GeneralUtils;
 import Utils.SSHConnector;
+import Utils.SysObjUtils;
 import jsystem.framework.ParameterProperties;
 import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
+import testsNG.Actions.AlarmsAndEvents;
 
 public class BasicAction extends Action {
 	private String timeToWait = "00:00:00";
@@ -25,6 +35,97 @@ public class BasicAction extends Action {
 	private String password;
 	private String sleepTime;
 	private String netspan;
+	private EnodeB dut;
+	private static Map<String,Date> startDate = null;
+	private final int eventStartDeafult = 20;
+	
+	@ParameterProperties(description = "Name of Enodeb Which the test will be run On")
+	public void setDUT(String dut) {
+		this.dut = (EnodeB) SysObjUtils.getInstnce().initSystemObject(EnodeB.class, false, dut).get(0);
+	}
+
+	public String getDUT() {
+		return this.dut.getNetspanName();
+	}
+
+	@Test
+	@TestProperties(name = "Clear Alarms", returnParam = "LastStatus", paramsInclude = { "DUT" })
+	public void clearAlarms() {
+		if(dut == null){
+			report.report("No dut in test", Reporter.FAIL);
+			return;
+		}
+		AlarmsAndEvents alarmsAndEvents = AlarmsAndEvents.getInstance();
+		alarmsAndEvents.deleteAllAlarmsNode(dut);
+	}
+	
+	@Test
+	@TestProperties(name = "Clear Events", returnParam = "LastStatus", paramsInclude = { "DUT" })
+	public void clearEvents() {
+		if(dut == null){
+			report.report("No dut in test", Reporter.FAIL);
+			return;
+		}
+		if(startDate == null){
+			startDate = new HashMap<String,Date>();
+		}
+		Date dateFrom = new Date();
+		startDate.put(dut.getNetspanName(), dateFrom);
+	}
+	
+	@Test
+	@TestProperties(name = "Get All Alarms", returnParam = "LastStatus", paramsInclude = { "DUT" })
+	public void getAlarms() {
+		if(dut == null){
+			report.report("No dut in test", Reporter.FAIL);
+			return;
+		}
+		printAlarmsInfo(dut);
+	}
+	
+	@Test
+	@TestProperties(name = "Get All Events", returnParam = "LastStatus", paramsInclude = { "DUT" })
+	public void getEvents() {
+		if(dut == null){
+			report.report("No dut in test", Reporter.FAIL);
+			return;
+		}
+		Date from = null;
+		if(startDate.get(dut.getNetspanName()) == null){
+			report.report("Clear events was not used. Getting events of last "+eventStartDeafult+" minutes");
+			from = DateUtils.addMinutes(from, -eventStartDeafult);
+		}
+		Date to = new Date();
+		printEventsInfo(dut,from,to);
+	}
+	
+	private void printEventsInfo(EnodeB enodeb,Date from, Date to){
+		AlarmsAndEvents alarmsAndEvents = AlarmsAndEvents.getInstance();
+		List<EventInfo> eventsInfo = alarmsAndEvents.getEventsNodeByDateRange(enodeb, from, to);
+		if (!eventsInfo.isEmpty()) {
+            GeneralUtils.startLevel(enodeb.getName() + "'s Alarms: ");
+            for (EventInfo eventInfo : eventsInfo) {
+                alarmsAndEvents.printEventInfo(eventInfo);
+            }
+            GeneralUtils.stopLevel();
+        } else {
+            report.report(enodeb.getName() + "'s events list is empty");
+        }
+	}
+	
+	private void printAlarmsInfo(EnodeB eNodeB) {
+		AlarmsAndEvents alarmsAndEvents = AlarmsAndEvents.getInstance();
+        List<AlarmInfo> alarmsInfo = alarmsAndEvents.getAllAlarmsNode(eNodeB);
+        if (!alarmsInfo.isEmpty()) {
+            GeneralUtils.startLevel(eNodeB.getName() + "'s Alarms: ");
+            for (AlarmInfo alarmInfo : alarmsInfo) {
+                alarmsAndEvents.printAlarmInfo(alarmInfo);
+            }
+            GeneralUtils.stopLevel();
+        } else {
+            report.report(eNodeB.getName() + "'s Alarms list is empty");
+        }
+    }
 	
 	@ParameterProperties(description = "Waiting time in seconds after sending last command. Default - no waiting")
 	public void setSleepTime(String sleepTime) {

@@ -173,6 +173,11 @@ public abstract class EnodeBComponent extends SystemObjectImpl implements LogLis
      */
     @Override
     public void init() throws Exception {
+        StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
+        StackTraceElement ee = stacktrace[2];//maybe this number needs to be corrected
+        String className = ee.getClassName();
+
+
         super.init();
         corePathSet = new HashSet<String>();
 

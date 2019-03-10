@@ -109,7 +109,7 @@ public class BasicAction extends Action {
 		AlarmsAndEvents alarmsAndEvents = AlarmsAndEvents.getInstance();
 		List<EventInfo> eventsInfo = alarmsAndEvents.getEventsNodeByDateRange(enodeb, from, to);
 		if (!eventsInfo.isEmpty()) {
-            GeneralUtils.startLevel(enodeb.getName() + "'s Alarms: ");
+            GeneralUtils.startLevel(enodeb.getName() + "'s Events: ");
             for (EventInfo eventInfo : eventsInfo) {
                 alarmsAndEvents.printEventInfo(eventInfo);
             }

@@ -93,7 +93,10 @@ public class BasicAction extends Action {
 		Date from = null;
 		if(startDate.get(dut.getNetspanName()) == null){
 			report.report("Clear events was not used. Getting events of last "+eventStartDeafult+" minutes");
+			from = new Date();
 			from = DateUtils.addMinutes(from, -eventStartDeafult);
+		}else{
+			from = startDate.get(dut.getNetspanName());
 		}
 		Date to = new Date();
 		printEventsInfo(dut,from,to);

@@ -101,6 +101,7 @@ public class BasicAction extends Action {
 			from = startDate.get(dut.getNetspanName());
 		}
 		Date to = new Date();
+		report.report("Getting events from: "+from.toString()+" to: "+to.toString());
 		printEventsInfo(dut,from,to);
 	}
 	

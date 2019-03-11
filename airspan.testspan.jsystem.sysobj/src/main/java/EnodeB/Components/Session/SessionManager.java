@@ -29,9 +29,32 @@ public class SessionManager {
 		this.enodeBComponent = enodeBComponent;
 		this.sessions = new ArrayList<Session>();
 	}
-	
-	public void init()
-	{
+
+	/**
+	 * open Serial Log Session
+	 */
+	public void openSerialLogSession() {
+		try {
+			serialLogLevel = Integer.parseInt(
+					TestspanConfigurationsManager.getInstance().getConfig(CONSOLE_LOG_LEVEL_PROPERTY_NAME));
+		} catch (Exception e) {
+			GeneralUtils.printToConsole(
+					"Console Log level is not defined in testpan.properties file. Can't set sessions log level!");
+			serialLogLevel = LOG_LEVEL_NO_VALUE; // property doesn't exist
+													// so don't use it.
+		}
+		if (enodeBComponent.serialCom != null){
+			openConsoleSession();
+			if(defaultSession == null && getEnodeBComponent() instanceof DAN){
+				defaultSession = getSerialSession();
+			}
+		}
+	}
+
+	/**
+	 * open SSH Log Session
+	 */
+	public void openSSHLogSession() {
 		try {
 			SSHlogLevel = Integer
 					.parseInt(TestspanConfigurationsManager.getInstance().getConfig(LOG_LEVEL_PROPERTY_NAME));
@@ -41,15 +64,18 @@ public class SessionManager {
 			SSHlogLevel = LOG_LEVEL_NO_VALUE; // property doesn't exist so
 											// don't use it.
 		}
-		try {
-			serialLogLevel = Integer.parseInt(
-					TestspanConfigurationsManager.getInstance().getConfig(CONSOLE_LOG_LEVEL_PROPERTY_NAME));
-		} catch (Exception e) {
-			GeneralUtils.printToConsole(
-					"Console Log level is not defined in testpan.properties file. Can't set sessions log level!");
-			serialLogLevel = LOG_LEVEL_NO_VALUE; // property doesn't exist
-													// so don't use it.
-		}	
+		String sessionName = openSession(getEnodeBComponent().getName() + "_" + SSH_LOG_SESSION_NAME, SSHlogLevel);
+		if (sessionName != null)
+		{
+			SSHlogSession = getSession(sessionName);
+			SSHlogSession.setShouldStayInCli(true);
+		}
+	}
+
+	/**
+	 * open SSH Command Session
+	 */
+	public void openSSHCommandSession() {
 		try {
 			commandsLogLevel = Integer.parseInt(
 					TestspanConfigurationsManager.getInstance().getConfig(COMMAND_LOG_LEVEL_PROPERTY_NAME));
@@ -58,27 +84,10 @@ public class SessionManager {
 					"Console Log level is not defined in testpan.properties file. Can't set sessions log level!");
 			commandsLogLevel = LOG_LEVEL_NO_VALUE; // property doesn't exist
 													// so don't use it.
-		}	
-		
-		
-		
+		}
 		String sessionName = openSession(getEnodeBComponent().getName() + "_" + SSH_COMMANDS_SESSION_NAME, commandsLogLevel);
 		if (sessionName != null)
 			defaultSession = getSession(sessionName);
-		
-		sessionName = openSession(getEnodeBComponent().getName() + "_" + SSH_LOG_SESSION_NAME, SSHlogLevel);
-		if (sessionName != null)
-		{
-			SSHlogSession = getSession(sessionName);
-			SSHlogSession.setShouldStayInCli(true);
-		}
-
-		if (enodeBComponent.serialCom != null){
-			openConsoleSession();
-			if(defaultSession == null && getEnodeBComponent() instanceof DAN){
-				defaultSession = getSerialSession();
-			}
-		}
 	}
 
 	private synchronized boolean openConsoleSession() {

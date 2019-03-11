@@ -207,7 +207,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 		}
 		if (connectInfo.serialInfo != null) {
 			XLP.createSerialCom(connectInfo.serialInfo.getSerialIP(), Integer.parseInt(connectInfo.serialInfo.getSerialPort()) );
-			XLP.setSerialUsername(connectInfo.serialInfo.getUserName());	
+			XLP.setSerialUsername(connectInfo.serialInfo.getUserName());
 		}
 		XLP.setParent(this);
 		XLP.setIpAddress(connectInfo.getIpAddress());
@@ -216,7 +216,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 		if(connectInfo.getReadCommunity()!=null)
 			XLP.setReadCommunity(connectInfo.getReadCommunity());
 		if(connectInfo.getWriteCommunity()!=null)
-			XLP.setWriteCommunity(connectInfo.getWriteCommunity());		
+			XLP.setWriteCommunity(connectInfo.getWriteCommunity());
 		XLP.debugFlags = getDebugFlags();
 		XLP.hardwareName = getControlComponenetHwName();
 		XLP.setName(getName());
@@ -2223,7 +2223,11 @@ public abstract class EnodeB extends SystemObjectImpl {
 	public String getXLPName(){
 		return XLP.getName();
 	}
-	
+
+	public XLP getXLP(){
+		return XLP;
+	}
+
 	public boolean isInstanceOfXLP_14_0(){
 		return (XLP instanceof XLP_14_0);
 	}

@@ -31,6 +31,7 @@ public class Session implements Runnable {
 	private Cli cli;
 	private boolean loggedSession;
 	private boolean shouldStayInCli = false;
+	private boolean isSessionInitialized = false;
 	
 	//lock used to allow safe login without interruption from other commands. every access to sendRawCommands should be after aquiring this
 	public Semaphore sshConnectionLock = new Semaphore(1); 
@@ -544,5 +545,20 @@ public class Session implements Runnable {
 
 	public void setShouldStayInCli(boolean shouldStayInCli) {
 		this.shouldStayInCli = shouldStayInCli;
+	}
+
+	/**
+	 * True if it was initialed
+	 * @param sessionInitialized - sessionInitialized
+	 */
+	public void setSessionInitialized(boolean sessionInitialized) {
+		isSessionInitialized = sessionInitialized;
+	}
+
+	/** isSessionInitialized getter
+	 * @return - isSessionInitialized
+	 */
+	public boolean isSessionInitialized() {
+		return isSessionInitialized;
 	}
 }

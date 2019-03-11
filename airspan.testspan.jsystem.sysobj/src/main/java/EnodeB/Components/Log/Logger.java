@@ -75,23 +75,44 @@ public class Logger implements Runnable {
 		
 		// Initializing the logged sessions
 		this.loggedSessions = new ArrayList<Session>();
-		
-		// Console session
-		if (sessionManager.getSerialSession() != null)
-			this.loggedSessions.add(sessionManager.getSerialSession());
-		
-		// SSH session
-		if (parent.getIpAddress() != null){ 
-			this.loggedSessions.add(sessionManager.getSSHlogSession());
-			this.loggedSessions.add(sessionManager.getDefaultSession());
-		}
-		
-		for (Session session : loggedSessions) {
+		addLoggedSessions(sessionManager);
+		initLoggedSessions();
+	}
+
+	/**
+	 * Init Logged Sessions if not Initialized
+	 */
+	public void initLoggedSessions() {
+		//todo check what should be done on logged sessions
+		for (Session session : this.loggedSessions) {
+			if (!session.isSessionInitialized()) {
 				session.setLoggedSession(true);
 				session.setEnableCliBuffer(false);
 				GeneralUtils.printToConsole("update log level from logger");
 				session.updateLogLevel();
-		}		
+				session.setSessionInitialized(true);
+			}
+		}
+	}
+
+	/**
+	 * Add the Logged Sessions from sessionManager to loggedSessions Array - in order to stream from them
+	 * @param sessionManager - sessionManager
+	 */
+	public void addLoggedSessions(SessionManager sessionManager) {
+		// Console session
+		if (sessionManager.getSerialSession() != null)
+			this.loggedSessions.add(sessionManager.getSerialSession());
+
+		// SSH sessions
+		if (parent.getIpAddress() != null) {
+			if (sessionManager.getSSHlogSession() != null) {
+				this.loggedSessions.add(sessionManager.getSSHlogSession());
+			}
+			if (sessionManager.getDefaultSession() != null) {
+				this.loggedSessions.add(sessionManager.getDefaultSession());
+			}
+		}
 	}
 	
 	/**

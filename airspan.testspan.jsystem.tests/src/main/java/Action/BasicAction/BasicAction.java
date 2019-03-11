@@ -1,6 +1,8 @@
 package Action.BasicAction;
 
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -38,7 +40,41 @@ public class BasicAction extends Action {
 	private EnodeB dut;
 	private static Map<String,Date> startDate;
 	private final int eventStartDeafult = 20;
+	private ArrayList<String> listOfAlarms;
+	private ArrayList<String> listOfEvents;
+	private verifyAlarmAction verifyAction = verifyAlarmAction.Equals;
 	
+	public verifyAlarmAction getVerifyAction() {
+		return verifyAction;
+	}
+
+	@ParameterProperties(description = "Equals: search for exact event. Contains: check if your string is in event info string")
+	public void setVerifyAction(verifyAlarmAction verifyAction) {
+		this.verifyAction = verifyAction;
+	}
+
+	public enum verifyAlarmAction{
+		Equals, Verify;
+	}
+	
+	public ArrayList<String> getListOfAlarms() {
+		return listOfAlarms;
+	}
+
+	@ParameterProperties(description = "List of alarms type ids, separated by ;")
+	public void setListOfAlarms(String listOfAlarms) {
+		this.listOfAlarms = new ArrayList<String>(Arrays.asList(listOfAlarms.split(";")));
+	}
+
+	public ArrayList<String> getListOfEvents() {
+		return listOfEvents;
+	}
+
+	@ParameterProperties(description = "List of events info, separated by #")
+	public void setListOfEvents(String listOfEvents) {
+		this.listOfEvents = new ArrayList<String>(Arrays.asList(listOfEvents.split("#")));
+	}
+
 	@ParameterProperties(description = "Name of Enodeb Which the test will be run On")
 	public void setDUT(String dut) {
 		this.dut = (EnodeB) SysObjUtils.getInstnce().initSystemObject(EnodeB.class, false, dut).get(0);
@@ -91,8 +127,14 @@ public class BasicAction extends Action {
 			report.report("No dut in test", Reporter.FAIL);
 			return;
 		}
+		Date from = setStartTime();
+		Date to = new Date();
+		report.report("Getting events from: "+from.toString()+" to: "+to.toString());
+		printEventsInfo(dut,from,to);
+	}
+	
+	private Date setStartTime(){
 		Date from = null;
-		
 		if(startDate == null || (startDate != null && startDate.get(dut.getNetspanName()) == null)){
 			report.report("Clear events was not used. Getting events of last "+eventStartDeafult+" minutes");
 			from = new Date();
@@ -100,9 +142,7 @@ public class BasicAction extends Action {
 		}else{
 			from = startDate.get(dut.getNetspanName());
 		}
-		Date to = new Date();
-		report.report("Getting events from: "+from.toString()+" to: "+to.toString());
-		printEventsInfo(dut,from,to);
+		return from;
 	}
 	
 	private void printEventsInfo(EnodeB enodeb,Date from, Date to){
@@ -132,6 +172,76 @@ public class BasicAction extends Action {
             report.report(eNodeB.getName() + "'s Alarms list is empty");
         }
     }
+	
+	@Test
+	@TestProperties(name = "Verify Alarms", returnParam = "LastStatus", paramsInclude = { "DUT","ListOfAlarms" })
+	public void verifyAlarms() {
+		if(dut == null){
+			report.report("No dut in test", Reporter.FAIL);
+			return;
+		}
+		if(listOfAlarms.isEmpty()){
+			report.report("No alarms were set to verify", Reporter.FAIL);
+			return;
+		}
+		AlarmsAndEvents alarmsAndEvents = AlarmsAndEvents.getInstance();
+        List<AlarmInfo> alarmsInfo = alarmsAndEvents.getAllAlarmsNode(dut);
+        for(String id : listOfAlarms){
+        	int count = 0;
+        	for(AlarmInfo alarm : alarmsInfo){
+        		if(id.equals(alarm.alarmType)){
+        			count++;
+        		}
+        	}
+        	if(count == 0){
+        		report.report("Alarm with type id ["+id+"] was not found",Reporter.FAIL);
+        	}else{
+        		report.report("Alarm with type id ["+id+"] was found ["+count+"] time"+(count==1?"":"s"));
+        	}
+        }
+	}
+	
+	@Test
+	@TestProperties(name = "Verify Events", returnParam = "LastStatus", paramsInclude = { "DUT",
+			"ListOfEvents","VerifyAction" })
+	public void verifyEvents() {
+		if(dut == null){
+			report.report("No dut in test", Reporter.FAIL);
+			return;
+		}
+		if(listOfEvents.isEmpty()){
+			report.report("No events were set to verify", Reporter.FAIL);
+			return;
+		}
+		if(verifyAction == verifyAlarmAction.Equals){
+			report.report("Searching for exact event info");
+		}else{
+			report.report("Searching for containing event info");
+		}
+		AlarmsAndEvents alarmsAndEvents = AlarmsAndEvents.getInstance();
+        Date from = setStartTime();
+        Date to = new Date();
+		List<EventInfo> eventsInfo = alarmsAndEvents.getEventsNodeByDateRange(dut, from, to);
+        for(String info : listOfEvents){
+        	int count = 0;
+        	for(EventInfo event : eventsInfo){
+        		if(verifyAction == verifyAlarmAction.Equals){
+        			if(info.equals(event.getEventInfo())){
+        				count++;
+        			}
+        		}else{
+        			if(event.getEventInfo().contains(info)){
+        				count++;
+        			}
+        		}
+        	}
+        	if(count == 0){
+        		report.report("Event with event info ["+info+"] was not found",Reporter.FAIL);
+        	}else{
+        		report.report("Event with event info ["+info+"] was found ["+count+"] time"+(count==1?"":"s"));
+        	}
+        }
+	}
 	
 	@ParameterProperties(description = "Waiting time in seconds after sending last command. Default - no waiting")
 	public void setSleepTime(String sleepTime) {

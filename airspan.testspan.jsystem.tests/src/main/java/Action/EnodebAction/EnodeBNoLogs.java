@@ -173,7 +173,7 @@ public class EnodeBNoLogs extends EnodebAction {
         for(String id : listOfAlarms){
         	int count = 0;
         	for(AlarmInfo alarm : alarmsInfo){
-        		if(id.equals(alarm.alarmTypeId)){
+        		if(id.equals(alarm.alarmTypeId.toString())){
         			count++;
         		}
         	}

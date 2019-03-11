@@ -28,6 +28,12 @@ public class EnodeBNoLogs extends EnodebAction {
 	private ArrayList<String> listOfEvents;
 	private verifyAlarmAction verifyAction = verifyAlarmAction.Equals;
 	
+	@Override
+	public void init() {
+		enbInTest = new ArrayList<>();
+		super.init();
+	}
+	
 	public verifyAlarmAction getVerifyAction() {
 		return verifyAction;
 	}
@@ -59,7 +65,7 @@ public class EnodeBNoLogs extends EnodebAction {
 		this.listOfEvents = new ArrayList<String>(Arrays.asList(listOfEvents.split("#")));
 	}
 
-	@ParameterProperties(description = "Name of Enodeb Which the test will be run On")
+	@ParameterProperties(description = "Name of Enodeb Which the action will be run On")
 	public void setDUT(String dut) {
 		this.dut = (EnodeB) SysObjUtils.getInstnce().initSystemObject(EnodeB.class, false, dut).get(0);
 	}
@@ -168,6 +174,10 @@ public class EnodeBNoLogs extends EnodebAction {
 			report.report("No alarms were set to verify", Reporter.FAIL);
 			return;
 		}
+		verifyAlarmsHelper();
+	}
+	
+	private void verifyAlarmsHelper(){
 		AlarmsAndEvents alarmsAndEvents = AlarmsAndEvents.getInstance();
         List<AlarmInfo> alarmsInfo = alarmsAndEvents.getAllAlarmsNode(dut);
         for(String id : listOfAlarms){
@@ -202,6 +212,10 @@ public class EnodeBNoLogs extends EnodebAction {
 		}else{
 			report.report("Searching for containing event info");
 		}
+		verifyEventsHelper();
+	}
+	
+	private void verifyEventsHelper(){
 		AlarmsAndEvents alarmsAndEvents = AlarmsAndEvents.getInstance();
         Date from = setStartTime();
         Date to = new Date();

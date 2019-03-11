@@ -18,7 +18,12 @@ public class Prompt {
         this.prompt = prompt;
         this.isRegularExpression = isRegExp;
     }
-
+    public Prompt(String prompt, boolean isRegExp, String stringToSend, boolean setEnter) {
+    	this(prompt, isRegExp);
+    	setStringToSend(stringToSend);
+		setCommandEnd(setEnter);
+    }
+    
     public String getPrompt() {
         return prompt;
     }

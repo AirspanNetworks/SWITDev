@@ -5,6 +5,8 @@ import java.io.PrintStream;
 //import java.util.logging.Level;
 import java.util.ArrayList;
 
+import org.hamcrest.core.IsInstanceOf;
+
 /**
  * Generic systemobject.Cli
  * 
@@ -21,15 +23,15 @@ public class Cli {
 	protected Terminal terminal = null;
 	
 	
-	private StringBuffer result = new StringBuffer();
+	public StringBuffer result = new StringBuffer();
 	
-	private Prompt resultPrompt;
+	protected Prompt resultPrompt;
 	/**
 	 * if set to true will send ENTER whan prompt wait timeout is recieved
 	 */
 	private boolean graceful = false;
 	
-	private long startTime = 0;
+	protected long startTime = 0;
 	
 	/**
 	 * Create a systemobject.terminal.Cli object
@@ -46,6 +48,10 @@ public class Cli {
 	
 	public void addPrompt(Prompt prompt) {
 		terminal.addPrompt(prompt);
+		
+		if(prompt instanceof LinkedPrompt) {
+			terminal.addPrompt(((LinkedPrompt)prompt).getLinkedPrompt());
+		}
 	}
 	
 	
@@ -199,7 +205,8 @@ public class Cli {
 				return;
 			}
 			Prompt prompt = waitWithGrace(timeout);
-			while (true) {
+			resultPrompt = prompt;
+			while (prompt.getStringToSend() != null) {
 				if (timeout > 0) {
 					if (System.currentTimeMillis() - startTime > (timeout)) {
 						throw new IOException("timeout: " + timeout);
@@ -209,32 +216,38 @@ public class Cli {
 				 * If the scrallEnd property of the found prompt is set to true
 				 * the check for terminal scrall end is skiped.
 				 */
-				if(prompt.isScrallEnd()){
-					if (prompt.isCommandEnd()) {
-						break;
-					}
-				} else {
-					if (terminal.isScrallEnd()) {
-						if (prompt.isCommandEnd()) {
-							break;
-						}
-					} else {
-						//System.err.println("Prompt found: " + prompt.getPrompt() +" but no command end");
-						prompt = waitWithGrace(timeout);
-						continue;
-					}
-				}
+//				if(prompt.isScrallEnd()){
+//					if (prompt.isCommandEnd()) {
+//						break;
+//					}
+//				} else {
+//					if (terminal.isScrallEnd()) {
+//						if (prompt.isCommandEnd()) {
+//							break;
+//						}
+//					} 
+//					else {
+//						//System.err.println("Prompt found: " + prompt.getPrompt() +" but no command end");
+//						prompt = waitWithGrace(timeout);
+//						continue;
+//					}
+//				}
 				String stringToSend = prompt.getStringToSend();
 				if (stringToSend != null) {
 					if (prompt.isAddEnter()) {
 						stringToSend = stringToSend + getEnterStr(); //ENTER;
 					}
+					Thread.sleep(50);
 					terminal.sendString(stringToSend, delayedTyping);
 				}
+//				else {
+//					break;
+//				}
 				prompt = waitWithGrace(timeout);
+				this.resultPrompt = prompt;
 			}
 			
-			resultPrompt = prompt;
+//			resultPrompt = prompt;
 		} finally {
 			result.append(terminal.getResult());
 			if (defaultPromts != null) {
@@ -319,7 +332,7 @@ public class Cli {
 	 * @return the prompt
 	 * @throws Exception
 	 */
-	private Prompt waitWithGrace(long timeout) throws Exception{
+	protected Prompt waitWithGrace(long timeout) throws Exception{
 		try {
 			Prompt p = terminal.waitForPrompt(timeout);
 			result.append(terminal.getResult());

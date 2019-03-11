@@ -9,6 +9,8 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.collections.functors.NullIsExceptionPredicate;
+
 public abstract class Terminal {
 	Logger log = Logger.getLogger(Terminal.class.getName());
     protected static final int IN_BUFFER_SIZE = 65536;
@@ -158,7 +160,8 @@ public abstract class Terminal {
     public synchronized Prompt waitForPrompt(long timeout) throws IOException, InterruptedException{
         long startTime = System.currentTimeMillis();
         StringBuffer sb = new StringBuffer();
-        while (true) {
+        Prompt prompt = null;
+        while (true) { 
             if (timeout > 0) {
                 if (System.currentTimeMillis() - startTime > timeout) {
                     result.append(sb);
@@ -191,7 +194,7 @@ public abstract class Terminal {
                     }
                     int promptArraySize = prompts.size();
                     for (int j = 0; j < promptArraySize; j++) {
-                        Prompt prompt = (Prompt)prompts.get(j);
+                        prompt = (Prompt)prompts.get(j);
                         if (prompt == null || prompt.getPrompt() == null){
                             continue;
                         }
@@ -224,6 +227,8 @@ public abstract class Terminal {
                 }
             } else {
                 Thread.sleep(10);
+//                sendString("\r", false);
+                
             }
         }
     }

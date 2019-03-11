@@ -1,14 +1,19 @@
 package Action.BasicAction;
 
-import java.io.Console;
 import java.io.IOException;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.glassfish.grizzly.streams.StreamReader;
+import org.glassfish.grizzly.streams.StreamWriter;
 import org.junit.Test;
 
 import Action.Action;
-import Netspan.NBIVersion;
+//import EnodeB.Components.Cli.Cli;
 import Netspan.NetspanServer;
 import PowerControllers.PowerController;
 import PowerControllers.PowerControllerPort;
@@ -16,11 +21,12 @@ import Utils.GeneralUtils;
 import Utils.SSHConnector;
 import Utils.ConnectionManager.ConnectionInfo;
 import Utils.ConnectionManager.ConnectorTypes;
-import Utils.ConnectionManager.TelnetConnector;
-import Utils.ConnectionManager.terminal.Cli;
+import Utils.ConnectionManager.terminal.Prompt;
 import Utils.ConnectionManager.terminal.Telnet;
 import Utils.ConnectionManager.terminal.Terminal;
-import Utils.ConnectionManager.terminal.Prompt;
+import Utils.WatchDog.commandWatchDLAndUL;
+import Utils.ConnectionManager.terminal.ExtendCLI;
+import Utils.ConnectionManager.terminal.LinkedPrompt;
 import jsystem.framework.ParameterProperties;
 import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
@@ -29,7 +35,7 @@ public class BasicAction extends Action {
 	private String timeToWait = "00:00:00";
 	private String ipPowerPort;
 	private String debugCommands;
-	private String serialCommand;
+	private String serialCommand = "id";
 	
 	public String getSerialCommand() {
 		return serialCommand;
@@ -40,8 +46,11 @@ public class BasicAction extends Action {
 		this.serialCommand = serialCommand;
 	}
 
-	private String ip;
-	private int port;
+	private String ip = "192.168.58.169";
+	private int port = 2001;
+	private boolean isLteCliRequired = false;
+	
+	
 	public int getPort() {
 		return port;
 	}
@@ -52,11 +61,21 @@ public class BasicAction extends Action {
 
 	private String userName;
 	private String password;
-	private String sleepTime;
+	private long sleepTime = 2;
 	private String netspan;
 	
+	@ParameterProperties(description = "Set true is command belong to lteCli scope")
+	public boolean isLteCliRequired() {
+		return isLteCliRequired;
+	}
+
+	public void setLteCliRequired(boolean isLteCliRequired) {
+		this.isLteCliRequired = isLteCliRequired;
+	}
+
+	
 	@ParameterProperties(description = "Waiting time in seconds after sending last command. Default - no waiting")
-	public void setSleepTime(String sleepTime) {
+	public void setSleepTime(long sleepTime) {
 		this.sleepTime = sleepTime;
 	}
 
@@ -163,93 +182,127 @@ public class BasicAction extends Action {
 			e.printStackTrace();
 		}
 	}
-	
+		
 	@Test
 	@TestProperties(name = "Send Commands To Serial", returnParam = "LastStatus", paramsInclude = { "Ip", "Port", "Password",
 			"UserName", "SerialCommand", "SleepTime" })
-	public void sendCommandsToSerial() {
+	public void sendCommandsToSerial() throws Exception {
 		boolean isNull = false;
+		ConnectionInfo conn_info;
+		ExtendCLI cli = null;
 		
-//		
-		GeneralUtils.startLevel("Starting parameters");
-		
+		password = "HeWGEUx66m=_4!ND";
+		userName = "admin";
+				
 		try {
-			
+			GeneralUtils.startLevel("Starting parameters");
 			if(ip == null){
-				GeneralUtils.logToLevel("IP cannot be empty",Reporter.FAIL);
+				report.report("IP cannot be empty");
 				isNull = true;
 			}
 			if(port == 0){
-				GeneralUtils.logToLevel("Port cannot be empty",Reporter.FAIL);
+				report.report("Port cannot be empty");
 				isNull = true;
 			}
 			if(userName == null){
-				GeneralUtils.logToLevel("UserName cannot be empty",Reporter.FAIL);
+				report.report("UserName cannot be empty");
 				isNull = true;
 			}
 			if(password == null){
-				GeneralUtils.logToLevel("Password cannot be empty",Reporter.FAIL);
+				report.report("Password cannot be empty");
 				isNull = true;
 			}
 			if(serialCommand == null){
-				GeneralUtils.logToLevel("Serial Command cannot be empty",Reporter.FAIL);
+				report.report("Serial Command cannot be empty");
 				isNull = true;
 			}
 			
 			if(isNull){
-				GeneralUtils.logToLevel("Parameters not comleted");
 				return;
 			}
 			
-			Long timeOut; 
-			timeOut = Long.parseLong(timeToWait);
-			
+		}
+		finally {
 			GeneralUtils.stopLevel();
-			GeneralUtils.startLevel("Create connection items");
-			
-			ConnectionInfo conn_info = new ConnectionInfo("Serial", ip, port, userName, password, ConnectorTypes.Telnet);
-			
-			GeneralUtils.logToLevel("Connection: " + conn_info.toString());
-			
+		}
+		
+		GeneralUtils.startLevel("Create connection items");
+		LinkedPrompt loggin_start = new LinkedPrompt("(login:)", true, userName, true);
+		Prompt logged_out = new Prompt("(login:)", true);
+		Prompt password_prompt = new Prompt("Password:", false, password, true);
+		
+		loggin_start.setLinkedPrompt(password_prompt);
+		
+		Prompt password_reset = new Prompt("Password:", false, "\u0003", true);
+		Prompt admin_exit = new Prompt("$", false, "exit", true);
+		LinkedPrompt sudo_su = new LinkedPrompt("$", false, "sudo su", true);
+		sudo_su.setLinkedPrompt(password_prompt);
+		Prompt sudo_session = new Prompt("#", false);
+		Prompt sudo_exit = new Prompt("#", false, "exit", true);
+		
+		Prompt lteCli_session = new Prompt("lte_cli:>>", false);
+		Prompt lteCli_switchTo = new Prompt("#", false, "/bs/lteCli", true);
+		
+		Prompt lteCli_exit = new Prompt("lte_cli:>>", false, "\u0003", true);
+		
+		try {
+			conn_info = new ConnectionInfo("Serial", ip, port, userName, password, ConnectorTypes.Telnet);
+			report.report("Connection: " + conn_info.toString());
 			Terminal terminal = new Telnet(conn_info.host, conn_info.port);
-			terminal.connect();
-			GeneralUtils.logToLevel("Connected: " + (terminal.isConnected() ? "Yes" : "No"));
-//			Cli cli = new Cli(terminal);
+			cli = new ExtendCLI(terminal);
 			
-			Prompt admin_login = new Utils.ConnectionManager.terminal.Prompt("login:", true);
-			admin_login.setStringToSend(userName);
-			admin_login.setCommandEnd(true);
+			cli.addPrompt(loggin_start);
+//			cli.addPrompt(password_prompt);
+			cli.addPrompt(sudo_su);
+			cli.addPrompt(sudo_session);
+			cli.addPrompt(lteCli_session);
+			cli.setGraceful(true);
+			cli.setEnterStr("\n");
 			
-			Prompt password_prompt = new Prompt("Password:", false);
-			password_prompt.setStringToSend(password);
-			password_prompt.setCommandEnd(true);
+			report.report("Connected: " + (terminal.isConnected() ? "Yes" : "No"));
 			
-			Prompt sudo_su = new Prompt("#", false);
-			sudo_su.setStringToSend("sudo su");
-			sudo_su.setAddEnter(true);
-			
-			Prompt admin_prompt = new Prompt("#", false);
-			Prompt sudo_prompt = new Prompt("$", false);
-			Prompt lteCli = new Prompt("lteCli:>>", false);
-			
-			GeneralUtils.stopLevel();
 			GeneralUtils.startLevel("Read current prompt");
-			Prompt active_prompt = terminal.waitForPrompt(timeOut);
+			PrintStream stdarr = new PrintStream("C:\\probot\\tmp\\telnet.log");
+			cli.setPrintStream(stdarr);
+			cli.sendString(cli.getEnterStr(), false);
 			
-			GeneralUtils.logToLevel("Active prompt: " + active_prompt.toString());
+			cli.setGraceful(false);
+			cli.resetToPrompt(logged_out, sudo_exit, admin_exit, password_reset, lteCli_exit);
+			
+			cli.login(0, true);
+			
+			isLteCliRequired = true;
+			
+			if(isLteCliRequired) {
+				cli.switcToPrompt(lteCli_switchTo);
+			}
+						
+//			String cmd = "/bs/bin/set_bank.sh";
+			String cmd = "ue show link";
+			report.report("Send command: " + cmd);
+			cli.command(cmd);
+			List<String> output = cli.getResult(cmd, sudo_session.getPrompt(), new String[] {"\n", "\r"});
+			
+			for (String string : output) {
+				report.report("--->  " + string);
+			}
+				
+			
+//			report.report("Logged In: " + (terminal.isConnected() ? "Yes" : "No"));
 			GeneralUtils.stopLevel();
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			GeneralUtils.printToConsole(e.getMessage());
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			GeneralUtils.printToConsole(e.getMessage());
+			e.printStackTrace();
+			report.report(e.getLocalizedMessage(), Reporter.FAIL);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			GeneralUtils.printToConsole(e.getMessage());
+			e.printStackTrace();
+			report.report(e.getMessage(), Reporter.FAIL);
 		}
 		finally {
+			if(cli != null)
+				cli.resetToPrompt(logged_out, sudo_exit, admin_exit, password_reset, lteCli_exit);
 			GeneralUtils.stopAllLevels();
 		}
 	}
@@ -294,7 +347,7 @@ public class BasicAction extends Action {
 				GeneralUtils.unSafeSleep(1000);
 				report.report("Response for "+cmd+":"+output);
 			}
-			int wait = sleepTime == null ? 0 : Integer.valueOf(sleepTime)*1000;
+			int wait = ((int)sleepTime) *1000;
 			GeneralUtils.unSafeSleep(wait);
 			ssh.disconnect();
 		}else{

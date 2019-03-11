@@ -2701,6 +2701,7 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
             AlarmInfo temp = new AlarmInfo();
             temp.alarmId = alarm.getAlarmId();
             temp.alarmType = alarm.getAlarmType();
+            temp.alarmTypeId = alarm.getAlarmTypeId();
             temp.alarmSource = alarm.getAlarmSource();
             temp.alarmInfo = alarm.getAlarmInfo();
             temp.severity = alarm.getSeverity();

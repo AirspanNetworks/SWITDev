@@ -1,5 +1,6 @@
 package Utils;
 
+import java.awt.Color;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -85,7 +86,15 @@ public class GeneralUtils {
         String html = String.format("<pre style=\"margin-left: 60px; max-height:500px; overflow: scroll;\">%s</pre>", text.replace("\n", "<br>"));
         report.reportHtml(title, html, true);
     }
-
+    
+    public static void reportHtmlLink(String title, String text, boolean status, Pair<String, String>...pairs) {
+    	for(Pair<String, String> item : pairs) {
+    		text = text.replace(item.getElement0(), "<font size=\"3\" bold=\"true\" color=\"" + item.getElement1() + "\">" + item.getElement0() + "</font>");
+    	}
+    	String html = String.format("<pre style=\"margin-left: 60px; max-height:500px; overflow: scroll;\">%s</pre>", text.replace("\n", "<br>\n"));
+    	 report.reportHtml(title, html, status);
+    }
+    
     public static boolean unSafeSleep(long timeInMS) {
         try {
             Thread.sleep(timeInMS);
@@ -253,12 +262,18 @@ public class GeneralUtils {
      * @param status
      */
     public static void logToLevel(String message, int status) {
-    	GeneralUtils.printToConsole(message);
-        report.report(message, status);
+    	try {
+    		GeneralUtils.printToConsole(message);
+    		report.report(message.toString(), status);
+    	}
+    	catch (Exception e) {
+			// TODO: handle exception
+    		e.printStackTrace();
+		}
     }
     
     public static void logToLevel(String message) {
-    	logToLevel(message, Reporter.PASS);
+    	GeneralUtils.logToLevel(message, Reporter.PASS);
     }
     
     public static void stopAllLevels() {

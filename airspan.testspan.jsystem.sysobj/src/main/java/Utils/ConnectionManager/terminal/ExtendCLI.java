@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
+import org.apache.tools.ant.util.regexp.Regexp;
+
 /**
  * 
  * @author doguz
@@ -36,8 +38,10 @@ public class ExtendCLI extends Cli {
 	 * @return
 	 */
 	public List<String> getResult(String command, String prompt, String[] delimiters) {
-		
+	
 		String output = super.getResult();
+		
+//		output = output.replaceAll("\\[[0-9;m]+", "");
 		
 		String defaultDelimiter = "\n";
 		List<String> result = new ArrayList<String>();
@@ -51,8 +55,8 @@ public class ExtendCLI extends Cli {
 		
 		for(String line : lines) {
 			
-			if(collectFlag && line != "")
-				result.add(line);
+			if(collectFlag && line.length() > 0)
+				result.add(line.replaceAll("\\[[0-9;m]+", ""));
 			
 			if(line.endsWith(command))
 				collectFlag = true;
@@ -166,11 +170,7 @@ public class ExtendCLI extends Cli {
 	
 	public void resetToPrompt(IPrompt...prompts) throws Exception{
 		long timeout = 0;
-		startTime = System.currentTimeMillis();	
-//		while(getCurrentPrompt().getPrompt() != target.getPrompt()) {
-			
-			login(timeout, prompts);
-//		}
+		login(timeout, prompts);
 	}
 
 //	public void resetToPrompt(List<IPrompt> logout_sequence) {

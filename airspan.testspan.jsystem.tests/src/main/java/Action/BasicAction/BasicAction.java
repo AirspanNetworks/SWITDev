@@ -1,5 +1,6 @@
 package Action.BasicAction;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -7,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 
 import org.glassfish.grizzly.streams.StreamReader;
 import org.glassfish.grizzly.streams.StreamWriter;
@@ -18,13 +20,13 @@ import Netspan.NetspanServer;
 import PowerControllers.PowerController;
 import PowerControllers.PowerControllerPort;
 import Utils.GeneralUtils;
+import Utils.Pair;
 import Utils.SSHConnector;
 import Utils.ConnectionManager.ConnectionInfo;
 import Utils.ConnectionManager.ConnectorTypes;
 import Utils.ConnectionManager.terminal.Prompt;
 import Utils.ConnectionManager.terminal.Telnet;
 import Utils.ConnectionManager.terminal.Terminal;
-import Utils.WatchDog.commandWatchDLAndUL;
 import Utils.ConnectionManager.terminal.ExtendCLI;
 import Utils.ConnectionManager.terminal.IPrompt;
 import Utils.ConnectionManager.terminal.LinkedPrompt;
@@ -36,8 +38,18 @@ public class BasicAction extends Action {
 	private String timeToWait = "00:00:00";
 	private String ipPowerPort;
 	private String debugCommands;
-	private String serialCommand = "";
+	private String serialCommand;
+	private String expectedPatern;
 	
+	@ParameterProperties(description = "Evaluate if pattern exists in output (Ignored if omitted")
+	public final String getExpectedPatern() {
+		return expectedPatern;
+	}
+
+	public final void setExpectedPatern(String expectedPatern) {
+		this.expectedPatern = expectedPatern;
+	}
+
 	public String getSerialCommand() {
 		return serialCommand;
 	}
@@ -196,55 +208,59 @@ public class BasicAction extends Action {
 		
 	@Test
 	@TestProperties(name = "Send Commands To Serial", returnParam = "LastStatus", paramsInclude = { "Ip", "Port", "Password",
-			"UserName", "SerialCommand", "SleepTime", "LteCliRequired", "SudoRequired" })
+			"UserName", "SerialCommand", "SleepTime", "LteCliRequired", "SudoRequired", "ExpectedPatern" })
 	public void sendCommandsToSerial() throws Exception {
 		boolean isNull = false;
 		ConnectionInfo conn_info;
 		ExtendCLI cli = null;
-		
+		String workingPrompt = "";
+		String init_prompt = "login:";
 		String EXIT = "exit";
 		String CntrlC = "\u0003";
 		
+//		ip = "192.168.58.169";
+//		port = 2001;
 //		password = "HeWGEUx66m=_4!ND";
 //		userName = "admin";
-//		isLteCliRequired = false;
-//		isSudoRequired = true;
+//		lteCliRequired = false;
+//		sudoRequired = false;
 ////		serialCommand = "ue show link";
-//		serialCommand = "/bs/bin/set_bank.sh";
+////		serialCommand = "/bs/bin/set_bank.sh";
+//		serialCommand = "ls -ls /";
+//		expectedPatern = "/mnt/flash";
 		
 		try {
-			GeneralUtils.startLevel("Starting parameters");
+//			GeneralUtils.startLevel("Starting parameters");
 			if(ip == null){
-				report.report("IP cannot be empty");
+				GeneralUtils.startLevel("IP cannot be empty");
 				isNull = true;
 			}
 			if(port == 0){
-				report.report("Port cannot be empty");
+				GeneralUtils.startLevel("Port cannot be empty");
 				isNull = true;
 			}
 			if(userName == null){
-				report.report("UserName cannot be empty");
+				GeneralUtils.startLevel("UserName cannot be empty");
 				isNull = true;
 			}
 			if(password == null){
-				report.report("Password cannot be empty");
+				GeneralUtils.startLevel("Password cannot be empty");
 				isNull = true;
 			}
 			if(serialCommand == null){
-				report.report("Serial Command cannot be empty");
+				GeneralUtils.startLevel("Serial Command cannot be empty");
 				isNull = true;
 			}
-			
-			if(isNull){
-				return;
-			}
-			
 		}
 		finally {
-			GeneralUtils.stopLevel();
+			if(isNull){
+				report.report("Some of parameters not valid", Reporter.FAIL);
+				GeneralUtils.stopLevel();
+				return;
+			}
 		}
 		
-		GeneralUtils.startLevel("Create connection items");
+//		GeneralUtils.startLevel("Create connection items");
 		
 		List<IPrompt> login_sequence = new ArrayList<IPrompt>();
 		List<IPrompt> logout_sequence = new ArrayList<IPrompt>();
@@ -255,14 +271,23 @@ public class BasicAction extends Action {
 		LinkedPrompt loggin_start = new LinkedPrompt("(login:)", true, userName, true, password_prompt);
 		login_sequence.add(loggin_start);
 		
+		
 		if(sudoRequired) {
 			LinkedPrompt sudo_su = new LinkedPrompt("$", false, "sudo su", true, password_prompt);
 			login_sequence.add(sudo_su);
 			login_sequence.add(new Prompt("#", false));
+			workingPrompt = "#";
 		}
+		else {
+			login_sequence.add(new Prompt("$", false));
+			workingPrompt = "$";
+		}
+		
 		if(lteCliRequired) {
 			login_sequence.add(new Prompt("#", false, "/bs/lteCli", true));
 			login_sequence.add(new Prompt("lte_cli:>>", false));
+			workingPrompt = "lte_cli:>>";
+			sleepTime += 5;
 		}
 		
 		session_sequence.add(new Prompt("$", false));
@@ -275,6 +300,8 @@ public class BasicAction extends Action {
 		logout_sequence.add(new Prompt("#", false, EXIT, true));
 		logout_sequence.add(new Prompt("lte_cli:>>", false, CntrlC, true));
 		
+//		GeneralUtils.stopLevel();
+		
 		try {
 			conn_info = new ConnectionInfo("Serial", ip, port, userName, password, ConnectorTypes.Telnet);
 			report.report("Connection: " + conn_info.toString());
@@ -284,27 +311,59 @@ public class BasicAction extends Action {
 			cli.setGraceful(true);
 			cli.setEnterStr("\n");
 			
-			GeneralUtils.startLevel("Connected: " + (terminal.isConnected() ? "Yes" : "No"));
-			
-			report.report("Reset session...");
+			GeneralUtils.startLevel("Connecting & loging in...");
 			
 			cli.sendString(cli.getEnterStr(), false);
+			Thread.sleep(2);
 			cli.resetToPrompt(logout_sequence.toArray(new IPrompt[0]));
-			report.report("Reset session completed");
-			report.report("Login starting...");
-			cli.login(0, login_sequence.toArray(new IPrompt[0]));
-			report.report("Login completed");
-			report.report("Send command: " + serialCommand);
-			cli.command(serialCommand, 10000, true, true);
-			List<String> output = cli.getResult(serialCommand, cli.getCurrentPrompt().getPrompt(), new String[] {"\n", "\r"});
-			
-			for (String string : output) {
-				report.report("--->  " + string);
+			String prmt = cli.getCurrentPrompt().getPrompt();
+			if(prmt.contains(init_prompt)) {
+				report.report("---> " + prmt);
+				report.report("Reset begin...");
 			}
-				
+			else {
+				report.report("Reset failed; Cannot get to prompt '" + init_prompt + "'", Reporter.FAIL);
+				return;
+			}
+			report.report("Reset session completed");
+			prmt = cli.getCurrentPrompt().getPrompt();
+			report.report("---> " + prmt);
+			report.report("Login starting...");
+			Thread.sleep(2);
+			cli.login(sleepTime * 1000, login_sequence.toArray(new IPrompt[0]));
+			prmt = cli.getCurrentPrompt().getPrompt();
+			if(prmt.contains(workingPrompt)) {
+				report.report("---> " + prmt);
+				report.report("Login completed");
+			}
+			else {
+				report.report("Login failed; Cannot get to prompt '" + workingPrompt + "'", Reporter.FAIL);
+				return;
+			}
 			
-//			report.report("Logged In: " + (terminal.isConnected() ? "Yes" : "No"));
 			GeneralUtils.stopLevel();
+			
+			GeneralUtils.startLevel("Send command: " + serialCommand);
+			Thread.sleep(2);
+			cli.command(serialCommand, sleepTime * 1000, true, true);		
+			List<String> output = cli.getResult(serialCommand, cli.getCurrentPrompt().getPrompt(), new String[] {"\n", "\r"});
+			String outputString = String.join("\n", output);
+			report.report(outputString);
+			GeneralUtils.stopLevel();
+			
+			boolean status = true;
+			
+			if(expectedPatern != null) {
+				if(!outputString.contains(expectedPatern)) {
+					report.report("Output not contains expected pattern '" + expectedPatern + "'", Reporter.FAIL);
+					status = false;
+				}
+				else {
+					report.report("Output contains expected pattern '" + expectedPatern + "'");
+				}
+			}
+			
+			GeneralUtils.reportHtmlLink("Command " + serialCommand + " output", outputString, status, Pair.createPair(expectedPatern, "green"));
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

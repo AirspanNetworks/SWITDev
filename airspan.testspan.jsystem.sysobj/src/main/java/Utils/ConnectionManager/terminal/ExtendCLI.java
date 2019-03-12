@@ -105,6 +105,7 @@ public class ExtendCLI extends Cli {
 					if (prompt.isAddEnter()) {
 						stringToSend = stringToSend + getEnterStr(); //ENTER;
 					}
+					Thread.sleep(5);
 					sendString(stringToSend, true);
 					if(prompt instanceof LinkedPrompt) {
 						prompt = ((LinkedPrompt) prompt).getLinkedPrompt();

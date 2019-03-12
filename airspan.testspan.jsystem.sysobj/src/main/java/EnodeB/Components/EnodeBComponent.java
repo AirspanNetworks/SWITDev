@@ -736,6 +736,8 @@ public abstract class EnodeBComponent extends SystemObjectImpl implements LogLis
     
     private class WaitForSNMPAndSetTrapDest extends Thread {
         public void run() {
+        	if(snmp == null)
+        		return;
             waitForReachable(WAIT_FOR_REACHABILITY);
             long startTime = System.currentTimeMillis();
             while ((System.currentTimeMillis() - startTime) < WAIT_FOR_REACHABILITY) {
@@ -784,9 +786,9 @@ public abstract class EnodeBComponent extends SystemObjectImpl implements LogLis
     	boolean actionPassed = true;
     	String oid = MibReader.getInstance().resolveByName("wmanDevCmnSnmpV1V2TrapDest");
     	GeneralUtils.printToConsole(this.getName() +  " - setTrapDestination thread update trapDest params");
-    	actionPassed &= snmp.snmpSet(oid + ".2.4", nmsHostName.contains(":") ? "2" : "1");
+    	snmp.snmpSet(oid + ".2.4", nmsHostName.contains(":") ? "2" : "1");
+    	snmp.snmpSet(oid + ".4.4", 162);
     	actionPassed &= snmp.snmpSet(oid + ".3.4", InetAddressesHelper.ipStringToBytes(nmsHostName));
-    	actionPassed &= snmp.snmpSet(oid + ".4.4", 162);
     	actionPassed &= snmp.snmpSet(oid + ".5.4", 1);
     	return actionPassed;
     }

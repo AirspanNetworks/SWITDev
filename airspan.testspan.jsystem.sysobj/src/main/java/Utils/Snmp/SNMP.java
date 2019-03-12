@@ -790,7 +790,8 @@ public class SNMP extends SystemObjectImpl {
 		String oid = MibReader.getInstance().resolveByName("SysName");
 		String sysName = this.get(oid);
 		GeneralUtils.printToConsole("System name - " + sysName);
-		return !sysName.equals(String.valueOf(GeneralUtils.ERROR_VALUE));
+		boolean available = !(sysName.equals(String.valueOf(GeneralUtils.ERROR_VALUE)) || sysName.equals("noSuchObject"));
+		return available;
 		
 	}	
 }

@@ -55,7 +55,7 @@ public class EnodeBNoLogs extends EnodebAction {
 	@Test
 	@TestProperties(name = "Start Collect Alarms", returnParam = "LastStatus", paramsInclude = { "DUT" })
 	public void startCollectAlarms() {
-		if(!checkDutNull()){
+		if(isDutNull()){
 			return;
 		}
 		AlarmsAndEvents alarmsAndEvents = AlarmsAndEvents.getInstance();
@@ -65,7 +65,7 @@ public class EnodeBNoLogs extends EnodebAction {
 	@Test
 	@TestProperties(name = "Start Collect Events", returnParam = "LastStatus", paramsInclude = { "DUT" })
 	public void startCollectEvents() {
-		if(!checkDutNull()){
+		if(isDutNull()){
 			return;
 		}
 		if(startDate == null){
@@ -80,7 +80,7 @@ public class EnodeBNoLogs extends EnodebAction {
 	@Test
 	@TestProperties(name = "Get All Alarms", returnParam = "LastStatus", paramsInclude = { "DUT" })
 	public void getAlarms() {
-		if(!checkDutNull()){
+		if(isDutNull()){
 			return;
 		}
 		printAlarmsInfo(dut);
@@ -89,7 +89,7 @@ public class EnodeBNoLogs extends EnodebAction {
 	@Test
 	@TestProperties(name = "Get All Events", returnParam = "LastStatus", paramsInclude = { "DUT" })
 	public void getEvents() {
-		if(!checkDutNull()){
+		if(isDutNull()){
 			return;
 		}
 		Date from = setStartTime();
@@ -101,7 +101,7 @@ public class EnodeBNoLogs extends EnodebAction {
 	@Test
 	@TestProperties(name = "Verify Alarms", returnParam = "LastStatus", paramsInclude = { "DUT","ListOfAlarms" })
 	public void verifyAlarms() {
-		if(!checkDutNull()){
+		if(isDutNull()){
 			return;
 		}
 		if(listOfAlarms.isEmpty()){
@@ -115,7 +115,7 @@ public class EnodeBNoLogs extends EnodebAction {
 	@TestProperties(name = "Verify Events", returnParam = "LastStatus", paramsInclude = { "DUT",
 			"ListOfEvents","VerifyAction" })
 	public void verifyEvents() {
-		if(!checkDutNull()){
+		if(isDutNull()){
 			return;
 		}
 		if(listOfEvents.isEmpty()){
@@ -130,12 +130,12 @@ public class EnodeBNoLogs extends EnodebAction {
 		verifyEventsHelper();
 	}
 	
-	private boolean checkDutNull(){
+	private boolean isDutNull(){
 		if(dut == null){
 			report.report("No dut in test", Reporter.FAIL);
-			return false;
+			return true;
 		}
-		return true;
+		return false;
 	}
 	
 	private Date setStartTime(){

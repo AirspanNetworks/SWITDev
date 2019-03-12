@@ -41,7 +41,7 @@ public class ExtendCLI extends Cli {
 	
 		String output = super.getResult();
 		
-//		output = output.replaceAll("\\[[0-9;m]+", "");
+		output = output.replaceAll("\\[[0-9;m]+", "");
 		
 		String defaultDelimiter = "\n";
 		List<String> result = new ArrayList<String>();
@@ -105,7 +105,7 @@ public class ExtendCLI extends Cli {
 					if (prompt.isAddEnter()) {
 						stringToSend = stringToSend + getEnterStr(); //ENTER;
 					}
-					Thread.sleep(5);
+					Thread.sleep(100);
 					sendString(stringToSend, true);
 					if(prompt instanceof LinkedPrompt) {
 						prompt = ((LinkedPrompt) prompt).getLinkedPrompt();

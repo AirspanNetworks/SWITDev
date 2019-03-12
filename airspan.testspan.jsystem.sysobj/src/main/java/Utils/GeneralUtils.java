@@ -87,8 +87,10 @@ public class GeneralUtils {
     }
     
     public static void reportHtmlLink(String title, String text, boolean status, Pair<String, String>...pairs) {
-    	for(Pair<String, String> item : pairs) {
-    		text = text.replace(item.getElement0(), "<font size=\"3\" bold=\"true\" color=\"" + item.getElement1() + "\">" + item.getElement0() + "</font>");
+    	if(text.length() > 0) {
+	    	for(Pair<String, String> item : pairs) {
+	    		text = text.replace(item.getElement0(), "<font size=\"3\" bold=\"true\" color=\"" + item.getElement1() + "\">" + item.getElement0() + "</font>");
+	    	}
     	}
     	String html = String.format("<pre style=\"margin-left: 60px; max-height:500px; overflow: scroll;\">%s</pre>", text.replace("\n", "<br>\n"));
     	 report.reportHtml(title, html, status);

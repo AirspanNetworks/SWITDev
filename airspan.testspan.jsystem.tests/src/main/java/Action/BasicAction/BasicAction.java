@@ -222,12 +222,13 @@ public class BasicAction extends Action {
 //		port = 2001;
 //		password = "HeWGEUx66m=_4!ND";
 //		userName = "admin";
-//		lteCliRequired = false;
-//		sudoRequired = false;
+////		lteCliRequired = true;
+//		sudoRequired = true;
 ////		serialCommand = "ue show link";
 ////		serialCommand = "/bs/bin/set_bank.sh";
 //		serialCommand = "ls -ls /";
-//		expectedPatern = "/mnt/flash";
+////		expectedPatern = "/mnt/flash";
+////		sleepTime = 5;
 		
 		try {
 //			GeneralUtils.startLevel("Starting parameters");
@@ -312,9 +313,9 @@ public class BasicAction extends Action {
 			cli.setEnterStr("\n");
 			
 			GeneralUtils.startLevel("Connecting & loging in...");
-			
+			Thread.sleep(20);
 			cli.sendString(cli.getEnterStr(), false);
-			Thread.sleep(2);
+			Thread.sleep(20);
 			cli.resetToPrompt(logout_sequence.toArray(new IPrompt[0]));
 			String prmt = cli.getCurrentPrompt().getPrompt();
 			if(prmt.contains(init_prompt)) {
@@ -329,7 +330,7 @@ public class BasicAction extends Action {
 			prmt = cli.getCurrentPrompt().getPrompt();
 			report.report("---> " + prmt);
 			report.report("Login starting...");
-			Thread.sleep(2);
+			Thread.sleep(20);
 			cli.login(sleepTime * 1000, login_sequence.toArray(new IPrompt[0]));
 			prmt = cli.getCurrentPrompt().getPrompt();
 			if(prmt.contains(workingPrompt)) {
@@ -344,11 +345,13 @@ public class BasicAction extends Action {
 			GeneralUtils.stopLevel();
 			
 			GeneralUtils.startLevel("Send command: " + serialCommand);
-			Thread.sleep(2);
-			cli.command(serialCommand, sleepTime * 1000, true, true);		
+			Thread.sleep(20);
+			cli.command(serialCommand, sleepTime * 1000, true, true);
+			Thread.sleep(sleepTime * 500);
+			report.report("Command completed; Pending result...");
 			List<String> output = cli.getResult(serialCommand, cli.getCurrentPrompt().getPrompt(), new String[] {"\n", "\r"});
 			String outputString = String.join("\n", output);
-			report.report(outputString);
+			report.report("Output: \n" + outputString);
 			GeneralUtils.stopLevel();
 			
 			boolean status = true;

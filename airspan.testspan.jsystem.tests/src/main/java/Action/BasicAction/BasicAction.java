@@ -345,9 +345,9 @@ public class BasicAction extends Action {
 			GeneralUtils.stopLevel();
 			
 			GeneralUtils.startLevel("Send command: " + serialCommand);
-			Thread.sleep(20);
+			Thread.sleep(200);
 			cli.command(serialCommand, sleepTime * 1000, true, true);
-			Thread.sleep(sleepTime * 500);
+			Thread.sleep(sleepTime * 1000);
 			report.report("Command completed; Pending result...");
 			List<String> output = cli.getResult(serialCommand, cli.getCurrentPrompt().getPrompt(), new String[] {"\n", "\r"});
 			String outputString = String.join("\n", output);
@@ -366,7 +366,7 @@ public class BasicAction extends Action {
 				}
 			}
 			
-			GeneralUtils.reportHtmlLink("Command " + serialCommand + " output", outputString, status, Pair.createPair(expectedPatern, "green"));
+			GeneralUtils.reportHtmlLink("Command " + serialCommand + " output", outputString, status, new Pair<String, String>(expectedPatern, "green"));
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

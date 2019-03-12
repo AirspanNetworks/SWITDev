@@ -26,6 +26,7 @@ import Utils.ConnectionManager.terminal.Telnet;
 import Utils.ConnectionManager.terminal.Terminal;
 import Utils.WatchDog.commandWatchDLAndUL;
 import Utils.ConnectionManager.terminal.ExtendCLI;
+import Utils.ConnectionManager.terminal.IPrompt;
 import Utils.ConnectionManager.terminal.LinkedPrompt;
 import jsystem.framework.ParameterProperties;
 import jsystem.framework.TestProperties;
@@ -50,6 +51,16 @@ public class BasicAction extends Action {
 	private int port = 2001;
 	private boolean isLteCliRequired = false;
 	
+	public final boolean isSudoRequired() {
+		return isSudoRequired;
+	}
+	
+	@ParameterProperties(description = "Set false if not required (Default: true)")
+	public final void setSudoRequired(boolean isSudoRequired) {
+		this.isSudoRequired = isSudoRequired;
+	}
+
+	private boolean isSudoRequired = true;
 	
 	public int getPort() {
 		return port;
@@ -185,15 +196,22 @@ public class BasicAction extends Action {
 		
 	@Test
 	@TestProperties(name = "Send Commands To Serial", returnParam = "LastStatus", paramsInclude = { "Ip", "Port", "Password",
-			"UserName", "SerialCommand", "SleepTime" })
+			"UserName", "SerialCommand", "SleepTime", "isLteCliRequired", "isSudoRequired" })
 	public void sendCommandsToSerial() throws Exception {
 		boolean isNull = false;
 		ConnectionInfo conn_info;
 		ExtendCLI cli = null;
 		
-		password = "HeWGEUx66m=_4!ND";
-		userName = "admin";
-				
+		String EXIT = "exit";
+		String CntrlC = "\u0003";
+		
+//		password = "HeWGEUx66m=_4!ND";
+//		userName = "admin";
+//		isLteCliRequired = false;
+//		isSudoRequired = true;
+////		serialCommand = "ue show link";
+//		serialCommand = "/bs/bin/set_bank.sh";
+		
 		try {
 			GeneralUtils.startLevel("Starting parameters");
 			if(ip == null){
@@ -227,61 +245,59 @@ public class BasicAction extends Action {
 		}
 		
 		GeneralUtils.startLevel("Create connection items");
+		
+		List<IPrompt> login_sequence = new ArrayList<IPrompt>();
+		List<IPrompt> logout_sequence = new ArrayList<IPrompt>();
+		List<IPrompt> session_sequence = new ArrayList<IPrompt>();
+ 		
 		LinkedPrompt loggin_start = new LinkedPrompt("(login:)", true, userName, true);
-		Prompt logged_out = new Prompt("(login:)", true);
-		Prompt password_prompt = new Prompt("Password:", false, password, true);
-		
+		IPrompt password_prompt = new Prompt("Password:", false, password, true);
 		loggin_start.setLinkedPrompt(password_prompt);
+		login_sequence.add(loggin_start);
 		
-		Prompt password_reset = new Prompt("Password:", false, "\u0003", true);
-		Prompt admin_exit = new Prompt("$", false, "exit", true);
-		LinkedPrompt sudo_su = new LinkedPrompt("$", false, "sudo su", true);
-		sudo_su.setLinkedPrompt(password_prompt);
-		Prompt sudo_session = new Prompt("#", false);
-		Prompt sudo_exit = new Prompt("#", false, "exit", true);
+		if(isSudoRequired) {
+			LinkedPrompt sudo_su = new LinkedPrompt("$", false, "sudo su", true);
+			sudo_su.setLinkedPrompt(password_prompt);
+			login_sequence.add(sudo_su);
+			login_sequence.add(new Prompt("#", false));
+		}
+		if(isLteCliRequired) {
+			login_sequence.add(new Prompt("#", false, "/bs/lteCli", true));
+			login_sequence.add(new Prompt("lte_cli:>>", false));
+		}
 		
-		Prompt lteCli_session = new Prompt("lte_cli:>>", false);
-		Prompt lteCli_switchTo = new Prompt("#", false, "/bs/lteCli", true);
+		session_sequence.add(new Prompt("$", false));
+		session_sequence.add(new Prompt("#", false));
+		session_sequence.add(new Prompt("lte_cli:>>", false));
 		
-		Prompt lteCli_exit = new Prompt("lte_cli:>>", false, "\u0003", true);
+		logout_sequence.add(new Prompt("(login:)", true));
+		logout_sequence.add(new Prompt("Password:", false, CntrlC, true));
+		logout_sequence.add(new Prompt("$", false, EXIT, true));
+		logout_sequence.add(new Prompt("#", false, EXIT, true));
+		logout_sequence.add(new Prompt("lte_cli:>>", false, CntrlC, true));
 		
 		try {
 			conn_info = new ConnectionInfo("Serial", ip, port, userName, password, ConnectorTypes.Telnet);
 			report.report("Connection: " + conn_info.toString());
 			Terminal terminal = new Telnet(conn_info.host, conn_info.port);
 			cli = new ExtendCLI(terminal);
-			
-			cli.addPrompt(loggin_start);
-//			cli.addPrompt(password_prompt);
-			cli.addPrompt(sudo_su);
-			cli.addPrompt(sudo_session);
-			cli.addPrompt(lteCli_session);
+			cli.addPrompts(session_sequence.toArray(new IPrompt[0]));
 			cli.setGraceful(true);
 			cli.setEnterStr("\n");
 			
-			report.report("Connected: " + (terminal.isConnected() ? "Yes" : "No"));
+			GeneralUtils.startLevel("Connected: " + (terminal.isConnected() ? "Yes" : "No"));
 			
-			GeneralUtils.startLevel("Read current prompt");
-			PrintStream stdarr = new PrintStream("C:\\probot\\tmp\\telnet.log");
-			cli.setPrintStream(stdarr);
+			report.report("Reset session...");
+			
 			cli.sendString(cli.getEnterStr(), false);
-			
-			cli.setGraceful(false);
-			cli.resetToPrompt(logged_out, sudo_exit, admin_exit, password_reset, lteCli_exit);
-			
-			cli.login(0, true);
-			
-			isLteCliRequired = true;
-			
-			if(isLteCliRequired) {
-				cli.switcToPrompt(lteCli_switchTo);
-			}
-						
-//			String cmd = "/bs/bin/set_bank.sh";
-			String cmd = "ue show link";
-			report.report("Send command: " + cmd);
-			cli.command(cmd);
-			List<String> output = cli.getResult(cmd, sudo_session.getPrompt(), new String[] {"\n", "\r"});
+			cli.resetToPrompt(logout_sequence.toArray(new IPrompt[0]));
+			report.report("Reset session completed");
+			report.report("Login starting...");
+			cli.login(0, login_sequence.toArray(new IPrompt[0]));
+			report.report("Login completed");
+			report.report("Send command: " + serialCommand);
+			cli.command(serialCommand, 10000, true, true);
+			List<String> output = cli.getResult(serialCommand, cli.getCurrentPrompt().getPrompt(), new String[] {"\n", "\r"});
 			
 			for (String string : output) {
 				report.report("--->  " + string);
@@ -302,7 +318,7 @@ public class BasicAction extends Action {
 		}
 		finally {
 			if(cli != null)
-				cli.resetToPrompt(logged_out, sudo_exit, admin_exit, password_reset, lteCli_exit);
+				cli.resetToPrompt(logout_sequence.toArray(new IPrompt[0]));
 			GeneralUtils.stopAllLevels();
 		}
 	}

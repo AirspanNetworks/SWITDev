@@ -49,18 +49,18 @@ public class BasicAction extends Action {
 
 	private String ip = "192.168.58.169";
 	private int port = 2001;
-	private boolean isLteCliRequired = false;
+	private boolean lteCliRequired = false;
 	
-	public final boolean isSudoRequired() {
-		return isSudoRequired;
+	public final boolean getSudoRequired() {
+		return sudoRequired;
 	}
 	
 	@ParameterProperties(description = "Set false if not required (Default: true)")
 	public final void setSudoRequired(boolean isSudoRequired) {
-		this.isSudoRequired = isSudoRequired;
+		this.sudoRequired = isSudoRequired;
 	}
 
-	private boolean isSudoRequired = true;
+	private boolean sudoRequired = true;
 	
 	public int getPort() {
 		return port;
@@ -76,12 +76,12 @@ public class BasicAction extends Action {
 	private String netspan;
 	
 	@ParameterProperties(description = "Set true is command belong to lteCli scope")
-	public boolean isLteCliRequired() {
-		return isLteCliRequired;
+	public boolean getLteCliRequired() {
+		return lteCliRequired;
 	}
 
 	public void setLteCliRequired(boolean isLteCliRequired) {
-		this.isLteCliRequired = isLteCliRequired;
+		this.lteCliRequired = isLteCliRequired;
 	}
 
 	
@@ -196,7 +196,7 @@ public class BasicAction extends Action {
 		
 	@Test
 	@TestProperties(name = "Send Commands To Serial", returnParam = "LastStatus", paramsInclude = { "Ip", "Port", "Password",
-			"UserName", "SerialCommand", "SleepTime", "isLteCliRequired", "isSudoRequired" })
+			"UserName", "SerialCommand", "SleepTime", "LteCliRequired", "SudoRequired" })
 	public void sendCommandsToSerial() throws Exception {
 		boolean isNull = false;
 		ConnectionInfo conn_info;
@@ -255,13 +255,13 @@ public class BasicAction extends Action {
 		loggin_start.setLinkedPrompt(password_prompt);
 		login_sequence.add(loggin_start);
 		
-		if(isSudoRequired) {
+		if(sudoRequired) {
 			LinkedPrompt sudo_su = new LinkedPrompt("$", false, "sudo su", true);
 			sudo_su.setLinkedPrompt(password_prompt);
 			login_sequence.add(sudo_su);
 			login_sequence.add(new Prompt("#", false));
 		}
-		if(isLteCliRequired) {
+		if(lteCliRequired) {
 			login_sequence.add(new Prompt("#", false, "/bs/lteCli", true));
 			login_sequence.add(new Prompt("lte_cli:>>", false));
 		}

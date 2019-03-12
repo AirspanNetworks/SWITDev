@@ -28,16 +28,6 @@ public class EnodeBNoLogs extends EnodebAction {
 	private ArrayList<String> listOfEvents;
 	private verifyAlarmAction verifyAction = verifyAlarmAction.Equals;
 	
-	@Override
-	public void init() {
-		enbInTest = new ArrayList<>();
-		super.init();
-	}
-	
-	public verifyAlarmAction getVerifyAction() {
-		return verifyAction;
-	}
-
 	@ParameterProperties(description = "Equals: search for exact event. Contains: check if your string is in event info string")
 	public void setVerifyAction(verifyAlarmAction verifyAction) {
 		this.verifyAction = verifyAction;
@@ -47,17 +37,9 @@ public class EnodeBNoLogs extends EnodebAction {
 		Equals, Contains;
 	}
 	
-	public ArrayList<String> getListOfAlarms() {
-		return listOfAlarms;
-	}
-
 	@ParameterProperties(description = "List of alarms type ids, separated by ;")
 	public void setListOfAlarms(String listOfAlarms) {
 		this.listOfAlarms = new ArrayList<String>(Arrays.asList(listOfAlarms.split(";")));
-	}
-
-	public ArrayList<String> getListOfEvents() {
-		return listOfEvents;
 	}
 
 	@ParameterProperties(description = "List of events info, separated by #")
@@ -70,15 +52,10 @@ public class EnodeBNoLogs extends EnodebAction {
 		this.dut = (EnodeB) SysObjUtils.getInstnce().initSystemObject(EnodeB.class, false, dut).get(0);
 	}
 
-	public String getDUT() {
-		return this.dut.getNetspanName();
-	}
-
 	@Test
-	@TestProperties(name = "Clear Alarms", returnParam = "LastStatus", paramsInclude = { "DUT" })
-	public void clearAlarms() {
-		if(dut == null){
-			report.report("No dut in test", Reporter.FAIL);
+	@TestProperties(name = "Start Collect Alarms", returnParam = "LastStatus", paramsInclude = { "DUT" })
+	public void startCollectAlarms() {
+		if(!checkDutNull()){
 			return;
 		}
 		AlarmsAndEvents alarmsAndEvents = AlarmsAndEvents.getInstance();
@@ -86,10 +63,9 @@ public class EnodeBNoLogs extends EnodebAction {
 	}
 	
 	@Test
-	@TestProperties(name = "Clear Events", returnParam = "LastStatus", paramsInclude = { "DUT" })
-	public void clearEvents() {
-		if(dut == null){
-			report.report("No dut in test", Reporter.FAIL);
+	@TestProperties(name = "Start Collect Events", returnParam = "LastStatus", paramsInclude = { "DUT" })
+	public void startCollectEvents() {
+		if(!checkDutNull()){
 			return;
 		}
 		if(startDate == null){
@@ -97,14 +73,14 @@ public class EnodeBNoLogs extends EnodebAction {
 		}
 		Date dateFrom = new Date();
 		startDate.put(dut.getNetspanName(), dateFrom);
+		GeneralUtils.printToConsole("List of start times:");
 		GeneralUtils.printToConsole(startDate.toString());
 	}
 	
 	@Test
 	@TestProperties(name = "Get All Alarms", returnParam = "LastStatus", paramsInclude = { "DUT" })
 	public void getAlarms() {
-		if(dut == null){
-			report.report("No dut in test", Reporter.FAIL);
+		if(!checkDutNull()){
 			return;
 		}
 		printAlarmsInfo(dut);
@@ -113,14 +89,53 @@ public class EnodeBNoLogs extends EnodebAction {
 	@Test
 	@TestProperties(name = "Get All Events", returnParam = "LastStatus", paramsInclude = { "DUT" })
 	public void getEvents() {
-		if(dut == null){
-			report.report("No dut in test", Reporter.FAIL);
+		if(!checkDutNull()){
 			return;
 		}
 		Date from = setStartTime();
 		Date to = new Date();
 		report.report("Getting events from: "+from.toString()+" to: "+to.toString());
 		printEventsInfo(dut,from,to);
+	}
+	
+	@Test
+	@TestProperties(name = "Verify Alarms", returnParam = "LastStatus", paramsInclude = { "DUT","ListOfAlarms" })
+	public void verifyAlarms() {
+		if(!checkDutNull()){
+			return;
+		}
+		if(listOfAlarms.isEmpty()){
+			report.report("No alarms were set to verify", Reporter.FAIL);
+			return;
+		}
+		verifyAlarmsHelper();
+	}
+	
+	@Test
+	@TestProperties(name = "Verify Events", returnParam = "LastStatus", paramsInclude = { "DUT",
+			"ListOfEvents","VerifyAction" })
+	public void verifyEvents() {
+		if(!checkDutNull()){
+			return;
+		}
+		if(listOfEvents.isEmpty()){
+			report.report("No events were set to verify", Reporter.FAIL);
+			return;
+		}
+		if(verifyAction == verifyAlarmAction.Equals){
+			report.report("Searching for exact event info");
+		}else{
+			report.report("Searching for containing event info");
+		}
+		verifyEventsHelper();
+	}
+	
+	private boolean checkDutNull(){
+		if(dut == null){
+			report.report("No dut in test", Reporter.FAIL);
+			return false;
+		}
+		return true;
 	}
 	
 	private Date setStartTime(){
@@ -163,20 +178,6 @@ public class EnodeBNoLogs extends EnodebAction {
         }
     }
 	
-	@Test
-	@TestProperties(name = "Verify Alarms", returnParam = "LastStatus", paramsInclude = { "DUT","ListOfAlarms" })
-	public void verifyAlarms() {
-		if(dut == null){
-			report.report("No dut in test", Reporter.FAIL);
-			return;
-		}
-		if(listOfAlarms.isEmpty()){
-			report.report("No alarms were set to verify", Reporter.FAIL);
-			return;
-		}
-		verifyAlarmsHelper();
-	}
-	
 	private void verifyAlarmsHelper(){
 		AlarmsAndEvents alarmsAndEvents = AlarmsAndEvents.getInstance();
         List<AlarmInfo> alarmsInfo = alarmsAndEvents.getAllAlarmsNode(dut);
@@ -193,26 +194,6 @@ public class EnodeBNoLogs extends EnodebAction {
         		report.report("Alarm with type id ["+id+"] was found ["+count+"] time"+(count==1?"":"s"));
         	}
         }
-	}
-	
-	@Test
-	@TestProperties(name = "Verify Events", returnParam = "LastStatus", paramsInclude = { "DUT",
-			"ListOfEvents","VerifyAction" })
-	public void verifyEvents() {
-		if(dut == null){
-			report.report("No dut in test", Reporter.FAIL);
-			return;
-		}
-		if(listOfEvents.isEmpty()){
-			report.report("No events were set to verify", Reporter.FAIL);
-			return;
-		}
-		if(verifyAction == verifyAlarmAction.Equals){
-			report.report("Searching for exact event info");
-		}else{
-			report.report("Searching for containing event info");
-		}
-		verifyEventsHelper();
 	}
 	
 	private void verifyEventsHelper(){

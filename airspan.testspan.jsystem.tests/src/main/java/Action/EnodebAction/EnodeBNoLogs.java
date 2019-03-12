@@ -141,7 +141,7 @@ public class EnodeBNoLogs extends EnodebAction {
 	private Date setStartTime(){
 		Date from = null;
 		if(startDate == null || (startDate != null && startDate.get(dut.getNetspanName()) == null)){
-			report.report("Clear events was not used. Getting events of last "+eventStartDeafult+" minutes");
+			report.report("Clear events was not used. Getting events of last "+eventStartDeafult+" minutes", Reporter.WARNING);
 			from = new Date();
 			from = DateUtils.addMinutes(from, -eventStartDeafult);
 		}else{

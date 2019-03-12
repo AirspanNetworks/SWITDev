@@ -36,7 +36,7 @@ public class BasicAction extends Action {
 	private String timeToWait = "00:00:00";
 	private String ipPowerPort;
 	private String debugCommands;
-	private String serialCommand = "id";
+	private String serialCommand = "";
 	
 	public String getSerialCommand() {
 		return serialCommand;
@@ -47,8 +47,8 @@ public class BasicAction extends Action {
 		this.serialCommand = serialCommand;
 	}
 
-	private String ip = "192.168.58.169";
-	private int port = 2001;
+	private String ip = "";
+	private int port = 0;
 	private boolean lteCliRequired = false;
 	
 	public final boolean getSudoRequired() {
@@ -250,14 +250,13 @@ public class BasicAction extends Action {
 		List<IPrompt> logout_sequence = new ArrayList<IPrompt>();
 		List<IPrompt> session_sequence = new ArrayList<IPrompt>();
  		
-		LinkedPrompt loggin_start = new LinkedPrompt("(login:)", true, userName, true);
 		IPrompt password_prompt = new Prompt("Password:", false, password, true);
-		loggin_start.setLinkedPrompt(password_prompt);
+		
+		LinkedPrompt loggin_start = new LinkedPrompt("(login:)", true, userName, true, password_prompt);
 		login_sequence.add(loggin_start);
 		
 		if(sudoRequired) {
-			LinkedPrompt sudo_su = new LinkedPrompt("$", false, "sudo su", true);
-			sudo_su.setLinkedPrompt(password_prompt);
+			LinkedPrompt sudo_su = new LinkedPrompt("$", false, "sudo su", true, password_prompt);
 			login_sequence.add(sudo_su);
 			login_sequence.add(new Prompt("#", false));
 		}

@@ -25,7 +25,7 @@ public class Cli {
 	
 	public StringBuffer result = new StringBuffer();
 	
-	protected Prompt resultPrompt;
+	protected IPrompt resultPrompt;
 	/**
 	 * if set to true will send ENTER whan prompt wait timeout is recieved
 	 */
@@ -46,7 +46,7 @@ public class Cli {
 	}
 	
 	
-	public void addPrompt(Prompt prompt) {
+	public void addPrompt(IPrompt prompt) {
 		terminal.addPrompt(prompt);
 		
 		if(prompt instanceof LinkedPrompt) {
@@ -54,8 +54,13 @@ public class Cli {
 		}
 	}
 	
+	public void addPrompts(IPrompt...prompts) {
+		for(IPrompt prompt : prompts) {
+			addPrompt(prompt);
+		}
+	}
 	
-	public Prompt getPrompt(String prompt) {
+	public IPrompt getPrompt(String prompt) {
 		return terminal.getPrompt(prompt);
 	}
 	
@@ -126,7 +131,7 @@ public class Cli {
 	 * Returns the prompt which identification triggered the termination
 	 * of the cli operation.
 	 */
-	public Prompt getResultPrompt() {
+	public IPrompt getResultPrompt() {
 		return resultPrompt;
 	}
 
@@ -178,7 +183,7 @@ public class Cli {
 	public void command(String command, long timeout, boolean addEnter, boolean delayedTyping, String[] promptStrings,
 			Prompt[] prompts) throws Exception {
 		resultPrompt =null;
-		ArrayList<Prompt> defaultPromts = null;
+		ArrayList<IPrompt> defaultPromts = null;
 		if (prompts != null) {
 			defaultPromts = terminal.getPrompts();
 			terminal.removePrompts();
@@ -204,7 +209,7 @@ public class Cli {
 				result.append(terminal.getResult());
 				return;
 			}
-			Prompt prompt = waitWithGrace(timeout);
+			IPrompt prompt = waitWithGrace(timeout);
 			resultPrompt = prompt;
 			while (prompt.getStringToSend() != null) {
 				if (timeout > 0) {
@@ -332,9 +337,9 @@ public class Cli {
 	 * @return the prompt
 	 * @throws Exception
 	 */
-	protected Prompt waitWithGrace(long timeout) throws Exception{
+	protected IPrompt waitWithGrace(long timeout) throws Exception{
 		try {
-			Prompt p = terminal.waitForPrompt(timeout);
+			IPrompt p = terminal.waitForPrompt(timeout);
 			result.append(terminal.getResult());
 			return p;
 		} catch (Exception e){
@@ -355,12 +360,12 @@ public class Cli {
 	 * @return	the prompt found
 	 * @throws Exception
 	 */
-	private Prompt sendEnter(long timeout) throws Exception{
+	private IPrompt sendEnter(long timeout) throws Exception{
 		startTime = System.currentTimeMillis();
 		terminal.sendString(getEnterStr(), false);
 		result.append(terminal.getResult());
 
-		Prompt p = terminal.waitForPrompt(timeout);
+		IPrompt p = terminal.waitForPrompt(timeout);
 		result.append(terminal.getResult());
 		return p;
 	}

@@ -19,7 +19,7 @@ public abstract class Terminal {
     protected InputStream in = null;
     protected int bufChar = 10;
     protected long scrallEndTimeout = 200;
-    ArrayList<Prompt> prompts = new ArrayList<Prompt>();
+    ArrayList<IPrompt> prompts = new ArrayList<IPrompt>();
 
     public abstract void connect() throws IOException;
     public abstract void disconnect() throws IOException;
@@ -157,10 +157,10 @@ public abstract class Terminal {
     	
     }
 
-    public synchronized Prompt waitForPrompt(long timeout) throws IOException, InterruptedException{
+    public synchronized IPrompt waitForPrompt(long timeout) throws IOException, InterruptedException{
         long startTime = System.currentTimeMillis();
         StringBuffer sb = new StringBuffer();
-        Prompt prompt = null;
+        IPrompt prompt = null;
         while (true) { 
             if (timeout > 0) {
                 if (System.currentTimeMillis() - startTime > timeout) {
@@ -194,7 +194,7 @@ public abstract class Terminal {
                     }
                     int promptArraySize = prompts.size();
                     for (int j = 0; j < promptArraySize; j++) {
-                        prompt = (Prompt)prompts.get(j);
+                        prompt = (IPrompt)prompts.get(j);
                         if (prompt == null || prompt.getPrompt() == null){
                             continue;
                         }
@@ -233,7 +233,7 @@ public abstract class Terminal {
         }
     }
 
-    public synchronized Prompt waitFor() throws IOException, InterruptedException{
+    public synchronized IPrompt waitFor() throws IOException, InterruptedException{
     	return waitForPrompt(20000);
     }
 
@@ -257,14 +257,14 @@ public abstract class Terminal {
         addPrompt(prompt);
     }
     
-    public void addPrompt(Prompt prompt){
+    public void addPrompt(IPrompt prompt){
         prompts.remove(prompt);
         prompts.add(prompt);
     }
     
-    public Prompt getPrompt(String prompt){
+    public IPrompt getPrompt(String prompt){
         for (int i = 0; i < prompts.size(); i++){
-            Prompt p = (Prompt)prompts.get(i);
+            IPrompt p = (IPrompt)prompts.get(i);
             if (p.getPrompt().equals(prompt)){
                 return p;
             }
@@ -273,15 +273,15 @@ public abstract class Terminal {
     }
     
     public void removePrompts(){
-    	prompts = new ArrayList<Prompt>();
+    	prompts = new ArrayList<IPrompt>();
     }
     
     @SuppressWarnings("unchecked")
-	public ArrayList<Prompt> getPrompts(){
-    	return (ArrayList<Prompt>)prompts.clone();
+	public ArrayList<IPrompt> getPrompts(){
+    	return (ArrayList<IPrompt>)prompts.clone();
     }
     
-    public void setPrompts(ArrayList<Prompt> prompts){
+    public void setPrompts(ArrayList<IPrompt> prompts){
     	this.prompts = prompts;
     }
 	public int getBufChar() {

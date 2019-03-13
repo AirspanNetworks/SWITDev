@@ -160,7 +160,8 @@ public class Cli {
 	 * @exception IOException
 	 */
 	public void command(String command, long timeout, boolean addEnter, boolean delayedTyping) throws Exception {
-		command(command, timeout, addEnter, delayedTyping, (String) null);
+		command(command, timeout, addEnter, delayedTyping, resultPrompt.getPrompt());
+//		IPrompt pr = waitWithGrace(timeout);
 	}
 	
 	
@@ -181,7 +182,7 @@ public class Cli {
 	}
 	
 	public void command(String command, long timeout, boolean addEnter, boolean delayedTyping, String[] promptStrings,
-			Prompt[] prompts) throws Exception {
+			IPrompt[] prompts) throws Exception {
 		resultPrompt =null;
 		ArrayList<IPrompt> defaultPromts = null;
 		if (prompts != null) {
@@ -196,11 +197,11 @@ public class Cli {
 				if (addEnter) {
 					command = command + getEnterStr(); //ENTER
 				}
-				//try {
-				result.append(terminal.getResult());
-				/*} catch (IOException e){
-				 log.log(Level.WARNING,"Unable to clear buffer",e);
-				 }*/
+//				try {
+					result.append(terminal.getResult());
+//				} catch (IOException e){
+//					log.log(Level.WARNING,"Unable to clear buffer",e);
+//				}
 				terminal.sendString(command, delayedTyping);
 			}
 			startTime = System.currentTimeMillis();
@@ -221,34 +222,34 @@ public class Cli {
 				 * If the scrallEnd property of the found prompt is set to true
 				 * the check for terminal scrall end is skiped.
 				 */
-//				if(prompt.isScrallEnd()){
-//					if (prompt.isCommandEnd()) {
-//						break;
-//					}
-//				} else {
-//					if (terminal.isScrallEnd()) {
-//						if (prompt.isCommandEnd()) {
-//							break;
-//						}
-//					} 
-//					else {
-//						//System.err.println("Prompt found: " + prompt.getPrompt() +" but no command end");
-//						prompt = waitWithGrace(timeout);
-//						continue;
-//					}
-//				}
+				if(prompt.isScrallEnd()){
+					if (prompt.isCommandEnd()) {
+						break;
+					}
+				} else {
+					if (terminal.isScrallEnd()) {
+						if (prompt.isCommandEnd()) {
+							break;
+						}
+					} 
+					else {
+						//System.err.println("Prompt found: " + prompt.getPrompt() +" but no command end");
+						prompt = waitWithGrace(timeout);
+						continue;
+					}
+				}
 				String stringToSend = prompt.getStringToSend();
 				if (stringToSend != null) {
 					if (prompt.isAddEnter()) {
 						stringToSend = stringToSend + getEnterStr(); //ENTER;
 					}
 					Thread.sleep(50);
-					terminal.sendString(stringToSend, delayedTyping);
+					sendString(stringToSend, delayedTyping);
 				}
 //				else {
 //					break;
 //				}
-				prompt = waitWithGrace(timeout);
+				prompt = terminal.waitForPrompt(timeout);
 				this.resultPrompt = prompt;
 			}
 			

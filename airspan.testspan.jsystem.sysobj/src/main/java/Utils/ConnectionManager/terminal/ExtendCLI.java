@@ -1,12 +1,23 @@
 package Utils.ConnectionManager.terminal;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOError;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.TimeoutException;
+import java.util.regex.Pattern;
 
 import org.apache.tools.ant.util.regexp.Regexp;
+import org.glassfish.tyrus.core.SendCompletionAdapter;
+import org.hamcrest.core.IsInstanceOf;
 
 /**
  * 
@@ -18,16 +29,33 @@ import org.apache.tools.ant.util.regexp.Regexp;
  */
 public class ExtendCLI extends Cli {
 	
-	private boolean outputExpected = true;
+	private String log_file_path = "";
+	private File log_cache = null;
+	static final String DEFAULT_CACHE_FILENAME = "session.log";
+	static final String DEFAULT_CACHE_FILEDIR = "tmp";
 	
-	private IPrompt sessionPrompt = null;
+//	private IPrompt sessionPrompt = null;
 	
 	public ExtendCLI(Terminal terminal) throws IOException {
-		super(terminal);
-		outputExpected = true;
-		// TODO Auto-generated constructor stub
+		this(terminal, System.getProperty("user.home") + File.separator + DEFAULT_CACHE_FILEDIR + File.separator + DEFAULT_CACHE_FILENAME);
 	}
-
+	
+	public ExtendCLI(Terminal terminal, String cache_file_path) throws IOException {
+		super(terminal);
+		create_cache_file(cache_file_path);
+	}
+	
+	private void create_cache_file(String file_path) throws IOException {
+		File temp_log = new File(file_path);
+				
+		if(temp_log.exists()) {
+			temp_log.delete();
+		}
+		temp_log.createNewFile();
+		log_cache = temp_log;
+		log_file_path = file_path;
+	}
+	
 	/**
 	 * Extend standart Cli
 	 * @author doguz
@@ -37,146 +65,185 @@ public class ExtendCLI extends Cli {
 	 * @param delimiters
 	 * @return
 	 */
-	public List<String> getResult(String command, String prompt, String[] delimiters) {
-	
-		String output = super.getResult();
-		
-		output = output.replaceAll("\\[[0-9;m]+", "");
+	public String getCommandOutput(String output, String command, String prompt, String[] delimiters) {
 		
 		String defaultDelimiter = "\n";
-		List<String> result = new ArrayList<String>();
-		boolean collectFlag = false;
 		
 		for(String delimiter : delimiters){
 			output = output.replace(delimiter, defaultDelimiter);	
 		}
 		
 		List<String> lines = Arrays.asList(output.split(defaultDelimiter));
+		Queue<String> line_cache = new LinkedList<String>(lines);
+		List<String> temp = new ArrayList<String>();
+		Collections.reverse(lines); 
+		String line = "";
 		
-		for(String line : lines) {
-			
-			if(collectFlag && line.length() > 0)
-				result.add(line.replaceAll("\\[[0-9;m]+", ""));
-			
-			if(line.endsWith(command))
-				collectFlag = true;
-			else if(line == prompt){
-				collectFlag = false;
-			}			
+		while(line_cache.size() > 0 || line.endsWith(command)) {
+			line = line_cache.poll();
+			if(line.length() > 0)
+				temp.add(line);	
+		}
+		
+		String result = "";
+		for(String t : temp) {
+			result += t + defaultDelimiter;
 		}
 		
 		return result;
 	}
 	
-	public List<String> getResult(String command, String prompt){
-		return this.getResult(command, prompt, new String[] {"\n"});
+	public String getCommandOutput(String output, String command, String prompt){
+		return this.getCommandOutput(output, command, prompt, new String[] {"\n"});
 	}
 	
-	public void login(long timeout, IPrompt...prompts) throws Exception {
-//		command(null, 0, true, true, null, prompts);
+	/**
+	 * 
+	 * @param timeout
+	 * @param prompt
+	 * @throws Exception
+	 */
+	public void login(long timeout, IPrompt prompt) throws Exception {
+		login(timeout, prompt, 0);
+	}
+	
+	/**
+	 * 
+	 * @param timeout
+	 * @param prompt
+	 * @param retry
+	 * @throws Exception
+	 */
+	public void login(long timeout, IPrompt prompt, int retry) throws Exception {
 		ArrayList<IPrompt> defaultPromts = null;
-		IPrompt prompt = null;
+		IPrompt runtime_prompt = prompt;
 		
 		try {
-			if (prompts != null) {
-				defaultPromts = terminal.getPrompts();
-				terminal.removePrompts();
-				for (IPrompt pr : prompts) {
-					if(resultPrompt != null) {
-						if(pr.getPrompt() == resultPrompt.getPrompt()) {
-							resultPrompt = pr;
-						}
-					}
-					terminal.addPrompt(pr);
-				}
-			}
+
+			defaultPromts = terminal.getPrompts();
+			terminal.removePrompts();
 			startTime = System.currentTimeMillis();
 			
-			prompt = waitWithGrace(timeout);
-
-			while (prompt.getStringToSend() != null) {
-				if (timeout > 0) {
-					if (System.currentTimeMillis() - startTime > (timeout)) {
-						throw new IOException("timeout: " + timeout);
+			addPrompt(runtime_prompt);
+			
+			sendString("\n", true);
+			
+			while (runtime_prompt instanceof LinkedPrompt) {
+				
+				IPrompt next_prompt = ((LinkedPrompt)runtime_prompt).getLinkedPrompt();
+				
+				if (runtime_prompt.getStringToSend() != null) {
+					String stringToSend = runtime_prompt.getStringToSend();
+					if (stringToSend != null) {
+						if (runtime_prompt.isAddEnter()) {
+							stringToSend = stringToSend + getEnterStr(); //ENTER;
+						}
+						Thread.sleep(50);
+						sendString(stringToSend, true);
+						Thread.sleep(50);
+						IPrompt current_prompt = waitWithGrace(timeout);
+						
+						while(retry > 0) {
+							if(current_prompt.getPrompt() != next_prompt.getPrompt()) {
+								Thread.sleep(200);
+								current_prompt = waitWithGrace(timeout);
+//								throw new IOException("Wrong login/logout sequence; Prompt '" + current_prompt.getPrompt() + " got instead of '" + next_prompt.getPrompt() + "'");
+							}
+							retry--;
+						}
+						
+						runtime_prompt = next_prompt;
 					}
 				}
-				String stringToSend = prompt.getStringToSend();
-				if (stringToSend != null) {
-					if (prompt.isAddEnter()) {
-						stringToSend = stringToSend + getEnterStr(); //ENTER;
-					}
-					Thread.sleep(100);
-					sendString(stringToSend, true);
-					if(prompt instanceof LinkedPrompt) {
-						prompt = ((LinkedPrompt) prompt).getLinkedPrompt();
-					}else {
-						prompt = waitWithGrace(timeout);
-					}
-				}
+				terminal.removePrompts();
+				addPrompt(next_prompt);
 			}
+			
+			defaultPromts.add(runtime_prompt);
+			
 		} finally {
-			sessionPrompt = prompt;
+//			defaultPromts.add(prompt);
 			result.append(terminal.getResult());
 			if (defaultPromts != null) {
-				terminal.setPrompts(defaultPromts);
+				terminal.removePrompts();
+				addPrompts(defaultPromts.toArray(new IPrompt[0]));
 			}			
+			sendString("\n", true);
 		}	
 		
 	}
 	
-	@Override
-	public IPrompt waitWithGrace(long timeout) throws Exception {
-		if(outputExpected) {
-			outputExpected = false;
-			resultPrompt = super.waitWithGrace(timeout);
+	private String readFile(String file, String... clearPatterns) throws IOException {
+	    BufferedReader reader = new BufferedReader(new FileReader (file));
+	    String         line = null;
+	    StringBuilder  stringBuilder = new StringBuilder();
+	    String         ls = System.getProperty("line.separator");
+	    
+	    if(clearPatterns.length == 0) {
+	    	clearPatterns = new String[] {"\\[[0-9;m]+"};
+	    }
+	    
+	    try {
+	        while((line = reader.readLine()) != null) {
+	            stringBuilder.append(line);
+	            stringBuilder.append(ls);
+	        }
+	        	
+	        String temp_result = stringBuilder.toString();
+	        
+	        for(String pattern : clearPatterns) {
+	        	temp_result = temp_result.replaceAll(pattern, "");
+	        }
+	        
+	        return temp_result;
+	    } finally {
+	        reader.close();
+	    }
+	}
+	
+	private void setPrintStream(String file_path) throws IOException {
+		File temp_log = new File(file_path);
+		
+		if(!temp_log.exists()) {
+			temp_log.createNewFile();
 		}
 		
-		return resultPrompt;
+		super.setPrintStream(new PrintStream(temp_log));
 	}
 	
-	public void sendString(String stringToSend, boolean delayedTyping) throws IOException, InterruptedException {
-		outputExpected = true;
-		terminal.sendString(stringToSend, delayedTyping);
-	}
-	
-	public void command(String command, long timeout, boolean addEnter, boolean delayedTyping) throws Exception {
-		startTime = System.currentTimeMillis();
+	public String exec_command(String command, long timeout, boolean addEnter, boolean delayedTyping) throws Exception {
 		
-		if (addEnter) {
-			command = command + getEnterStr(); //ENTER
-		}
+		create_cache_file(log_file_path);
+		setPrintStream(log_file_path);
+		command(command, timeout, addEnter, delayedTyping, getCurrentPrompt().getPrompt());
+		Thread.sleep(timeout);
 		resultPrompt = waitWithGrace(timeout);
-		sendString(command, delayedTyping);
+		Thread.sleep(timeout);
 		resultPrompt = waitWithGrace(timeout);
-	}
-	
-	public void switchToPrompt(Prompt prompt) throws Exception {
-//		Prompt current = waitWithGrace(2000);
-//		if(current.getPrompt() == prompt.getPrompt())
-//			return;
-//		
-		addPrompt(prompt);
-		login(0, prompt);
-		
+		return readFile(log_file_path);
 	}
 	
 	public IPrompt getCurrentPrompt() throws Exception {
-		return this.waitWithGrace(0);
+		if(resultPrompt == null)
+			sendString("\n", true);
+			resultPrompt = waitWithGrace(500);
+		return resultPrompt;
 	}
 	
 	public IPrompt getCurrentPrompt(long timeout) throws Exception {
 		return this.waitWithGrace(timeout);
 	}
 
-	
-	public void resetToPrompt(IPrompt...prompts) throws Exception{
+	public void resetToPrompt(IPrompt prompt) throws Exception{
 		long timeout = 0;
-		login(timeout, prompts);
+		login(timeout, prompt);
 	}
-
-//	public void resetToPrompt(List<IPrompt> logout_sequence) {
-//		IPrompt[] array_prommpts = new IPrompt[logout_sequence.size()];
-//		
-//		
-//	}
+	
+	@Override
+	public void close() throws IOException {
+		super.close();
+//		if(log_cache != null) {
+//			log_cache.delete();
+//		}
+	}
 }

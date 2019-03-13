@@ -86,7 +86,16 @@ public class GeneralUtils {
         report.reportHtml(title, html, true);
     }
     
-    public static void reportHtmlLink(String title, String text, boolean status, Pair<String, String>...pairs) {
+    /**
+     * 
+     * @param title
+     * @param text
+     * @param status
+     * @param pairs - Allow define colors for selected patterns inside of text
+     */
+    
+    @SafeVarargs
+	public static void reportHtmlLink(String title, String text, boolean status, Pair<String, String>...pairs) {
     	if(text.length() > 0) {
 	    	for(Pair<String, String> item : pairs) {
 	    		text = text.replace(item.getElement0(), "<font size=\"3\" bold=\"true\" color=\"" + item.getElement1() + "\">" + item.getElement0() + "</font>");

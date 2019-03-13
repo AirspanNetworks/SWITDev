@@ -8,7 +8,6 @@ public class DebugPort extends EnodeBComponent{
 	private String DEBUG_PORT_USERNAME = "admin";
 	private String DEBUG_PORT_PASSWOED = "HeWGEUx66m=_4!ND";
 
-	@Override
 	public void init() throws Exception {
 		setUsername(DEBUG_PORT_USERNAME);
 		setPassword(DEBUG_PORT_PASSWOED);

@@ -110,11 +110,10 @@ public abstract class XLP extends EnodeBComponent {
     /**
      * (non-Javadoc)
      *
-     * @see EnodeB.Components.EnodeBComponent#init() init & connecting to
+     * @see EnodeB.Components.EnodeBComponent# & connecting to
      * serialCom. then connecting via SSH, if fails get the serialCom ,
      * insure that the XLP is in running state.
      */
-    @Override
     public void init() throws Exception {
         setUserNameAndPassword();
         // init & connecting to serialCom. then connecting via SSH, if fails get
@@ -1343,7 +1342,7 @@ public abstract class XLP extends EnodeBComponent {
             if (snmp.snmpSet(oid, requestedVersion)) {
                 reboot();
             } else
-                report("The ENodeB: " + this.getName() + " Could not be Restarted");
+                report.report("The ENodeB: " + this.getName() + " Could not be Restarted");
         } catch (Exception e) {
         }
     }

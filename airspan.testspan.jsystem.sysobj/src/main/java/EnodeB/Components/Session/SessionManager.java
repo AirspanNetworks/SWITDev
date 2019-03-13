@@ -44,7 +44,7 @@ public class SessionManager {
 													// so don't use it.
 		}
 		if (enodeBComponent.serialCom != null){
-			openConsoleSession();
+			openSerialSession();
 			if(defaultSession == null && getEnodeBComponent() instanceof DAN){
 				defaultSession = getSerialSession();
 			}
@@ -90,7 +90,7 @@ public class SessionManager {
 			defaultSession = getSession(sessionName);
 	}
 
-	private synchronized boolean openConsoleSession() {
+	private synchronized boolean openSerialSession() {
 		Session newConsoleSession = new Session(getEnodeBComponent().getName() + "_" + CONSOLE_SESSION_NAME, getEnodeBComponent(), getEnodeBComponent().serialCom.getSerial(), serialLogLevel);
 		boolean ans = newConsoleSession.waitForSessionToConnect(SESSION_WAIT_TIMEOUT);
 		sessions.add(newConsoleSession);

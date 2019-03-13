@@ -227,6 +227,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 			swType = 18;
 		}
 		XLP.setSWTypeInstnace(swType);
+		XLP.setLogNeeded(isInitCalledFromAction());
 		XLP.init();
 		if(ipsecTunnelEnabled){
 			ArrayList<EnodeB> eNodeBs = new ArrayList<EnodeB>();
@@ -2308,5 +2309,21 @@ public abstract class EnodeB extends SystemObjectImpl {
 	
 	public int getNumberOfCells(){
 		return XLP.getNumberOfCells();
+	}
+
+	/**
+	 * This method checks if the caller is an Action class by looking into the StackTrace.
+	 * Limited to the first 15 levels of the StackTrace in order to avoid passing on all its 70 levels
+	 *
+	 * @return - true if it's an action. false if it's a close test.
+	 */
+	protected boolean isInitCalledFromAction() {
+		StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
+		for (int i = 0; i < 15; i++) {
+			if (stacktrace[i].getClassName().contains("Action")) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

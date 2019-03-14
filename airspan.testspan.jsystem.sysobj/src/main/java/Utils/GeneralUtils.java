@@ -91,18 +91,16 @@ public class GeneralUtils {
      * @param title
      * @param text
      * @param status
-     * @param pairs - Allow define colors for selected patterns inside of text
+     * @param patterns - Allow define colors for selected patterns inside of text
      */
-    
-    @SafeVarargs
-	public static void reportHtmlLink(String title, String text, boolean status, Pair<String, String>...pairs) {
+	public static void reportHtmlLink(String title, String text, Boolean status, String color, String[] patterns ) {
     	if(text.length() > 0) {
-	    	for(Pair<String, String> item : pairs) {
-	    		text = text.replace(item.getElement0(), "<font size=\"3\" bold=\"true\" color=\"" + item.getElement1() + "\">" + item.getElement0() + "</font>");
+	    	for(String key : patterns) {
+	    		text = text.replace(key, "<font size=\"3\" bold=\"true\" color=\"" + color + "\">" + key + "</font>");
 	    	}
     	}
     	String html = String.format("<pre style=\"margin-left: 60px; max-height:500px; overflow: scroll;\">%s</pre>", text.replace("\n", "<br>\n"));
-    	 report.reportHtml(title, html, status);
+    	report.reportHtml(title, html, status);
     }
     
     public static boolean unSafeSleep(long timeInMS) {

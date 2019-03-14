@@ -9,7 +9,9 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,11 +49,11 @@ public class BasicAction extends Action {
 	private String expectedPatern;
 	
 	@ParameterProperties(description = "Evaluate if pattern exists in output (Ignored if omitted")
-	public final String getExpectedPatern() {
+	public String getExpectedPatern() {
 		return expectedPatern;
 	}
 
-	public final void setExpectedPatern(String expectedPatern) {
+	public void setExpectedPatern(String expectedPatern) {
 		this.expectedPatern = expectedPatern;
 	}
 
@@ -217,6 +219,22 @@ public class BasicAction extends Action {
 	public static final String SUDO_PATTERN = "#";
 	public static final String LTECLI_PATTERN = "lte_cli:>>";
 	
+	/**
+	 * 
+	 * @param expected_string
+	 * @return
+	 */
+	private static Map<String, String> readExpected(String expected_string){
+			Map<String, String> expectedCollection = new HashMap<String, String>();
+		
+		if(expected_string != null && expected_string != "") {
+			for(String pattern : expected_string.split("\\s*;\\s*")) {
+				expectedCollection.put(pattern, "green");
+			}
+		}
+		return expectedCollection;
+	}
+	
 	@Test
 	@TestProperties(name = "Send Commands To Serial", returnParam = "LastStatus", paramsInclude = { "Ip", "Port", "Password",
 			"UserName", "SerialCommand", "SleepTime", "LteCliRequired", "SudoRequired", "ExpectedPatern" })
@@ -238,9 +256,9 @@ public class BasicAction extends Action {
 ////		lteCliRequired = true;
 //		serialCommand = "ls -la /";
 ////		serialCommand = "ue show link";
-//		expectedPatern = "/mnt/flash";
+//		expectedPatern = "/mnt/flash ; dima;rsys";
 //		sleepTime = 5;
-		
+//		
 		try {
 //			GeneralUtils.startLevel("Starting parameters");
 			if(ip == null){
@@ -319,7 +337,6 @@ public class BasicAction extends Action {
 			GeneralUtils.startLevel("Connecting & loging in...");
 			Thread.sleep(20);
 			cli.sendString(cli.getEnterStr(), false);
-			Thread.sleep(20);
 			
 			cli.addPrompts(
 					new Prompt(ADMIN_PATTERN, false, true), 
@@ -340,32 +357,35 @@ public class BasicAction extends Action {
 
 			Thread.sleep(500);
 			cli.login(sleepTime * 1000, login_sequence);
-			
+			report.report("Login to serial completed");
 			GeneralUtils.stopLevel();
 			
-			GeneralUtils.startLevel("Send command: " + serialCommand);
+//			GeneralUtils.startLevel("Send command: " + serialCommand);
 			Thread.sleep(100);
 			String output_str = cli.exec_command(serialCommand, sleepTime * 1000, true, false);
-
-			report.report("Output: ----------\n" + output_str + "\n------------------");
-			GeneralUtils.stopLevel();
 			
-			boolean status = true;
-			
-			if(output_str.length() > 0)
-				
+			int status = Reporter.PASS;
+			String result_text = "Test completed";
 			
 			if(expectedPatern != null) {
-				if(!output_str.contains(expectedPatern)) {
-					GeneralUtils.reportHtmlLink("Command " + serialCommand + " output", output_str, status); //, new Pair<String, String>(expectedPatern, "green"));
-					report.report("Output not contains expected pattern '" + expectedPatern + "'", Reporter.FAIL);
-					status = false;
+//				Map<String, String> expectedCollection = readExpected(expectedPatern);
+				
+				result_text += " as following:\n";
+				
+				for(String key : expectedPatern.split("\\s*;\\s*")) {
+					int local_stat = output_str.contains(key) ? Reporter.PASS : Reporter.FAIL;
+					result_text += String.format("Expected pattern '%s' %s exists in output\n", key, local_stat == Reporter.PASS ? "" : "not");
+					status = status == Reporter.PASS ?  local_stat: status;
 				}
-				else {
-					GeneralUtils.reportHtmlLink("Command " + serialCommand + " output", output_str, status); //, new Pair<String, String>(expectedPatern, "green"));
-					report.report("Output contains expected pattern '" + expectedPatern + "'");
-				}
+				GeneralUtils.reportHtmlLink("Command " + serialCommand + " output", output_str, Boolean.parseBoolean(String.format("%d", status)), "green", expectedPatern.split(";"));
 			}
+			else {
+				result_text = "Test completed";
+				GeneralUtils.reportHtmlLink("Command " + serialCommand + " output", output_str);
+			}
+			
+			report.report(result_text, status);
+			
 			
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -14,10 +14,22 @@ public class Prompt implements IPrompt {
     public Prompt(){
         
     }
+    
+    public Prompt(String prompt) {
+    	this(prompt, false);
+    }
+    
     public Prompt(String prompt, boolean isRegExp){
         this.prompt = prompt;
         this.isRegularExpression = isRegExp;
     }
+    
+    public Prompt(String prompt, boolean isRegExp, boolean isCommandEnd){
+    	this(prompt, isRegExp);
+    	setCommandEnd(isCommandEnd);
+     
+    }
+    
     public Prompt(String prompt, boolean isRegExp, String stringToSend, boolean setEnter) {
     	this(prompt, isRegExp);
     	setStringToSend(stringToSend);

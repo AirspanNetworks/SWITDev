@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOError;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -33,6 +34,7 @@ public class ExtendCLI extends Cli {
 	private File log_cache = null;
 	static final String DEFAULT_CACHE_FILENAME = "session.log";
 	static final String DEFAULT_CACHE_FILEDIR = "tmp";
+	static final String DEFAULT_UNPRINTABLE = "\\[[0-9;m]+";
 	
 //	private IPrompt sessionPrompt = null;
 	
@@ -180,7 +182,7 @@ public class ExtendCLI extends Cli {
 	    String         ls = System.getProperty("line.separator");
 	    
 	    if(clearPatterns.length == 0) {
-	    	clearPatterns = new String[] {"\\[[0-9;m]+"};
+	    	clearPatterns = new String[] {DEFAULT_UNPRINTABLE};
 	    }
 	    
 	    try {
@@ -212,14 +214,19 @@ public class ExtendCLI extends Cli {
 	}
 	
 	public String exec_command(String command, long timeout, boolean addEnter, boolean delayedTyping) throws Exception {
-		
+		getResult();
 		create_cache_file(log_file_path);
 		setPrintStream(log_file_path);
+		
+		long startTime = System.currentTimeMillis();
+		
 		command(command, timeout, addEnter, delayedTyping, getCurrentPrompt().getPrompt());
-		Thread.sleep(timeout);
-		resultPrompt = waitWithGrace(timeout);
-		Thread.sleep(timeout);
-		resultPrompt = waitWithGrace(timeout);
+		Thread.sleep(200);
+		
+		while (System.currentTimeMillis() - startTime < timeout) {
+			resultPrompt = waitWithGrace(timeout);
+			Thread.sleep(1000);
+		}
 		return readFile(log_file_path);
 	}
 	
@@ -242,8 +249,8 @@ public class ExtendCLI extends Cli {
 	@Override
 	public void close() throws IOException {
 		super.close();
-//		if(log_cache != null) {
-//			log_cache.delete();
-//		}
+		if(log_cache != null) {
+			log_cache.delete();
+		}
 	}
 }

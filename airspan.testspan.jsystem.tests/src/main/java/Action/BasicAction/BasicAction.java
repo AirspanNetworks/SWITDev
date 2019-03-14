@@ -344,7 +344,7 @@ public class BasicAction extends Action {
 					result_text += String.format("Expected pattern '%s' %s exists in output\n", key, local_stat == Reporter.PASS ? "" : "not");
 					status = status == Reporter.PASS ?  local_stat: status;
 				}
-				GeneralUtils.reportHtmlLink("Command " + serialCommand + " output", output_str, Boolean.parseBoolean(String.format("%d", status)), "green", expectedPatern.split(";"));
+				GeneralUtils.reportHtmlLink("Command " + serialCommand + " output", output_str, !Boolean.parseBoolean(String.format("%d", status)), "green", expectedPatern.split(";"));
 			}
 			else {
 				result_text = "Test completed";

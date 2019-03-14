@@ -191,7 +191,7 @@ public class P0 extends TPTBase{
 	public void VoLTE_Call_Reject_when_maximum_VoLTE_Active_Calls(){
 		int volteOriginal = dut.getMaxVolteCalls();
 		boolean setMaxVolte;
-		GeneralUtils.startLevel("Setting max volte calls to 1 and rebooting enodeb");
+		GeneralUtils.startLevel("Setting max volte calls to 1 and rebooting enodeb (if needed)");
 		setMaxVolte = setMaxVolteCallAndReboot(1);
 		setMaxVolte = setMaxVolte && dut.getMaxVolteCalls()==1;
 		GeneralUtils.stopLevel();
@@ -231,7 +231,7 @@ public class P0 extends TPTBase{
 			}
 		}
 		if(dut.getMaxVolteCalls() != volteOriginal){
-			GeneralUtils.startLevel("Setting max volte calls to original value and rebooting enodeb");
+			GeneralUtils.startLevel("Setting max volte calls to original value and rebooting enodeb (if needed)");
 			setMaxVolteCallAndReboot(volteOriginal);
 			GeneralUtils.stopLevel();			
 		}
@@ -316,7 +316,7 @@ public class P0 extends TPTBase{
 		}
 		int volteOriginal = dut.getMaxVolteCalls();
 		boolean setMaxVolte;
-		GeneralUtils.startLevel("Setting max volte calls to 1 and rebooting enodeb");
+		GeneralUtils.startLevel("Setting max volte calls to 1 and rebooting enodeb (if needed)");
 		setMaxVolte = setMaxVolteCallAndReboot(1);
 		setMaxVolte = setMaxVolte && dut.getMaxVolteCalls()==1;
 		GeneralUtils.stopLevel();
@@ -358,7 +358,7 @@ public class P0 extends TPTBase{
 			}
 		}
 		if(dut.getMaxVolteCalls() != volteOriginal){
-			GeneralUtils.startLevel("Setting max volte calls to original value and rebooting enodeb");
+			GeneralUtils.startLevel("Setting max volte calls to original value and rebooting enodeb (if needed)");
 			setMaxVolteCallAndReboot(volteOriginal);
 			GeneralUtils.stopLevel();			
 		}
@@ -979,6 +979,8 @@ public class P0 extends TPTBase{
 				}else{
 					report.report("Enodeb failed to reach all running and in service after reboot",Reporter.WARNING);
 				}				
+			}else{
+				report.report("No need to reboot");
 			}
 		}else{
 			report.report("Failed to set max volte calls to "+max,Reporter.WARNING);

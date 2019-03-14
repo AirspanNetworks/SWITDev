@@ -27,7 +27,7 @@ import Netspan.API.Enums.ClockSources;
 import Netspan.API.Enums.EnabledStates;
 import Netspan.API.Enums.EnbStates;
 import Netspan.API.Enums.EnbTypes;
-import Netspan.API.Enums.HandoverTypes;
+import Netspan.API.Enums.HandoverType;
 import Netspan.API.Enums.HardwareCategory;
 import Netspan.API.Enums.HoControlStateTypes;
 import Netspan.API.Enums.ImageType;
@@ -390,7 +390,7 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
 
     @Override
     public boolean verifyNeighbor(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
-                                  X2ControlStateTypes x2ControlStatus, HandoverTypes HandoverTypes, boolean isStaticNeighbor,
+                                  X2ControlStateTypes x2ControlStatus, HandoverType HandoverType, boolean isStaticNeighbor,
                                   String qOffsetRange) {
 
         boolean wasAdded = true;
@@ -429,10 +429,10 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
                     }
                 }
 
-                if (null != HandoverTypes) {
-                    if (nbr.getHandoverType().getValue() != HandoverTypes) {
+                if (null != HandoverType) {
+                    if (nbr.getHandoverType().getValue() != HandoverType) {
                         report.report("HandOver Type is " + nbr.getHandoverType().getValue() + " and not "
-                            + HandoverTypes.value() + " as expected", Reporter.WARNING);
+                            + HandoverType.value() + " as expected", Reporter.WARNING);
                         wasAdded = false;
                     } else {
                         report.report("HandOver Type is " + nbr.getHandoverType().getValue() + " as expected");
@@ -2701,6 +2701,7 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
             AlarmInfo temp = new AlarmInfo();
             temp.alarmId = alarm.getAlarmId();
             temp.alarmType = alarm.getAlarmType();
+            temp.alarmTypeId = alarm.getAlarmTypeId();
             temp.alarmSource = alarm.getAlarmSource();
             temp.alarmInfo = alarm.getAlarmInfo();
             temp.severity = alarm.getSeverity();
@@ -2955,13 +2956,13 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
 
     @Override
     public boolean addNeighbor(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
-                               X2ControlStateTypes x2ControlStatus, HandoverTypes HandoverTypes, boolean isStaticNeighbor,
+                               X2ControlStateTypes x2ControlStatus, HandoverType HandoverType, boolean isStaticNeighbor,
                                String qOffsetRange) {
         List<LteAddNeighbourWs> neighbourConfigList = new ArrayList<>();
         LteAddNeighbourWs neighbourConfig = new LteAddNeighbourWs();
         ObjectFactory factoryDetails = new ObjectFactory();
         
-        neighbourConfig.setHandoverType(factoryDetails.createLteAddNeighbourWsHandoverType(HandoverTypes));
+        neighbourConfig.setHandoverType(factoryDetails.createLteAddNeighbourWsHandoverType(HandoverType));
         neighbourConfig.setHoControlState(factoryDetails.createLteAddNeighbourWsHoControlState(hoControlStatus));
         neighbourConfig.setIsStaticNeighbour(factoryDetails.createLteAddNeighbourWsIsStaticNeighbour(isStaticNeighbor));
         neighbourConfig.setNeighbourName(neighbor.getNetspanName());
@@ -3040,7 +3041,7 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
 
     @Override
     public boolean checkCannotAddNeighbor(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
-                                          X2ControlStateTypes x2ControlStatus, HandoverTypes HandoverTypes, boolean isStaticNeighbor,
+                                          X2ControlStateTypes x2ControlStatus, HandoverType HandoverType, boolean isStaticNeighbor,
                                           String qOffsetRange) {
         int enbNumbersOfCells = this.getNumberOfNetspanCells(enodeB);
         int nbrNumbersOfCells = this.getNumberOfNetspanCells(neighbor);
@@ -3048,13 +3049,13 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
         String neighborName = neighbor.getNetspanName();
 
         if (enbNumbersOfCells == nbrNumbersOfCells && enbNumbersOfCells == 2) {
-            return (this.addNeighbourMultiCell(enodeB, neighbor, hoControlStatus, x2ControlStatus, HandoverTypes,
+            return (this.addNeighbourMultiCell(enodeB, neighbor, hoControlStatus, x2ControlStatus, HandoverType,
                 isStaticNeighbor, qOffsetRange));
         } else {
             try {
                 for (int i = 1; i <= 3; i++) {
                     LteNeighbourResponse result = soapHelper_15_2.getLteSoap().lteNeighbourAdd(
-                        sourceNodeName, neighborName, hoControlStatus, x2ControlStatus, HandoverTypes,
+                        sourceNodeName, neighborName, hoControlStatus, x2ControlStatus, HandoverType,
                         isStaticNeighbor, qOffsetRange, String.valueOf(enodeB.getCellContextID()), credentialsLte);
                     if (result.getErrorCode() != Netspan.NBI_15_2.Lte.ErrorCodes.OK) {
                         report.report("lteNeighbourAdd via Netspan Failed : " + result.getErrorString());
@@ -3081,19 +3082,19 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
      * @param neighbor
      * @param hoControlStatus
      * @param x2ControlStatus
-     * @param HandoverTypes
+     * @param HandoverType
      * @param isStaticNeighbor
      * @param qOffsetRange
      * @return
      */
     @Override
     public boolean addNeighbourMultiCell(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
-                                         X2ControlStateTypes x2ControlStatus, HandoverTypes HandoverTypes, boolean isStaticNeighbor,
+                                         X2ControlStateTypes x2ControlStatus, HandoverType HandoverType, boolean isStaticNeighbor,
                                          String qOffsetRange) {
         ObjectFactory factoryDetails = new ObjectFactory();
         List<LteAddNeighbourWs> neighbourConfigList = new ArrayList<>();
         LteAddNeighbourWs neighbourConfig = new LteAddNeighbourWs();
-        neighbourConfig.setHandoverType(factoryDetails.createLteAddNeighbourWsHandoverType(HandoverTypes));
+        neighbourConfig.setHandoverType(factoryDetails.createLteAddNeighbourWsHandoverType(HandoverType));
         neighbourConfig.setHoControlState(factoryDetails.createLteAddNeighbourWsHoControlState(hoControlStatus));
         neighbourConfig.setIsStaticNeighbour(factoryDetails.createLteAddNeighbourWsIsStaticNeighbour(isStaticNeighbor));
         neighbourConfig.setNeighbourName(neighbor.getNetspanName());

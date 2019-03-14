@@ -21,7 +21,7 @@ import EnodeB.EnodeB;
 import Netspan.EnbProfiles;
 import Netspan.API.Enums.EnabledStates;
 import Netspan.API.Enums.EnbStates;
-import Netspan.API.Enums.HandoverTypes;
+import Netspan.API.Enums.HandoverType;
 import Netspan.API.Enums.HoControlStateTypes;
 import Netspan.API.Enums.SonAnrStates;
 import Netspan.API.Enums.X2ControlStateTypes;
@@ -2358,7 +2358,7 @@ public class P0 extends TestspanTest {
 		if (allNeighborsList.size() >= 1) {
 			for (EnodeB enb : allNeighborsList) {
 				if (!neighbors.addNeighbor(dutInTest, enb, HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC,
-						HandoverTypes.TRIGGER_X_2, true, "0")) {
+						HandoverType.TRIGGER_X_2, true, "0")) {
 					return false;
 				}
 			}

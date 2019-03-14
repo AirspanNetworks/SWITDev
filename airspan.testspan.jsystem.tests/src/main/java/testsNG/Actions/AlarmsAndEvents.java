@@ -243,6 +243,9 @@ public class AlarmsAndEvents {
 	 */
 	public void printAlarmInfo(AlarmInfo alarmInfo) {
 		GeneralUtils.startLevel("AlarmType: " + alarmInfo.alarmType);
+		if(alarmInfo.alarmTypeId != null){
+			report.report("AlarmTypeId: "+alarmInfo.alarmTypeId.toString());			
+		}
 		report.report("AlarmId: " + alarmInfo.alarmId.toString());
 		report.report("AlarmSource: " + alarmInfo.alarmSource);
 		report.report("AlarmInfo: " + alarmInfo.alarmInfo);
@@ -256,7 +259,7 @@ public class AlarmsAndEvents {
 	}
 	
 	public void printEventInfo(EventInfo eventInfo) {
-		GeneralUtils.startLevel("EventId: " + eventInfo.getEventType());
+		GeneralUtils.startLevel("EventType: " + eventInfo.getEventType());
 		report.report("EventTypeId: " + eventInfo.getEventTypeId().toString());
 		report.report("SourceType: " + eventInfo.getSourceType());
 		report.report("SourceName: " + eventInfo.getSourceName());

@@ -23,7 +23,7 @@ import Netspan.API.Enums.CategoriesLte;
 import Netspan.API.Enums.ClockSources;
 import Netspan.API.Enums.EnabledStates;
 import Netspan.API.Enums.EnbTypes;
-import Netspan.API.Enums.HandoverTypes;
+import Netspan.API.Enums.HandoverType;
 import Netspan.API.Enums.HardwareCategory;
 import Netspan.API.Enums.HoControlStateTypes;
 import Netspan.API.Enums.ImageType;
@@ -950,21 +950,21 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 	 *            the ho control status
 	 * @param x2ControlStatus
 	 *            the x2 control status
-	 * @param HandoverTypes
+	 * @param HandoverType
 	 *            the handover type
 	 * @param isStaticNeighbor
 	 *            the is static neighbor
 	 * @return true, if successful
 	 */
 	public boolean addNeighbor(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
-			X2ControlStateTypes x2ControlStatus, HandoverTypes HandoverTypes, boolean isStaticNeighbor,
+			X2ControlStateTypes x2ControlStatus, HandoverType HandoverType, boolean isStaticNeighbor,
 			String qOffsetRange) {
 		String sourceNodeName = enodeB.getNetspanName();
 		String neighborName = neighbor.getNetspanName();
 		GeneralUtils.printToConsole("Sending NBI requeset \"lteNeighbourAdd\" for eNodeB " + sourceNodeName);
 		try {
 			LteNeighbourResponse result = (LteNeighbourResponse) helper_14_50.execute("lteNeighbourAdd", sourceNodeName,
-					neighborName, hoControlStatus, x2ControlStatus, HandoverTypes, isStaticNeighbor, qOffsetRange);
+					neighborName, hoControlStatus, x2ControlStatus, HandoverType, isStaticNeighbor, qOffsetRange);
 			GeneralUtils.printToConsole(String.format("NBI method \"lteNeighbourAdd\" for eNodeB %s returned value: %s",
 					sourceNodeName, result.getErrorCode().toString()));
 			if (result.getErrorCode() == Netspan.NBI_14_50.API.Lte.ErrorCodes.ERROR) {
@@ -981,7 +981,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 
 	@Override
 	public boolean addNeighbourMultiCell(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
-			X2ControlStateTypes x2ControlStatus, HandoverTypes HandoverTypes, boolean isStaticNeighbor,
+			X2ControlStateTypes x2ControlStatus, HandoverType HandoverType, boolean isStaticNeighbor,
 			String qOffsetRange) {
 		report.report("addNeighbourMultiCell via NBI_14_5 Failed : Try to use correct NBI version", Reporter.WARNING);
 		return false;
@@ -1083,19 +1083,19 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 	 * <p>
 	 * For each parameter, if its value is "null", the test for the specific
 	 * parameter will not be evaluated. Only hoControlType, x2ControlType,
-	 * HandoverTypes and qOffserRange can be sent as "null".
+	 * HandoverType and qOffserRange can be sent as "null".
 	 *
 	 * @param enodeB
 	 * @param neighbor
 	 * @param hoControlType
 	 * @param x2ControlType
-	 * @param HandoverTypes
+	 * @param HandoverType
 	 * @param isStaticNeighbor
 	 * @param qOffsetRange
 	 * @return
 	 */
 	public boolean verifyNeighbor(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlType,
-			X2ControlStateTypes x2ControlType, HandoverTypes HandoverTypes, boolean isStaticNeighbor,
+			X2ControlStateTypes x2ControlType, HandoverType HandoverType, boolean isStaticNeighbor,
 			String qOffsetRange) {
 		boolean wasadded = true;
 		boolean wasFound = false;
@@ -1136,10 +1136,10 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 					}
 				}
 
-				if (null != HandoverTypes) {
-					if (nbr.getHandoverType().getValue() != HandoverTypes) {
+				if (null != HandoverType) {
+					if (nbr.getHandoverType().getValue() != HandoverType) {
 						report.report("HandOver Type is " + nbr.getHandoverType().getValue() + " and not "
-								+ HandoverTypes.value() + " as expected", Reporter.WARNING);
+								+ HandoverType.value() + " as expected", Reporter.WARNING);
 						wasadded = false;
 					} else {
 						report.report("HandOver Type is " + nbr.getHandoverType().getValue() + " as expected");
@@ -2817,14 +2817,14 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 
 	@Override
 	public boolean checkCannotAddNeighbor(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
-			X2ControlStateTypes x2ControlStatus, HandoverTypes HandoverTypes, boolean isStaticNeighbor,
+			X2ControlStateTypes x2ControlStatus, HandoverType HandoverType, boolean isStaticNeighbor,
 			String qOffsetRange) {
 		String sourceNodeName = enodeB.getNetspanName();
 		String neighborName = neighbor.getNetspanName();
 		GeneralUtils.printToConsole("Sending NBI requeset \"lteNeighbourAdd\" for eNodeB " + sourceNodeName);
 		try {
 			LteNeighbourResponse result = (LteNeighbourResponse) helper_14_50.execute("lteNeighbourAdd", sourceNodeName,
-					neighborName, hoControlStatus, x2ControlStatus, HandoverTypes, isStaticNeighbor, qOffsetRange);
+					neighborName, hoControlStatus, x2ControlStatus, HandoverType, isStaticNeighbor, qOffsetRange);
 			GeneralUtils.printToConsole(String.format("NBI method \"lteNeighbourAdd\" for eNodeB %s returned value: %s",
 					sourceNodeName, result.getErrorCode().toString()));
 			if (result.getErrorCode() != Netspan.NBI_14_50.API.Lte.ErrorCodes.OK) {

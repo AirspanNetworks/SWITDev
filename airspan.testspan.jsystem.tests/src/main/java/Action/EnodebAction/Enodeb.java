@@ -941,6 +941,9 @@ public class Enodeb extends EnodebAction {
 		if (dut != null) {
 			enbInTest.add(dut);
 		}
+		if (duts != null) {
+			enbInTest.addAll(duts);
+		}
 		super.init();
 	}
 

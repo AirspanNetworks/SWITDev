@@ -13,7 +13,7 @@ import EPC.EPC;
 import EnodeB.EnodeB;
 import Netspan.EnbProfiles;
 import Netspan.API.Enums.ConnectedModeEventTypes;
-import Netspan.API.Enums.HandoverTypes;
+import Netspan.API.Enums.HandoverType;
 import Netspan.API.Enums.HoControlStateTypes;
 import Netspan.API.Enums.X2ControlStateTypes;
 import Netspan.Profiles.MobilityParameters;
@@ -161,7 +161,7 @@ public class P0 extends TestspanTest {
 	 * @param numOfTry
 	 * @return
 	 */
-	public boolean preTest(HoControlStateTypes HOControlTypes, X2ControlStateTypes X2Types, HandoverTypes HOType,
+	public boolean preTest(HoControlStateTypes HOControlTypes, X2ControlStateTypes X2Types, HandoverType HOType,
 			ConnectedModeEventTypes hoEventType) {
 		GeneralUtils.startLevel("HO Pre Test");
 		try {
@@ -425,7 +425,7 @@ public class P0 extends TestspanTest {
 
 		passCriteria.put(succCounterName, succCounterNameSNMP);
 		passCriteria.put(attCounterName, attCounterNameSNMP);
-		performHoOneTime(HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC, HandoverTypes.TRIGGER_X_2,
+		performHoOneTime(HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC, HandoverType.TRIGGER_X_2,
 				ConnectedModeEventTypes.A_3);
 		postTest();
 	}
@@ -439,7 +439,7 @@ public class P0 extends TestspanTest {
 		isIntra = true;
 		reason = "";
 		String forward = MibReader.getInstance().resolveByName("asLteStkCellCfgFwdHoEnable");
-		performHoOneTime(HoControlStateTypes.ALLOWED, X2ControlStateTypes.NOT_ALLOWED, HandoverTypes.S_1_ONLY,
+		performHoOneTime(HoControlStateTypes.ALLOWED, X2ControlStateTypes.NOT_ALLOWED, HandoverType.S_1_ONLY,
 				ConnectedModeEventTypes.A_3);
 		postTest();
 		try {
@@ -471,7 +471,7 @@ public class P0 extends TestspanTest {
 		}
 		passCriteria.put(succCounterName, succCounterNameSNMP);
 		passCriteria.put(attCounterName, attCounterNameSNMP);
-		performHoOneTime(HoControlStateTypes.ALLOWED, X2ControlStateTypes.NOT_ALLOWED, HandoverTypes.S_1_ONLY,
+		performHoOneTime(HoControlStateTypes.ALLOWED, X2ControlStateTypes.NOT_ALLOWED, HandoverType.S_1_ONLY,
 				ConnectedModeEventTypes.A_3);
 		postTest();
 	}
@@ -485,7 +485,7 @@ public class P0 extends TestspanTest {
 		reason = "";
 		passCriteria.put("HoX2InterFreqInAttRnlRadioRsn", "HoX2InterFreqInAttRnlRadioRsn");
 		passCriteria.put("HoX2InterFreqInCompSuccRnlRadioRsn", "HoX2InterFreqInCompSuccRnlRadioRsn");
-		performHoOneTime(HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC, HandoverTypes.TRIGGER_X_2,
+		performHoOneTime(HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC, HandoverType.TRIGGER_X_2,
 				ConnectedModeEventTypes.A_3);
 		postTest();
 	}
@@ -498,7 +498,7 @@ public class P0 extends TestspanTest {
 		reason = "";
 		passCriteria.put("HoS1InterFreqInAttRnlRadioRsn", "HoS1InterFreqInAttRnlRadioRsn");
 		passCriteria.put("HoS1InterFreqInCompSuccRnlRadioRsn", "HoS1InterFreqInCompSuccRnlRadioRsn");
-		performHoOneTime(HoControlStateTypes.ALLOWED, X2ControlStateTypes.NOT_ALLOWED, HandoverTypes.S_1_ONLY,
+		performHoOneTime(HoControlStateTypes.ALLOWED, X2ControlStateTypes.NOT_ALLOWED, HandoverType.S_1_ONLY,
 				ConnectedModeEventTypes.A_3);
 		postTest();
 	}
@@ -512,7 +512,7 @@ public class P0 extends TestspanTest {
 	}
 
 	private void helperPreTestAndHOLongTest(HoControlStateTypes hoControl, X2ControlStateTypes x2Control,
-			HandoverTypes hoType, ConnectedModeEventTypes hoEventType) {
+			HandoverType hoType, ConnectedModeEventTypes hoEventType) {
 		boolean action = true;
 		action &= preTest(hoControl, x2Control, hoType, hoEventType);
 		if(action)
@@ -542,7 +542,7 @@ public class P0 extends TestspanTest {
 		passCriteria.put(succCounterName, succCounterNameSNMP);
 		passCriteria.put(attCounterName, attCounterNameSNMP);
 
-		helperPreTestAndHOLongTest(HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC, HandoverTypes.TRIGGER_X_2,
+		helperPreTestAndHOLongTest(HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC, HandoverType.TRIGGER_X_2,
 				ConnectedModeEventTypes.A_3);
 		postTest();
 	}
@@ -577,7 +577,7 @@ public class P0 extends TestspanTest {
 		passCriteria.put(succCounterName, succCounterNameSNMP);
 		passCriteria.put(attCounterName, attCounterNameSNMP);
 
-		helperPreTestAndHOLongTest(HoControlStateTypes.ALLOWED, X2ControlStateTypes.NOT_ALLOWED, HandoverTypes.S_1_ONLY,
+		helperPreTestAndHOLongTest(HoControlStateTypes.ALLOWED, X2ControlStateTypes.NOT_ALLOWED, HandoverType.S_1_ONLY,
 				ConnectedModeEventTypes.A_3);
 		postTest();
 	}
@@ -598,7 +598,7 @@ public class P0 extends TestspanTest {
 		reason = "";
 		setX2IntraCounters();
 
-		helperPreTestAndHOLongTest(HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC, HandoverTypes.TRIGGER_X_2,
+		helperPreTestAndHOLongTest(HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC, HandoverType.TRIGGER_X_2,
 				ConnectedModeEventTypes.A_3);
 		postTest();
 	}
@@ -612,7 +612,7 @@ public class P0 extends TestspanTest {
 
 		setX2IntraCounters();
 
-		helperPreTestAndHOLongTest(HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC, HandoverTypes.TRIGGER_X_2,
+		helperPreTestAndHOLongTest(HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC, HandoverType.TRIGGER_X_2,
 				ConnectedModeEventTypes.A_4);
 		postTest();
 	}
@@ -662,7 +662,7 @@ public class P0 extends TestspanTest {
 		passCriteria.put(succCounterName, succCounterNameSNMP);
 		passCriteria.put(attCounterName, attCounterNameSNMP);
 
-		helperPreTestAndHOLongTest(HoControlStateTypes.ALLOWED, X2ControlStateTypes.NOT_ALLOWED, HandoverTypes.S_1_ONLY,
+		helperPreTestAndHOLongTest(HoControlStateTypes.ALLOWED, X2ControlStateTypes.NOT_ALLOWED, HandoverType.S_1_ONLY,
 				ConnectedModeEventTypes.A_3);
 		postTest();
 	}
@@ -735,7 +735,7 @@ public class P0 extends TestspanTest {
 		return flag1 && flag2;
 	}
 
-	public void performHoOneTime(HoControlStateTypes HOControlTypes, X2ControlStateTypes X2Types, HandoverTypes HOType,
+	public void performHoOneTime(HoControlStateTypes HOControlTypes, X2ControlStateTypes X2Types, HandoverType HOType,
 			ConnectedModeEventTypes hoEventType) {
 		boolean action = true;
 		report.report("HO Test");
@@ -817,7 +817,7 @@ public class P0 extends TestspanTest {
 	 * @return true if succeed
 	 */
 	public boolean addNeighbours(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes HOControlTypes,
-			X2ControlStateTypes X2Types, HandoverTypes HOType, boolean isStaticNeighbor, String qOffsetRange) {
+			X2ControlStateTypes X2Types, HandoverType HOType, boolean isStaticNeighbor, String qOffsetRange) {
 		if (skipAddNeighbourIfNeeded())
 			return true;
 		GeneralUtils.startLevel("Adding neighbor " + neighbor.getName() + " to EnodeB " + enodeB.getName());
@@ -880,7 +880,7 @@ public class P0 extends TestspanTest {
 	 * @return - true if succeed
 	 */
 	private boolean addNeighboursSingleOrMultiCell(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes HOControlTypes,
-			X2ControlStateTypes X2Types, HandoverTypes HOType, boolean isStaticNeighbor, String qOffsetRange,
+			X2ControlStateTypes X2Types, HandoverType HOType, boolean isStaticNeighbor, String qOffsetRange,
 			boolean isMultiCell) {
 		boolean isNeighbourAdded;
 
@@ -1332,7 +1332,7 @@ public class P0 extends TestspanTest {
 
 		GeneralUtils.startLevel("make enodeB's neighbors");
 		if (!addNeighbours(enodeB, neighbor, HoControlStateTypes.ALLOWED, X2ControlStateTypes.AUTOMATIC,
-				HandoverTypes.TRIGGER_X_2, true, "0")) {
+				HandoverType.TRIGGER_X_2, true, "0")) {
 			report.report("Couldn't configure enodeB's as neighbors");
 			GeneralUtils.stopLevel();
 			reason = "Neighbor wasn't added to EnodeB\n";

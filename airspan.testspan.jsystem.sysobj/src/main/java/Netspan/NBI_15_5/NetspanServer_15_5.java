@@ -1550,7 +1550,7 @@ public class NetspanServer_15_5 extends NetspanServer_15_2 implements Netspan_15
 			nghData.mnc = ngh.getMnc();
 			nghData.hoControlStatus = ngh.getHoControlStatus().getValue();
 			nghData.x2ControlStatus = ngh.getX2ControlStatus().getValue();
-			nghData.HandoverTypes = ngh.getHandoverType().getValue();
+			nghData.HandoverType = ngh.getHandoverType().getValue();
 			nghData.discoveredBy = ngh.getDiscoveredBy().getValue();
 			nghData.isStaticNeighbour = ngh.getIsStaticNeighbour().getValue();
 			nghData.hoSuccessRate = ngh.getHoSuccessRate().getValue();

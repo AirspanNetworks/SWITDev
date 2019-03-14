@@ -1001,6 +1001,10 @@ public class P0 extends TPTBase{
 		
 		changeOtherENBsToOOS();
 		
+		GeneralUtils.startLevel("Turning off ues in setup");
+		peripheralsConfig.stopUEsOnlySnmp(SetupUtils.getInstance().getAllUEs());
+		GeneralUtils.stopLevel();
+		
 		if (runWithDynamicCFI)
 			enbConfig.enableDynamicCFI(this.dut);
 		else
@@ -1083,10 +1087,6 @@ public class P0 extends TPTBase{
 	
 		resetTestBol = false;
 		trafficSTC.setactiveStreamsArray(stringArrayStreamNames);
-		
-		GeneralUtils.startLevel("Turning off ues in setup");
-		peripheralsConfig.stopUEsOnlySnmp(SetupUtils.getInstance().getAllUEs());
-		GeneralUtils.stopLevel();
 		
 		GeneralUtils.startLevel("Turning on ues in primary UE list");
 		peripheralsConfig.startUEsOnlySnmp(ueList);

@@ -94,7 +94,6 @@ public class SWUpgrade extends TestspanTest {
 	@TestProperties(name = "Software Upgrade Via Netspan", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {
 			"IsTestWasSuccessful" })
 	public void softwareUpgradeFromNetspan() {
-		isPass = true;
 		ArrayList<EnodebSwStatus> enbSWDetailsList = new ArrayList<> ();
 		for (EnodeB dut : duts) {
 			GeneralUtils.startLevel("Update Default Software Image For " + dut.getName());
@@ -105,8 +104,7 @@ public class SWUpgrade extends TestspanTest {
 		softwareUtiles.setSoftwareActivateStartTimeInMili(System.currentTimeMillis());
 		activateSwVersion(enbSWDetailsList);
 		softwareUtiles.followSwUpgradeProgressViaNetspan(enbSWDetailsList);
-		isPass = softwareUtiles.validateRunningVersion(enbSWDetailsList);
-		if (isPass) {
+		if (softwareUtiles.validateRunningVersion(enbSWDetailsList)) {
 			report.addProperty("SoftwareUpgradeType", SWUpgradeConnectionMethod.Netspan.toString());
 			report.report("SW upgrade test passed successfully");
 		} else {

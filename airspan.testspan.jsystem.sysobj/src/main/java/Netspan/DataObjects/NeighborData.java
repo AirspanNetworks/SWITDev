@@ -2,7 +2,7 @@ package Netspan.DataObjects;
 
 import Netspan.API.Enums.DiscoveredByValues;
 import Netspan.API.Enums.EnbTypes;
-import Netspan.API.Enums.HandoverTypes;
+import Netspan.API.Enums.HandoverType;
 import Netspan.API.Enums.HoControlStateTypes;
 import Netspan.API.Enums.X2ControlStateTypes;
 import Netspan.API.Enums.NghCellStatus;
@@ -21,7 +21,7 @@ public class NeighborData {
     public String mnc;
     public HoControlStateTypes hoControlStatus;
     public X2ControlStateTypes x2ControlStatus;
-    public HandoverTypes HandoverTypes;
+    public HandoverType HandoverType;
     public DiscoveredByValues discoveredBy;
     public Boolean isStaticNeighbour;
     public Integer hoSuccessRate;

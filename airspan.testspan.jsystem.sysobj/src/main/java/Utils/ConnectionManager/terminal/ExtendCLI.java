@@ -3,22 +3,14 @@ package Utils.ConnectionManager.terminal;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOError;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import java.util.concurrent.TimeoutException;
-import java.util.regex.Pattern;
-
-import org.apache.tools.ant.util.regexp.Regexp;
-import org.glassfish.tyrus.core.SendCompletionAdapter;
-import org.hamcrest.core.IsInstanceOf;
 
 /**
  * 
@@ -30,33 +22,21 @@ import org.hamcrest.core.IsInstanceOf;
  */
 public class ExtendCLI extends Cli {
 	
-	private String log_file_path = "";
-	private File log_cache = null;
-	static final String DEFAULT_CACHE_FILENAME = "session.log";
-	static final String DEFAULT_CACHE_FILEDIR = "tmp";
-	static final String DEFAULT_UNPRINTABLE = "\\[[0-9;m]+";
 	
-//	private IPrompt sessionPrompt = null;
+	static final String DEFAULT_CACHE_PREFIX = "telnet_";
+	static final String DEFAULT_CACHE_EXT = ".log";
+	static final String DEFAULT_UNPRINTABLE = "\\[[0-9;m]+";
+	private String cache_prefix = "";
 	
 	public ExtendCLI(Terminal terminal) throws IOException {
-		this(terminal, System.getProperty("user.home") + File.separator + DEFAULT_CACHE_FILEDIR + File.separator + DEFAULT_CACHE_FILENAME);
+		this(terminal, DEFAULT_CACHE_PREFIX);
 	}
 	
-	public ExtendCLI(Terminal terminal, String cache_file_path) throws IOException {
+	public ExtendCLI(Terminal terminal, String cache_prefix) throws IOException {
 		super(terminal);
-		create_cache_file(cache_file_path);
+		this.cache_prefix = cache_prefix;
 	}
 	
-	private void create_cache_file(String file_path) throws IOException {
-		File temp_log = new File(file_path);
-				
-		if(temp_log.exists()) {
-			temp_log.delete();
-		}
-		temp_log.createNewFile();
-		log_cache = temp_log;
-		log_file_path = file_path;
-	}
 	
 	/**
 	 * Extend standart Cli
@@ -215,8 +195,8 @@ public class ExtendCLI extends Cli {
 	
 	public String exec_command(String command, long timeout, boolean addEnter, boolean delayedTyping) throws Exception {
 		getResult();
-		create_cache_file(log_file_path);
-		setPrintStream(log_file_path);
+		File log_cache = File.createTempFile(cache_prefix, DEFAULT_CACHE_EXT);
+		setPrintStream(log_cache.getAbsolutePath());
 		
 		long startTime = System.currentTimeMillis();
 		
@@ -227,7 +207,7 @@ public class ExtendCLI extends Cli {
 			resultPrompt = waitWithGrace(timeout);
 			Thread.sleep(1000);
 		}
-		return readFile(log_file_path);
+		return readFile(log_cache.getAbsolutePath());
 	}
 	
 	public IPrompt getCurrentPrompt() throws Exception {
@@ -249,8 +229,5 @@ public class ExtendCLI extends Cli {
 	@Override
 	public void close() throws IOException {
 		super.close();
-		if(log_cache != null) {
-			log_cache.delete();
-		}
 	}
 }

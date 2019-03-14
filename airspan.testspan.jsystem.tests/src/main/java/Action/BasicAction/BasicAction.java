@@ -1,24 +1,9 @@
 package Action.BasicAction;
 
-import java.awt.Color;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.bcel.classfile.Constant;
-import org.glassfish.grizzly.streams.StreamReader;
-import org.glassfish.grizzly.streams.StreamWriter;
-import org.joda.time.field.SkipUndoDateTimeField;
 import org.junit.Test;
 
 import Action.Action;
@@ -27,7 +12,6 @@ import Netspan.NetspanServer;
 import PowerControllers.PowerController;
 import PowerControllers.PowerControllerPort;
 import Utils.GeneralUtils;
-import Utils.Pair;
 import Utils.SSHConnector;
 import Utils.ConnectionManager.ConnectionInfo;
 import Utils.ConnectionManager.ConnectorTypes;
@@ -218,23 +202,7 @@ public class BasicAction extends Action {
 	public static final String ADMIN_PATTERN = "$";
 	public static final String SUDO_PATTERN = "#";
 	public static final String LTECLI_PATTERN = "lte_cli:>>";
-	
-	/**
-	 * 
-	 * @param expected_string
-	 * @return
-	 */
-	private static Map<String, String> readExpected(String expected_string){
-			Map<String, String> expectedCollection = new HashMap<String, String>();
 		
-		if(expected_string != null && expected_string != "") {
-			for(String pattern : expected_string.split("\\s*;\\s*")) {
-				expectedCollection.put(pattern, "green");
-			}
-		}
-		return expectedCollection;
-	}
-	
 	@Test
 	@TestProperties(name = "Send Commands To Serial", returnParam = "LastStatus", paramsInclude = { "Ip", "Port", "Password",
 			"UserName", "SerialCommand", "SleepTime", "LteCliRequired", "SudoRequired", "ExpectedPatern" })

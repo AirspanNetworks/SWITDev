@@ -214,17 +214,17 @@ public class BasicAction extends Action {
 		String SUDO_COMMAND = "sudo su";
 		String LTECLI_COMMAND = "/bs/lteCli";
 		
-		ip = "192.168.58.169";
-		port = 2001;
-		password = "HeWGEUx66m=_4!ND";
-		userName = "admin";
-//		lteCliRequired = false;
-		sudoRequired = true;
-//		lteCliRequired = true;
-		serialCommand = "ls -la /";
-//		serialCommand = "ue show link";
-		expectedPatern = "/mnt/flash ; dima;rsys";
-		sleepTime = 5;
+//		ip = "192.168.58.169";
+//		port = 2001;
+//		password = "HeWGEUx66m=_4!ND";
+//		userName = "admin";
+////		lteCliRequired = false;
+//		sudoRequired = true;
+////		lteCliRequired = true;
+//		serialCommand = "ls -la /";
+////		serialCommand = "ue show link";
+//		expectedPatern = "/mnt/flash ; dima;rsys";
+//		sleepTime = 5;
 //		
 		try {
 //			GeneralUtils.startLevel("Starting parameters");

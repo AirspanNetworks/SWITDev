@@ -445,7 +445,7 @@ public class TrafficAction extends Action {
 	@Override
 	public void handleUIEvent(HashMap<String, Parameter> map, String methodName) throws Exception {
 
-		if (methodName.equals("enhancedStartTraffic")) {
+		if (methodName.equals("startTraffic")) {
 			handleUIEventGetCounterValue(map, methodName);
 		}
 	}

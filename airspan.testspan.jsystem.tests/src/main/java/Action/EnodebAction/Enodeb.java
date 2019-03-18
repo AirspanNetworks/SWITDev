@@ -1124,39 +1124,32 @@ public class Enodeb extends EnodebAction {
     			report.report("Can't login to serial host " + dut.getName(), Reporter.FAIL);
                 return;
     		}
-    		else
-    			report.report("LoggedIn to serial host " + dut.getName(), Reporter.PASS);
-    		
-    		if(this.getLteCliRequired()) {
-        		if(session.isShouldStayInCli()) {
-        			if(!session.sendCommands("", "lte_cli:>>"))
-					{
-        				report.report(dut.getName() + " is out of lte_cli, trying to enter.");
-						if(session.sendCommands("/bs/lteCli", "lte_cli:>>"))
-						{
-							report.report("update log level from stay in cli");
-							
-//							session.updateLogLevel();
-						}
-						else
-						{
-							GeneralUtils.printToConsole(dut.getName() + " is still out of lte_cli, disconnecting session.");
-							session.disconnectSession();
-							report.report(dut.getName() + " is still out of lte_cli, disconnecting session", Reporter.FAIL);
-			                return;
-						}
-					}
-        		}
-        	}
-    		else {
-    			if(session.isShouldStayInCli()) {
-    				session.setShouldStayInCli(false);
-    				report.report("Disable CLI to serial host " + dut.getName(), Reporter.PASS);
-    			}
-    		}
+    	}else{
+    		report.report("LoggedIn to serial host " + dut.getName(), Reporter.PASS);    	
     	}
-    	else {
-    		report.report("In CLI to serial host " + dut.getName(), Reporter.PASS);
+    		
+    	if(this.getLteCliRequired()) {
+        	if(session.isShouldStayInCli()) {
+        		if(!session.sendCommands("", "lte_cli:>>")){
+        			report.report(dut.getName() + " is out of lte_cli, trying to enter.");
+					if(session.sendCommands("/bs/lteCli", "lte_cli:>>")){
+						report.report("update log level from stay in cli");
+//						session.updateLogLevel();
+					}else{
+						GeneralUtils.printToConsole(dut.getName() + " is still out of lte_cli, disconnecting session.");
+						session.disconnectSession();
+						report.report(dut.getName() + " is still out of lte_cli, disconnecting session", Reporter.FAIL);
+			            return;
+					}
+				}else {
+		    		report.report("In CLI to serial host " + dut.getName(), Reporter.PASS);
+		    	}
+        	}
+        }else{
+    		if(session.isShouldStayInCli()) {
+    			session.setShouldStayInCli(false);
+    			report.report("Disable CLI to serial host " + dut.getName(), Reporter.PASS);
+    		}
     	}
     	
     	int status = Reporter.PASS;

@@ -1144,6 +1144,19 @@ public class Enodeb extends EnodebAction {
 				}else {
 		    		report.report("In CLI to serial host " + dut.getName(), Reporter.PASS);
 		    	}
+        	}else{
+        		if(!session.sendCommands("", "lte_cli:>>")){
+        			report.report(dut.getName() + " is out of lte_cli, trying to enter.");
+					if(session.sendCommands("/bs/lteCli", "lte_cli:>>")){
+						report.report("update log level from stay in cli");
+//						session.updateLogLevel();
+					}else{
+						GeneralUtils.printToConsole(dut.getName() + " is still out of lte_cli, disconnecting session.");
+						session.disconnectSession();
+						report.report(dut.getName() + " is still out of lte_cli, disconnecting session", Reporter.FAIL);
+			            return;
+					}
+				}
         	}
         }else{
     		if(session.isShouldStayInCli()) {

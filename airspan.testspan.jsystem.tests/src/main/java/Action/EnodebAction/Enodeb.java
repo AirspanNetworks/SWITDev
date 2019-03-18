@@ -1129,6 +1129,7 @@ public class Enodeb extends EnodebAction {
     	}
     		
     	if(this.getLteCliRequired()) {
+    		report.report("in if");
         	if(session.isShouldStayInCli()) {
         		if(!session.sendCommands("", "lte_cli:>>")){
         			report.report(dut.getName() + " is out of lte_cli, trying to enter.");
@@ -1159,6 +1160,7 @@ public class Enodeb extends EnodebAction {
 				}
         	}
         }else{
+        	report.report("in else");
     		if(session.isShouldStayInCli()) {
     			session.setShouldStayInCli(false);
     			report.report("Disable CLI to serial host " + dut.getName(), Reporter.PASS);

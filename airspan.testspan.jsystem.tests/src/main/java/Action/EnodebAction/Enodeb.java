@@ -1129,8 +1129,9 @@ public class Enodeb extends EnodebAction {
     	}
     		
     	if(this.getLteCliRequired()) {
-    		report.report("in if");
         	if(session.isShouldStayInCli()) {
+        		report.report("in if");
+
         		if(!session.sendCommands("", "lte_cli:>>")){
         			report.report(dut.getName() + " is out of lte_cli, trying to enter.");
 					if(session.sendCommands("/bs/lteCli", "lte_cli:>>")){
@@ -1146,6 +1147,8 @@ public class Enodeb extends EnodebAction {
 		    		report.report("In CLI to serial host " + dut.getName(), Reporter.PASS);
 		    	}
         	}else{
+            	report.report("in else");
+
         		if(!session.sendCommands("", "lte_cli:>>")){
         			report.report(dut.getName() + " is out of lte_cli, trying to enter.");
 					if(session.sendCommands("/bs/lteCli", "lte_cli:>>")){
@@ -1160,7 +1163,6 @@ public class Enodeb extends EnodebAction {
 				}
         	}
         }else{
-        	report.report("in else");
     		if(session.isShouldStayInCli()) {
     			session.setShouldStayInCli(false);
     			report.report("Disable CLI to serial host " + dut.getName(), Reporter.PASS);

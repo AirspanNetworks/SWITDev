@@ -83,15 +83,11 @@ public class Logger implements Runnable {
 	 * Init Logged Sessions if not Initialized
 	 */
 	public void initLoggedSessions() {
-		//todo check what should be done on logged sessions
 		for (Session session : this.loggedSessions) {
-			if (!session.isSessionInitialized()) {
-				session.setLoggedSession(true);
+			session.setLoggedSession(true);
 				session.setEnableCliBuffer(false);
 				GeneralUtils.printToConsole("update log level from logger");
 				session.updateLogLevel();
-				session.setSessionInitialized(true);
-			}
 		}
 	}
 

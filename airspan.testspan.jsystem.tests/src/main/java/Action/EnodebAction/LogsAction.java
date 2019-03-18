@@ -140,7 +140,6 @@ public class LogsAction extends EnodebAction {
 		Logger logger = eNodeB.getXLP().getLogger();
 		//add session to openSessions
 		logger.addLoggedSessions(sessionManager);
-		logger.initLoggedSessions();
 		logger.addLogListener(eNodeB.getXLP());
 	}
 
@@ -163,9 +162,13 @@ public class LogsAction extends EnodebAction {
 		if (session == Session.SSH) {
 			sessionManager.openSSHLogSession();
 			sessionName = sessionManager.getSSHlogSession().getName();
+			sessionManager.getSSHlogSession().setLoggedSession(true);
+			sessionManager.getSSHlogSession().setEnableCliBuffer(false);
 		} else {
 			sessionManager.openSerialLogSession();
 			sessionName = sessionManager.getSerialSession().getName();
+			sessionManager.getSerialSession().setLoggedSession(true);
+			sessionManager.getSerialSession().setEnableCliBuffer(false);
 		}
 		return sessionName;
 	}

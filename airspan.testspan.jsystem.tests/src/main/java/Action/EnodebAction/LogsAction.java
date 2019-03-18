@@ -14,12 +14,24 @@ import java.util.HashMap;
 
 public class LogsAction extends EnodebAction {
 
+	protected EnodeB dut;
 	private ArrayList<EnodeB> duts;
 	protected Session session;
 	private LogLevel logLevel = LogLevel.SIX;
 	private Processes processes = Processes.ALL;
 	protected String process;
 	protected String client;
+
+	@Override
+	public void init() {
+		if (enbInTest == null) {
+			enbInTest = new ArrayList<EnodeB>();
+		}
+		if (dut != null) {
+			enbInTest.add(dut);
+		}
+		super.init();
+	}
 
 	/**
 	 * Process dropdown to log: All or ParticularModel(Specific Process and Client)
@@ -65,6 +77,13 @@ public class LogsAction extends EnodebAction {
 		LogLevel(int value) {
 			this.value = value;
 		}
+	}
+
+	@ParameterProperties(description = "Name of ENB from the SUT")
+	public void setDUT(String dut) {
+		ArrayList<EnodeB> temp = (ArrayList<EnodeB>) SysObjUtils.getInstnce().initSystemObject(EnodeB.class, false,
+				dut.split(","));
+		this.dut = temp.get(0);
 	}
 
 	@ParameterProperties(description = "Name of all EnB comma separated i.e. enb1,enb2")

@@ -97,6 +97,7 @@ public class Logger implements Runnable {
 
 	/**
 	 * Add the Logged Sessions from sessionManager to loggedSessions Array - in order to stream from them
+	 *
 	 * @param sessionManager - sessionManager
 	 */
 	public void addLoggedSessions(SessionManager sessionManager) {

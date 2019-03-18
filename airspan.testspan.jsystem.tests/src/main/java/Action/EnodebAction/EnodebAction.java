@@ -103,7 +103,7 @@ public class EnodebAction extends Action {
 	private void closeLogsFiles(EnodeB eNodeB) {
 		Logger[] loggers = eNodeB.getLoggers();
 		log.info(String.format("Closing log files for test for eNondeB %s", eNodeB.getName()));
-//		generateEnBLogs(eNodeB, loggers);
+//		closeAndGenerateEnBLogFiles(eNodeB, loggers);
 		generateAutoLogs(eNodeB, loggers);
 	}
 
@@ -115,12 +115,10 @@ public class EnodebAction extends Action {
 		GeneralUtils.stopLevel();
 	}
 
-	private void generateEnBLogs(EnodeB eNodeB, Logger[] loggers) {
+	protected void closeAndGenerateEnBLogFiles(EnodeB eNodeB, Logger[] loggers) {
 		GeneralUtils.startLevel(String.format("eNodeB %s logs", eNodeB.getName()));
 		for (Logger logger : loggers) {
 			logger.setCountErrorBool(false);
-		}
-		for (Logger logger : loggers) {
 			logger.closeEnodeBLog(String.format("%s_%s", getMethodName(), logger.getParent().getName()));
 			scenarioUtils.scenarioStatistics(logger, eNodeB);
 		}

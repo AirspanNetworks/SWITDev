@@ -142,7 +142,7 @@ public class Session implements Runnable {
 	/**
 	 * Sends commands to the terminal directly
 	 * 
-	 * @param commands
+	 * @param command
 	 *            the commands to send
 	 */
 	public synchronized void sendRawCommand(String command) {

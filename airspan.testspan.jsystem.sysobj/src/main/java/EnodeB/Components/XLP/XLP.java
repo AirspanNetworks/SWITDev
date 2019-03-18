@@ -554,6 +554,10 @@ public abstract class XLP extends EnodeBComponent {
         sendCommandsOnSession(SessionManager.SSH_SESSION_NAME, LTE_CLI_PROMPT, String.format("logger threshold set client=%s process=%s cli=%s", client, process, level), LTE_CLI_PROMPT);
     }
 
+    public void setSessionLogLevel(String sessionName,String client, String process, int level) {
+        sendCommandsOnSession(sessionName, LTE_CLI_PROMPT, String.format("logger threshold set client=%s process=%s cli=%s", client, process, level), LTE_CLI_PROMPT);
+    }
+
     /**
      * Gets the hardware name.
      *

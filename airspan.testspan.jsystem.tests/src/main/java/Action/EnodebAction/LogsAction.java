@@ -138,8 +138,10 @@ public class LogsAction extends EnodebAction {
 	 */
 	private void addOpenSessionToLogger(EnodeB eNodeB, SessionManager sessionManager) {
 		Logger logger = eNodeB.getXLP().getLogger();
-		logger.addLoggedSessions(sessionManager);
-		logger.addLogListener(eNodeB.getXLP());
+		synchronized (logger.lock){
+			logger.addLoggedSessions(sessionManager);
+			logger.addLogListener(eNodeB.getXLP());
+		}
 	}
 
 	@Test

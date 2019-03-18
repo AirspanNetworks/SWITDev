@@ -17,9 +17,9 @@ import Utils.GeneralUtils;
 import Utils.Properties.TestspanConfigurationsManager;
 
 public class Logger implements Runnable {
-
+	public final Object lock = new Object();
 	private static final String LOG_INTERVAL_PROPERTY_NAME           = "logger.logInterval"; // value in milliseconds.
-	
+
 	//eventId for the logger events
 	private static int eventID = 0;
 	private boolean countErrorBool;
@@ -218,29 +218,39 @@ public class Logger implements Runnable {
 		startLog(logFilePath);
 			
 		while (isLogging) {
+			synchronized (lock) {
+				streamLogsLoop();
+			}
+		}
+		System.out.printf("[%s]: Logger was stopped.\n", getName());
+		isLogging = false;
+		logWriterEnb.closeAll();
+		logWriterAuto.closeAll();
+	}
+
+	public void streamLogsLoop() {
 			String[] buffers = new String[getLoggedSessions().size()];
 			for (int sessionIndx = 0; sessionIndx < getLoggedSessions().size(); sessionIndx++) {
 				Session session = getLoggedSessions().get(sessionIndx);
-						
+
 				String buffer = session.getLoggerBuffer();
 				buffers[sessionIndx] = buffer;
-	
+
 				String[] lines = processLines(buffer);
-				for (String logLine : lines) 
-				{
+				for (String logLine : lines) {
 					if (logLine == null || logLine.length() == 0) {
 						continue;
-					}				
-					
+					}
+
 					if (session.getName().contains(SessionManager.SSH_COMMANDS_SESSION_NAME))
 						logWriterAuto.writeLog(logLine, "", session.getName());
 					else
 						logWriterEnb.writeLog(logLine, "", session.getName());
-					
-					invokeListeners(logLine);					
+
+					invokeListeners(logLine);
 				}
-				if(countErrorBool && session.getName().contains(SessionManager.SSH_LOG_SESSION_NAME))
-					analyzeLine(buffer);				
+				if (countErrorBool && session.getName().contains(SessionManager.SSH_LOG_SESSION_NAME))
+					analyzeLine(buffer);
 			}
 			GeneralUtils.unSafeSleep(logInterval);
 
@@ -249,17 +259,12 @@ public class Logger implements Runnable {
 				System.out.printf("[%s]: No log files are logged and no listeners registered, this is maybe an error. stopping logger.", name);
 				stop();
 			}
-					
+
 			// Stop logger if there are no logged sessions
 			if (getLoggedSessions().size() == 0) {
 				System.err.printf("[%s]: There are no logged session connected to the logger.\n", name);
 				stop();
 			}
-		}
-		System.out.printf("[%s]: Logger was stopped.\n", getName());
-		isLogging = false;
-		logWriterEnb.closeAll();
-		logWriterAuto.closeAll();
 	}
 
 	private void analyzeLine(String buffer) {

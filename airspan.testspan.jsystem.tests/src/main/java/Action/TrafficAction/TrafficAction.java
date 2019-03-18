@@ -445,12 +445,12 @@ public class TrafficAction extends Action {
 	@Override
 	public void handleUIEvent(HashMap<String, Parameter> map, String methodName) throws Exception {
 
-		if (methodName.equals("enhancedStartTraffic")) {
-			handleUIEventGetCounterValue(map, methodName);
+		if (methodName.equals("startTraffic")) {
+			handleUIEventStartTraffic(map);
 		}
 	}
 
-	private void handleUIEventGetCounterValue(HashMap<String, Parameter> map, String methodName) {
+	private void handleUIEventStartTraffic(HashMap<String, Parameter> map) {
 		map.get("LoadType").setVisible(false);
 		map.get("Dut").setVisible(false);
 		map.get("ULLoad").setVisible(false);
@@ -503,6 +503,7 @@ public class TrafficAction extends Action {
 			map.get("FrameSize").setVisible(false);
 			map.get("ULLoad").setValue(null);
 			map.get("DLLoad").setValue(null);
+			map.get("LoadType").setValue(LoadType.Custom);
 		}
 
 		if (TransmitDirection.UL == TransmitDirection.valueOf(direction.getValue().toString())

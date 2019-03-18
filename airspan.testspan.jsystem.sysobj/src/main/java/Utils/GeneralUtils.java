@@ -85,7 +85,24 @@ public class GeneralUtils {
         String html = String.format("<pre style=\"margin-left: 60px; max-height:500px; overflow: scroll;\">%s</pre>", text.replace("\n", "<br>"));
         report.reportHtml(title, html, true);
     }
-
+    
+    /**
+     * 
+     * @param title
+     * @param text
+     * @param status
+     * @param patterns - Allow define colors for selected patterns inside of text
+     */
+	public static void reportHtmlLink(String title, String text, Boolean status, String color, String[] patterns ) {
+    	if(text.length() > 0) {
+	    	for(String key : patterns) {
+	    		text = text.replace(key, "<font size=\"3\" bold=\"true\" color=\"" + color + "\">" + key + "</font>");
+	    	}
+    	}
+    	String html = String.format("<pre style=\"margin-left: 60px; max-height:500px; overflow: scroll;\">%s</pre>", text.replace("\n", "<br>\n"));
+    	report.reportHtml(title, html, status);
+    }
+    
     public static boolean unSafeSleep(long timeInMS) {
         try {
             Thread.sleep(timeInMS);
@@ -245,7 +262,28 @@ public class GeneralUtils {
             return false;
         }
     }
-
+    
+    /*
+     * Logging to console and to reporter
+     * @author Dmitry Oguz
+     * @param message
+     * @param status
+     */
+    public static void logToLevel(String message, int status) {
+    	try {
+    		GeneralUtils.printToConsole(message);
+    		report.report(message.toString(), status);
+    	}
+    	catch (Exception e) {
+			// TODO: handle exception
+    		e.printStackTrace();
+		}
+    }
+    
+    public static void logToLevel(String message) {
+    	GeneralUtils.logToLevel(message, Reporter.PASS);
+    }
+    
     public static void stopAllLevels() {
         while (levelCounter > 0) {
             if (!stopLevel()) {
@@ -298,7 +336,7 @@ public class GeneralUtils {
         String today = formatter.format(date);
         return today.replaceAll("\\/", "_");
     }
-
+    
     /**
      * gets Long number (currentTimeMillis)
      *

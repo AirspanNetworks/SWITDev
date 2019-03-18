@@ -13,6 +13,8 @@ import EnodeB.EnodeB;
 import EnodeB.EnodeB.Architecture;
 import EnodeB.EnodeBWithDAN;
 import EnodeB.Components.DAN;
+import EnodeB.Components.EnodeBComponent;
+import EnodeB.Components.Session.Session;
 import Netspan.EnbProfiles;
 import Netspan.NetspanServer;
 import Netspan.API.Enums.CellBarringPolicies;
@@ -1050,4 +1052,138 @@ public class Enodeb extends EnodebAction {
 		}
 		return result;
 	}
+	
+	private String serialCommand;
+	private String expectedOutput;
+	private int commandTimeout  = 1;
+	private boolean lteCliRequired = false;
+	
+	@ParameterProperties(description = "Commmand to be send via serial")
+	public void setSerialCommand(String serialCommand) {
+		this.serialCommand = serialCommand;
+	}
+
+	public String getSerialCommand() {
+		return serialCommand;
+	}
+
+	@ParameterProperties(description = "Expected Command output; If exists recieved output will be evaluated for matching")
+	public void setExpectedOutput(String expectedOutput) {
+		this.expectedOutput = expectedOutput;
+	}
+
+	public String getExpectedOutput() {
+		return this.expectedOutput;
+	}
+
+	@ParameterProperties(description = "Command Timeout (In minutes; Default: 1)")
+	public void setCommandTimeout(int commandTimeout) {
+		this.commandTimeout = commandTimeout * 1000;
+	}
+	
+	public int getCommandTimeout() {
+		return commandTimeout;
+	}
+	
+	@ParameterProperties(description = "True - if command require lteCli shell")
+	public void setLteCliRequired(boolean lteCliRequired) {
+		this.lteCliRequired = lteCliRequired;
+	}
+	
+	public boolean getLteCliRequired() {
+		return lteCliRequired;
+	}
+
+	@Test
+    @TestProperties(name = "sendCommandToSerial"
+    					, returnParam = { "IsTestWasSuccessful" }
+    					, paramsInclude = { "DUT", "SerialCommand", "ExpectedOutput" , "LteCliRequired", "CommandTimeout"})
+    public void sendCommandToSerial() throws Exception {
+    			
+    	String command = this.getSerialCommand();
+    	String output = this.getExpectedOutput();
+    	int timeout = this.getCommandTimeout();
+    	Session session = this.dut.getSerialSession();
+    	
+    	GeneralUtils.startLevel("Start keyword sent command: '" + command + "'");
+    	
+    	if(!session.isConnected()) {
+    		if(!session.connectSession()) {
+    			report.report("Can't connect to serial host " + dut.getName(), Reporter.FAIL);
+                return;
+    		}
+    		else
+    			report.report("Serial host " + dut.getName() + " connected", Reporter.PASS);
+    	}
+    	else {
+    		report.report("Connected to serial host " + dut.getName(), Reporter.PASS);
+    	}
+    	
+    	if(!session.isLoggedSession()) {
+    		if(!session.loginSerial()) {
+    			report.report("Can't login to serial host " + dut.getName(), Reporter.FAIL);
+                return;
+    		}
+    		else
+    			report.report("LoggedIn to serial host " + dut.getName(), Reporter.PASS);
+    		
+    		if(this.getLteCliRequired()) {
+        		if(session.isShouldStayInCli()) {
+        			if(!session.sendCommands("", "lte_cli:>>"))
+					{
+        				report.report(dut.getName() + " is out of lte_cli, trying to enter.");
+						if(session.sendCommands("/bs/lteCli", "lte_cli:>>"))
+						{
+							report.report("update log level from stay in cli");
+							
+//							session.updateLogLevel();
+						}
+						else
+						{
+							GeneralUtils.printToConsole(dut.getName() + " is still out of lte_cli, disconnecting session.");
+							session.disconnectSession();
+							report.report(dut.getName() + " is still out of lte_cli, disconnecting session", Reporter.FAIL);
+			                return;
+						}
+					}
+        		}
+        	}
+    		else {
+    			if(session.isShouldStayInCli()) {
+    				session.setShouldStayInCli(false);
+    				report.report("Disable CLI to serial host " + dut.getName(), Reporter.PASS);
+    			}
+    		}
+    	}
+    	else {
+    		report.report("In CLI to serial host " + dut.getName(), Reporter.PASS);
+    	}
+    	
+    	int status = Reporter.PASS;
+    	String text_status = "";
+    	GeneralUtils.startLevel("Sent command: '" + command + "'; Timeout: " + timeout + "ms");
+    	session.getCliBuffer();
+    	String response_text = session.sendCommands(EnodeBComponent.SHELL_PROMPT, command, null, timeout);
+    	GeneralUtils.stopLevel();
+    	
+    	if(output != null) {
+    		if(response_text.indexOf(output) > 0) {
+    			status = Reporter.PASS;
+    			text_status = "PASS";
+    		}
+    		else {
+    			status = Reporter.FAIL;
+    			text_status = "FAIL";
+    		}
+    		report.report("Real output " + (status == Reporter.PASS ? "not" : "") + "match expected pattern", status);
+    	}
+//    	report.report("Command output: -------------------\n" +  response_text + "\n----------------------");
+    	GeneralUtils.reportHtmlLink("Command output:", response_text);
+    	GeneralUtils.stopLevel();
+//    	return status == Reporter.PASS;
+    }
+
+	
+	
+	
 }

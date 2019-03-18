@@ -80,7 +80,9 @@ public class SessionManager {
 			}
 		}
 	}
-
+	
+	
+	
 	private synchronized boolean openConsoleSession() {
 		Session newConsoleSession = new Session(getEnodeBComponent().getName() + "_" + CONSOLE_SESSION_NAME, getEnodeBComponent(), getEnodeBComponent().serialCom.getSerial(), serialLogLevel);
 		boolean ans = newConsoleSession.waitForSessionToConnect(SESSION_WAIT_TIMEOUT);

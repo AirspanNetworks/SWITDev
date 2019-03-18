@@ -1506,6 +1506,41 @@ public abstract class EnodeB extends SystemObjectImpl {
 	public int getCellBarredMibValue(int cellNum){
 		return XLP.getCellBarredValue(cellNum);
 	}
+	
+	/*
+	 * Generic methods for route add <ip> reject
+	 *                     route del <ip> reject
+	 * With support both IPv4, IPv6
+	 */
+	
+	public enum IPAddress_Type{
+		IPv4, IPv6
+	}
+	
+	public enum RouteOperations{
+		add, del
+	}
+	
+	private static IPAddress_Type getIPType(String ip_address) {
+		if(ip_address.contains(":"))
+			return IPAddress_Type.IPv6;
+					
+		return IPAddress_Type.IPv4;
+	}
+	
+	public String routeRejectHost(String ip_address, RouteOperations cmd) {
+		IPAddress_Type ip_type = getIPType(ip_address);
+		
+		Map<IPAddress_Type, String> commandTemplate = new HashMap<IPAddress_Type, String>();
+		commandTemplate.put(IPAddress_Type.IPv4, "route %s -host %s reject");
+		commandTemplate.put(IPAddress_Type.IPv6, "ip -6 route %s -host %s reject");
+		
+		String command = String.format(commandTemplate.get(ip_type), cmd.toString(), ip_address);
+		
+		return this.shell(command);
+	}
+	
+	
 	public String shell(String command){
 		return XLP.shell(command);
 	}

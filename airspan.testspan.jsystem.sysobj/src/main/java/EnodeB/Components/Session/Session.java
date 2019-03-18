@@ -248,7 +248,7 @@ public class Session implements Runnable {
 		return;
 	}
 
-	private boolean disconnectSession() {
+	public boolean disconnectSession() {
 		try {
 			GeneralUtils.printToConsole("Session " + getName() + " terminal disconnecting");
 			connected = false;
@@ -262,7 +262,7 @@ public class Session implements Runnable {
 		}
 	}
 
-	private boolean connectSession() {
+	public boolean connectSession() {
 		try {
 			terminal.connect();
 			return terminal.isConnected();
@@ -514,7 +514,7 @@ public class Session implements Runnable {
 		this.enableCliBuffer = enableCliBuffer;
 	}
 
-	private boolean sendCommands(String cmd, String response) {
+	public boolean sendCommands(String cmd, String response) {
 		privateBuffer = "";
 		String ans = "";
 		sendRawCommand(cmd);
@@ -537,6 +537,8 @@ public class Session implements Runnable {
 			return logLevel;
 		}
 	}
+	
+	
 	
 	public boolean isShouldStayInCli() {
 		return shouldStayInCli;

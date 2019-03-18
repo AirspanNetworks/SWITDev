@@ -90,6 +90,7 @@ public class P0 extends TPTBase{
 	private int totalUEsPerCell;
 	private int udpDataLoad;
 	private int qci1_5PacketSize;
+	private int qci9PacketSize = 1400;
 	private int qci1LoadInFps;
 	private int qci5LoadInKbps;
 	
@@ -741,7 +742,7 @@ public class P0 extends TPTBase{
 			dlCriteriaQcisInList+=qci5LoadInKbps/1000.0;
 			ulCriteriaQcisInList+=qci5LoadInKbps/1000.0;
 			
-			LoadParam lpQci9Dl = new LoadParam(loadPerUEDl*1000, '9', ueNum, LoadParam.LoadUnit.KILOBITS_PER_SECOND,1400);
+			LoadParam lpQci9Dl = new LoadParam(loadPerUEDl*1000, '9', ueNum, LoadParam.LoadUnit.KILOBITS_PER_SECOND,this.qci9PacketSize);
 			loadingParametersDl.add(lpQci9Dl);
 			if(udpDataLoad>100){
 				dlCriteriaDataQcis+=loadPerUEDl*100/udpDataLoad;
@@ -749,7 +750,7 @@ public class P0 extends TPTBase{
 				dlCriteriaDataQcis+=loadPerUEDl;				
 			}
 			
-			LoadParam lpQci9Ul = new LoadParam(loadPerUEUl*1000, '9', ueNum, LoadParam.LoadUnit.KILOBITS_PER_SECOND,1400);
+			LoadParam lpQci9Ul = new LoadParam(loadPerUEUl*1000, '9', ueNum, LoadParam.LoadUnit.KILOBITS_PER_SECOND,this.qci9PacketSize);
 			loadingParametersUl.add(lpQci9Ul);
 			if(udpDataLoad>100){
 				ulCriteriaDataQcis+=loadPerUEUl*100/udpDataLoad;
@@ -1974,7 +1975,7 @@ public class P0 extends TPTBase{
 	public int getRuntime() {
 		return runtime;
 	}
-
+	
 	@ParameterProperties(description = "Number of minutes the test will run")
 	public void setRuntime(int runtime) {
 		this.runtime = runtime;
@@ -2000,11 +2001,22 @@ public class P0 extends TPTBase{
 	public int getQci1_5PacketSize() {
 		return qci1_5PacketSize;
 	}
-
+	
+	@ParameterProperties(description = "Frame size for Barriers 1, 5")
 	public void setQci1_5PacketSize(int qci1_5PacketSize) {
 		this.qci1_5PacketSize = qci1_5PacketSize;
 	}
 
+	public int getQci_9PacketSize() {
+		return this.qci9PacketSize;
+	}
+	
+	@ParameterProperties(description = "Frame size for Barrier 9")
+	public void setQci_9PacketSize(int qci1_9PacketSize) {
+		this.qci9PacketSize = qci1_9PacketSize;
+	}
+
+	
 	public int getQci1LoadInFps() {
 		return qci1LoadInFps;
 	}

@@ -126,8 +126,8 @@ public class LogsAction extends EnodebAction {
 	}
 
 	@Test
-	@TestProperties(name = "Close EnodeB Logs", returnParam = {"IsTestWasSuccessful"}, paramsInclude = {"DUTs"})
-	public void closeEnodeBLogs() {
+	@TestProperties(name = "Stop EnodeB Logs", returnParam = {"IsTestWasSuccessful"}, paramsInclude = {"DUTs"})
+	public void stopEnodeBLogs() {
 		for (EnodeB eNodeB : duts) {
 			closeAndGenerateEnBLogFiles(eNodeB, eNodeB.getLoggers());
 		}

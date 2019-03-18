@@ -35,7 +35,7 @@ public class Logger implements Runnable {
 	private Reporter reporter;
 	
 	private long logInterval;
-	
+
 	private ArrayList<Session> loggedSessions;
 	
 	private LogWriter logWriterEnb;
@@ -74,16 +74,28 @@ public class Logger implements Runnable {
 		}		
 		
 		// Initializing the logged sessions
-		this.loggedSessions = new ArrayList<Session>();
+		setLoggedSessions(new ArrayList<Session>());
 		addLoggedSessions(sessionManager);
 		initLoggedSessions();
+	}
+
+	public synchronized ArrayList<Session> getLoggedSessions() {
+		return loggedSessions;
+	}
+
+	public synchronized void setLoggedSessions(ArrayList<Session> loggedSessions) {
+		this.loggedSessions = loggedSessions;
+	}
+
+	public synchronized void addToLoggedSessions(Session session) {
+		loggedSessions.add(session);
 	}
 
 	/**
 	 * Init Logged Sessions if not Initialized
 	 */
 	public void initLoggedSessions() {
-		for (Session session : this.loggedSessions) {
+		for (Session session : this.getLoggedSessions()) {
 			session.setLoggedSession(true);
 				session.setEnableCliBuffer(false);
 				GeneralUtils.printToConsole("update log level from logger");
@@ -98,16 +110,16 @@ public class Logger implements Runnable {
 	 */
 	public void addLoggedSessions(SessionManager sessionManager) {
 		// Console session
-		if (sessionManager.getSerialSession() != null)
-			this.loggedSessions.add(sessionManager.getSerialSession());
-
+		if (sessionManager.getSerialSession() != null) {
+			addToLoggedSessions(sessionManager.getSerialSession());
+		}
 		// SSH sessions
 		if (parent.getIpAddress() != null) {
 			if (sessionManager.getSSHlogSession() != null) {
-				this.loggedSessions.add(sessionManager.getSSHlogSession());
+				addToLoggedSessions(sessionManager.getSSHlogSession());
 			}
 			if (sessionManager.getDefaultSession() != null) {
-				this.loggedSessions.add(sessionManager.getDefaultSession());
+				addToLoggedSessions(sessionManager.getDefaultSession());
 			}
 		}
 	}
@@ -206,9 +218,9 @@ public class Logger implements Runnable {
 		startLog(logFilePath);
 			
 		while (isLogging) {
-			String[] buffers = new String[loggedSessions.size()];
-			for (int sessionIndx = 0; sessionIndx < loggedSessions.size(); sessionIndx++) {
-				Session session = loggedSessions.get(sessionIndx);
+			String[] buffers = new String[getLoggedSessions().size()];
+			for (int sessionIndx = 0; sessionIndx < getLoggedSessions().size(); sessionIndx++) {
+				Session session = getLoggedSessions().get(sessionIndx);
 						
 				String buffer = session.getLoggerBuffer();
 				buffers[sessionIndx] = buffer;
@@ -239,7 +251,7 @@ public class Logger implements Runnable {
 			}
 					
 			// Stop logger if there are no logged sessions
-			if (loggedSessions.size() == 0) {
+			if (getLoggedSessions().size() == 0) {
 				System.err.printf("[%s]: There are no logged session connected to the logger.\n", name);
 				stop();
 			}
@@ -309,10 +321,10 @@ public class Logger implements Runnable {
 	public void startLog(String logName) {
 		System.out.printf("[%s]: Creating log files. \n", name);
 		
-		if (loggedSessions.size() < 1)
+		if (getLoggedSessions().size() < 1)
 			System.err.printf("[%s]: There are no log needed for this. Not creating any log files. \n", name);
 		else		{
-			for (Session session : loggedSessions)
+			for (Session session : getLoggedSessions())
 			{
 				if (session.getName().contains(SessionManager.SSH_COMMANDS_SESSION_NAME)) 
 					logWriterAuto.addLog(logName, session.getName());				

@@ -73,8 +73,24 @@ public class BasicAction extends Action {
 	}
 
 	private String userName;
+	private String userPrompt = "$";
+	
+	@ParameterProperties(description = "Provide if user prompt require special prompt, default '$' used if omitted")
+	public String getUserPrompt() {
+		return userPrompt;
+	}
+
+	public void setUserPrompt(String userPrompt) {
+		this.userPrompt = userPrompt;
+	}
+
 	private String password;
 	private long sleepTime = 2;
+	
+	public final long getSleepTime() {
+		return sleepTime;
+	}
+
 	private String netspan;
 	
 	@ParameterProperties(description = "Set true is command belong to lteCli scope")
@@ -96,7 +112,8 @@ public class BasicAction extends Action {
 	public void setIp(String ip) {
 		this.ip = ip;
 	}
-
+	
+	@ParameterProperties(description = "Login user name")
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
@@ -199,35 +216,22 @@ public class BasicAction extends Action {
 	public static final String LOGIN_PATTERN = "login:";
 	public static final String PASSWORD_PATTERN = "Password:";
 	public static final String ADMIN_PATTERN = "$";
-	public static final String SUDO_PATTERN = "#";
+	public static final String ROOT_PATTERN = "#";
 	public static final String LTECLI_PATTERN = "lte_cli:>>";
-		
+	public static final String EXIT_COMMAND = "exit";
+	public static final String CntrC_COMMAND = "\\u0003";	
+	
 	@Test
-	@TestProperties(name = "Send Commands To Serial", returnParam = "LastStatus", paramsInclude = { "Ip", "Port", "Password",
-			"UserName", "SerialCommand", "SleepTime", "LteCliRequired", "SudoRequired", "ExpectedPatern" })
+	@TestProperties(name = "Send Commands To Serial", returnParam = "LastStatus", paramsInclude = { "Ip", "Port",
+			"UserName", "UserPrompt", "Password", "SerialCommand", "LteCliRequired", "SudoRequired", "SleepTime", "ExpectedPatern" })
 	public void sendCommandsToSerial() throws Exception {
 		boolean isNull = false;
 		ConnectionInfo conn_info;
 		ExtendCLI cli = null;
-		String EXIT = "exit";
-		String CntrlC = "\u0003";
 		String SUDO_COMMAND = "sudo su";
 		String LTECLI_COMMAND = "/bs/lteCli";
 		
-//		ip = "192.168.58.169";
-//		port = 2001;
-//		password = "HeWGEUx66m=_4!ND";
-//		userName = "admin";
-////		lteCliRequired = false;
-//		sudoRequired = true;
-////		lteCliRequired = true;
-//		serialCommand = "ls -la /";
-////		serialCommand = "ue show link";
-//		expectedPatern = "/mnt/flash ; dima;rsys";
-//		sleepTime = 5;
-//		
 		try {
-//			GeneralUtils.startLevel("Starting parameters");
 			if(ip == null){
 				GeneralUtils.startLevel("IP cannot be empty");
 				isNull = true;
@@ -248,6 +252,10 @@ public class BasicAction extends Action {
 				GeneralUtils.startLevel("Serial Command cannot be empty");
 				isNull = true;
 			}
+			if(userPrompt == null){
+				GeneralUtils.startLevel("User prompt cannot be empty");
+				isNull = true;
+			}
 		}
 		finally {
 			if(isNull){
@@ -259,18 +267,18 @@ public class BasicAction extends Action {
 		
 		IPrompt logout_sequence;
 		IPrompt logged_out = new Prompt("login:", false, true);
-		IPrompt admin_logout = new LinkedPrompt(ADMIN_PATTERN, false, EXIT, true, logged_out);
-		IPrompt password_reset = new LinkedPrompt(PASSWORD_PATTERN, false, CntrlC, true, logged_out);
-		IPrompt sudo_logout = new LinkedPrompt(SUDO_PATTERN, false, EXIT, true, admin_logout);
-		IPrompt ltecli_logout = new LinkedPrompt(LTECLI_PATTERN, false, CntrlC, true, sudo_logout);
+		IPrompt user_logout = new LinkedPrompt(userPrompt, false, EXIT_COMMAND, true, logged_out);
+		IPrompt password_reset = new LinkedPrompt(PASSWORD_PATTERN, false, CntrC_COMMAND, true, logged_out);
+		IPrompt sudo_logout = new LinkedPrompt(ROOT_PATTERN, false, EXIT_COMMAND, true, user_logout);
+		IPrompt ltecli_logout = new LinkedPrompt(LTECLI_PATTERN, false, CntrC_COMMAND, true, sudo_logout);
 		
 		
-		LinkedPrompt login_sequence = new LinkedPrompt(LOGIN_PATTERN, true, userName, true);
-		LinkedPrompt admin_password = new LinkedPrompt(PASSWORD_PATTERN, false, password, true);
+		LinkedPrompt user_login = new LinkedPrompt(LOGIN_PATTERN, true, userName, true);
+		LinkedPrompt user_password = new LinkedPrompt(PASSWORD_PATTERN, false, password, true);
 		IPrompt sudo_switch = null;
 		
 		if(sudoRequired) {
-			IPrompt sudo_prompt = new Prompt(SUDO_PATTERN, false, true); 
+			IPrompt sudo_prompt = new Prompt(ROOT_PATTERN, false, true); 
 			sudo_switch = new LinkedPrompt(PASSWORD_PATTERN, false, password, true);
 			
 			if(!lteCliRequired) {
@@ -278,19 +286,26 @@ public class BasicAction extends Action {
 				logout_sequence = sudo_logout;
 			}
 			else {
-				LinkedPrompt lte_cli_switch = new LinkedPrompt(SUDO_PATTERN, false, LTECLI_COMMAND, true, new Prompt(LTECLI_PATTERN, false, true));
+				LinkedPrompt lte_cli_switch = new LinkedPrompt(ROOT_PATTERN, false, LTECLI_COMMAND, true, new Prompt(LTECLI_PATTERN, false, true));
 				((LinkedPrompt)sudo_switch).setLinkedPrompt(lte_cli_switch);
 				logout_sequence = ltecli_logout;
 			}
 			
-			LinkedPrompt sudo_su = new LinkedPrompt(ADMIN_PATTERN, false, SUDO_COMMAND, true, sudo_switch);
-			admin_password.setLinkedPrompt(sudo_su);
+			LinkedPrompt sudo_su = new LinkedPrompt(userPrompt, false, SUDO_COMMAND, true, sudo_switch);
+			user_password.setLinkedPrompt(sudo_su);
 		} else {
-			admin_password.setLinkedPrompt(new Prompt(ADMIN_PATTERN, false, true));
-			logout_sequence = admin_logout;
+			if(lteCliRequired) {
+				LinkedPrompt lte_cli_switch = new LinkedPrompt(ROOT_PATTERN, false, LTECLI_COMMAND, true, new Prompt(LTECLI_PATTERN, false, true));
+				user_password.setLinkedPrompt(lte_cli_switch);
+				logout_sequence = ltecli_logout;
+			}
+			else {
+				user_password.setLinkedPrompt(new Prompt(userPrompt, false, true));
+				logout_sequence = user_logout;
+			}
 		}
 		
-		login_sequence.setLinkedPrompt(admin_password);
+		user_login.setLinkedPrompt(user_password);
 		
 		try {
 			
@@ -306,24 +321,27 @@ public class BasicAction extends Action {
 			cli.sendString(cli.getEnterStr(), false);
 			
 			cli.addPrompts(
-					new Prompt(ADMIN_PATTERN, false, true), 
-					new Prompt(SUDO_PATTERN, false, true),
+					new Prompt(userPrompt, false, true), 
+					new Prompt(ROOT_PATTERN, false, true),
 					new Prompt(LTECLI_PATTERN, false, true),
 					new Prompt(LOGIN_PATTERN, false, true));
 			
 			IPrompt current_pr = cli.getCurrentPrompt();
 			
 			switch (current_pr.getPrompt()) {
-				case SUDO_PATTERN: cli.resetToPrompt(sudo_logout); break;
-				case ADMIN_PATTERN: cli.resetToPrompt(admin_logout); break;
+				case ROOT_PATTERN: cli.resetToPrompt(sudo_logout); break;
+				case ADMIN_PATTERN: cli.resetToPrompt(user_logout); break;
 				case LTECLI_PATTERN: cli.resetToPrompt(ltecli_logout); break;
 				case PASSWORD_PATTERN: cli.resetToPrompt(password_reset);break;
+				default:
+					
+					break;
 			}
 			
 			report.report("Reset session completed");
 
 			Thread.sleep(500);
-			cli.login(sleepTime * 1000, login_sequence);
+			cli.login(sleepTime * 1000, user_login);
 			report.report("Login to serial completed");
 			GeneralUtils.stopLevel();
 			

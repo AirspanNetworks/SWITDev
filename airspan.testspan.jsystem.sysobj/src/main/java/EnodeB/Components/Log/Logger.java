@@ -73,9 +73,12 @@ public class Logger implements Runnable {
 			Assert.fail("Logger init failed: Log interval is not configured.");
 		}		
 		
-		// Initializing the logged sessions
-		setLoggedSessions(new ArrayList<Session>());
-		addLoggedSessions(sessionManager);
+		if (getLoggedSessions() == null ) {
+			setLoggedSessions(new ArrayList<Session>());
+		}
+		synchronized (lock) {
+			addLoggedSessions(sessionManager);
+		}
 		initLoggedSessions();
 	}
 

@@ -360,6 +360,7 @@ public class BasicAction extends Action {
 			report.report("Reset session completed");
 
 			Thread.sleep(500);
+			report.report("Login properties:\n" + user_login.toString());
 			cli.login(sleepTime * 1000, user_login);
 			report.report("Login to serial completed");
 			GeneralUtils.stopLevel();

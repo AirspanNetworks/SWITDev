@@ -23,6 +23,7 @@ import Utils.ConnectionManager.terminal.LinkedPrompt;
 import jsystem.framework.ParameterProperties;
 import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
+import jsystem.sysobj.traffic.analizers.SetPacket;
 
 public class BasicAction extends Action {
 	private String timeToWait = "00:00:00";
@@ -213,6 +214,19 @@ public class BasicAction extends Action {
 		}
 	}
 	
+	private void setUnitTestforserial() {
+		setIp("192.168.58.64");
+		setPort(4003);
+		setUserName("root");
+		setPassword("HeWGEUx66m=_4!ND");
+		setUserPrompt("#");
+		setSerialCommand("ls -la /");
+		setSudoRequired(false);
+		setLteCliRequired(false);
+		
+	}
+	
+	
 	public static final String LOGIN_PATTERN = "login:";
 	public static final String PASSWORD_PATTERN = "Password:";
 	public static final String ADMIN_PATTERN = "$";
@@ -230,6 +244,11 @@ public class BasicAction extends Action {
 		ExtendCLI cli = null;
 		String SUDO_COMMAND = "sudo su";
 		String LTECLI_COMMAND = "/bs/lteCli";
+		
+		/* Internal unittest only
+		 * setUnitTestforserial(); 
+		 */
+		
 		
 		try {
 			if(ip == null){

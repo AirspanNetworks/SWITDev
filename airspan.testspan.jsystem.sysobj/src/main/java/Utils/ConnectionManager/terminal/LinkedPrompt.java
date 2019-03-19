@@ -33,4 +33,15 @@ public class LinkedPrompt extends Prompt implements IPrompt {
 		this(prompt, isRegExp, stringToSend, setEnter);
 		setLinkedPrompt(linkedPrompt);
 	}
+	
+	@Override
+	public String toString() {
+		StringBuilder res = new StringBuilder(String.format("Prompt: '%s'; StringToSend: '%s'", this.getPrompt(), this.getStringToSend()));
+		res.append(String.format("; is final shell: '%s'", this.isCommandEnd()));	
+		if(linked_prompt != null) {
+			res.append("\n\t" + linked_prompt.toString());
+		}
+		
+		return res.toString();
+	}
 }

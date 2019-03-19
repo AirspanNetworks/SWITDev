@@ -1,6 +1,8 @@
 package Action.EnodebAction;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -1094,94 +1096,104 @@ public class Enodeb extends EnodebAction {
 		return lteCliRequired;
 	}
 
-	@Test
-    @TestProperties(name = "sendCommandToSerial"
-    					, returnParam = { "IsTestWasSuccessful" }
-    					, paramsInclude = { "DUT", "SerialCommand", "ExpectedOutput" , "LteCliRequired", "CommandTimeout"})
-    public void sendCommandToSerial() throws Exception {
-    			
-    	String command = this.getSerialCommand();
-    	String output = this.getExpectedOutput();
-    	int timeout = this.getCommandTimeout();
-    	Session session = this.dut.getSerialSession();
+//	@Test
+//    @TestProperties(name = "sendCommandToSerial"
+//    					, returnParam = { "IsTestWasSuccessful" }
+//    					, paramsInclude = { "DUT", "SerialCommand", "ExpectedOutput" , "LteCliRequired", "CommandTimeout"})
+//    public void sendCommandToSerial() throws Exception {
+//    			
+//    	String command = this.getSerialCommand();
+//    	String output = this.getExpectedOutput();
+//    	int timeout = this.getCommandTimeout();
+//    	Session session = this.dut.getSerialSession();
+//    	
+//    	GeneralUtils.startLevel("Start keyword sent command: '" + command + "'");
+//    	
+//    	try {
+//    		File temp_cache = File.createTempFile("temp_log_cache", ".log");
+//    		
+//    		session.setTerminalPrintStream(new PrintStream(temp_cache));
+//    		session.sendCommands(cmd, response);
+//    		
+//    	}finally {
+//			GeneralUtils.stopAllLevels();
+//		}
     	
-    	GeneralUtils.startLevel("Start keyword sent command: '" + command + "'");
-    	
-    	if(!session.isConnected()) {
-    		if(!session.connectSession()) {
-    			report.report("Can't connect to serial host " + dut.getName(), Reporter.FAIL);
-                return;
-    		}
-    		else
-    			report.report("Serial host " + dut.getName() + " connected", Reporter.PASS);
-    	}
-    	else {
-    		report.report("Connected to serial host " + dut.getName(), Reporter.PASS);
-    	}
-    	
-    	if(!session.isLoggedSession()) {
-    		if(!session.loginSerial()) {
-    			report.report("Can't login to serial host " + dut.getName(), Reporter.FAIL);
-                return;
-    		}
-    		else
-    			report.report("LoggedIn to serial host " + dut.getName(), Reporter.PASS);
-    		
-    		if(this.getLteCliRequired()) {
-        		if(session.isShouldStayInCli()) {
-        			if(!session.sendCommands("", "lte_cli:>>"))
-					{
-        				report.report(dut.getName() + " is out of lte_cli, trying to enter.");
-						if(session.sendCommands("/bs/lteCli", "lte_cli:>>"))
-						{
-							report.report("update log level from stay in cli");
-							
-//							session.updateLogLevel();
-						}
-						else
-						{
-							GeneralUtils.printToConsole(dut.getName() + " is still out of lte_cli, disconnecting session.");
-							session.disconnectSession();
-							report.report(dut.getName() + " is still out of lte_cli, disconnecting session", Reporter.FAIL);
-			                return;
-						}
-					}
-        		}
-        	}
-    		else {
-    			if(session.isShouldStayInCli()) {
-    				session.setShouldStayInCli(false);
-    				report.report("Disable CLI to serial host " + dut.getName(), Reporter.PASS);
-    			}
-    		}
-    	}
-    	else {
-    		report.report("In CLI to serial host " + dut.getName(), Reporter.PASS);
-    	}
-    	
-    	int status = Reporter.PASS;
-    	String text_status = "";
-    	GeneralUtils.startLevel("Sent command: '" + command + "'; Timeout: " + timeout + "ms");
-    	session.getCliBuffer();
-    	String response_text = session.sendCommands(EnodeBComponent.SHELL_PROMPT, command, null, timeout);
-    	GeneralUtils.stopLevel();
-    	
-    	if(output != null) {
-    		if(response_text.indexOf(output) > 0) {
-    			status = Reporter.PASS;
-    			text_status = "PASS";
-    		}
-    		else {
-    			status = Reporter.FAIL;
-    			text_status = "FAIL";
-    		}
-    		report.report("Real output " + (status == Reporter.PASS ? "not" : "") + "match expected pattern", status);
-    	}
-//    	report.report("Command output: -------------------\n" +  response_text + "\n----------------------");
-    	GeneralUtils.reportHtmlLink("Command output:", response_text);
-    	GeneralUtils.stopLevel();
-//    	return status == Reporter.PASS;
-    }
+//    	if(!session.isConnected()) {
+//    		if(!session.connectSession()) {
+//    			report.report("Can't connect to serial host " + dut.getName(), Reporter.FAIL);
+//                return;
+//    		}
+//    		else
+//    			report.report("Serial host " + dut.getName() + " connected", Reporter.PASS);
+//    	}
+//    	else {
+//    		report.report("Connected to serial host " + dut.getName(), Reporter.PASS);
+//    	}
+//    	
+//    	if(!session.isLoggedSession()) {
+//    		if(!session.loginSerial()) {
+//    			report.report("Can't login to serial host " + dut.getName(), Reporter.FAIL);
+//                return;
+//    		}
+//    		else
+//    			report.report("LoggedIn to serial host " + dut.getName(), Reporter.PASS);
+//    		
+//    		if(this.getLteCliRequired()) {
+//        		if(session.isShouldStayInCli()) {
+//        			if(!session.sendCommands("", "lte_cli:>>"))
+//					{
+//        				report.report(dut.getName() + " is out of lte_cli, trying to enter.");
+//						if(session.sendCommands("/bs/lteCli", "lte_cli:>>"))
+//						{
+//							report.report("update log level from stay in cli");
+//							
+////							session.updateLogLevel();
+//						}
+//						else
+//						{
+//							GeneralUtils.printToConsole(dut.getName() + " is still out of lte_cli, disconnecting session.");
+//							session.disconnectSession();
+//							report.report(dut.getName() + " is still out of lte_cli, disconnecting session", Reporter.FAIL);
+//			                return;
+//						}
+//					}
+//        		}
+//        	}
+//    		else {
+//    			if(session.isShouldStayInCli()) {
+//    				session.setShouldStayInCli(false);
+//    				report.report("Disable CLI to serial host " + dut.getName(), Reporter.PASS);
+//    			}
+//    		}
+//    	}
+//    	else {
+//    		report.report("In CLI to serial host " + dut.getName(), Reporter.PASS);
+//    	}
+//    	
+//    	int status = Reporter.PASS;
+//    	String text_status = "";
+//    	GeneralUtils.startLevel("Sent command: '" + command + "'; Timeout: " + timeout + "ms");
+//    	session.getCliBuffer();
+//    	String response_text = session.sendCommands(EnodeBComponent.SHELL_PROMPT, command, null, timeout);
+//    	GeneralUtils.stopLevel();
+//    	
+//    	if(output != null) {
+//    		if(response_text.indexOf(output) > 0) {
+//    			status = Reporter.PASS;
+//    			text_status = "PASS";
+//    		}
+//    		else {
+//    			status = Reporter.FAIL;
+//    			text_status = "FAIL";
+//    		}
+//    		report.report("Real output " + (status == Reporter.PASS ? "not" : "") + "match expected pattern", status);
+//    	}
+////    	report.report("Command output: -------------------\n" +  response_text + "\n----------------------");
+//    	GeneralUtils.reportHtmlLink("Command output:", response_text);
+//    	GeneralUtils.stopLevel();
+////    	return status == Reporter.PASS;
+//    }
 
 	
 	

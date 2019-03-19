@@ -345,7 +345,6 @@ public class BasicAction extends Action {
 			report.report("Login to serial completed");
 			GeneralUtils.stopLevel();
 			
-//			GeneralUtils.startLevel("Send command: " + serialCommand);
 			Thread.sleep(100);
 			String output_str = cli.exec_command(serialCommand, sleepTime * 1000, true, false);
 			
@@ -353,7 +352,6 @@ public class BasicAction extends Action {
 			String result_text = "Test completed";
 			
 			if(expectedPatern != null) {
-//				Map<String, String> expectedCollection = readExpected(expectedPatern);
 				
 				result_text += " as following:\n";
 				

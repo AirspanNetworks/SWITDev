@@ -110,8 +110,7 @@ public abstract class Terminal {
                         avail = in.available();
                         if (System.currentTimeMillis() - startTime > timeout) {
                             result.append(sb);
-                            break;
-//                            throw new IOException("timeout: " + timeout);
+                            throw new IOException("Prompt not resolved during timeout: " + timeout);
                         }
                     	continue;
                     }

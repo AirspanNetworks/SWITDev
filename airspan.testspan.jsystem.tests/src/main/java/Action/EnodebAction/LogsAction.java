@@ -3,6 +3,7 @@ package Action.EnodebAction;
 import EnodeB.Components.Log.Logger;
 import EnodeB.Components.Session.SessionManager;
 import EnodeB.EnodeB;
+import Utils.GeneralUtils;
 import Utils.SysObjUtils;
 import jsystem.framework.ParameterProperties;
 import jsystem.framework.TestProperties;
@@ -21,6 +22,7 @@ public class LogsAction extends EnodebAction {
 	private Processes processes = Processes.ALL;
 	protected String process;
 	protected String client;
+	private static final String LOG_ACTION = "Log_Action";
 
 	/**
 	 * Process dropdown to log: All or ParticularModel(Specific Process and Client)
@@ -119,6 +121,16 @@ public class LogsAction extends EnodebAction {
 		}
 	}
 
+	@Test
+	@TestProperties(name = "Stop EnodeB Logs", returnParam = {"IsTestWasSuccessful"}, paramsInclude = {"DUTs"})
+	public void stopEnodeBLogs() {
+		for (EnodeB eNodeB : duts) {
+			SessionManager sessionManager = eNodeB.getXLP().getSessionManager();
+			removeFromLoggedSession(eNodeB, sessionManager);
+			closeAndGenerateEnBLogFiles(eNodeB, eNodeB.getLoggers());
+		}
+	}
+
 	/**
 	 * add Open Session To Logger Thread
 	 *
@@ -130,19 +142,19 @@ public class LogsAction extends EnodebAction {
 		synchronized (logger.lock) {
 			logger.addLoggedSessions(sessionManager);
 			logger.addLogListener(eNodeB.getXLP());
-			logger.startLog(String.format("%s_%s", getMethodName(), logger.getParent().getName()));
+			logger.startLog(String.format("%s_%s", LOG_ACTION, logger.getParent().getName()));
 			logger.setCountErrorBool(true);
 		}
 	}
 
-	@Test
-	@TestProperties(name = "Stop EnodeB Logs", returnParam = {"IsTestWasSuccessful"}, paramsInclude = {"DUTs"})
-	public void stopEnodeBLogs() {
-		for (EnodeB eNodeB : duts) {
-			SessionManager sessionManager = eNodeB.getXLP().getSessionManager();
-			removeFromLoggedSession(eNodeB,sessionManager);
-			closeAndGenerateEnBLogFiles(eNodeB, eNodeB.getLoggers());
+	private void closeAndGenerateEnBLogFiles(EnodeB eNodeB, Logger[] loggers) {
+		GeneralUtils.startLevel(String.format("eNodeB %s logs", eNodeB.getName()));
+		for (Logger logger : loggers) {
+			logger.setCountErrorBool(false);
+			logger.closeEnodeBLog(String.format("%s_%s", LOG_ACTION, logger.getParent().getName()));
+			scenarioUtils.scenarioStatistics(logger, eNodeB);
 		}
+		GeneralUtils.stopLevel();
 	}
 
 	/**

@@ -212,6 +212,9 @@ public class SessionManager {
 		return getEnodeBComponent().getName();
 	}
 
+	/** Command Session
+	 * @return - defaultSession
+	 */
 	public Session getDefaultSession() {
 		return defaultSession;
 	}

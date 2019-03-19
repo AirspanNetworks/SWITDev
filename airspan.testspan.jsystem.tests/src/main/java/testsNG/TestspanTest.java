@@ -672,7 +672,7 @@ public class TestspanTest extends SystemTestCase4 {
      * @param eNodeB  - eNodeB
      * @param loggers - loggers
      */
-    private void closeEnBLogs(EnodeB eNodeB, Logger[] loggers) {
+    public void closeEnBLogs(EnodeB eNodeB, Logger[] loggers) {
         log.info(String.format("Closing log files for test for eNondeB %s", eNodeB.getName()));
         GeneralUtils.startLevel(String.format("eNodeB %s logs", eNodeB.getName()));
 

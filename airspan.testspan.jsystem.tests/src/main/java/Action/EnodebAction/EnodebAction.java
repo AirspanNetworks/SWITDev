@@ -115,7 +115,7 @@ public class EnodebAction extends Action {
 		GeneralUtils.stopLevel();
 	}
 
-	protected void closeAndGenerateEnBLogFiles(EnodeB eNodeB, Logger[] loggers) {
+	private void closeAndGenerateEnBLogFiles(EnodeB eNodeB, Logger[] loggers) {
 		GeneralUtils.startLevel(String.format("eNodeB %s logs", eNodeB.getName()));
 		for (Logger logger : loggers) {
 			logger.setCountErrorBool(false);

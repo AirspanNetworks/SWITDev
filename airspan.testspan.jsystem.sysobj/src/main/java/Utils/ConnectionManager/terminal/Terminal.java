@@ -9,8 +9,6 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.collections.functors.NullIsExceptionPredicate;
-
 public abstract class Terminal {
 	Logger log = Logger.getLogger(Terminal.class.getName());
     protected static final int IN_BUFFER_SIZE = 65536;
@@ -110,9 +108,12 @@ public abstract class Terminal {
                     int b = in.read();
                     if (b < 0) {
                         avail = in.available();
+                        if (System.currentTimeMillis() - startTime > timeout) {
+                            result.append(sb);
+                            break;
+//                            throw new IOException("timeout: " + timeout);
+                        }
                     	continue;
-                        //result.append(sb);
-                        //throw new IOException("connection close");
                     }
                     if (b == 8) {
                         sb.append('B');

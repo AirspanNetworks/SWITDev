@@ -16,7 +16,7 @@ public class LogsAction extends EnodebAction {
 
 	//	protected EnodeB dut;
 	private ArrayList<EnodeB> duts;
-	protected Session session;
+	protected static Session session;
 	private LogLevel logLevel = LogLevel.SIX;
 	private Processes processes = Processes.ALL;
 	protected String process;
@@ -139,6 +139,8 @@ public class LogsAction extends EnodebAction {
 	@TestProperties(name = "Stop EnodeB Logs", returnParam = {"IsTestWasSuccessful"}, paramsInclude = {"DUTs"})
 	public void stopEnodeBLogs() {
 		for (EnodeB eNodeB : duts) {
+			SessionManager sessionManager = eNodeB.getXLP().getSessionManager();
+			removeFromLoggedSession(eNodeB,sessionManager);
 			closeAndGenerateEnBLogFiles(eNodeB, eNodeB.getLoggers());
 		}
 	}
@@ -164,6 +166,24 @@ public class LogsAction extends EnodebAction {
 		}
 		return sessionName;
 	}
+
+	/**
+	 * open Log Session - SSH or Serial
+	 *
+	 * @param sessionManager - sessionManager
+	 * @return - sessionName
+	 */
+	private void removeFromLoggedSession(EnodeB eNodeB, SessionManager sessionManager) {
+		Logger logger = eNodeB.getXLP().getLogger();
+		synchronized (logger.lock) {
+			if (session == Session.SSH) {
+				logger.removeFromLoggedSessions(sessionManager.getSSHlogSession());
+			} else {
+				logger.removeFromLoggedSessions(sessionManager.getSerialSession());
+			}
+		}
+	}
+
 
 	/**
 	 * select Processes to log

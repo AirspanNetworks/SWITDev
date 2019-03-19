@@ -94,6 +94,11 @@ public class Logger implements Runnable {
 		loggedSessions.add(session);
 	}
 
+	public synchronized void removeFromLoggedSessions(Session session) {
+		loggedSessions.remove(session);
+	}
+
+
 	/**
 	 * Init Logged Sessions if not Initialized
 	 */
@@ -126,7 +131,7 @@ public class Logger implements Runnable {
 			}
 		}
 	}
-	
+
 	/**
 	 * Adds a log listener the the logger
 	 * @param listener the listener

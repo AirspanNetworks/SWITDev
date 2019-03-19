@@ -115,7 +115,7 @@ public class LogsAction extends EnodebAction {
 	public void startEnodeBLogs() {
 		for (EnodeB eNodeB : duts) {
 			SessionManager sessionManager = eNodeB.getXLP().getSessionManager();
-			String sessionName = openLogSession(sessionManager);
+			String sessionName = openLogSession(eNodeB, sessionManager);
 			defineLogProperties(eNodeB, sessionName);
 			addOpenSessionToLogger(eNodeB, sessionManager);
 		}
@@ -163,7 +163,7 @@ public class LogsAction extends EnodebAction {
 	 * @param sessionManager - sessionManager
 	 * @return - sessionName
 	 */
-	private String openLogSession(SessionManager sessionManager) {
+	private String openLogSession(EnodeB enodeB, SessionManager sessionManager) {
 		String sessionName;
 		if (session == Session.SSH) {
 			sessionManager.openSSHLogSession();
@@ -171,6 +171,7 @@ public class LogsAction extends EnodebAction {
 			sessionManager.getSSHlogSession().setLoggedSession(true);
 			sessionManager.getSSHlogSession().setEnableCliBuffer(false);
 		} else {
+			enodeB.getXLP().initSerialCom();
 			sessionManager.openSerialLogSession();
 			sessionName = sessionManager.getSerialSession().getName();
 			sessionManager.getSerialSession().setLoggedSession(true);

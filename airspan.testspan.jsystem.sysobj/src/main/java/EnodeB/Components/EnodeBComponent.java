@@ -246,7 +246,7 @@ public abstract class EnodeBComponent implements LogListener {
 		sessionManager.openSSHLogSession();
 	}
 
-	private void initSerialCom() {
+	public void initSerialCom() {
 		if (serialCom != null) {
 			try {
 				serialCom.init();

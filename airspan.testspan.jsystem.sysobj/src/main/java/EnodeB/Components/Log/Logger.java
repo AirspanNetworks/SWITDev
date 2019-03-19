@@ -325,10 +325,9 @@ public class Logger implements Runnable {
 	 */
 	public void startLog(String logName) {
 		System.out.printf("[%s]: Creating log files. \n", name);
-		
 		if (getLoggedSessions().size() < 1)
 			System.err.printf("[%s]: There are no log needed for this. Not creating any log files. \n", name);
-		else		{
+		else {
 			for (Session session : getLoggedSessions())
 			{
 				if (session.getName().contains(SessionManager.SSH_COMMANDS_SESSION_NAME)) 
@@ -336,7 +335,6 @@ public class Logger implements Runnable {
 				else
 					logWriterEnb.addLog(logName, session.getName());
 			}
-			
 		}
 	}
 	

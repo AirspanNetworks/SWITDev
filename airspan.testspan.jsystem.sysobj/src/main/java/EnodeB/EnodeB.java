@@ -188,23 +188,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 	public void init() throws Exception {
 		super.init();
 
-		switch (enodeBversion) {
-		case "14_5": 
-		case "15_1":
-			XLP = new XLP_14_5();	
-			break;
-		case "15_2": 
-		case "15_5": 
-			XLP = new XLP_15_2(); 
-			break;
-		case "16_0": 
-			XLP = new XLP_16_0(); 
-			break;	
-		default:
-			XLP = new XLP_15_2();
-			report.report("no enodeB version was found- setting to XLP_15.2 as default");
-			break;
-		}
+		getXLPByEnodeBVersion();
 		if (connectInfo.serialInfo != null) {
 			XLP.createSerialCom(connectInfo.serialInfo.getSerialIP(), Integer.parseInt(connectInfo.serialInfo.getSerialPort()) );
 			XLP.setSerialUsername(connectInfo.serialInfo.getUserName());
@@ -237,6 +221,29 @@ public abstract class EnodeB extends SystemObjectImpl {
 			tunnelManager.safeStart();
 		}
 		XLP.printVersion();
+	}
+
+	/**
+	 * get XLP By EnodeB Version
+	 */
+	private void getXLPByEnodeBVersion() {
+		switch (enodeBversion) {
+		case "14_5":
+		case "15_1":
+			XLP = new XLP_14_5();
+			break;
+		case "15_2":
+		case "15_5":
+			XLP = new XLP_15_2();
+			break;
+		case "16_0":
+			XLP = new XLP_16_0();
+			break;
+		default:
+			XLP = new XLP_15_2();
+			report.report("no enodeB version was found- setting to XLP_15.2 as default");
+			break;
+		}
 	}
 
 	/**

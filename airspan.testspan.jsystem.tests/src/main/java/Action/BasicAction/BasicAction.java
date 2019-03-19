@@ -355,10 +355,8 @@ public class BasicAction extends Action {
 			
 			
 		} catch (IOException e) {
-			e.printStackTrace();
 			report.report(e.getLocalizedMessage(), Reporter.FAIL);
 		} catch (Exception e) {
-			e.printStackTrace();
 			report.report(e.getMessage(), Reporter.FAIL);
 		}
 		finally {

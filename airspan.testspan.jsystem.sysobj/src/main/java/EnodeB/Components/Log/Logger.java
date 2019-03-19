@@ -118,15 +118,15 @@ public class Logger implements Runnable {
 	 */
 	public void addLoggedSessions(SessionManager sessionManager) {
 		// Console session
-		if (sessionManager.getSerialSession() != null) {
+		if (sessionManager.getSerialSession() != null && (!getLoggedSessions().contains(sessionManager.getSerialSession()))) {
 			addToLoggedSessions(sessionManager.getSerialSession());
 		}
 		// SSH sessions
 		if (parent.getIpAddress() != null) {
-			if (sessionManager.getSSHlogSession() != null) {
+			if (sessionManager.getSSHlogSession() != null && (!getLoggedSessions().contains(sessionManager.getSSHlogSession()))) {
 				addToLoggedSessions(sessionManager.getSSHlogSession());
 			}
-			if (sessionManager.getDefaultSession() != null) {
+			if (sessionManager.getDefaultSession() != null && (!getLoggedSessions().contains(sessionManager.getDefaultSession()))) {
 				addToLoggedSessions(sessionManager.getDefaultSession());
 			}
 		}

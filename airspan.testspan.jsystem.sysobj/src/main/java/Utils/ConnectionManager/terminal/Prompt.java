@@ -150,4 +150,11 @@ public class Prompt implements IPrompt {
     	}
     	return pattern;
     }
+    
+    @Override
+    public String toString() {
+    	StringBuilder res = new StringBuilder(String.format("Prompt: '%s'; StringToSend: '%s'", this.getPrompt(), this.getStringToSend()));
+		res.append(String.format("; is final shell: '%s'", this.isCommandEnd()));
+		return res.toString();
+    }
 }

@@ -1312,10 +1312,15 @@ public class TPTBase extends TestspanTest {
 		//report.report("DL value from netspan: "+doubleTo2DigitsAfterPoint(dl/1000.0/dlFromNetspan.size())+" Mbps");
 		//report.report("UL value from netspan: "+doubleTo2DigitsAfterPoint(ul/1000.0/ulFromNetspan.size())+" Mbps");
 	
+		double ul_Divided_With_Number_Of_Streams = 0;
+		double dl_Divided_With_Number_Of_Streams = 0;
 		
-		
-		double ul_Divided_With_Number_Of_Streams = uLrxTotal / 1000000.0 / sizeUlStreams;
-		double dl_Divided_With_Number_Of_Streams = dlrxTotal / 1000000.0 / sizeDlStreams;
+		if(sizeUlStreams != 0){
+			ul_Divided_With_Number_Of_Streams = doubleTo2DigitsAfterPoint(uLrxTotal / 1000000.0 / sizeUlStreams);			
+		}
+		if(sizeDlStreams != 0){
+			dl_Divided_With_Number_Of_Streams = doubleTo2DigitsAfterPoint(dlrxTotal / 1000000.0 / sizeDlStreams);			
+		}
 
 		double ulPassCriteria = ul;
 		double dlPassCriteria = dl;
@@ -1358,18 +1363,18 @@ public class TPTBase extends TestspanTest {
 
 		if (ul_Divided_With_Number_Of_Streams < ulPassCriteria) {
 			report.report("UL : Expected: " + calcUpRate + "[Mbps] , Actual : "
-					+ doubleTo2DigitsAfterPoint(ul_Divided_With_Number_Of_Streams) + "[Mbps]", Reporter.FAIL);
+					+ ul_Divided_With_Number_Of_Streams + "[Mbps]", Reporter.FAIL);
 		} else {
 			report.report("UL : Expected: " + calcUpRate + "[Mbps] , Actual : "
-					+ doubleTo2DigitsAfterPoint(ul_Divided_With_Number_Of_Streams) + "[Mbps]");
+					+ ul_Divided_With_Number_Of_Streams + "[Mbps]");
 		}
 
 		if (dl_Divided_With_Number_Of_Streams < dlPassCriteria) {
 			report.report("DL : Expected: " + calcDownRate + "[Mbps], Actual : "
-					+ doubleTo2DigitsAfterPoint(dl_Divided_With_Number_Of_Streams) + "[Mbps]", Reporter.FAIL);
+					+ dl_Divided_With_Number_Of_Streams + "[Mbps]", Reporter.FAIL);
 		} else {
 			report.report("DL : Expected: " + calcDownRate + "[Mbps], Actual : "
-					+ doubleTo2DigitsAfterPoint(dl_Divided_With_Number_Of_Streams) + "[Mbps]");
+					+ dl_Divided_With_Number_Of_Streams + "[Mbps]");
 		}
 		reason = "Exp - UL: " + calcUpRate + "Mbps" + " DL: " + calcDownRate + "Mbps<br>";
 		reason += "Act - UL: " + upRate + "Mbps" + " DL: " + downRate + "Mbps";

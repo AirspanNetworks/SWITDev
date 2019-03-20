@@ -2334,14 +2334,19 @@ public abstract class XLP extends EnodeBComponent {
         for (int i = 0; i < mccs.length; i++) {
             Plmn temp = new Plmn();
             String[] hexArraymcc = mccs[i].toString().split(":");
-            String[] hexArraymnc = mncs[i].toString().split(":");
             String mcc = calculateAsciiToInt(hexArraymcc);
-            String mnc = calculateAsciiToInt(hexArraymnc);
             temp.setMCC(mcc);
-            temp.setMNC(mnc);
             plmns.add(temp);
 
         }
+        
+        for (int i = 0; i < mncs.length; i++) {
+        	Plmn temp = new Plmn();
+        	String[] hexArraymnc = mncs[i].toString().split(":");
+        	String mnc = calculateAsciiToInt(hexArraymnc);
+        	temp.setMNC(mnc);
+        }
+        
         return plmns;
 
     }

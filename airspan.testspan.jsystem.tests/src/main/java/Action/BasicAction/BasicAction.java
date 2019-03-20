@@ -219,7 +219,7 @@ public class BasicAction extends Action {
 		setPort(4005);
 		setUserName("root");
 		setPassword("HeWGEUx66m=_4!ND");
-		setUserPrompt("#");
+//		setUserPrompt("#");
 		setSerialCommand("ls -la /");
 		setSudoRequired(false);
 		setLteCliRequired(false);

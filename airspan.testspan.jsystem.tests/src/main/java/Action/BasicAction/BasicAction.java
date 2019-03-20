@@ -76,14 +76,14 @@ public class BasicAction extends Action {
 	private String userName;
 	private String userPrompt = "$";
 	
-	@ParameterProperties(description = "Provide if user prompt require special prompt, default '$' used if omitted")
-	public String getUserPrompt() {
-		return userPrompt;
-	}
+//	@ParameterProperties(description = "Provide if user prompt require special prompt, default '$' used if omitted")
+//	public String getUserPrompt() {
+//		return userPrompt;
+//	}
 
-	public void setUserPrompt(String userPrompt) {
-		this.userPrompt = userPrompt;
-	}
+//	public void setUserPrompt(String userPrompt) {
+//		this.userPrompt = userPrompt;
+//	}
 
 	private String password;
 	private long sleepTime = 2;
@@ -215,8 +215,8 @@ public class BasicAction extends Action {
 	}
 	
 	private void setUnitTestforserial() {
-		setIp("192.168.58.64");
-		setPort(4003);
+		setIp("192.168.58.183");
+		setPort(4005);
 		setUserName("root");
 		setPassword("HeWGEUx66m=_4!ND");
 		setUserPrompt("#");
@@ -245,9 +245,9 @@ public class BasicAction extends Action {
 		String SUDO_COMMAND = "sudo su";
 		String LTECLI_COMMAND = "/bs/lteCli";
 		
-		/* Internal unittest only
-		 * setUnitTestforserial(); 
-		 */
+		/* Internal unittest only */
+//		 setUnitTestforserial(); 
+		 
 		
 		
 		try {
@@ -262,7 +262,13 @@ public class BasicAction extends Action {
 			if(userName == null){
 				GeneralUtils.startLevel("UserName cannot be empty");
 				isNull = true;
+			}else {
+				switch(userName) {
+					case "root": userPrompt = ROOT_PATTERN; break;
+					case "admin" : userPrompt = ADMIN_PATTERN; break;
+				}
 			}
+			
 			if(password == null){
 				GeneralUtils.startLevel("Password cannot be empty");
 				isNull = true;
@@ -294,6 +300,7 @@ public class BasicAction extends Action {
 		
 		LinkedPrompt user_login = new LinkedPrompt(LOGIN_PATTERN, true, userName, true);
 		LinkedPrompt user_password = new LinkedPrompt(PASSWORD_PATTERN, false, password, true);
+		
 		IPrompt sudo_switch = null;
 		
 		if(sudoRequired) {
@@ -327,7 +334,7 @@ public class BasicAction extends Action {
 		user_login.setLinkedPrompt(user_password);
 		
 		try {
-			
+			report.report("Login properties:\n" + user_login.toString());
 			conn_info = new ConnectionInfo("Serial", ip, port, userName, password, ConnectorTypes.Telnet);
 			report.report("Connection: " + conn_info.toString());
 			Terminal terminal = new Telnet(conn_info.host, conn_info.port);
@@ -335,7 +342,7 @@ public class BasicAction extends Action {
 			cli.setGraceful(true);
 			cli.setEnterStr("\n");
 			
-			GeneralUtils.startLevel("Connecting & loging in...");
+			GeneralUtils.startLevel("Reset session");
 			Thread.sleep(20);
 			cli.sendString(cli.getEnterStr(), false);
 			
@@ -356,10 +363,7 @@ public class BasicAction extends Action {
 					
 					break;
 			}
-			
-			report.report("Reset session completed");
-
-			Thread.sleep(500);
+			Thread.sleep(100);
 			report.report("Login properties:\n" + user_login.toString());
 			cli.login(sleepTime * 1000, user_login);
 			report.report("Login to serial completed");

@@ -233,7 +233,7 @@ public class BasicAction extends Action {
 	public static final String ROOT_PATTERN = "#";
 	public static final String LTECLI_PATTERN = "lte_cli:>>";
 	public static final String EXIT_COMMAND = "exit";
-	public static final String CntrC_COMMAND = "\\u0003";	
+	public static final String CntrC_COMMAND = "\u0003";	
 	
 	@Test
 	@TestProperties(name = "Send Commands To Serial", returnParam = "LastStatus", paramsInclude = { "Ip", "Port",

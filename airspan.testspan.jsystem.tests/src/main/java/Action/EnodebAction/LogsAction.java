@@ -121,6 +121,7 @@ public class LogsAction extends EnodebAction {
 			paramsInclude = {"DUTs", "Session", "LogLevel", "Processes", "Process", "Client"})
 	public void startEnodeBLogs() {
 		for (EnodeB eNodeB : duts) {
+			printToReportOpenLogDetails(eNodeB);
 			SessionManager sessionManager = eNodeB.getXLP().getSessionManager();
 			openLogSession(eNodeB, sessionManager);
 			setLogLevelAndProcessByName(eNodeB);
@@ -135,9 +136,44 @@ public class LogsAction extends EnodebAction {
 			paramsInclude = {"DUTs", "Session"})
 	public void stopEnodeBLogs() {
 		for (EnodeB eNodeB : duts) {
+			printToReportCloseLogDetails(eNodeB);
 			SessionManager sessionManager = eNodeB.getXLP().getSessionManager();
 			removeFromLoggedSession(eNodeB, sessionManager);
 			closeAndGenerateEnBLogFiles(eNodeB, eNodeB.getLoggers());
+		}
+	}
+
+	/**
+	 * Print To Report Log Details when opening log session
+	 *
+	 * @param eNodeB - eNodeB
+	 */
+	private void printToReportOpenLogDetails(EnodeB eNodeB) {
+		report.report("Opening Session:");
+		printToReportLogDetails(eNodeB);
+	}
+
+	/**
+	 * Print To Report Log Details when closing log session
+	 *
+	 * @param eNodeB - eNodeB
+	 */
+	private void printToReportCloseLogDetails(EnodeB eNodeB) {
+		report.report("Closing Session:");
+		printToReportLogDetails(eNodeB);
+	}
+
+	/**
+	 * Print To Report Log Details:
+	 * Session, EnodeB, Log Level, Processes: All or Process, Client.
+	 *
+	 * @param eNodeB - eNodeB
+	 */
+	private void printToReportLogDetails(EnodeB eNodeB) {
+		report.report("Log Session: " + session.value + ".For EnodeB: " + eNodeB.getName());
+		report.report("Log Level: " + logLevel.value + ". Processes: " + processes.value);
+		if (Processes.PARTICULAR_MODEL.value.equals(processes.value)) {
+			report.report("Process: " + process + ". Client: " + client);
 		}
 	}
 

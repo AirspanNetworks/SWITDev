@@ -1010,10 +1010,15 @@ public class P0 extends TestspanTest {
 						break;
 					}
 				}
-				if (!res)
-					report.report("The UE: " + ue.getLanIpAddress() + " [ " + ue.getImsi() + "] selected Plmn is "
-							+ selectedPlmn.show() + " and not " + ExpectedPLMNs.get(0) + " OR " + ExpectedPLMNs.get(1),
-							Reporter.FAIL);
+				if (!res) {
+					Plmn node0 = ExpectedPLMNs.get(0);
+					Plmn node1 = ExpectedPLMNs.get(1);
+					String ue_ip = ue.getLanIpAddress();
+					String ue_imsi = ue.getImsi();
+					String selectedPlmn_text = selectedPlmn.show();
+					report.report("The UE: " + ue_ip + " [ " + ue_imsi + "] selected Plmn is "
+							+ selectedPlmn_text + " and not " + node0 + " OR " + node1, Reporter.FAIL);
+				}
 			} else {
 				if (ExpectedPLMNs.get(0).equal(selectedPlmn))
 					report.report("The UE: " + ue.getLanIpAddress() + " [ " + ue.getImsi() + "] selected Plmn is "

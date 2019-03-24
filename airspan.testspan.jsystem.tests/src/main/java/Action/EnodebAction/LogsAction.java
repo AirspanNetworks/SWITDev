@@ -287,10 +287,16 @@ public class LogsAction extends EnodebAction {
 	private void removeFromLoggedSession(EnodeB eNodeB, SessionManager sessionManager) {
 		Logger logger = eNodeB.getXLP().getLogger();
 		synchronized (logger.lock) {
-			if (session == Session.SSH) {
-				logger.removeFromLoggedSessions(sessionManager.getSSHlogSession());
-			} else {
-				logger.removeFromLoggedSessions(sessionManager.getSerialSession());
+			switch (session) {
+				case SSH:
+					logger.removeFromLoggedSessions(sessionManager.getSSHlogSession());
+					break;
+				case SERIAL:
+					logger.removeFromLoggedSessions(sessionManager.getSerialSession());
+					break;
+				case BOTH:
+					logger.removeFromLoggedSessions(sessionManager.getSSHlogSession());
+					logger.removeFromLoggedSessions(sessionManager.getSerialSession());
 			}
 		}
 	}

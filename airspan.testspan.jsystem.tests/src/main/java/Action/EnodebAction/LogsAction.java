@@ -149,8 +149,9 @@ public class LogsAction extends EnodebAction {
 	 * @param eNodeB - eNodeB
 	 */
 	private void printToReportOpenLogDetails(EnodeB eNodeB) {
-		report.report("Opening Session:");
+		GeneralUtils.startLevel("Opening Session:");
 		printToReportLogDetails(eNodeB);
+		GeneralUtils.stopLevel();
 	}
 
 	/**
@@ -159,8 +160,9 @@ public class LogsAction extends EnodebAction {
 	 * @param eNodeB - eNodeB
 	 */
 	private void printToReportCloseLogDetails(EnodeB eNodeB) {
-		report.report("Closing Session:");
+		GeneralUtils.startLevel("Closing Session:");
 		printToReportLogDetails(eNodeB);
+		GeneralUtils.stopLevel();
 	}
 
 	/**
@@ -170,7 +172,7 @@ public class LogsAction extends EnodebAction {
 	 * @param eNodeB - eNodeB
 	 */
 	private void printToReportLogDetails(EnodeB eNodeB) {
-		report.report("Log Session: " + session.value + ".For EnodeB: " + eNodeB.getName());
+		report.report("Log Session: " + session.value + ". For EnodeB: " + eNodeB.getName());
 		report.report("Log Level: " + logLevel.value + ". Processes: " + processes.value);
 		if (Processes.PARTICULAR_MODEL.value.equals(processes.value)) {
 			report.report("Process: " + process + ". Client: " + client);
@@ -254,7 +256,7 @@ public class LogsAction extends EnodebAction {
 	 * @param logger      - logger
 	 */
 	private void startLogByName(String sessionName, Logger logger) {
-		logger.startLog(String.format("%s_%s", sessionName + LOG_ACTION, logger.getParent().getName()));
+		logger.startLog(sessionName + LOG_ACTION);
 	}
 
 	/**
@@ -264,7 +266,7 @@ public class LogsAction extends EnodebAction {
 	 * @param logger      - logger
 	 */
 	private void closeLogByName(String sessionName, Logger logger) {
-		logger.closeEnodeBLog(String.format("%s_%s", sessionName + LOG_ACTION, logger.getParent().getName()));
+		logger.closeEnodeBLog(sessionName + LOG_ACTION);
 	}
 
 	/**

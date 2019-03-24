@@ -391,7 +391,7 @@ public class BasicAction extends Action {
 				GeneralUtils.reportHtmlLink("Command " + serialCommand + " output", output_str);
 			}
 			
-			report.report(result_text, status);
+			report.report(result_text + "Output:\n" + output_str, status);
 			
 			
 		} catch (IOException e) {

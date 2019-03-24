@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 
@@ -11,6 +12,8 @@ import jsystem.framework.report.Reporter;
 import junit.framework.SystemTestCase4;
 
 public class Action extends SystemTestCase4 {
+	
+	protected String reason = StringUtils.EMPTY;
 	protected int actionID = 0;
 	protected String LastStatus = "";
 	public static final String DEFAULT_SOURCE_POM_PROPERTIES_FILE_NAME = "pom.properties";
@@ -31,6 +34,7 @@ public class Action extends SystemTestCase4 {
 	@After
 	public void end() {
 		setLastStatusRetParam();
+		printFailReasonToPropFile();
 	}
 
 	private void setLastStatusRetParam() {
@@ -143,4 +147,14 @@ public class Action extends SystemTestCase4 {
 		}
 		return version;
 	}
+	
+	/**
+     * Print Fail Reason To Prop File
+     */
+    private void printFailReasonToPropFile() {
+        if (!reason.isEmpty()) {
+            report.addProperty("failureReason", reason);
+            report.report("Fail reason: " + reason);
+        }
+    }
 }

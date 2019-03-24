@@ -90,7 +90,8 @@ public class Attenuator extends Action {
 		try {
 			attValue = Float.parseFloat(attenuatorValue);
 		} catch (Exception e) {
-			report.report("Failed to set value to attenuator!. Illigal value requested - " + attenuatorValue, Reporter.FAIL);
+			report.report("Failed to set value to attenuator!. Illegal value requested - " + attenuatorValue, Reporter.FAIL);
+			reason = "Failed to set value to attenuator!. Illegal value requested - " + attenuatorValue;
 			return;
 		}
 		AttenuatorSet attenuatorSetUnderTest = AttenuatorSet.getAttenuatorSet(attenuatorSetName);
@@ -106,12 +107,11 @@ public class Attenuator extends Action {
 		}
 		if (!success || attenuation != attValue) {
 			report.report("Set attenuator Failed", Reporter.FAIL);
+			reason = "Set attenuator Failed";
 		} else {
 			report.report("Set attenuator Succeeded");
 		}
 	}
-	
-	
 	
 	@Test
 	@TestProperties(name = "Move attenuator", returnParam = "LastStatus", paramsInclude = { "attenuatorSetName", "attenuatorMinValue", "attenuatorMaxValue", "attenuatorStep", "attenuatorStepTime", "totalTimeUnit", "totalTime" })
@@ -151,6 +151,7 @@ public class Attenuator extends Action {
 			GeneralUtils.printToConsole("totalTimeMilisec = " + totalTimeMilisec);
 		}catch (Exception e) {
 			report.report("Could not accept all of the parameters. " + e.getMessage(), Reporter.FAIL);
+			reason = "Could not accept all of the parameters. " + e.getMessage();
 			e.printStackTrace();
 			report.report("attenuatorSetName: " + attenuatorSetName + ", AttenuatorMinValue: " + attenuatorMinValue + ", attenuatorMaxValue: " + attenuatorMaxValue + ", attenuatorStep: " + attenuatorStep + ", attenuatorStepTime: " + attenuatorStepTime + ", attenuatorStepTime: " + totalTime);
 			return;

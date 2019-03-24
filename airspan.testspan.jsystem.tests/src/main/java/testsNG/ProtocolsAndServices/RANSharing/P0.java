@@ -996,7 +996,11 @@ public class P0 extends TestspanTest {
 			} else
 				report.report("The UE: " + ue.getLanIpAddress() + " [ " + ue.getImsi() + "] home Plmn is "
 						+ homePlmn.show() + " and not " + uePlmn.show(), Reporter.FAIL);
-			if (ExpectedPLMNs.size() > 1) {
+			
+			if (ExpectedPLMNs.size() == 0) {
+				report.report("PLMN configuration didn't read correctly", Reporter.WARNING);
+			}
+			else if (ExpectedPLMNs.size() > 1) {
 				boolean res = false;
 				for (Plmn tempPlmn : ExpectedPLMNs) {
 					if (tempPlmn.equal(selectedPlmn)) {

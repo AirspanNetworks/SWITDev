@@ -404,7 +404,7 @@ public class BasicAction extends Action {
 				cli.resetToPrompt(logout_sequence);
 				cli.close();
 			}
-			GeneralUtils.stopAllLevels();
+			GeneralUtils.stopLevel();
 		}
 	}
 		

@@ -89,7 +89,7 @@ public class LogsAction extends EnodebAction {
 		this.duts = (ArrayList<EnodeB>) SysObjUtils.getInstnce().initSystemObject(EnodeB.class, false, dut.split(","));
 	}
 
-	@ParameterProperties(description = "session for start log")
+	@ParameterProperties(description = "Log session to start \\ stop ")
 	public void setSession(Session session) {
 		this.session = session;
 	}
@@ -218,7 +218,7 @@ public class LogsAction extends EnodebAction {
 	 * @param logger      - logger
 	 */
 	private void startLogByName(String sessionName, Logger logger) {
-		logger.startLog(String.format("%s_%s", sessionName, logger.getParent().getName()));
+		logger.startLog(String.format("%s_%s", sessionName + LOG_ACTION, logger.getParent().getName()));
 	}
 
 	/**
@@ -262,7 +262,7 @@ public class LogsAction extends EnodebAction {
 		sessionManager.openSerialLogSession();
 		sessionManager.getSerialSession().setLoggedSession(true);
 		sessionManager.getSerialSession().setEnableCliBuffer(false);
-		return LOG_ACTION + sessionManager.getSerialSession().getName();
+		return sessionManager.getSerialSession().getName();
 	}
 
 	/**
@@ -275,7 +275,7 @@ public class LogsAction extends EnodebAction {
 		sessionManager.openSSHLogSession();
 		sessionManager.getSSHlogSession().setLoggedSession(true);
 		sessionManager.getSSHlogSession().setEnableCliBuffer(false);
-		return LOG_ACTION + sessionManager.getSSHlogSession().getName();
+		return sessionManager.getSSHlogSession().getName();
 	}
 
 	/**

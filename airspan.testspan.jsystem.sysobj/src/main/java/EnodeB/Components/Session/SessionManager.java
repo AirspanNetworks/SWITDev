@@ -8,7 +8,7 @@ import Utils.GeneralUtils;
 import Utils.Properties.TestspanConfigurationsManager;
 
 public class SessionManager {
-	public static final String CONSOLE_SESSION_NAME = "Serial";
+	public static final String SERIAL_SESSION_NAME = "Serial";
 	public static final String SSH_SESSION_NAME = "SSH";
 	public static final String SSH_LOG_SESSION_NAME = "SSHlogSession";
 	public static final String SSH_COMMANDS_SESSION_NAME = "CommandsSession";
@@ -91,7 +91,7 @@ public class SessionManager {
 	}
 
 	private synchronized boolean openSerialSession() {
-		Session newConsoleSession = new Session(getEnodeBComponent().getName() + "_" + CONSOLE_SESSION_NAME, getEnodeBComponent(), getEnodeBComponent().serialCom.getSerial(), serialLogLevel);
+		Session newConsoleSession = new Session(getEnodeBComponent().getName() + "_" + SERIAL_SESSION_NAME, getEnodeBComponent(), getEnodeBComponent().serialCom.getSerial(), serialLogLevel);
 		boolean ans = newConsoleSession.waitForSessionToConnect(SESSION_WAIT_TIMEOUT);
 		sessions.add(newConsoleSession);
 		setSerialSession(newConsoleSession);
@@ -144,7 +144,7 @@ public class SessionManager {
 
 	public void showLoginStatus() {
 		for (Session session : sessions) {
-			if (!session.getName().contains(CONSOLE_SESSION_NAME)) {
+			if (!session.getName().contains(SERIAL_SESSION_NAME)) {
 				session.showLoginStatus();
 			}			
 		}

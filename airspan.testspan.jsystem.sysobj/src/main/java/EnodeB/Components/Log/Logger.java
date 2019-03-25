@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 
 import jsystem.framework.report.Reporter;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 
 import EnodeB.Components.EnodeBComponent;
@@ -18,7 +19,7 @@ import Utils.Properties.TestspanConfigurationsManager;
 
 public class Logger implements Runnable {
 	public final Object lock = new Object();
-	private static final String LOG_INTERVAL_PROPERTY_NAME           = "logger.logInterval"; // value in milliseconds.
+	private static final String LOG_INTERVAL_PROPERTY_NAME = "logger.logInterval"; // value in milliseconds.
 
 	//eventId for the logger events
 	private static int eventID = 0;
@@ -372,9 +373,24 @@ public class Logger implements Runnable {
 	}
 
 	/**
+	 * Add new files to be logged- logWriterEnb
+	 * This method will add a file for the <b>console</b>
+	 *
+	 * @param logName - logName
+	 */
+	public void startEnodeBLog(String logName) {
+		System.out.printf("[%s]: Creating log files. \n", name);
+		if (getLoggedSessions().size() < 1)
+			System.err.printf("[%s]: There are no log needed for this. Not creating any log files. \n", name);
+		else {
+			logWriterEnb.addLog(logName, StringUtils.EMPTY);
+		}
+	}
+
+	/**
 	 * Closes the log files that contains the logName and copies them to the test folder via the reporter.
 	 *
-	 * @param logName
+	 * @param logName - logName
 	 */
 	public void closeEnodeBLog(String logName) {
 		logWriterEnb.closeLog(logName);
@@ -383,7 +399,7 @@ public class Logger implements Runnable {
 	/**
 	 * Closes the log files that contains the logName and copies them to the test folder via the reporter.
 	 *
-	 * @param logName
+	 * @param logName - logName
 	 */
 	public void closeAutoLog(String logName) {
 		logWriterAuto.closeLog(logName);
@@ -396,6 +412,7 @@ public class Logger implements Runnable {
 
 	/**
 	 * Get the parent component of the logger
+	 *
 	 * @return
 	 */
 	public EnodeBComponent getParent() {
@@ -405,6 +422,7 @@ public class Logger implements Runnable {
 
 	/**
 	 * Get the reporter instance the logger uses.
+	 *
 	 * @return
 	 */
 	public Reporter getReporter() {

@@ -16,11 +16,11 @@ import java.util.HashMap;
 public class LogsAction extends EnodebAction {
 
 	private ArrayList<EnodeB> duts;
-	protected Session session;
+	private Session session;
 	private LogLevel logLevel = LogLevel.SIX;
 	private Processes processes = Processes.ALL;
-	protected String process;
-	protected String client;
+	private String process;
+	private String client;
 	private static final String LOG_ACTION = "_LogAction";
 	private static final String ACTION_NAME_STRING = "startEnodeBLogs";
 	private static final String PROCESS_STRING = "Process";
@@ -36,7 +36,7 @@ public class LogsAction extends EnodebAction {
 		ALL("All"),
 		PARTICULAR_MODEL("Particular Model");
 
-		public String value;
+		final String value;
 
 		Processes(String value) {
 			this.value = value;
@@ -51,7 +51,7 @@ public class LogsAction extends EnodebAction {
 		SERIAL("Serial"),
 		BOTH("SSH+Serial");
 
-		String value;
+		final String value;
 
 		Session(String value) {
 			this.value = value;
@@ -69,7 +69,7 @@ public class LogsAction extends EnodebAction {
 		FIVE(5),
 		SIX(6);
 
-		int value;
+		final int value;
 
 		LogLevel(int value) {
 			this.value = value;
@@ -219,14 +219,14 @@ public class LogsAction extends EnodebAction {
 	private void startLogs(Logger logger) {
 		switch (session) {
 			case SSH:
-				startLogByName(sshSessionName, logger);
+				logger.startEnodeBLog(sshSessionName);
 				break;
 			case SERIAL:
-				startLogByName(serialSessionName, logger);
+				logger.startEnodeBLog(serialSessionName);
 				break;
 			case BOTH:
-				startLogByName(sshSessionName, logger);
-				startLogByName(serialSessionName, logger);
+				logger.startEnodeBLog(sshSessionName);
+				logger.startEnodeBLog(serialSessionName);
 		}
 	}
 
@@ -238,35 +238,15 @@ public class LogsAction extends EnodebAction {
 	private void closeLogs(Logger logger) {
 		switch (session) {
 			case SSH:
-				closeLogByName(sshSessionName, logger);
+				logger.closeEnodeBLog(sshSessionName);
 				break;
 			case SERIAL:
-				closeLogByName(serialSessionName, logger);
+				logger.closeEnodeBLog(serialSessionName);
 				break;
 			case BOTH:
-				closeLogByName(sshSessionName, logger);
-				closeLogByName(serialSessionName, logger);
+				logger.closeEnodeBLog(sshSessionName);
+				logger.closeEnodeBLog(serialSessionName);
 		}
-	}
-
-	/**
-	 * Start log by session name
-	 *
-	 * @param sessionName - logName
-	 * @param logger      - logger
-	 */
-	private void startLogByName(String sessionName, Logger logger) {
-		logger.startLog(sessionName + LOG_ACTION);
-	}
-
-	/**
-	 * Close the log files that contains the logName and copy them to the test folder via the reporter.
-	 *
-	 * @param sessionName - logName
-	 * @param logger      - logger
-	 */
-	private void closeLogByName(String sessionName, Logger logger) {
-		logger.closeEnodeBLog(sessionName + LOG_ACTION);
 	}
 
 	/**
@@ -293,27 +273,27 @@ public class LogsAction extends EnodebAction {
 	 *
 	 * @param enodeB         - enodeB
 	 * @param sessionManager - enodeB
-	 * @return - LOG_ACTION prefix + ssh session Name
+	 * @return - ssh session Name + LOG_ACTION suffix
 	 */
 	private String openSerialSession(EnodeB enodeB, SessionManager sessionManager) {
 		enodeB.getXLP().initSerialCom();
 		sessionManager.openSerialLogSession();
 		sessionManager.getSerialSession().setLoggedSession(true);
 		sessionManager.getSerialSession().setEnableCliBuffer(false);
-		return sessionManager.getSerialSession().getName();
+		return sessionManager.getSerialSession().getName() + LOG_ACTION;
 	}
 
 	/**
 	 * Open SSH Session, define name, set log session flag
 	 *
 	 * @param sessionManager - sessionManager
-	 * @return - LOG_ACTION prefix + serial session Name
+	 * @return - serial session Name + LOG_ACTION suffix
 	 */
 	private String openSSHSession(SessionManager sessionManager) {
 		sessionManager.openSSHLogSession();
 		sessionManager.getSSHlogSession().setLoggedSession(true);
 		sessionManager.getSSHlogSession().setEnableCliBuffer(false);
-		return sessionManager.getSSHlogSession().getName();
+		return sessionManager.getSSHlogSession().getName() + LOG_ACTION;
 	}
 
 	/**

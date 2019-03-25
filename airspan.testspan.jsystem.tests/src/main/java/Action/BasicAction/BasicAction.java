@@ -215,17 +215,38 @@ public class BasicAction extends Action {
 	}
 	
 	private void setUnitTestforserial() {
-		setIp("192.168.58.183");
-		setPort(4005);
+		setIp("192.168.58.12");
+		setPort(4004);
 		setUserName("root");
 		setPassword("HeWGEUx66m=_4!ND");
 //		setUserPrompt("#");
 		setSerialCommand("ls -la /");
 		setSudoRequired(false);
 		setLteCliRequired(false);
+		setSleepTime(20);
 		
 	}
 	
+	private static void resetSerialSession(ExtendCLI session) throws Exception {
+		session.sendString("\n", false);
+		Thread.sleep(20);
+		session.sendString("\n", false);
+		Thread.sleep(20);
+		session.sendString("\n", false);
+		Thread.sleep(20);
+		session.sendString(CntrC_COMMAND + session.getEnterStr(), false);
+		Thread.sleep(20);
+		session.sendString("\n", false);
+		Thread.sleep(20);
+		session.sendString(EXIT_COMMAND + session.getEnterStr(), false);
+		Thread.sleep(20);
+		session.sendString("\n", false);
+		Thread.sleep(20);
+		session.sendString(CntrC_COMMAND + session.getEnterStr(), false);
+		Thread.sleep(20);
+		session.sendString("\n", false);
+		Thread.sleep(20);
+	}
 	
 	public static final String LOGIN_PATTERN = "login:";
 	public static final String PASSWORD_PATTERN = "Password:";
@@ -248,7 +269,6 @@ public class BasicAction extends Action {
 		/* Internal unittest only */
 //		 setUnitTestforserial(); 
 		 
-		
 		
 		try {
 			if(ip == null){
@@ -295,7 +315,7 @@ public class BasicAction extends Action {
 		IPrompt user_logout = new LinkedPrompt(userPrompt, false, EXIT_COMMAND, true, logged_out);
 		IPrompt password_reset = new LinkedPrompt(PASSWORD_PATTERN, false, CntrC_COMMAND, true, logged_out);
 		IPrompt sudo_logout = new LinkedPrompt(ROOT_PATTERN, false, EXIT_COMMAND, true, user_logout);
-		IPrompt ltecli_logout = new LinkedPrompt(LTECLI_PATTERN, false, CntrC_COMMAND, true, sudo_logout);
+		IPrompt ltecli_logout = new LinkedPrompt(LTECLI_PATTERN, false, CntrC_COMMAND, true);
 		
 		
 		LinkedPrompt user_login = new LinkedPrompt(LOGIN_PATTERN, true, userName, true);
@@ -323,7 +343,9 @@ public class BasicAction extends Action {
 			if(lteCliRequired) {
 				LinkedPrompt lte_cli_switch = new LinkedPrompt(ROOT_PATTERN, false, LTECLI_COMMAND, true, new Prompt(LTECLI_PATTERN, false, true));
 				user_password.setLinkedPrompt(lte_cli_switch);
+				((LinkedPrompt)ltecli_logout).setLinkedPrompt(user_logout);
 				logout_sequence = ltecli_logout;
+				
 			}
 			else {
 				user_password.setLinkedPrompt(new Prompt(userPrompt, false, true));
@@ -341,10 +363,11 @@ public class BasicAction extends Action {
 			cli = new ExtendCLI(terminal);
 			cli.setGraceful(true);
 			cli.setEnterStr("\n");
-			
-			GeneralUtils.startLevel("Reset session");
-			Thread.sleep(20);
 			cli.sendString(cli.getEnterStr(), false);
+			GeneralUtils.startLevel("Reset session");
+			resetSerialSession(cli);
+		
+			Thread.sleep(20);
 			
 			cli.addPrompts(
 					new Prompt(userPrompt, false, true), 
@@ -354,18 +377,27 @@ public class BasicAction extends Action {
 			
 			IPrompt current_pr = cli.getCurrentPrompt();
 			
-			switch (current_pr.getPrompt()) {
-				case ROOT_PATTERN: cli.resetToPrompt(sudo_logout); break;
-				case ADMIN_PATTERN: cli.resetToPrompt(user_logout); break;
-				case LTECLI_PATTERN: cli.resetToPrompt(ltecli_logout); break;
-				case PASSWORD_PATTERN: cli.resetToPrompt(password_reset);break;
-				default:
-					
-					break;
-			}
+//			switch (current_pr.getPrompt()) {
+//				case ROOT_PATTERN: cli.resetToPrompt(sudo_logout); break;
+//				case ADMIN_PATTERN: cli.resetToPrompt(user_logout); break;
+//				case LTECLI_PATTERN: cli.resetToPrompt(ltecli_logout); break;
+//				case PASSWORD_PATTERN: cli.resetToPrompt(password_reset);break;
+//				default:
+//					
+//					break;
+//			}
+//			
+//			current_pr = cli.getCurrentPrompt();
+			report.report("Session reset to prompt: " + current_pr.getPrompt());
+			
 			Thread.sleep(100);
 			report.report("Login properties:\n" + user_login.toString());
 			cli.login(sleepTime * 1000, user_login);
+			
+			current_pr = cli.getCurrentPrompt(3);
+			if(current_pr.getPrompt() != user_login.getFinalPrompt().getPrompt()) {
+				throw new IOException("Shell stay in wrong prompt (Prompt: '" + current_pr.getPrompt() + "')");
+			}
 			report.report("Login to serial completed");
 			GeneralUtils.stopLevel();
 			
@@ -391,11 +423,11 @@ public class BasicAction extends Action {
 				GeneralUtils.reportHtmlLink("Command " + serialCommand + " output", output_str);
 			}
 			
-			report.report(result_text, status);
+			report.report(result_text + "Output:\n" + output_str, status);
 			
 			
 		} catch (IOException e) {
-			report.report(e.getLocalizedMessage(), Reporter.FAIL);
+			report.report(e.getMessage(), Reporter.FAIL);
 		} catch (Exception e) {
 			report.report(e.getMessage(), Reporter.FAIL);
 		}
@@ -404,7 +436,7 @@ public class BasicAction extends Action {
 				cli.resetToPrompt(logout_sequence);
 				cli.close();
 			}
-			GeneralUtils.stopAllLevels();
+			GeneralUtils.stopLevel();
 		}
 	}
 		

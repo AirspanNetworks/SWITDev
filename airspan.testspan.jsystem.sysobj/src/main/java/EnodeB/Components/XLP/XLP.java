@@ -2322,15 +2322,25 @@ public abstract class XLP extends EnodeBComponent {
     }
 
     public ArrayList<Plmn> getConfiguredPLMNList() {
-        ArrayList<Plmn> plmns = new ArrayList<>();
+    	ArrayList<Plmn> plmns = new ArrayList<>();
         String mccOID = MibReader.getInstance().resolveByName("asLteStkPlmnCfgMcc");
         String mncOID = MibReader.getInstance().resolveByName("asLteStkPlmnCfgMnc");
-
+        
+        report.report("PLMN MCC OID Snmpwalk: " + mccOID);
         HashMap<String, Variable> mccWalk = this.snmp.SnmpWalk(mccOID);
-        HashMap<String, Variable> mncWalk = this.snmp.SnmpWalk(mncOID);
         Object[] mccs = mccWalk.values().toArray();
+        
+        report.report("PLMN MNC OID Snmpwalk: " + mncOID);
+        HashMap<String, Variable> mncWalk = this.snmp.SnmpWalk(mncOID);
         Object[] mncs = mncWalk.values().toArray();
 
+        if(mncs.length != mccs.length) {
+        	report.report("PLMN MCCS oid: "+ mccOID + " - length " + mccs.length);
+        	report.report("PLMN MNCS oid: "+ mncOID + " - length " + mccs.length);
+        	report.report("PLMN MCC & MNC Snmpwalk return different results:", Reporter.WARNING);
+        	return plmns;
+        }
+        
         for (int i = 0; i < mccs.length; i++) {
             Plmn temp = new Plmn();
             String[] hexArraymcc = mccs[i].toString().split(":");
@@ -2340,7 +2350,6 @@ public abstract class XLP extends EnodeBComponent {
             temp.setMCC(mcc);
             temp.setMNC(mnc);
             plmns.add(temp);
-
         }
         return plmns;
 

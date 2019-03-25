@@ -157,4 +157,9 @@ public class Prompt implements IPrompt {
 		res.append(String.format("; is final shell: '%s'", this.isCommandEnd()));
 		return res.toString();
     }
+
+	@Override
+	public IPrompt getFinalPrompt() {
+		return this;
+	}
 }

@@ -212,7 +212,10 @@ public class ExtendCLI extends Cli {
 	
 	public IPrompt getCurrentPrompt() throws Exception {
 		if(resultPrompt == null)
-			sendString("\n", true);
+//			sendString("\n", true);
+//		
+//			String input_buffer = read();
+//			System.out.print(input_buffer);
 			resultPrompt = waitWithGrace(500);
 		return resultPrompt;
 	}

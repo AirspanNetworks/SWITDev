@@ -69,4 +69,14 @@ public class LinkedPrompt extends Prompt implements IPrompt {
 		
 		return res.toString();
 	}
+	
+	@Override
+	public IPrompt getFinalPrompt() {
+		if(linked_prompt != null) {
+			return linked_prompt.getFinalPrompt();
+		}
+		
+		return super.getFinalPrompt();
+	}
+	
 }

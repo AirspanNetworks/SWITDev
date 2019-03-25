@@ -24,5 +24,6 @@ public abstract class InOutInputStream extends InputStream {
 			in.close();
 		}
 	}
-
+	
+	
 }

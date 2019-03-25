@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -64,6 +65,16 @@ public abstract class Terminal {
 		return new String(bytes);
 	}
 
+	public static String readToEnd(InputStream in) throws IOException {
+      byte[] b = new byte[1024];
+      int n;
+      StringBuilder sb = new StringBuilder();
+      while ((n = in.read(b)) >= 0) {
+         sb.append(b);
+      }
+      return sb.toString();
+   }
+	
     public synchronized void addRemark(String remark){
         result.append(remark);
     }

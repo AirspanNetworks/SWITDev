@@ -996,7 +996,11 @@ public class P0 extends TestspanTest {
 			} else
 				report.report("The UE: " + ue.getLanIpAddress() + " [ " + ue.getImsi() + "] home Plmn is "
 						+ homePlmn.show() + " and not " + uePlmn.show(), Reporter.FAIL);
-			if (ExpectedPLMNs.size() > 1) {
+			
+			if (ExpectedPLMNs.size() == 0) {
+				report.report("PLMN configuration didn't read correctly", Reporter.WARNING);
+			}
+			else if (ExpectedPLMNs.size() > 1) {
 				boolean res = false;
 				for (Plmn tempPlmn : ExpectedPLMNs) {
 					if (tempPlmn.equal(selectedPlmn)) {
@@ -1006,10 +1010,21 @@ public class P0 extends TestspanTest {
 						break;
 					}
 				}
-				if (!res)
-					report.report("The UE: " + ue.getLanIpAddress() + " [ " + ue.getImsi() + "] selected Plmn is "
-							+ selectedPlmn.show() + " and not " + ExpectedPLMNs.get(0) + " OR " + ExpectedPLMNs.get(1),
-							Reporter.FAIL);
+				
+				if (!res) {
+					if(ExpectedPLMNs.size() == 0) {
+						report.report("ExpectedPLMNs are empty", Reporter.FAIL);
+					}
+					else {
+						Plmn node0 = ExpectedPLMNs.get(0);
+						Plmn node1 = ExpectedPLMNs.get(1);
+						String ue_ip = ue.getLanIpAddress();
+						String ue_imsi = ue.getImsi();
+						String selectedPlmn_text = selectedPlmn.show();
+						report.report("The UE: " + ue_ip + " [ " + ue_imsi + "] selected Plmn is "
+								+ selectedPlmn_text + " and not " + node0 + " OR " + node1, Reporter.FAIL);
+					}
+				}
 			} else {
 				if (ExpectedPLMNs.get(0).equal(selectedPlmn))
 					report.report("The UE: " + ue.getLanIpAddress() + " [ " + ue.getImsi() + "] selected Plmn is "

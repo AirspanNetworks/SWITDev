@@ -1364,6 +1364,7 @@ public class TPTBase extends TestspanTest {
 		if (ul_Divided_With_Number_Of_Streams < ulPassCriteria) {
 			report.report("UL : Expected: " + calcUpRate + "[Mbps] , Actual : "
 					+ ul_Divided_With_Number_Of_Streams + "[Mbps]", Reporter.FAIL);
+			reason += "Exp UL: " + calcUpRate + " Mbps" + ". Act UL: "+upRate+" Mbps<br>";
 		} else {
 			report.report("UL : Expected: " + calcUpRate + "[Mbps] , Actual : "
 					+ ul_Divided_With_Number_Of_Streams + "[Mbps]");
@@ -1372,12 +1373,11 @@ public class TPTBase extends TestspanTest {
 		if (dl_Divided_With_Number_Of_Streams < dlPassCriteria) {
 			report.report("DL : Expected: " + calcDownRate + "[Mbps], Actual : "
 					+ dl_Divided_With_Number_Of_Streams + "[Mbps]", Reporter.FAIL);
+			reason += "Exp DL: " + calcDownRate + " Mbps" + ". Act DL: "+downRate+" Mbps";
 		} else {
 			report.report("DL : Expected: " + calcDownRate + "[Mbps], Actual : "
 					+ dl_Divided_With_Number_Of_Streams + "[Mbps]");
 		}
-		reason = "Exp - UL: " + calcUpRate + "Mbps" + " DL: " + calcDownRate + "Mbps<br>";
-		reason += "Act - UL: " + upRate + "Mbps" + " DL: " + downRate + "Mbps";
 
 		String dlulCalc = getCalculatorPassCriteriaOnlyXml(radioParams);
 		

@@ -5,7 +5,9 @@ import java.util.regex.Pattern;
 public interface IPrompt {
 
 	String getPrompt();
-
+	
+	IPrompt getFinalPrompt();
+	
 	void setPrompt(String prompt);
 
 	boolean isRegularExpression();

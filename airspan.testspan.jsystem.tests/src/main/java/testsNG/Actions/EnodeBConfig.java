@@ -1100,7 +1100,7 @@ public class EnodeBConfig {
 	private String readParamFromHwProductsTableViaShell(EnodeB enb, String param,String productCode) {
 		String[] str = enb.shell("grep " + param + " /bs/data/hwProducts").split(",");
 		for (int i = 0; i < str.length; i++) {
-			if (str[i].equals(param)) {
+			if (str[i].contains(param)) {
 				int index = i;
 				String value = enb.shell("grep " + productCode + " /bs/data/hwProducts")
 						.split(",")[index];

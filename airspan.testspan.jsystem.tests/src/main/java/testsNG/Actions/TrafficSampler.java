@@ -89,8 +89,8 @@ public class TrafficSampler implements Runnable{
 				report.report("No results available for DL traffic", Reporter.FAIL);
 			}
 		}
-		TPTBase.createHTMLTableWithResults(ul_Divided_With_Number_Of_Streams, (ULExpected==null?0:ULExpected), dl_Divided_With_Number_Of_Streams,
-				(DLExpected==null?0:DLExpected), (dlLoad==null?0:dlLoad), (ulLoad==null?0:ulLoad), null);
+		TPTBase.createHTMLTableWithResults(ul_Divided_With_Number_Of_Streams, ULExpected, dl_Divided_With_Number_Of_Streams,
+				DLExpected, dlLoad, ulLoad, null);
 	}
 
 	private ArrayList<Long> getUlDlResultsFromList(Long uLrxTotal, Long dlrxTotal,

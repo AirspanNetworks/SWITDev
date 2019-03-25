@@ -546,16 +546,16 @@ public abstract class XLP extends EnodeBComponent {
      */
     @Override
     public void setSessionLogLevel(String sessionName, int level) {
-        sendCommandsOnSession(sessionName, LTE_CLI_PROMPT, "logger threshold set client=* process=* cli=" + level, LTE_CLI_PROMPT);
+        sendCommandsOnSession(sessionName, LTE_CLI_PROMPT, "logger threshold set client=* process=* cli=" + String.valueOf(level), LTE_CLI_PROMPT);
 
     }
 
     public void setSessionLogLevel(String client, String process, int level) {
-        sendCommandsOnSession(SessionManager.SSH_SESSION_NAME, LTE_CLI_PROMPT, String.format("logger threshold set client=%s process=%s cli=%s", client, process, level), LTE_CLI_PROMPT);
+        sendCommandsOnSession(SessionManager.SSH_SESSION_NAME, LTE_CLI_PROMPT, String.format("logger threshold set client=%s process=%s cli=%s", client, process, String.valueOf(level)), LTE_CLI_PROMPT);
     }
 
     public void setSessionLogLevel(String sessionName,String client, String process, int level) {
-        sendCommandsOnSession(sessionName, LTE_CLI_PROMPT, String.format("logger threshold set client=%s process=%s cli=%s", client, process, level), LTE_CLI_PROMPT);
+        sendCommandsOnSession(sessionName, LTE_CLI_PROMPT, String.format("logger threshold set client=%s process=%s cli=%s", client, process, String.valueOf(level)), LTE_CLI_PROMPT);
     }
 
     /**

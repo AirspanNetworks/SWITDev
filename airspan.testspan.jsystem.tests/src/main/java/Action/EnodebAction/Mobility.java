@@ -259,6 +259,7 @@ public class Mobility extends EnodebAction {
 
 		if (!flag) {
 			report.report("Clone and Set Mobility Profile Failed", Reporter.FAIL);
+			reason = "Clone and Set Mobility Profile Failed";
 		}
 	}
 

@@ -36,6 +36,7 @@ public class Network extends EnodebAction {
 		}catch(Exception e){
 			e.printStackTrace();
 			report.report("No Eson server tag was found in SUT",Reporter.FAIL);
+			reason = "No Eson server tag was found in SUT";
 			return;
 		}
 		report.report("Configuring Eson server "+esonServer.getServerIp()+" (update network profile)");
@@ -44,6 +45,7 @@ public class Network extends EnodebAction {
 		
 		if (!enodeBConfig.updateNetworkProfile(dut, network)) {
 			report.report("Failed to configure Eson server", Reporter.FAIL);
+			reason = "Failed to configure Eson server";
 		} else {
 			report.report("Configuration done");
 		}
@@ -59,6 +61,7 @@ public class Network extends EnodebAction {
 		} catch (Exception e) {
 			e.printStackTrace();
 			report.report("No IPG tag was found in SUT",Reporter.FAIL);
+			reason = "No IPG tag was found in SUT";
 			return;
 		}
 		report.report("Configuring IPG address "+ipg.getFakeIP()+" as second MME (update network profile)");
@@ -69,6 +72,7 @@ public class Network extends EnodebAction {
 		
 		if (!enodeBConfig.updateNetworkProfile(dut, network)) {
 			report.report("Failed to configure IPG", Reporter.FAIL);
+			reason = "Failed to configure IPG";
 		} else {
 			report.report("Configuration done");
 		}

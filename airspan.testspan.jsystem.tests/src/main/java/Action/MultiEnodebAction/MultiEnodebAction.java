@@ -73,10 +73,12 @@ public class MultiEnodebAction extends EnodebAction {
 	public void init() {
         if (enodeB == null){
         	report.report("DUT1 is not loaded",Reporter.FAIL);
+        	reason = "DUT1 is not loaded";
         	Assume.assumeTrue(false);        	
         }
 		if (neighbor == null){
 			report.report("DUT2 is not loaded",Reporter.FAIL);
+			reason = "DUT2 is not loaded";
 			Assume.assumeTrue(false);			
 		}
 		enbInTest = new ArrayList<>();
@@ -91,6 +93,7 @@ public class MultiEnodebAction extends EnodebAction {
 	public void startHO() {
 		if(isStartedHO()){
 			report.report("HO has already been started and cannot be started again", Reporter.FAIL);
+			reason = "HO has already been started and cannot be started again";
 			return;
 		}
 		if(timeToHO == null){
@@ -101,6 +104,7 @@ public class MultiEnodebAction extends EnodebAction {
 		setCounters();
 		if (!gettingPassCratiriaValue()) {
 			report.report("Failed to reset counters", Reporter.FAIL);
+			reason = "Failed to reset counters";
 			return;
 		}
 		report.report("Number of dynamic UES: "+dynUEList.size());
@@ -115,6 +119,7 @@ public class MultiEnodebAction extends EnodebAction {
 	public void getStatisticsHO() {
 		if(!isStartedHO()){
 			report.report("Hand Over was not started. No results", Reporter.FAIL);
+			reason = "Hand Over was not started. No results";
 		}else{
 			while(true){
 				if(isFinishedHO()){
@@ -248,6 +253,7 @@ public class MultiEnodebAction extends EnodebAction {
 				GeneralUtils.startLevel("Number of attempts out of real attenuator moves is: "
 						+ new DecimalFormat("##.##").format(theoreticalAttempts) + "%");
 				report.report("Number of attempts is less then 60%", Reporter.FAIL);
+				reason = "Number of attempts is less then 60%";
 				report.report("Number of attempts / attenuator moves");
 				GeneralUtils.stopLevel();
 			} else {
@@ -269,9 +275,9 @@ public class MultiEnodebAction extends EnodebAction {
 				report.report("SNMP MIB: " + counterSuccesssnmp + " On Both EnodeBs / SNMP MIB: " + counterAttemptsnmp
 						+ " On Both EnodeBs");
 				if (total_HO_Success_rate_out_of_attempts < WARNING_LEVEL) {
-					report.report(
-							"Success rate lower then Threshold (" + GeneralUtils.fractureToPercent(PASS_LEVEL) + ")",
+					report.report("Success rate lower then Threshold (" + GeneralUtils.fractureToPercent(PASS_LEVEL) + ")",
 							Reporter.FAIL);
+					reason = "Success rate lower then Threshold (" + GeneralUtils.fractureToPercent(PASS_LEVEL) + ")";
 				}
 				if (total_HO_Success_rate_out_of_attempts > WARNING_LEVEL
 						&& total_HO_Success_rate_out_of_attempts < PASS_LEVEL) {

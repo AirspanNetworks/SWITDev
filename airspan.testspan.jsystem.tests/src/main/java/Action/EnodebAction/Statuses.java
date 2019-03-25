@@ -157,6 +157,7 @@ public class Statuses extends EnodebAction{
 			}
 			else{
 				report.report("the expected value: " + stringEexpectedValue + " does not equals to the value from enodeB (" + value + ")", Reporter.FAIL);
+				reason = "the expected value: " + stringEexpectedValue + " does not equals to the value from enodeB (" + value + ")";
 				return false;
 			}
 				
@@ -164,6 +165,7 @@ public class Statuses extends EnodebAction{
 		else {
 			if (boolValue == booleanExpectedValue){
 				report.report("the expected value: " + stringEexpectedValue + " equals to the value from enodeB (" + value + ")", Reporter.FAIL);
+				reason = "the expected value: " + stringEexpectedValue + " equals to the value from enodeB (" + value + ")";
 				return false;
 			}
 				
@@ -187,12 +189,14 @@ public class Statuses extends EnodebAction{
 			}
 			else{
 				report.report("the expected value: " + stringEexpectedValue + " does not equals to the value from enodeB (" + value + ")", Reporter.FAIL);
+				reason = "the expected value: " + stringEexpectedValue + " does not equals to the value from enodeB (" + value + ")";
 				return false;
 			}	
 		}
 		else {
 			if (value.equals(stringEexpectedValue)){
 				report.report("the expected value: " + stringEexpectedValue + " equals to the value from enodeB (" + value + ")", Reporter.FAIL);
+				reason = "the expected value: " + stringEexpectedValue + " equals to the value from enodeB (" + value + ")";
 				return false;
 			}		
 			else{
@@ -219,6 +223,7 @@ public class Statuses extends EnodebAction{
 				
 			else{
 				report.report("the expected value: " + stringEexpectedValue + " does not equals to the value from enodeB (" + value + ")", Reporter.FAIL);
+				reason = "the expected value: " + stringEexpectedValue + " does not equals to the value from enodeB (" + value + ")";
 				return false;
 			}
 				
@@ -226,6 +231,7 @@ public class Statuses extends EnodebAction{
 		else {
 			if (enumValue == enumExpectedValue.ACTIVE){
 				report.report("the expected value: " + stringEexpectedValue + " equals to the value from enodeB (" + value + ")", Reporter.FAIL);
+				reason = "the expected value: " + stringEexpectedValue + " equals to the value from enodeB (" + value + ")";
 				return false;
 			}
 				

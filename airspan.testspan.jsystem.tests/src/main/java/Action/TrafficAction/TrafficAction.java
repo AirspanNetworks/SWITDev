@@ -288,6 +288,7 @@ public class TrafficAction extends Action {
 		trafficManagerInstance = TrafficManager.getInstance(null);
 		if (trafficManagerInstance == null) {
 			report.report("Failed to init traffic manager instance", Reporter.FAIL);
+			reason = "Failed to init traffic manager instance";
 			return;
 		}
 		if (trafficToGetStatistics == null) {
@@ -303,6 +304,7 @@ public class TrafficAction extends Action {
 		trafficManagerInstance = TrafficManager.getInstance(null);
 		if (trafficManagerInstance == null) {
 			report.report("Failed to init traffic manager instance", Reporter.FAIL);
+			reason = "Failed to init traffic manager instance";
 			return;
 		}
 		if (trafficToStop == null) {
@@ -331,16 +333,19 @@ public class TrafficAction extends Action {
 	private boolean validateStreams() {
 		if (trafficManagerInstance.checkIfNameExist(semanticName)) {
 			report.report("Action failed - trying to run traffic with a semantic name already running", Reporter.FAIL);
+			reason = "Action failed - trying to run traffic with a semantic name already running";
 			return false;
 		}
 
 		if (!trafficManagerInstance.checkGeneratorType(generatorType)) {
+			reason = "Can not start traffic with different generator type from before";
 			return false;
 		}
 
 		toCheck = convertToStreamStrings(ues, qci, transmitDirection, trafficType);
 		if (trafficManagerInstance.checkIfStreamsExist(toCheck)) {
 			report.report("Action failed - trying to run traffic on a stream already running", Reporter.FAIL);
+			reason = "Action failed - trying to run traffic on a stream already running";
 			return false;
 		}
 		return true;
@@ -387,6 +392,8 @@ public class TrafficAction extends Action {
 		if (trafficType == Protocol.TCP && generatorType == GeneratorType.STC) {
 			report.report("Traffic type " + trafficType.toString() + " is not compatible with generator type "
 					+ generatorType.toString(), Reporter.FAIL);
+			reason = "Traffic type " + trafficType.toString() + " is not compatible with generator type "
+					+ generatorType.toString();
 			return false;
 		}
 		if (ues == null) {
@@ -394,10 +401,12 @@ public class TrafficAction extends Action {
 		}
 		if (qci == null) {
 			report.report("No QCIs were configured", Reporter.FAIL);
+			reason = "No QCIs were configured";
 			return false;
 		}
 		if (semanticName == null) {
 			report.report("No name was configured", Reporter.FAIL);
+			reason = "No name was configured";
 			return false;
 		}
 		if (runTime != null) {
@@ -412,6 +421,7 @@ public class TrafficAction extends Action {
 
 		if (trafficManagerInstance == null) {
 			report.report("Generator type was not found in SUT", Reporter.FAIL);
+			reason = "Generator type was not found in SUT";
 			return false;
 		}
 		report.report("Semantic name: " + semanticName);

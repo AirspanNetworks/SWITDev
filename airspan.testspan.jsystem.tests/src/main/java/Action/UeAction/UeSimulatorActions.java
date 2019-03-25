@@ -139,6 +139,7 @@ public class UeSimulatorActions extends Action {
 		
 		if (!res) {
 			report.report("Adding UEs Failed", Reporter.FAIL);
+			reason = "Adding UEs Failed";
 		} else {
 			report.report("Adding UEs Succeeded");
 		}
@@ -175,6 +176,7 @@ public class UeSimulatorActions extends Action {
 
 		if (!flag) {
 			report.report("Add UEs Failed", Reporter.FAIL);
+			reason = "Add UEs Failed";
 			return  false;
 		} else {
 			report.report("Add UEs Succeeded");
@@ -211,6 +213,7 @@ public class UeSimulatorActions extends Action {
 
 		if (!flag) {
 			report.report("Add UEs Failed", Reporter.FAIL);
+			reason = "Add UEs Failed";
 			return false;
 		} else {
 			report.report("Add UEs Succeeded");
@@ -245,6 +248,7 @@ public class UeSimulatorActions extends Action {
 		
 		if (!res) {
 			report.report("delete UEs Failed", Reporter.FAIL);
+			reason = "delete UEs Failed";
 		} else {
 			report.report("delete UEs Succeeded");
 		}
@@ -277,6 +281,7 @@ public class UeSimulatorActions extends Action {
 
 		if (!flag) {
 			report.report("Delete UEs Failed", Reporter.FAIL);
+			reason = "Delete UEs Failed";
 		} else {
 			report.report("Delete UEs Succeeded");
 		}
@@ -295,8 +300,10 @@ public class UeSimulatorActions extends Action {
 			}
 			else{
 				report.report("UE simulator stop command failed", Reporter.WARNING);
-				if (amariSoftServer.isRunning()) 
+				if (amariSoftServer.isRunning()){
 					report.report("UE simulator is still running", Reporter.FAIL);
+					reason = "UE simulator is still running";					
+				}
 				else
 					report.report("UE simulator is stopped");
 			}
@@ -314,6 +321,7 @@ public class UeSimulatorActions extends Action {
 		try {
 			if (duts == null) {
 				report.report("No DUTs given to start UE simulator.", Reporter.FAIL);
+				reason = "No DUTs given to start UE simulator.";
 				return;
 			}
 			report.report("Starting UE simulator with the following Cells:");
@@ -329,8 +337,10 @@ public class UeSimulatorActions extends Action {
 			AmariSoftServer amariSoftServer = AmariSoftServer.getInstance();	
 			if (amariSoftServer.startServer(duts)) 
 				report.report("UE simulator has started as expected");
-			else 
+			else{
 				report.report("UE simulator didn't start", Reporter.FAIL);
+				reason = "UE simulator didn't start";
+			}
 		} catch (Exception e) {
 			report.report("Error starting UE simulator: " + e.getMessage(), Reporter.WARNING);
 			e.printStackTrace();
@@ -382,6 +392,7 @@ public class UeSimulatorActions extends Action {
 		
 		if (!res) {
 			report.report("start UEs Failed", Reporter.FAIL);
+			reason = "start UEs Failed";
 		} else {
 			report.report("start UEs Succeeded");
 		}
@@ -486,6 +497,7 @@ public class UeSimulatorActions extends Action {
 		
 		if (!res) {
 			report.report("stop UEs Failed", Reporter.FAIL);
+			reason = "stop UEs Failed";
 		} else {
 			report.report("stop UEs Succeeded");
 		}
@@ -573,6 +585,7 @@ public class UeSimulatorActions extends Action {
 		
 		if (!res) {
 			report.report("stop UEs Failed", Reporter.FAIL);
+			reason = "stop UEs Failed";
 		} else {
 			report.report("stop UEs Succeeded");
 		}

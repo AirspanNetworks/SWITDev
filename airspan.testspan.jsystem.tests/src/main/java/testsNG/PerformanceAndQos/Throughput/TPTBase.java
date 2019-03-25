@@ -1422,12 +1422,20 @@ public class TPTBase extends TestspanTest {
 		results.add("UL");
 		results.add(injectedUL==null?"N/A":String.format("%.2f", injectedUL));
 		results.add(expectedUL==null?"N/A":String.format("%.2f", expectedUL));
-		results.add(String.format("%.2f", actualUl));
+		if(injectedUL==null && expectedUL==null){
+			results.add("N/A");
+		}else{
+			results.add(String.format("%.2f", actualUl));			
+		}
 
 		results.add("DL");
 		results.add(injectedDL==null?"N/A":String.format("%.2f", injectedDL));
 		results.add(expectedDL==null?"N/A":String.format("%.2f", expectedDL));
-		results.add(String.format("%.2f", actualDl));
+		if(injectedDL==null && expectedDL==null){
+			results.add("N/A");
+		}else{
+			results.add(String.format("%.2f", actualDl));			
+		}
 
 		if(dl_ul_calc != null){
 			String[] calc = dl_ul_calc.split("_");

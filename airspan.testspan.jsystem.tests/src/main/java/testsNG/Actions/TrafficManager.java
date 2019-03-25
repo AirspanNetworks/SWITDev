@@ -275,13 +275,13 @@ public class TrafficManager {
 	private void setLoadPerStream(EnodeB enb, LoadType loadType, String dlLoad, String ulLoad) {
 		GeneralUtils.startLevel("Set load per stream");
 		getLoadPerStream(enb, loadType, dlLoad,ulLoad);
-		if(loadStreamDl == null){
+		/*if(loadStreamDl == null){
 			loadStreamDl = 0D;
 		}
 		if(loadStreamUl == null){
 			loadStreamUl = 0D;
-		}
-		trafficInstance.trafficLoadSet(Pair.createPair(loadStreamDl, loadStreamUl));
+		}*/
+		trafficInstance.trafficLoadSet(Pair.createPair(loadStreamDl==null?0D:loadStreamDl, loadStreamUl==null?0D:loadStreamUl));
 		GeneralUtils.stopLevel();
 	}
 	

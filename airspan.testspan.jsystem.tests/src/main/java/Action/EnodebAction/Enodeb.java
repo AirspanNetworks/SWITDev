@@ -623,8 +623,8 @@ public class Enodeb extends EnodebAction {
 		boolean flag = EnodeBConfig.getInstance().setProfile(this.dut, this.cellId, this.enbProfile, this.profileName);
 
 		if (!flag) {
-			report.report("Set " + this.enbProfile + " Failed", Reporter.FAIL);
-			reason = "Set " + this.enbProfile + " Failed";
+			report.report("Failed to set profile " + profileName + " to enodeb " + dut.getNetspanName(), Reporter.FAIL);
+			reason = "Failed to set profile " + profileName + " to enodeb " + dut.getNetspanName();
 		} else {
 			report.report("Succeeded to set profile " + profileName + " to enodeb " + dut.getNetspanName());
 		}

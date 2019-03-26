@@ -193,10 +193,7 @@ public class EnodeBNoLogs extends EnodebAction {
         	}
         	if(count == 0){
         		report.report("Alarm with type id ["+id+"] was not found",Reporter.FAIL);
-        		if(!reason.isEmpty()){
-        			reason += "\n";
-        		}
-        		reason += "Alarm with type id ["+id+"] was not found";
+        		reason += "Alarm with type id ["+id+"] was not found.<br> ";
         	}else{
         		report.report("Alarm with type id ["+id+"] was found ["+count+"] time"+(count==1?"":"s"));
         	}
@@ -223,10 +220,7 @@ public class EnodeBNoLogs extends EnodebAction {
         	}
         	if(count == 0){
         		report.report("Event with event info ["+info+"] was not found",Reporter.FAIL);
-        		if(!reason.isEmpty()){
-        			reason += "\n";
-        		}
-        		reason += "Event with event info ["+info+"] was not found";
+        		reason += "Event with event info ["+info+"] was not found.<br> ";
         	}else{
         		report.report("Event with event info ["+info+"] was found ["+count+"] time"+(count==1?"":"s"));
         	}

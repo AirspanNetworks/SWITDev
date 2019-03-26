@@ -134,7 +134,7 @@ public class UeAction extends Action {
                         report.report("set earfcn value of " + EARFCN + " into " + ue.getName() + " successfully");
                     } else {
                         report.report("Could not set earfcn value to " + ue.getName(), Reporter.FAIL);
-                        reason = "Could not set earfcn value to " + ue.getName();
+                        reason += "Could not set earfcn value to " + ue.getName()+"<br> ";
                     }
                 }
             } else {
@@ -163,7 +163,7 @@ public class UeAction extends Action {
     @Test // 9
     @TestProperties(name = "Set UEs APN", returnParam = "LastStatus", paramsInclude = {"UEs", "apnName"})
     public void setAPN() {
-        report.report("Start UEs");
+        report.report("Set APN to UEs");
         boolean flag = PeripheralsConfig.getInstance().setAPN(ues, apnName);
 
         if (!flag) {

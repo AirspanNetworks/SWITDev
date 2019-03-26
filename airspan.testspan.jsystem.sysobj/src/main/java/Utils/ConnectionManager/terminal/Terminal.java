@@ -67,6 +67,7 @@ public abstract class Terminal {
 
 	public static String readToEnd(InputStream in) throws IOException {
       byte[] b = new byte[1024];
+      @SuppressWarnings("unused")
       int n;
       StringBuilder sb = new StringBuilder();
       while ((n = in.read(b)) >= 0) {
@@ -109,7 +110,7 @@ public abstract class Terminal {
             if (timeout > 0) {
                 if (System.currentTimeMillis() - startTime > timeout) {
                     result.append(sb);
-                    throw new IOException("timeout: " + timeout);
+                    throw new IOException("Prompt not resolved during timeout: " + timeout);
                 }
             }
             int avail = in.available();
@@ -121,7 +122,7 @@ public abstract class Terminal {
                         avail = in.available();
                         if (System.currentTimeMillis() - startTime > timeout) {
                             result.append(sb);
-                            throw new IOException("Prompt not resolved during timeout: " + timeout);
+                            throw new IOException("Prompt not resolved during timeout#1: " + timeout);
                         }
                     	continue;
                     }
@@ -157,7 +158,7 @@ public abstract class Terminal {
                     if (timeout > 0) {
                         if (System.currentTimeMillis() - startTime > timeout) {
                             result.append(sb);
-                            throw new IOException("timeout: " + timeout);
+                            throw new IOException("Prompt not resolved during timeout#2: " + timeout);
                         }
                     }
                 }
@@ -176,7 +177,7 @@ public abstract class Terminal {
             if (timeout > 0) {
                 if (System.currentTimeMillis() - startTime > timeout) {
                     result.append(sb);
-                    throw new IOException("timeout: " + timeout);
+                    throw new IOException("Prompt waiting timeout: " + timeout);
                 }
             }
             int avail = in.available();
@@ -232,7 +233,7 @@ public abstract class Terminal {
                     if (timeout > 0) {
                         if (System.currentTimeMillis() - startTime > timeout) {
                             result.append(sb);
-                            throw new IOException("timeout: " + timeout);
+                            throw new IOException("Prompt waiting timeout#1: " + timeout);
                         }
                     }
                 }

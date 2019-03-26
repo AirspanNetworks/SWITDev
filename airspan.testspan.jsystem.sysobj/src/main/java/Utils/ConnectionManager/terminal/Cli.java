@@ -215,7 +215,7 @@ public class Cli {
 			while (prompt.getStringToSend() != null) {
 				if (timeout > 0) {
 					if (System.currentTimeMillis() - startTime > (timeout)) {
-						throw new IOException("timeout: " + timeout);
+						throw new IOException("After command; Get Prompt timeout: " + timeout);
 					}
 				}
 				/*

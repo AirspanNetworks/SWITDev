@@ -22,6 +22,7 @@ public class Prompt implements IPrompt {
     public Prompt(String prompt, boolean isRegExp){
         this.prompt = prompt;
         this.isRegularExpression = isRegExp;
+        setCommandEnd(true);
     }
     
     public Prompt(String prompt, boolean isRegExp, boolean isCommandEnd){

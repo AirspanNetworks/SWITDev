@@ -200,33 +200,68 @@ public class ExtendCLI extends Cli {
 		
 		long startTime = System.currentTimeMillis();
 		
-		command(command, timeout, addEnter, delayedTyping, getCurrentPrompt().getPrompt());
-		Thread.sleep(200);
+		sendString(command + "\n", delayedTyping);
 		
-		while (System.currentTimeMillis() - startTime < timeout) {
-			resultPrompt = waitWithGrace(timeout);
-			Thread.sleep(1000);
-		}
+		Thread.sleep(200);
+		do {
+			resultPrompt = terminal.waitForPrompt(200);
+			Thread.sleep(200);
+		}while (System.currentTimeMillis() - startTime < timeout);
+			
 		return readFile(log_cache.getAbsolutePath());
+	}
+	
+	private String readOutputFromMarkToEnd(String mark) {
+		String output = getResult();
+		
+		if(output.contains(mark)) {
+			return output.split(mark, 2)[1];
+		}
+		
+		return null;
 	}
 	
 	public IPrompt getCurrentPrompt() throws Exception {
 		if(resultPrompt == null)
-//			sendString("\n", true);
-//		
-//			String input_buffer = read();
-//			System.out.print(input_buffer);
+			sendString("\n", true);
+			Thread.sleep(200);
 			resultPrompt = waitWithGrace(500);
 		return resultPrompt;
 	}
 	
-	public IPrompt getCurrentPrompt(long timeout) throws Exception {
-		return this.waitWithGrace(timeout);
+	/**
+	 * 
+	 * @param reset - true for re-read prompt (last read prompt if false)
+	 * @return
+	 * @throws Exception
+	 */
+	public IPrompt getCurrentPrompt(boolean reset) throws Exception {
+		if(reset) {
+			resultPrompt = null;
+		}
+		return getCurrentPrompt();
 	}
 
-	public void resetToPrompt(IPrompt prompt) throws Exception{
-		long timeout = 0;
-		login(timeout, prompt);
+//	public void resetToPrompt(IPrompt prompt) throws Exception{
+//		long timeout = 0;
+//		login(timeout, prompt);
+//	}
+	
+	public boolean resetSerialSession(IPrompt... reset_prompts) throws Exception {
+		
+		for(IPrompt reset_prompt : reset_prompts) {	
+			if(getCurrentPrompt(true).getPrompt() == reset_prompt.getPrompt()) {
+				
+				if(reset_prompt.isCommandEnd()) {
+					if(getCurrentPrompt(true).getPrompt() == reset_prompt.getPrompt()) {
+						return true;
+					}
+				}else {
+					sendString(reset_prompt.getStringToSend() + "\n", false);
+				}
+			}	
+		}
+		return false;
 	}
 	
 	@Override

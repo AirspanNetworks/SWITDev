@@ -76,15 +76,15 @@ public class TrafficSampler implements Runnable{
 				report.report("Actual average UL tpt: "+actualUlToReport+" Mbps");
 				if(ul_Divided_With_Number_Of_Streams < ULExpected){
 					report.report("UL actual is lower than expected", Reporter.FAIL);
-					reason = "Details for traffic instance with semantic name "+name+":<br>";
-					reason += " Expected UL: "+expectedUlToReport+" Mbps. Actual UL: "+actualUlToReport+" Mbps.<br>";
+					reason = " Details for traffic instance with semantic name "+name+":";
+					reason += " Expected UL: "+expectedUlToReport+" Mbps. Actual UL: "+actualUlToReport+" Mbps.";
 				}else{
 					report.step("UL actual is above expected");
 				}				
 			}else{
 				report.report("No results available for UL traffic", Reporter.FAIL);
-				reason = "Details for traffic instance with semantic name "+name+":<br>";
-				reason += " No results available for UL traffic.<br>";
+				reason = " Details for traffic instance with semantic name "+name+":";
+				reason += " No results available for UL traffic.";
 			}
 		}
 		double dl_Divided_With_Number_Of_Streams = 0;
@@ -99,25 +99,22 @@ public class TrafficSampler implements Runnable{
 				if(dl_Divided_With_Number_Of_Streams < DLExpected){
 					report.report("DL actual is lower than expected", Reporter.FAIL);
 					if(reason.isEmpty()){
-						reason = "Details for traffic instance with semantic name "+name+":<br>";
+						reason = " Details for traffic instance with semantic name "+name+":";
 					}
-					reason += " Expected DL: "+expectedDlToReport+" Mbps. Actual DL: "+actualDlToReport+" Mbps.<br>";
+					reason += " Expected DL: "+expectedDlToReport+" Mbps. Actual DL: "+actualDlToReport+" Mbps.";
 				}else{
 					report.step("DL actual is above expected");
 				}			
 			}else{
 				report.report("No results available for DL traffic", Reporter.FAIL);
 				if(reason.isEmpty()){
-					reason = "Details for traffic instance with semantic name "+name+":<br>";
+					reason = " Details for traffic instance with semantic name "+name+":";
 				}
-				reason += " No results available for DL traffic.<br>";
+				reason += " No results available for DL traffic.";
 			}
 		}
 		TPTBase.createHTMLTableWithResults(ul_Divided_With_Number_Of_Streams, ULExpected, dl_Divided_With_Number_Of_Streams,
 				DLExpected, dlLoad, ulLoad, null);
-		if(!reason.isEmpty()){
-			report.report(reason);
-		}
 	}
 
 	private ArrayList<Long> getUlDlResultsFromList(Long uLrxTotal, Long dlrxTotal,

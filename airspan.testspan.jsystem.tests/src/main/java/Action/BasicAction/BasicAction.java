@@ -14,6 +14,8 @@ import Utils.GeneralUtils;
 import Utils.SSHConnector;
 import Utils.ConnectionManager.ConnectionInfo;
 import Utils.ConnectionManager.ConnectorTypes;
+import Utils.ConnectionManager.UserInfo.PromptsCommandsInfo;
+import Utils.ConnectionManager.UserInfo.UserInfoFactory;
 import Utils.ConnectionManager.terminal.Prompt;
 import Utils.ConnectionManager.terminal.Telnet;
 import Utils.ConnectionManager.terminal.Terminal;
@@ -23,7 +25,7 @@ import Utils.ConnectionManager.terminal.LinkedPrompt;
 import jsystem.framework.ParameterProperties;
 import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
-import jsystem.sysobj.traffic.analizers.SetPacket;
+
 
 public class BasicAction extends Action {
 	private String timeToWait = "00:00:00";
@@ -215,47 +217,24 @@ public class BasicAction extends Action {
 	}
 	
 	private void setUnitTestforserial() {
-		setIp("192.168.58.12");
-		setPort(4004);
-		setUserName("root");
+		setIp("192.168.58.169");
+		setPort(2001);
+		setUserName("admin");
+		
+//		setIp("192.168.58.12");
+//		setPort(4004);
+//		setUserName("root");
+		
 		setPassword("HeWGEUx66m=_4!ND");
 //		setUserPrompt("#");
 		setSerialCommand("ls -la /");
-		setSudoRequired(false);
+		setSudoRequired(true);
 		setLteCliRequired(false);
-		setSleepTime(20);
+		setSleepTime(3);
 		
 	}
 	
-	private static void resetSerialSession(ExtendCLI session) throws Exception {
-		session.sendString("\n", false);
-		Thread.sleep(20);
-		session.sendString("\n", false);
-		Thread.sleep(20);
-		session.sendString("\n", false);
-		Thread.sleep(20);
-		session.sendString(CntrC_COMMAND + session.getEnterStr(), false);
-		Thread.sleep(20);
-		session.sendString("\n", false);
-		Thread.sleep(20);
-		session.sendString(EXIT_COMMAND + session.getEnterStr(), false);
-		Thread.sleep(20);
-		session.sendString("\n", false);
-		Thread.sleep(20);
-		session.sendString(CntrC_COMMAND + session.getEnterStr(), false);
-		Thread.sleep(20);
-		session.sendString("\n", false);
-		Thread.sleep(20);
-	}
-	
-	public static final String LOGIN_PATTERN = "login:";
-	public static final String PASSWORD_PATTERN = "Password:";
-	public static final String ADMIN_PATTERN = "$";
-	public static final String ROOT_PATTERN = "#";
-	public static final String LTECLI_PATTERN = "lte_cli:>>";
-	public static final String EXIT_COMMAND = "exit";
-	public static final String CntrC_COMMAND = "\u0003";	
-	
+
 	@Test
 	@TestProperties(name = "Send Commands To Serial", returnParam = "LastStatus", paramsInclude = { "Ip", "Port",
 			"UserName", "UserPrompt", "Password", "SerialCommand", "LteCliRequired", "SudoRequired", "SleepTime", "ExpectedPatern" })
@@ -263,13 +242,11 @@ public class BasicAction extends Action {
 		boolean isNull = false;
 		ConnectionInfo conn_info;
 		ExtendCLI cli = null;
-		String SUDO_COMMAND = "sudo su";
-		String LTECLI_COMMAND = "/bs/lteCli";
 		
 		/* Internal unittest only */
-//		 setUnitTestforserial(); 
+		 setUnitTestforserial(); 
 		 
-		
+		// Verify input parameters
 		try {
 			if(ip == null){
 				GeneralUtils.startLevel("IP cannot be empty");
@@ -284,8 +261,8 @@ public class BasicAction extends Action {
 				isNull = true;
 			}else {
 				switch(userName) {
-					case "root": userPrompt = ROOT_PATTERN; break;
-					case "admin" : userPrompt = ADMIN_PATTERN; break;
+					case "root": userPrompt = PromptsCommandsInfo.ROOT_PATTERN; break;
+					case "admin" : userPrompt = PromptsCommandsInfo.ADMIN_PATTERN; break;
 				}
 			}
 			
@@ -310,50 +287,8 @@ public class BasicAction extends Action {
 			}
 		}
 		
-		IPrompt logout_sequence;
-		IPrompt logged_out = new Prompt("login:", false, true);
-		IPrompt user_logout = new LinkedPrompt(userPrompt, false, EXIT_COMMAND, true, logged_out);
-		IPrompt password_reset = new LinkedPrompt(PASSWORD_PATTERN, false, CntrC_COMMAND, true, logged_out);
-		IPrompt sudo_logout = new LinkedPrompt(ROOT_PATTERN, false, EXIT_COMMAND, true, user_logout);
-		IPrompt ltecli_logout = new LinkedPrompt(LTECLI_PATTERN, false, CntrC_COMMAND, true);
-		
-		
-		LinkedPrompt user_login = new LinkedPrompt(LOGIN_PATTERN, true, userName, true);
-		LinkedPrompt user_password = new LinkedPrompt(PASSWORD_PATTERN, false, password, true);
-		
-		IPrompt sudo_switch = null;
-		
-		if(sudoRequired) {
-			IPrompt sudo_prompt = new Prompt(ROOT_PATTERN, false, true); 
-			sudo_switch = new LinkedPrompt(PASSWORD_PATTERN, false, password, true);
-			
-			if(!lteCliRequired) {
-				((LinkedPrompt)sudo_switch).setLinkedPrompt(sudo_prompt);
-				logout_sequence = sudo_logout;
-			}
-			else {
-				LinkedPrompt lte_cli_switch = new LinkedPrompt(ROOT_PATTERN, false, LTECLI_COMMAND, true, new Prompt(LTECLI_PATTERN, false, true));
-				((LinkedPrompt)sudo_switch).setLinkedPrompt(lte_cli_switch);
-				logout_sequence = ltecli_logout;
-			}
-			
-			LinkedPrompt sudo_su = new LinkedPrompt(userPrompt, false, SUDO_COMMAND, true, sudo_switch);
-			user_password.setLinkedPrompt(sudo_su);
-		} else {
-			if(lteCliRequired) {
-				LinkedPrompt lte_cli_switch = new LinkedPrompt(ROOT_PATTERN, false, LTECLI_COMMAND, true, new Prompt(LTECLI_PATTERN, false, true));
-				user_password.setLinkedPrompt(lte_cli_switch);
-				((LinkedPrompt)ltecli_logout).setLinkedPrompt(user_logout);
-				logout_sequence = ltecli_logout;
-				
-			}
-			else {
-				user_password.setLinkedPrompt(new Prompt(userPrompt, false, true));
-				logout_sequence = user_logout;
-			}
-		}
-		
-		user_login.setLinkedPrompt(user_password);
+		// Read login sequence by user name (if sudo and/or lte required - also)
+		IPrompt user_login = UserInfoFactory.getUserInfo(userName, password, sudoRequired, lteCliRequired);
 		
 		try {
 			report.report("Login properties:\n" + user_login.toString());
@@ -363,44 +298,65 @@ public class BasicAction extends Action {
 			cli = new ExtendCLI(terminal);
 			cli.setGraceful(true);
 			cli.setEnterStr("\n");
-			cli.sendString(cli.getEnterStr(), false);
-			GeneralUtils.startLevel("Reset session");
-			resetSerialSession(cli);
-		
-			Thread.sleep(20);
+			GeneralUtils.startLevel("Prepare session");
 			
+			// Read current prompt for decide to reset it
 			cli.addPrompts(
 					new Prompt(userPrompt, false, true), 
-					new Prompt(ROOT_PATTERN, false, true),
-					new Prompt(LTECLI_PATTERN, false, true),
-					new Prompt(LOGIN_PATTERN, false, true));
+					new Prompt(PromptsCommandsInfo.ROOT_PATTERN, false, true),
+					new Prompt(PromptsCommandsInfo.LTECLI_PATTERN, false, true),
+					new Prompt(PromptsCommandsInfo.LOGIN_PATTERN, false, true),
+					new Prompt(PromptsCommandsInfo.PASSWORD_PATTERN, false, true));
 			
-			IPrompt current_pr = cli.getCurrentPrompt();
+			IPrompt current_pr = cli.getCurrentPrompt(true);
 			
-//			switch (current_pr.getPrompt()) {
-//				case ROOT_PATTERN: cli.resetToPrompt(sudo_logout); break;
-//				case ADMIN_PATTERN: cli.resetToPrompt(user_logout); break;
-//				case LTECLI_PATTERN: cli.resetToPrompt(ltecli_logout); break;
-//				case PASSWORD_PATTERN: cli.resetToPrompt(password_reset);break;
-//				default:
-//					
-//					break;
-//			}
-//			
-//			current_pr = cli.getCurrentPrompt();
-			report.report("Session reset to prompt: " + current_pr.getPrompt());
 			
-			Thread.sleep(100);
-			report.report("Login properties:\n" + user_login.toString());
-			cli.login(sleepTime * 1000, user_login);
+			if(current_pr.getPrompt() == user_login.getPrompt()) {
+				// Session require login only
+				report.report("Login needed:\n" + user_login.toString());
+				cli.login(sleepTime * 1000, user_login);
+				Thread.sleep(1000);
+				current_pr = cli.getCurrentPrompt(true);
+				if(current_pr.getPrompt() != user_login.getFinalPrompt().getPrompt()) {
+					report.report("Login failed (Prompt: '" + current_pr.getPrompt() + "')", Reporter.FAIL);
+					throw new IOException("Login failed (Prompt: '" + current_pr.getPrompt() + "')");
+				}
+				report.report("Login to serial completed");
 			
-			current_pr = cli.getCurrentPrompt(3);
-			if(current_pr.getPrompt() != user_login.getFinalPrompt().getPrompt()) {
-				throw new IOException("Shell stay in wrong prompt (Prompt: '" + current_pr.getPrompt() + "')");
+			
+			}else if(current_pr.getPrompt() != user_login.getFinalPrompt().getPrompt()) {
+				// Session require reset current state and login
+				report.report("Session reset needed (Current prompt: '" + current_pr.getPrompt() + "' vs. desired: '" + user_login.getFinalPrompt().getPrompt() + "')");
+				if(!cli.resetSerialSession( 
+						new Prompt(PromptsCommandsInfo.PASSWORD_PATTERN, false, PromptsCommandsInfo.CntrC_COMMAND, false),
+						new Prompt(PromptsCommandsInfo.LTECLI_PATTERN, false, PromptsCommandsInfo.CntrC_COMMAND, false),
+						new Prompt(PromptsCommandsInfo.ROOT_PATTERN, false, PromptsCommandsInfo.EXIT_COMMAND, false),
+						new Prompt(PromptsCommandsInfo.ADMIN_PATTERN, false, PromptsCommandsInfo.EXIT_COMMAND, false)
+						)) {
+					throw new IOException("Session reset failed");
+				}
+				
+				current_pr = cli.getCurrentPrompt(true);
+				report.report("Session reset completed (Prompt: '" + current_pr.getPrompt() + "')");
+				
+				report.report("Login needed:\n" + user_login.toString());
+				cli.login(sleepTime * 1000, user_login);
+				Thread.sleep(1000);
+				current_pr = cli.getCurrentPrompt(true);
+				if(current_pr.getPrompt() != user_login.getFinalPrompt().getPrompt()) {
+					report.report("Login failed (Prompt: '" + current_pr.getPrompt() + "')", Reporter.FAIL);
+					throw new IOException("Login failed (Prompt: '" + current_pr.getPrompt() + "')");
+				}
+				report.report("Login to serial completed");
+			}else {
+				// No reset or login needed
+				report.report("No reset needed");
 			}
-			report.report("Login to serial completed");
+			
+			report.report("Session prepare completed (Prompt: '" + current_pr.getPrompt() + "')");
 			GeneralUtils.stopLevel();
 			
+			GeneralUtils.startLevel("Command execution - '" + serialCommand + "'");
 			Thread.sleep(100);
 			String output_str = cli.exec_command(serialCommand, sleepTime * 1000, true, false);
 			
@@ -408,22 +364,22 @@ public class BasicAction extends Action {
 			String result_text = "Test completed";
 			
 			if(expectedPatern != null) {
-				
-				result_text += " as following:\n";
-				
-				for(String key : expectedPatern.split("\\s*;\\s*")) {
-					int local_stat = output_str.contains(key) ? Reporter.PASS : Reporter.FAIL;
-					result_text += String.format("Expected pattern '%s' %s exists in output\n", key, local_stat == Reporter.PASS ? "" : "not");
-					status = status == Reporter.PASS ?  local_stat: status;
-				}
-				GeneralUtils.reportHtmlLink("Command " + serialCommand + " output", output_str, !Boolean.parseBoolean(String.format("%d", status)), "green", expectedPatern.split(";"));
+				report.report("Pattern verification not implemented", Reporter.WARNING);
+//				result_text += " as following:\n";
+//				
+//				for(String key : expectedPatern.split("\\s*;\\s*")) {
+//					int local_stat = output_str.contains(key) ? Reporter.PASS : Reporter.FAIL;
+//					result_text += String.format("Expected pattern '%s' %s exists in output\n", key, local_stat == Reporter.PASS ? "" : "not");
+//					status = status == Reporter.PASS ?  local_stat: status;
+//				}
+//				GeneralUtils.reportHtmlLink("Command " + serialCommand + " output", output_str, !Boolean.parseBoolean(String.format("%d", status)), "green", expectedPatern.split(";"));
 			}
 			else {
 				result_text = "Test completed";
 				GeneralUtils.reportHtmlLink("Command " + serialCommand + " output", output_str);
 			}
 			
-			report.report(result_text + "Output:\n" + output_str, status);
+			report.report(result_text + "; Output:\n" + output_str, status);
 			
 			
 		} catch (IOException e) {
@@ -433,7 +389,6 @@ public class BasicAction extends Action {
 		}
 		finally {
 			if(cli != null) {
-				cli.resetToPrompt(logout_sequence);
 				cli.close();
 			}
 			GeneralUtils.stopLevel();

@@ -12,6 +12,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import Utils.ConnectionManager.UserInfo.PromptsCommandsInfo;
+
 /**
  * 
  * @author doguz
@@ -108,7 +110,7 @@ public class ExtendCLI extends Cli {
 			
 			addPrompt(runtime_prompt);
 			
-			sendString("\n", true);
+//			sendString("\n", true);
 			
 			while (runtime_prompt instanceof LinkedPrompt) {
 				
@@ -202,11 +204,11 @@ public class ExtendCLI extends Cli {
 		
 		sendString(command + "\n", delayedTyping);
 		
-		Thread.sleep(200);
-		do {
+		Thread.sleep(timeout);
+//		do {
 			resultPrompt = terminal.waitForPrompt(200);
-			Thread.sleep(200);
-		}while (System.currentTimeMillis() - startTime < timeout);
+//			Thread.sleep(200);
+//		}while (System.currentTimeMillis() - startTime < timeout);
 			
 		return readFile(log_cache.getAbsolutePath());
 	}
@@ -225,7 +227,7 @@ public class ExtendCLI extends Cli {
 		if(resultPrompt == null)
 			sendString("\n", true);
 			Thread.sleep(200);
-			resultPrompt = waitWithGrace(500);
+			resultPrompt = waitWithGrace(1000);
 		return resultPrompt;
 	}
 	
@@ -241,27 +243,38 @@ public class ExtendCLI extends Cli {
 		}
 		return getCurrentPrompt();
 	}
-
-//	public void resetToPrompt(IPrompt prompt) throws Exception{
-//		long timeout = 0;
-//		login(timeout, prompt);
-//	}
 	
 	public boolean resetSerialSession(IPrompt... reset_prompts) throws Exception {
-		
-		for(IPrompt reset_prompt : reset_prompts) {	
-			if(getCurrentPrompt(true).getPrompt() == reset_prompt.getPrompt()) {
 				
-				if(reset_prompt.isCommandEnd()) {
-					if(getCurrentPrompt(true).getPrompt() == reset_prompt.getPrompt()) {
-						return true;
-					}
-				}else {
-					sendString(reset_prompt.getStringToSend() + "\n", false);
-				}
+		ArrayList<IPrompt> defaultPromts = null;
+		try {
+			if (reset_prompts != null) {
+				defaultPromts = terminal.getPrompts();
+				terminal.removePrompts();
+				terminal.addPrompts(reset_prompts);
+			}
+			IPrompt current_pr = getCurrentPrompt(true);
+			
+			do {
+				String command_str = current_pr.getStringToSend() != null ? current_pr.getStringToSend() : "";
+				sendString(command_str + "\n", false);
+				Thread.sleep(100);
+				current_pr = getCurrentPrompt(true);
+
+			}while(!current_pr.isCommandEnd());
+			Thread.sleep(500);
+			return true;
+		}catch (Exception e) {
+			System.out.println("Session reset ended");
+			terminal.disconnect();
+			terminal.connect();
+			return true;
+		}finally {
+			if (defaultPromts != null) {
+				terminal.removePrompts();
+				terminal.setPrompts(defaultPromts);
 			}	
 		}
-		return false;
 	}
 	
 	@Override

@@ -274,6 +274,12 @@ public abstract class Terminal {
         prompts.add(prompt);
     }
     
+    public void addPrompts(IPrompt...prompts) {
+    	for(IPrompt prompt : prompts) {
+    		addPrompt(prompt);
+    	}
+    }
+    
     public IPrompt getPrompt(String prompt){
         for (int i = 0; i < prompts.size(); i++){
             IPrompt p = (IPrompt)prompts.get(i);

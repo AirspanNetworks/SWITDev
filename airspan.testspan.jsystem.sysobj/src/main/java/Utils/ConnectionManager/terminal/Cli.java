@@ -182,7 +182,7 @@ public class Cli {
 	}
 	
 	public void command(String command, long timeout, boolean addEnter, boolean delayedTyping, String[] promptStrings,
-			IPrompt[] prompts) throws Exception {
+			IPrompt... prompts) throws Exception {
 		resultPrompt =null;
 		ArrayList<IPrompt> defaultPromts = null;
 		if (prompts != null) {

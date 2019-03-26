@@ -105,13 +105,10 @@ public class Attenuator extends Action {
 			attenuation = attenuations[0];
 			report.report("Attenuator value after set: " + attenuation);
 		}
-		if (!success){
-			report.report("Set attenuator Failed", Reporter.FAIL);
-			reason = "Set attenuator Failed";			
-		}else if(attenuation != attValue) {
+		if (!success || attenuation != attValue){
 			report.report("Set attenuator Failed. Expected value: "+attValue+", Actual value: "+attenuation, Reporter.FAIL);
 			reason = "Set attenuator Failed. Expected value: "+attValue+", Actual value: "+attenuation;
-		} else {
+		}else {
 			report.report("Set attenuator Succeeded");
 		}
 	}

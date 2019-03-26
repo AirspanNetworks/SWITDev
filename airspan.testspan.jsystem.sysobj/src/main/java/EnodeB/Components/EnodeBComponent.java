@@ -988,7 +988,17 @@ public abstract class EnodeBComponent implements LogListener {
         // empty method. Should be overridden by relevant components;
     }
 
-    /*
+	/**
+	 * Sets the session log level.
+	 *
+	 * @param sessionName the session name
+	 * @param level       the level
+	 */
+	public void setSessionLogLevel(String sessionName ,String client ,String process, int level) {
+		// empty method. Should be overridden by relevant components;
+	}
+
+	/*
      * (non-Javadoc)
      *
      * @see java.lang.Object#toString()

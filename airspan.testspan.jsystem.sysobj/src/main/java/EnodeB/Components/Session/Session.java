@@ -18,6 +18,14 @@ public class Session implements Runnable {
 
 	private final static long RECONNECT_TIMEOUT = 30000;
 
+	/**
+	 * Process and Client are being called in threads while the scenario is running.
+	 * Set by default to * (== Everything).
+	 * There is an option to change them to a specific Module by using theirs setters.
+	 */
+	private static String process = "*";
+	private static String client = "*";
+
 	private Thread reconnectionThread;
 	private String name;
 	private Terminal terminal;
@@ -39,7 +47,7 @@ public class Session implements Runnable {
 	// if true cli buffer is saved all the time,
 	// otherwise it'll be filled only when a cli commend is being sent
 	private boolean enableCliBuffer;
-	private int logLevel = -1;
+	private static int logLevel = -1;
 
 	private String hostname = "";
 
@@ -77,6 +85,30 @@ public class Session implements Runnable {
 		{
 			this.connected = true;
 		}
+	}
+
+	/**
+	 * Set process, by default it's == *
+	 * @param process = process
+	 */
+	public void setProcess(String process) {
+		this.process = process;
+	}
+
+	/**
+	 * Set client, by default it's == *
+	 * @param client = client
+	 */
+	public void setClient(String client) {
+		this.client = client;
+	}
+
+	/**
+	 * Set logLevel, by default it's taken from Prop file
+	 * @param logLevel = logLevel
+	 */
+	public void setLogLevel(int logLevel) {
+		this.logLevel = logLevel;
 	}
 
 	public boolean loginSerial() {
@@ -384,11 +416,6 @@ public class Session implements Runnable {
 
 	private boolean verifyLogLevel(){
 		String tableToVerify = enbComp.sendCommandsOnSession(name,EnodeBComponent.LTE_CLI_PROMPT, "logger threshold get", "");
-//		String tableToPrint = "************************logger threshold get*************************\n";
-//		tableToPrint += "EnodeB: "+enbComp.getIpAddress()+", session: "+getName()+ ", wanted log level: "+logLevel+"\n";
-//		tableToPrint += tableToVerify;
-//		tableToPrint += "*********************************************************************\n";
-//		GeneralUtils.printToConsole(tableToPrint);
 		int numOfMatches = 0;
 		Pattern pattern = null;
 		try{
@@ -422,13 +449,13 @@ public class Session implements Runnable {
 		GeneralUtils.printToConsole("Setting Session " + getName() +" for EnodeB "+enbComp.getIpAddress()+ " log level to " + logLevel);
 		if (connected && logLevel >= 0) {
 			GeneralUtils.printToConsole("Setting log level");
-			enbComp.setSessionLogLevel(name, logLevel);
+			enbComp.setSessionLogLevel(name, client, process, logLevel);
 			GeneralUtils.printToConsole("Verifying log level");
 			verify = verifyLogLevel();
 			if(!verify){					
 				GeneralUtils.printToConsole("Failed to set log level. Setting log level again");
 				GeneralUtils.unSafeSleep(10*1000);
-				enbComp.setSessionLogLevel(name, logLevel);
+				enbComp.setSessionLogLevel(name, client, process, logLevel);
 				GeneralUtils.printToConsole("Verifying log level");
 				verify = verifyLogLevel();
 			}

@@ -103,6 +103,7 @@ public class Action extends SystemTestCase4 {
 		if (!flag) {
 			report.report("Current Value: " + currentValue + ", Expected value: " + comparison + " " + expectedValue,
 					Reporter.FAIL);
+			reason = "Current Value: " + currentValue + ", Expected value: " + comparison + " " + expectedValue;
 		} else {
 			report.report("Current Value: " + currentValue + " is " + comparison + " " + expectedValue);
 		}
@@ -115,6 +116,7 @@ public class Action extends SystemTestCase4 {
 		}
 		else {
 			report.report(parameterName + ": Current Value=" + currentValue + ", Expected value="+expectedValue, Reporter.FAIL);
+			reason = parameterName + ": Current Value=" + currentValue + ", Expected value="+expectedValue;
 			return false;
 		}
 	}

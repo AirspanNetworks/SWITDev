@@ -103,6 +103,7 @@ public class NeighborManagement extends EnodebAction {
 		report.reportHtml(dut.getName() + ": db get nghList", dut.lteCli("db get nghList"), true);
 		if (!flag) {
 			report.report("Add Neighbour Failed", Reporter.FAIL);
+			reason = "Add Neighbour Failed";
 		} else {
 			report.report("Add Neighbour Succeeded");
 		}
@@ -130,6 +131,7 @@ public class NeighborManagement extends EnodebAction {
 		report.reportHtml(dut.getName() + ": db get nghList", dut.lteCli("db get nghList"), true);
 		if (!flag) {
 			report.report("Delete All Neighbours of " + this.dut.getNetspanName() + " Failed", Reporter.FAIL);
+			reason = "Delete All Neighbours of " + this.dut.getNetspanName() + " Failed";
 		} else {
 			report.report("Delete All Neighbours of " + this.dut.getNetspanName() + " Succeeded");
 		}
@@ -181,6 +183,7 @@ public class NeighborManagement extends EnodebAction {
 		report.reportHtml(dut.getName() + ": db get nghList", dut.lteCli("db get nghList"), true);
 		if (!flag) {
 			report.report("Neighbour not verified!", Reporter.FAIL);
+			reason = "Neighbour not verified!";
 		} else {
 			report.report("Neighbour verified!");
 		}
@@ -198,6 +201,7 @@ public class NeighborManagement extends EnodebAction {
 		report.reportHtml(dut.getName() + ": db get nghList", dut.lteCli("db get nghList"), true);
 		if (!flag) {
 			report.report("Neighbour not deleted!", Reporter.FAIL);
+			reason = "Neighbour not deleted!";
 		} else {
 			report.report("Neighbour deleted!");
 		}

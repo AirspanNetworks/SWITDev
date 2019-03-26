@@ -164,6 +164,7 @@ public class BasicAction extends Action {
 			report.report("Wait " + timeToWaitMillisecond + " Milliseconds Succeeded");
 		} else {
 			report.report("Failed to Wait " + timeToWaitMillisecond + " Milliseconds", Reporter.FAIL);
+			reason = "Failed to Wait " + timeToWaitMillisecond + " Milliseconds";
 		}
 	}
 	
@@ -176,37 +177,40 @@ public class BasicAction extends Action {
 			
 			PowerControllerPort chosenPort = powerControllerPort.getPort(this.ipPowerPort);
 			if(chosenPort == null) {
-				report.report("there is no Such port in IP Power!",Reporter.FAIL);
+				report.report("There is no such port in IP Power",Reporter.FAIL);
+				reason = "There is no such port in IP Power";
 				return;
 			}
 			
 			if(!chosenPort.powerOn()) {
-				report.report("could not power ON port "+this.ipPowerPort,Reporter.FAIL);
+				report.report("Could not power ON port "+this.ipPowerPort,Reporter.FAIL);
+				reason = "Could not power ON port "+this.ipPowerPort;
 				return;
 			}
-			report.report("port "+this.ipPowerPort +" set To ON!");
+			report.report("Port "+this.ipPowerPort +" set to ON");
 		}catch(Exception e) {
 			report.report("Failed to init Ip Power System - check SUT");
 			e.printStackTrace();
 		}
 	}
 	
-	
 	@Test // 3
 	@TestProperties(name = "Power OFF Ip Power Port", returnParam = "LastStatus", paramsInclude = { "ipPowerPort" })
 	public void powerOffIpPowerPort() {
-		report.report("trying to Power Off port ");
+		report.report("Trying to Power Off port ");
 		try {
 			PowerController powerControllerPort = (PowerController) system.getSystemObject("aviosys"); 
 			
 			PowerControllerPort chosenPort = powerControllerPort.getPort(this.ipPowerPort);
 			if(chosenPort == null) {
-				report.report("there is no Such port in IP Power!",Reporter.FAIL);
+				report.report("There is no such port in IP Power",Reporter.FAIL);
+				reason = "There is no such port in IP Power";
 				return;
 			}
 			
 			if(!chosenPort.powerOff()) {
 				report.report("could not power OFF port "+this.ipPowerPort,Reporter.FAIL);
+				reason = "could not power OFF port "+this.ipPowerPort;
 				return;
 			}
 			report.report("port "+this.ipPowerPort +" set To OFF!");
@@ -282,6 +286,7 @@ public class BasicAction extends Action {
 		finally {
 			if(isNull){
 				report.report("Some of parameters not valid", Reporter.FAIL);
+				reason = "Some of parameters not valid";
 				GeneralUtils.stopLevel();
 				return;
 			}
@@ -418,6 +423,7 @@ public class BasicAction extends Action {
 		}
 		
 		if(isNull){
+			reason = "Some of parameters not valid";
 			return;
 		}
 		
@@ -440,6 +446,7 @@ public class BasicAction extends Action {
 			ssh.disconnect();
 		}else{
 			report.report("Failed to connect to device",Reporter.FAIL);
+			reason = "Failed to connect to device";
 		}
 	}
 	

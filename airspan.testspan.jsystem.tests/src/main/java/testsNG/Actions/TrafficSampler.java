@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 
+import org.apache.commons.lang3.StringUtils;
 
 import Action.TrafficAction.TrafficAction.ExpectedType;
 import EnodeB.EnodeB;
@@ -36,7 +37,12 @@ public class TrafficSampler implements Runnable{
 	public static Reporter report = ListenerstManager.getInstance();
 	private Double ulLoad = null;
 	private Double dlLoad = null;
+	private String reason;
 	
+	public synchronized String getReason() {
+		return reason;
+	}
+
 	public void start(){
 		//runnableThread = new Thread(this);
 		//runnableThread.start();			
@@ -59,38 +65,56 @@ public class TrafficSampler implements Runnable{
 	}
 	
 	private void compareResults(Long uLrxTotal, Long dlrxTotal, ArrayList<ArrayList<StreamParams>> listOfStreamList) {
+		reason = StringUtils.EMPTY;
 		double ul_Divided_With_Number_Of_Streams = 0;
 		if(ULExpected != null){
 			if(listOfStreamList.size() != 0){
 				ul_Divided_With_Number_Of_Streams = uLrxTotal / 1000000.0 / listOfStreamList.size();
-				report.report("Expected UL: "+convertTo3DigitsAfterPoint(ULExpected)+" Mbps");
-				report.report("Actual average UL tpt: "+convertTo3DigitsAfterPoint(ul_Divided_With_Number_Of_Streams)+" Mbps");
+				String expectedUlToReport = convertTo3DigitsAfterPoint(ULExpected);
+				String actualUlToReport = convertTo3DigitsAfterPoint(ul_Divided_With_Number_Of_Streams);
+				report.report("Expected UL: "+expectedUlToReport+" Mbps");
+				report.report("Actual average UL tpt: "+actualUlToReport+" Mbps");
 				if(ul_Divided_With_Number_Of_Streams < ULExpected){
 					report.report("UL actual is lower than expected", Reporter.FAIL);
+					reason = "Details for traffic instance with semantic name "+name+":<br> ";
+					reason += "Expected UL: "+expectedUlToReport+" Mbps. Actual UL: "+actualUlToReport+" Mbps.<br> ";
 				}else{
 					report.step("UL actual is above expected");
 				}				
 			}else{
 				report.report("No results available for UL traffic", Reporter.FAIL);
+				reason = "Details for traffic instance with semantic name "+name+":<br> ";
+				reason += "No results available for UL traffic.<br> ";
 			}
 		}
 		double dl_Divided_With_Number_Of_Streams = 0;
 		if(DLExpected != null){
 			if(listOfStreamList.size() != 0){
 				dl_Divided_With_Number_Of_Streams = dlrxTotal / 1000000.0 / listOfStreamList.size();			
-				report.report("Expected DL: "+convertTo3DigitsAfterPoint(DLExpected)+" Mbps");
-				report.report("Actual average DL tpt: "+convertTo3DigitsAfterPoint(dl_Divided_With_Number_Of_Streams)+" Mbps");
+				String expectedDlToReport = convertTo3DigitsAfterPoint(DLExpected);
+				String actualDlToReport = convertTo3DigitsAfterPoint(dl_Divided_With_Number_Of_Streams);
+
+				report.report("Expected DL: "+expectedDlToReport+" Mbps");
+				report.report("Actual average DL tpt: "+actualDlToReport+" Mbps");
 				if(dl_Divided_With_Number_Of_Streams < DLExpected){
 					report.report("DL actual is lower than expected", Reporter.FAIL);
+					if(reason.isEmpty()){
+						reason = "Details for traffic instance with semantic name "+name+":<br> ";
+					}
+					reason += "Expected DL: "+expectedDlToReport+" Mbps. Actual DL: "+actualDlToReport+" Mbps.<br> ";
 				}else{
 					report.step("DL actual is above expected");
 				}			
 			}else{
 				report.report("No results available for DL traffic", Reporter.FAIL);
+				if(reason.isEmpty()){
+					reason = "Details for traffic instance with semantic name "+name+":<br> ";
+				}
+				reason += "No results available for DL traffic.<br> ";
 			}
 		}
-		TPTBase.createHTMLTableWithResults(ul_Divided_With_Number_Of_Streams, (ULExpected==null?0:ULExpected), dl_Divided_With_Number_Of_Streams,
-				(DLExpected==null?0:DLExpected), (dlLoad==null?0:dlLoad), (ulLoad==null?0:ulLoad), null);
+		TPTBase.createHTMLTableWithResults(ul_Divided_With_Number_Of_Streams, ULExpected, dl_Divided_With_Number_Of_Streams,
+				DLExpected, dlLoad, ulLoad, null);
 	}
 
 	private ArrayList<Long> getUlDlResultsFromList(Long uLrxTotal, Long dlrxTotal,

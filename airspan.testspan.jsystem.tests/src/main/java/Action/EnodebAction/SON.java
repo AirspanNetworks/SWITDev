@@ -47,6 +47,7 @@ public class SON extends EnodebAction {
 		else
 		{
 			report.report(dut1.getName() + " is not in service.", Reporter.FAIL);
+			reason = dut1.getName() + " is not in service.";
 			GeneralUtils.stopLevel();
 			return;
 		}
@@ -56,6 +57,7 @@ public class SON extends EnodebAction {
 		else
 		{
 			report.report(dut2.getName() + " is not in service.", Reporter.FAIL);
+			reason = dut2.getName() + " is not in service.";
 			GeneralUtils.stopLevel();
 			return;
 		}
@@ -120,6 +122,7 @@ public class SON extends EnodebAction {
 		report.reportHtml(dut1.getName() + " - db get nghList", dut1.lteCli("db get nghlist"), true);
 		if (!neighbors.verifyAnrNeighbor(dut1, dut2)) {
 			report.report("[ERROR]: Can not find the neighbor on ngh list, test failed.", Reporter.FAIL);
+			reason = "[ERROR]: Can not find the neighbor on ngh list, test failed.";
 			result = false;
 		} else {
 			report.report("Neighbour found with attenuator at " + attenuatorSetUnderTest.getAttenuation()[0]);
@@ -131,6 +134,7 @@ public class SON extends EnodebAction {
 			report.reportHtml(dut2.getName() + " - db get nghList", dut2.lteCli("db get nghlist"), true);
 			if (!neighbors.verifyAnrNeighbor(dut2, dut1)) {
 				report.report("[ERROR]: Can not find the neighbor on ngh list, test failed.", Reporter.FAIL);
+				reason = "[ERROR]: Can not find the neighbor on ngh list, test failed.";
 				result = false;
 			} else {
 				report.report(String.format("[PASS]: %s was added to %s as ANR Neighbor successfully.", dut1.getName(),

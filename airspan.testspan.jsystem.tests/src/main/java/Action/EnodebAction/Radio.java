@@ -33,6 +33,7 @@ public class Radio extends EnodebAction {
 			this.cellId = Integer.valueOf(cellId);
 		} catch (Exception exc) {
 			report.report("Failed to load CellID due to: " + exc.getMessage(), Reporter.FAIL);
+			reason = "Failed to load CellID due to: " + exc.getMessage();
 		}
 	}
 
@@ -47,6 +48,7 @@ public class Radio extends EnodebAction {
 			this.earfcn = Integer.valueOf(earfcn);
 		} catch (Exception exc) {
 			report.report("Failed to load EARFCN due to: " + exc.getMessage(), Reporter.FAIL);
+			reason = "Failed to load EARFCN due to: " + exc.getMessage();
 		}
 	}
 
@@ -56,6 +58,7 @@ public class Radio extends EnodebAction {
 			this.txPower = Integer.valueOf(txPower);
 		} catch (Exception exc) {
 			report.report("Failed to load TxPower due to: " + exc.getMessage(), Reporter.FAIL);
+			reason = "Failed to load TxPower due to: " + exc.getMessage();
 		}
 	}
 
@@ -82,6 +85,7 @@ public class Radio extends EnodebAction {
 
 		if (!flag) {
 			report.report("Clone and Set Radio Profile Failed", Reporter.FAIL);
+			reason = "Clone and Set Radio Profile Failed";
 		}
 	}
 	
@@ -103,6 +107,7 @@ public class Radio extends EnodebAction {
 		dut.setCellContextNumber(cellId);
 		if (!enodeBConfig.updateRadioProfile(dut, radioParams)) {
 			report.report("Failed to change EARFCN", Reporter.FAIL);
+			reason = "Failed to change EARFCN";
 		} else {
 			report.report("Change done");
 		}

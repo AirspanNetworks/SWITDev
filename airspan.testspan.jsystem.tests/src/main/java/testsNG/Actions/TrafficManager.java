@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.apache.commons.lang3.StringUtils;
+
 import Action.TrafficAction.TrafficAction.ExpectedType;
 import Action.TrafficAction.TrafficAction.LoadType;
 import EnodeB.EnodeB;
@@ -41,6 +43,7 @@ public class TrafficManager {
 	
 	private Double dlExpected;
 	private Double ulExpected;
+	private String reason;
 	
 	public static TrafficManager getInstance(GeneratorType type){
 		if(instance == null){
@@ -93,7 +96,7 @@ public class TrafficManager {
 			String ulExp, String dlExp, EnodeB enb, Integer numberParallelStreams,
 			Double windowSizeInKbits, Integer mss, Integer packetSize, Protocol protocol, Integer timeout,
 			ArrayList<String> streams){
-		
+		reason = StringUtils.EMPTY;
 		if(!isTrafficInit){
 			if(!initTrafficWithNoStartTraffic(TrafficCapacity.FULLTPT, protocol)){
 				return;
@@ -160,15 +163,18 @@ public class TrafficManager {
 		try {
 			if(!trafficInstance.initTrafficWithNoStartTraffic(tptCapacity)){
 				report.report("Start traffic failed",Reporter.FAIL);
+				reason = "Start traffic failed";
 				return false;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			report.report("Start traffic failed",Reporter.FAIL);
+			reason = "Start traffic failed";
 			return false;
 		}
 		if(!initProtocol(protocol)){
 			report.report("Failed to init protocol", Reporter.FAIL);
+			reason = "Failed to init protocol";
 			return false;
 		}
 		trafficInstance.setAllStreamsToState(false);
@@ -191,6 +197,7 @@ public class TrafficManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 			report.report("Failed to enable streams", Reporter.FAIL);
+			reason = "Failed to enable streams";
 		}finally{
 			GeneralUtils.stopLevel();
 		}
@@ -221,6 +228,7 @@ public class TrafficManager {
 		} catch (TrafficException e) {
 			e.printStackTrace();
 			report.report("Failed to set protocol", Reporter.FAIL);
+			reason = "Failed to set protocol";
 		}finally{
 			GeneralUtils.stopLevel();			
 		}
@@ -275,13 +283,13 @@ public class TrafficManager {
 	private void setLoadPerStream(EnodeB enb, LoadType loadType, String dlLoad, String ulLoad) {
 		GeneralUtils.startLevel("Set load per stream");
 		getLoadPerStream(enb, loadType, dlLoad,ulLoad);
-		if(loadStreamDl == null){
+		/*if(loadStreamDl == null){
 			loadStreamDl = 0D;
 		}
 		if(loadStreamUl == null){
 			loadStreamUl = 0D;
-		}
-		trafficInstance.trafficLoadSet(Pair.createPair(loadStreamDl, loadStreamUl));
+		}*/
+		trafficInstance.trafficLoadSet(Pair.createPair(loadStreamDl==null?0D:loadStreamDl, loadStreamUl==null?0D:loadStreamUl));
 		GeneralUtils.stopLevel();
 	}
 	
@@ -337,6 +345,7 @@ public class TrafficManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 			report.report("Failed to start traffic", Reporter.FAIL);
+			reason = "Failed to start traffic";
 			return false;
 		}
 		return true;
@@ -404,7 +413,8 @@ public class TrafficManager {
 	private Pair<Double,Double> getCalculatorPassCriteria(EnodeB enb,RadioParameters radioParams) {
 		String calculatorStringKey = ParseRadioProfileToString(radioParams);
 		if (calculatorStringKey == null) {
-			report.report("calculator key value is empty - fail test", Reporter.FAIL);
+			report.report("Calculator key value is empty - fail test", Reporter.FAIL);
+			reason = "Calculator key value is empty - fail test";
 			return null;
 		}
 		CalculatorMap calc = new CalculatorMap();
@@ -471,7 +481,8 @@ public class TrafficManager {
 
 	public boolean checkGeneratorType(GeneratorType generatorType) {
 		if(!trafficType.equals(generatorType)){
-			report.report("Can not start traffic with different generator type from before", Reporter.FAIL);
+			report.report("Can't start traffic with different generator type from before", Reporter.FAIL);
+			reason = "Can't start traffic with different generator type from before";
 			return false;
 		}
 		return true;
@@ -487,6 +498,7 @@ public class TrafficManager {
 	}
 
 	public void stopTraffic(ArrayList<String> trafficToStop) {
+		reason = StringUtils.EMPTY;
 		if(trafficToStop.isEmpty()){
 			Iterator<TrafficSampler> iter = samplerList.iterator();
 			while(iter.hasNext()){
@@ -502,6 +514,9 @@ public class TrafficManager {
 				TrafficSampler ts = iter.next();
 				GeneralUtils.startLevel("Getting statistics for traffic "+ts.getName());
 				ts.getStatistics();
+				if(!ts.getReason().isEmpty()){
+					reason+=ts.getReason();
+				}
 				ts.removeStreams();
 				iter.remove();
 				GeneralUtils.stopLevel();
@@ -525,6 +540,9 @@ public class TrafficManager {
 					if(ts.getName().equals(nameToStop)){
 						GeneralUtils.startLevel("Getting statistics for traffic "+ts.getName());
 						ts.getStatistics();
+						if(!ts.getReason().isEmpty()){
+							reason+=ts.getReason();
+						}
 						ts.removeStreams();
 						iter.remove();
 						GeneralUtils.stopLevel();
@@ -534,11 +552,19 @@ public class TrafficManager {
 		}
 	}
 
+	public synchronized String getReason() {
+		return reason;
+	}
+
 	public void getTrafficStatistics(ArrayList<String> trafficToGetStatistics) {
+		reason = StringUtils.EMPTY;
 		if(trafficToGetStatistics.isEmpty()){
 			for(TrafficSampler ts:samplerList){
 				GeneralUtils.startLevel("Getting statistics for traffic "+ts.getName());
 				ts.getStatistics();
+				if(!ts.getReason().isEmpty()){
+					reason+=ts.getReason();
+				}
 				GeneralUtils.stopLevel();
 			}
 		}else{
@@ -547,6 +573,9 @@ public class TrafficManager {
 					if(ts.getName().equals(nameToGetStatistics)){
 						GeneralUtils.startLevel("Getting statistics for traffic "+ts.getName());
 						ts.getStatistics();
+						if(!ts.getReason().isEmpty()){
+							reason+=ts.getReason();
+						}
 						GeneralUtils.stopLevel();
 					}
 				}			

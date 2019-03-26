@@ -403,6 +403,7 @@ public class Enodeb extends EnodebAction {
 				dut.getName() + " Wait For All Running And In Service " + timeOutInMillisecond / 1000 + "  seconds.");
 		if (!this.dut.waitForAllRunningAndInService(timeOutInMillisecond)) {
 			report.report("Wait For All Running And In Service Failed", Reporter.FAIL);
+			reason = "Wait For All Running And In Service Failed";
 		} else {
 			report.report("Wait For All Running And In Service Succeeded");
 		}
@@ -426,6 +427,7 @@ public class Enodeb extends EnodebAction {
 
 		if (!this.dut.rebootViaNetspan(netspanRebootType)) {
 			report.report("Reboot Failed", Reporter.FAIL);
+			reason = "Reboot Failed";
 		} else {
 			report.report("Reboot Succeeded");
 		}
@@ -440,6 +442,7 @@ public class Enodeb extends EnodebAction {
 
 		if (!flag) {
 			report.report("Reset Counters Failed", Reporter.FAIL);
+			reason = "Reset Counters Failed";
 		} else {
 			report.report("Reset Counters Succeeded");
 		}
@@ -461,6 +464,7 @@ public class Enodeb extends EnodebAction {
 			report.report("Ping to IP " + this.pingIP + " Succeeded");
 		} else {
 			report.report("Ping to IP " + this.pingIP + " Failed", Reporter.FAIL);
+			reason = "Ping to IP " + this.pingIP + " Failed";
 		}
 	}
 
@@ -507,6 +511,7 @@ public class Enodeb extends EnodebAction {
 
 		if (!flag) {
 			report.report("Set Service State Failed", Reporter.FAIL);
+			reason = "Set Service State Failed";
 		} else {
 			report.report("Set Service State Succeeded");
 		}
@@ -525,12 +530,14 @@ public class Enodeb extends EnodebAction {
 				val = Integer.parseInt(this.valueToSet);
 			} catch (Exception e) {
 				report.report("Cant convert value:" + this.valueToSet + " to Int", Reporter.FAIL);
+				reason = "Cant convert value:" + this.valueToSet + " to Int";
 				return;
 			}
 			try {
 				answer = this.dut.snmpSet(this.OID, val);
 			} catch (IOException e) {
 				report.report("SNMP fail for OID:" + this.OID + " Value:" + val, Reporter.FAIL);
+				reason = "SNMP fail for OID:" + this.OID + " Value:" + val;
 				return;
 			}
 
@@ -540,6 +547,7 @@ public class Enodeb extends EnodebAction {
 				this.dut.snmpSet(this.OID, this.valueToSet);
 			} catch (IOException e) {
 				report.report("SNMP fail for OID:" + this.OID + " Value:" + this.valueToSet, Reporter.FAIL);
+				reason = "SNMP fail for OID:" + this.OID + " Value:" + this.valueToSet;
 				return;
 			}
 			break;
@@ -548,6 +556,7 @@ public class Enodeb extends EnodebAction {
 			report.report("SNMP Set succeded for OID:" + this.OID + " Value:" + this.valueToSet);
 		} else {
 			report.report("SNMP Set failed for OID:" + this.OID + " Value:" + this.valueToSet, Reporter.FAIL);
+			reason = "SNMP Set failed for OID:" + this.OID + " Value:" + this.valueToSet;
 		}
 	}
 
@@ -581,7 +590,8 @@ public class Enodeb extends EnodebAction {
 		try {
 			clockSource = NetspanServer.getInstance().getPrimaryClockSource(this.dut);
 		} catch (Exception e) {
-			report.report("Is Clock source it 1588 Test faild dut to: " + e.getMessage(), Reporter.FAIL);
+			report.report("Is Clock source it 1588 Test failed dut to: " + e.getMessage(), Reporter.FAIL);
+			reason = "Is Clock source it 1588 Test failed dut to: " + e.getMessage();
 			e.printStackTrace();
 			return;
 		}
@@ -613,7 +623,8 @@ public class Enodeb extends EnodebAction {
 		boolean flag = EnodeBConfig.getInstance().setProfile(this.dut, this.cellId, this.enbProfile, this.profileName);
 
 		if (!flag) {
-			report.report("Set " + this.enbProfile + " Failed", Reporter.FAIL);
+			report.report("Failed to set profile " + profileName + " to enodeb " + dut.getNetspanName(), Reporter.FAIL);
+			reason = "Failed to set profile " + profileName + " to enodeb " + dut.getNetspanName();
 		} else {
 			report.report("Succeeded to set profile " + profileName + " to enodeb " + dut.getNetspanName());
 		}
@@ -679,6 +690,7 @@ public class Enodeb extends EnodebAction {
 			boolean flag = netspan.setEnbCellProperties(dut, enbCellProperties);
 			if (!flag) {
 				report.report("Set cell properties Failed", Reporter.FAIL);
+				reason = "Set cell properties Failed";
 				return;
 			} else
 				report.report("Set cell properties Passed");
@@ -687,41 +699,47 @@ public class Enodeb extends EnodebAction {
 			report.report("Enabled status from netspan: " + (enbCellProperties1.isEnabled ? "enabled" : "disabled"));
 			if (enbCellProperties1.isEnabled != enableCell) {
 				report.report("Enabled status not as expected!", Reporter.FAIL);
+				reason = "Enabled status not as expected!";
 				flag = false;
 			}
 
 			report.report("PCI value from netspan: " + enbCellProperties1.physicalCellId);
 			if (physicalCellId != null) {
 				if (enbCellProperties1.physicalCellId != pciValue) {
-					report.report("PCI value not as expected!", Reporter.FAIL);
+					report.report("PCI value not as expected. Expected: "+pciValue+", Actual: "+enbCellProperties1.physicalCellId, Reporter.FAIL);
+					reason += "PCI value not as expected. Expected: "+pciValue+", Actual: "+enbCellProperties1.physicalCellId;
 					flag = false;
 				}
 			}
 			report.report("RSI value from netspan: " + enbCellProperties1.prachRsi);
 			if (PRACHRootSequenceIndex != null) {
 				if (enbCellProperties1.prachRsi != rsiValue) {
-					report.report("RSI value not as expected!", Reporter.FAIL);
+					report.report("RSI value not as expected. Expected: "+rsiValue+", Actual: "+enbCellProperties1.prachRsi, Reporter.FAIL);
+					reason += "RSI value not as expected. Expected: "+rsiValue+", Actual: "+enbCellProperties1.prachRsi;
 					flag = false;
 				}
 			}
-			report.report("PCI value from netspan: " + enbCellProperties1.trackingAreaCode);
+			report.report("TrackingAreaCode value from netspan: " + enbCellProperties1.trackingAreaCode);
 			if (trackingAreaCode != null) {
 				if (enbCellProperties1.trackingAreaCode != trackingCodeValue) {
-					report.report("trackingAreaCode value not as expected!", Reporter.FAIL);
+					report.report("TrackingAreaCode value not as expected. Expected: "+trackingCodeValue+", Actual: "+enbCellProperties1.trackingAreaCode, Reporter.FAIL);
+					reason += "TrackingAreaCode value not as expected. Expected: "+trackingCodeValue+", Actual: "+enbCellProperties1.trackingAreaCode;
 					flag = false;
 				}
 			}
 			report.report("emergencyAreaId value from netspan: " + enbCellProperties1.emergencyAreaId);
 			if (emergencyAreaId != null) {
 				if (enbCellProperties1.emergencyAreaId != emergencyAreaValue) {
-					report.report("emergencyAreaId value not as expected!", Reporter.FAIL);
+					report.report("emergencyAreaId value not as expected. Expected: "+emergencyAreaValue+", Actual: "+enbCellProperties1.emergencyAreaId, Reporter.FAIL);
+					reason += "emergencyAreaId value not as expected. Expected: "+emergencyAreaValue+", Actual: "+enbCellProperties1.emergencyAreaId;
 					flag = false;
 				}
 			}
 			report.report("prachFreqOffset value from netspan: " + enbCellProperties1.prachFreqOffset);
 			if (PRACHFrequencyOffset != null) {
 				if (enbCellProperties1.prachFreqOffset != PRACHFrequencyOffsetValue) {
-					report.report("prachFreqOffset value not as expected!", Reporter.FAIL);
+					report.report("prachFreqOffset value not as expected. Expected: "+PRACHFrequencyOffsetValue+", Actual: "+enbCellProperties1.prachFreqOffset, Reporter.FAIL);
+					reason += "prachFreqOffset value not as expected. Expected: "+PRACHFrequencyOffsetValue+", Actual: "+enbCellProperties1.prachFreqOffset;
 					flag = false;
 				}
 			}
@@ -730,7 +748,8 @@ public class Enodeb extends EnodebAction {
 					"closedSubscriberGroupMode value from netspan: " + enbCellProperties1.closedSubscriberGroupMode);
 			if (closedSubscriberGroupMode != null) {
 				if (enbCellProperties1.closedSubscriberGroupMode != closedSubscriberGroupMode) {
-					report.report("closedSubscriberGroupMode value not as expected!", Reporter.FAIL);
+					report.report("closedSubscriberGroupMode value not as expected. Expected: "+closedSubscriberGroupMode.toString()+", Actual: "+enbCellProperties1.closedSubscriberGroupMode.toString(), Reporter.FAIL);
+					reason += "closedSubscriberGroupMode value not as expected. Expected: "+closedSubscriberGroupMode.toString()+", Actual: "+enbCellProperties1.closedSubscriberGroupMode.toString();
 					flag = false;
 				}
 			}
@@ -738,14 +757,16 @@ public class Enodeb extends EnodebAction {
 			report.report("cellBarringPolicy value from netspan: " + enbCellProperties1.cellBarringPolicy);
 			if (cellBarringPolicy != null) {
 				if (enbCellProperties1.cellBarringPolicy != cellBarringPolicy) {
-					report.report("cellBarringPolicy", Reporter.FAIL);
+					report.report("cellBarringPolicy value not as expected. Expected: "+cellBarringPolicy.toString()+", Actual: "+enbCellProperties1.cellBarringPolicy.toString(), Reporter.FAIL);
+					reason += "cellBarringPolicy value not as expected. Expected: "+cellBarringPolicy.toString()+", Actual: "+enbCellProperties1.cellBarringPolicy.toString();
 					flag = false;
 				}
 			}
 			GeneralUtils.stopLevel();
 
 		} catch (Exception e) {
-			report.report("Could not get netspan! Set cell properties failed ", Reporter.FAIL);
+			report.report("Could not get netspan! Set cell properties failed", Reporter.FAIL);
+			reason = "Could not get netspan! Set cell properties failed";
 		}
 	}
 
@@ -757,6 +778,7 @@ public class Enodeb extends EnodebAction {
 
 		if (!enodeBConfig.convertToPnPConfig(dut)) {
 			report.report("Failed to set EnodeB as Pnp", Reporter.FAIL);
+			reason = "Failed to set EnodeB as Pnp";
 		} else {
 			report.report("Configuration done");
 		}
@@ -783,6 +805,7 @@ public class Enodeb extends EnodebAction {
 		} catch (IOException e) {
 			e.printStackTrace();
 			report.report("Start parallel commands failed due to: " + e.getMessage(), Reporter.FAIL);
+			reason = "Start parallel commands failed due to: " + e.getMessage();
 			flag = false;
 		}
 		if (flag) {
@@ -799,6 +822,7 @@ public class Enodeb extends EnodebAction {
 			report.report("Stop parallel commands done");
 		} else {
 			report.report("Stop parallel commands failed", Reporter.FAIL);
+			reason = "Stop parallel commands failed";
 		}
 	}
 
@@ -813,6 +837,7 @@ public class Enodeb extends EnodebAction {
 
 		if (lteBackhauls == null || this.backhaulEthernetName == null || this.backhaulEthernetParameter == null) {
 			report.report("Verify " + this.backhaulEthernetName + ": " + this.backhaulEthernetParameter, Reporter.FAIL);
+			reason = "Verify " + this.backhaulEthernetName + ": " + this.backhaulEthernetParameter;
 			return;
 		} else {
 			report.report("Verify " + this.backhaulEthernetName + ": " + this.backhaulEthernetParameter);
@@ -876,6 +901,7 @@ public class Enodeb extends EnodebAction {
 			} else {
 				setAnswer(false);
 				report.report("Failed to set " + this.dut.getName() + " mode to " + managedMode, Reporter.FAIL);
+				reason = "Failed to set " + this.dut.getName() + " mode to " + managedMode;
 			}
 		}
 	}
@@ -892,6 +918,7 @@ public class Enodeb extends EnodebAction {
 			status = netspan.performReProvision(dut.getNetspanName());
 			if (!status) {
 				report.report("Re-Provision Failed", Reporter.FAIL);
+				reason = "Re-Provision Failed";
 				return;
 			} else
 				report.step(String.format("%s - Succeeded to perform Re-Provision", dut.getNetspanName()));
@@ -914,6 +941,7 @@ public class Enodeb extends EnodebAction {
 				status = dut.reboot();
 				if (!status) {
 					report.report("Reboot Failed", Reporter.FAIL);
+					reason = "Reboot Failed";
 					report.stopLevel();
 					return false;
 				}
@@ -1020,15 +1048,18 @@ public class Enodeb extends EnodebAction {
 	public void changeGranulatiryPeriod() {
 		if (granularityPeriod == GeneralUtils.ERROR_VALUE) {
 			report.report("No granularity period was configured", Reporter.FAIL);
+			reason = "No granularity period was configured";
 			return;
 		}
 		if (granularityPeriod <= 0) {
 			report.report("Can't set granularity period of 0 or less", Reporter.FAIL);
+			reason = "Can't set granularity period of 0 or less";
 			return;
 		}
 		boolean setGranularity = EnodeBConfig.getInstance().setGranularityPeriod(dut, granularityPeriod);
 		if (!setGranularity) {
 			report.report("Failed to set granularity period", Reporter.FAIL);
+			reason = "Failed to set granularity period";
 		}
 	}
 

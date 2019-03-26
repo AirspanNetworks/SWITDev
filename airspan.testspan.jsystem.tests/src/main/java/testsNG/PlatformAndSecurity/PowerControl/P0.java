@@ -83,7 +83,7 @@ public class P0 extends PowerControlBase {
 				int txMaxPower = enbConfig.readTxMaxPowerOfProductViaShell(dut,productCode);
 
 				if (txMaxPower == GeneralUtils.ERROR_VALUE) {
-					report.report("Product code: +" + productCode + " does not exist in CSV file", Reporter.FAIL);
+					report.report("Product code: " + productCode + " does not exist in CSV file", Reporter.FAIL);
 					reason = "Product code: " + productCode + " does not exist in CSV file";
 					return;
 				} else {

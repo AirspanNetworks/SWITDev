@@ -106,6 +106,7 @@ public class EnodeBNoLogs extends EnodebAction {
 		}
 		if(listOfAlarms.isEmpty()){
 			report.report("No alarms were set to verify", Reporter.FAIL);
+			reason = "No alarms were set to verify";
 			return;
 		}
 		verifyAlarmsHelper();
@@ -120,6 +121,7 @@ public class EnodeBNoLogs extends EnodebAction {
 		}
 		if(listOfEvents.isEmpty()){
 			report.report("No events were set to verify", Reporter.FAIL);
+			reason = "No events were set to verify";
 			return;
 		}
 		if(verifyAction == verifyAlarmAction.Equals){
@@ -133,6 +135,7 @@ public class EnodeBNoLogs extends EnodebAction {
 	private boolean isDutNull(){
 		if(dut == null){
 			report.report("No dut in test", Reporter.FAIL);
+			reason = "No dut in test";
 			return true;
 		}
 		return false;
@@ -190,6 +193,7 @@ public class EnodeBNoLogs extends EnodebAction {
         	}
         	if(count == 0){
         		report.report("Alarm with type id ["+id+"] was not found",Reporter.FAIL);
+        		reason += "Alarm with type id ["+id+"] was not found.<br> ";
         	}else{
         		report.report("Alarm with type id ["+id+"] was found ["+count+"] time"+(count==1?"":"s"));
         	}
@@ -216,6 +220,7 @@ public class EnodeBNoLogs extends EnodebAction {
         	}
         	if(count == 0){
         		report.report("Event with event info ["+info+"] was not found",Reporter.FAIL);
+        		reason += "Event with event info ["+info+"] was not found.<br> ";
         	}else{
         		report.report("Event with event info ["+info+"] was found ["+count+"] time"+(count==1?"":"s"));
         	}

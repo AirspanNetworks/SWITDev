@@ -63,6 +63,7 @@ public class UeAction extends Action {
 
         if (!PeripheralsConfig.getInstance().checkIfAllUEsAreConnectedToNode(this.ues, dut)) {
             report.report("Some of the UEs are not connected to EnodeB", Reporter.FAIL);
+            reason = "Some of the UEs are not connected to EnodeB";
         } else {
             report.report("All the UEs are connected");
         }
@@ -78,6 +79,7 @@ public class UeAction extends Action {
             report.report("Reboot UE Succeeded");
         } else {
             report.report("Reboot UE Failed", Reporter.FAIL);
+            reason = "Reboot UE Failed";
         }
     }
 
@@ -89,6 +91,7 @@ public class UeAction extends Action {
 
         if (!flag) {
             report.report("Start UEs Failed", Reporter.FAIL);
+            reason = "Start UEs Failed";
         } else {
             report.report("Start UEs Succeeded");
         }
@@ -102,6 +105,7 @@ public class UeAction extends Action {
 
         if (!flag) {
             report.report("Stop UEs Failed", Reporter.FAIL);
+            reason = "Stop UEs Failed";
         } else {
             report.report("Stop UEs Succeeded");
         }
@@ -113,7 +117,8 @@ public class UeAction extends Action {
         report.report("change earfcn action");
         report.report("earfcn from SUT : " + EARFCN);
         if (ues == null) {
-            report.report("there are no ues from parameters!", Reporter.FAIL);
+            report.report("There are no ues from parameters", Reporter.FAIL);
+            reason = "There are no ues from parameters";
             return;
         }
 
@@ -128,11 +133,12 @@ public class UeAction extends Action {
                     if (((GemtekUE) ue).changeEARFCN(EARFCN)) {
                         report.report("set earfcn value of " + EARFCN + " into " + ue.getName() + " successfully");
                     } else {
-                        report.report("could not set earfcn value to " + ue.getName(), Reporter.FAIL);
+                        report.report("Could not set earfcn value to " + ue.getName(), Reporter.FAIL);
+                        reason += "Could not set earfcn value to " + ue.getName()+"<br> ";
                     }
                 }
             } else {
-                report.report("ue : " + ue.getName() + "is not a Gemtek and canot change his EARFCN");
+                report.report("UE: " + ue.getName() + " is not a Gemtek and cannot change his EARFCN");
             }
             GeneralUtils.stopLevel();
         }
@@ -150,17 +156,19 @@ public class UeAction extends Action {
             report.report("Reboot UEs Succeeded");
         } else {
             report.report("Not all UEs were rebooted", Reporter.FAIL);
+            reason = "Not all UEs were rebooted";
         }
     }
 
     @Test // 9
     @TestProperties(name = "Set UEs APN", returnParam = "LastStatus", paramsInclude = {"UEs", "apnName"})
     public void setAPN() {
-        report.report("Start UEs");
+        report.report("Set APN to UEs");
         boolean flag = PeripheralsConfig.getInstance().setAPN(ues, apnName);
 
         if (!flag) {
             report.report("Set UEs APN Failed", Reporter.FAIL);
+            reason = "Set UEs APN Failed";
         } else {
             report.step("Set UEs APN Succeeded");
         }

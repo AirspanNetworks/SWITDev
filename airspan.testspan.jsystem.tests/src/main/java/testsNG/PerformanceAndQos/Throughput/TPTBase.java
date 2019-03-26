@@ -1420,14 +1420,22 @@ public class TPTBase extends TestspanTest {
 		results.add("Actual");
 
 		results.add("UL");
-		results.add(injectedUL==0?"N/A":String.format("%.2f", injectedUL));
-		results.add(expectedUL==0?"N/A":String.format("%.2f", expectedUL));
-		results.add(String.format("%.2f", actualUl));
+		results.add(injectedUL==null?"N/A":String.format("%.2f", injectedUL));
+		results.add(expectedUL==null?"N/A":String.format("%.2f", expectedUL));
+		if(injectedUL==null && expectedUL==null){
+			results.add("N/A");
+		}else{
+			results.add(String.format("%.2f", actualUl));			
+		}
 
 		results.add("DL");
-		results.add(injectedDL==0?"N/A":String.format("%.2f", injectedDL));
-		results.add(expectedDL==0?"N/A":String.format("%.2f", expectedDL));
-		results.add(String.format("%.2f", actualDl));
+		results.add(injectedDL==null?"N/A":String.format("%.2f", injectedDL));
+		results.add(expectedDL==null?"N/A":String.format("%.2f", expectedDL));
+		if(injectedDL==null && expectedDL==null){
+			results.add("N/A");
+		}else{
+			results.add(String.format("%.2f", actualDl));			
+		}
 
 		if(dl_ul_calc != null){
 			String[] calc = dl_ul_calc.split("_");
@@ -1455,7 +1463,7 @@ public class TPTBase extends TestspanTest {
 		table.addField(HtmlFieldColor.WHITE, results.get(4));
 		table.addField(HtmlFieldColor.WHITE, results.get(5));
 		HtmlFieldColor line2Result = HtmlFieldColor.WHITE;
-		if(expectedUL!=0){
+		if(expectedUL != null){
 			if (actualUl >= expectedUL) {
 				line2Result = HtmlFieldColor.GREEN;
 			} else {
@@ -1471,7 +1479,7 @@ public class TPTBase extends TestspanTest {
 		table.addField(HtmlFieldColor.WHITE, results.get(8));
 		table.addField(HtmlFieldColor.WHITE, results.get(9));
 		HtmlFieldColor line3Result = HtmlFieldColor.WHITE;
-		if(expectedDL!=0){
+		if(expectedDL!=null){
 			if (actualDl >= expectedDL) {
 				line3Result = HtmlFieldColor.GREEN;
 			} else {

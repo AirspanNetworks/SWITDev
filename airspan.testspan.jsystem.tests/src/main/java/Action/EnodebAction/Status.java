@@ -122,6 +122,7 @@ public class Status extends EnodebAction {
 
 		if (!frNumberExist) {
 			report.report(this.rfNumber.value() + " does not exist", Reporter.FAIL);
+			reason = this.rfNumber.value() + " does not exist";
 		}
 	}
 
@@ -156,6 +157,7 @@ public class Status extends EnodebAction {
 		}
 		else {
 			report.report(finalReport, Reporter.FAIL);
+			reason = finalReport;
 		}
 	}
 	

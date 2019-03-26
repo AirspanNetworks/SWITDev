@@ -295,6 +295,9 @@ public class TrafficAction extends Action {
 			trafficToGetStatistics = new ArrayList<String>();
 		}
 		trafficManagerInstance.getTrafficStatistics(trafficToGetStatistics);
+		if(!trafficManagerInstance.getReason().isEmpty()){
+			reason = trafficManagerInstance.getReason();
+		}
 	}
 
 	@Test
@@ -311,6 +314,9 @@ public class TrafficAction extends Action {
 			trafficToStop = new ArrayList<String>();
 		}
 		trafficManagerInstance.stopTraffic(trafficToStop);
+		if(!trafficManagerInstance.getReason().isEmpty()){
+			reason = trafficManagerInstance.getReason();
+		}
 	}
 
 	@Test
@@ -328,6 +334,9 @@ public class TrafficAction extends Action {
 		trafficManagerInstance.startTraffic(semanticName, convertUeToNamesList(ues), qci, loadType, ULLoad, DLLoad,
 				transmitDirection, expectedLoadType, ULExpected, DLExpected, dut, parallelStreams, windowSize, mss,
 				frameSize, trafficType, runTime, toCheck);
+		if(!trafficManagerInstance.getReason().isEmpty()){
+			reason = trafficManagerInstance.getReason();
+		}
 	}
 
 	private boolean validateStreams() {

@@ -325,9 +325,11 @@ public class TrafficAction extends Action {
 			"FrameSize", "WindowSize", "ParallelStreams", "Mss", "ExpectedLoadType", "ULExpected", "DLExpected" })
 	public void startTraffic() {
 		GeneralUtils.startLevel("Parameters for start traffic");
-		if (!validateParams())
+		if (!validateParams()){
+			GeneralUtils.stopLevel();			
 			return;
-		tptCulculation();
+		}
+		tptCalculation();
 		GeneralUtils.stopLevel();
 		if (!validateStreams())
 			return;
@@ -360,7 +362,7 @@ public class TrafficAction extends Action {
 		return true;
 	}
 
-	private void tptCulculation() {
+	private void tptCalculation() {
 		if (trafficType == Protocol.TCP) {
 			if (windowSize != null) {
 				report.report("Window size: " + windowSize);

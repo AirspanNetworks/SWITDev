@@ -156,7 +156,7 @@ public class Action extends SystemTestCase4 {
     private void printFailReasonToPropFile() {
         if (!reason.isEmpty()) {
             report.addProperty("failureReason", reason);
-            report.report("Fail reason: " + reason);
+            report.report("Fail reason: " + reason.replace("<br>", ""));
         }
     }
 }

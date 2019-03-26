@@ -96,7 +96,7 @@ public class TrafficManager {
 			String ulExp, String dlExp, EnodeB enb, Integer numberParallelStreams,
 			Double windowSizeInKbits, Integer mss, Integer packetSize, Protocol protocol, Integer timeout,
 			ArrayList<String> streams){
-		
+		reason = StringUtils.EMPTY;
 		if(!isTrafficInit){
 			if(!initTrafficWithNoStartTraffic(TrafficCapacity.FULLTPT, protocol)){
 				return;

@@ -546,6 +546,7 @@ public abstract class XLP extends EnodeBComponent {
      */
     @Override
     public void setSessionLogLevel(String sessionName, int level) {
+        GeneralUtils.printToConsole("DEBUG: logger threshold set client=* process=* cli=" + String.valueOf(level));
         sendCommandsOnSession(sessionName, LTE_CLI_PROMPT, "logger threshold set client=* process=* cli=" + String.valueOf(level), LTE_CLI_PROMPT);
     }
 

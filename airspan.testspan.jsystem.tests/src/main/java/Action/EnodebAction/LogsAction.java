@@ -269,14 +269,14 @@ public class LogsAction extends EnodebAction {
 	private void startLogs(Logger logger) {
 		switch (session) {
 			case SSH:
-				logger.startEnodeBLog(sshSessionName);
+				logger.startEnodeBLog(sshSessionName, LOG_ACTION);
 				break;
 			case SERIAL:
-				logger.startEnodeBLog(serialSessionName);
+				logger.startEnodeBLog(serialSessionName,LOG_ACTION);
 				break;
 			case BOTH:
-				logger.startEnodeBLog(sshSessionName);
-				logger.startEnodeBLog(serialSessionName);
+				logger.startEnodeBLog(sshSessionName, LOG_ACTION);
+				logger.startEnodeBLog(serialSessionName, LOG_ACTION);
 		}
 	}
 

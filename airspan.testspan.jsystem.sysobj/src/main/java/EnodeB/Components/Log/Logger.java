@@ -378,12 +378,12 @@ public class Logger implements Runnable {
 	 *
 	 * @param logName - logName
 	 */
-	public void startEnodeBLog(String logName) {
+	public void startEnodeBLog(String logName, String prefix) {
 		System.out.printf("[%s]: Creating log files. \n", name);
 		if (getLoggedSessions().size() < 1)
 			System.err.printf("[%s]: There are no log needed for this. Not creating any log files. \n", name);
 		else {
-			logWriterEnb.addLog(logName, StringUtils.EMPTY);
+			logWriterEnb.addLog(logName, prefix);
 		}
 	}
 

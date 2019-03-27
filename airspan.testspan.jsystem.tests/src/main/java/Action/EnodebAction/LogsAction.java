@@ -288,14 +288,14 @@ public class LogsAction extends EnodebAction {
 	private void closeLogs(Logger logger) {
 		switch (session) {
 			case SSH:
-				logger.closeEnodeBLog(sshSessionName);
+				logger.closeEnodeBLog(sshSessionName,LOG_ACTION);
 				break;
 			case SERIAL:
-				logger.closeEnodeBLog(serialSessionName);
+				logger.closeEnodeBLog(serialSessionName, LOG_ACTION);
 				break;
 			case BOTH:
-				logger.closeEnodeBLog(sshSessionName);
-				logger.closeEnodeBLog(serialSessionName);
+				logger.closeEnodeBLog(sshSessionName, LOG_ACTION);
+				logger.closeEnodeBLog(serialSessionName, LOG_ACTION);
 		}
 	}
 
@@ -335,7 +335,7 @@ public class LogsAction extends EnodebAction {
 			sessionManager.openSerialLogSession();
 			sessionManager.getSerialSession().setLoggedSession(true);
 			sessionManager.getSerialSession().setEnableCliBuffer(false);
-			sessionManager.getSerialSession().setName(sessionManager.getSerialSession().getName() + LOG_ACTION);
+//			sessionManager.getSerialSession().setName(sessionManager.getSerialSession().getName() + LOG_ACTION);
 		}
 		return sessionManager.getSerialSession().getName();
 	}
@@ -351,7 +351,7 @@ public class LogsAction extends EnodebAction {
 			sessionManager.openSSHLogSession();
 			sessionManager.getSSHlogSession().setLoggedSession(true);
 			sessionManager.getSSHlogSession().setEnableCliBuffer(false);
-			sessionManager.getSSHlogSession().setName(sessionManager.getSSHlogSession().getName() + LOG_ACTION);
+//			sessionManager.getSSHlogSession().setName(sessionManager.getSSHlogSession().getName() + LOG_ACTION);
 		}
 		return sessionManager.getSSHlogSession().getName();
 	}

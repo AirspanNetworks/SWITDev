@@ -401,6 +401,15 @@ public class Logger implements Runnable {
 	 *
 	 * @param logName - logName
 	 */
+	public void closeEnodeBLog(String logName, String prefix) {
+		logWriterEnb.closeLog(logName, prefix);
+	}
+
+	/**
+	 * Closes the log files that contains the logName and copies them to the test folder via the reporter.
+	 *
+	 * @param logName - logName
+	 */
 	public void closeAutoLog(String logName) {
 		logWriterAuto.closeLog(logName);
 	}

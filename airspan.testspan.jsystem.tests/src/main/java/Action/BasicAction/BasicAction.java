@@ -248,7 +248,7 @@ public class BasicAction extends Action {
 		ExtendCLI cli = null;
 		
 		/* Internal unittest only */
-		 setUnitTestforserial(); 
+//		 setUnitTestforserial(); 
 		 
 		// Verify input parameters
 		try {
@@ -370,14 +370,14 @@ public class BasicAction extends Action {
 			
 			if(expectedPatern != null) {
 				report.report("Pattern verification not implemented", Reporter.WARNING);
-//				result_text += " as following:\n";
+				result_text += " as following:\n";
 //				
 //				for(String key : expectedPatern.split("\\s*;\\s*")) {
 //					int local_stat = output_str.contains(key) ? Reporter.PASS : Reporter.FAIL;
 //					result_text += String.format("Expected pattern '%s' %s exists in output\n", key, local_stat == Reporter.PASS ? "" : "not");
 //					status = status == Reporter.PASS ?  local_stat: status;
 //				}
-//				GeneralUtils.reportHtmlLink("Command " + serialCommand + " output", output_str, !Boolean.parseBoolean(String.format("%d", status)), "green", expectedPatern.split(";"));
+				GeneralUtils.reportHtmlLink("Command " + serialCommand + " output", output_str, !Boolean.parseBoolean(String.format("%d", status)), "green", expectedPatern.split(";"));
 			}
 			else {
 				result_text = "Test completed";

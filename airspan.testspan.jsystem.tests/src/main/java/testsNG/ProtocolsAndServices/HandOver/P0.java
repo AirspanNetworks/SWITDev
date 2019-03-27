@@ -180,8 +180,7 @@ public class P0 extends TestspanTest {
 					return false;
 				if (!checkAllDynamicConnected())
 					return false;
-				if (!checkStaticUesConnected())
-					return false;
+				checkStaticUesConnected();
 			}
 			if (!findMainEnb())
 				return false;
@@ -207,18 +206,16 @@ public class P0 extends TestspanTest {
 		GeneralUtils.stopLevel();
 	}
 
-	private boolean checkStaticUesConnected() {
+	private void checkStaticUesConnected() {
 		GeneralUtils.startLevel("Checking if all static UEs are connected");
 		if (statUEList != null) {
 			if (!peripheralsConfig.epcAndEnodeBsConnection(statUEList, enbInTest)) {
-				report.report("Not all static UEs are connected to EnodeB", Reporter.FAIL);
+				report.report("Not all static UEs are connected to EnodeB", Reporter.WARNING);
 				reason = "Not all static UEs are connected to EnodeB";
-				return false;
 			}
 		} else {
 			report.report("There are no static UEs to check");
 		}
-		return true;
 	}
 
 	public void deleteNeighbours() {

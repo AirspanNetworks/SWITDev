@@ -335,8 +335,9 @@ public class LogsAction extends EnodebAction {
 			sessionManager.openSerialLogSession();
 			sessionManager.getSerialSession().setLoggedSession(true);
 			sessionManager.getSerialSession().setEnableCliBuffer(false);
+			sessionManager.getSerialSession().setName(sessionManager.getSerialSession().getName() + LOG_ACTION);
 		}
-		return sessionManager.getSerialSession().getName() + LOG_ACTION;
+		return sessionManager.getSerialSession().getName();
 	}
 
 	/**
@@ -350,8 +351,9 @@ public class LogsAction extends EnodebAction {
 			sessionManager.openSSHLogSession();
 			sessionManager.getSSHlogSession().setLoggedSession(true);
 			sessionManager.getSSHlogSession().setEnableCliBuffer(false);
+			sessionManager.getSSHlogSession().setName(sessionManager.getSSHlogSession().getName() + LOG_ACTION);
 		}
-		return sessionManager.getSSHlogSession().getName() + LOG_ACTION;
+		return sessionManager.getSSHlogSession().getName();
 	}
 
 	/**

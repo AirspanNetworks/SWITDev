@@ -216,6 +216,7 @@ public class P0 extends TestspanTest {
 		} else {
 			report.report("There are no static UEs to check");
 		}
+		GeneralUtils.stopLevel();
 	}
 
 	public void deleteNeighbours() {

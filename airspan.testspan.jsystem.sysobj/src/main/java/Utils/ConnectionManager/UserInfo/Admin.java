@@ -3,7 +3,7 @@ package Utils.ConnectionManager.UserInfo;
 import Utils.ConnectionManager.terminal.LinkedPrompt;
 import Utils.ConnectionManager.terminal.Prompt;
 
-public class Admin extends UserInfoAbstract {
+public class Admin extends LinkedPrompt {
 	/**
 	 * Regular session with login 'admin'
 	 * @param password
@@ -14,7 +14,7 @@ public class Admin extends UserInfoAbstract {
 		password_pr.setLinkedPrompt(new Prompt(PromptsCommandsInfo.ADMIN_PATTERN, true));
 		setLinkedPrompt(password_pr);
 		
-		setExit_sequence(new LinkedPrompt(PromptsCommandsInfo.ADMIN_PATTERN, false, PromptsCommandsInfo.EXIT_COMMAND, true));
+//		setExit_sequence(new LinkedPrompt(PromptsCommandsInfo.ADMIN_PATTERN, false, PromptsCommandsInfo.EXIT_COMMAND, true));
 		
 	}
 	/**
@@ -34,7 +34,7 @@ public class Admin extends UserInfoAbstract {
 			LinkedPrompt last_pr = (LinkedPrompt) getLinkedPrompt();
 			last_pr.setLinkedPrompt(sudo);
 			
-			setExit_sequence(new LinkedPrompt(PromptsCommandsInfo.ROOT_PATTERN, false, PromptsCommandsInfo.EXIT_COMMAND, true));
+//			setExit_sequence(new LinkedPrompt(PromptsCommandsInfo.ROOT_PATTERN, false, PromptsCommandsInfo.EXIT_COMMAND, true));
 			
 		}
 	}
@@ -54,7 +54,7 @@ public class Admin extends UserInfoAbstract {
 			LinkedPrompt password_pr = (LinkedPrompt) getLinkedPrompt();
 			password_pr.setLinkedPrompt(lte_cli);
 			
-			setExit_sequence(new LinkedPrompt(PromptsCommandsInfo.LTECLI_PATTERN, false, PromptsCommandsInfo.CntrC_COMMAND, true));
+//			setExit_sequence(new LinkedPrompt(PromptsCommandsInfo.LTECLI_PATTERN, false, PromptsCommandsInfo.CntrC_COMMAND, true));
 			
 		}
 	}

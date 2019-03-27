@@ -3,7 +3,7 @@ package Utils.ConnectionManager.UserInfo;
 import Utils.ConnectionManager.terminal.LinkedPrompt;
 import Utils.ConnectionManager.terminal.Prompt;
 
-public class Op extends UserInfoAbstract {
+public class Op extends LinkedPrompt {
 	
 	public Op(String password) {
 		super(PromptsCommandsInfo.LOGIN_PATTERN, true, "op", true);
@@ -11,7 +11,7 @@ public class Op extends UserInfoAbstract {
 		password_pr.setLinkedPrompt(new Prompt(PromptsCommandsInfo.LTECLI_PATTERN, false));
 		setLinkedPrompt(password_pr);
 		
-		setExit_sequence(new LinkedPrompt(PromptsCommandsInfo.LTECLI_PATTERN, false, PromptsCommandsInfo.CntrC_COMMAND, true));
+//		setExit_sequence(new LinkedPrompt(PromptsCommandsInfo.LTECLI_PATTERN, false, PromptsCommandsInfo.CntrC_COMMAND, true));
 	}
 	
 	public Op(String password, boolean is_sudo) {
@@ -24,7 +24,7 @@ public class Op extends UserInfoAbstract {
 			password_pr.setLinkedPrompt(sudo);
 			setLinkedPrompt(password_pr);
 			
-			setExit_sequence(new LinkedPrompt(PromptsCommandsInfo.ROOT_PATTERN, false, PromptsCommandsInfo.EXIT_COMMAND, true));
+//			setExit_sequence(new LinkedPrompt(PromptsCommandsInfo.ROOT_PATTERN, false, PromptsCommandsInfo.EXIT_COMMAND, true));
 		}
 	}
 	
@@ -37,7 +37,7 @@ public class Op extends UserInfoAbstract {
 			LinkedPrompt password_pr = (LinkedPrompt) getLinkedPrompt();
 			password_pr.setLinkedPrompt(lte_cli);
 			
-			setExit_sequence(new LinkedPrompt(PromptsCommandsInfo.LTECLI_PATTERN, false, PromptsCommandsInfo.CntrC_COMMAND, true));
+//			setExit_sequence(new LinkedPrompt(PromptsCommandsInfo.LTECLI_PATTERN, false, PromptsCommandsInfo.CntrC_COMMAND, true));
 		}
 	}
 }

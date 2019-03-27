@@ -3,7 +3,7 @@ package Utils.ConnectionManager.UserInfo;
 import Utils.ConnectionManager.terminal.LinkedPrompt;
 import Utils.ConnectionManager.terminal.Prompt;
 
-public class Root extends UserInfoAbstract {
+public class Root extends LinkedPrompt {
 	/**
 	 * Regular session with login 'root'
 	 * @param password
@@ -14,7 +14,7 @@ public class Root extends UserInfoAbstract {
 		password_pr.setLinkedPrompt(new Prompt(PromptsCommandsInfo.ROOT_PATTERN, false));
 		setLinkedPrompt(password_pr);
 		
-		setExit_sequence(new LinkedPrompt(PromptsCommandsInfo.ROOT_PATTERN, false, PromptsCommandsInfo.EXIT_COMMAND, true));
+//		setExit_sequence(new LinkedPrompt(PromptsCommandsInfo.ROOT_PATTERN, false, PromptsCommandsInfo.EXIT_COMMAND, true));
 	}
 	
 	public Root(String password, boolean is_ltecli) {
@@ -26,7 +26,7 @@ public class Root extends UserInfoAbstract {
 			LinkedPrompt password_pr = (LinkedPrompt) getLinkedPrompt();
 			password_pr.setLinkedPrompt(lte_cli);
 			
-			setExit_sequence(new LinkedPrompt(PromptsCommandsInfo.LTECLI_PATTERN,  false, PromptsCommandsInfo.CntrC_COMMAND, true));
+//			setExit_sequence(new LinkedPrompt(PromptsCommandsInfo.LTECLI_PATTERN,  false, PromptsCommandsInfo.CntrC_COMMAND, true));
 		}
 	}
 }

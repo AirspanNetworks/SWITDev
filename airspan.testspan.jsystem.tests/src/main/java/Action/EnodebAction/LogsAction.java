@@ -15,30 +15,41 @@ import java.util.HashMap;
 
 public class LogsAction extends EnodebAction {
 
+	//String Constants
 	private String EVERY_MODULE_STRING = "*";
+	private static final String LOG_ACTION = "_LogAction";
+	private static final String ACTION_NAME_STRING = "startEnodeBLogs";
+	private static final String MODULES_STRING = "Modules";
+	private static final String PROCESS_STRING = "Process";
+	private static final String CLIENT_STRING = "Client";
+	//User Inputs
 	private ArrayList<EnodeB> duts;
 	private Session session;
 	private LogLevel logLevel = LogLevel.SIX;
-	private Processes processes = Processes.ALL;
+	private Modules modules = Modules.ALL;
 	private String process = EVERY_MODULE_STRING;
 	private String client = EVERY_MODULE_STRING;
-	private static final String LOG_ACTION = "_LogAction";
-	private static final String ACTION_NAME_STRING = "startEnodeBLogs";
-	private static final String PROCESS_STRING = "Process";
-	private static final String PROCESSES_STRING = "Processes";
-	private static final String CLIENT_STRING = "Client";
+	//Test vars
+	private static Modules modulesSSH;
+	private static String processSSH;
+	private static String clientSSH;
+	private static LogLevel logLevelSSH;
+	private static Modules modulesSerial;
+	private static String processSerial;
+	private static String clientSerial;
+	private static LogLevel logLevelSerial;
 
 	/**
 	 * Enum represented by String to Process dropdown to log:
 	 * All or ParticularModel(Specific Process and Client)
 	 */
-	private enum Processes {
+	private enum Modules {
 		ALL("All"),
 		PARTICULAR_MODEL("Particular Model");
 
 		final String value;
 
-		Processes(String value) {
+		Modules(String value) {
 			this.value = value;
 		}
 	}
@@ -99,9 +110,9 @@ public class LogsAction extends EnodebAction {
 		this.logLevel = logLevel;
 	}
 
-	@ParameterProperties(description = "Processes For Start Log")
-	public void setProcesses(Processes processes) {
-		this.processes = processes;
+	@ParameterProperties(description = "Modules For Start Log")
+	public void setModules(Modules modules) {
+		this.modules = modules;
 	}
 
 	@ParameterProperties(description = "Choose a specific Process")
@@ -118,10 +129,11 @@ public class LogsAction extends EnodebAction {
 	@TestProperties(
 			name = "Start EnodeB Logs",
 			returnParam = {"IsTestWasSuccessful"},
-			paramsInclude = {"DUTs", "Session", "LogLevel", "Processes", "Process", "Client"})
+			paramsInclude = {"DUTs", "Session", "LogLevel", "Modules", "Process", "Client"})
 	public void startEnodeBLogs() {
+		defineLogProperties();
 		for (EnodeB eNodeB : duts) {
-			printToReportOpenLogDetails(eNodeB);
+			printToReportLogDetails(eNodeB, "Open");
 			SessionManager sessionManager = eNodeB.getXLP().getSessionManager();
 			openLogSession(eNodeB, sessionManager);
 			setLogLevelAndProcessByName(eNodeB);
@@ -136,10 +148,38 @@ public class LogsAction extends EnodebAction {
 			paramsInclude = {"DUTs", "Session"})
 	public void stopEnodeBLogs() {
 		for (EnodeB eNodeB : duts) {
-			printToReportCloseLogDetails(eNodeB);
-			SessionManager sessionManager = eNodeB.getXLP().getSessionManager();
-			removeFromLoggedSession(eNodeB, sessionManager);
-			closeAndGenerateEnBLogFiles(eNodeB, eNodeB.getLoggers());
+			printToReportLogDetails(eNodeB, "Close");
+			removeFromLoggedSession(eNodeB);
+			closeAndGenerateEnBLogFiles(eNodeB);
+		}
+	}
+
+	/**
+	 * Define log level, client and process for every session according to user request.
+	 */
+	private void defineLogProperties() {
+		switch (session) {
+			case SSH:
+				processSSH = process;
+				clientSSH = client;
+				logLevelSSH = logLevel;
+				modulesSSH = modules;
+				break;
+			case SERIAL:
+				processSerial = process;
+				clientSerial = client;
+				logLevelSerial = logLevel;
+				modulesSerial = modules;
+				break;
+			case BOTH:
+				processSSH = process;
+				clientSSH = client;
+				logLevelSSH = logLevel;
+				modulesSSH = modules;
+				processSerial = process;
+				clientSerial = client;
+				logLevelSerial = logLevel;
+				modulesSerial = modules;
 		}
 	}
 
@@ -147,34 +187,43 @@ public class LogsAction extends EnodebAction {
 	 * Print To Report Log Details when opening log session
 	 *
 	 * @param eNodeB - eNodeB
+	 * @param action - Open or Close
 	 */
-	private void printToReportOpenLogDetails(EnodeB eNodeB) {
-		GeneralUtils.startLevel("Opening Session:");
-		printToReportLogDetails(eNodeB);
+	private void printToReportLogDetails(EnodeB eNodeB, String action) {
+		GeneralUtils.startLevel(action + " Session:");
+		printDetailsPerSession(eNodeB);
 		GeneralUtils.stopLevel();
 	}
 
 	/**
-	 * Print To Report Log Details when closing log session
+	 * print Details Per Session
 	 *
 	 * @param eNodeB - eNodeB
 	 */
-	private void printToReportCloseLogDetails(EnodeB eNodeB) {
-		GeneralUtils.startLevel("Closing Session:");
-		printToReportLogDetails(eNodeB);
-		GeneralUtils.stopLevel();
+	private void printDetailsPerSession(EnodeB eNodeB) {
+		switch (session) {
+			case SSH:
+				printToReportLogDetails(eNodeB, Session.SSH.value, logLevelSSH, modulesSSH, processSSH, clientSSH);
+				break;
+			case SERIAL:
+				printToReportLogDetails(eNodeB, Session.SERIAL.value, logLevelSerial, modulesSerial, processSerial, clientSerial);
+				break;
+			case BOTH:
+				printToReportLogDetails(eNodeB, Session.SSH.value, logLevelSSH, modulesSSH, processSSH, clientSSH);
+				printToReportLogDetails(eNodeB, Session.SERIAL.value, logLevelSerial, modulesSerial, processSerial, clientSerial);
+		}
 	}
 
 	/**
 	 * Print To Report Log Details:
-	 * Session, EnodeB, Log Level, Processes: All or Process, Client.
+	 * Session, EnodeB, Log Level, Modules: All or Process, Client.
 	 *
 	 * @param eNodeB - eNodeB
 	 */
-	private void printToReportLogDetails(EnodeB eNodeB) {
-		report.report("Log Session: " + session.value + ". For EnodeB: " + eNodeB.getName());
-		report.report("Log Level: " + String.valueOf(logLevel.value) + ". Processes: " + processes.value);
-		if (Processes.PARTICULAR_MODEL.value.equals(processes.value)) {
+	private void printToReportLogDetails(EnodeB eNodeB, String session, LogLevel logLevel, Modules modules, String process, String client) {
+		report.report("Log Session: " + session + ". For EnodeB: " + eNodeB.getName());
+		report.report("Log Level: " + String.valueOf(logLevel.value) + ". Modules: " + modules.value);
+		if (Modules.PARTICULAR_MODEL.value.equals(modules.value)) {
 			report.report("Process: " + process + ". Client: " + client);
 		}
 	}
@@ -199,11 +248,11 @@ public class LogsAction extends EnodebAction {
 	/**
 	 * Close And Generate EnB Log Files
 	 *
-	 * @param eNodeB  - eNodeB
-	 * @param loggers - loggers
+	 * @param eNodeB - eNodeB
 	 */
-	private void closeAndGenerateEnBLogFiles(EnodeB eNodeB, Logger[] loggers) {
+	private void closeAndGenerateEnBLogFiles(EnodeB eNodeB) {
 		GeneralUtils.startLevel(String.format("eNodeB %s logs", eNodeB.getName()));
+		Logger loggers[] = eNodeB.getLoggers();
 		for (Logger logger : loggers) {
 			logger.setCountErrorBool(false);
 			closeLogs(logger);
@@ -311,49 +360,47 @@ public class LogsAction extends EnodebAction {
 	private void setLogLevelAndProcessByName(EnodeB eNodeB) {
 		switch (session) {
 			case SSH:
-				eNodeB.setSSHSessionLogLevelPerProcess(sshSessionName, client, process, logLevel.value);
+				eNodeB.setSSHSessionLogLevelPerProcess(sshSessionName, clientSSH, processSSH, logLevelSSH.value);
 				break;
 			case SERIAL:
-				eNodeB.setSerialSessionLogLevelPerProcess(serialSessionName, client, process, logLevel.value);
+				eNodeB.setSerialSessionLogLevelPerProcess(serialSessionName, clientSerial, processSerial, logLevelSerial.value);
 				break;
 			case BOTH:
-				eNodeB.setSSHSessionLogLevelPerProcess(sshSessionName, client, process, logLevel.value);
-				eNodeB.setSerialSessionLogLevelPerProcess(serialSessionName, client, process, logLevel.value);
+				eNodeB.setSSHSessionLogLevelPerProcess(sshSessionName, clientSSH, processSSH, logLevelSSH.value);
+				eNodeB.setSerialSessionLogLevelPerProcess(serialSessionName, clientSerial, processSerial, logLevelSerial.value);
 		}
 	}
 
 	/**
 	 * Set process, client and log level for Reconnect thread, so in case of disconnecting an override won't occur.
-	 * @see EnodeB.Components.Session# updateLogLevel()
 	 *
 	 * @param eNodeB - eNodeB
+	 * @see EnodeB.Components.Session# updateLogLevel()
 	 */
 	private void setSSHParamsForReconnect(EnodeB eNodeB) {
-		eNodeB.getSSHlogSession().setProcess(process);
-		eNodeB.getSSHlogSession().setClient(client);
-		eNodeB.getSSHlogSession().setLogLevel(logLevel.value);
+		eNodeB.getSSHlogSession().setProcess(processSSH);
+		eNodeB.getSSHlogSession().setClient(clientSSH);
+		eNodeB.getSSHlogSession().setLogLevel(logLevelSSH.value);
 	}
 
 	/**
 	 * Set process, client and log level for Reconnect thread, so in case of disconnecting an override won't occur.
-	 * @see EnodeB.Components.Session# updateLogLevel()
 	 *
 	 * @param eNodeB - eNodeB
+	 * @see EnodeB.Components.Session# updateLogLevel()
 	 */
 	private void setSerialParamsForReconnect(EnodeB eNodeB) {
-		eNodeB.getSerialSession().setProcess(process);
-		eNodeB.getSerialSession().setClient(client);
-		eNodeB.getSerialSession().setLogLevel(logLevel.value);
+		eNodeB.getSerialSession().setProcess(processSerial);
+		eNodeB.getSerialSession().setClient(clientSerial);
+		eNodeB.getSerialSession().setLogLevel(logLevelSerial.value);
 	}
-
 
 	/**
 	 * Open Log Session - SSH or Serial
 	 * Wait for Logger thread to finish its iteration before removing from LoggedSession array.
-	 *
-	 * @param sessionManager - sessionManager
 	 */
-	private void removeFromLoggedSession(EnodeB eNodeB, SessionManager sessionManager) {
+	private void removeFromLoggedSession(EnodeB eNodeB) {
+		SessionManager sessionManager = eNodeB.getXLP().getSessionManager();
 		Logger logger = eNodeB.getXLP().getLogger();
 		synchronized (logger.lock) {
 			switch (session) {
@@ -384,26 +431,26 @@ public class LogsAction extends EnodebAction {
 	}
 
 	/**
-	 * Show parameters Process and Client in case the user select Processes: Particular Model
+	 * Show parameters Process and Client in case the user select Modules: Particular Model
 	 *
 	 * @param map - map
 	 */
 	private void handleUIEventGetCounterValue(HashMap<String, Parameter> map) {
 		map.get(PROCESS_STRING).setVisible(false);
 		map.get(CLIENT_STRING).setVisible(false);
-		Parameter processes = map.get(PROCESSES_STRING);
-		setProcessesMenuVisible(map, processes);
+		Parameter modules = map.get(MODULES_STRING);
+		setModulesMenuVisible(map, modules);
 	}
 
 	/**
-	 * Set Processes Menu Visible.
+	 * Set Modules Menu Visible.
 	 * If user choose "ALL MODULES" option then Process & Client == *
 	 *
-	 * @param map       - map
-	 * @param processes - processes
+	 * @param map     - map
+	 * @param modules - modules
 	 */
-	private void setProcessesMenuVisible(HashMap<String, Parameter> map, Parameter processes) {
-		if (Processes.PARTICULAR_MODEL == Processes.valueOf(processes.getValue().toString())) {
+	private void setModulesMenuVisible(HashMap<String, Parameter> map, Parameter modules) {
+		if (Modules.PARTICULAR_MODEL == Modules.valueOf(modules.getValue().toString())) {
 			map.get(PROCESS_STRING).setVisible(true);
 			map.get(CLIENT_STRING).setVisible(true);
 		} else {

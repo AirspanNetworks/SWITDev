@@ -88,6 +88,14 @@ public class Session implements Runnable {
 	}
 
 	/**
+	 * Set process, by default it's defined in Session constructor
+	 * @param name = name
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	/**
 	 * Set process, by default it's == *
 	 * @param process = process
 	 */

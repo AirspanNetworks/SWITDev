@@ -14,7 +14,7 @@ public class Op extends UserSequence {
 		passwords = password.split("__|__");
 		
 		this.op_password = passwords[0];
-		this.root_password = passwords[1];
+		
 		
 		add(new Prompt(PromptsCommandsInfo.LOGIN_PATTERN, true, "op", true));
 		add(new Prompt(PromptsCommandsInfo.PASSWORD_PATTERN, false, this.op_password, true));
@@ -30,7 +30,7 @@ public class Op extends UserSequence {
 			if(passwords.length < 2) {
 				throw new IOException("Password string for user 'op' must care two passwords separated by '__|__'");
 			}
-			
+			this.root_password = passwords[1];
 			remove(new Prompt(PromptsCommandsInfo.LTECLI_PATTERN, false));
 			add(new Prompt(PromptsCommandsInfo.LTECLI_PATTERN, false, PromptsCommandsInfo.AIRSPAN_COMMAND, true));
 			add(new Prompt(PromptsCommandsInfo.PASSWORD_PATTERN, false, this.root_password, true));

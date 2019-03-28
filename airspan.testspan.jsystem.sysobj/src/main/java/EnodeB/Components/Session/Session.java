@@ -479,18 +479,16 @@ public class Session implements Runnable {
 		return verify;
 	}
 
+	/**
+	 * set Session LogLevel
+	 */
 	private void setSessionLogLevel(){
-		switch (name){
-			case SessionManager.SSH_COMMANDS_SESSION_NAME:
-				enbComp.setSessionLogLevel(name, client, process, SessionManager.getCommandsLogLevel());
-				break;
-			case SessionManager.SSH_LOG_SESSION_NAME:
-				enbComp.setSessionLogLevel(name, client, process, SessionManager.getSSHlogLevel());
-				break;
-			case SessionManager.SERIAL_SESSION_NAME:
-				enbComp.setSessionLogLevel(name, client, process, SessionManager.getSerialLogLevel());
-				break;
-		}
+		if(name.contains(SessionManager.SSH_COMMANDS_SESSION_NAME))
+			enbComp.setSessionLogLevel(name, client, process, SessionManager.getCommandsLogLevel());
+		if (name.contains(SessionManager.SSH_LOG_SESSION_NAME))
+			enbComp.setSessionLogLevel(name, client, process, SessionManager.getSSHlogLevel());
+		if (name.contains(SessionManager.SERIAL_SESSION_NAME))
+			enbComp.setSessionLogLevel(name, client, process, SessionManager.getSerialLogLevel());
 	}
 
 	/**

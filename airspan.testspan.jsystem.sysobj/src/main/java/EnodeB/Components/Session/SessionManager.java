@@ -17,9 +17,9 @@ public class SessionManager {
 	private final static String COMMAND_LOG_LEVEL_PROPERTY_NAME = "logger.commandSessionLogLevel";
 	private final static int LOG_LEVEL_NO_VALUE = -2;
 	private ArrayList<Session> sessions;
-	private Session SSHCommandSession;
-	private Session SSHlogSession;
-	private Session serialSession;
+	private static Session SSHCommandSession;
+	private static Session SSHlogSession;
+	private static Session serialSession;
 	private EnodeBComponent enodeBComponent;
 	private static int SSHlogLevel = -1;
 	private static int serialLogLevel = -1;

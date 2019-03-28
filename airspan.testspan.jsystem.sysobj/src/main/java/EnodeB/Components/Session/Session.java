@@ -58,7 +58,6 @@ public class Session implements Runnable {
 	}
 
 	public Session(String name, EnodeBComponent enbComp, Terminal terminal, int logLevel) {
-
 		this.name = name;
 		this.terminal = terminal;
 		this.reconnect = true;

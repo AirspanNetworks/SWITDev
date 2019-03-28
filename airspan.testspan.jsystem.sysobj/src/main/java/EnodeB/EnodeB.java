@@ -1802,12 +1802,8 @@ public abstract class EnodeB extends SystemObjectImpl {
 		 XLP.setSessionLogLevel(client, process, level);
 	 }
 
-	public void setSSHSessionLogLevelPerProcess(String sessionName, String client, String process, int level) {
+	public void setSessionLogLevelPerProcess(String sessionName, String client, String process, int level) {
 		XLP.setSessionLogLevel( sessionName, client, process, level);
-	}
-
-	public void setSerialSessionLogLevelPerProcess(String sessionName, String client, String process, int level) {
-		XLP.setSerialSessionLogLevel( sessionName, client, process, level);
 	}
 
 	public int getPacketForwardingEnable(int cellId){

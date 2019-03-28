@@ -362,14 +362,14 @@ public class LogsAction extends EnodebAction {
 	private void setLogLevelAndProcessByName(EnodeB eNodeB) {
 		switch (session) {
 			case SSH:
-				eNodeB.setSSHSessionLogLevelPerProcess(sshSessionName, clientSSH, processSSH, logLevelSSH.value);
+				eNodeB.setSessionLogLevelPerProcess(sshSessionName, clientSSH, processSSH, logLevelSSH.value);
 				break;
 			case SERIAL:
-				eNodeB.setSerialSessionLogLevelPerProcess(serialSessionName, clientSerial, processSerial, logLevelSerial.value);
+				eNodeB.setSessionLogLevelPerProcess(serialSessionName, clientSerial, processSerial, logLevelSerial.value);
 				break;
 			case BOTH:
-				eNodeB.setSSHSessionLogLevelPerProcess(sshSessionName, clientSSH, processSSH, logLevelSSH.value);
-				eNodeB.setSerialSessionLogLevelPerProcess(serialSessionName, clientSerial, processSerial, logLevelSerial.value);
+				eNodeB.setSessionLogLevelPerProcess(sshSessionName, clientSSH, processSSH, logLevelSSH.value);
+				eNodeB.setSessionLogLevelPerProcess(serialSessionName, clientSerial, processSerial, logLevelSerial.value);
 		}
 	}
 

@@ -456,14 +456,14 @@ public class Session implements Runnable {
 		GeneralUtils.printToConsole("Setting Session " + getName() +" for EnodeB "+enbComp.getIpAddress()+ " log level to " + logLevel);
 		if (connected && logLevel >= 0) {
 			GeneralUtils.printToConsole("Setting log level");
-			setSessionLogLevel();
-//			enbComp.setSessionLogLevel(name, client, process, logLevel);
+//			setSessionLogLevel();
+			enbComp.setSessionLogLevel(name, client, process, logLevel);
 			GeneralUtils.printToConsole("Verifying log level");
 			verify = verifyLogLevel();
 			if(!verify){					
 				GeneralUtils.printToConsole("Failed to set log level. Setting log level again");
 				GeneralUtils.unSafeSleep(10*1000);
-				setSessionLogLevel();
+				enbComp.setSessionLogLevel(name, client, process,logLevel);
 				GeneralUtils.printToConsole("Verifying log level");
 				verify = verifyLogLevel();
 			}
@@ -478,17 +478,17 @@ public class Session implements Runnable {
 		return verify;
 	}
 
-	/**
-	 * set Session LogLevel
-	 */
-	private void setSessionLogLevel(){
-		if(name.contains(SessionManager.SSH_COMMANDS_SESSION_NAME))
-			enbComp.setSessionLogLevel(name, client, process, SessionManager.getCommandsLogLevel());
-		if (name.contains(SessionManager.SSH_LOG_SESSION_NAME))
-			enbComp.setSessionLogLevel(name, client, process, SessionManager.getSSHlogLevel());
-		if (name.contains(SessionManager.SERIAL_SESSION_NAME))
-			enbComp.setSessionLogLevel(name, client, process, SessionManager.getSerialLogLevel());
-	}
+//	/**
+//	 * set Session LogLevel
+//	 */
+//	private void setSessionLogLevel(){
+//		if(name.contains(SessionManager.SSH_COMMANDS_SESSION_NAME))
+//			enbComp.setSessionLogLevel(name, client, process, SessionManager.getCommandsLogLevel());
+//		if (name.contains(SessionManager.SSH_LOG_SESSION_NAME))
+//			enbComp.setSessionLogLevel(name, client, process, SessionManager.getSSHlogLevel());
+//		if (name.contains(SessionManager.SERIAL_SESSION_NAME))
+//			enbComp.setSessionLogLevel(name, client, process, SessionManager.getSerialLogLevel());
+//	}
 
 	/**
 	 * Gets the buffer the cli is using if it's enabled (enableCliBuffer = true)

@@ -5,8 +5,6 @@ import java.io.PrintStream;
 //import java.util.logging.Level;
 import java.util.ArrayList;
 
-import org.hamcrest.core.IsInstanceOf;
-
 /**
  * Generic systemobject.Cli
  * 
@@ -23,15 +21,15 @@ public class Cli {
 	protected Terminal terminal = null;
 	
 	
-	public StringBuffer result = new StringBuffer();
+	protected StringBuffer result = new StringBuffer();
 	
-	protected IPrompt resultPrompt;
+	protected Prompt resultPrompt;
 	/**
 	 * if set to true will send ENTER whan prompt wait timeout is recieved
 	 */
 	private boolean graceful = false;
 	
-	protected long startTime = 0;
+	private long startTime = 0;
 	
 	/**
 	 * Create a systemobject.terminal.Cli object
@@ -46,21 +44,12 @@ public class Cli {
 	}
 	
 	
-	public void addPrompt(IPrompt prompt) {
+	public void addPrompt(Prompt prompt) {
 		terminal.addPrompt(prompt);
-		
-		if(prompt instanceof LinkedPrompt) {
-			terminal.addPrompt(((LinkedPrompt)prompt).getLinkedPrompt());
-		}
 	}
 	
-	public void addPrompts(IPrompt...prompts) {
-		for(IPrompt prompt : prompts) {
-			addPrompt(prompt);
-		}
-	}
 	
-	public IPrompt getPrompt(String prompt) {
+	public Prompt getPrompt(String prompt) {
 		return terminal.getPrompt(prompt);
 	}
 	
@@ -131,7 +120,7 @@ public class Cli {
 	 * Returns the prompt which identification triggered the termination
 	 * of the cli operation.
 	 */
-	public IPrompt getResultPrompt() {
+	public Prompt getResultPrompt() {
 		return resultPrompt;
 	}
 
@@ -160,8 +149,7 @@ public class Cli {
 	 * @exception IOException
 	 */
 	public void command(String command, long timeout, boolean addEnter, boolean delayedTyping) throws Exception {
-		command(command, timeout, addEnter, delayedTyping, resultPrompt.getPrompt());
-//		IPrompt pr = waitWithGrace(timeout);
+		command(command, timeout, addEnter, delayedTyping, (String) null);
 	}
 	
 	
@@ -182,9 +170,9 @@ public class Cli {
 	}
 	
 	public void command(String command, long timeout, boolean addEnter, boolean delayedTyping, String[] promptStrings,
-			IPrompt... prompts) throws Exception {
+			Prompt[] prompts) throws Exception {
 		resultPrompt =null;
-		ArrayList<IPrompt> defaultPromts = null;
+		ArrayList<Prompt> defaultPromts = null;
 		if (prompts != null) {
 			defaultPromts = terminal.getPrompts();
 			terminal.removePrompts();
@@ -197,11 +185,11 @@ public class Cli {
 				if (addEnter) {
 					command = command + getEnterStr(); //ENTER
 				}
-//				try {
-					result.append(terminal.getResult());
-//				} catch (IOException e){
-//					log.log(Level.WARNING,"Unable to clear buffer",e);
-//				}
+				//try {
+				result.append(terminal.getResult());
+				/*} catch (IOException e){
+				 log.log(Level.WARNING,"Unable to clear buffer",e);
+				 }*/
 				terminal.sendString(command, delayedTyping);
 			}
 			startTime = System.currentTimeMillis();
@@ -210,12 +198,11 @@ public class Cli {
 				result.append(terminal.getResult());
 				return;
 			}
-			IPrompt prompt = waitWithGrace(timeout);
-			resultPrompt = prompt;
-			while (prompt.getStringToSend() != null) {
+			Prompt prompt = waitWithGrace(timeout);
+			while (true) {
 				if (timeout > 0) {
 					if (System.currentTimeMillis() - startTime > (timeout)) {
-						throw new IOException("After command; Get Prompt timeout: " + timeout);
+						throw new IOException("timeout: " + timeout);
 					}
 				}
 				/*
@@ -231,8 +218,7 @@ public class Cli {
 						if (prompt.isCommandEnd()) {
 							break;
 						}
-					} 
-					else {
+					} else {
 						//System.err.println("Prompt found: " + prompt.getPrompt() +" but no command end");
 						prompt = waitWithGrace(timeout);
 						continue;
@@ -243,17 +229,12 @@ public class Cli {
 					if (prompt.isAddEnter()) {
 						stringToSend = stringToSend + getEnterStr(); //ENTER;
 					}
-					Thread.sleep(50);
-					sendString(stringToSend, delayedTyping);
+					terminal.sendString(stringToSend, delayedTyping);
 				}
-//				else {
-//					break;
-//				}
-				prompt = terminal.waitForPrompt(timeout);
-				this.resultPrompt = prompt;
+				prompt = waitWithGrace(timeout);
 			}
 			
-//			resultPrompt = prompt;
+			resultPrompt = prompt;
 		} finally {
 			result.append(terminal.getResult());
 			if (defaultPromts != null) {
@@ -338,17 +319,16 @@ public class Cli {
 	 * @return the prompt
 	 * @throws Exception
 	 */
-	protected IPrompt waitWithGrace(long timeout) throws Exception{
+	protected Prompt waitWithGrace(long timeout) throws Exception{
 		try {
-			IPrompt p = terminal.waitForPrompt(timeout);
+			Prompt p = terminal.waitForPrompt(timeout);
 			result.append(terminal.getResult());
 			return p;
 		} catch (Exception e){
 			if(!graceful){
 				throw e;
 			}
-			
-			return sendEnter(15 * 1000);
+			return sendEnter(2000);
 		}
 			
 	}
@@ -361,12 +341,12 @@ public class Cli {
 	 * @return	the prompt found
 	 * @throws Exception
 	 */
-	private IPrompt sendEnter(long timeout) throws Exception{
+	private Prompt sendEnter(long timeout) throws Exception{
 		startTime = System.currentTimeMillis();
 		terminal.sendString(getEnterStr(), false);
 		result.append(terminal.getResult());
 
-		IPrompt p = terminal.waitForPrompt(timeout);
+		Prompt p = terminal.waitForPrompt(timeout);
 		result.append(terminal.getResult());
 		return p;
 	}

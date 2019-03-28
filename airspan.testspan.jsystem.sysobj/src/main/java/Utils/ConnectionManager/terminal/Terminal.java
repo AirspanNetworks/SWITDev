@@ -10,6 +10,8 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.naming.TimeLimitExceededException;
+
 public abstract class Terminal {
 	Logger log = Logger.getLogger(Terminal.class.getName());
     protected static final int IN_BUFFER_SIZE = 65536;
@@ -18,7 +20,7 @@ public abstract class Terminal {
     protected InputStream in = null;
     protected int bufChar = 10;
     protected long scrallEndTimeout = 200;
-    ArrayList<IPrompt> prompts = new ArrayList<IPrompt>();
+    ArrayList<Prompt> prompts = new ArrayList<Prompt>();
 
     public abstract void connect() throws IOException;
     public abstract void disconnect() throws IOException;
@@ -169,21 +171,21 @@ public abstract class Terminal {
     	
     }
 
-    public synchronized IPrompt waitForPrompt(long timeout) throws IOException, InterruptedException{
+    public synchronized Prompt waitForPrompt(long timeout) throws TimeLimitExceededException, IOException, InterruptedException{
         long startTime = System.currentTimeMillis();
         StringBuffer sb = new StringBuffer();
-        IPrompt prompt = null;
+        Prompt prompt = null;
         while (true) { 
             if (timeout > 0) {
                 if (System.currentTimeMillis() - startTime > timeout) {
                     result.append(sb);
-                    throw new IOException("Prompt waiting timeout: " + timeout);
+                    throw new TimeLimitExceededException("Prompt waiting timeout: " + timeout);
                 }
             }
             int avail = in.available();
             if (avail > 0) {
             //System.out.println("Available: " + avail);
-                while (avail > 0) {
+                do {
                     int b = in.read();
                     if (b < 0) {
                         avail = in.available();
@@ -204,26 +206,10 @@ public abstract class Terminal {
                     if (printStream != null){
                     	printStream.print((char)b);
                     }
-                    int promptArraySize = prompts.size();
-                    for (int j = 0; j < promptArraySize; j++) {
-                        prompt = (IPrompt)prompts.get(j);
-                        if (prompt == null || prompt.getPrompt() == null){
-                            continue;
-                        }
-                        String bufString = sb.toString();
-                        if (prompt.isRegularExpression()){
-                        	Pattern p = prompt.getPattern();
-                        	Matcher m = p.matcher(bufString);
-                            if(m.find()){
-                                result.append(sb);
-                                return prompt;
-                            }
-                        } else {
-                            if (bufString.endsWith(prompt.getPrompt())){
-                                result.append(sb);
-                                return prompt;
-                            }
-                        }
+                    
+                    if((prompt = bufferMatchPrompt(prompts, sb)) != null) {
+                    	result.append(sb);
+                    	return prompt;
                     }
                     avail = in.available();
                     /**
@@ -233,19 +219,48 @@ public abstract class Terminal {
                     if (timeout > 0) {
                         if (System.currentTimeMillis() - startTime > timeout) {
                             result.append(sb);
-                            throw new IOException("Prompt waiting timeout#1: " + timeout);
+                            throw new TimeLimitExceededException("Prompt waiting timeout#1: " + timeout);
                         }
                     }
-                }
+                }while (avail > 0);
+                
             } else {
+//            	sendString("\n", false);
                 Thread.sleep(10);
-//                sendString("\r", false);
                 
             }
         }
     }
 
-    public synchronized IPrompt waitFor() throws IOException, InterruptedException{
+    
+    public static Prompt bufferMatchPrompt(List<Prompt> prompts, StringBuffer sb) {
+    	Prompt prompt = null;
+    	Prompt result = null;
+    	String bufString = sb.toString();
+    	int promptArraySize = prompts.size();
+        for (int j = 0; j < promptArraySize; j++) {
+            prompt = (Prompt)prompts.get(j);
+            if (prompt == null || prompt.getPrompt() == null)
+                continue;
+            
+            if (prompt.isRegularExpression()){
+            	Pattern p = prompt.getPattern();
+            	Matcher m = p.matcher(bufString);
+                if(m.find()) {
+                	result = prompt;
+                	break; 
+                }
+            } else {
+                if (bufString.endsWith(prompt.getPrompt())){
+                	result = prompt;
+                	break; 
+                }
+            }
+        }
+        return result;
+    }
+    
+    public synchronized Prompt waitFor() throws InterruptedException, TimeLimitExceededException, IOException{
     	return waitForPrompt(20000);
     }
 
@@ -269,20 +284,20 @@ public abstract class Terminal {
         addPrompt(prompt);
     }
     
-    public void addPrompt(IPrompt prompt){
+    public void addPrompt(Prompt prompt){
         prompts.remove(prompt);
         prompts.add(prompt);
     }
     
-    public void addPrompts(IPrompt...prompts) {
-    	for(IPrompt prompt : prompts) {
+    public void addPrompts(Prompt...prompts) {
+    	for(Prompt prompt : prompts) {
     		addPrompt(prompt);
     	}
     }
     
-    public IPrompt getPrompt(String prompt){
+    public Prompt getPrompt(String prompt){
         for (int i = 0; i < prompts.size(); i++){
-            IPrompt p = (IPrompt)prompts.get(i);
+            Prompt p = (Prompt)prompts.get(i);
             if (p.getPrompt().equals(prompt)){
                 return p;
             }
@@ -291,15 +306,15 @@ public abstract class Terminal {
     }
     
     public void removePrompts(){
-    	prompts = new ArrayList<IPrompt>();
+    	prompts = new ArrayList<Prompt>();
     }
     
     @SuppressWarnings("unchecked")
-	public ArrayList<IPrompt> getPrompts(){
-    	return (ArrayList<IPrompt>)prompts.clone();
+	public ArrayList<Prompt> getPrompts(){
+    	return (ArrayList<Prompt>)prompts.clone();
     }
     
-    public void setPrompts(ArrayList<IPrompt> prompts){
+    public void setPrompts(ArrayList<Prompt> prompts){
     	this.prompts = prompts;
     }
 	public int getBufChar() {

@@ -229,6 +229,9 @@ public class Cli {
 					if (prompt.isAddEnter()) {
 						stringToSend = stringToSend + getEnterStr(); //ENTER;
 					}
+					
+					System.out.print("String to send: '" + stringToSend + "'");
+					
 					terminal.sendString(stringToSend, delayedTyping);
 				}
 				prompt = waitWithGrace(timeout);

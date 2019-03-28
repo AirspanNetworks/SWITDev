@@ -292,10 +292,8 @@ public class ExtendCLI extends Cli {
 	public void login(long timeout, Prompt... prompts) throws Exception {
 		List<Prompt> defaultPrompts = terminal.getPrompts();
 		terminal.removePrompts();
+		addPrompts(prompts);
 		try {
-			for(Prompt prompt : prompts) {
-				addPrompt(prompt);
-			}
 			super.login(timeout);
 		}
 		finally {

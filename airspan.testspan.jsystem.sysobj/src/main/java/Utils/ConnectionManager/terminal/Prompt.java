@@ -34,7 +34,7 @@ public class Prompt {
     public Prompt(String prompt, boolean isRegExp, String stringToSend, boolean setEnter) {
     	this(prompt, isRegExp);
     	setStringToSend(stringToSend);
-		addEnter= setEnter;
+    	setAddEnter(setEnter);
 		setCommandEnd(false);
     }
     

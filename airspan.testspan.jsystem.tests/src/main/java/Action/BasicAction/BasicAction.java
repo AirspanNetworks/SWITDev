@@ -235,16 +235,15 @@ public class BasicAction extends Action {
 		setUserName("op");
 		
 //		setPassword("HeWGEUx66m=_4!ND");
-		setPassword("Ss%7^q7NC#Uj!AnX__|__HeWGEUx66m=_4!ND");
-//		setUserPrompt("#");
-//		setSerialCommand("ls -la /");
-		setSerialCommand("ue show link");
+		setPassword("Ss%7^q7NC#Uj!AnX====HeWGEUx66m=_4!ND");
+		setSerialCommand("ls -la /");
+//		setSerialCommand("ue show link");
 //		setSerialCommand("show banks");
 		
 		setSudoRequired(true);
-		setLteCliRequired(true);
+		setLteCliRequired(false);
 //		setExpectedPatern("root");
-		setSleepTime(5);
+		setSleepTime(10);
 		
 	}
 	
@@ -319,10 +318,10 @@ public class BasicAction extends Action {
 			// Read current prompt for decide to reset it
 			cli.addPrompts(
 					new Prompt(userPrompt, false, true), 
-					new Prompt(PromptsCommandsInfo.ROOT_PATTERN, false, true),
-					new Prompt(PromptsCommandsInfo.LTECLI_PATTERN, false, true),
-					new Prompt(PromptsCommandsInfo.LOGIN_PATTERN, false, true),
-					new Prompt(PromptsCommandsInfo.PASSWORD_PATTERN, false, true));
+					new Prompt(PromptsCommandsInfo.ROOT_PATTERN, false),
+					new Prompt(PromptsCommandsInfo.LTECLI_PATTERN, false),
+					new Prompt(PromptsCommandsInfo.LOGIN_PATTERN, false),
+					new Prompt(PromptsCommandsInfo.PASSWORD_PATTERN, false));
 			
 			
 			Prompt current_pr = cli.getCurrentPrompt();

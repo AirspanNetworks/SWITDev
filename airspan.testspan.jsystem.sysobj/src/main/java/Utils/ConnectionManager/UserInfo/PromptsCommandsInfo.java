@@ -13,7 +13,8 @@ public class PromptsCommandsInfo {
 	public static final String AIRSPAN_COMMAND = "airspansudo";
 	public static final String LTECLI_COMMAND = "/bs/lteCli";
 	
-	public static final String ADMIN_PASSWORD = "";
+	public static final String ADMIN_PASSWORD = "HeWGEUx66m=_4!ND";
 	public static final String OP_PASSWORD = "Ss%7^q7NC#Uj!AnX";
+	public static final String DELIMITER = "====";
 
 }

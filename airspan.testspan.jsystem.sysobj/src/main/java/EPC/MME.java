@@ -39,7 +39,7 @@ public class MME extends SystemObjectImpl {
 		    blocksArray.add(match);
 		}
 		for(String temp: blocksArray){
-			if (temp.contains("ipv4-address " + s1IpAddress)){
+			if (temp.contains("ipv4-address " + s1IpAddress) || temp.contains("ipv6-address " + s1IpAddress)){
 				String pattern = "plmn-id mcc (\\d+) mnc (\\d+)";
 				m = Pattern.compile(pattern).matcher(temp);
 				Plmn plmn;

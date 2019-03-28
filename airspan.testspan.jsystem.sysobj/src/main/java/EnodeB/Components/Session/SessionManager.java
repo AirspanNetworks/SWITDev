@@ -2,7 +2,6 @@ package EnodeB.Components.Session;
 
 import java.util.ArrayList;
 
-import EnodeB.Components.DAN;
 import EnodeB.Components.EnodeBComponent;
 import Utils.GeneralUtils;
 import Utils.Properties.TestspanConfigurationsManager;
@@ -22,9 +21,9 @@ public class SessionManager {
 	private Session SSHlogSession;
 	private Session serialSession;
 	private EnodeBComponent enodeBComponent;
-	private int SSHlogLevel = -1;
-	private int serialLogLevel = -1;
-	private int commandsLogLevel = -1;
+	private static int SSHlogLevel = -1;
+	private static int serialLogLevel = -1;
+	private static int commandsLogLevel = -1;
 	public SessionManager(EnodeBComponent enodeBComponent) {
 		this.enodeBComponent = enodeBComponent;
 		this.sessions = new ArrayList<Session>();
@@ -34,15 +33,7 @@ public class SessionManager {
 	 * open Serial Log Session
 	 */
 	public void openSerialLogSession() {
-		try {
-			serialLogLevel = Integer.parseInt(
-					TestspanConfigurationsManager.getInstance().getConfig(CONSOLE_LOG_LEVEL_PROPERTY_NAME));
-		} catch (Exception e) {
-			GeneralUtils.printToConsole(
-					"Console Log level is not defined in testpan.properties file. Can't set sessions log level!");
-			serialLogLevel = LOG_LEVEL_NO_VALUE; // property doesn't exist
-													// so don't use it.
-		}
+		serialLogLevel = setDefaultCommandSessionLevelFromPropFile(CONSOLE_LOG_LEVEL_PROPERTY_NAME);
 		if (enodeBComponent.serialCom != null){
 			openSerialSession();
 //			if(SSHCommandSession == null && getEnodeBComponent() instanceof DAN){
@@ -55,15 +46,7 @@ public class SessionManager {
 	 * open SSH Log Session
 	 */
 	public void openSSHLogSession() {
-		try {
-			SSHlogLevel = Integer
-					.parseInt(TestspanConfigurationsManager.getInstance().getConfig(LOG_LEVEL_PROPERTY_NAME));
-		} catch (Exception e) {
-			GeneralUtils.printToConsole(
-					"Log level is not defined in testpan.properties file. Can't set sessions log level!");
-			SSHlogLevel = LOG_LEVEL_NO_VALUE; // property doesn't exist so
-											// don't use it.
-		}
+		SSHlogLevel = setDefaultCommandSessionLevelFromPropFile(LOG_LEVEL_PROPERTY_NAME);
 		String sessionName = openSession(getEnodeBComponent().getName() + "_" + SSH_LOG_SESSION_NAME, SSHlogLevel);
 		if (sessionName != null)
 		{
@@ -76,18 +59,24 @@ public class SessionManager {
 	 * open SSH Command Session
 	 */
 	public void openSSHCommandSession() {
-		try {
-			commandsLogLevel = Integer.parseInt(
-					TestspanConfigurationsManager.getInstance().getConfig(COMMAND_LOG_LEVEL_PROPERTY_NAME));
-		} catch (Exception e) {
-			GeneralUtils.printToConsole(
-					"Console Log level is not defined in testpan.properties file. Can't set sessions log level!");
-			commandsLogLevel = LOG_LEVEL_NO_VALUE; // property doesn't exist
-													// so don't use it.
-		}
+		commandsLogLevel = setDefaultCommandSessionLevelFromPropFile(COMMAND_LOG_LEVEL_PROPERTY_NAME);
 		String sessionName = openSession(getEnodeBComponent().getName() + "_" + SSH_COMMANDS_SESSION_NAME, commandsLogLevel);
 		if (sessionName != null)
 			SSHCommandSession = getSession(sessionName);
+	}
+
+	/**
+	 * get the command session log level from testspan.prop if exists
+	 */
+	public int setDefaultCommandSessionLevelFromPropFile(String propTitle) {
+		int logLevel;
+		try {
+			logLevel = Integer.parseInt(TestspanConfigurationsManager.getInstance().getConfig(propTitle));
+		} catch (Exception e) {
+			GeneralUtils.printToConsole(propTitle + " is not defined in testpan.properties file. Can't set sessions log level!");
+			logLevel = LOG_LEVEL_NO_VALUE; // property doesn't exist so don't use it.
+		}
+		return logLevel;
 	}
 
 	private synchronized boolean openSerialSession() {
@@ -238,5 +227,30 @@ public class SessionManager {
 
 	public void setSerialSession(Session serialSession) {
 		this.serialSession = serialSession;
+	}
+
+	/**
+	 * Get Commands LogLevel
+	 *
+	 * @return - commandsLogLevel
+	 */
+	public static int getCommandsLogLevel() {
+		return commandsLogLevel;
+	}
+
+	/**
+	 * Get Commands LogLevel
+	 *
+	 * @return - SSHlogLevel
+	 */
+	public static int getSSHlogLevel() {
+		return SSHlogLevel;
+	}
+
+	/** get SerialLogLevel
+	 * @return - serialLogLevel
+	 */
+	public static int getSerialLogLevel() {
+		return serialLogLevel;
 	}
 }

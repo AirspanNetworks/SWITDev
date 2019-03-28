@@ -457,13 +457,14 @@ public class Session implements Runnable {
 		GeneralUtils.printToConsole("Setting Session " + getName() +" for EnodeB "+enbComp.getIpAddress()+ " log level to " + logLevel);
 		if (connected && logLevel >= 0) {
 			GeneralUtils.printToConsole("Setting log level");
+			setSessionLogLevel();
 			enbComp.setSessionLogLevel(name, client, process, logLevel);
 			GeneralUtils.printToConsole("Verifying log level");
 			verify = verifyLogLevel();
 			if(!verify){					
 				GeneralUtils.printToConsole("Failed to set log level. Setting log level again");
 				GeneralUtils.unSafeSleep(10*1000);
-				enbComp.setSessionLogLevel(name, client, process, logLevel);
+				setSessionLogLevel();
 				GeneralUtils.printToConsole("Verifying log level");
 				verify = verifyLogLevel();
 			}
@@ -476,6 +477,20 @@ public class Session implements Runnable {
 		else
 			GeneralUtils.printToConsole("Failed setting " + getName() + " log level to " + logLevel);
 		return verify;
+	}
+
+	private void setSessionLogLevel(){
+		switch (name){
+			case SessionManager.SSH_COMMANDS_SESSION_NAME:
+				enbComp.setSessionLogLevel(name, client, process, SessionManager.getCommandsLogLevel());
+				break;
+			case SessionManager.SSH_LOG_SESSION_NAME:
+				enbComp.setSessionLogLevel(name, client, process, SessionManager.getSSHlogLevel());
+				break;
+			case SessionManager.SERIAL_SESSION_NAME:
+				enbComp.setSessionLogLevel(name, client, process, SessionManager.getSerialLogLevel());
+				break;
+		}
 	}
 
 	/**

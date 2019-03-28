@@ -567,7 +567,9 @@ public abstract class XLP extends EnodeBComponent {
         GeneralUtils.printToConsole("**DEBUG: " +sessionName+" "+client+" "+process+" "+String.valueOf(level));
         StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
         for (int i = 0; i < 15; i++) {
-            GeneralUtils.printToConsole(String.valueOf(stacktrace[i]));
+            if (stacktrace[i] != null) {
+                GeneralUtils.printToConsole(String.valueOf(stacktrace[i]));
+            }
         }
         sendCommandsOnSession(sessionName, LTE_CLI_PROMPT, String.format("logger threshold set client=%s process=%s cli=%s", client, process, String.valueOf(level)), LTE_CLI_PROMPT);
     }

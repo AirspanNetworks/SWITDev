@@ -458,7 +458,7 @@ public class Session implements Runnable {
 		if (connected && logLevel >= 0) {
 			GeneralUtils.printToConsole("Setting log level");
 			setSessionLogLevel();
-			enbComp.setSessionLogLevel(name, client, process, logLevel);
+//			enbComp.setSessionLogLevel(name, client, process, logLevel);
 			GeneralUtils.printToConsole("Verifying log level");
 			verify = verifyLogLevel();
 			if(!verify){					

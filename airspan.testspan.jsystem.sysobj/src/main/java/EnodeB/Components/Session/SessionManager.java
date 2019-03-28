@@ -18,7 +18,7 @@ public class SessionManager {
 	private final static String COMMAND_LOG_LEVEL_PROPERTY_NAME = "logger.commandSessionLogLevel";
 	private final static int LOG_LEVEL_NO_VALUE = -2;
 	private ArrayList<Session> sessions;
-	private Session defaultSession;
+	private Session SSHCommandSession;
 	private Session SSHlogSession;
 	private Session serialSession;
 	private EnodeBComponent enodeBComponent;
@@ -45,9 +45,9 @@ public class SessionManager {
 		}
 		if (enodeBComponent.serialCom != null){
 			openSerialSession();
-			if(defaultSession == null && getEnodeBComponent() instanceof DAN){
-				defaultSession = getSerialSession();
-			}
+//			if(SSHCommandSession == null && getEnodeBComponent() instanceof DAN){
+//				SSHCommandSession = getSerialSession();
+//			}
 		}
 	}
 
@@ -87,7 +87,7 @@ public class SessionManager {
 		}
 		String sessionName = openSession(getEnodeBComponent().getName() + "_" + SSH_COMMANDS_SESSION_NAME, commandsLogLevel);
 		if (sessionName != null)
-			defaultSession = getSession(sessionName);
+			SSHCommandSession = getSession(sessionName);
 	}
 
 	private synchronized boolean openSerialSession() {
@@ -177,7 +177,7 @@ public class SessionManager {
 	}
 
 	public synchronized String sendCommandDefaultSession(String prompt, String command, String response, int responseTimeout) {
-		return sendCommands(this.defaultSession.getName(), prompt, command, response, responseTimeout);
+		return sendCommands(this.SSHCommandSession.getName(), prompt, command, response, responseTimeout);
 	}
 
 	/** Wrapper tp sendCommands with an option to response Timeout
@@ -213,10 +213,10 @@ public class SessionManager {
 	}
 
 	/** Command Session
-	 * @return - defaultSession
+	 * @return - SSHCommandSession
 	 */
-	public Session getDefaultSession() {
-		return defaultSession;
+	public Session getSSHCommandSession() {
+		return SSHCommandSession;
 	}
 	
 	public Session getSSHlogSession() {

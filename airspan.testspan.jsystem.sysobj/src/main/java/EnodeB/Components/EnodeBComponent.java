@@ -165,7 +165,7 @@ public abstract class EnodeBComponent implements LogListener {
 	}
 
 	public Session getDefaultSession() {
-        return sessionManager.getDefaultSession();
+        return sessionManager.getSSHCommandSession();
     }
 
     public Session getSSHlogSession() {
@@ -213,7 +213,6 @@ public abstract class EnodeBComponent implements LogListener {
         SWTypeInstnace = sWTypeInstnace;
     }
 
-    //todo remove the isAction logic to the parent
 	/**
 	 * Init & connecting to serialCom.
 	 * then connecting via SSH, if fails get the serialCom
@@ -536,7 +535,7 @@ public abstract class EnodeBComponent implements LogListener {
         String ans = sessionManager.openSession(sessionName);
         if (ans == null) {
             GeneralUtils.printToConsole("Failed opening session " + sessionName + ", returning default session instead.");
-            ans = sessionManager.getDefaultSession().getName();
+            ans = sessionManager.getSSHCommandSession().getName();
         }
         return ans;
     }

@@ -8,7 +8,6 @@ import java.util.regex.Pattern;
 
 import jsystem.framework.report.Reporter;
 
-import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 
 import EnodeB.Components.EnodeBComponent;
@@ -128,8 +127,8 @@ public class Logger implements Runnable {
 			if (sessionManager.getSSHlogSession() != null && (!getLoggedSessions().contains(sessionManager.getSSHlogSession()))) {
 				addToLoggedSessions(sessionManager.getSSHlogSession());
 			}
-			if (sessionManager.getDefaultSession() != null && (!getLoggedSessions().contains(sessionManager.getDefaultSession()))) {
-				addToLoggedSessions(sessionManager.getDefaultSession());
+			if (sessionManager.getSSHCommandSession() != null && (!getLoggedSessions().contains(sessionManager.getSSHCommandSession()))) {
+				addToLoggedSessions(sessionManager.getSSHCommandSession());
 			}
 		}
 	}

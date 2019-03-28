@@ -1,43 +1,64 @@
 package Utils.ConnectionManager.UserInfo;
 
-import Utils.ConnectionManager.terminal.LinkedPrompt;
+import java.io.IOException;
+import java.util.ArrayList;
 import Utils.ConnectionManager.terminal.Prompt;
 
-public class Op extends LinkedPrompt {
+public class Op extends UserSequence {
 	
-	public Op(String password) {
-		super(PromptsCommandsInfo.LOGIN_PATTERN, true, "op", true);
-		LinkedPrompt password_pr = new LinkedPrompt(PromptsCommandsInfo.PASSWORD_PATTERN, false, password, true);
-		password_pr.setLinkedPrompt(new Prompt(PromptsCommandsInfo.LTECLI_PATTERN, false));
-		setLinkedPrompt(password_pr);
+	private String op_password = "";
+	private String root_password = "";
+	private String[] passwords = null;
+	
+	private Op(String password) throws IOException {
+		passwords = password.split("__|__");
+		
+		this.op_password = passwords[0];
+		this.root_password = passwords[1];
+		
+		add(new Prompt(PromptsCommandsInfo.LOGIN_PATTERN, true, "op", true));
+		add(new Prompt(PromptsCommandsInfo.PASSWORD_PATTERN, false, this.op_password, true));
+		add(new Prompt(PromptsCommandsInfo.LTECLI_PATTERN, false));
 		
 //		setExit_sequence(new LinkedPrompt(PromptsCommandsInfo.LTECLI_PATTERN, false, PromptsCommandsInfo.CntrC_COMMAND, true));
 	}
 	
-	public Op(String password, boolean is_sudo) {
+	private Op(String password, boolean is_sudo) throws IOException {
 		this(password);
 		
 		if(is_sudo) {
-			LinkedPrompt password_pr = (LinkedPrompt) getLinkedPrompt();
-			LinkedPrompt sudo = new LinkedPrompt(PromptsCommandsInfo.LTECLI_PATTERN, false, "airspansudo", true);
-			sudo.setLinkedPrompt(new Prompt(PromptsCommandsInfo.ROOT_PATTERN, false));
-			password_pr.setLinkedPrompt(sudo);
-			setLinkedPrompt(password_pr);
+			if(passwords.length < 2) {
+				throw new IOException("Password string for user 'op' must care two passwords separated by '__|__'");
+			}
 			
-//			setExit_sequence(new LinkedPrompt(PromptsCommandsInfo.ROOT_PATTERN, false, PromptsCommandsInfo.EXIT_COMMAND, true));
+			remove(new Prompt(PromptsCommandsInfo.LTECLI_PATTERN, false));
+			add(new Prompt(PromptsCommandsInfo.LTECLI_PATTERN, false, PromptsCommandsInfo.AIRSPAN_COMMAND, true));
+			add(new Prompt(PromptsCommandsInfo.PASSWORD_PATTERN, false, this.root_password, true));
+			add(new Prompt(PromptsCommandsInfo.ROOT_PATTERN, false));
+									
 		}
 	}
 	
-	public Op(String password, boolean is_sudo, boolean is_ltecli) {
+	public Op(String password, boolean is_sudo, boolean is_ltecli) throws IOException {
 		this(password, is_sudo);
 		
 		if(is_ltecli) {
-			LinkedPrompt lte_cli = new LinkedPrompt(PromptsCommandsInfo.SUDO_COMMAND, false, PromptsCommandsInfo.LTECLI_COMMAND, true);
-			lte_cli.setLinkedPrompt(new Prompt(PromptsCommandsInfo.LTECLI_PATTERN, false));
-			LinkedPrompt password_pr = (LinkedPrompt) getLinkedPrompt();
-			password_pr.setLinkedPrompt(lte_cli);
+			if(!is_sudo) {
+				throw new IOException("User 'op' cannot use lte_cli without sudo mode (set it TRUE)");
+			}
 			
-//			setExit_sequence(new LinkedPrompt(PromptsCommandsInfo.LTECLI_PATTERN, false, PromptsCommandsInfo.CntrC_COMMAND, true));
+			if(sibling == null) {
+				sibling = new ArrayList<UserSequence>();
+			}
+			UserSequence temp_sibling = new UserSequence();
+			temp_sibling.add(new Prompt(PromptsCommandsInfo.ROOT_PATTERN, false, PromptsCommandsInfo.LTECLI_COMMAND, true));
+			temp_sibling.add(new Prompt(PromptsCommandsInfo.LTECLI_PATTERN, false));
+			sibling.add(temp_sibling);
 		}
+	}
+	
+	@Override
+	public boolean enforceSessionReset() {
+		return true;
 	}
 }

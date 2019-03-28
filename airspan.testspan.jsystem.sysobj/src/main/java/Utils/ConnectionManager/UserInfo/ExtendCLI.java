@@ -20,6 +20,7 @@ import org.apache.tools.ant.taskdefs.WaitFor;
 import Utils.ConnectionManager.terminal.Cli;
 import Utils.ConnectionManager.terminal.Prompt;
 import Utils.ConnectionManager.terminal.Terminal;
+import jsystem.framework.report.Reporter;
 
 /**
  * 
@@ -303,7 +304,7 @@ public class ExtendCLI extends Cli {
 		}
 	}
 	
-	public void login(long timeout, UserSequence prompts) throws Exception {
+	public boolean login(long timeout, UserSequence prompts) throws Exception {
 		
 		login(timeout, prompts.toArray(new Prompt[] {}));
 		
@@ -311,7 +312,13 @@ public class ExtendCLI extends Cli {
 			for(UserSequence u_seq : prompts.siblingPrompts()) {
 				login(timeout, u_seq);
 			}
-		}	
+		}
+		
+		Prompt current_pr = getCurrentPrompt();;
+		if(current_pr.getPrompt() != prompts.getFinalPrompt().getPrompt()) {
+			return false;
+		}
+		return true;
 	}
 	
 

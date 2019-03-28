@@ -345,11 +345,8 @@ public class BasicAction extends Action {
 			if(current_pr.getPrompt() == PromptsCommandsInfo.LOGIN_PATTERN) {
 				// Session require login only
 				report.report("Login needed:\n" + user_login.toString());
-				cli.login(sleepTime * 1000, user_login);
-
-				current_pr = cli.getCurrentPrompt();;
-				if(current_pr.getPrompt() != user_login.getFinalPrompt().getPrompt()) {
-					report.report("Login failed (Prompt: '" + current_pr.getPrompt() + "')", Reporter.FAIL);
+				if(!cli.login(sleepTime * 1000, user_login)) {
+					report.report("Login failed (Prompt: '" + current_pr.getPrompt() + "')", Reporter.WARNING);
 					throw new IOException("Login failed (Prompt: '" + current_pr.getPrompt() + "')");
 				}
 				report.report("Login to serial completed");
@@ -381,7 +378,7 @@ public class BasicAction extends Action {
 				GeneralUtils.reportHtmlLink("Command " + serialCommand + " output", output_str);
 			}
 			
-			report.report(result_text + "; Output:\n" + output_str, status);
+			report.report(result_text, status);
 			
 			
 		} catch (IOException e) {

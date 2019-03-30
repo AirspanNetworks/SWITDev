@@ -211,7 +211,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 			swType = 18;
 		}
 		XLP.setSWTypeInstnace(swType);
-		XLP.setLogNeeded(isInitCalledFromAction());
+		XLP.setLogNeeded(!isInitCalledFromAction());
 		XLP.init();
 		if(ipsecTunnelEnabled){
 			ArrayList<EnodeB> eNodeBs = new ArrayList<EnodeB>();

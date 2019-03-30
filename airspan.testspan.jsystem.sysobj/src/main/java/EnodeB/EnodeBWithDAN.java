@@ -19,7 +19,7 @@ public abstract class EnodeBWithDAN extends EnodeB {
 			DAN = new DAN[connectInfo.danInfo.length];
 			for(int i = 0; i<DAN.length; i++){
 				DAN[i] = new DAN();
-				DAN[i].setLogNeeded(isInitCalledFromAction());
+				DAN[i].setLogNeeded(!isInitCalledFromAction());
 				DAN[i].createSerialCom(connectInfo.danInfo[i].getSerialIP(), Integer.parseInt(connectInfo.danInfo[i].getSerialPort()));
 				DAN[i].setName(getName() + "_DAN[" + i + "]");
 				DAN[i].init();

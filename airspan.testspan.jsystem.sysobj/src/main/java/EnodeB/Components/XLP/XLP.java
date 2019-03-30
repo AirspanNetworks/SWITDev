@@ -566,7 +566,8 @@ public abstract class XLP extends EnodeBComponent {
     public void setSessionLogLevel(String sessionName,String client, String process, int level) {
         GeneralUtils.printToConsole("**DEBUG: " +sessionName+" "+client+" "+process+" "+String.valueOf(level));
         StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
-        for (int i = 0; i < 15; i++) {
+        int stackLength = stacktrace.length;
+        for (int i = 0; i < stackLength ; i++) {
             if (stacktrace[i] != null) {
                 GeneralUtils.printToConsole(String.valueOf(stacktrace[i]));
             }

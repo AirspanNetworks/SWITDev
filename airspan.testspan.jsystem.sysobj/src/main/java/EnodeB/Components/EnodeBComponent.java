@@ -223,7 +223,7 @@ public abstract class EnodeBComponent implements LogListener {
 		isStateChangedToCoreDump = false;
 		initSNMP();
 		sessionManager = new SessionManager(this);
-		if (!isLogNeeded) {
+		if (isLogNeeded) {
 			openSerialAndSSHLogSessions();
 		}
 		sessionManager.openSSHCommandSession();
@@ -362,7 +362,9 @@ public abstract class EnodeBComponent implements LogListener {
                                 if (ans != "" && !ans.equals(GeneralUtils.ERROR_VALUE + "")) {
                                     GeneralUtils.printToConsole(getName() + " SNMP is working.");
                                     snmpWorking = true;
-                                    sessionManager.updateAllSessionsLogLevel();
+                                    if (isLogNeeded) {
+										sessionManager.updateAllSessionsLogLevel();
+									}
                                 } else {
                                     GeneralUtils.unSafeSleep(3000); //if snmp doesn't work, sleep before trying again.
                                 }

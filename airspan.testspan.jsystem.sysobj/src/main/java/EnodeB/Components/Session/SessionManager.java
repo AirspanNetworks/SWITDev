@@ -17,13 +17,13 @@ public class SessionManager {
 	private final static String COMMAND_LOG_LEVEL_PROPERTY_NAME = "logger.commandSessionLogLevel";
 	private final static int LOG_LEVEL_NO_VALUE = -2;
 	private ArrayList<Session> sessions;
-	private static Session SSHCommandSession;
-	private static Session SSHlogSession;
-	private static Session serialSession;
+	private Session SSHCommandSession;
+	private Session SSHlogSession;
+	private Session serialSession;
 	private EnodeBComponent enodeBComponent;
-	private static int SSHlogLevel = -1;
-	private static int serialLogLevel = -1;
-	private static int commandsLogLevel = -1;
+	private int SSHlogLevel = -1;
+	private int serialLogLevel = -1;
+	private int commandsLogLevel = -1;
 	public SessionManager(EnodeBComponent enodeBComponent) {
 		this.enodeBComponent = enodeBComponent;
 		this.sessions = new ArrayList<Session>();
@@ -252,31 +252,5 @@ public class SessionManager {
 
 	public void setSerialSession(Session serialSession) {
 		this.serialSession = serialSession;
-	}
-
-	/**
-	 * Get Commands LogLevel
-	 *
-	 * @return - commandsLogLevel
-	 */
-	public static int getCommandsLogLevel() {
-		return commandsLogLevel;
-	}
-
-	/**
-	 * Get Commands LogLevel
-	 *
-	 * @return - SSHlogLevel
-	 */
-	public static int getSSHlogLevel() {
-		return SSHlogLevel;
-	}
-
-	/**
-	 * get SerialLogLevel
-	 * @return - serialLogLevel
-	 */
-	public static int getSerialLogLevel() {
-		return serialLogLevel;
 	}
 }

@@ -43,6 +43,31 @@ public class SessionManager {
 	}
 
 	/**
+	 * open Serial Log Session
+	 * @param logLevel
+	 */
+	public void openSerialLogSession(int logLevel) {
+		serialLogLevel = logLevel;
+		if (enodeBComponent.serialCom != null){
+			openSerialSession();
+		}
+	}
+
+	/**
+	 * open SSH Log Session
+	 * @param logLevel
+	 */
+	public void openSSHLogSession(int logLevel) {
+		SSHlogLevel = logLevel;
+		String sessionName = openSession(getEnodeBComponent().getName() + "_" + SSH_LOG_SESSION_NAME, SSHlogLevel);
+		if (sessionName != null)
+		{
+			SSHlogSession = getSession(sessionName);
+			SSHlogSession.setShouldStayInCli(true);
+		}
+	}
+
+	/**
 	 * open SSH Log Session
 	 */
 	public void openSSHLogSession() {
@@ -247,7 +272,8 @@ public class SessionManager {
 		return SSHlogLevel;
 	}
 
-	/** get SerialLogLevel
+	/**
+	 * get SerialLogLevel
 	 * @return - serialLogLevel
 	 */
 	public static int getSerialLogLevel() {

@@ -457,7 +457,7 @@ public class Session implements Runnable {
 //		long threadId = Thread.currentThread().getId();
 //		GeneralUtils.printToConsole("DEBUG2: updateLogLevel - Thread ID# " + threadId + " is doing this task");
 		boolean verify = false;
-		GeneralUtils.printToConsole("Setting Session " + getName() +" for EnodeB "+enbComp.getIpAddress()+ " log level to " + logLevel);
+		GeneralUtils.printToConsole("Setting Session " + getName() +" for EnodeB "+enbComp.getIpAddress()+ "  log level to " + logLevel);
 		if (connected && logLevel >= 0) {
 			GeneralUtils.printToConsole("Setting log level");
 //			setSessionLogLevel();

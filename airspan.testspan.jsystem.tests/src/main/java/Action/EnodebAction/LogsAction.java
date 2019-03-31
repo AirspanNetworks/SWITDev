@@ -272,7 +272,7 @@ public class LogsAction extends EnodebAction {
 				logger.startEnodeBLog(sshSessionName, LOG_ACTION);
 				break;
 			case SERIAL:
-				logger.startEnodeBLog(serialSessionName,LOG_ACTION);
+				logger.startEnodeBLog(serialSessionName, LOG_ACTION);
 				break;
 			case BOTH:
 				logger.startEnodeBLog(sshSessionName, LOG_ACTION);
@@ -288,7 +288,7 @@ public class LogsAction extends EnodebAction {
 	private void closeLogs(Logger logger) {
 		switch (session) {
 			case SSH:
-				logger.closeEnodeBLog(sshSessionName,LOG_ACTION);
+				logger.closeEnodeBLog(sshSessionName, LOG_ACTION);
 				break;
 			case SERIAL:
 				logger.closeEnodeBLog(serialSessionName, LOG_ACTION);
@@ -332,10 +332,9 @@ public class LogsAction extends EnodebAction {
 	private String openSerialSession(EnodeB enodeB, SessionManager sessionManager) {
 		if (sessionManager.getSerialSession() == null) {
 			enodeB.getXLP().initSerialCom();
-			sessionManager.openSerialLogSession();
+			sessionManager.openSerialLogSession(logLevelSerial.value);
 			sessionManager.getSerialSession().setLoggedSession(true);
 			sessionManager.getSerialSession().setEnableCliBuffer(false);
-//			sessionManager.getSerialSession().setName(sessionManager.getSerialSession().getName() + LOG_ACTION);
 		}
 		return sessionManager.getSerialSession().getName();
 	}
@@ -348,10 +347,9 @@ public class LogsAction extends EnodebAction {
 	 */
 	private String openSSHSession(SessionManager sessionManager) {
 		if (sessionManager.getSSHlogSession() == null) {
-			sessionManager.openSSHLogSession();
+			sessionManager.openSSHLogSession(logLevelSSH.value);
 			sessionManager.getSSHlogSession().setLoggedSession(true);
 			sessionManager.getSSHlogSession().setEnableCliBuffer(false);
-//			sessionManager.getSSHlogSession().setName(sessionManager.getSSHlogSession().getName() + LOG_ACTION);
 		}
 		return sessionManager.getSSHlogSession().getName();
 	}
@@ -383,6 +381,7 @@ public class LogsAction extends EnodebAction {
 		eNodeB.getSSHlogSession().setProcess(processSSH);
 		eNodeB.getSSHlogSession().setClient(clientSSH);
 		eNodeB.getSSHlogSession().setLogLevel(logLevelSSH.value);
+//		SessionManager.setSerialLogLevel(logLevelSSH.value);
 	}
 
 	/**
@@ -395,6 +394,7 @@ public class LogsAction extends EnodebAction {
 		eNodeB.getSerialSession().setProcess(processSerial);
 		eNodeB.getSerialSession().setClient(clientSerial);
 		eNodeB.getSerialSession().setLogLevel(logLevelSerial.value);
+//		SessionManager.setSerialLogLevel(logLevelSerial.value);
 	}
 
 	/**

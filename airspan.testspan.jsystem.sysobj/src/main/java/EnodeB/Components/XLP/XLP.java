@@ -564,14 +564,16 @@ public abstract class XLP extends EnodeBComponent {
      */
     @Override
     public void setSessionLogLevel(String sessionName,String client, String process, int level) {
-        GeneralUtils.printToConsole("**DEBUG: " +sessionName+" "+client+" "+process+" "+String.valueOf(level));
-        StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
-        int stackLength = stacktrace.length;
-        for (int i = 0; i < stackLength ; i++) {
-            if (stacktrace[i] != null) {
-                GeneralUtils.printToConsole(String.valueOf(stacktrace[i]));
-            }
-        }
+		long threadId = Thread.currentThread().getId();
+		GeneralUtils.printToConsole("DEBUG2: Thread ID# " + threadId + " is doing this task");
+		GeneralUtils.printToConsole("**DEBUG: " +sessionName+" "+client+" "+process+" "+String.valueOf(level));
+//        StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
+//        int stackLength = stacktrace.length;
+//        for (int i = 0; i < stackLength ; i++) {
+//            if (stacktrace[i] != null) {
+//                GeneralUtils.printToConsole(String.valueOf(stacktrace[i]));
+//            }
+//        }
         sendCommandsOnSession(sessionName, LTE_CLI_PROMPT, String.format("logger threshold set client=%s process=%s cli=%s", client, process, String.valueOf(level)), LTE_CLI_PROMPT);
     }
 

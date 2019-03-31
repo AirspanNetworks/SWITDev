@@ -565,7 +565,7 @@ public abstract class XLP extends EnodeBComponent {
     @Override
     public void setSessionLogLevel(String sessionName,String client, String process, int level) {
 		long threadId = Thread.currentThread().getId();
-		GeneralUtils.printToConsole("DEBUG2: Thread ID# " + threadId + " is doing this task");
+		GeneralUtils.printToConsole("**DEBUG2: Thread ID# " + threadId + " is doing this task");
 		GeneralUtils.printToConsole("**DEBUG: " +sessionName+" "+client+" "+process+" "+String.valueOf(level));
 //        StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
 //        int stackLength = stacktrace.length;

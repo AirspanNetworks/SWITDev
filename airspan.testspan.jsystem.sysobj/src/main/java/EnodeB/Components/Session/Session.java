@@ -23,8 +23,8 @@ public class Session implements Runnable {
 	 * Set by default to * (== Everything).
 	 * There is an option to change them to a specific Module by using theirs setters.
 	 */
-	private static String process = "*";
-	private static String client = "*";
+	private String process = "*";
+	private String client = "*";
 
 	private Thread reconnectionThread;
 	private String name;
@@ -47,7 +47,7 @@ public class Session implements Runnable {
 	// if true cli buffer is saved all the time,
 	// otherwise it'll be filled only when a cli commend is being sent
 	private boolean enableCliBuffer;
-	private static int logLevel = -1;
+	private int logLevel = -1;
 
 	private String hostname = "";
 

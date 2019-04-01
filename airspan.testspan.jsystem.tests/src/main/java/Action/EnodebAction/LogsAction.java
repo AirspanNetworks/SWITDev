@@ -92,7 +92,7 @@ public class LogsAction extends EnodebAction {
 		while (iter.hasNext()) {
 			LogSessionParamsSet logSessionParamsSet = iter.next();
 			if ((newLogSessionParamsSet.enodeB.getName().equalsIgnoreCase(logSessionParamsSet.enodeB.getName())) &&
-					(newLogSessionParamsSet.session.value.equalsIgnoreCase(inputSession.value))) {
+					(newLogSessionParamsSet.session.value.equalsIgnoreCase(logSessionParamsSet.session.value))) {
 				iter.remove();
 			}
 		}

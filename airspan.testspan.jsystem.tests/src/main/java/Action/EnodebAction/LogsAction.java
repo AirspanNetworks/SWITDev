@@ -193,6 +193,7 @@ public class LogsAction extends EnodebAction {
 	public void stopEnodeBLogs() {
 		for (EnodeB eNodeB : duts) {
 			LogSessionParamsSet sessionParamSetToClose = getSessionParamSetToClose(eNodeB);
+			if (sessionParamSetToClose == null) continue;
 			if (!sessionParamSetToClose.isSessionOpen) continue;
 			printToReportLogDetails(sessionParamSetToClose, "Close");
 			removeFromLoggedSession(sessionParamSetToClose);
@@ -203,16 +204,31 @@ public class LogsAction extends EnodebAction {
 	}
 
 	/**
-	 * Find in logSessionParamsList the requested session to close
+	 * Find in logSessionParamsList the requested session to close else return null
 	 *
 	 * @param eNodeB - eNodeB
-	 * @return - logSessionParamsSetToClose
+	 * @return - logSessionParamsSetToClose or null if not found
 	 */
 	private LogSessionParamsSet getSessionParamSetToClose(EnodeB eNodeB) {
+		LogSessionParamsSet sessionParamSetToClose;
 		Pair<EnodeB, Session> enBSessionPairToClose = new Pair<EnodeB, Session>(eNodeB, inputSession);
-		int index = logSessionParamsList.indexOf(enBSessionPairToClose);
-		return logSessionParamsList.get(index);
+		if (logSessionParamsList.contains(enBSessionPairToClose)) {
+			int index = logSessionParamsList.indexOf(enBSessionPairToClose);
+			sessionParamSetToClose = logSessionParamsList.get(index);
+		} else {
+			sessionParamSetToClose = null;
+		}
+		return sessionParamSetToClose;
 	}
+
+//	/**
+//	 * Find in logSessionParamsList the requested session to close
+//	 *
+//	 * @param eNodeB - eNodeB
+//	 * @return - logSessionParamsSetToClose
+//	 */
+//	private LogSessionParamsSet getSessionParamSetToClose(EnodeB eNodeB) {
+//	}
 
 	/**
 	 * Print To Report Log Details when opening log session

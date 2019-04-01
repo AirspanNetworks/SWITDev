@@ -5,7 +5,6 @@ import EnodeB.Components.Session.SessionManager;
 import EnodeB.EnodeB;
 import Utils.GeneralUtils;
 import Utils.LogSessionParamsSet;
-import Utils.Pair;
 import Utils.SysObjUtils;
 import jsystem.framework.ParameterProperties;
 import jsystem.framework.TestProperties;
@@ -52,7 +51,7 @@ public class LogsAction extends EnodebAction {
 		}
 		for (EnodeB eNodeB : duts) {
 			LogSessionParamsSet newLogSessionParamsSet = createLogSessionParamSet(eNodeB);
-			checkIfSessionWasAlreadyOpened(newLogSessionParamsSet);
+			removeSessionIfAlreadyOpened(newLogSessionParamsSet);
 			logSessionParamsList.add(newLogSessionParamsSet);
 		}
 	}
@@ -68,7 +67,6 @@ public class LogsAction extends EnodebAction {
 		}
 	}
 
-
 	/**
 	 * Define log level, inputClient and inputProcess for every session according to user request.
 	 *
@@ -79,14 +77,17 @@ public class LogsAction extends EnodebAction {
 	}
 
 	/**
-	 * If already requested to open specific SSH\Serial session to an eNB, replace the old element by the new one
+	 * If already requested to open specific SSH\Serial session to an eNB, remove it in order to
+	 * replace by the new one
 	 *
 	 * @param newLogSessionParamsSet - newLogSessionParamsSet
 	 */
-	private void checkIfSessionWasAlreadyOpened(LogSessionParamsSet newLogSessionParamsSet) {
-		if (logSessionParamsList.contains(newLogSessionParamsSet.enBSessionPair)) {
-			int oldIndexSet = logSessionParamsList.indexOf(newLogSessionParamsSet.enBSessionPair);
-			logSessionParamsList.remove(oldIndexSet);
+	private void removeSessionIfAlreadyOpened(LogSessionParamsSet newLogSessionParamsSet) {
+		for (LogSessionParamsSet logSessionParamsSet : logSessionParamsList) {
+			if ((newLogSessionParamsSet.enodeB.getName().equalsIgnoreCase(logSessionParamsSet.enodeB.getName())) &&
+					(newLogSessionParamsSet.session.value.equalsIgnoreCase(inputSession.value))) {
+				logSessionParamsList.remove(logSessionParamsSet);
+			}
 		}
 	}
 
@@ -210,15 +211,13 @@ public class LogsAction extends EnodebAction {
 	 * @return - logSessionParamsSetToClose or null if not found
 	 */
 	private LogSessionParamsSet getSessionParamSetToClose(EnodeB eNodeB) {
-		LogSessionParamsSet sessionParamSetToClose;
-		Pair<EnodeB, Session> enBSessionPairToClose = new Pair<EnodeB, Session>(eNodeB, inputSession);
-		if (logSessionParamsList.contains(enBSessionPairToClose)) {
-			int index = logSessionParamsList.indexOf(enBSessionPairToClose);
-			sessionParamSetToClose = logSessionParamsList.get(index);
-		} else {
-			sessionParamSetToClose = null;
+		for (LogSessionParamsSet logSessionParamsSet : logSessionParamsList) {
+			if ((logSessionParamsSet.enodeB.getName().equalsIgnoreCase(eNodeB.getName())) &&
+					(logSessionParamsSet.session.value.equalsIgnoreCase(inputSession.value))) {
+				return logSessionParamsSet;
+			}
 		}
-		return sessionParamSetToClose;
+		return null;
 	}
 
 //	/**

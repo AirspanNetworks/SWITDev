@@ -1,6 +1,7 @@
 package Utils.ConnectionManager.UserInfo;
 
-import Utils.ConnectionManager.terminal.Prompt;
+//import systemobject.terminal.Prompt;
+import Utils.ConnectionManager.terminal.exPrompt;
 
 public class Root extends UserSequence {
 	/**
@@ -8,19 +9,19 @@ public class Root extends UserSequence {
 	 * @param password
 	 */
 	public Root(String password) {
-		add(new Prompt(PromptsCommandsInfo.LOGIN_PATTERN, true, "root", true));
-		add(new Prompt(PromptsCommandsInfo.PASSWORD_PATTERN, false, password, true));
-		add(new Prompt(PromptsCommandsInfo.ROOT_PATTERN, false));
+		add(new exPrompt(PromptsCommandsInfo.LOGIN_PATTERN, true, "root", true));
+		add(new exPrompt(PromptsCommandsInfo.PASSWORD_PATTERN, false, password, true));
+		add(new exPrompt(PromptsCommandsInfo.ROOT_PATTERN, false));
 	}
 	
 	public Root(String password, boolean is_ltecli) {
 		this(password);
 		
 		if(is_ltecli) {
-			remove(new Prompt(PromptsCommandsInfo.ROOT_PATTERN, false));
-			add(new Prompt(PromptsCommandsInfo.ROOT_PATTERN, false, PromptsCommandsInfo.LTECLI_COMMAND, true));
-			add(new Prompt(PromptsCommandsInfo.LTECLI_PATTERN, false));
-													
+			UserSequence temp_sibling = new UserSequence();
+			temp_sibling.add(new exPrompt(PromptsCommandsInfo.ROOT_PATTERN, false, PromptsCommandsInfo.LTECLI_COMMAND, true));
+			temp_sibling.add(new exPrompt(PromptsCommandsInfo.LTECLI_PATTERN, false));
+			setSibling(temp_sibling);
 		}
 	}
 }

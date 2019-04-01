@@ -148,22 +148,22 @@ public class LogsAction extends EnodebAction {
 	}
 
 	@ParameterProperties(description = "LogLevel to start")
-	public void setInputLogLevel(LogLevel inputLogLevel) {
+	public void setLogLevel(LogLevel inputLogLevel) {
 		this.inputLogLevel = inputLogLevel;
 	}
 
 	@ParameterProperties(description = "Modules For Start Log")
-	public void setInputModules(Modules inputModules) {
+	public void setModules(Modules inputModules) {
 		this.inputModules = inputModules;
 	}
 
 	@ParameterProperties(description = "Choose a specific Process")
-	public void setInputProcess(String inputProcess) {
+	public void setProcess(String inputProcess) {
 		this.inputProcess = inputProcess;
 	}
 
 	@ParameterProperties(description = "Choose a specific Client")
-	public void setInputClient(String inputClient) {
+	public void setClient(String inputClient) {
 		this.inputClient = inputClient;
 	}
 

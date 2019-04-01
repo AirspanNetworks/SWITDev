@@ -5,6 +5,7 @@ import EnodeB.Components.Session.SessionManager;
 import EnodeB.EnodeB;
 import Utils.GeneralUtils;
 import Utils.LogSessionParamsSet;
+import Utils.Pair;
 import Utils.SysObjUtils;
 import jsystem.framework.ParameterProperties;
 import jsystem.framework.TestProperties;
@@ -190,14 +191,27 @@ public class LogsAction extends EnodebAction {
 			returnParam = {"IsTestWasSuccessful"},
 			paramsInclude = {"DUTs", "Session"})
 	public void stopEnodeBLogs() {
-		for (LogSessionParamsSet logSessionParamsSet : logSessionParamsList) {
-			if (!logSessionParamsSet.isSessionOpen) continue;
-			printToReportLogDetails(logSessionParamsSet, "Close");
-			removeFromLoggedSession(logSessionParamsSet);
-			closeAndGenerateEnBLogFiles(logSessionParamsSet);
-			logSessionParamsSet.isSessionOpen = false;
+		for (EnodeB eNodeB : duts) {
+			LogSessionParamsSet sessionParamSetToClose = getSessionParamSetToClose(eNodeB);
+			if (!sessionParamSetToClose.isSessionOpen) continue;
+			printToReportLogDetails(sessionParamSetToClose, "Close");
+			removeFromLoggedSession(sessionParamSetToClose);
+			closeAndGenerateEnBLogFiles(sessionParamSetToClose);
+			sessionParamSetToClose.isSessionOpen = false;
 		}
 		updateLogSessionParamsList();
+	}
+
+	/**
+	 * Find in logSessionParamsList the requested session to close
+	 *
+	 * @param eNodeB - eNodeB
+	 * @return - logSessionParamsSetToClose
+	 */
+	private LogSessionParamsSet getSessionParamSetToClose(EnodeB eNodeB) {
+		Pair<EnodeB, Session> enBSessionPairToClose = new Pair<EnodeB, Session>(eNodeB, inputSession);
+		int index = logSessionParamsList.indexOf(enBSessionPairToClose);
+		return logSessionParamsList.get(index);
 	}
 
 	/**

@@ -87,10 +87,13 @@ public class LogsAction extends EnodebAction {
 	 * @param newLogSessionParamsSet - newLogSessionParamsSet
 	 */
 	private void removeSessionIfAlreadyOpened(LogSessionParamsSet newLogSessionParamsSet) {
-		for (LogSessionParamsSet logSessionParamsSet : logSessionParamsList) {
+		Iterator<LogSessionParamsSet> iter;
+		iter = logSessionParamsList.iterator();
+		while (iter.hasNext()) {
+			LogSessionParamsSet logSessionParamsSet = iter.next();
 			if ((newLogSessionParamsSet.enodeB.getName().equalsIgnoreCase(logSessionParamsSet.enodeB.getName())) &&
 					(newLogSessionParamsSet.session.value.equalsIgnoreCase(inputSession.value))) {
-				logSessionParamsList.remove(logSessionParamsSet);
+				iter.remove();
 			}
 		}
 	}

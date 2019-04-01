@@ -13,6 +13,7 @@ import jsystem.framework.scenario.Parameter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 public class LogsAction extends EnodebAction {
 
@@ -60,9 +61,12 @@ public class LogsAction extends EnodebAction {
 	 * Removes from the logSessionParamsList array all the session that closed
 	 */
 	public void updateLogSessionParamsList() {
-		for (LogSessionParamsSet logSessionParamsSet : logSessionParamsList) {
+		Iterator<LogSessionParamsSet> iter;
+		iter = logSessionParamsList.iterator();
+		while (iter.hasNext()) {
+			LogSessionParamsSet logSessionParamsSet = iter.next();
 			if (!logSessionParamsSet.isSessionOpen) {
-				logSessionParamsList.remove(logSessionParamsSet);
+				iter.remove();
 			}
 		}
 	}

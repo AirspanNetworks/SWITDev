@@ -400,13 +400,13 @@ public class TrafficAction extends Action {
 	}
 
 	private boolean validateParams() {
-		if (trafficType == Protocol.TCP && generatorType == GeneratorType.STC) {
+		/*if (trafficType == Protocol.TCP && generatorType == GeneratorType.STC) {
 			report.report("Traffic type " + trafficType.toString() + " is not compatible with generator type "
 					+ generatorType.toString(), Reporter.FAIL);
 			reason = "Traffic type " + trafficType.toString() + " is not compatible with generator type "
 					+ generatorType.toString();
 			return false;
-		}
+		}*/
 		if (ues == null) {
 			report.report("No UEs were configured", Reporter.WARNING);
 		}

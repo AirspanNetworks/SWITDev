@@ -102,7 +102,7 @@ public class Traffic {
             GeneralUtils.printToConsole("before trying to set RestSTC");
             trafficGenerator = (ITrafficGenerator) system.getSystemObject("RestSTC");
             generatorType = TrafficGeneratorType.ITraffic;
-            typeGen = GeneratorType.STC;
+            typeGen = null;
             GeneralUtils.printToConsole("done setting RestSTC");
         } catch (Exception e) {
             GeneralUtils.printToConsole("Could not init Rest Object , " + e.getMessage());
@@ -128,11 +128,11 @@ public class Traffic {
     }
 
 	public enum GeneratorType{
-		STC, Iperf;
+		Iperf;
 	}
 	
 	private Traffic(ArrayList<UE> ues, GeneratorType type){
-		if(type == GeneratorType.STC){
+		/*if(type == GeneratorType.STC){
 			try {
 				GeneralUtils.printToConsole("Trying to set RestSTC");
 				trafficGenerator = (ITrafficGenerator) system.getSystemObject("RestSTC");
@@ -144,7 +144,8 @@ public class Traffic {
 				instance = null;
 				return;
 			}
-		}else if(type == GeneratorType.Iperf){
+		}else */
+		if(type == GeneratorType.Iperf){
 			GeneralUtils.printToConsole("Trying to set IPERF");
 			trafficGenerator = IPerf.getInstance(ues);
 			if(trafficGenerator == null){
@@ -378,7 +379,7 @@ public class Traffic {
 
             case CUSTOM:
             	// if traffic instance is iperf, use default of 10M/1M
-            	if(typeGen == GeneratorType.Iperf){
+            	if(typeGen != null){
             		return startTraffic(TrafficCapacity.LOWTPT);
             	}
                 subscribeToSTCFile();

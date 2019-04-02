@@ -9,25 +9,26 @@ public class UserSequence extends ArrayList<exPrompt> implements Iterator<UserSe
 	
 	private UserSequence sibling = null;
 
-//	public final UserSequence getSibling() {
-//		return sibling;
-//	}
-//
-//	public final void setSibling(UserSequence sibling) {
-//		this.sibling = sibling;
-//	}
-
-	public final UserSequence getSibling() {
-		UserSequence instance = this;
-		while(instance.hasNext()) {
-			instance = next();
-		}
-		return instance;
+	public void setSibling(UserSequence sibling) {
+		this.sibling = sibling;
 	}
 
-	public final void setSibling(UserSequence sibling) {
-		UserSequence instance = getSibling();
-		instance.sibling = sibling;
+	public UserSequence getLastSibling() {
+//		UserSequence instance = this;
+//		System.out.print(instance.toString());
+//		while(instance.hasNext()) {
+//			instance = next();
+//		}
+//		return instance;
+		if(hasNext())
+			return next().getLastSibling();
+		else
+			return this;
+	}
+
+	public void addSibling(UserSequence sibling) {
+		UserSequence instance = getLastSibling();
+		instance.setSibling(sibling);
 	}
 	
 	/**
@@ -36,14 +37,14 @@ public class UserSequence extends ArrayList<exPrompt> implements Iterator<UserSe
 	private static final long serialVersionUID = 1L;
 	
 	public exPrompt getFinalPrompt() {
-		UserSequence instance = getSibling();
+		UserSequence instance = getLastSibling();
 		
 		for(exPrompt pr : instance) {
 			if(pr.isCommandEnd()) {
 				return pr;
 			}
 		}
-		return null;
+		throw new IndexOutOfBoundsException("No final prompt found");
 	}
 	
 	public boolean enforceSessionReset() {
@@ -52,34 +53,33 @@ public class UserSequence extends ArrayList<exPrompt> implements Iterator<UserSe
 
 	@Override
 	public boolean hasNext() {
-		return sibling == null ? false : true;
+		boolean s = (sibling != null);
+//		System.out.print("\nUS: " + this.toString() + (s ? "" : "doesn't ") + " have sibling\n");
+		return s;
 	}
 
 	@Override
 	public UserSequence next() {
-		return sibling;
+//		System.out.print("\nNext of " + this.toString() + "\n\tis: " + sibling + "\n");
+		return this.sibling;
 	}
 	
 	@Override
 	public String toString() {
-		return toString("");
+		return super.toString() + "; " + (this.hasNext() ? "H" : "Doesn't h") + "ave sibling";
 	}
-	
-	public String toString(String indent) {
-		StringBuffer result = new StringBuffer();
-		for(exPrompt p : this) {
-			result.append(indent + p.getPrompt());
-			if(p.getStringToSend() != null) {
-				result.append("; Command: " + p.getStringToSend());
-			}
-			result.append("\n");
-		}
-		
-		UserSequence instance = this;
-		while(instance.hasNext()) {
-			instance = next();
-			result.append(indent + instance.toString(indent + " "));
-		}
-		return result.toString();
-	}
+//	
+//	private String toString(String indent) {
+//		StringBuffer result = new StringBuffer();
+//		for(exPrompt p : this) {
+//			result.append(indent + p.toString() + "\n");
+//		}
+//		
+//		UserSequence instance = this;
+//		while(instance.hasNext()) {
+//			instance = next();
+//			result.append(indent + instance.toString(indent + " "));
+//		}
+//		return result.toString();
+//	}
 }

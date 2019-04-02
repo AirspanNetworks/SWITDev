@@ -24,6 +24,7 @@ public class exPrompt extends Prompt{
         this.prompt = prompt;
         this.isRegularExpression = isRegExp;
         setCommandEnd(true);
+        setAddEnter(true);
     }
     
     public exPrompt(String prompt, boolean isRegExp, boolean isCommandEnd){
@@ -105,8 +106,11 @@ public class exPrompt extends Prompt{
     
     @Override
     public String toString() {
-    	StringBuilder res = new StringBuilder(String.format("Prompt: '%s'; StringToSend: '%s'", this.getPrompt(), this.getStringToSend()));
-		res.append(String.format("; is final shell: '%s'", this.isCommandEnd()));
+    	StringBuilder res = new StringBuilder(String.format("Prompt: '%s'", getPrompt()));
+    	if(isCommandEnd())
+    		res.append(" there is final prompt");
+    	else
+    		res.append("; Command: " + getStringToSend());
 		return res.toString();
     }
 }

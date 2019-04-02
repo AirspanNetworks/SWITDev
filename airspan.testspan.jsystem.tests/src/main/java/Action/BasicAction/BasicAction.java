@@ -261,7 +261,7 @@ public class BasicAction extends Action {
 		exCLI cli = null;
 		
 		/* Internal unittest only */
-		 setUnitTestforserial();
+//		 setUnitTestforserial();
 		 
 		// Verify input parameters
 		try {

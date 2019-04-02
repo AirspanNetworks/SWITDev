@@ -21,7 +21,7 @@ public class Root extends UserSequence {
 			UserSequence temp_sibling = new UserSequence();
 			temp_sibling.add(new exPrompt(PromptsCommandsInfo.ROOT_PATTERN, false, PromptsCommandsInfo.LTECLI_COMMAND, true));
 			temp_sibling.add(new exPrompt(PromptsCommandsInfo.LTECLI_PATTERN, false));
-			setSibling(temp_sibling);
+			addSibling(temp_sibling);
 		}
 	}
 }

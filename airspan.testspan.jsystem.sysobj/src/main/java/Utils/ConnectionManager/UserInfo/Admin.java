@@ -33,7 +33,7 @@ public class Admin extends UserSequence {
 			temp_sibling.add(new exPrompt(PromptsCommandsInfo.ADMIN_PATTERN, false, PromptsCommandsInfo.SUDO_COMMAND, true));
 			temp_sibling.add(new exPrompt(PromptsCommandsInfo.PASSWORD_PATTERN, false, password, true));
 			temp_sibling.add(new exPrompt(PromptsCommandsInfo.ROOT_PATTERN, false));
-			setSibling(temp_sibling);
+			addSibling(temp_sibling);
 		}
 	}
 	
@@ -55,7 +55,7 @@ public class Admin extends UserSequence {
 			UserSequence ltecli = new UserSequence();
 			ltecli.add(new exPrompt(PromptsCommandsInfo.ROOT_PATTERN, false, PromptsCommandsInfo.LTECLI_COMMAND, true));
 			ltecli.add(new exPrompt(PromptsCommandsInfo.LTECLI_PATTERN, false));
-			setSibling(ltecli);
+			addSibling(ltecli);
 			
 		}
 	}

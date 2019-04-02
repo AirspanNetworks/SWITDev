@@ -4,7 +4,7 @@ import EnodeB.Components.Log.Logger;
 import EnodeB.Components.Session.SessionManager;
 import EnodeB.EnodeB;
 import Utils.GeneralUtils;
-import Utils.LogSessionParamsSet;
+import Utils.LogSessionParams;
 import Utils.SysObjUtils;
 import jsystem.framework.ParameterProperties;
 import jsystem.framework.TestProperties;
@@ -21,19 +21,18 @@ public class LogsAction extends EnodebAction {
 	 * String Constants
 	 */
 	private String EVERY_MODULE_STRING = "*";
-	private static final String LOG_ACTION = "_LogAction";
-	private static final String ACTION_NAME_STRING = "startEnodeBLogs";
-	private static final String MODULES_STRING = "Modules";
-	private static final String PROCESS_STRING = "Process";
-	private static final String CLIENT_STRING = "Client";
+	private final String LOG_ACTION = "_LogAction";
+	private final String MODULES_STRING = "Modules";
+	private final String PROCESS_STRING = "Process";
+	private final String CLIENT_STRING = "Client";
 
 	/**
 	 * Static List that organizes all the open session in a scenario
 	 */
-	private static ArrayList<LogSessionParamsSet> logSessionParamsList;
+	private static ArrayList<LogSessionParams> logSessionParamsList;
 
 	/**
-	 * User Inputs
+	 * Jsystem User Inputs
 	 */
 	private ArrayList<EnodeB> duts;
 	private Session inputSession;
@@ -51,9 +50,9 @@ public class LogsAction extends EnodebAction {
 			logSessionParamsList = new ArrayList<>();
 		}
 		for (EnodeB eNodeB : duts) {
-			LogSessionParamsSet newLogSessionParamsSet = createLogSessionParamSet(eNodeB);
-			removeSessionIfAlreadyOpened(newLogSessionParamsSet);
-			logSessionParamsList.add(newLogSessionParamsSet);
+			LogSessionParams newLogSessionParams = createLogSessionParamSet(eNodeB);
+			removeSessionIfAlreadyOpened(newLogSessionParams);
+			logSessionParamsList.add(newLogSessionParams);
 		}
 	}
 
@@ -61,11 +60,11 @@ public class LogsAction extends EnodebAction {
 	 * Removes from the logSessionParamsList array all the session that closed
 	 */
 	public void updateLogSessionParamsList() {
-		Iterator<LogSessionParamsSet> iter;
+		Iterator<LogSessionParams> iter;
 		iter = logSessionParamsList.iterator();
 		while (iter.hasNext()) {
-			LogSessionParamsSet logSessionParamsSet = iter.next();
-			if (!logSessionParamsSet.isSessionOpen) {
+			LogSessionParams logSessionParams = iter.next();
+			if (!logSessionParams.isSessionOpen) {
 				iter.remove();
 			}
 		}
@@ -76,23 +75,23 @@ public class LogsAction extends EnodebAction {
 	 *
 	 * @return - LogProperties for each session
 	 */
-	private LogSessionParamsSet createLogSessionParamSet(EnodeB eNodeB) {
-		return new LogSessionParamsSet(eNodeB, inputSession, inputModules, inputProcess, inputClient, inputLogLevel);
+	private LogSessionParams createLogSessionParamSet(EnodeB eNodeB) {
+		return new LogSessionParams(eNodeB, inputSession, inputModules, inputProcess, inputClient, inputLogLevel);
 	}
 
 	/**
 	 * If already requested to open specific SSH\Serial session to an eNB, remove it in order to
 	 * replace by the new one
 	 *
-	 * @param newLogSessionParamsSet - newLogSessionParamsSet
+	 * @param newLogSessionParams - newLogSessionParams
 	 */
-	private void removeSessionIfAlreadyOpened(LogSessionParamsSet newLogSessionParamsSet) {
-		Iterator<LogSessionParamsSet> iter;
+	private void removeSessionIfAlreadyOpened(LogSessionParams newLogSessionParams) {
+		Iterator<LogSessionParams> iter;
 		iter = logSessionParamsList.iterator();
 		while (iter.hasNext()) {
-			LogSessionParamsSet logSessionParamsSet = iter.next();
-			if ((newLogSessionParamsSet.enodeB.getName().equalsIgnoreCase(logSessionParamsSet.enodeB.getName())) &&
-					(newLogSessionParamsSet.session.value.equalsIgnoreCase(logSessionParamsSet.session.value))) {
+			LogSessionParams logSessionParams = iter.next();
+			if ((newLogSessionParams.enodeB.getName().equalsIgnoreCase(logSessionParams.enodeB.getName())) &&
+					(newLogSessionParams.session.value.equalsIgnoreCase(logSessionParams.session.value))) {
 				iter.remove();
 			}
 		}
@@ -183,13 +182,13 @@ public class LogsAction extends EnodebAction {
 			paramsInclude = {"DUTs", "Session", "LogLevel", "Modules", "Process", "Client"})
 	public void startEnodeBLogs() {
 		createLogSessionParamsList();
-		for (LogSessionParamsSet logSessionParamsSet : logSessionParamsList) {
-			if (logSessionParamsSet.isSessionOpen) continue;
-			printToReportLogDetails(logSessionParamsSet, "Open");
-			openLogSession(logSessionParamsSet);
-			setLogLevelAndProcessByName(logSessionParamsSet);
-			addOpenSessionToLogger(logSessionParamsSet);
-			logSessionParamsSet.isSessionOpen = true;
+		for (LogSessionParams logSessionParams : logSessionParamsList) {
+			if (logSessionParams.isSessionOpen) continue;
+			printToReportLogDetails(logSessionParams, "Open");
+			openLogSession(logSessionParams);
+			setLogLevelAndProcessByName(logSessionParams);
+			addOpenSessionToLogger(logSessionParams);
+			logSessionParams.isSessionOpen = true;
 		}
 	}
 
@@ -200,7 +199,7 @@ public class LogsAction extends EnodebAction {
 			paramsInclude = {"DUTs", "Session"})
 	public void stopEnodeBLogs() {
 		for (EnodeB eNodeB : duts) {
-			LogSessionParamsSet sessionParamSetToClose = getSessionParamSetToClose(eNodeB);
+			LogSessionParams sessionParamSetToClose = getSessionParamSetToClose(eNodeB);
 			if (sessionParamSetToClose == null) continue;
 			if (!sessionParamSetToClose.isSessionOpen) continue;
 			printToReportLogDetails(sessionParamSetToClose, "Close");
@@ -215,41 +214,32 @@ public class LogsAction extends EnodebAction {
 	 * Find in logSessionParamsList the requested session to close else return null
 	 *
 	 * @param eNodeB - eNodeB
-	 * @return - logSessionParamsSetToClose or null if not found
+	 * @return - logSessionParamsToClose or null if not found
 	 */
-	private LogSessionParamsSet getSessionParamSetToClose(EnodeB eNodeB) {
-		for (LogSessionParamsSet logSessionParamsSet : logSessionParamsList) {
-			if ((logSessionParamsSet.enodeB.getName().equalsIgnoreCase(eNodeB.getName())) &&
-					(logSessionParamsSet.session.value.equalsIgnoreCase(inputSession.value))) {
-				return logSessionParamsSet;
+	private LogSessionParams getSessionParamSetToClose(EnodeB eNodeB) {
+		for (LogSessionParams logSessionParams : logSessionParamsList) {
+			if ((logSessionParams.enodeB.getName().equalsIgnoreCase(eNodeB.getName())) &&
+					(logSessionParams.session.value.equalsIgnoreCase(inputSession.value))) {
+				return logSessionParams;
 			}
 		}
 		return null;
 	}
 
-//	/**
-//	 * Find in logSessionParamsList the requested session to close
-//	 *
-//	 * @param eNodeB - eNodeB
-//	 * @return - logSessionParamsSetToClose
-//	 */
-//	private LogSessionParamsSet getSessionParamSetToClose(EnodeB eNodeB) {
-//	}
-
 	/**
 	 * Print To Report Log Details when opening log session
 	 *
-	 * @param logSessionParamsSet - logSessionParamsSet
+	 * @param logSessionParams - logSessionParams
 	 * @param action              - Open or Close
 	 */
-	private void printToReportLogDetails(LogSessionParamsSet logSessionParamsSet, String action) {
+	private void printToReportLogDetails(LogSessionParams logSessionParams, String action) {
 		GeneralUtils.startLevel(action + " Session:");
-		printToReportLogDetails(logSessionParamsSet.enodeB,
-				logSessionParamsSet.session.value,
-				logSessionParamsSet.logLevel,
-				logSessionParamsSet.module,
-				logSessionParamsSet.process,
-				logSessionParamsSet.client);
+		printToReportLogDetails(logSessionParams.enodeB,
+				logSessionParams.session.value,
+				logSessionParams.logLevel,
+				logSessionParams.module,
+				logSessionParams.process,
+				logSessionParams.client);
 		GeneralUtils.stopLevel();
 	}
 
@@ -271,15 +261,15 @@ public class LogsAction extends EnodebAction {
 	 * Add Open Session To LoggedSessions array, in order to stream from them in Logger Thread.
 	 * If the sessions already exist in this array, it won't add them again.
 	 *
-	 * @param logSessionParamsSet - logSessionParamsSet
+	 * @param logSessionParams - logSessionParams
 	 */
-	private void addOpenSessionToLogger(LogSessionParamsSet logSessionParamsSet) {
-		SessionManager sessionManager = logSessionParamsSet.enodeB.getXLP().getSessionManager();
-		Logger logger = logSessionParamsSet.enodeB.getXLP().getLogger();
+	private void addOpenSessionToLogger(LogSessionParams logSessionParams) {
+		SessionManager sessionManager = logSessionParams.enodeB.getXLP().getSessionManager();
+		Logger logger = logSessionParams.enodeB.getXLP().getLogger();
 		synchronized (logger.lock) {
 			logger.addLoggedSessions(sessionManager);
-			logger.addLogListener(logSessionParamsSet.enodeB.getXLP());
-			startLogs(logSessionParamsSet, logger);
+			logger.addLogListener(logSessionParams.enodeB.getXLP());
+			startLogs(logSessionParams, logger);
 			logger.setCountErrorBool(true);
 		}
 	}
@@ -287,15 +277,15 @@ public class LogsAction extends EnodebAction {
 	/**
 	 * Close And Generate EnB Log Files
 	 *
-	 * @param logSessionParamsSet - logSessionParamsSet
+	 * @param logSessionParams - logSessionParams
 	 */
-	private void closeAndGenerateEnBLogFiles(LogSessionParamsSet logSessionParamsSet) {
-		GeneralUtils.startLevel(String.format("eNodeB %s logs", logSessionParamsSet.enodeB.getName()));
-		Logger loggers[] = logSessionParamsSet.enodeB.getLoggers();
+	private void closeAndGenerateEnBLogFiles(LogSessionParams logSessionParams) {
+		GeneralUtils.startLevel(String.format("eNodeB %s logs", logSessionParams.enodeB.getName()));
+		Logger loggers[] = logSessionParams.enodeB.getLoggers();
 		for (Logger logger : loggers) {
 			logger.setCountErrorBool(false);
-			closeLogs(logSessionParamsSet, logger);
-			scenarioUtils.scenarioStatistics(logger, logSessionParamsSet.enodeB);
+			closeLogs(logSessionParams, logger);
+			scenarioUtils.scenarioStatistics(logger, logSessionParams.enodeB);
 		}
 		GeneralUtils.stopLevel();
 	}
@@ -305,17 +295,17 @@ public class LogsAction extends EnodebAction {
 	 *
 	 * @param logger - logger
 	 */
-	private void startLogs(LogSessionParamsSet logSessionParamsSet, Logger logger) {
-		switch (logSessionParamsSet.session) {
+	private void startLogs(LogSessionParams logSessionParams, Logger logger) {
+		switch (logSessionParams.session) {
 			case SSH:
-				logger.startEnodeBLog(logSessionParamsSet.sshSessionName, LOG_ACTION);
+				logger.startEnodeBLog(logSessionParams.sshSessionName, LOG_ACTION);
 				break;
 			case SERIAL:
-				logger.startEnodeBLog(logSessionParamsSet.serialSessionName, LOG_ACTION);
+				logger.startEnodeBLog(logSessionParams.serialSessionName, LOG_ACTION);
 				break;
 			case BOTH:
-				logger.startEnodeBLog(logSessionParamsSet.sshSessionName, LOG_ACTION);
-				logger.startEnodeBLog(logSessionParamsSet.serialSessionName, LOG_ACTION);
+				logger.startEnodeBLog(logSessionParams.sshSessionName, LOG_ACTION);
+				logger.startEnodeBLog(logSessionParams.serialSessionName, LOG_ACTION);
 		}
 	}
 
@@ -324,54 +314,54 @@ public class LogsAction extends EnodebAction {
 	 *
 	 * @param logger - logger
 	 */
-	private void closeLogs(LogSessionParamsSet logSessionParamsSet, Logger logger) {
-		switch (logSessionParamsSet.session) {
+	private void closeLogs(LogSessionParams logSessionParams, Logger logger) {
+		switch (logSessionParams.session) {
 			case SSH:
-				logger.closeEnodeBLog(logSessionParamsSet.sshSessionName, LOG_ACTION);
+				logger.closeEnodeBLog(logSessionParams.sshSessionName, LOG_ACTION);
 				break;
 			case SERIAL:
-				logger.closeEnodeBLog(logSessionParamsSet.serialSessionName, LOG_ACTION);
+				logger.closeEnodeBLog(logSessionParams.serialSessionName, LOG_ACTION);
 				break;
 			case BOTH:
-				logger.closeEnodeBLog(logSessionParamsSet.sshSessionName, LOG_ACTION);
-				logger.closeEnodeBLog(logSessionParamsSet.serialSessionName, LOG_ACTION);
+				logger.closeEnodeBLog(logSessionParams.sshSessionName, LOG_ACTION);
+				logger.closeEnodeBLog(logSessionParams.serialSessionName, LOG_ACTION);
 		}
 	}
 
 	/**
 	 * Open Log Session - SSH or Serial and define session names
 	 *
-	 * @param logSessionParamsSet - logSessionParamsSet
+	 * @param logSessionParams - logSessionParams
 	 */
-	private void openLogSession(LogSessionParamsSet logSessionParamsSet) {
-		switch (logSessionParamsSet.session) {
+	private void openLogSession(LogSessionParams logSessionParams) {
+		switch (logSessionParams.session) {
 			case SSH:
-				logSessionParamsSet.sshSessionName = openSSHSession(logSessionParamsSet);
-				setSSHParamsForReconnect(logSessionParamsSet);
+				logSessionParams.sshSessionName = openSSHSession(logSessionParams);
+				setSSHParamsForReconnect(logSessionParams);
 				break;
 			case SERIAL:
-				logSessionParamsSet.serialSessionName = openSerialSession(logSessionParamsSet);
-				setSerialParamsForReconnect(logSessionParamsSet);
+				logSessionParams.serialSessionName = openSerialSession(logSessionParams);
+				setSerialParamsForReconnect(logSessionParams);
 				break;
 			case BOTH:
-				logSessionParamsSet.sshSessionName = openSSHSession(logSessionParamsSet);
-				setSSHParamsForReconnect(logSessionParamsSet);
-				logSessionParamsSet.serialSessionName = openSerialSession(logSessionParamsSet);
-				setSerialParamsForReconnect(logSessionParamsSet);
+				logSessionParams.sshSessionName = openSSHSession(logSessionParams);
+				setSSHParamsForReconnect(logSessionParams);
+				logSessionParams.serialSessionName = openSerialSession(logSessionParams);
+				setSerialParamsForReconnect(logSessionParams);
 		}
 	}
 
 	/**
 	 * Open Serial Session if not opened, define name, set log session flag
 	 *
-	 * @param logSessionParamsSet - logSessionParamsSet
+	 * @param logSessionParams - logSessionParams
 	 * @return - ssh session Name + LOG_ACTION suffix
 	 */
-	private String openSerialSession(LogSessionParamsSet logSessionParamsSet) {
-		SessionManager sessionManager = logSessionParamsSet.enodeB.getXLP().getSessionManager();
+	private String openSerialSession(LogSessionParams logSessionParams) {
+		SessionManager sessionManager = logSessionParams.enodeB.getXLP().getSessionManager();
 		if (sessionManager.getSerialSession() == null) {
-			logSessionParamsSet.enodeB.getXLP().initSerialCom();
-			sessionManager.openSerialLogSession(logSessionParamsSet.logLevel.value);
+			logSessionParams.enodeB.getXLP().initSerialCom();
+			sessionManager.openSerialLogSession(logSessionParams.logLevel.value);
 			sessionManager.getSerialSession().setLoggedSession(true);
 			sessionManager.getSerialSession().setEnableCliBuffer(false);
 		}
@@ -383,10 +373,10 @@ public class LogsAction extends EnodebAction {
 	 *
 	 * @return - serial session Name + LOG_ACTION suffix
 	 */
-	private String openSSHSession(LogSessionParamsSet logSessionParamsSet) {
-		SessionManager sessionManager = logSessionParamsSet.enodeB.getXLP().getSessionManager();
+	private String openSSHSession(LogSessionParams logSessionParams) {
+		SessionManager sessionManager = logSessionParams.enodeB.getXLP().getSessionManager();
 		if (sessionManager.getSSHlogSession() == null) {
-			sessionManager.openSSHLogSession(logSessionParamsSet.logLevel.value);
+			sessionManager.openSSHLogSession(logSessionParams.logLevel.value);
 			sessionManager.getSSHlogSession().setLoggedSession(true);
 			sessionManager.getSSHlogSession().setEnableCliBuffer(false);
 		}
@@ -396,57 +386,57 @@ public class LogsAction extends EnodebAction {
 	/**
 	 * Open Log Session - SSH or Serial and define session names
 	 */
-	private void setLogLevelAndProcessByName(LogSessionParamsSet logSessionParamsSet) {
-		switch (logSessionParamsSet.session) {
+	private void setLogLevelAndProcessByName(LogSessionParams logSessionParams) {
+		switch (logSessionParams.session) {
 			case SSH:
-				logSessionParamsSet.enodeB.setSessionLogLevelPerProcess(logSessionParamsSet.sshSessionName,
-						logSessionParamsSet.client, logSessionParamsSet.process, logSessionParamsSet.logLevel.value);
+				logSessionParams.enodeB.setSessionLogLevelPerProcess(logSessionParams.sshSessionName,
+						logSessionParams.client, logSessionParams.process, logSessionParams.logLevel.value);
 				break;
 			case SERIAL:
-				logSessionParamsSet.enodeB.setSessionLogLevelPerProcess(logSessionParamsSet.serialSessionName,
-						logSessionParamsSet.client, logSessionParamsSet.process, logSessionParamsSet.logLevel.value);
+				logSessionParams.enodeB.setSessionLogLevelPerProcess(logSessionParams.serialSessionName,
+						logSessionParams.client, logSessionParams.process, logSessionParams.logLevel.value);
 				break;
 			case BOTH:
-				logSessionParamsSet.enodeB.setSessionLogLevelPerProcess(logSessionParamsSet.sshSessionName,
-						logSessionParamsSet.client, logSessionParamsSet.process, logSessionParamsSet.logLevel.value);
-				logSessionParamsSet.enodeB.setSessionLogLevelPerProcess(logSessionParamsSet.serialSessionName,
-						logSessionParamsSet.client, logSessionParamsSet.process, logSessionParamsSet.logLevel.value);
+				logSessionParams.enodeB.setSessionLogLevelPerProcess(logSessionParams.sshSessionName,
+						logSessionParams.client, logSessionParams.process, logSessionParams.logLevel.value);
+				logSessionParams.enodeB.setSessionLogLevelPerProcess(logSessionParams.serialSessionName,
+						logSessionParams.client, logSessionParams.process, logSessionParams.logLevel.value);
 		}
 	}
 
 	/**
 	 * Set inputProcess, inputClient and log level for Reconnect thread, so in case of disconnecting an override won't occur.
 	 *
-	 * @param logSessionParamsSet - logSessionParamsSet
+	 * @param logSessionParams - logSessionParams
 	 * @see EnodeB.Components.Session# updateLogLevel()
 	 */
-	private void setSSHParamsForReconnect(LogSessionParamsSet logSessionParamsSet) {
-		logSessionParamsSet.enodeB.getSSHlogSession().setProcess(logSessionParamsSet.process);
-		logSessionParamsSet.enodeB.getSSHlogSession().setClient(logSessionParamsSet.client);
-		logSessionParamsSet.enodeB.getSSHlogSession().setLogLevel(logSessionParamsSet.logLevel.value);
+	private void setSSHParamsForReconnect(LogSessionParams logSessionParams) {
+		logSessionParams.enodeB.getSSHlogSession().setProcess(logSessionParams.process);
+		logSessionParams.enodeB.getSSHlogSession().setClient(logSessionParams.client);
+		logSessionParams.enodeB.getSSHlogSession().setLogLevel(logSessionParams.logLevel.value);
 	}
 
 	/**
 	 * Set inputProcess, inputClient and log level for Reconnect thread, so in case of disconnecting an override won't occur.
 	 *
-	 * @param logSessionParamsSet - logSessionParamsSet
+	 * @param logSessionParams - logSessionParams
 	 * @see EnodeB.Components.Session# updateLogLevel()
 	 */
-	private void setSerialParamsForReconnect(LogSessionParamsSet logSessionParamsSet) {
-		logSessionParamsSet.enodeB.getSerialSession().setProcess(logSessionParamsSet.process);
-		logSessionParamsSet.enodeB.getSerialSession().setClient(logSessionParamsSet.client);
-		logSessionParamsSet.enodeB.getSerialSession().setLogLevel(logSessionParamsSet.logLevel.value);
+	private void setSerialParamsForReconnect(LogSessionParams logSessionParams) {
+		logSessionParams.enodeB.getSerialSession().setProcess(logSessionParams.process);
+		logSessionParams.enodeB.getSerialSession().setClient(logSessionParams.client);
+		logSessionParams.enodeB.getSerialSession().setLogLevel(logSessionParams.logLevel.value);
 	}
 
 	/**
 	 * Open Log Session - SSH or Serial
 	 * Wait for Logger thread to finish its iteration before removing from LoggedSession array.
 	 */
-	private void removeFromLoggedSession(LogSessionParamsSet logSessionParamsSet) {
-		SessionManager sessionManager = logSessionParamsSet.enodeB.getXLP().getSessionManager();
-		Logger logger = logSessionParamsSet.enodeB.getXLP().getLogger();
+	private void removeFromLoggedSession(LogSessionParams logSessionParams) {
+		SessionManager sessionManager = logSessionParams.enodeB.getXLP().getSessionManager();
+		Logger logger = logSessionParams.enodeB.getXLP().getLogger();
 		synchronized (logger.lock) {
-			switch (logSessionParamsSet.session) {
+			switch (logSessionParams.session) {
 				case SSH:
 					logger.removeFromLoggedSessions(sessionManager.getSSHlogSession());
 					break;
@@ -468,7 +458,7 @@ public class LogsAction extends EnodebAction {
 	 */
 	@Override
 	public void handleUIEvent(HashMap<String, Parameter> map, String methodName) {
-		if (methodName.equals(ACTION_NAME_STRING)) {
+		if (methodName.equals("startEnodeBLogs")) {
 			handleUIEventGetCounterValue(map);
 		}
 	}

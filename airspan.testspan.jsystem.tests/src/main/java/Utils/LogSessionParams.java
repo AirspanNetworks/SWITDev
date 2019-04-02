@@ -5,10 +5,10 @@ import EnodeB.EnodeB;
 
 
 /**
- * LogSessionParamsSet per EnB
+ * LogSessionParams per EnB
  * PazZ
  */
-public class LogSessionParamsSet {
+public class LogSessionParams {
 	/**
 	 * Parameter set vars, for each Session
 	 */
@@ -32,7 +32,7 @@ public class LogSessionParamsSet {
 	 * This constructor will be created for every session in order to save all the session params
 
 	 */
-	public LogSessionParamsSet(EnodeB eNodeB, LogsAction.Session inputSession, LogsAction.Modules inputModule,
+	public LogSessionParams(EnodeB eNodeB, LogsAction.Session inputSession, LogsAction.Modules inputModule,
 								String inputProcess, String inputClient, LogsAction.LogLevel inputLogLevel) {
 		this.enodeB = eNodeB;
 		this.session = inputSession;

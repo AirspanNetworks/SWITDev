@@ -356,7 +356,7 @@ public class BasicAction extends Action {
 				}
 				report.report("Login to serial completed");
 			}
-			
+			current_pr = cli.waitWithGrace(sleepTime * 100);
 			report.report("Session prepare completed (Prompt: '" + current_pr.getPrompt() + "')");
 			GeneralUtils.stopLevel();
 			

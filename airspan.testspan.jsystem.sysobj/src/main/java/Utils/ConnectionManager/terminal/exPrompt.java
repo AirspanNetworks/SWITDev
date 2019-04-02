@@ -1,8 +1,9 @@
 package Utils.ConnectionManager.terminal;
 
 import java.util.regex.Pattern;
+import systemobject.terminal.Prompt;
 
-public class Prompt {
+public class exPrompt extends Prompt{
     private String prompt;
     private boolean isRegularExpression = false;
     private boolean isScrallEnd = false;
@@ -11,27 +12,28 @@ public class Prompt {
     private boolean addEnter = true;
     private Pattern pattern = null;
 
-    public Prompt(){
+    public exPrompt(){
         
     }
     
-    public Prompt(String prompt) {
+    public exPrompt(String prompt) {
     	this(prompt, false);
     }
     
-    public Prompt(String prompt, boolean isRegExp){
+    public exPrompt(String prompt, boolean isRegExp){
         this.prompt = prompt;
         this.isRegularExpression = isRegExp;
         setCommandEnd(true);
+        setAddEnter(true);
     }
     
-    public Prompt(String prompt, boolean isRegExp, boolean isCommandEnd){
+    public exPrompt(String prompt, boolean isRegExp, boolean isCommandEnd){
     	this(prompt, isRegExp);
     	setCommandEnd(isCommandEnd);
      
     }
     
-    public Prompt(String prompt, boolean isRegExp, String stringToSend, boolean setEnter) {
+    public exPrompt(String prompt, boolean isRegExp, String stringToSend, boolean setEnter) {
     	this(prompt, isRegExp);
     	setStringToSend(stringToSend);
     	setAddEnter(setEnter);
@@ -104,8 +106,11 @@ public class Prompt {
     
     @Override
     public String toString() {
-    	StringBuilder res = new StringBuilder(String.format("Prompt: '%s'; StringToSend: '%s'", this.getPrompt(), this.getStringToSend()));
-		res.append(String.format("; is final shell: '%s'", this.isCommandEnd()));
+    	StringBuilder res = new StringBuilder(String.format("Prompt: '%s'", getPrompt()));
+    	if(isCommandEnd())
+    		res.append(" there is final prompt");
+    	else
+    		res.append("; Command: " + getStringToSend());
 		return res.toString();
     }
 }

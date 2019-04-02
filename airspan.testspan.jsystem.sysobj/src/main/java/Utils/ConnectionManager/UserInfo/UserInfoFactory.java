@@ -5,7 +5,9 @@ package Utils.ConnectionManager.UserInfo;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import Utils.ConnectionManager.terminal.Prompt;
+
+//import systemobject.terminal.Prompt;
+import Utils.ConnectionManager.terminal.exPrompt;
 
 /**
  * @author doguz
@@ -30,13 +32,13 @@ public final class UserInfoFactory {
 		}
 	}
 	
-	public static ArrayList<Prompt> getExitSequence(){
-		ArrayList<Prompt> result =  new ArrayList<Prompt>();
-		result.add(new Prompt(PromptsCommandsInfo.PASSWORD_PATTERN, false, PromptsCommandsInfo.CntrC_COMMAND, false));
-		result.add(new Prompt(PromptsCommandsInfo.LTECLI_PATTERN, false, PromptsCommandsInfo.CntrC_COMMAND, false));
-		result.add(new Prompt(PromptsCommandsInfo.ROOT_PATTERN, false, PromptsCommandsInfo.EXIT_COMMAND, false));
-		result.add(new Prompt(PromptsCommandsInfo.ADMIN_PATTERN, false, PromptsCommandsInfo.EXIT_COMMAND, false));
-		result.add(new Prompt(PromptsCommandsInfo.LOGIN_PATTERN, true));
+	public static ArrayList<exPrompt> getExitSequence(){
+		ArrayList<exPrompt> result =  new ArrayList<exPrompt>();
+		result.add(new exPrompt(PromptsCommandsInfo.PASSWORD_PATTERN, false, PromptsCommandsInfo.CntrC_COMMAND, false));
+		result.add(new exPrompt(PromptsCommandsInfo.LTECLI_PATTERN, false, PromptsCommandsInfo.CntrC_COMMAND, false));
+		result.add(new exPrompt(PromptsCommandsInfo.ROOT_PATTERN, false, PromptsCommandsInfo.EXIT_COMMAND, false));
+		result.add(new exPrompt(PromptsCommandsInfo.ADMIN_PATTERN, false, PromptsCommandsInfo.EXIT_COMMAND, false));
+		result.add(new exPrompt(PromptsCommandsInfo.LOGIN_PATTERN, true));
 		
 		return result;
 	}

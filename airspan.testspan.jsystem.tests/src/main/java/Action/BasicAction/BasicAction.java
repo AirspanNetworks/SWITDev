@@ -2,6 +2,7 @@ package Action.BasicAction;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,16 +16,20 @@ import Utils.GeneralUtils;
 import Utils.SSHConnector;
 import Utils.ConnectionManager.ConnectionInfo;
 import Utils.ConnectionManager.ConnectorTypes;
-import Utils.ConnectionManager.UserInfo.ExtendCLI;
 import Utils.ConnectionManager.UserInfo.UserSequence;
 import Utils.ConnectionManager.UserInfo.PromptsCommandsInfo;
 import Utils.ConnectionManager.UserInfo.UserInfoFactory;
-import Utils.ConnectionManager.terminal.Prompt;
-import Utils.ConnectionManager.terminal.Telnet;
-import Utils.ConnectionManager.terminal.Terminal;
+//import Utils.ConnectionManager.terminal.Prompt;
+//import Utils.ConnectionManager.terminal.Telnet;
+//import Utils.ConnectionManager.terminal.Terminal;
 import jsystem.framework.ParameterProperties;
 import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
+import Utils.ConnectionManager.terminal.exCLI;
+//import systemobject.terminal.Prompt;
+import Utils.ConnectionManager.terminal.exPrompt;
+import systemobject.terminal.Telnet;
+import systemobject.terminal.Terminal;
 
 
 public class BasicAction extends Action {
@@ -226,23 +231,22 @@ public class BasicAction extends Action {
 	}
 	
 	private void setUnitTestforserial() {
-//		setIp("192.168.58.169");
-//		setPort(2001);
-//		setUserName("admin");
+		setIp("192.168.58.169");
+		setPort(2001);
+		setUserName("admin");
 		
-		setIp("192.168.58.12");
-		setPort(4004);
-		setUserName("op");
+//		setIp("192.168.58.12");
+//		setPort(4004);
+//		setUserName("op");
 		
-//		setPassword("HeWGEUx66m=_4!ND");
-		setPassword("Ss%7^q7NC#Uj!AnX====HeWGEUx66m=_4!ND");
+		setPassword("HeWGEUx66m=_4!ND");
+//		setPassword("Ss%7^q7NC#Uj!AnX====HeWGEUx66m=_4!ND");
 		setSerialCommand("ls -la /");
 //		setSerialCommand("ue show link");
 //		setSerialCommand("show banks");
 		
 		setSudoRequired(true);
 		setLteCliRequired(false);
-//		setExpectedPatern("root");
 		setSleepTime(10);
 		
 	}
@@ -254,10 +258,10 @@ public class BasicAction extends Action {
 	public void sendCommandsToSerial() throws Exception {
 		boolean isNull = false;
 		ConnectionInfo conn_info;
-		ExtendCLI cli = null;
+		exCLI cli = null;
 		
 		/* Internal unittest only */
-//		 setUnitTestforserial(); 
+//		 setUnitTestforserial();
 		 
 		// Verify input parameters
 		try {
@@ -276,6 +280,7 @@ public class BasicAction extends Action {
 				switch(userName) {
 					case "root": userPrompt = PromptsCommandsInfo.ROOT_PATTERN; break;
 					case "admin" : userPrompt = PromptsCommandsInfo.ADMIN_PATTERN; break;
+					case "op" : userPrompt = PromptsCommandsInfo.LTECLI_PATTERN;break;
 				}
 			}
 			
@@ -291,8 +296,9 @@ public class BasicAction extends Action {
 				GeneralUtils.startLevel("User prompt cannot be empty");
 				isNull = true;
 			}
-		}
-		finally {
+		}catch (Exception e) {
+			System.out.print("Error occurs: " + e.toString());
+		}finally {
 			if(isNull){
 				report.report("Some of parameters not valid", Reporter.FAIL);
 				reason = "Some of parameters not valid";
@@ -303,37 +309,37 @@ public class BasicAction extends Action {
 		
 		// Read login sequence by user name (if sudo and/or lte required - also)
 		UserSequence user_login = UserInfoFactory.getLoginSequenceForUser(userName, password, sudoRequired, lteCliRequired);
-		List<Prompt> exit_sequence = UserInfoFactory.getExitSequence();
+		ArrayList<exPrompt> exit_sequence = UserInfoFactory.getExitSequence();
 		
 		try {
 			report.report("Login properties:\n" + user_login.toString());
 			conn_info = new ConnectionInfo("Serial", ip, port, userName, password, ConnectorTypes.Telnet);
 			report.report("Connection: " + conn_info.toString());
 			Terminal terminal = new Telnet(conn_info.host, conn_info.port);
-			cli = new ExtendCLI(terminal);
+			cli = new exCLI(terminal);
 			cli.setGraceful(true);
 			cli.setEnterStr("\n");
 			GeneralUtils.startLevel("Prepare session");
 			
 			// Read current prompt for decide to reset it
 			cli.addPrompts(
-					new Prompt(userPrompt, false, true), 
-					new Prompt(PromptsCommandsInfo.ROOT_PATTERN, false),
-					new Prompt(PromptsCommandsInfo.LTECLI_PATTERN, false),
-					new Prompt(PromptsCommandsInfo.LOGIN_PATTERN, false),
-					new Prompt(PromptsCommandsInfo.PASSWORD_PATTERN, false));
+					new exPrompt(userPrompt, false, true), 
+					new exPrompt(PromptsCommandsInfo.ROOT_PATTERN, false),
+					new exPrompt(PromptsCommandsInfo.LTECLI_PATTERN, false),
+					new exPrompt(PromptsCommandsInfo.LOGIN_PATTERN, false),
+					new exPrompt(PromptsCommandsInfo.PASSWORD_PATTERN, false));
 			
 			
-			Prompt current_pr = cli.getCurrentPrompt();
+			exPrompt current_pr = cli.waitWithGrace(sleepTime * 100);
 			
 			if((user_login.enforceSessionReset() || current_pr.getPrompt() != user_login.getFinalPrompt().getPrompt()) && 
 					current_pr.getPrompt() != PromptsCommandsInfo.LOGIN_PATTERN) {
 				// Session require reset current state and login
 				report.report("Session reset needed (Current prompt: '" + current_pr.getPrompt() + "' vs. desired: '" + user_login.getFinalPrompt().getPrompt() + "')");
 				
-				cli.login(sleepTime * 1000, exit_sequence.toArray(new Prompt[] {}));
+				cli.login(sleepTime * 1000, exit_sequence.toArray(new exPrompt[] {}));
 				
-				current_pr = cli.getCurrentPrompt();
+				current_pr = cli.waitWithGrace(sleepTime * 100);
 				report.report("Session reset completed (Prompt: '" + current_pr.getPrompt() + "')");
 				
 			}else {
@@ -350,7 +356,7 @@ public class BasicAction extends Action {
 				}
 				report.report("Login to serial completed");
 			}
-			
+			current_pr = cli.waitWithGrace(sleepTime * 100);
 			report.report("Session prepare completed (Prompt: '" + current_pr.getPrompt() + "')");
 			GeneralUtils.stopLevel();
 			
@@ -388,7 +394,7 @@ public class BasicAction extends Action {
 		finally {
 			
 			if(user_login.enforceSessionReset()) {
-				cli.login(2000, exit_sequence.toArray(new Prompt[] {}));
+				cli.login(2000, exit_sequence.toArray(new exPrompt[] {}));
 			}
 			
 			if(cli != null) {

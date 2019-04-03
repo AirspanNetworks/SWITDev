@@ -127,7 +127,7 @@ public class Logger implements Runnable {
 			if (sessionManager.getSSHlogSession() != null && (!getLoggedSessions().contains(sessionManager.getSSHlogSession()))) {
 				addToLoggedSessions(sessionManager.getSSHlogSession());
 			}
-			if (sessionManager.getSSHCommandSession() != null) {
+			if (sessionManager.getSSHCommandSession() != null && (!getLoggedSessions().contains(sessionManager.getSSHCommandSession()))) {
 				addToLoggedSessions(sessionManager.getSSHCommandSession());
 			}
 		}

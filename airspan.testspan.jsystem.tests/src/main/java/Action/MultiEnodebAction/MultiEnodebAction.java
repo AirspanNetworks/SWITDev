@@ -258,7 +258,7 @@ public class MultiEnodebAction extends EnodebAction {
 				GeneralUtils.startLevel("Number of attempts out of real attenuator moves is: "
 						+ new DecimalFormat("##.##").format(theoreticalAttempts) + "%");
 				report.report("Number of attempts is less then 60%", Reporter.FAIL);
-				reason = "Number of attempts is less then 60%";
+				reason = "Number of attempts is less then 60 percent";
 				report.report("Number of attempts / attenuator moves");
 				GeneralUtils.stopLevel();
 			} else {
@@ -266,6 +266,7 @@ public class MultiEnodebAction extends EnodebAction {
 					GeneralUtils.startLevel("Number of attempts out of real attenuator moves is: "
 							+ new DecimalFormat("##.##").format(theoreticalAttempts) + "%");
 					report.report("Number of attempts is less then 85%", Reporter.WARNING);
+					reason = "Number of attempts is less then 85 percent";
 					report.report("Number of attempts / attenuator moves");
 					GeneralUtils.stopLevel();
 				} else {

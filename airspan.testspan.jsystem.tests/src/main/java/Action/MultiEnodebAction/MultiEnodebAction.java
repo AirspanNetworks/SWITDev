@@ -102,6 +102,10 @@ public class MultiEnodebAction extends EnodebAction {
 		}
 		preTest();		
 		setCounters();
+		resetCounters();
+		int waitingPeriodTime = enodeB.getGranularityPeriod();
+		report.report("Wait for " + waitingPeriodTime + " minutes for Counter to update");
+		GeneralUtils.unSafeSleep(waitingPeriodTime * 60 * 1000);
 		if (!gettingPassCratiriaValue()) {
 			report.report("Failed to reset counters", Reporter.FAIL);
 			reason = "Failed to reset counters";

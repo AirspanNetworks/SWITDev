@@ -384,7 +384,12 @@ public class Logger implements Runnable {
 		if (getLoggedSessions().size() < 1)
 			System.err.printf("[%s]: There are no log needed for this. Not creating any log files. \n", name);
 		else {
-			logWriterEnb.addLog(logName, prefix);
+			for (Session session : getLoggedSessions()) {
+				if (session.getName().contains(SessionManager.SSH_COMMANDS_SESSION_NAME))
+					logWriterAuto.addLog(logName, session.getName());
+				else
+					logWriterEnb.addLog(logName, prefix);
+			}
 		}
 	}
 

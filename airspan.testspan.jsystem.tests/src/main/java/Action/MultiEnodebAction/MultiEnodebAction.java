@@ -102,6 +102,7 @@ public class MultiEnodebAction extends EnodebAction {
 		}
 		preTest();		
 		setCounters();
+		report.report("Changing counters value to 0");
 		resetCounters();
 		int waitingPeriodTime = enodeB.getGranularityPeriod();
 		report.report("Wait for " + waitingPeriodTime + " minutes for Counter to update");

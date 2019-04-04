@@ -675,10 +675,9 @@ public class TestspanTest extends SystemTestCase4 {
     public void closeEnBLogs(EnodeB eNodeB, Logger[] loggers) {
         log.info(String.format("Closing log files for test for eNondeB %s", eNodeB.getName()));
         GeneralUtils.startLevel(String.format("eNodeB %s logs", eNodeB.getName()));
-
         for (Logger logger : loggers) {
             logger.setCountErrorBool(false);
-            logger.closeEnodeBLog(String.format("%s_%s", getMethodName(), logger.getParent().getName()));
+            logger.closeEnodeBLog(getMethodName(), logger);
             testStatistics(logger, eNodeB);
             ScenarioUtils.getInstance().scenarioStatistics(logger, eNodeB);
         }

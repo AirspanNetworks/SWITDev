@@ -57,9 +57,9 @@ public class Logger implements Runnable {
 		this.logWriterAuto = new LogWriter(this);
 		this.countErrorBool = false;
 
-		try{
+		try {
 			pattern = Pattern.compile("\\s+(\\D*\\(\\)):(\\d+) <(.*):(.*) (ERROR)> (.*)");
-		}catch(Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 			GeneralUtils.printToConsole("Failed to compile ERROR pattern");
 		}
@@ -73,7 +73,7 @@ public class Logger implements Runnable {
 			Assert.fail("Logger init failed: Log interval is not configured.");
 		}
 
-		if (getLoggedSessions() == null ) {
+		if (getLoggedSessions() == null) {
 			setLoggedSessions(new ArrayList<Session>());
 		}
 		synchronized (lock) {
@@ -365,16 +365,18 @@ public class Logger implements Runnable {
 			System.err.printf("[%s]: There are no log needed for this. Not creating any log files. \n", name);
 		else {
 			for (Session session : getLoggedSessions()) {
-				if (session.getName().contains(SessionManager.SSH_COMMANDS_SESSION_NAME))
-					logWriterAuto.addLog(logName, session.getName());
-				else
-					logWriterEnb.addLog(logName, session.getName());
+				if (!session.isSessionStreamsForLogAction()) {
+					if (session.getName().contains(SessionManager.SSH_COMMANDS_SESSION_NAME))
+						logWriterAuto.addLog(logName, session.getName());
+					else
+						logWriterEnb.addLog(logName, session.getName());
+				}
 			}
 		}
 	}
 
 	/**
-	 * Add new files to be logged- logWriterEnb
+	 * Add new files to be logged - just to logWriterEnb, for Logs Action
 	 * This method will add a file for the <b>console</b>
 	 *
 	 * @param logName - logName
@@ -384,12 +386,7 @@ public class Logger implements Runnable {
 		if (getLoggedSessions().size() < 1)
 			System.err.printf("[%s]: There are no log needed for this. Not creating any log files. \n", name);
 		else {
-			for (Session session : getLoggedSessions()) {
-				if (session.getName().contains(SessionManager.SSH_COMMANDS_SESSION_NAME))
-					logWriterAuto.addLog(logName, session.getName());
-				else
-					logWriterEnb.addLog(logName, prefix);
-			}
+			logWriterEnb.addLog(logName, prefix);
 		}
 	}
 
@@ -401,6 +398,39 @@ public class Logger implements Runnable {
 	public void closeEnodeBLog(String logName) {
 		logWriterEnb.closeLog(logName);
 	}
+
+	/**
+	 * Closes the log files that contains the logName and copies them to the test folder via the reporter.
+	 * *This method won't close logs that streams to Log Action
+	 *
+	 * @param methodName - enBName_SessionType (i.e Velocity44_CommandSession)
+	 * @param logger - logger
+	 */
+	public void closeEnodeBLog(String methodName, Logger logger) {
+		String requestedFileToClose = String.format("%s_%s", methodName, logger.getParent().getName());
+		ArrayList<Session> loggedSessions = logger.getLoggedSessions();
+		if (isLogFileStreamsForLogAction(requestedFileToClose, loggedSessions)) return;
+		logWriterEnb.closeLog(requestedFileToClose);
+	}
+
+	/**
+	 * Loop on all the logged session of an Enb and check if the requested file to close is being used by Logs Action - if so - don't close it.
+	 *
+	 * @param requestedFileToClose - requestedFileToClose
+	 * @param loggedSessions - loggedSessions
+	 *
+	 * @return - true if being used by Log Action
+	 */
+	private boolean isLogFileStreamsForLogAction(String requestedFileToClose, ArrayList<Session> loggedSessions) {
+		for (Session loggedSession : loggedSessions) {
+			if (requestedFileToClose.contains(loggedSession.getName()) &&
+					loggedSession.isSessionStreamsForLogAction()){
+				return true;
+			}
+		}
+		return false;
+	}
+
 
 	/**
 	 * Closes the log files that contains the logName and copies them to the test folder via the reporter.

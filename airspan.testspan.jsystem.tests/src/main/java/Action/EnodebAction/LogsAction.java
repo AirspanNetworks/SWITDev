@@ -21,7 +21,7 @@ public class LogsAction extends EnodebAction {
 	 * String Constants
 	 */
 	private String EVERY_MODULE_STRING = "*";
-	private final String LOG_ACTION = "_LogAction";
+	private final String LOG_ACTION = "LogAction";
 	private final String MODULES_STRING = "Modules";
 	private final String PROCESS_STRING = "Process";
 	private final String CLIENT_STRING = "Client";
@@ -364,6 +364,7 @@ public class LogsAction extends EnodebAction {
 			sessionManager.openSerialLogSession(logSessionParams.logLevel.value);
 			sessionManager.getSerialSession().setLoggedSession(true);
 			sessionManager.getSerialSession().setEnableCliBuffer(false);
+			sessionManager.getSerialSession().setSessionStreamsForLogAction(true);
 		}
 		return sessionManager.getSerialSession().getName();
 	}
@@ -379,6 +380,7 @@ public class LogsAction extends EnodebAction {
 			sessionManager.openSSHLogSession(logSessionParams.logLevel.value);
 			sessionManager.getSSHlogSession().setLoggedSession(true);
 			sessionManager.getSSHlogSession().setEnableCliBuffer(false);
+			sessionManager.getSSHlogSession().setSessionStreamsForLogAction(true);
 		}
 		return sessionManager.getSSHlogSession().getName();
 	}

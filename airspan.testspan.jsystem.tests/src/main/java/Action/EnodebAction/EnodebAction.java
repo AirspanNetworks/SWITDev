@@ -119,7 +119,7 @@ public class EnodebAction extends Action {
 		GeneralUtils.startLevel(String.format("eNodeB %s logs", eNodeB.getName()));
 		for (Logger logger : loggers) {
 			logger.setCountErrorBool(false);
-			logger.closeEnodeBLog(String.format("%s_%s", getMethodName(), logger.getParent().getName()));
+			logger.closeEnodeBLog(getMethodName(),logger);
 			scenarioUtils.scenarioStatistics(logger, eNodeB);
 		}
 		GeneralUtils.stopLevel();

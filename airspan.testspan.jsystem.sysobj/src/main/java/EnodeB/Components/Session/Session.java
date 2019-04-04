@@ -40,6 +40,11 @@ public class Session implements Runnable {
 	private boolean loggedSession;
 	private boolean shouldStayInCli = false;
 	private boolean isSessionInitialized = false;
+
+	/**
+	 * Flag - Set to true if this session is being used by Action Log
+	 */
+	private boolean isSessionStreamsForLogAction = false;
 	
 	//lock used to allow safe login without interruption from other commands. every access to sendRawCommands should be after aquiring this
 	public Semaphore sshConnectionLock = new Semaphore(1); 
@@ -611,5 +616,22 @@ public class Session implements Runnable {
 	 */
 	public boolean isSessionInitialized() {
 		return isSessionInitialized;
+	}
+
+	/** check if this session is being used by Logs Action
+	 *
+	 * @return - flag
+	 */
+	public boolean isSessionStreamsForLogAction() {
+		return isSessionStreamsForLogAction;
+	}
+
+	/**
+	 * set Session Streams flag - if it's being use by Log Action
+	 *
+	 * @param sessionStreamsForLogAction - flag
+	 */
+	public void setSessionStreamsForLogAction(boolean sessionStreamsForLogAction) {
+		isSessionStreamsForLogAction = sessionStreamsForLogAction;
 	}
 }

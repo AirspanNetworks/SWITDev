@@ -161,6 +161,7 @@ import Netspan.Profiles.SystemDefaultParameters;
 import Utils.GeneralUtils;
 import Utils.GeneralUtils.RebootType;
 import Utils.GeneralUtils.RebootTypesNetspan;
+import Utils.GeneralUtils.RelayScanType;
 import Utils.Pair;
 import Utils.Triple;
 import jsystem.framework.report.Reporter;
@@ -4434,5 +4435,11 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
 		boolean rebooted = result.getErrorCode() == ErrorCodes.OK;
 		soapHelper_15_2.endInventorySoap();
 		return rebooted;
+	}
+
+	@Override
+	public boolean relayScan(EnodeB enodeB, RelayScanType scanType) {
+		report.report("relayScan function is not implemented for this netspan(15_2)!");
+		return false;
 	}
 }

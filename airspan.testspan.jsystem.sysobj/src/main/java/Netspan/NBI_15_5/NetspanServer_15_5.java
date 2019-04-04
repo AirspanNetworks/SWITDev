@@ -2513,7 +2513,7 @@ public class NetspanServer_15_5 extends NetspanServer_15_2 implements Netspan_15
 		}
 		boolean scanned = result.getErrorCode() == Netspan.NBI_15_5.Backhaul.ErrorCodes.OK;
 		if(!scanned){
-			report.report("Scan failed due to: "+result.getErrorString(),Reporter.WARNING);
+			report.report("Scan failed due to: "+result.getNode().get(0).getNodeResultString(),Reporter.WARNING);
 		}
 		soapHelper_15_5.endBackhaulSoap();
 		return scanned;

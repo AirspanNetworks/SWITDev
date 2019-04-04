@@ -802,8 +802,8 @@ public class Enodeb extends EnodebAction {
 		EnodeBConfig enodeBConfig = EnodeBConfig.getInstance();
 
 		if (!enodeBConfig.relayScan(dut, scanType)) {
-			report.report("Failed to scan relay", Reporter.FAIL);
-			reason = "Failed to scan relay";
+			report.report("Relay failed to scan", Reporter.FAIL);
+			reason = "Relay failed to scan";
 		} else {
 			report.report("Scan done");
 		}

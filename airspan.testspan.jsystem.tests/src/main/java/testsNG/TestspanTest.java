@@ -139,6 +139,7 @@ public class TestspanTest extends SystemTestCase4 {
      * @param eNodeB - eNodeB
      */
     private void initEnodeB(EnodeB eNodeB) {
+        openSessions(eNodeB);
         initUnexpectedRebootOfEnB(eNodeB);
         createEnodeBLogFiles(eNodeB);
         addEnodeBToUnexpectedRebootMap(eNodeB.getNetspanName());
@@ -157,6 +158,16 @@ public class TestspanTest extends SystemTestCase4 {
         eNodeB.setNodeLoggerUrl(eNodeB, TestConfig.getInstace().getLoggerUploadAllUrl());
         checkAndSetDefaultNetspanProfiles(eNodeB);
         getDBFiles(eNodeB, beforeTest);
+    }
+
+    /**
+     * Open Serial and SSH session if not opened
+     * @param eNodeB
+     */
+    //todo deal with DAN
+    private void openSessions(EnodeB eNodeB) {
+        eNodeB.openSerialLogSession(eNodeB);
+        eNodeB.openSSHLogSession(eNodeB);
     }
 
     /**

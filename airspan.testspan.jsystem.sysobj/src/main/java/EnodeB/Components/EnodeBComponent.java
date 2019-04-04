@@ -39,7 +39,7 @@ public abstract class EnodeBComponent implements LogListener {
 	private String name = null;
 	private SystemObject parent = null;
 	protected Reporter report = ListenerstManager.getInstance();
-	protected boolean isLogNeeded;
+//	public boolean isLogNeeded;
 
     public static final String SECURED_USERNAME = "op";
     public static final String SECURED_PASSWORD = "Ss%7^q7NC#Uj!AnX";
@@ -105,13 +105,13 @@ public abstract class EnodeBComponent implements LogListener {
     public boolean SkipCMP = false;
     private volatile WaitForSrialPromptAndEchoToSkipCMP waitForSrialPromptAndEchoToSkipCMP;
 
-	/**
-	 * setter to isLogNeeded
-	 * @param logNeeded
-	 */
-	public void setLogNeeded(boolean logNeeded) {
-		isLogNeeded = logNeeded;
-	}
+//	/**
+//	 * setter to isLogNeeded
+//	 * @param logNeeded
+//	 */
+//	public void setLogNeeded(boolean logNeeded) {
+//		isLogNeeded = logNeeded;
+//	}
 
 	/**
 	 * parent setter
@@ -223,9 +223,9 @@ public abstract class EnodeBComponent implements LogListener {
 		isStateChangedToCoreDump = false;
 		initSNMP();
 		sessionManager = new SessionManager(this);
-		if (isLogNeeded) {
-			openSerialAndSSHLogSessions();
-		}
+//		if (isLogNeeded) {
+//			openSerialAndSSHLogSessions();
+//		}
 		sessionManager.openSSHCommandSession();
 		startLogStreamer();
 
@@ -236,14 +236,14 @@ public abstract class EnodeBComponent implements LogListener {
 		this.waitForSrialPromptAndEchoToSkipCMP = new WaitForSrialPromptAndEchoToSkipCMP(WAIT_FOR_SERIAL_PROMPT);
 	}
 
-	/**
-	 * full old Init opening all sessions
-	 */
-	private void openSerialAndSSHLogSessions() {
-		initSerialCom();
-		sessionManager.openSerialLogSession();
-		sessionManager.openSSHLogSession();
-	}
+//	/**
+//	 * full old Init opening all sessions
+//	 */
+//	public void openSerialAndSSHLogSessions() {
+//		initSerialCom();
+//		sessionManager.openSerialLogSession();
+//		sessionManager.openSSHLogSession();
+//	}
 
 	public void initSerialCom() {
 		if (serialCom != null) {
@@ -362,9 +362,9 @@ public abstract class EnodeBComponent implements LogListener {
                                 if (ans != "" && !ans.equals(GeneralUtils.ERROR_VALUE + "")) {
                                     GeneralUtils.printToConsole(getName() + " SNMP is working.");
                                     snmpWorking = true;
-                                    if (isLogNeeded) {
+//                                    if (isLogNeeded) {
 										sessionManager.updateAllSessionsLogLevel();
-									}
+//									}
                                 } else {
                                     GeneralUtils.unSafeSleep(3000); //if snmp doesn't work, sleep before trying again.
                                 }

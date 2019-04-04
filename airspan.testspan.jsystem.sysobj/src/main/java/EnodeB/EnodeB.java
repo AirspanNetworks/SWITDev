@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.util.*;
 
+import EnodeB.Components.Session.SessionManager;
 import org.snmp4j.smi.Variable;
 
 import EnodeB.Components.UEDist;
@@ -211,7 +212,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 			swType = 18;
 		}
 		XLP.setSWTypeInstnace(swType);
-		XLP.setLogNeeded(!isInitCalledFromAction());
+//		XLP.setLogNeeded(!isInitCalledFromAction());
 		XLP.init();
 		if(ipsecTunnelEnabled){
 			ArrayList<EnodeB> eNodeBs = new ArrayList<EnodeB>();
@@ -2336,5 +2337,35 @@ public abstract class EnodeB extends SystemObjectImpl {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * open Serial Log Session if not opened
+	 */
+	public String openSerialLogSession(EnodeB enodeB) {
+		SessionManager sessionManager = enodeB.getXLP().getSessionManager();
+		if ((sessionManager.getSerialSession() == null)){
+			enodeB.getXLP().initSerialCom();
+			sessionManager.openSerialLogSession();
+			sessionManager.getSerialSession().setLoggedSession(true);
+			sessionManager.getSerialSession().setEnableCliBuffer(false);
+			sessionManager.getSerialSession().setSessionStreamsForLogAction(true);
+		}
+		return sessionManager.getSerialSession().getName();
+	}
+
+	/**
+	 * open SSH Log Session if not opened
+	 */
+
+	public String openSSHLogSession(EnodeB enodeB){
+		SessionManager sessionManager = enodeB.getXLP().getSessionManager();
+		if (sessionManager.getSSHlogSession() == null) {
+			sessionManager.openSSHLogSession();
+			sessionManager.getSSHlogSession().setLoggedSession(true);
+			sessionManager.getSSHlogSession().setEnableCliBuffer(false);
+			sessionManager.getSSHlogSession().setSessionStreamsForLogAction(true);
+		}
+		return sessionManager.getSSHlogSession().getName();
 	}
 }

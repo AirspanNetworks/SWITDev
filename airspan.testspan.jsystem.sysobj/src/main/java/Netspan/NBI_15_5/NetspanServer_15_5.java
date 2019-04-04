@@ -2498,24 +2498,24 @@ public class NetspanServer_15_5 extends NetspanServer_15_2 implements Netspan_15
 		Netspan.NBI_15_5.Backhaul.NodeActionResult result = null;
 		ArrayList<String> listEnb = new ArrayList<String>();
 		listEnb.add(enodeB.getNetspanName());
+		boolean scanned = false;
 		try{
 			if(scanType == RelayScanType.ForceScan){
 				result = soapHelper_15_5.getBackhaulSoap().relayForceScan(listEnb, null, credentialsBackhaul);
+				scanned = result.getErrorCode() == Netspan.NBI_15_5.Backhaul.ErrorCodes.OK;
+				if(!scanned){
+					report.report("Scan failed due to: "+result.getNode().get(0).getNodeResultString(),Reporter.WARNING);
+				}
 			}else{
 				report.report("Scan type is not available in version 15.5", Reporter.FAIL);
-				soapHelper_15_5.endBackhaulSoap();
-				return false;
+				scanned = false;
 			}			
 		}catch(Exception e){
-			report.report("getEventsNode via netspan Return Error: " + e.getMessage());
+			report.report("relayScan via netspan Return Error: " + e.getMessage());
+			scanned = false;
+		}finally {
 			soapHelper_15_5.endBackhaulSoap();
-			return false;
 		}
-		boolean scanned = result.getErrorCode() == Netspan.NBI_15_5.Backhaul.ErrorCodes.OK;
-		if(!scanned){
-			report.report("Scan failed due to: "+result.getNode().get(0).getNodeResultString(),Reporter.WARNING);
-		}
-		soapHelper_15_5.endBackhaulSoap();
 		return scanned;
 	}
 }

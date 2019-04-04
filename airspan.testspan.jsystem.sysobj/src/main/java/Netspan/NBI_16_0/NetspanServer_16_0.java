@@ -929,22 +929,23 @@ public class NetspanServer_16_0 extends NetspanServer_15_5 implements Netspan_16
 		Netspan.NBI_16_0.Backhaul.NodeActionResult result = null;
 		ArrayList<String> listEnb = new ArrayList<String>();
 		listEnb.add(enodeB.getNetspanName());
+		boolean scanned = false;
 		try{
 			if(scanType == RelayScanType.ForceScan){
 				return super.relayScan(enodeB, scanType);
 			}else{
 				result = soapHelper_16_0.getBackhaulSoap().relayScan(listEnb, null, credentialsBackhaul);
+				scanned = result.getErrorCode() == Netspan.NBI_16_0.Backhaul.ErrorCodes.OK;
+				if(!scanned){
+					report.report("Scan failed due to: "+result.getNode().get(0).getNodeResultString(),Reporter.WARNING);
+				}
 			}			
 		}catch(Exception e){
-			report.report("getEventsNode via netspan Return Error: " + e.getMessage());
-			soapHelper_16_0.endBackhaulSoap();
-			return false;
+			report.report("relayScan via netspan Return Error: " + e.getMessage());
+			scanned = false;
+		}finally {
+			soapHelper_16_0.endBackhaulSoap();			
 		}
-		boolean scanned = result.getErrorCode() == Netspan.NBI_16_0.Backhaul.ErrorCodes.OK;
-		if(!scanned){
-			report.report("Scan failed due to: "+result.getNode().get(0).getNodeResultString(),Reporter.WARNING);
-		}
-		soapHelper_16_0.endBackhaulSoap();
 		return scanned;
 	}
 }

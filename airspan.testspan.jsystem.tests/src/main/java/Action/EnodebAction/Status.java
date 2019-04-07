@@ -10,6 +10,7 @@ import EnodeB.EnodeB;
 import EnodeB.EnodeB.Architecture;
 import Netspan.NetspanServer;
 import Netspan.API.Lte.RFStatus;
+import Netspan.Profiles.ConnectedUETrafficDirection;
 import Utils.SysObjUtils;
 import jsystem.framework.ParameterProperties;
 import jsystem.framework.TestProperties;
@@ -229,10 +230,12 @@ public class Status extends EnodebAction {
 		try {
 			report.report(String.format("NetSpan: %s", this.dut));
 			netspnan = NetspanServer.getInstance();
-			HashMap<Integer, Integer> connectionTable = netspnan.getUeConnectedPerCategory(this.dut);
-			
-			for(Integer key : connectionTable.keySet() ) {
-				report.report(String.format("Key: %d = %d", key, connectionTable.get(key)));
+			HashMap<ConnectedUETrafficDirection, HashMap<Integer, Integer>> connectionTable = netspnan.getUeConnectedPerCategory(this.dut);
+			for(ConnectedUETrafficDirection key : connectionTable.keySet() ) {
+				report.report(String.format("Category: %d", key));
+				for(Integer category : connectionTable.get(key).keySet() ) {
+					report.report(String.format("\t%s = %d", key, connectionTable.get(key).get(category)));
+				}
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

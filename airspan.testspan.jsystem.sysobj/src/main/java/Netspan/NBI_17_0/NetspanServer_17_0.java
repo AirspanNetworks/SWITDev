@@ -1,7 +1,13 @@
 package Netspan.NBI_17_0;
 
+import java.util.HashMap;
+import java.util.List;
+
+import EnodeB.EnodeB;
 import Netspan.NBIVersion;
 import Netspan.NBI_16_0.NetspanServer_16_0;
+import Utils.GeneralUtils;
+import jsystem.framework.report.Reporter;
 
 
 public class NetspanServer_17_0 extends NetspanServer_16_0 implements Netspan_17_0_abilities{
@@ -51,4 +57,40 @@ public class NetspanServer_17_0 extends NetspanServer_16_0 implements Netspan_17
 		credentialsSoftware.setUsername(USERNAME);
 		credentialsSoftware.setPassword(PASSWORD);
     }
+    
+    @Override
+    public HashMap<Integer, Integer> getUeConnectedPerCategory(EnodeB enb) {
+        Netspan.NBI_17_0.Status.LteUeGetResult lteUeGetResult;
+        HashMap<Integer, Integer> ret = new HashMap<>();
+        try {
+            lteUeGetResult = soapHelper_17_0.getStatusSoap()
+                .enbConnectedUeStatusGet(enb.getNetspanName(), credentialsStatus);
+            if (lteUeGetResult.getErrorCode() != Netspan.NBI_17_0.Status.ErrorCodes.OK) {
+                report.report("enbConnectedUeStatusGet via Netspan Failed : " + lteUeGetResult.getErrorString(),
+                    Reporter.WARNING);
+                return ret;
+            }
+            for (Netspan.NBI_17_0.Status.LteUeStatusWs currentCell : lteUeGetResult.getCell()) {
+                if (currentCell.getCellId().getValue() == enb.getCellContextID()) {
+                    List<Netspan.NBI_17_0.Status.LteUeCategory> catDataList = currentCell.getCategoryData();
+                    for (Netspan.NBI_17_0.Status.LteUeCategory catData : catDataList) {
+                        ret.put(catData.getCategory().getValue(), catData.getConnectedUes().getValue());
+                    }
+                    GeneralUtils.printToConsole(
+                        "enbConnectedUeStatusGet via Netspan for eNodeB " + enb.getNetspanName() + " succeeded");
+                    return ret;
+                }
+            }
+        } catch (Exception e) {
+            report.report("enbConnectedUeStatusGet via Netspan Failed due to: " + e.getMessage(), Reporter.WARNING);
+            e.printStackTrace();
+            return new HashMap<Integer, Integer>();
+        } finally {
+        	soapHelper_17_0.endStatusSoap();
+        }
+        GeneralUtils.printToConsole(
+            "enbConnectedUeStatusGet via Netspan for eNodeB " + enb.getNetspanName() + " succeeded");
+        return ret;
+    }
+    
 }

@@ -800,12 +800,18 @@ public class Enodeb extends EnodebAction {
 	@TestProperties(name = "Relay Scan", returnParam = { "IsTestWasSuccessful" }, paramsInclude = { "DUT","ScanType" })
 	public void relayScan() {
 		EnodeBConfig enodeBConfig = EnodeBConfig.getInstance();
-
+		dut.expecteInServiceState = false;
+		dut.setExpectBooting(true);
 		if (!enodeBConfig.relayScan(dut, scanType)) {
 			report.report("Relay failed to scan", Reporter.FAIL);
 			reason = "Relay failed to scan";
+			dut.expecteInServiceState = true;
+			dut.setExpectBooting(false);
 		} else {
 			report.report("Scan done");
+			GeneralUtils.unSafeSleep(60*1000);
+			report.report("Wait for enodeb to reach in service state");
+			dut.waitForAllRunningAndInService(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);
 		}
 	}
 	

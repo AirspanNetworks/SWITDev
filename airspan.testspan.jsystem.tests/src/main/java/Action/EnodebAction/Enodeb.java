@@ -813,6 +813,8 @@ public class Enodeb extends EnodebAction {
 			report.report("Wait for enodeb to reach in service state");
 			if(!dut.waitForAllRunningAndInService(EnodeB.WAIT_FOR_ALL_RUNNING_TIME)){
 				report.report("EnodeB failed to reach in service state", Reporter.WARNING);
+			}else{
+				report.report("EnodeB reached in service state");
 			}
 		}
 	}

@@ -811,7 +811,9 @@ public class Enodeb extends EnodebAction {
 			report.report("Scan done");
 			GeneralUtils.unSafeSleep(60*1000);
 			report.report("Wait for enodeb to reach in service state");
-			dut.waitForAllRunningAndInService(EnodeB.WAIT_FOR_ALL_RUNNING_TIME);
+			if(!dut.waitForAllRunningAndInService(EnodeB.WAIT_FOR_ALL_RUNNING_TIME)){
+				report.report("EnodeB failed to reach in service state", Reporter.WARNING);
+			}
 		}
 	}
 	

@@ -2507,7 +2507,7 @@ public class NetspanServer_15_5 extends NetspanServer_15_2 implements Netspan_15
 					report.report("Scan failed due to: "+result.getNode().get(0).getNodeResultString(),Reporter.WARNING);
 				}
 			}else{
-				report.report("Scan type is not available in version 15.5", Reporter.FAIL);
+				report.report("Scan type 'Scan' is not available in version 15.5", Reporter.FAIL);
 				scanned = false;
 			}			
 		}catch(Exception e){

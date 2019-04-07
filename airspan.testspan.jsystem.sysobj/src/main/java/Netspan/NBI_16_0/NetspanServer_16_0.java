@@ -58,6 +58,7 @@ import Netspan.Profiles.RadioParameters;
 import Netspan.Profiles.SyncParameters;
 import Utils.GeneralUtils;
 import Utils.GeneralUtils.RebootTypesNetspan;
+import Utils.GeneralUtils.RelayScanType;
 import jsystem.framework.report.Reporter;
 
 
@@ -921,5 +922,30 @@ public class NetspanServer_16_0 extends NetspanServer_15_5 implements Netspan_16
 		boolean rebooted = result.getErrorCode() == ErrorCodes.OK;
 		soapHelper_16_0.endInventorySoap();
 		return rebooted;
+	}
+	
+	@Override
+	public boolean relayScan(EnodeB enodeB, RelayScanType scanType) {
+		Netspan.NBI_16_0.Backhaul.NodeActionResult result = null;
+		ArrayList<String> listEnb = new ArrayList<String>();
+		listEnb.add(enodeB.getNetspanName());
+		boolean scanned = false;
+		try{
+			if(scanType == RelayScanType.ForceScan){
+				return super.relayScan(enodeB, scanType);
+			}else{
+				result = soapHelper_16_0.getBackhaulSoap().relayScan(listEnb, null, credentialsBackhaul);
+				scanned = result.getErrorCode() == Netspan.NBI_16_0.Backhaul.ErrorCodes.OK;
+				if(!scanned){
+					report.report("Scan failed due to: "+result.getNode().get(0).getNodeResultString(),Reporter.WARNING);
+				}
+			}			
+		}catch(Exception e){
+			report.report("relayScan via netspan Return Error: " + e.getMessage());
+			scanned = false;
+		}finally {
+			soapHelper_16_0.endBackhaulSoap();			
+		}
+		return scanned;
 	}
 }

@@ -30,6 +30,7 @@ import Netspan.API.Lte.EnbCellProperties;
 import Netspan.API.Lte.LteBackhaul;
 import Utils.GeneralUtils;
 import Utils.GeneralUtils.RebootTypesNetspan;
+import Utils.GeneralUtils.RelayScanType;
 import Utils.SysObjUtils;
 import jsystem.framework.ParameterProperties;
 import jsystem.framework.TestProperties;
@@ -140,7 +141,18 @@ public class Enodeb extends EnodebAction {
 	private String PRACHFrequencyOffset;
 	private CellBarringPolicies cellBarringPolicy;
 	protected CsgModes closedSubscriberGroupMode;
+	private RelayScanType scanType = RelayScanType.Scan;
 
+	public synchronized RelayScanType getScanType() {
+		return scanType;
+	}
+
+	public synchronized void setScanType(RelayScanType scanType) {
+		this.scanType = scanType;
+	}
+
+	
+	
 	// Backhaul and Ethernet
 	protected BackhaulEthernetName backhaulEthernetName;
 	protected BackhaulEthernetParameter backhaulEthernetParameter;
@@ -432,7 +444,7 @@ public class Enodeb extends EnodebAction {
 			report.report("Reboot Succeeded");
 		}
 	}
-
+	
 	@Test // 3
 	@TestProperties(name = "Reset Counters", returnParam = "LastStatus", paramsInclude = { "DUT" })
 	public void resetCounters() {
@@ -783,6 +795,31 @@ public class Enodeb extends EnodebAction {
 			report.report("Configuration done");
 		}
 	}
+	
+	@Test
+	@TestProperties(name = "Relay Scan", returnParam = { "IsTestWasSuccessful" }, paramsInclude = { "DUT","ScanType" })
+	public void relayScan() {
+		EnodeBConfig enodeBConfig = EnodeBConfig.getInstance();
+		dut.expecteInServiceState = false;
+		dut.setExpectBooting(true);
+		report.report("Trying to relay scan with scan type: "+scanType);
+		if (!enodeBConfig.relayScan(dut, scanType)) {
+			report.report("Relay failed to scan", Reporter.FAIL);
+			reason = "Relay failed to scan";
+			dut.expecteInServiceState = true;
+			dut.setExpectBooting(false);
+		} else {
+			report.report("Scan done");
+			GeneralUtils.unSafeSleep(60*1000);
+			report.report("Wait for enodeb to reach in service state");
+			if(!dut.waitForAllRunningAndInService(EnodeB.WAIT_FOR_ALL_RUNNING_TIME)){
+				report.report("EnodeB failed to reach in service state", Reporter.WARNING);
+			}else{
+				report.report("EnodeB reached in service state");
+			}
+		}
+	}
+	
 
 	/**
 	 * Start Parallel Commands

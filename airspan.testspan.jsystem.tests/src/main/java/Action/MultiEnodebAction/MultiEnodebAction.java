@@ -102,6 +102,11 @@ public class MultiEnodebAction extends EnodebAction {
 		}
 		preTest();		
 		setCounters();
+		report.report("Changing counters value to 0");
+		resetCounters();
+		int waitingPeriodTime = enodeB.getGranularityPeriod();
+		report.report("Wait for " + waitingPeriodTime + " minutes for Counter to update");
+		GeneralUtils.unSafeSleep(waitingPeriodTime * 60 * 1000);
 		if (!gettingPassCratiriaValue()) {
 			report.report("Failed to reset counters", Reporter.FAIL);
 			reason = "Failed to reset counters";
@@ -253,7 +258,7 @@ public class MultiEnodebAction extends EnodebAction {
 				GeneralUtils.startLevel("Number of attempts out of real attenuator moves is: "
 						+ new DecimalFormat("##.##").format(theoreticalAttempts) + "%");
 				report.report("Number of attempts is less then 60%", Reporter.FAIL);
-				reason = "Number of attempts is less then 60%";
+				reason = "Number of attempts is less then 60 percent";
 				report.report("Number of attempts / attenuator moves");
 				GeneralUtils.stopLevel();
 			} else {
@@ -261,6 +266,7 @@ public class MultiEnodebAction extends EnodebAction {
 					GeneralUtils.startLevel("Number of attempts out of real attenuator moves is: "
 							+ new DecimalFormat("##.##").format(theoreticalAttempts) + "%");
 					report.report("Number of attempts is less then 85%", Reporter.WARNING);
+					reason = "Number of attempts is less then 85 percent";
 					report.report("Number of attempts / attenuator moves");
 					GeneralUtils.stopLevel();
 				} else {

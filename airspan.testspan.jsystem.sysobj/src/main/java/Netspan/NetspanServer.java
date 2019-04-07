@@ -49,6 +49,7 @@ import Netspan.Profiles.SyncParameters;
 import Netspan.Profiles.SystemDefaultParameters;
 import Utils.GeneralUtils.RebootType;
 import Utils.GeneralUtils.RebootTypesNetspan;
+import Utils.GeneralUtils.RelayScanType;
 import Utils.Pair;
 import jsystem.framework.system.SystemManagerImpl;
 import jsystem.framework.system.SystemObjectImpl;
@@ -696,5 +697,7 @@ public abstract class NetspanServer extends SystemObjectImpl {
 
 	public abstract Pair<Integer,Integer> getUlDlTrafficValues(String nodeName);
 
-	public abstract void initSoapHelper() throws Exception; 
+	public abstract void initSoapHelper() throws Exception;
+	
+	public abstract boolean relayScan(EnodeB enodeB, RelayScanType scanType);
 }

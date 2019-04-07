@@ -130,6 +130,7 @@ import Netspan.Profiles.SystemDefaultParameters;
 import Utils.GeneralUtils;
 import Utils.GeneralUtils.RebootType;
 import Utils.GeneralUtils.RebootTypesNetspan;
+import Utils.GeneralUtils.RelayScanType;
 import Utils.Pair;
 import jsystem.framework.IgnoreMethod;
 import jsystem.framework.report.Reporter;
@@ -3099,6 +3100,12 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 	@Override
 	public boolean resetNodeRebootAction(String nodeName, RebootTypesNetspan rebootType) {
 		GeneralUtils.printToConsole("resetNodeRebootAction function is not implemented for this netspan(14_5)!");
+		return false;
+	}
+
+	@Override
+	public boolean relayScan(EnodeB enodeB, RelayScanType scanType) {
+		report.report("relayScan function is not implemented for this netspan(14_5)!");
 		return false;
 	}
 }

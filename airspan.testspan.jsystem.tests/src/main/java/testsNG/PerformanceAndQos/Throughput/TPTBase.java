@@ -473,7 +473,6 @@ public class TPTBase extends TestspanTest {
 
 		if (!peripheralsConfig.checkIfAllUEsAreConnectedToNode(ueList, dut)) {
 			report.report("test will go on with a warning about UES", Reporter.WARNING);
-			reason = "UE not connected to DUT";
 		}
 
 		if (ueList.get(0) instanceof VirtualUE) {

@@ -48,6 +48,7 @@ import Netspan.Profiles.SystemDefaultParameters;
 import Utils.GeneralUtils;
 import Utils.Pair;
 import Utils.GeneralUtils.RebootType;
+import Utils.GeneralUtils.RelayScanType;
 import Utils.Snmp.MibReader;
 import jsystem.framework.report.ListenerstManager;
 import jsystem.framework.report.Reporter;
@@ -2083,5 +2084,9 @@ public class EnodeBConfig {
 			earfcn =  node.getEarfcn();
 		}
 		return earfcn;
+	}
+	
+	public boolean relayScan(EnodeB enodeB, RelayScanType scanType){
+		return netspanServer.relayScan(enodeB, scanType);
 	}
 }

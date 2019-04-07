@@ -76,14 +76,14 @@ public class TrafficSampler implements Runnable{
 				report.report("Actual average UL tpt: "+actualUlToReport+" Mbps");
 				if(ul_Divided_With_Number_Of_Streams < ULExpected){
 					report.report("UL actual is lower than expected", Reporter.FAIL);
-					reason = "Details for traffic instance with semantic name "+name+":<br> ";
+					reason = name+":<br> ";
 					reason += "Expected UL: "+expectedUlToReport+" Mbps. Actual UL: "+actualUlToReport+" Mbps.<br> ";
 				}else{
 					report.step("UL actual is above expected");
 				}				
 			}else{
 				report.report("No results available for UL traffic", Reporter.FAIL);
-				reason = "Details for traffic instance with semantic name "+name+":<br> ";
+				reason = name+":<br> ";
 				reason += "No results available for UL traffic.<br> ";
 			}
 		}
@@ -99,7 +99,7 @@ public class TrafficSampler implements Runnable{
 				if(dl_Divided_With_Number_Of_Streams < DLExpected){
 					report.report("DL actual is lower than expected", Reporter.FAIL);
 					if(reason.isEmpty()){
-						reason = "Details for traffic instance with semantic name "+name+":<br> ";
+						reason = name+":<br> ";
 					}
 					reason += "Expected DL: "+expectedDlToReport+" Mbps. Actual DL: "+actualDlToReport+" Mbps.<br> ";
 				}else{
@@ -108,7 +108,7 @@ public class TrafficSampler implements Runnable{
 			}else{
 				report.report("No results available for DL traffic", Reporter.FAIL);
 				if(reason.isEmpty()){
-					reason = "Details for traffic instance with semantic name "+name+":<br> ";
+					reason = name+":<br> ";
 				}
 				reason += "No results available for DL traffic.<br> ";
 			}
@@ -116,7 +116,7 @@ public class TrafficSampler implements Runnable{
 		TPTBase.createHTMLTableWithResults(ul_Divided_With_Number_Of_Streams, ULExpected, dl_Divided_With_Number_Of_Streams,
 				DLExpected, dlLoad, ulLoad, null);
 	}
-
+	
 	private ArrayList<Long> getUlDlResultsFromList(Long uLrxTotal, Long dlrxTotal,
 			ArrayList<ArrayList<StreamParams>> listOfStreamList2) {
 		ArrayList<Long> listOfTotalRx = new ArrayList<Long>();

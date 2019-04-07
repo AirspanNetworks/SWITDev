@@ -449,6 +449,10 @@ public class GeneralUtils {
     	Reset_Node, Cold_Reset_Node, Forced_Reset_Node, Forced_Cold_Reset_Node; 
     }
     
+    public enum RelayScanType{
+    	Scan, ForceScan;
+    }
+    
     /**
      * extract gz file to a new file with the given prefix
      *

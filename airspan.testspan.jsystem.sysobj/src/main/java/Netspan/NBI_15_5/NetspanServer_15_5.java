@@ -133,6 +133,7 @@ import Utils.Pair;
 import Utils.Triple;
 import Utils.GeneralUtils.RebootType;
 import Utils.GeneralUtils.RebootTypesNetspan;
+import Utils.GeneralUtils.RelayScanType;
 import jsystem.framework.report.Reporter;
 
 public class NetspanServer_15_5 extends NetspanServer_15_2 implements Netspan_15_5_abilities {
@@ -2490,5 +2491,31 @@ public class NetspanServer_15_5 extends NetspanServer_15_2 implements Netspan_15
 		boolean rebooted = result.getErrorCode() == ErrorCodes.OK;
 		soapHelper_15_5.endInventorySoap();
 		return rebooted;
+	}
+	
+	@Override
+	public boolean relayScan(EnodeB enodeB, RelayScanType scanType) {
+		Netspan.NBI_15_5.Backhaul.NodeActionResult result = null;
+		ArrayList<String> listEnb = new ArrayList<String>();
+		listEnb.add(enodeB.getNetspanName());
+		boolean scanned = false;
+		try{
+			if(scanType == RelayScanType.ForceScan){
+				result = soapHelper_15_5.getBackhaulSoap().relayForceScan(listEnb, null, credentialsBackhaul);
+				scanned = result.getErrorCode() == Netspan.NBI_15_5.Backhaul.ErrorCodes.OK;
+				if(!scanned){
+					report.report("Scan failed due to: "+result.getNode().get(0).getNodeResultString(),Reporter.WARNING);
+				}
+			}else{
+				report.report("Scan type is not available in version 15.5", Reporter.FAIL);
+				scanned = false;
+			}			
+		}catch(Exception e){
+			report.report("relayScan via netspan Return Error: " + e.getMessage());
+			scanned = false;
+		}finally {
+			soapHelper_15_5.endBackhaulSoap();
+		}
+		return scanned;
 	}
 }

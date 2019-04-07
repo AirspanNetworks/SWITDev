@@ -39,7 +39,6 @@ public abstract class EnodeBComponent implements LogListener {
 	private String name = null;
 	private SystemObject parent = null;
 	protected Reporter report = ListenerstManager.getInstance();
-//	public boolean isLogNeeded;
 
     public static final String SECURED_USERNAME = "op";
     public static final String SECURED_PASSWORD = "Ss%7^q7NC#Uj!AnX";
@@ -104,14 +103,6 @@ public abstract class EnodeBComponent implements LogListener {
     public ArrayList<String> debugFlags;
     public boolean SkipCMP = false;
     private volatile WaitForSrialPromptAndEchoToSkipCMP waitForSrialPromptAndEchoToSkipCMP;
-
-//	/**
-//	 * setter to isLogNeeded
-//	 * @param logNeeded
-//	 */
-//	public void setLogNeeded(boolean logNeeded) {
-//		isLogNeeded = logNeeded;
-//	}
 
 	/**
 	 * parent setter
@@ -223,9 +214,6 @@ public abstract class EnodeBComponent implements LogListener {
 		isStateChangedToCoreDump = false;
 		initSNMP();
 		sessionManager = new SessionManager(this);
-//		if (isLogNeeded) {
-//			openSerialAndSSHLogSessions();
-//		}
 		sessionManager.openSSHCommandSession();
 		startLogStreamer();
 

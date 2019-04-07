@@ -1,6 +1,5 @@
 package Utils;
 
-import Action.EnodebAction.LogsAction;
 import EnodeB.EnodeB;
 
 
@@ -12,13 +11,13 @@ public class LogSessionParams {
 	/**
 	 * Parameter set vars, for each Session
 	 */
-	public Pair<EnodeB, LogsAction.Session> enBSessionPair;
+	public Pair<EnodeB, Session> enBSessionPair;
 	public EnodeB enodeB;
-	public LogsAction.Session session;
-	public LogsAction.Modules module;
+	public Session session;
+	public Modules module;
 	public String process;
 	public String client;
-	public LogsAction.LogLevel logLevel;
+	public LogLevel logLevel;
 	public boolean isSessionOpen;
 
 	/**
@@ -30,10 +29,9 @@ public class LogSessionParams {
 
 	/**
 	 * This constructor will be created for every session in order to save all the session params
-
 	 */
-	public LogSessionParams(EnodeB eNodeB, LogsAction.Session inputSession, LogsAction.Modules inputModule,
-								String inputProcess, String inputClient, LogsAction.LogLevel inputLogLevel) {
+	public LogSessionParams(EnodeB eNodeB, Session inputSession, Modules inputModule,
+							String inputProcess, String inputClient, LogLevel inputLogLevel) {
 		this.enodeB = eNodeB;
 		this.session = inputSession;
 		this.module = inputModule;
@@ -42,5 +40,53 @@ public class LogSessionParams {
 		this.logLevel = inputLogLevel;
 		this.isSessionOpen = false;
 		this.enBSessionPair = new Pair<>(eNodeB, inputSession);
+	}
+
+	/**
+	 * Enum represented by String to Process dropdown to log:
+	 * All or ParticularModel(Specific Process and Client)
+	 */
+	public enum Modules {
+		ALL("All"),
+		PARTICULAR_MODEL("Particular Model");
+
+		public final String value;
+
+		Modules(String value) {
+			this.value = value;
+		}
+	}
+
+	/**
+	 * Enum represented by String to session dropdown- SSH or Serial
+	 */
+	public enum Session {
+		SSH("SSH"),
+		SERIAL("Serial"),
+		BOTH("SSH+Serial");
+
+		public final String value;
+
+		Session(String value) {
+			this.value = value;
+		}
+	}
+
+	/**
+	 * Enum represented by int to LogLevel dropdown - 1 to 6
+	 */
+	public enum LogLevel {
+		ONE(1),
+		TWO(2),
+		THREE(3),
+		FOUR(4),
+		FIVE(5),
+		SIX(6);
+
+		public final int value;
+
+		LogLevel(int value) {
+			this.value = value;
+		}
 	}
 }

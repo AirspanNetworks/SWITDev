@@ -2324,22 +2324,6 @@ public abstract class EnodeB extends SystemObjectImpl {
 	}
 
 	/**
-	 * This method checks if the caller is an Action class by looking into the StackTrace.
-	 * Limited to the first 15 levels of the StackTrace in order to avoid passing on all its 70 levels
-	 *
-	 * @return - true if it's an action. false if it's a close test.
-	 */
-	protected boolean isInitCalledFromAction() {
-		StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
-		for (int i = 0; i < 15; i++) {
-			if (stacktrace[i].getClassName().contains("Action")) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
 	 * open Serial Log Session if not opened
 	 */
 	public String openSerialLogSession(EnodeB enodeB) {

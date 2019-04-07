@@ -334,20 +334,25 @@ public class LogsAction extends EnodebAction {
 	 * @param logSessionParams - logSessionParams
 	 */
 	private void openLogSession(LogSessionParams logSessionParams) {
+		SessionManager sessionManager = logSessionParams.enodeB.getXLP().getSessionManager();
 		switch (logSessionParams.session) {
 			case SSH:
-				logSessionParams.sshSessionName = openSSHSession(logSessionParams);
+				logSessionParams.sshSessionName = logSessionParams.enodeB.openSSHLogSession(logSessionParams.enodeB);
+				sessionManager.getSSHlogSession().setSessionStreamsForLogAction(true);
 				setSSHParamsForReconnect(logSessionParams);
 				break;
 			case SERIAL:
-				logSessionParams.serialSessionName = openSerialSession(logSessionParams);
+				logSessionParams.serialSessionName = logSessionParams.enodeB.openSerialLogSession(logSessionParams.enodeB);
+				sessionManager.getSerialSession().setSessionStreamsForLogAction(true);
 				setSerialParamsForReconnect(logSessionParams);
 				break;
 			case BOTH:
-				logSessionParams.sshSessionName = openSSHSession(logSessionParams);
+				logSessionParams.sshSessionName = logSessionParams.enodeB.openSSHLogSession(logSessionParams.enodeB);
+				logSessionParams.serialSessionName = logSessionParams.enodeB.openSerialLogSession(logSessionParams.enodeB);
 				setSSHParamsForReconnect(logSessionParams);
-				logSessionParams.serialSessionName = openSerialSession(logSessionParams);
 				setSerialParamsForReconnect(logSessionParams);
+				sessionManager.getSSHlogSession().setSessionStreamsForLogAction(true);
+				sessionManager.getSerialSession().setSessionStreamsForLogAction(true);
 		}
 	}
 

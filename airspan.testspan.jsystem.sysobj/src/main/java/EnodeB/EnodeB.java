@@ -2349,7 +2349,6 @@ public abstract class EnodeB extends SystemObjectImpl {
 			sessionManager.openSerialLogSession();
 			sessionManager.getSerialSession().setLoggedSession(true);
 			sessionManager.getSerialSession().setEnableCliBuffer(false);
-			sessionManager.getSerialSession().setSessionStreamsForLogAction(true);
 		}
 		return sessionManager.getSerialSession().getName();
 	}
@@ -2363,7 +2362,6 @@ public abstract class EnodeB extends SystemObjectImpl {
 			sessionManager.openSSHLogSession();
 			sessionManager.getSSHlogSession().setLoggedSession(true);
 			sessionManager.getSSHlogSession().setEnableCliBuffer(false);
-			sessionManager.getSSHlogSession().setSessionStreamsForLogAction(true);
 		}
 		return sessionManager.getSSHlogSession().getName();
 	}

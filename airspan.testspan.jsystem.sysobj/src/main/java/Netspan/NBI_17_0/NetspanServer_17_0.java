@@ -6,6 +6,7 @@ import java.util.List;
 import EnodeB.EnodeB;
 import Netspan.NBIVersion;
 import Netspan.NBI_16_0.NetspanServer_16_0;
+import Netspan.Profiles.ConnectedUETrafficDirection;
 import Utils.GeneralUtils;
 import jsystem.framework.report.Reporter;
 
@@ -59,9 +60,11 @@ public class NetspanServer_17_0 extends NetspanServer_16_0 implements Netspan_17
     }
     
     @Override
-    public HashMap<Integer, Integer> getUeConnectedPerCategory(EnodeB enb) {
+    public HashMap<ConnectedUETrafficDirection, HashMap<Integer, Integer>> getUeConnectedPerCategory(EnodeB enb) {
         Netspan.NBI_17_0.Status.LteUeGetResult lteUeGetResult;
-        HashMap<Integer, Integer> ret = new HashMap<>();
+        HashMap<ConnectedUETrafficDirection, HashMap<Integer, Integer>> ret = new HashMap<>();
+        HashMap<Integer, Integer> ueData = new HashMap<>();
+        
         try {
             lteUeGetResult = soapHelper_17_0.getStatusSoap()
                 .enbConnectedUeStatusGet(enb.getNetspanName(), credentialsStatus);
@@ -74,7 +77,18 @@ public class NetspanServer_17_0 extends NetspanServer_16_0 implements Netspan_17
                 if (currentCell.getCellId().getValue() == enb.getCellContextID()) {
                     List<Netspan.NBI_17_0.Status.LteUeCategory> catDataList = currentCell.getCategoryData();
                     for (Netspan.NBI_17_0.Status.LteUeCategory catData : catDataList) {
-                        ret.put(catData.getCategory().getValue(), catData.getConnectedUes().getValue());
+                    	ueData.clear();
+                    	if(catData.getConnectedUes() != null) {
+                    		ueData.put(catData.getCategory().getValue(), catData.getConnectedUes().getValue());
+                    		ret.put(ConnectedUETrafficDirection.All, ueData);
+                    	}else {
+                    		ueData.put(catData.getCategory().getValue(), catData.getConnectedUesDl().getValue());
+                    		ret.put(ConnectedUETrafficDirection.Dl, ueData);
+                    		ueData.clear();
+                    		ueData.put(catData.getCategory().getValue(), catData.getConnectedUesUl().getValue());
+                    		ret.put(ConnectedUETrafficDirection.Ul, ueData);
+                    	}         
+                        
                     }
                     GeneralUtils.printToConsole(
                         "enbConnectedUeStatusGet via Netspan for eNodeB " + enb.getNetspanName() + " succeeded");
@@ -84,7 +98,7 @@ public class NetspanServer_17_0 extends NetspanServer_16_0 implements Netspan_17
         } catch (Exception e) {
             report.report("enbConnectedUeStatusGet via Netspan Failed due to: " + e.getMessage(), Reporter.WARNING);
             e.printStackTrace();
-            return new HashMap<Integer, Integer>();
+            return new HashMap<ConnectedUETrafficDirection, HashMap<Integer, Integer>>();
         } finally {
         	soapHelper_17_0.endStatusSoap();
         }

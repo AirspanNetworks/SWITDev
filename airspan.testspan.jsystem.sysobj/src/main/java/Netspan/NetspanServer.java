@@ -35,6 +35,7 @@ import Netspan.API.Software.SoftwareStatus;
 import Netspan.DataObjects.NeighborData;
 import Netspan.Profiles.CellAdvancedParameters;
 import Netspan.Profiles.CellBarringPolicyParameters;
+import Netspan.Profiles.ConnectedUETrafficDirection;
 import Netspan.Profiles.EnodeBAdvancedParameters;
 import Netspan.Profiles.INetspanProfile;
 import Netspan.Profiles.ManagementParameters;
@@ -485,8 +486,8 @@ public abstract class NetspanServer extends SystemObjectImpl {
     public abstract boolean delete3rdParty(ArrayList<String> names);
 
     public abstract List<String> getAll3rdParty();
-
-    public abstract HashMap<Integer, Integer> getUeConnectedPerCategory(EnodeB enb);
+    
+    public abstract HashMap<ConnectedUETrafficDirection, HashMap<Integer, Integer>> getUeConnectedPerCategory(EnodeB enb);
 
     public abstract RadioParameters radioProfileGet(EnodeB enb) throws Exception;
 

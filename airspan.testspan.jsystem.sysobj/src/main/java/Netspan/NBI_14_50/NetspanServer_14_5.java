@@ -115,6 +115,7 @@ import Netspan.NBI_14_50.API.Status.NodeSoftwareGetResult;
 import Netspan.Profiles.ManagementParameters;
 import Netspan.Profiles.CellAdvancedParameters;
 import Netspan.Profiles.CellBarringPolicyParameters;
+import Netspan.Profiles.ConnectedUETrafficDirection;
 import Netspan.Profiles.EnodeBAdvancedParameters;
 import Netspan.Profiles.INetspanProfile;
 import Netspan.Profiles.MobilityParameters;
@@ -1616,19 +1617,22 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 			return null;
 		}
 	}
-
+	
 	@Override
-	public HashMap<Integer, Integer> getUeConnectedPerCategory(EnodeB enb) {
+	public HashMap<ConnectedUETrafficDirection, HashMap<Integer, Integer>> getUeConnectedPerCategory(EnodeB enb) {
 		LteUeGetResult lteUeGetResult;
-		HashMap<Integer, Integer> ret = new HashMap<>();
-
+		HashMap<ConnectedUETrafficDirection, HashMap<Integer, Integer>> ret = new HashMap<>();
+		HashMap<Integer, Integer> ueData = new HashMap<>();
+		
 		try {
 			lteUeGetResult = (LteUeGetResult) helper_14_50.execute("enbConnectedUeStatusGet", enb.getNetspanName());
 			LteUeStatusWs currentCell = lteUeGetResult.getCell().get(0);
 			List<LteUeCategory> catDataList = currentCell.getCategoryData();
-			for (LteUeCategory catData : catDataList)
-				ret.put(catData.getCategory().getValue(), catData.getConnectedUes().getValue());
-
+			for (LteUeCategory catData : catDataList) {
+				ueData.clear();
+				ueData.put(catData.getCategory().getValue(), catData.getConnectedUes().getValue());
+				ret.put(ConnectedUETrafficDirection.All, ueData);
+			}
 			return ret;
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -194,4 +194,50 @@ public class Status extends EnodebAction {
 			}
 		}
 	}
+	
+	public enum TrafficDirection{
+		UL, DL
+	}
+	
+	private TrafficDirection tdirection = TrafficDirection.UL;
+	
+	private int Category = 0;
+	
+	public final int getCategory() {
+		return Category;
+	}
+	
+	@ParameterProperties(description = "Traffic cetegory of UE")
+	public final void setCategory(int Category) {
+		this.Category = Category;
+	}
+
+	public final TrafficDirection getTdirection() {
+		return tdirection;
+	}
+	
+	@ParameterProperties(description = "Desired Traffic direction for UE")
+	public final void setTdirection(TrafficDirection tdirection) {
+		this.tdirection = tdirection;
+	}
+
+	@Test // 3
+	@TestProperties(name = "Verify UE Categoty", returnParam = "LastStatus", paramsInclude = { "DUT", "Category", "Direction" })
+	public void verifyUEConnectedCategory() {
+		
+		NetspanServer netspnan;
+		try {
+			report.report(String.format("NetSpan: %s", this.dut));
+			netspnan = NetspanServer.getInstance();
+			HashMap<Integer, Integer> connectionTable = netspnan.getUeConnectedPerCategory(this.dut);
+			
+			for(Integer key : connectionTable.keySet() ) {
+				report.report(String.format("Key: %d = %d", key, connectionTable.get(key)));
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 }

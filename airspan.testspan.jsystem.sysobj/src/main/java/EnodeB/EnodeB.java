@@ -2357,7 +2357,6 @@ public abstract class EnodeB extends SystemObjectImpl {
 	/**
 	 * open SSH Log Session if not opened
 	 */
-
 	public String openSSHLogSession(EnodeB enodeB){
 		SessionManager sessionManager = enodeB.getXLP().getSessionManager();
 		if (sessionManager.getSSHlogSession() == null) {
@@ -2367,5 +2366,18 @@ public abstract class EnodeB extends SystemObjectImpl {
 			sessionManager.getSSHlogSession().setSessionStreamsForLogAction(true);
 		}
 		return sessionManager.getSSHlogSession().getName();
+	}
+
+	/**
+	 * Add all the open session that opened in the eNB to loggedSessions array in order to stream through Logger thread.
+	 *
+	 * @param enodeB - enodeB
+	 */
+	public void addToLoggedSession(EnodeB enodeB){
+		SessionManager sessionManager = enodeB.getXLP().getSessionManager();
+		Logger logger = enodeB.getXLP().getLogger();
+		synchronized (logger.lock){
+			logger.addLoggedSessions(sessionManager);
+		}
 	}
 }

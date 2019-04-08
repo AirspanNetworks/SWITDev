@@ -11,6 +11,7 @@ import EnodeB.EnodeB.Architecture;
 import Netspan.NetspanServer;
 import Netspan.API.Lte.RFStatus;
 import Netspan.Profiles.ConnectedUETrafficDirection;
+import Utils.GeneralUtils;
 import Utils.SysObjUtils;
 import jsystem.framework.ParameterProperties;
 import jsystem.framework.TestProperties;
@@ -234,6 +235,7 @@ public class Status extends EnodebAction {
 		
 		NetspanServer netspnan;
 		try {
+			GeneralUtils.startLevel("Test verifyUEConnectedCategory: Category " + getCategory() + " expecting " + getExpectedUEInCategory() + " UE's");
 			report.report(String.format("NetSpan: %s", this.dut));
 			netspnan = NetspanServer.getInstance();
 			HashMap<ConnectedUETrafficDirection, HashMap<Integer, Integer>> connectionTable = netspnan.getUeConnectedPerCategory(this.dut);
@@ -261,6 +263,8 @@ public class Status extends EnodebAction {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally {
+			GeneralUtils.stopLevel();
 		}
 		
 	}

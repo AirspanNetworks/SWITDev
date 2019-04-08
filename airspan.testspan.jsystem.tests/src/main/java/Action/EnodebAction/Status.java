@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
 
 import EnodeB.EnodeB;
@@ -229,37 +231,39 @@ public class Status extends EnodebAction {
 		this.Direction = ConnectedUETrafficDirection.valueOf(tdirection);
 	}
 
-	@SuppressWarnings("unlikely-arg-type")
 	@Test // 3
 	@TestProperties(name = "Verify UE Categoty", returnParam = "LastStatus", paramsInclude = { "DUT", "Category", "Direction", "ExpectedUEInCategory"})
 	public void verifyUEConnectedCategory() {
 		
 		NetspanServer netspnan;
+		List<MutablePair<ConnectedUETrafficDirection,Integer>> MarkUpList = new ArrayList<>();
+		HashMap<ConnectedUETrafficDirection, HashMap<Integer, Integer>> connectionTable = null;
+		
 		try {
 			GeneralUtils.startLevel("Test verifyUEConnectedCategory: Category " + getCategory() + " expecting " + getExpectedUEInCategory() + " UE's");
 			report.report(String.format("NetSpan: %s", this.dut));
 			netspnan = NetspanServer.getInstance();
-			HashMap<ConnectedUETrafficDirection, HashMap<Integer, Integer>> connectionTable = netspnan.getUeConnectedPerCategory(this.dut);
-			
-			String html_text = CategoryMapToHTML(connectionTable);
-			report.reportHtml("Conected UE's map", html_text, true);
+			connectionTable = netspnan.getUeConnectedPerCategory(this.dut);
 			
 			if(!connectionTable.containsKey(this.Direction)) {
 				report.report("Desired Direction " + this.Direction + " not exists; check test configuration", Reporter.WARNING);
 				return;
 			}
 			
-			Integer lookUpCategoryIndex = this.Category - 1;
-			
 			Assert.assertTrue("Desired category not exists", connectionTable.get(this.Direction).containsKey(this.Category));
 			
-			Integer real_count = connectionTable.get(this.Direction).get(lookUpCategoryIndex);
-			if(real_count == getExpectedUEInCategory()) {
-				report.report("UE count in category " + this.Category + " match expected: " + real_count);
-			}else {
-				report.report("UE count in category " + this.Category + " doesn't match expected: " +  real_count + " vs. " + getExpectedUEInCategory(), Reporter.FAIL);
+			Integer real_count = connectionTable.get(this.Direction).get(this.Category);
+			if(real_count != getExpectedUEInCategory()) {
+				MarkUpList.add(new MutablePair<ConnectedUETrafficDirection, Integer>(this.Direction, this.Category));
 			}
 			
+			String html_text = CategoryMapToHTML(connectionTable, "red", MarkUpList);
+			report.reportHtml("Conected UE's map", html_text, true);
+			if(MarkUpList.size() > 0) {
+				report.report("UE count in category " + this.Category + " doesn't match expected: " +  real_count + " vs. " + getExpectedUEInCategory(), Reporter.FAIL);
+			}else {
+				report.report("UE count in category " + this.Category + " match expected: " + real_count);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}finally {
@@ -268,7 +272,7 @@ public class Status extends EnodebAction {
 		
 	}
 	
-	private String CategoryMapToHTML(HashMap<ConnectedUETrafficDirection, HashMap<Integer, Integer>> connectionTable) {
+	private static String CategoryMapToHTML(HashMap<ConnectedUETrafficDirection, HashMap<Integer, Integer>> connectionTable, String fail_color, List<MutablePair<ConnectedUETrafficDirection, Integer>> pairs) {
 		
 		StringBuffer result_data = new StringBuffer();
 		StringBuffer result_header = new StringBuffer("<tr><td>Category</td>");
@@ -276,9 +280,22 @@ public class Status extends EnodebAction {
 		for(ConnectedUETrafficDirection direction : connectionTable.keySet() ) {
 			result_data.append("<tr><td>" + direction.toString() + "</td>");
 			for(Integer category : connectionTable.get(direction).keySet() ) {
-				if(!header_ready)
-					result_header.append("<th>" + category.toString() + "</th>");
-				result_data.append("<td>" + connectionTable.get(direction).get(category) + "</td>");
+				boolean signForColor = false;
+				for(Pair<ConnectedUETrafficDirection,Integer> pair : pairs) {
+					if( new MutablePair<ConnectedUETrafficDirection, Integer>(direction, category) == pair) {
+						signForColor = true;
+					break;
+					}		
+				}
+				if(signForColor) {
+					result_data.append("<td><font color=\"" + fail_color + "\">" + connectionTable.get(direction).get(category) + "</font></td>");
+					if(!header_ready)
+						result_header.append("<th><font color=\"" + fail_color + "\">" + category.toString() + "</font></th>");
+				}else {
+					if(!header_ready)
+						result_header.append("<th>" + category.toString() + "</th>");
+					result_data.append("<td>" + connectionTable.get(direction).get(category) + "</td>");
+				}
 			}
 			result_data.append("</tr>\n");
 			result_header.append("</tr>\n");
@@ -286,13 +303,5 @@ public class Status extends EnodebAction {
 		}
 		
 		return "<table>\n" + result_header.toString() + result_data.toString() + "\n</table>";
-	}
-	
-	public static String padRight(String s, int n) {
-	     return String.format("%-" + n + "s", s);  
-	}
-
-	public static String padLeft(String s, int n) {
-	    return String.format("%" + n + "s", s);  
 	}
 }

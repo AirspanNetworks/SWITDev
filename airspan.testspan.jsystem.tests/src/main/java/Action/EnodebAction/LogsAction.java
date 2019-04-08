@@ -15,6 +15,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+
+/**
+ * Logs Action - Start and Stop logs from EnB.
+ * Created: PazZ
+ * 04.2019
+ */
 public class LogsAction extends EnodebAction {
 
 	/**
@@ -219,7 +225,7 @@ public class LogsAction extends EnodebAction {
 	private void addOpenSessionToLogger(LogSessionParams logSessionParams) {
 		SessionManager sessionManager = logSessionParams.enodeB.getXLP().getSessionManager();
 		Logger logger = logSessionParams.enodeB.getXLP().getLogger();
-		synchronized (logger.lock) {
+		synchronized (logger.lockLoggedSessionList) {
 			logger.addLoggedSessions(sessionManager);
 			logger.addLogListener(logSessionParams.enodeB.getXLP());
 			startLogs(logSessionParams, logger);
@@ -366,7 +372,7 @@ public class LogsAction extends EnodebAction {
 	private void removeFromLoggedSession(LogSessionParams logSessionParams) {
 		SessionManager sessionManager = logSessionParams.enodeB.getXLP().getSessionManager();
 		Logger logger = logSessionParams.enodeB.getXLP().getLogger();
-		synchronized (logger.lock) {
+		synchronized (logger.lockLoggedSessionList) {
 			switch (logSessionParams.session) {
 				case SSH:
 					logger.removeFromLoggedSessions(sessionManager.getSSHlogSession());

@@ -162,6 +162,7 @@ public class TestspanTest extends SystemTestCase4 {
 
     /**
      * Open Serial and SSH session if not opened
+     *
      * @param eNodeB - eNodeB
      */
     //todo deal with DAN

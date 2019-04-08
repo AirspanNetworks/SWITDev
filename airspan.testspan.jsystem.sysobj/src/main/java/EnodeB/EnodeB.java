@@ -2393,7 +2393,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 	public void addToLoggedSession(EnodeB enodeB){
 		SessionManager sessionManager = enodeB.getXLP().getSessionManager();
 		Logger logger = enodeB.getXLP().getLogger();
-		synchronized (logger.lock){
+		synchronized (logger.lockLoggedSessionList){
 			logger.addLoggedSessions(sessionManager);
 		}
 	}

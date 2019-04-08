@@ -17,7 +17,11 @@ import Utils.GeneralUtils;
 import Utils.Properties.TestspanConfigurationsManager;
 
 public class Logger implements Runnable {
-	public final Object lock = new Object();
+
+	/**
+	 * This locker is used for using LoggedSession, (adding or removing session to stream).
+	 */
+	public final Object lockLoggedSessionList = new Object();
 	private static final String LOG_INTERVAL_PROPERTY_NAME = "logger.logInterval"; // value in milliseconds.
 
 	//eventId for the logger events
@@ -76,7 +80,7 @@ public class Logger implements Runnable {
 		if (getLoggedSessions() == null) {
 			setLoggedSessions(new ArrayList<Session>());
 		}
-		synchronized (lock) {
+		synchronized (lockLoggedSessionList) {
 			addLoggedSessions(sessionManager);
 		}
 		initLoggedSessions();
@@ -155,7 +159,6 @@ public class Logger implements Runnable {
 				LoggerEvent event = new LoggerEvent(this, line, eventID++ , "");
 				if (eventID == Integer.MAX_VALUE)
 					eventID = 0;
-
 				listener.getLogLine(event);
 			}
 		}
@@ -191,7 +194,6 @@ public class Logger implements Runnable {
 		return new String[0];
 	}
 
-
 	/**
 	 * Starts the logger
 	 */
@@ -223,7 +225,7 @@ public class Logger implements Runnable {
 		System.out.printf("[%s]: logger thread started. \n", name);
 		startLog(logFilePath);
 		while (isLogging) {
-			synchronized (lock) {
+			synchronized (lockLoggedSessionList) {
 				streamLogsLoop();
 			}
 		}
@@ -235,7 +237,7 @@ public class Logger implements Runnable {
 
 	/**
 	 * stream Logs Loop Processes log lines while isLogging param is true.
-	 * This method protected with lock param, so open sessions can be added to loggedSessions Array while this thread runs.
+	 * This method protected with lockLoggedSessionList param, so open sessions can be added to loggedSessions Array while this thread runs.
 	 */
 	public void streamLogsLoop() {
 		String[] buffers = new String[getLoggedSessions().size()];

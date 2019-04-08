@@ -43,7 +43,8 @@ public class SessionManager {
 	}
 
 	/**
-	 * open Serial Log Session
+	 * open Serial Log Session with specific log level
+	 *
 	 * @param logLevel
 	 */
 	public void openSerialLogSession(int logLevel) {
@@ -55,6 +56,7 @@ public class SessionManager {
 
 	/**
 	 * open SSH Log Session
+	 *
 	 * @param logLevel
 	 */
 	public void openSSHLogSession(int logLevel) {

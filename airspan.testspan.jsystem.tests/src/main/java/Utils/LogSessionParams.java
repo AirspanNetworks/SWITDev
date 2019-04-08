@@ -5,7 +5,8 @@ import EnodeB.EnodeB;
 
 /**
  * LogSessionParams per EnB
- * PazZ
+ * Created: PazZ
+ * 04.2019
  */
 public class LogSessionParams {
 	/**

@@ -440,7 +440,7 @@ public class BasicAction extends Action {
 		ssh.initConnection();
 		
 		if(ssh.isConnected()){
-			for (String cmd : this.debugCommands.split(",")) {
+			for (String cmd : this.debugCommands.split(";")) {
 				String output = ssh.sendCommand(cmd, 1000);
 				GeneralUtils.unSafeSleep(1000);
 				report.report("Response for "+cmd+":"+output);

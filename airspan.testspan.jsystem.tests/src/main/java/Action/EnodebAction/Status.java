@@ -17,6 +17,7 @@ import jsystem.framework.ParameterProperties;
 import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
 import jsystem.framework.scenario.Parameter;
+import junit.framework.Assert;
 import testsNG.Actions.EnodeBConfig;
 
 public class Status extends EnodebAction {
@@ -239,20 +240,18 @@ public class Status extends EnodebAction {
 			report.report(String.format("NetSpan: %s", this.dut));
 			netspnan = NetspanServer.getInstance();
 			HashMap<ConnectedUETrafficDirection, HashMap<Integer, Integer>> connectionTable = netspnan.getUeConnectedPerCategory(this.dut);
+			
 			String html_text = CategoryMapToHTML(connectionTable);
-//			for(ConnectedUETrafficDirection key : connectionTable.keySet() ) {
-//				report.report(String.format("Category: %d", key));
-//				for(Integer category : connectionTable.get(key).keySet() ) {
-//					report.report(String.format("\t%s = %d", key, connectionTable.get(key).get(category)));
-//				}
-//			}
 			report.reportHtml("Conected UE's map", html_text, true);
 			
-			Integer lookUpCategoryIndex = this.Category - 1;
-			if(!connectionTable.containsKey(lookUpCategoryIndex)) {
-				report.report("Desired Category " + this.Category + " not exists; check test configuration", Reporter.WARNING);
+			if(!connectionTable.containsKey(this.Direction)) {
+				report.report("Desired Direction " + this.Direction + " not exists; check test configuration", Reporter.WARNING);
 				return;
 			}
+			
+			Integer lookUpCategoryIndex = this.Category - 1;
+			
+			Assert.assertTrue("Desired category not exists", connectionTable.get(this.Direction).containsKey(this.Category));
 			
 			Integer real_count = connectionTable.get(this.Direction).get(lookUpCategoryIndex);
 			if(real_count == getExpectedUEInCategory()) {

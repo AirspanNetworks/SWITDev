@@ -2278,7 +2278,7 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
 
     @Override
     public HashMap<ConnectedUETrafficDirection, HashMap<Integer, Integer>> getUeConnectedPerCategory(EnodeB enb) {
-        LteUeGetResult lteUeGetResult;
+    	Netspan.NBI_15_2.Status.LteUeGetResult lteUeGetResult;
         HashMap<Integer, Integer> res = new HashMap<>();
         HashMap<ConnectedUETrafficDirection, HashMap<Integer, Integer>> ret = new HashMap<>();
         

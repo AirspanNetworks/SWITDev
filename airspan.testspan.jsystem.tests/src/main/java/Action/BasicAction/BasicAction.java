@@ -158,7 +158,7 @@ public class BasicAction extends Action {
 		this.ipPowerPort = port;
 	}
 
-	@ParameterProperties(description = "Debug Commands List (Split by comma)")
+	@ParameterProperties(description = "Debug Commands List (Split by ;)")
 	public void setDebugCommands(String debugCommands) {
 		this.debugCommands = debugCommands;
 	}
@@ -432,7 +432,7 @@ public class BasicAction extends Action {
 		}
 		
 		report.report("Debug Commands to send:");
-		for (String cmd : this.debugCommands.split(",")) {
+		for (String cmd : this.debugCommands.split(";")) {
 			report.report(cmd);
 		}
 

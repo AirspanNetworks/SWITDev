@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -24,8 +23,9 @@ import Utils.GeneralUtils.RebootType;
 import Utils.Snmp.MibReader;
 import Utils.Snmp.SNMP;
 import jsystem.framework.IgnoreMethod;
+import jsystem.framework.report.ListenerstManager;
 import jsystem.framework.report.Reporter;
-import jsystem.framework.system.SystemObjectImpl;
+import jsystem.framework.system.SystemObject;
 
 /**
  * Implements a basic eNodeB component.
@@ -34,7 +34,11 @@ import jsystem.framework.system.SystemObjectImpl;
  * @author dshalom
  *
  */
-public abstract class EnodeBComponent extends SystemObjectImpl implements LogListener {
+public abstract class EnodeBComponent implements LogListener {
+
+	private String name = null;
+	private SystemObject parent = null;
+	protected Reporter report = ListenerstManager.getInstance();
 
     public static final String SECURED_USERNAME = "op";
     public static final String SECURED_PASSWORD = "Ss%7^q7NC#Uj!AnX";
@@ -100,7 +104,38 @@ public abstract class EnodeBComponent extends SystemObjectImpl implements LogLis
     public boolean SkipCMP = false;
     private volatile WaitForSrialPromptAndEchoToSkipCMP waitForSrialPromptAndEchoToSkipCMP;
 
-    public boolean isExpectBooting() {
+	/**
+	 * parent setter
+	 * @param parent - parent
+	 */
+	public void setParent(SystemObject parent) {
+		this.parent = parent;
+	}
+
+	/**
+	 * name setter
+	 * @param name - name
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	/**
+	 * parent getter
+	 * @return - parent
+	 */
+	public SystemObject getParent() {
+		return parent;
+	}
+
+	/** name getter
+	 * @return - name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	public boolean isExpectBooting() {
         return expectBooting;
     }
 
@@ -116,8 +151,12 @@ public abstract class EnodeBComponent extends SystemObjectImpl implements LogLis
         SkipCMP = Boolean.parseBoolean(skipCMP);
     }
 
-    public Session getDefaultSession() {
-        return sessionManager.getDefaultSession();
+	public  SessionManager getSessionManager() {
+		return this.sessionManager;
+	}
+
+	public Session getDefaultSession() {
+        return sessionManager.getSSHCommandSession();
     }
 
     public Session getSSHlogSession() {
@@ -165,62 +204,57 @@ public abstract class EnodeBComponent extends SystemObjectImpl implements LogLis
         SWTypeInstnace = sWTypeInstnace;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see Utils.TestspanSystemObject#init() init & connecting to serialCom.
-     * then connecting via SSH, if fails get the serialCom
-     */
-    @Override
+	/**
+	 * Init & connecting to serialCom.
+	 * then connecting via SSH, if fails get the serialCom
+	 */
     public void init() throws Exception {
-        super.init();
-        corePathSet = new HashSet<String>();
+		corePathSet = new HashSet<>();
+		deviceUnderTest = false;
+		isStateChangedToCoreDump = false;
+		initSNMP();
+		sessionManager = new SessionManager(this);
+		sessionManager.openSSHCommandSession();
+		startLogStreamer();
 
-        deviceUnderTest = false;
+		if (ipAddress != null) {
+			// Init secure copy object with EnodeB IP
+			secureCopy = new ScpClient(getIpAddress());
+		}
+		this.waitForSrialPromptAndEchoToSkipCMP = new WaitForSrialPromptAndEchoToSkipCMP(WAIT_FOR_SERIAL_PROMPT);
+	}
 
-        isStateChangedToCoreDump = false;
+	public void initSerialCom() {
+		if (serialCom != null) {
+			try {
+				serialCom.init();
+				serialCom.connect();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else
+			GeneralUtils.printToConsole("SerialCom is missing! Initializing component without console accesss.");
+	}
 
-        initSNMP();
+	/**
+	 * start Log Streamer (Thread)
+	 */
+	private void startLogStreamer() {
+		if (logFilePath == null) {
+			logFilePath = System.getProperty("user.dir") + "\\" + getName() + ".log";
+		}
+		logger = new Logger(logFilePath, this, sessionManager, report);
+		logger.addLogListener(this);
+		logger.start();
+	}
 
-        if (serialCom != null) {
-            try {
-                serialCom.init();
-                serialCom.connect();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else
-            GeneralUtils.printToConsole("SerialCom is missing! Initializing component without console accesss.");
-        GeneralUtils.printToConsole("Unknown state, assuming that the component is Online.");
-
-        if (logFilePath == null) {
-            logFilePath = System.getProperty("user.dir") + "\\" + getName() + ".log";
-        }
-
-        sessionManager = new SessionManager(this);
-        sessionManager.init();
-
-        logger = new Logger(logFilePath, this, sessionManager, report);
-        logger.addLogListener(this);
-        logger.start();
-
-        if (ipAddress != null) {
-            // Init secure copy object with EnodeB IP
-            secureCopy = new ScpClient(getIpAddress());
-        }
-        this.waitForSrialPromptAndEchoToSkipCMP = new WaitForSrialPromptAndEchoToSkipCMP(WAIT_FOR_SERIAL_PROMPT);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see jsystem.framework.system.SystemObjectImpl#close()
-     */
-    @Override
     public void close() {
-        logger.stop();
-        sessionManager.closeAllSessions();
-        super.close();
+		if (logger != null) {
+			logger.stop();
+		}
+		if (sessionManager != null) {
+			sessionManager.closeAllSessions();
+		}
     }
 
     /**
@@ -237,7 +271,6 @@ public abstract class EnodeBComponent extends SystemObjectImpl implements LogLis
      * Gets the component version.
      *
      * @return the version
-     * @throws IOException
      */
     @IgnoreMethod
     public String getVersion() {
@@ -411,15 +444,6 @@ public abstract class EnodeBComponent extends SystemObjectImpl implements LogLis
     }
 
     /**
-     * Gets the log file path.
-     *
-     * @return the log file path
-     */
-    public String getLogFilePath() {
-        return logFilePath;
-    }
-
-    /**
      * Adds a listener to logger.
      *
      * @param listener the listener
@@ -435,15 +459,6 @@ public abstract class EnodeBComponent extends SystemObjectImpl implements LogLis
      */
     public void removeListenerFromLogger(LogListener listener) {
         logger.removeLogListener(listener);
-    }
-
-    /**
-     * Sets the log file path.
-     *
-     * @param logFilePath the new log file path
-     */
-    public void setLogFilePath(String logFilePath) {
-        this.logFilePath = logFilePath;
     }
 
     /**
@@ -499,7 +514,7 @@ public abstract class EnodeBComponent extends SystemObjectImpl implements LogLis
         String ans = sessionManager.openSession(sessionName);
         if (ans == null) {
             GeneralUtils.printToConsole("Failed opening session " + sessionName + ", returning default session instead.");
-            ans = sessionManager.getDefaultSession().getName();
+            ans = sessionManager.getSSHCommandSession().getName();
         }
         return ans;
     }
@@ -667,7 +682,7 @@ public abstract class EnodeBComponent extends SystemObjectImpl implements LogLis
 		}
 		return false;
 	}
-    
+
     private boolean waitForUnreachable(long timeout) {
         long startTime = System.currentTimeMillis();
         GeneralUtils.printToConsole("Waiting for EnodeB " + this.getName() + " to be unreachable to detect a reboot.");
@@ -681,7 +696,7 @@ public abstract class EnodeBComponent extends SystemObjectImpl implements LogLis
         return false;
     }
 
-    
+
     public boolean waitForExpectBootingValue(long timeout, boolean status) {
         long startTime = System.currentTimeMillis();
         GeneralUtils.printToConsole("Waiting for EnodeB " + this.getName() + " to detect reboot log line.");
@@ -711,7 +726,7 @@ public abstract class EnodeBComponent extends SystemObjectImpl implements LogLis
         String line = e.getLine();
         handleLogEvents(line);
     }
-    
+
     private void handleLogEvents(String line){
     	if (deviceUnderTest) {
             if (!isExpectBooting()) {
@@ -721,19 +736,19 @@ public abstract class EnodeBComponent extends SystemObjectImpl implements LogLis
             }
         }
     }
-    
+
     private void handleReboots(){
     	 failOrReportOverReboot();
          handleSkipCMP();
          setTrapDestenation();
     }
-    
+
     private void setTrapDestenation(){
     	GeneralUtils.printToConsole(this.getName() +  " - setTrapDestination thread after reboot started");
     	WaitForSNMPAndSetTrapDest setTrapThread = new WaitForSNMPAndSetTrapDest();
     	setTrapThread.start();
     }
-    
+
     private class WaitForSNMPAndSetTrapDest extends Thread {
         public void run() {
         	if(snmp == null)
@@ -751,8 +766,8 @@ public abstract class EnodeBComponent extends SystemObjectImpl implements LogLis
             return;
         }
     }
-    
-    
+
+
     /**
      * Set trap destination in index 4 in case it is not configured.
      */
@@ -781,7 +796,7 @@ public abstract class EnodeBComponent extends SystemObjectImpl implements LogLis
     		e.printStackTrace();
     	}
     }
-    
+
     private boolean updateTrapDestTable(String nmsHostName) throws IOException{
     	boolean actionPassed = true;
     	String oid = MibReader.getInstance().resolveByName("wmanDevCmnSnmpV1V2TrapDest");
@@ -792,14 +807,14 @@ public abstract class EnodeBComponent extends SystemObjectImpl implements LogLis
     	actionPassed &= snmp.snmpSet(oid + ".5.4", 1);
     	return actionPassed;
     }
-    
+
     private void handleSkipCMP(){
     	if (SkipCMP && (!this.waitForSrialPromptAndEchoToSkipCMP.isAlive())) {
             this.waitForSrialPromptAndEchoToSkipCMP = new WaitForSrialPromptAndEchoToSkipCMP(WAIT_FOR_SERIAL_PROMPT);
             this.waitForSrialPromptAndEchoToSkipCMP.start();
         }
     }
-    
+
     private void failOrReportOverReboot(){
     	if (isExpectBooting()) {
             setExpectBooting(false);
@@ -809,16 +824,16 @@ public abstract class EnodeBComponent extends SystemObjectImpl implements LogLis
             report.report(getName() + " - unexpected reboot detected!", Reporter.FAIL);
         }
     }
-    
+
     private void failTestInCaseOfCoreOrPhyAssert(String line){
     	if(checkCoreStrings(line)){
     		parseCoreFilesPath(line);
-    		report.report(getName() + " - Corecare detected!", Reporter.FAIL);            		
+    		report.report(getName() + " - Corecare detected!", Reporter.FAIL);
     	}else if (line.contains("PHY ASSERT DETECTED")) {
             report.report(getName() + " - Phy assert detected!", Reporter.FAIL);
         }
     }
-    
+
     private class WaitForSrialPromptAndEchoToSkipCMP extends Thread {
         private final long timeout;
 
@@ -953,7 +968,17 @@ public abstract class EnodeBComponent extends SystemObjectImpl implements LogLis
         // empty method. Should be overridden by relevant components;
     }
 
-    /*
+	/**
+	 * Sets the session log level.
+	 *
+	 * @param sessionName the session name
+	 * @param level       the level
+	 */
+	public void setSessionLogLevel(String sessionName ,String client ,String process, int level) {
+		// empty method. Should be overridden by relevant components;
+	}
+
+	/*
      * (non-Javadoc)
      *
      * @see java.lang.Object#toString()

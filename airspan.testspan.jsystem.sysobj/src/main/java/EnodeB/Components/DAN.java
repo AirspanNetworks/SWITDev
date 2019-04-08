@@ -17,7 +17,6 @@ public class DAN extends EnodeBComponent {
 	private boolean statusTableFlag;
 	private String lastStatusTable;
 	
-	@Override
 	public void init() throws Exception {
 		this.statusTableFlag = false;	
 		super.init();

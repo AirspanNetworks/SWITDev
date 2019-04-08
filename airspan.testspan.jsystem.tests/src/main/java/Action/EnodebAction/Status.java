@@ -271,17 +271,17 @@ public class Status extends EnodebAction {
 	private String CategoryMapToHTML(HashMap<ConnectedUETrafficDirection, HashMap<Integer, Integer>> connectionTable) {
 		
 		StringBuffer result_data = new StringBuffer();
-		StringBuffer result_header = new StringBuffer("<tr><td>Category</tr></td>");
+		StringBuffer result_header = new StringBuffer("<tr><td>Category</td>");
 		boolean header_ready = false;
 		for(ConnectedUETrafficDirection direction : connectionTable.keySet() ) {
-			result_data.append("<tr><td>" + direction.toString() + "</tr></td>");
+			result_data.append("<tr><td>" + direction.toString() + "</td>");
 			for(Integer category : connectionTable.get(direction).keySet() ) {
 				if(!header_ready)
-					result_header.append("<tr><th>" + category.toString() + "</th></tr>");
-				result_data.append("<tr><td>" + connectionTable.get(direction).get(category) + "</tr></td>");
+					result_header.append("<th>" + category.toString() + "</th>");
+				result_data.append("<td>" + connectionTable.get(direction).get(category) + "</td>");
 			}
-			result_data.append("\n");
-			result_header.append("\n");
+			result_data.append("</tr>\n");
+			result_header.append("</tr>\n");
 			header_ready = true;
 		}
 		

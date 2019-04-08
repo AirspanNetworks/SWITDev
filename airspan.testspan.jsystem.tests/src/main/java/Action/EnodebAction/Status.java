@@ -232,7 +232,7 @@ public class Status extends EnodebAction {
 	}
 
 	@Test // 3
-	@TestProperties(name = "Verify UE Categoty", returnParam = "LastStatus", paramsInclude = { "DUT", "Category", "Direction", "ExpectedUEInCategory"})
+	@TestProperties(name = "Verify UE Category", returnParam = "LastStatus", paramsInclude = { "DUT", "Category", "Direction", "ExpectedUEInCategory"})
 	public void verifyUEConnectedCategory() {
 		
 		NetspanServer netspan;

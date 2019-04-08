@@ -2279,14 +2279,13 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
 
     @Override
     public HashMap<ConnectedUETrafficDirection, HashMap<Integer, Integer>> getUeConnectedPerCategory(EnodeB enb) {
-    	Netspan.NBI_15_2.Status.LteUeGetResult lteUeGetResult;
+    	LteUeGetResult lteUeGetResult;
         HashMap<Integer, Integer> res = new HashMap<>();
         HashMap<ConnectedUETrafficDirection, HashMap<Integer, Integer>> ret = new HashMap<>();
         
         try {
-        	//TODO: Verify casting correction
-        	lteUeGetResult = soapHelper_15_2.getStatusSoap()
-                    .enbConnectedUeStatusGet(enb.getNetspanName(), credentialsStatus);
+        	StatusSoap status = soapHelper_15_2.getStatusSoap();
+        	lteUeGetResult = status.enbConnectedUeStatusGet(enb.getNetspanName(), credentialsStatus);
             if (lteUeGetResult.getErrorCode() != Netspan.NBI_15_2.Status.ErrorCodes.OK) {
                 report.report("enbConnectedUeStatusGet via Netspan Failed : " + lteUeGetResult.getErrorString(),
                     Reporter.WARNING);

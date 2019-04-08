@@ -101,6 +101,7 @@ public class NetspanServer_17_0 extends NetspanServer_16_0 implements Netspan_17
                         "enbConnectedUeStatusGet via Netspan for eNodeB " + enb.getNetspanName() + " succeeded");
                 }
             }
+
         } catch (Exception e) {
             report.report("enbConnectedUeStatusGet via Netspan Failed due to: " + e.getMessage(), Reporter.WARNING);
             e.printStackTrace();
@@ -108,8 +109,8 @@ public class NetspanServer_17_0 extends NetspanServer_16_0 implements Netspan_17
         } finally {
         	soapHelper_17_0.endStatusSoap();
         }
-        GeneralUtils.printToConsole(
-            "enbConnectedUeStatusGet via Netspan for eNodeB " + enb.getNetspanName() + " succeeded");
+//        GeneralUtils.printToConsole(
+//            "enbConnectedUeStatusGet via Netspan for eNodeB " + enb.getNetspanName() + " succeeded");
         return ret;
     }
     

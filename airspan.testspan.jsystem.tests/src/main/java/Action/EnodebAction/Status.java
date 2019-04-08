@@ -261,7 +261,6 @@ public class Status extends EnodebAction {
 			}
 			
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}finally {
 			GeneralUtils.stopLevel();

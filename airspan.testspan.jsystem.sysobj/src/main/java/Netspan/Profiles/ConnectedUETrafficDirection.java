@@ -7,5 +7,9 @@ package Netspan.Profiles;
  *  From NBI 17.0 Connected UE differ by Upload & Download 
  */
 public enum ConnectedUETrafficDirection {
-	All, Ul, Dl
+	ALL, UL, DL;
+
+	public static ConnectedUETrafficDirection FromString(String tdirection) {
+		return ConnectedUETrafficDirection.valueOf(tdirection.toUpperCase());
+	}
 }

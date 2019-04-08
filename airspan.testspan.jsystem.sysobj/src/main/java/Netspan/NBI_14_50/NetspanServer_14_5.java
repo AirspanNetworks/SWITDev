@@ -1631,7 +1631,7 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 			for (LteUeCategory catData : catDataList) {
 				ueData.clear();
 				ueData.put(catData.getCategory().getValue(), catData.getConnectedUes().getValue());
-				ret.put(ConnectedUETrafficDirection.All, ueData);
+				ret.put(ConnectedUETrafficDirection.ALL, ueData);
 			}
 			return ret;
 		} catch (Exception e) {

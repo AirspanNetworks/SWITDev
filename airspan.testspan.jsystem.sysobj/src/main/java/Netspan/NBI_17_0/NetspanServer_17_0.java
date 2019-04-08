@@ -80,13 +80,13 @@ public class NetspanServer_17_0 extends NetspanServer_16_0 implements Netspan_17
                     	ueData.clear();
                     	if(catData.getConnectedUes() != null) {
                     		ueData.put(catData.getCategory().getValue(), catData.getConnectedUes().getValue());
-                    		ret.put(ConnectedUETrafficDirection.All, ueData);
+                    		ret.put(ConnectedUETrafficDirection.ALL, ueData);
                     	}else {
                     		ueData.put(catData.getCategory().getValue(), catData.getConnectedUesDl().getValue());
-                    		ret.put(ConnectedUETrafficDirection.Dl, ueData);
+                    		ret.put(ConnectedUETrafficDirection.DL, ueData);
                     		ueData.clear();
                     		ueData.put(catData.getCategory().getValue(), catData.getConnectedUesUl().getValue());
-                    		ret.put(ConnectedUETrafficDirection.Ul, ueData);
+                    		ret.put(ConnectedUETrafficDirection.UL, ueData);
                     	}         
                         
                     }

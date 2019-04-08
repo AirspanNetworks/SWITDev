@@ -2293,11 +2293,11 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
             for (LteUeStatusWs currentCell : lteUeGetResult.getCell()) {
                 if (currentCell.getCellId().getValue() == enb.getCellContextID()) {
                     List<LteUeCategory> catDataList = currentCell.getCategoryData();
-                    
+
                     for (LteUeCategory catData : catDataList) {
                         res.put(catData.getCategory().getValue(), catData.getConnectedUes().getValue());
                     }
-                    ret.put(ConnectedUETrafficDirection.All, res);
+                    ret.put(ConnectedUETrafficDirection.ALL, res);
                     GeneralUtils.printToConsole(
                         "enbConnectedUeStatusGet via Netspan for eNodeB " + enb.getNetspanName() + " succeeded");
                     return ret;

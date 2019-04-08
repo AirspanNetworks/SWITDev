@@ -196,14 +196,19 @@ public class Status extends EnodebAction {
 		}
 	}
 	
-	public enum TrafficDirection{
-		UL, DL
+	private ConnectedUETrafficDirection Direction = ConnectedUETrafficDirection.ALL;
+	private int Category = 0;
+	private int expectedUEInCategory = 0;
+	
+	public final int getExpectedUEInCategory() {
+		return expectedUEInCategory;
 	}
 	
-	private TrafficDirection tdirection = TrafficDirection.UL;
-	
-	private int Category = 0;
-	
+	@ParameterProperties(description = "Expected UE count in category (Default: 0)")
+	public final void setExpectedUEInCategory(int expectedUEInCategory) {
+		this.expectedUEInCategory = expectedUEInCategory;
+	}
+
 	public final int getCategory() {
 		return Category;
 	}
@@ -213,17 +218,18 @@ public class Status extends EnodebAction {
 		this.Category = Category;
 	}
 
-	public final TrafficDirection getTdirection() {
-		return tdirection;
+	public final ConnectedUETrafficDirection getDirection() {
+		return this.Direction;
 	}
 	
-	@ParameterProperties(description = "Desired Traffic direction for UE")
-	public final void setTdirection(TrafficDirection tdirection) {
-		this.tdirection = tdirection;
+	@ParameterProperties(description = "Desired Traffic direction for UE [UL, DL, ALL] (Default: ALL)")
+	public final void setDirection(String tdirection) {
+		this.Direction = ConnectedUETrafficDirection.FromString(tdirection);
 	}
 
+	@SuppressWarnings("unlikely-arg-type")
 	@Test // 3
-	@TestProperties(name = "Verify UE Categoty", returnParam = "LastStatus", paramsInclude = { "DUT", "Category", "Direction" })
+	@TestProperties(name = "Verify UE Categoty", returnParam = "LastStatus", paramsInclude = { "DUT", "Category", "Direction", "ExpectedUEInCategory"})
 	public void verifyUEConnectedCategory() {
 		
 		NetspanServer netspnan;
@@ -231,12 +237,27 @@ public class Status extends EnodebAction {
 			report.report(String.format("NetSpan: %s", this.dut));
 			netspnan = NetspanServer.getInstance();
 			HashMap<ConnectedUETrafficDirection, HashMap<Integer, Integer>> connectionTable = netspnan.getUeConnectedPerCategory(this.dut);
+			
 			for(ConnectedUETrafficDirection key : connectionTable.keySet() ) {
 				report.report(String.format("Category: %d", key));
 				for(Integer category : connectionTable.get(key).keySet() ) {
 					report.report(String.format("\t%s = %d", key, connectionTable.get(key).get(category)));
 				}
 			}
+			
+			Integer real_count = connectionTable.get(this.Direction).get(new Integer(this.Category));
+			
+			if(!connectionTable.containsKey(this.Category)) {
+				report.report("Desired Category " + this.Category + " not exists; check test configuration", Reporter.WARNING);
+				return;
+			}
+			
+			if(real_count == getExpectedUEInCategory()) {
+				report.report("UE count in category " + this.Category + " match expected: " + real_count);
+			}else {
+				report.report("UE count in category " + this.Category + " doesn't match expected: " +  real_count + " vs. " + getExpectedUEInCategory(), Reporter.FAIL);
+			}
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

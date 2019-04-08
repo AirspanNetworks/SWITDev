@@ -282,9 +282,11 @@ public class Status extends EnodebAction {
 			for(Integer category : connectionTable.get(direction).keySet() ) {
 				boolean signForColor = false;
 				for(Pair<ConnectedUETrafficDirection,Integer> pair : pairs) {
-					if( new MutablePair<ConnectedUETrafficDirection, Integer>(direction, category) == pair) {
+					MutablePair<ConnectedUETrafficDirection, Integer> pair_for_compare = 
+							new MutablePair<ConnectedUETrafficDirection, Integer>(direction, category);
+					if(pair_for_compare == pair) {
 						signForColor = true;
-					break;
+						break;
 					}		
 				}
 				if(signForColor) {

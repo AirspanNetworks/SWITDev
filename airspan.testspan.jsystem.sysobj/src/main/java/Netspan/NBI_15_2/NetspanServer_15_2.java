@@ -143,6 +143,7 @@ import Netspan.NBI_15_2.Status.LteUeGetResult;
 import Netspan.NBI_15_2.Status.LteUeStatusWs;
 import Netspan.NBI_15_2.Status.NodePtpGetResult;
 import Netspan.NBI_15_2.Status.NodeSoftwareGetResult;
+import Netspan.NBI_15_2.Status.StatusSoap;
 import Netspan.Profiles.CellAdvancedParameters;
 import Netspan.Profiles.CellBarringPolicyParameters;
 import Netspan.Profiles.ConnectedUETrafficDirection;
@@ -2284,7 +2285,8 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
         
         try {
         	//TODO: Verify casting correction
-            lteUeGetResult = (LteUeGetResult) soapHelper_15_2.getStatusSoap();
+        	lteUeGetResult = soapHelper_15_2.getStatusSoap()
+                    .enbConnectedUeStatusGet(enb.getNetspanName(), credentialsStatus);
             if (lteUeGetResult.getErrorCode() != Netspan.NBI_15_2.Status.ErrorCodes.OK) {
                 report.report("enbConnectedUeStatusGet via Netspan Failed : " + lteUeGetResult.getErrorString(),
                     Reporter.WARNING);

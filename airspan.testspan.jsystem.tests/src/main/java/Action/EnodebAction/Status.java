@@ -205,8 +205,8 @@ public class Status extends EnodebAction {
 	}
 	
 	@ParameterProperties(description = "Expected UE count in category (Default: 0)")
-	public final void setExpectedUEInCategory(int expectedUEInCategory) {
-		this.expectedUEInCategory = expectedUEInCategory;
+	public final void setExpectedUEInCategory(String expectedUEInCategory) {
+		this.expectedUEInCategory = Integer.valueOf(expectedUEInCategory);
 	}
 
 	public final int getCategory() {
@@ -214,8 +214,8 @@ public class Status extends EnodebAction {
 	}
 	
 	@ParameterProperties(description = "Traffic cetegory of UE")
-	public final void setCategory(int Category) {
-		this.Category = Category;
+	public final void setCategory(String Category) {
+		this.Category = Integer.valueOf(Category);
 	}
 
 	public final ConnectedUETrafficDirection getDirection() {
@@ -224,7 +224,7 @@ public class Status extends EnodebAction {
 	
 	@ParameterProperties(description = "Desired Traffic direction for UE [UL, DL, ALL] (Default: ALL)")
 	public final void setDirection(String tdirection) {
-		this.Direction = ConnectedUETrafficDirection.FromString(tdirection);
+		this.Direction = ConnectedUETrafficDirection.valueOf(tdirection);
 	}
 
 	@SuppressWarnings("unlikely-arg-type")

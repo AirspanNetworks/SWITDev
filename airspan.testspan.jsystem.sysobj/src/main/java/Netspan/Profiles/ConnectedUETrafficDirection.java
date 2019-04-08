@@ -8,8 +8,4 @@ package Netspan.Profiles;
  */
 public enum ConnectedUETrafficDirection {
 	ALL, UL, DL;
-
-	public static ConnectedUETrafficDirection FromString(String tdirection) {
-		return ConnectedUETrafficDirection.valueOf(tdirection.toUpperCase());
-	}
 }

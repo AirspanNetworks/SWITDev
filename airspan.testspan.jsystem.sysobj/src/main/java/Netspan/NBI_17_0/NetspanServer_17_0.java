@@ -63,7 +63,10 @@ public class NetspanServer_17_0 extends NetspanServer_16_0 implements Netspan_17
     public HashMap<ConnectedUETrafficDirection, HashMap<Integer, Integer>> getUeConnectedPerCategory(EnodeB enb) {
         Netspan.NBI_17_0.Status.LteUeGetResult lteUeGetResult;
         HashMap<ConnectedUETrafficDirection, HashMap<Integer, Integer>> ret = new HashMap<>();
-        HashMap<Integer, Integer> ueData = new HashMap<>();
+        HashMap<Integer, Integer> alData = new HashMap<>();
+        HashMap<Integer, Integer> ulData = new HashMap<>();
+        HashMap<Integer, Integer> dlData = new HashMap<>();
+        boolean mode = false;
         
         try {
             lteUeGetResult = soapHelper_17_0.getStatusSoap()
@@ -76,23 +79,26 @@ public class NetspanServer_17_0 extends NetspanServer_16_0 implements Netspan_17
             for (Netspan.NBI_17_0.Status.LteUeStatusWs currentCell : lteUeGetResult.getCell()) {
                 if (currentCell.getCellId().getValue() == enb.getCellContextID()) {
                     List<Netspan.NBI_17_0.Status.LteUeCategory> catDataList = currentCell.getCategoryData();
+                    alData.clear();
+                	ulData.clear();
+                	dlData.clear();
                     for (Netspan.NBI_17_0.Status.LteUeCategory catData : catDataList) {
-                    	ueData.clear();
                     	if(catData.getConnectedUes() != null) {
-                    		ueData.put(catData.getCategory().getValue(), catData.getConnectedUes().getValue());
-                    		ret.put(ConnectedUETrafficDirection.ALL, ueData);
+                    		alData.put(catData.getCategory().getValue(), catData.getConnectedUes().getValue());
                     	}else {
-                    		ueData.put(catData.getCategory().getValue(), catData.getConnectedUesDl().getValue());
-                    		ret.put(ConnectedUETrafficDirection.DL, ueData);
-                    		ueData.clear();
-                    		ueData.put(catData.getCategory().getValue(), catData.getConnectedUesUl().getValue());
-                    		ret.put(ConnectedUETrafficDirection.UL, ueData);
-                    	}         
-                        
+                    		mode = true;
+                    		dlData.put(catData.getCategory().getValue(), catData.getConnectedUesDl().getValue());
+                    		ulData.put(catData.getCategory().getValue(), catData.getConnectedUesUl().getValue());
+                    	}          
+                    }
+                    if(mode) {
+                    	ret.put(ConnectedUETrafficDirection.UL, ulData);
+                    	ret.put(ConnectedUETrafficDirection.DL, dlData);
+                    }else {
+                    	ret.put(ConnectedUETrafficDirection.ALL, alData);
                     }
                     GeneralUtils.printToConsole(
                         "enbConnectedUeStatusGet via Netspan for eNodeB " + enb.getNetspanName() + " succeeded");
-                    return ret;
                 }
             }
         } catch (Exception e) {

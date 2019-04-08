@@ -239,21 +239,22 @@ public class Status extends EnodebAction {
 			report.report(String.format("NetSpan: %s", this.dut));
 			netspnan = NetspanServer.getInstance();
 			HashMap<ConnectedUETrafficDirection, HashMap<Integer, Integer>> connectionTable = netspnan.getUeConnectedPerCategory(this.dut);
+			String html_text = CategoryMapToHTML(connectionTable);
+//			for(ConnectedUETrafficDirection key : connectionTable.keySet() ) {
+//				report.report(String.format("Category: %d", key));
+//				for(Integer category : connectionTable.get(key).keySet() ) {
+//					report.report(String.format("\t%s = %d", key, connectionTable.get(key).get(category)));
+//				}
+//			}
+			report.reportHtml("Conected UE's map", html_text, true);
 			
-			for(ConnectedUETrafficDirection key : connectionTable.keySet() ) {
-				report.report(String.format("Category: %d", key));
-				for(Integer category : connectionTable.get(key).keySet() ) {
-					report.report(String.format("\t%s = %d", key, connectionTable.get(key).get(category)));
-				}
-			}
-			
-			Integer real_count = connectionTable.get(this.Direction).get(new Integer(this.Category));
-			
-			if(!connectionTable.containsKey(this.Category)) {
+			Integer lookUpCategoryIndex = this.Category - 1;
+			if(!connectionTable.containsKey(lookUpCategoryIndex)) {
 				report.report("Desired Category " + this.Category + " not exists; check test configuration", Reporter.WARNING);
 				return;
 			}
 			
+			Integer real_count = connectionTable.get(this.Direction).get(lookUpCategoryIndex);
 			if(real_count == getExpectedUEInCategory()) {
 				report.report("UE count in category " + this.Category + " match expected: " + real_count);
 			}else {
@@ -266,5 +267,34 @@ public class Status extends EnodebAction {
 			GeneralUtils.stopLevel();
 		}
 		
+	}
+	
+	private String CategoryMapToHTML(HashMap<ConnectedUETrafficDirection, HashMap<Integer, Integer>> connectionTable) {
+		
+		StringBuffer result_data = new StringBuffer();
+		StringBuffer result_header = new StringBuffer("");
+		boolean header_ready = false;
+		for(ConnectedUETrafficDirection direction : connectionTable.keySet() ) {
+			result_data.append("<tr><td>" + direction.toString() + "</tr></td>");
+			for(Integer category : connectionTable.get(direction).keySet() ) {
+				if(!header_ready)
+					result_header.append("<tr><th>" + category.toString() + "</th></tr>");
+				result_data.append("<tr><td>" + connectionTable.get(direction).get(category) + "</tr></td>");
+			}
+			result_data.append("\n");
+			result_header.append("\n");
+			header_ready = true;
+		}
+		
+		
+		return "<table>\n" + result_header.toString() + result_data.toString() + "\n</table>";
+	}
+	
+	public static String padRight(String s, int n) {
+	     return String.format("%-" + n + "s", s);  
+	}
+
+	public static String padLeft(String s, int n) {
+	    return String.format("%" + n + "s", s);  
 	}
 }

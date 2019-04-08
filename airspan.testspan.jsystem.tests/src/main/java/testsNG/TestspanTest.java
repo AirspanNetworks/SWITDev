@@ -139,6 +139,7 @@ public class TestspanTest extends SystemTestCase4 {
      * @param eNodeB - eNodeB
      */
     private void initEnodeB(EnodeB eNodeB) {
+        openSessions(eNodeB);
         initUnexpectedRebootOfEnB(eNodeB);
         createEnodeBLogFiles(eNodeB);
         addEnodeBToUnexpectedRebootMap(eNodeB.getNetspanName());
@@ -157,6 +158,17 @@ public class TestspanTest extends SystemTestCase4 {
         eNodeB.setNodeLoggerUrl(eNodeB, TestConfig.getInstace().getLoggerUploadAllUrl());
         checkAndSetDefaultNetspanProfiles(eNodeB);
         getDBFiles(eNodeB, beforeTest);
+    }
+
+    /**
+     * Open Serial and SSH session if not opened
+     * @param eNodeB - eNodeB
+     */
+    //todo deal with DAN
+    private void openSessions(EnodeB eNodeB) {
+        eNodeB.openSerialLogSession(eNodeB);
+        eNodeB.openSSHLogSession(eNodeB);
+        eNodeB.addToLoggedSession(eNodeB);
     }
 
     /**
@@ -672,13 +684,12 @@ public class TestspanTest extends SystemTestCase4 {
      * @param eNodeB  - eNodeB
      * @param loggers - loggers
      */
-    private void closeEnBLogs(EnodeB eNodeB, Logger[] loggers) {
+    public void closeEnBLogs(EnodeB eNodeB, Logger[] loggers) {
         log.info(String.format("Closing log files for test for eNondeB %s", eNodeB.getName()));
         GeneralUtils.startLevel(String.format("eNodeB %s logs", eNodeB.getName()));
-
         for (Logger logger : loggers) {
             logger.setCountErrorBool(false);
-            logger.closeEnodeBLog(String.format("%s_%s", getMethodName(), logger.getParent().getName()));
+            logger.closeEnodeBLog(getMethodName(), logger);
             testStatistics(logger, eNodeB);
             ScenarioUtils.getInstance().scenarioStatistics(logger, eNodeB);
         }

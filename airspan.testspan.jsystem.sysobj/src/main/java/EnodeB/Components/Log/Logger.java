@@ -17,9 +17,9 @@ import Utils.GeneralUtils;
 import Utils.Properties.TestspanConfigurationsManager;
 
 public class Logger implements Runnable {
+	public final Object lock = new Object();
+	private static final String LOG_INTERVAL_PROPERTY_NAME = "logger.logInterval"; // value in milliseconds.
 
-	private static final String LOG_INTERVAL_PROPERTY_NAME           = "logger.logInterval"; // value in milliseconds.
-	
 	//eventId for the logger events
 	private static int eventID = 0;
 	private boolean countErrorBool;
@@ -30,17 +30,17 @@ public class Logger implements Runnable {
 	private boolean isLogging;
 	private HashMap<String, Integer> scenarioLoggerCounters;
 	private HashMap<String, Integer> testLoggerCounters;
-		
+
 	private String name;
 	private Reporter reporter;
-	
+
 	private long logInterval;
-	
+
 	private ArrayList<Session> loggedSessions;
-	
+
 	private LogWriter logWriterEnb;
 	private LogWriter logWriterAuto;
-	
+
 	private ArrayList<LogListener> listeners;
 	private Pattern pattern = null;
 
@@ -51,19 +51,19 @@ public class Logger implements Runnable {
 		this.scenarioLoggerCounters = new HashMap<String, Integer>();
 		this.testLoggerCounters = new HashMap<String, Integer>();
 		this.name = parent.getName() + ".Logger";
-		
+
 		this.listeners = new ArrayList<LogListener>();
 		this.logWriterEnb = new LogWriter(this);
 		this.logWriterAuto = new LogWriter(this);
 		this.countErrorBool = false;
-		
-		try{
+
+		try {
 			pattern = Pattern.compile("\\s+(\\D*\\(\\)):(\\d+) <(.*):(.*) (ERROR)> (.*)");
-		}catch(Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 			GeneralUtils.printToConsole("Failed to compile ERROR pattern");
 		}
-		
+
 		try {
 			logInterval = Long.parseLong(TestspanConfigurationsManager.getInstance().getConfig(LOG_INTERVAL_PROPERTY_NAME));
 		} catch (Exception e) {
@@ -71,41 +71,82 @@ public class Logger implements Runnable {
 			e.printStackTrace();
 			isLogging = false;
 			Assert.fail("Logger init failed: Log interval is not configured.");
-		}		
-		
-		// Initializing the logged sessions
-		this.loggedSessions = new ArrayList<Session>();
-		
-		// Console session
-		if (sessionManager.getSerialSession() != null)
-			this.loggedSessions.add(sessionManager.getSerialSession());
-		
-		// SSH session
-		if (parent.getIpAddress() != null){ 
-			this.loggedSessions.add(sessionManager.getSSHlogSession());
-			this.loggedSessions.add(sessionManager.getDefaultSession());
 		}
-		
-		for (Session session : loggedSessions) {
-				session.setLoggedSession(true);
-				session.setEnableCliBuffer(false);
-				GeneralUtils.printToConsole("update log level from logger");
-				session.updateLogLevel();
-		}		
+
+		if (getLoggedSessions() == null) {
+			setLoggedSessions(new ArrayList<Session>());
+		}
+		synchronized (lock) {
+			addLoggedSessions(sessionManager);
+		}
+		initLoggedSessions();
 	}
-	
+
+	public synchronized ArrayList<Session> getLoggedSessions() {
+		return loggedSessions;
+	}
+
+	public synchronized void setLoggedSessions(ArrayList<Session> loggedSessions) {
+		this.loggedSessions = loggedSessions;
+	}
+
+	public synchronized void addToLoggedSessions(Session session) {
+		loggedSessions.add(session);
+	}
+
+	public synchronized void removeFromLoggedSessions(Session session) {
+		loggedSessions.remove(session);
+	}
+
+
+	/**
+	 * Init Logged Sessions if not Initialized
+	 */
+	public void initLoggedSessions() {
+		for (Session session : this.getLoggedSessions()) {
+			session.setLoggedSession(true);
+			session.setEnableCliBuffer(false);
+			GeneralUtils.printToConsole("update log level from logger");
+			session.updateLogLevel();
+		}
+	}
+
+	/**
+	 * Add the Logged Sessions from sessionManager to loggedSessions Array - in order to stream from them in logger thread
+	 * Adding just in case they are not in the array.
+	 *
+	 * @param sessionManager - sessionManager
+	 */
+	public void addLoggedSessions(SessionManager sessionManager) {
+		// Console session
+		if (sessionManager.getSerialSession() != null && (!getLoggedSessions().contains(sessionManager.getSerialSession()))) {
+			addToLoggedSessions(sessionManager.getSerialSession());
+		}
+		// SSH sessions
+		if (parent.getIpAddress() != null) {
+			if (sessionManager.getSSHlogSession() != null && (!getLoggedSessions().contains(sessionManager.getSSHlogSession()))) {
+				addToLoggedSessions(sessionManager.getSSHlogSession());
+			}
+			if (sessionManager.getSSHCommandSession() != null && (!getLoggedSessions().contains(sessionManager.getSSHCommandSession()))) {
+				addToLoggedSessions(sessionManager.getSSHCommandSession());
+			}
+		}
+	}
+
 	/**
 	 * Adds a log listener the the logger
+	 *
 	 * @param listener the listener
 	 */
 	public void addLogListener(LogListener listener) {
-		synchronized (listeners) { 
+		synchronized (listeners) {
 			listeners.add(listener);
 		}
 	}
-	
+
 	/**
 	 * Invokes the getLogLine action on all listeners.
+	 *
 	 * @param line the log line.
 	 */
 	private void invokeListeners(String line) {
@@ -114,49 +155,43 @@ public class Logger implements Runnable {
 				LoggerEvent event = new LoggerEvent(this, line, eventID++ , "");
 				if (eventID == Integer.MAX_VALUE)
 					eventID = 0;
-				
+
 				listener.getLogLine(event);
 			}
 		}
 	}
-	
+
 	/**
-	 * Clears the counted log lines counters. 
-	 */
-	public void clearCounters() {
-		scenarioLoggerCounters.clear();
-	}
-	
-	/**
-	 * Clears the counted log lines counters. 
+	 * Clears the counted log lines counters.
 	 */
 	public void clearTestCounters() {
 		testLoggerCounters.clear();
 	}
-			
+
 	/**
 	 * Turns a log into an array of log lines.
+	 *
 	 * @param log a string containing the log
 	 * @return an array of log lines.
 	 */
-	public String[] processLines(String log) {	
+	public String[] processLines(String log) {
 		if (!log.trim().isEmpty()) {
 			String[] lines = log.split("\n");
 			Calendar receivedDate = Calendar.getInstance();
-			String timestamp =  String.format("%02d/%02d/%04d %02d:%02d:%02d:%03d    ::    ", receivedDate.get(Calendar.DAY_OF_MONTH), receivedDate.get(Calendar.MONTH) + 1 /*because January=0*/, 
-					receivedDate.get(Calendar.YEAR), receivedDate.get(Calendar.HOUR_OF_DAY), 
-		            receivedDate.get(Calendar.MINUTE),receivedDate.get(Calendar.SECOND), 
+			String timestamp =  String.format("%02d/%02d/%04d %02d:%02d:%02d:%03d    ::    ", receivedDate.get(Calendar.DAY_OF_MONTH), receivedDate.get(Calendar.MONTH) + 1 /*because January=0*/,
+					receivedDate.get(Calendar.YEAR), receivedDate.get(Calendar.HOUR_OF_DAY),
+		            receivedDate.get(Calendar.MINUTE),receivedDate.get(Calendar.SECOND),
 					receivedDate.get(Calendar.MILLISECOND));
 			for (int i = 0; i < lines.length; i++) {
 				lines[i] = timestamp + lines[i];
 			}
 			return lines;
 		}
-			
+
 		return new String[0];
 	}
-	
-	
+
+
 	/**
 	 * Starts the logger
 	 */
@@ -179,57 +214,92 @@ public class Logger implements Runnable {
 			Thread.sleep(2 * logInterval);
 		} catch (Exception e) {}
 	}
-	
+
 	@Override
 	public void run() {
+		long threadId = Thread.currentThread().getId();
+		GeneralUtils.printToConsole("**DEBUG2: Logger Thread ID# " + threadId + " is doing this task");
 		isLogging = true;
 		System.out.printf("[%s]: logger thread started. \n", name);
-		
 		startLog(logFilePath);
-			
 		while (isLogging) {
-			String[] buffers = new String[loggedSessions.size()];
-			for (int sessionIndx = 0; sessionIndx < loggedSessions.size(); sessionIndx++) {
-				Session session = loggedSessions.get(sessionIndx);
-						
-				String buffer = session.getLoggerBuffer();
-				buffers[sessionIndx] = buffer;
-	
-				String[] lines = processLines(buffer);
-				for (String logLine : lines) 
-				{
-					if (logLine == null || logLine.length() == 0) {
-						continue;
-					}				
-					
-					if (session.getName().contains(SessionManager.SSH_COMMANDS_SESSION_NAME))
-						logWriterAuto.writeLog(logLine, "", session.getName());
-					else
-						logWriterEnb.writeLog(logLine, "", session.getName());
-					
-					invokeListeners(logLine);					
-				}
-				if(countErrorBool && session.getName().contains(SessionManager.SSH_LOG_SESSION_NAME))
-					analyzeLine(buffer);				
-			}
-			GeneralUtils.unSafeSleep(logInterval);
-
-			// Stop logger if it's not needed.
-			if (logWriterEnb.size() == 0 && logWriterAuto.size() == 0 && listeners.size() == 0) {
-				System.out.printf("[%s]: No log files are logged and no listeners registered, this is maybe an error. stopping logger.", name);
-				stop();
-			}
-					
-			// Stop logger if there are no logged sessions
-			if (loggedSessions.size() == 0) {
-				System.err.printf("[%s]: There are no logged session connected to the logger.\n", name);
-				stop();
+			synchronized (lock) {
+				streamLogsLoop();
 			}
 		}
 		System.out.printf("[%s]: Logger was stopped.\n", getName());
 		isLogging = false;
 		logWriterEnb.closeAll();
 		logWriterAuto.closeAll();
+	}
+
+	/**
+	 * stream Logs Loop Processes log lines while isLogging param is true.
+	 * This method protected with lock param, so open sessions can be added to loggedSessions Array while this thread runs.
+	 */
+	public void streamLogsLoop() {
+		String[] buffers = new String[getLoggedSessions().size()];
+		for (int sessionIndx = 0; sessionIndx < getLoggedSessions().size(); sessionIndx++) {
+			Session session = getLoggedSessions().get(sessionIndx);
+			String buffer = session.getLoggerBuffer();
+			buffers[sessionIndx] = buffer;
+			String[] lines = processLines(buffer);
+			for (String logLine : lines) {
+				if (logLine == null || logLine.length() == 0) {
+					continue;
+				}
+				writeLogLine(session, logLine);
+				invokeListeners(logLine);
+			}
+			analyzeLogLineIfNeeded(session, buffer);
+		}
+		GeneralUtils.unSafeSleep(logInterval);
+		stopIfLogWritersEmpty();
+		stopIfLoggedSessionArrayEmpty();
+	}
+
+	/**
+	 * write Log Line to logWriterAuto / logWriterEnb
+	 *
+	 * @param session - session
+	 * @param logLine - logLine
+	 */
+	private void writeLogLine(Session session, String logLine) {
+		if (session.getName().contains(SessionManager.SSH_COMMANDS_SESSION_NAME))
+			logWriterAuto.writeLog(logLine, "", session.getName());
+		else
+			logWriterEnb.writeLog(logLine, "", session.getName());
+	}
+
+	/**
+	 * analyze Line If it is SSH log Session and countErrorBool==true
+	 *
+	 * @param session - session
+	 * @param buffer  - buffer
+	 */
+	private void analyzeLogLineIfNeeded(Session session, String buffer) {
+		if (countErrorBool && session.getName().contains(SessionManager.SSH_LOG_SESSION_NAME))
+			analyzeLine(buffer);
+	}
+
+	/**
+	 * Stop logger if there are no logged sessions
+	 */
+	private void stopIfLoggedSessionArrayEmpty() {
+		if (getLoggedSessions().size() == 0) {
+			System.err.printf("[%s]: There are no logged session connected to the logger.\n", name);
+			stop();
+		}
+	}
+
+	/**
+	 * Stop logger if it's not needed.
+	 */
+	private void stopIfLogWritersEmpty() {
+		if (logWriterEnb.size() == 0 && logWriterAuto.size() == 0 && listeners.size() == 0) {
+			System.out.printf("[%s]: No log files are logged and no listeners registered, this is maybe an error. stopping logger.", name);
+			stop();
+		}
 	}
 
 	private void analyzeLine(String buffer) {
@@ -239,7 +309,7 @@ public class Logger implements Runnable {
 			String key = "";
 			if(pattern == null){
 				try{
-					pattern = Pattern.compile("\\s+(\\D*\\(\\)):(\\d+) <(.*):(.*) (ERROR)> (.*)");								
+					pattern = Pattern.compile("\\s+(\\D*\\(\\)):(\\d+) <(.*):(.*) (ERROR)> (.*)");
 				}catch(Exception e){
 					e.printStackTrace();
 					GeneralUtils.printToConsole("Failed to compile ERROR pattern");
@@ -250,7 +320,7 @@ public class Logger implements Runnable {
 				line = line.trim();
 				match = null;
 				if(pattern!=null){
-					match = pattern.matcher(line);			
+					match = pattern.matcher(line);
 				}
 				key = "";
 				if(match!=null){
@@ -260,7 +330,7 @@ public class Logger implements Runnable {
 						severity+="ERROR";
 					}
 				}
-				
+
 				if(!key.equals("")){
 					key+=severity;
 					if (scenarioLoggerCounters.get(key) == null) {
@@ -270,57 +340,116 @@ public class Logger implements Runnable {
 						int count = scenarioLoggerCounters.get(key) + 1; // increase log line count.
 						scenarioLoggerCounters.put(key, count);
 					}
-							
+
 					if (testLoggerCounters.get(key) == null) {
 						testLoggerCounters.put(key, 1); // put the initial value of "1" of new counted log lines.
 					}
 					else {
 						int count = testLoggerCounters.get(key) + 1; // increase log line count.
 						testLoggerCounters.put(key, count);
-					}		
+					}
 				}
 			}
 		}
 	}
-	
+
 	/**
-	 * Add new files to be logged. 
+	 * Add new files to be logged.
 	 * This method will add a file for the <b>console</b>
-	 * @param logName 
+	 *
+	 * @param logName
 	 */
 	public void startLog(String logName) {
 		System.out.printf("[%s]: Creating log files. \n", name);
-		
-		if (loggedSessions.size() < 1)
+		if (getLoggedSessions().size() < 1)
 			System.err.printf("[%s]: There are no log needed for this. Not creating any log files. \n", name);
-		else		{
-			for (Session session : loggedSessions)
-			{
-				if (session.getName().contains(SessionManager.SSH_COMMANDS_SESSION_NAME)) 
-					logWriterAuto.addLog(logName, session.getName());				
-				else
-					logWriterEnb.addLog(logName, session.getName());
+		else {
+			for (Session session : getLoggedSessions()) {
+				if (!session.isSessionStreamsForLogAction()) {
+					if (session.getName().contains(SessionManager.SSH_COMMANDS_SESSION_NAME))
+						logWriterAuto.addLog(logName, session.getName());
+					else
+						logWriterEnb.addLog(logName, session.getName());
+				}
 			}
-			
 		}
 	}
-	
+
+	/**
+	 * Add new files to be logged - just to logWriterEnb, for Logs Action
+	 * This method will add a file for the <b>console</b>
+	 *
+	 * @param logName - logName
+	 */
+	public void startEnodeBLog(String logName, String prefix) {
+		System.out.printf("[%s]: Creating log files. \n", name);
+		if (getLoggedSessions().size() < 1)
+			System.err.printf("[%s]: There are no log needed for this. Not creating any log files. \n", name);
+		else {
+			logWriterEnb.addLog(logName, prefix);
+		}
+	}
+
 	/**
 	 * Closes the log files that contains the logName and copies them to the test folder via the reporter.
-	 * @param logName
+	 *
+	 * @param logName - logName
 	 */
 	public void closeEnodeBLog(String logName) {
 		logWriterEnb.closeLog(logName);
 	}
-	
+
 	/**
 	 * Closes the log files that contains the logName and copies them to the test folder via the reporter.
-	 * @param logName
+	 * *This method won't close logs that streams to Log Action
+	 *
+	 * @param methodName - enBName_SessionType (i.e Velocity44_CommandSession)
+	 * @param logger - logger
 	 */
-	public void closeAutoLog(String logName) { 
+	public void closeEnodeBLog(String methodName, Logger logger) {
+		String requestedFileToClose = String.format("%s_%s", methodName, logger.getParent().getName());
+		ArrayList<Session> loggedSessions = logger.getLoggedSessions();
+		if (isLogFileStreamsForLogAction(requestedFileToClose, loggedSessions)) return;
+		logWriterEnb.closeLog(requestedFileToClose);
+	}
+
+	/**
+	 * Loop on all the logged session of an Enb and check if the requested file to close is being used by Logs Action - if so - don't close it.
+	 *
+	 * @param requestedFileToClose - requestedFileToClose
+	 * @param loggedSessions - loggedSessions
+	 *
+	 * @return - true if being used by Log Action
+	 */
+	private boolean isLogFileStreamsForLogAction(String requestedFileToClose, ArrayList<Session> loggedSessions) {
+		for (Session loggedSession : loggedSessions) {
+			if (requestedFileToClose.contains(loggedSession.getName()) &&
+					loggedSession.isSessionStreamsForLogAction()){
+				return true;
+			}
+		}
+		return false;
+	}
+
+
+	/**
+	 * Closes the log files that contains the logName and copies them to the test folder via the reporter.
+	 *
+	 * @param logName - logName
+	 */
+	public void closeEnodeBLog(String logName, String prefix) {
+		logWriterEnb.closeLog(logName, prefix);
+	}
+
+	/**
+	 * Closes the log files that contains the logName and copies them to the test folder via the reporter.
+	 *
+	 * @param logName - logName
+	 */
+	public void closeAutoLog(String logName) {
 		logWriterAuto.closeLog(logName);
 	}
-	
+
 	public void closeAllLogFiles() {
 		logWriterEnb.closeAll();
 		logWriterAuto.closeAll();
@@ -328,6 +457,7 @@ public class Logger implements Runnable {
 
 	/**
 	 * Get the parent component of the logger
+	 *
 	 * @return
 	 */
 	public EnodeBComponent getParent() {
@@ -337,6 +467,7 @@ public class Logger implements Runnable {
 
 	/**
 	 * Get the reporter instance the logger uses.
+	 *
 	 * @return
 	 */
 	public Reporter getReporter() {
@@ -362,11 +493,11 @@ public class Logger implements Runnable {
 				listeners.remove(listener);
 		}
 	}
-	
+
 	public void setCountErrorBool(boolean countErrorBool) {
 		this.countErrorBool = countErrorBool;
 	}
-	
+
 	/**
 	 * Get the log interval in millis.
 	 * @return
@@ -374,7 +505,7 @@ public class Logger implements Runnable {
 	public long getLogInterval(){
 		return logInterval;
 	}
-	
+
 	public boolean isLogging() {
 		return isLogging;
 	}
@@ -394,7 +525,7 @@ public class Logger implements Runnable {
 	public void setTestLoggerCounters(HashMap<String, Integer> testLoggerCounters) {
 		this.testLoggerCounters = testLoggerCounters;
 	}
-	
+
 	public class LoggerError{
 		private String function;
 		private String lineNumber;
@@ -418,11 +549,11 @@ public class Logger implements Runnable {
 		public boolean equals(LoggerError other) {
 			return process.equals(other.getProcess()) && client.equals(other.getClient());
 		}
-		
+
 		public String getKey(){
 			return process+":"+client;
 		}
-		
+
 		public String getClient() {
 			return client;
 		}
@@ -434,7 +565,7 @@ public class Logger implements Runnable {
 		public String getFunction() {
 			return function;
 		}
-		
+
 		public String getLineNumber() {
 			return lineNumber;
 		}
@@ -446,7 +577,7 @@ public class Logger implements Runnable {
 		public String getErrorString() {
 			return errorString;
 		}
-		
+
 		public int getCounter() {
 			return counter;
 		}

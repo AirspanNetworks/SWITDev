@@ -326,7 +326,7 @@ public class TrafficAction extends Action {
 	public void startTraffic() {
 		GeneralUtils.startLevel("Parameters for start traffic");
 		if (!validateParams()){
-			GeneralUtils.stopLevel();			
+			GeneralUtils.stopLevel();
 			return;
 		}
 		tptCalculation();

@@ -235,18 +235,18 @@ public class Status extends EnodebAction {
 	@TestProperties(name = "Verify UE Categoty", returnParam = "LastStatus", paramsInclude = { "DUT", "Category", "Direction", "ExpectedUEInCategory"})
 	public void verifyUEConnectedCategory() {
 		
-		NetspanServer netspnan;
+		NetspanServer netspan;
 		List<MutablePair<ConnectedUETrafficDirection,Integer>> MarkUpList = new ArrayList<>();
 		HashMap<ConnectedUETrafficDirection, HashMap<Integer, Integer>> connectionTable = null;
 		
 		try {
 			GeneralUtils.startLevel("Test verifyUEConnectedCategory: Category " + getCategory() + " expecting " + getExpectedUEInCategory() + " UE's");
 			report.report(String.format("NetSpan: %s", this.dut));
-			netspnan = NetspanServer.getInstance();
-			connectionTable = netspnan.getUeConnectedPerCategory(this.dut);
+			netspan = NetspanServer.getInstance();
+			connectionTable = netspan.getUeConnectedPerCategory(this.dut);
 			
 			if(!connectionTable.containsKey(this.Direction)) {
-				report.report("Desired Direction " + this.Direction + " not exists; check test configuration", Reporter.WARNING);
+				report.report("Desired Direction " + this.Direction + " not exists; check test configuration", Reporter.FAIL);
 				return;
 			}
 			
@@ -275,10 +275,10 @@ public class Status extends EnodebAction {
 	private static String CategoryMapToHTML(HashMap<ConnectedUETrafficDirection, HashMap<Integer, Integer>> connectionTable, String fail_color, List<MutablePair<ConnectedUETrafficDirection, Integer>> pairs) {
 		
 		StringBuffer result_data = new StringBuffer();
-		StringBuffer result_header = new StringBuffer("<tr><td>Category</td>");
+		StringBuffer result_header = new StringBuffer("<tr>\n\t<td>Category</td>\n");
 		boolean header_ready = false;
 		for(ConnectedUETrafficDirection direction : connectionTable.keySet() ) {
-			result_data.append("<tr><td>" + direction.toString() + "</td>");
+			result_data.append("<tr>\n\t<td>" + direction.toString() + "</td>\n");
 			for(Integer category : connectionTable.get(direction).keySet() ) {
 				boolean signForColor = false;
 				for(Pair<ConnectedUETrafficDirection,Integer> pair : pairs) {
@@ -288,13 +288,13 @@ public class Status extends EnodebAction {
 					}		
 				}
 				if(signForColor) {
-					result_data.append("<td><font color=\"" + fail_color + "\">" + connectionTable.get(direction).get(category) + "</font></td>");
+					result_data.append("\t<td><font color=\"" + fail_color + "\">" + connectionTable.get(direction).get(category) + "</font></td>\n");
 					if(!header_ready)
-						result_header.append("<th><font color=\"" + fail_color + "\">" + category.toString() + "</font></th>");
+						result_header.append("\t<th><font color=\"" + fail_color + "\">" + category.toString() + "</font></th>\n");
 				}else {
 					if(!header_ready)
-						result_header.append("<th>" + category.toString() + "</th>");
-					result_data.append("<td>" + connectionTable.get(direction).get(category) + "</td>");
+						result_header.append("\t<th>" + category.toString() + "</th>\n");
+					result_data.append("\t<td>" + connectionTable.get(direction).get(category) + "</td>\n");
 				}
 			}
 			result_data.append("</tr>\n");

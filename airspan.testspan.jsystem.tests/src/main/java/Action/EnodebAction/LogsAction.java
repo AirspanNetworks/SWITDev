@@ -133,6 +133,12 @@ public class LogsAction extends EnodebAction {
 		this.inputClient = inputClient;
 	}
 
+	/**
+	 * This Action start EnodeB logs according to user's request.
+	 * Session Type: SSH / Serial / Both
+	 * Log Level: 1 - 6 (Default value is 6)
+	 * Modules: All / Specific Module (Specific Process and Client)
+	 */
 	@Test
 	@TestProperties(
 			name = "Start EnodeB Logs",
@@ -150,6 +156,10 @@ public class LogsAction extends EnodebAction {
 		}
 	}
 
+	/**
+	 * This Action stops EnodeB logs according to user's request.
+	 * The logs must be started first with "startEnodeBLogs" Action.
+	 */
 	@Test
 	@TestProperties(
 			name = "Stop EnodeB Logs",

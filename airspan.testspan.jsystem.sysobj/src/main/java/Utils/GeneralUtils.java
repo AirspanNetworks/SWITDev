@@ -104,13 +104,24 @@ public class GeneralUtils {
     }
     
     public static boolean unSafeSleep(long timeInMS) {
-        try {
-            Thread.sleep(timeInMS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
+    	if(timeInMS>40*60*1000){
+    		try {
+                Thread.sleep(40*60*1000);
+                report.report("Waited 40 minutes. Reporting to not lose connection to report");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                return false;
+            }
+    		return unSafeSleep(timeInMS - 40*60*1000);
+    	}else{
+    		try {
+                Thread.sleep(timeInMS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                return false;
+            }
+            return true;
+    	}
     }
 
     public static int milisToMinutes(long milis) {

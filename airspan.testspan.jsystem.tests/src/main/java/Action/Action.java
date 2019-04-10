@@ -28,7 +28,7 @@ public class Action extends SystemTestCase4 {
 	@Before
 	public void init() {
 		myVersion = getVersion();
-		report.setContainerProperties(0, "Version", myVersion);
+		report.setContainerProperties(0, "AutoVersion", myVersion);
 	}
 
 	@After

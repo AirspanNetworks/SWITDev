@@ -234,7 +234,6 @@ public class UeAction extends Action {
 			dm.addEventListener(evl);
 			report.report("Enable events of type " + eventType);
 			dm.enableEvents(new int[] { eventType.getEventType() });
-			report.report(ue.getName() + "showMeas: " + dm.cli("showMeas"));
 			report.report("Expected event name is: " + eventName);
 			report.report("Expected event payload is: " + payload);
 			GeneralUtils.stopLevel();

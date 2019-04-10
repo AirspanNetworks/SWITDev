@@ -167,7 +167,7 @@ public class P0 extends TestspanTest {
 		report.report("UE IP: " + choosenUE.getLanIpAddress() );
 		dm.setPORT(choosenUE.getDMToolPort());
 		report.report("UE Port: " + choosenUE.getDMToolPort());
-		dm.addlistenertoEvents(evt);
+		// dm.addlistenertoEvents(evt);
 		GeneralUtils.unSafeSleep(5000);
 		try {
 			dm.init();
@@ -275,7 +275,7 @@ public class P0 extends TestspanTest {
 	public class EvtLis extends EvtClient{
 		boolean eventHappened = false;
 		@Override
-		public void Evt(short[] payload, long evtSeqNumber) {
+		public void Evt(short[] payload) {
 			// this is repesents hex to short of the RRC payload
 			// (10001212556f182004330e4681000002008857d915448c000380) in the TP
  			short[] expected = new short[] { 16, 0, 18, 18, 85, 111, 24, 32, 4, 51, 14, 70, -127, 0, 0, 2, 0, -120, 87, -39,

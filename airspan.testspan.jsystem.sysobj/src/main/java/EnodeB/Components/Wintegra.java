@@ -26,11 +26,6 @@ public class Wintegra extends EnodeBComponent {
 	/** The Constant TNET_DATA_DELIMITER. */
 	public static final String TNET_DATA_DELIMITER = "=";
 
-	/*
-	 * (non-Javadoc)
-	 * @see EnodeB.Components.EnodeBUpgradableComponent#init()
-	 */
-	@ Override
 	public void init() throws Exception {
 		setName(getParent().getName() + "_Wintegra");
 		super.init();

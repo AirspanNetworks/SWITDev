@@ -110,11 +110,10 @@ public abstract class XLP extends EnodeBComponent {
     /**
      * (non-Javadoc)
      *
-     * @see EnodeB.Components.EnodeBComponent#init() init & connecting to
+     * @see EnodeB.Components.EnodeBComponent# & connecting to
      * serialCom. then connecting via SSH, if fails get the serialCom ,
      * insure that the XLP is in running state.
      */
-    @Override
     public void init() throws Exception {
         setUserNameAndPassword();
         // init & connecting to serialCom. then connecting via SSH, if fails get
@@ -547,12 +546,25 @@ public abstract class XLP extends EnodeBComponent {
      */
     @Override
     public void setSessionLogLevel(String sessionName, int level) {
-        sendCommandsOnSession(sessionName, LTE_CLI_PROMPT, "logger threshold set client=* process=* cli=" + level, LTE_CLI_PROMPT);
-
+        sendCommandsOnSession(sessionName, LTE_CLI_PROMPT, "logger threshold set client=* process=* cli=" + String.valueOf(level), LTE_CLI_PROMPT);
     }
 
     public void setSessionLogLevel(String client, String process, int level) {
-        sendCommandsOnSession(SessionManager.SSH_SESSION_NAME, LTE_CLI_PROMPT, String.format("logger threshold set client=%s process=%s cli=%s", client, process, level), LTE_CLI_PROMPT);
+        sendCommandsOnSession(SessionManager.SSH_SESSION_NAME, LTE_CLI_PROMPT, String.format("logger threshold set client=%s process=%s cli=%s", client, process, String.valueOf(level)), LTE_CLI_PROMPT);
+    }
+
+    /**
+     * set SSH Session Log Level - cli
+     *
+     * @see EnodeB.Components.EnodeBComponent#setSessionLogLevel
+     * @param sessionName the session name
+     * @param client - client
+     * @param process - process
+     * @param level       the level
+     */
+    @Override
+    public void setSessionLogLevel(String sessionName,String client, String process, int level) {
+        sendCommandsOnSession(sessionName, LTE_CLI_PROMPT, String.format("logger threshold set client=%s process=%s cli=%s", client, process, String.valueOf(level)), LTE_CLI_PROMPT);
     }
 
     /**
@@ -1343,7 +1355,7 @@ public abstract class XLP extends EnodeBComponent {
             if (snmp.snmpSet(oid, requestedVersion)) {
                 reboot();
             } else
-                report("The ENodeB: " + this.getName() + " Could not be Restarted");
+                report.report("The ENodeB: " + this.getName() + " Could not be Restarted");
         } catch (Exception e) {
         }
     }

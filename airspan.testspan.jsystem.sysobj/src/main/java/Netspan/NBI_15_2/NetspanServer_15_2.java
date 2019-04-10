@@ -143,8 +143,10 @@ import Netspan.NBI_15_2.Status.LteUeGetResult;
 import Netspan.NBI_15_2.Status.LteUeStatusWs;
 import Netspan.NBI_15_2.Status.NodePtpGetResult;
 import Netspan.NBI_15_2.Status.NodeSoftwareGetResult;
+import Netspan.NBI_15_2.Status.StatusSoap;
 import Netspan.Profiles.CellAdvancedParameters;
 import Netspan.Profiles.CellBarringPolicyParameters;
+import Netspan.Profiles.ConnectedUETrafficDirection;
 import Netspan.Profiles.EnodeBAdvancedParameters;
 import Netspan.Profiles.INetspanProfile;
 import Netspan.Profiles.ManagementParameters;
@@ -2276,12 +2278,14 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
     }
 
     @Override
-    public HashMap<Integer, Integer> getUeConnectedPerCategory(EnodeB enb) {
-        LteUeGetResult lteUeGetResult;
-        HashMap<Integer, Integer> ret = new HashMap<>();
+    public HashMap<ConnectedUETrafficDirection, HashMap<Integer, Integer>> getUeConnectedPerCategory(EnodeB enb) {
+    	LteUeGetResult lteUeGetResult;
+        HashMap<Integer, Integer> res = new HashMap<>();
+        HashMap<ConnectedUETrafficDirection, HashMap<Integer, Integer>> ret = new HashMap<>();
+        
         try {
-            lteUeGetResult = soapHelper_15_2.getStatusSoap()
-                .enbConnectedUeStatusGet(enb.getNetspanName(), credentialsStatus);
+        	StatusSoap status = soapHelper_15_2.getStatusSoap();
+        	lteUeGetResult = status.enbConnectedUeStatusGet(enb.getNetspanName(), credentialsStatus);
             if (lteUeGetResult.getErrorCode() != Netspan.NBI_15_2.Status.ErrorCodes.OK) {
                 report.report("enbConnectedUeStatusGet via Netspan Failed : " + lteUeGetResult.getErrorString(),
                     Reporter.WARNING);
@@ -2290,9 +2294,11 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
             for (LteUeStatusWs currentCell : lteUeGetResult.getCell()) {
                 if (currentCell.getCellId().getValue() == enb.getCellContextID()) {
                     List<LteUeCategory> catDataList = currentCell.getCategoryData();
+
                     for (LteUeCategory catData : catDataList) {
-                        ret.put(catData.getCategory().getValue(), catData.getConnectedUes().getValue());
+                        res.put(catData.getCategory().getValue(), catData.getConnectedUes().getValue());
                     }
+                    ret.put(ConnectedUETrafficDirection.ALL, res);
                     GeneralUtils.printToConsole(
                         "enbConnectedUeStatusGet via Netspan for eNodeB " + enb.getNetspanName() + " succeeded");
                     return ret;
@@ -2301,7 +2307,7 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
         } catch (Exception e) {
             report.report("enbConnectedUeStatusGet via Netspan Failed due to: " + e.getMessage(), Reporter.WARNING);
             e.printStackTrace();
-            return new HashMap<Integer, Integer>();
+            return new HashMap<ConnectedUETrafficDirection, HashMap<Integer, Integer>>();
         } finally {
             soapHelper_15_2.endStatusSoap();
         }
@@ -4439,7 +4445,7 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
 
 	@Override
 	public boolean relayScan(EnodeB enodeB, RelayScanType scanType) {
-		report.report("relayScan function is not implemented for this netspan(15_2)!");
+		// TODO Auto-generated method stub
 		return false;
 	}
 }

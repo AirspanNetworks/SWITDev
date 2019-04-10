@@ -2,13 +2,12 @@ package EnodeB.Components.Session;
 
 import java.util.ArrayList;
 
-import EnodeB.Components.DAN;
 import EnodeB.Components.EnodeBComponent;
 import Utils.GeneralUtils;
 import Utils.Properties.TestspanConfigurationsManager;
 
 public class SessionManager {
-	public static final String CONSOLE_SESSION_NAME = "Serial";
+	public static final String SERIAL_SESSION_NAME = "Serial";
 	public static final String SSH_SESSION_NAME = "SSH";
 	public static final String SSH_LOG_SESSION_NAME = "SSHlogSession";
 	public static final String SSH_COMMANDS_SESSION_NAME = "CommandsSession";
@@ -18,7 +17,7 @@ public class SessionManager {
 	private final static String COMMAND_LOG_LEVEL_PROPERTY_NAME = "logger.commandSessionLogLevel";
 	private final static int LOG_LEVEL_NO_VALUE = -2;
 	private ArrayList<Session> sessions;
-	private Session defaultSession;
+	private Session SSHCommandSession;
 	private Session SSHlogSession;
 	private Session serialSession;
 	private EnodeBComponent enodeBComponent;
@@ -29,62 +28,86 @@ public class SessionManager {
 		this.enodeBComponent = enodeBComponent;
 		this.sessions = new ArrayList<Session>();
 	}
-	
-	public void init()
-	{
-		try {
-			SSHlogLevel = Integer
-					.parseInt(TestspanConfigurationsManager.getInstance().getConfig(LOG_LEVEL_PROPERTY_NAME));
-		} catch (Exception e) {
-			GeneralUtils.printToConsole(
-					"Log level is not defined in testpan.properties file. Can't set sessions log level!");
-			SSHlogLevel = LOG_LEVEL_NO_VALUE; // property doesn't exist so
-											// don't use it.
+
+	/**
+	 * open Serial Log Session
+	 */
+	public void openSerialLogSession() {
+		serialLogLevel = setDefaultCommandSessionLevelFromPropFile(CONSOLE_LOG_LEVEL_PROPERTY_NAME);
+		if (enodeBComponent.serialCom != null){
+			openSerialSession();
+//			if(SSHCommandSession == null && getEnodeBComponent() instanceof DAN){
+//				SSHCommandSession = getSerialSession();
+//			}
 		}
-		try {
-			serialLogLevel = Integer.parseInt(
-					TestspanConfigurationsManager.getInstance().getConfig(CONSOLE_LOG_LEVEL_PROPERTY_NAME));
-		} catch (Exception e) {
-			GeneralUtils.printToConsole(
-					"Console Log level is not defined in testpan.properties file. Can't set sessions log level!");
-			serialLogLevel = LOG_LEVEL_NO_VALUE; // property doesn't exist
-													// so don't use it.
-		}	
-		try {
-			commandsLogLevel = Integer.parseInt(
-					TestspanConfigurationsManager.getInstance().getConfig(COMMAND_LOG_LEVEL_PROPERTY_NAME));
-		} catch (Exception e) {
-			GeneralUtils.printToConsole(
-					"Console Log level is not defined in testpan.properties file. Can't set sessions log level!");
-			commandsLogLevel = LOG_LEVEL_NO_VALUE; // property doesn't exist
-													// so don't use it.
-		}	
-		
-		
-		
-		String sessionName = openSession(getEnodeBComponent().getName() + "_" + SSH_COMMANDS_SESSION_NAME, commandsLogLevel);
-		if (sessionName != null)
-			defaultSession = getSession(sessionName);
-		
-		sessionName = openSession(getEnodeBComponent().getName() + "_" + SSH_LOG_SESSION_NAME, SSHlogLevel);
+	}
+
+	/**
+	 * open Serial Log Session with specific log level
+	 *
+	 * @param logLevel
+	 */
+	public void openSerialLogSession(int logLevel) {
+		serialLogLevel = logLevel;
+		if (enodeBComponent.serialCom != null){
+			openSerialSession();
+		}
+	}
+
+	/**
+	 * open SSH Log Session
+	 *
+	 * @param logLevel
+	 */
+	public void openSSHLogSession(int logLevel) {
+		SSHlogLevel = logLevel;
+		String sessionName = openSession(getEnodeBComponent().getName() + "_" + SSH_LOG_SESSION_NAME, SSHlogLevel);
 		if (sessionName != null)
 		{
 			SSHlogSession = getSession(sessionName);
 			SSHlogSession.setShouldStayInCli(true);
 		}
+	}
 
-		if (enodeBComponent.serialCom != null){
-			openConsoleSession();
-			if(defaultSession == null && getEnodeBComponent() instanceof DAN){
-				defaultSession = getSerialSession();
-			}
+	/**
+	 * open SSH Log Session
+	 */
+	public void openSSHLogSession() {
+		SSHlogLevel = setDefaultCommandSessionLevelFromPropFile(LOG_LEVEL_PROPERTY_NAME);
+		String sessionName = openSession(getEnodeBComponent().getName() + "_" + SSH_LOG_SESSION_NAME, SSHlogLevel);
+		if (sessionName != null)
+		{
+			SSHlogSession = getSession(sessionName);
+			SSHlogSession.setShouldStayInCli(true);
 		}
 	}
-	
-	
-	
-	private synchronized boolean openConsoleSession() {
-		Session newConsoleSession = new Session(getEnodeBComponent().getName() + "_" + CONSOLE_SESSION_NAME, getEnodeBComponent(), getEnodeBComponent().serialCom.getSerial(), serialLogLevel);
+
+	/**
+	 * open SSH Command Session
+	 */
+	public void openSSHCommandSession() {
+		commandsLogLevel = setDefaultCommandSessionLevelFromPropFile(COMMAND_LOG_LEVEL_PROPERTY_NAME);
+		String sessionName = openSession(getEnodeBComponent().getName() + "_" + SSH_COMMANDS_SESSION_NAME, commandsLogLevel);
+		if (sessionName != null)
+			SSHCommandSession = getSession(sessionName);
+	}
+
+	/**
+	 * get the command session log level from testspan.prop if exists
+	 */
+	public int setDefaultCommandSessionLevelFromPropFile(String propTitle) {
+		int logLevel;
+		try {
+			logLevel = Integer.parseInt(TestspanConfigurationsManager.getInstance().getConfig(propTitle));
+		} catch (Exception e) {
+			GeneralUtils.printToConsole(propTitle + " is not defined in testpan.properties file. Can't set sessions log level!");
+			logLevel = LOG_LEVEL_NO_VALUE; // property doesn't exist so don't use it.
+		}
+		return logLevel;
+	}
+
+	private synchronized boolean openSerialSession() {
+		Session newConsoleSession = new Session(getEnodeBComponent().getName() + "_" + SERIAL_SESSION_NAME, getEnodeBComponent(), getEnodeBComponent().serialCom.getSerial(), serialLogLevel);
 		boolean ans = newConsoleSession.waitForSessionToConnect(SESSION_WAIT_TIMEOUT);
 		sessions.add(newConsoleSession);
 		setSerialSession(newConsoleSession);
@@ -137,7 +160,7 @@ public class SessionManager {
 
 	public void showLoginStatus() {
 		for (Session session : sessions) {
-			if (!session.getName().contains(CONSOLE_SESSION_NAME)) {
+			if (!session.getName().contains(SERIAL_SESSION_NAME)) {
 				session.showLoginStatus();
 			}			
 		}
@@ -170,7 +193,7 @@ public class SessionManager {
 	}
 
 	public synchronized String sendCommandDefaultSession(String prompt, String command, String response, int responseTimeout) {
-		return sendCommands(this.defaultSession.getName(), prompt, command, response, responseTimeout);
+		return sendCommands(this.SSHCommandSession.getName(), prompt, command, response, responseTimeout);
 	}
 
 	/** Wrapper tp sendCommands with an option to response Timeout
@@ -205,8 +228,11 @@ public class SessionManager {
 		return getEnodeBComponent().getName();
 	}
 
-	public Session getDefaultSession() {
-		return defaultSession;
+	/** Command Session
+	 * @return - SSHCommandSession
+	 */
+	public Session getSSHCommandSession() {
+		return SSHCommandSession;
 	}
 	
 	public Session getSSHlogSession() {

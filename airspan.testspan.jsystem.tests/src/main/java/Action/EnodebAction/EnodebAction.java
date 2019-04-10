@@ -61,36 +61,13 @@ public class EnodebAction extends Action {
 		boolean isCoreOccurDuringTest = false;
 
 		for (EnodeB eNodeB : enbInTest) {
-
 			report.addProperty(eNodeB.getNetspanName() + "_Version", eNodeB.getRunningVersion());
-			Logger[] loggers = eNodeB.getLoggers();
-			log.info(String.format("Closing log files for test for eNondeB %s", eNodeB.getName()));
-
-			GeneralUtils.startLevel(String.format("eNodeB %s logs", eNodeB.getName()));
-
-			for (Logger logger : loggers) {
-				logger.setCountErrorBool(false);
-			}
-
-			for (Logger logger : loggers) {
-				logger.closeEnodeBLog(String.format("%s_%s", getMethodName(), logger.getParent().getName()));
-				scenarioUtils.scenarioStatistics(logger, eNodeB);
-			}
-			GeneralUtils.stopLevel();
-
-			GeneralUtils.startLevel(String.format("eNodeB %s Automation logs", eNodeB.getName()));
-			for (Logger logger : loggers) {
-				logger.closeAutoLog(String.format("%s_%s", getMethodName(), logger.getParent().getName()));
-			}
-			GeneralUtils.stopLevel();
-
+			closeLogsFiles(eNodeB);
 			setUnexpectedRebootStatistics(eNodeB);
-
 			if (eNodeB.isMACtoPHYEnabled()) {
 				eNodeB.disableMACtoPHYcapture();
 			}
 			eNodeB.showMACtoPHYCaptureFiles();
-
 			HashSet<String> coreSet = eNodeB.getCorePathList();
 			int coreIndex = 1;
 			String coreValue = "";
@@ -100,7 +77,6 @@ public class EnodebAction extends Action {
 				coreIndex++;
 				coreFilesPath += coreValue;
 			}
-
 			isCoreOccurDuringTest = (isCoreOccurDuringTest || eNodeB.isStateChangedToCoreDump());
 
 			// Initialize all the Parameters that refer each test individually.
@@ -122,6 +98,31 @@ public class EnodebAction extends Action {
 		}
 		GeneralUtils.printToConsole(scenarioUtils.getMemoryConsumption());
 		super.end();
+	}
+
+	private void closeLogsFiles(EnodeB eNodeB) {
+		Logger[] loggers = eNodeB.getLoggers();
+		log.info(String.format("Closing log files for test for eNondeB %s", eNodeB.getName()));
+//		closeAndGenerateEnBLogFiles(eNodeB, loggers);
+		generateAutoLogs(eNodeB, loggers);
+	}
+
+	private void generateAutoLogs(EnodeB eNodeB, Logger[] loggers) {
+		GeneralUtils.startLevel(String.format("eNodeB %s Automation logs", eNodeB.getName()));
+		for (Logger logger : loggers) {
+			logger.closeAutoLog(String.format("%s_%s", getMethodName(), logger.getParent().getName()));
+		}
+		GeneralUtils.stopLevel();
+	}
+
+	private void closeAndGenerateEnBLogFiles(EnodeB eNodeB, Logger[] loggers) {
+		GeneralUtils.startLevel(String.format("eNodeB %s logs", eNodeB.getName()));
+		for (Logger logger : loggers) {
+			logger.setCountErrorBool(false);
+			logger.closeEnodeBLog(getMethodName(),logger);
+			scenarioUtils.scenarioStatistics(logger, eNodeB);
+		}
+		GeneralUtils.stopLevel();
 	}
 
 	public void setUnexpectedRebootStatistics(EnodeB eNodeB) {

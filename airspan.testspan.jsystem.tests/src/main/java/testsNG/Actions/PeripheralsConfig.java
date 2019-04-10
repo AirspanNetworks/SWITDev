@@ -10,6 +10,7 @@ import EPC.EPC;
 import EnodeB.EnodeB;
 import Netspan.NetspanServer;
 import Netspan.API.Enums.EnbStates;
+import Netspan.Profiles.ConnectedUETrafficDirection;
 import PowerControllers.PowerControllerPort;
 import TestingServices.TestConfig;
 import UE.UE;
@@ -286,28 +287,32 @@ public class PeripheralsConfig {
 		return action;
 	}
 
-	public Integer getUeConnectionPerQCI(NetspanServer netspan, EnodeB enb, int qci) {
-		HashMap<Integer, Integer> netspanMapUeConnected = new HashMap<>();
-		netspanMapUeConnected = getUeMapFromNetspan(enb);
-		if (netspanMapUeConnected == null) {
-			return null;
-		}
-		return netspanMapUeConnected.get(qci);
-	}
+//	public Integer getUeConnectionPerQCI(NetspanServer netspan, EnodeB enb, int qci) {
+//		HashMap<ConnectedUETrafficDirection, HashMap<Integer, Integer>> netspanMapUeConnected = new HashMap<>();
+//		netspanMapUeConnected = getUeMapFromNetspan(enb);
+//		if (netspanMapUeConnected == null) {
+//			return null;
+//		}
+//		
+//		return netspanMapUeConnected.get(qci);
+//	}
+//
+//	public Integer getTotalUeConnection(EnodeB enb) {
+//		HashMap<ConnectedUETrafficDirection, HashMap<Integer, Integer>> netspanMapUeConnected = new HashMap<>();
+//		netspanMapUeConnected = getUeMapFromNetspan(enb);
+//		if (netspanMapUeConnected == null)
+//			return null;
+//		
+//		
+//		
+//		Integer sumUes = new Integer(0);
+//		for (Integer value : netspanMapUeConnected.values()) {
+//			sumUes += value;
+//		}
+//		return sumUes;
+//	}
 
-	public Integer getTotalUeConnection(EnodeB enb) {
-		HashMap<Integer, Integer> netspanMapUeConnected = new HashMap<>();
-		netspanMapUeConnected = getUeMapFromNetspan(enb);
-		if (netspanMapUeConnected == null)
-			return null;
-		Integer sumUes = new Integer(0);
-		for (Integer value : netspanMapUeConnected.values()) {
-			sumUes += value;
-		}
-		return sumUes;
-	}
-
-	private HashMap<Integer, Integer> getUeMapFromNetspan(EnodeB enb) {
+	private HashMap<ConnectedUETrafficDirection, HashMap<Integer, Integer>> getUeMapFromNetspan(EnodeB enb) {
 		return netspanServer.getUeConnectedPerCategory(enb);
 
 	}

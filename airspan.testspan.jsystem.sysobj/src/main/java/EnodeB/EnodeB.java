@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.util.*;
 
+import EnodeB.Components.Session.SessionManager;
 import org.snmp4j.smi.Variable;
 
 import EnodeB.Components.UEDist;
@@ -188,26 +189,10 @@ public abstract class EnodeB extends SystemObjectImpl {
 	public void init() throws Exception {
 		super.init();
 
-		switch (enodeBversion) {
-		case "14_5": 
-		case "15_1":
-			XLP = new XLP_14_5();	
-			break;
-		case "15_2": 
-		case "15_5": 
-			XLP = new XLP_15_2(); 
-			break;
-		case "16_0": 
-			XLP = new XLP_16_0(); 
-			break;	
-		default:
-			XLP = new XLP_15_2();
-			report.report("no enodeB version was found- setting to XLP_15.2 as default");
-			break;
-		}
+		getXLPByEnodeBVersion();
 		if (connectInfo.serialInfo != null) {
 			XLP.createSerialCom(connectInfo.serialInfo.getSerialIP(), Integer.parseInt(connectInfo.serialInfo.getSerialPort()) );
-			XLP.setSerialUsername(connectInfo.serialInfo.getUserName());	
+			XLP.setSerialUsername(connectInfo.serialInfo.getUserName());
 		}
 		XLP.setParent(this);
 		XLP.setIpAddress(connectInfo.getIpAddress());
@@ -216,7 +201,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 		if(connectInfo.getReadCommunity()!=null)
 			XLP.setReadCommunity(connectInfo.getReadCommunity());
 		if(connectInfo.getWriteCommunity()!=null)
-			XLP.setWriteCommunity(connectInfo.getWriteCommunity());		
+			XLP.setWriteCommunity(connectInfo.getWriteCommunity());
 		XLP.debugFlags = getDebugFlags();
 		XLP.hardwareName = getControlComponenetHwName();
 		XLP.setName(getName());
@@ -227,6 +212,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 			swType = 18;
 		}
 		XLP.setSWTypeInstnace(swType);
+//		XLP.setLogNeeded(!isInitCalledFromAction());
 		XLP.init();
 		if(ipsecTunnelEnabled){
 			ArrayList<EnodeB> eNodeBs = new ArrayList<EnodeB>();
@@ -236,6 +222,29 @@ public abstract class EnodeB extends SystemObjectImpl {
 			tunnelManager.safeStart();
 		}
 		XLP.printVersion();
+	}
+
+	/**
+	 * get XLP By EnodeB Version
+	 */
+	private void getXLPByEnodeBVersion() {
+		switch (enodeBversion) {
+		case "14_5":
+		case "15_1":
+			XLP = new XLP_14_5();
+			break;
+		case "15_2":
+		case "15_5":
+			XLP = new XLP_15_2();
+			break;
+		case "16_0":
+			XLP = new XLP_16_0();
+			break;
+		default:
+			XLP = new XLP_15_2();
+			report.report("no enodeB version was found- setting to XLP_15.2 as default");
+			break;
+		}
 	}
 
 	/**
@@ -1828,8 +1837,12 @@ public abstract class EnodeB extends SystemObjectImpl {
 	 public void setSessionLogLevel(String client, String process, int level) {
 		 XLP.setSessionLogLevel(client, process, level);
 	 }
-	 
-	 public int getPacketForwardingEnable(int cellId){
+
+	public void setSessionLogLevelPerProcess(String sessionName, String client, String process, int level) {
+		XLP.setSessionLogLevel( sessionName, client, process, level);
+	}
+
+	public int getPacketForwardingEnable(int cellId){
 		 return XLP.getPacketForwardingEnable(cellId);
 	 }
 	 
@@ -2258,7 +2271,11 @@ public abstract class EnodeB extends SystemObjectImpl {
 	public String getXLPName(){
 		return XLP.getName();
 	}
-	
+
+	public XLP getXLP(){
+		return XLP;
+	}
+
 	public boolean isInstanceOfXLP_14_0(){
 		return (XLP instanceof XLP_14_0);
 	}
@@ -2339,5 +2356,45 @@ public abstract class EnodeB extends SystemObjectImpl {
 	
 	public int getNumberOfCells(){
 		return XLP.getNumberOfCells();
+	}
+
+	/**
+	 * open Serial Log Session if not opened
+	 */
+	public String openSerialLogSession(EnodeB enodeB) {
+		SessionManager sessionManager = enodeB.getXLP().getSessionManager();
+		if ((sessionManager.getSerialSession() == null)){
+			enodeB.getXLP().initSerialCom();
+			sessionManager.openSerialLogSession();
+			sessionManager.getSerialSession().setLoggedSession(true);
+			sessionManager.getSerialSession().setEnableCliBuffer(false);
+		}
+		return sessionManager.getSerialSession().getName();
+	}
+
+	/**
+	 * open SSH Log Session if not opened
+	 */
+	public String openSSHLogSession(EnodeB enodeB){
+		SessionManager sessionManager = enodeB.getXLP().getSessionManager();
+		if (sessionManager.getSSHlogSession() == null) {
+			sessionManager.openSSHLogSession();
+			sessionManager.getSSHlogSession().setLoggedSession(true);
+			sessionManager.getSSHlogSession().setEnableCliBuffer(false);
+		}
+		return sessionManager.getSSHlogSession().getName();
+	}
+
+	/**
+	 * Add all the open session that opened in the eNB to loggedSessions array in order to stream through Logger thread.
+	 *
+	 * @param enodeB - enodeB
+	 */
+	public void addToLoggedSession(EnodeB enodeB){
+		SessionManager sessionManager = enodeB.getXLP().getSessionManager();
+		Logger logger = enodeB.getXLP().getLogger();
+		synchronized (logger.lockLoggedSessionList){
+			logger.addLoggedSessions(sessionManager);
+		}
 	}
 }

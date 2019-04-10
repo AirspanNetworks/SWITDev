@@ -8,7 +8,6 @@ public class Cell extends EnodeBComponent{
 	String ueListNames;
 	ArrayList<String> UEs = new ArrayList<String>();
 	
-	@Override
 	public void init() throws Exception{
 		setName(getParent().getName() + "_Cell");
 		super.init();

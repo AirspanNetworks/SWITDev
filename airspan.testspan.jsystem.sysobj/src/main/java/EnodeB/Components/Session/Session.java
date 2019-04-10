@@ -18,6 +18,14 @@ public class Session implements Runnable {
 
 	private final static long RECONNECT_TIMEOUT = 30000;
 
+	/**
+	 * Process and Client are being called in threads while the scenario is running.
+	 * Set by default to * (== Everything).
+	 * There is an option to change them to a specific Module by using theirs setters.
+	 */
+	private String process = "*";
+	private String client = "*";
+
 	private Thread reconnectionThread;
 	private String name;
 	private Terminal terminal;
@@ -31,6 +39,12 @@ public class Session implements Runnable {
 	private Cli cli;
 	private boolean loggedSession;
 	private boolean shouldStayInCli = false;
+	private boolean isSessionInitialized = false;
+
+	/**
+	 * Flag - Set to true if this session is being used by Action Log
+	 */
+	private boolean isSessionStreamsForLogAction = false;
 	
 	//lock used to allow safe login without interruption from other commands. every access to sendRawCommands should be after aquiring this
 	public Semaphore sshConnectionLock = new Semaphore(1); 
@@ -49,7 +63,6 @@ public class Session implements Runnable {
 	}
 
 	public Session(String name, EnodeBComponent enbComp, Terminal terminal, int logLevel) {
-
 		this.name = name;
 		this.terminal = terminal;
 		this.reconnect = true;
@@ -76,6 +89,38 @@ public class Session implements Runnable {
 		{
 			this.connected = true;
 		}
+	}
+
+	/**
+	 * Set process, by default it's defined in Session constructor
+	 * @param name = name
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	/**
+	 * Set process, by default it's == *
+	 * @param process = process
+	 */
+	public void setProcess(String process) {
+		this.process = process;
+	}
+
+	/**
+	 * Set client, by default it's == *
+	 * @param client = client
+	 */
+	public void setClient(String client) {
+		this.client = client;
+	}
+
+	/**
+	 * Set logLevel, by default it's taken from Prop file
+	 * @param logLevel = logLevel
+	 */
+	public void setLogLevel(int logLevel) {
+		this.logLevel = logLevel;
 	}
 
 	public boolean loginSerial() {
@@ -141,7 +186,7 @@ public class Session implements Runnable {
 	/**
 	 * Sends commands to the terminal directly
 	 * 
-	 * @param commands
+	 * @param command
 	 *            the commands to send
 	 */
 	public synchronized void sendRawCommand(String command) {
@@ -165,6 +210,8 @@ public class Session implements Runnable {
 
 	@Override
 	public void run() {
+		long threadId = Thread.currentThread().getId();
+		GeneralUtils.printToConsole("**DEBUG2: Session Thread ID# " + threadId + " is doing this task");
 		while (reconnect) {
 			reconnectSSH();
 			GeneralUtils.unSafeSleep(RECONNECT_TIMEOUT);
@@ -383,11 +430,6 @@ public class Session implements Runnable {
 
 	private boolean verifyLogLevel(){
 		String tableToVerify = enbComp.sendCommandsOnSession(name,EnodeBComponent.LTE_CLI_PROMPT, "logger threshold get", "");
-//		String tableToPrint = "************************logger threshold get*************************\n";
-//		tableToPrint += "EnodeB: "+enbComp.getIpAddress()+", session: "+getName()+ ", wanted log level: "+logLevel+"\n";
-//		tableToPrint += tableToVerify;
-//		tableToPrint += "*********************************************************************\n";
-//		GeneralUtils.printToConsole(tableToPrint);
 		int numOfMatches = 0;
 		Pattern pattern = null;
 		try{
@@ -417,17 +459,20 @@ public class Session implements Runnable {
 	 * @return true on success or false on failure
 	 */
 	public boolean updateLogLevel() {
+//		long threadId = Thread.currentThread().getId();
+//		GeneralUtils.printToConsole("DEBUG2: updateLogLevel - Thread ID# " + threadId + " is doing this task");
 		boolean verify = false;
-		GeneralUtils.printToConsole("Setting Session " + getName() +" for EnodeB "+enbComp.getIpAddress()+ " log level to " + logLevel);
+		GeneralUtils.printToConsole("Setting Session " + getName() +" for EnodeB "+enbComp.getIpAddress()+ "  log level to " + logLevel);
 		if (connected && logLevel >= 0) {
 			GeneralUtils.printToConsole("Setting log level");
-			enbComp.setSessionLogLevel(name, logLevel);
+//			setSessionLogLevel();
+			enbComp.setSessionLogLevel(name, client, process, logLevel);
 			GeneralUtils.printToConsole("Verifying log level");
 			verify = verifyLogLevel();
 			if(!verify){					
 				GeneralUtils.printToConsole("Failed to set log level. Setting log level again");
 				GeneralUtils.unSafeSleep(10*1000);
-				enbComp.setSessionLogLevel(name, logLevel);
+				enbComp.setSessionLogLevel(name, client, process,logLevel);
 				GeneralUtils.printToConsole("Verifying log level");
 				verify = verifyLogLevel();
 			}
@@ -441,6 +486,18 @@ public class Session implements Runnable {
 			GeneralUtils.printToConsole("Failed setting " + getName() + " log level to " + logLevel);
 		return verify;
 	}
+
+//	/**
+//	 * set Session LogLevel
+//	 */
+//	private void setSessionLogLevel(){
+//		if(name.contains(SessionManager.SSH_COMMANDS_SESSION_NAME))
+//			enbComp.setSessionLogLevel(name, client, process, SessionManager.getCommandsLogLevel());
+//		if (name.contains(SessionManager.SSH_LOG_SESSION_NAME))
+//			enbComp.setSessionLogLevel(name, client, process, SessionManager.getSSHlogLevel());
+//		if (name.contains(SessionManager.SERIAL_SESSION_NAME))
+//			enbComp.setSessionLogLevel(name, client, process, SessionManager.getSerialLogLevel());
+//	}
 
 	/**
 	 * Gets the buffer the cli is using if it's enabled (enableCliBuffer = true)
@@ -546,5 +603,37 @@ public class Session implements Runnable {
 
 	public void setShouldStayInCli(boolean shouldStayInCli) {
 		this.shouldStayInCli = shouldStayInCli;
+	}
+
+	/**
+	 * True if it was initialed
+	 * @param sessionInitialized - sessionInitialized
+	 */
+	public void setSessionInitialized(boolean sessionInitialized) {
+		isSessionInitialized = sessionInitialized;
+	}
+
+	/** isSessionInitialized getter
+	 * @return - isSessionInitialized
+	 */
+	public boolean isSessionInitialized() {
+		return isSessionInitialized;
+	}
+
+	/** check if this session is being used by Logs Action
+	 *
+	 * @return - flag
+	 */
+	public boolean isSessionStreamsForLogAction() {
+		return isSessionStreamsForLogAction;
+	}
+
+	/**
+	 * set Session Streams flag - if it's being use by Log Action
+	 *
+	 * @param sessionStreamsForLogAction - flag
+	 */
+	public void setSessionStreamsForLogAction(boolean sessionStreamsForLogAction) {
+		isSessionStreamsForLogAction = sessionStreamsForLogAction;
 	}
 }

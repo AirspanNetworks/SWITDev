@@ -130,7 +130,7 @@ public class BasicAction extends Action {
 		this.userName = userName;
 	}
 	
-	@ParameterProperties(description = "Password string (In case of user 'op' with sudo must be passed two passwords delimited with '__|__' ")
+	@ParameterProperties(description = "Password string (In case of user 'op' with sudo must be passed two passwords delimited with '====' ")
 	public void setPassword(String password) {
 		this.password = password;
 	}

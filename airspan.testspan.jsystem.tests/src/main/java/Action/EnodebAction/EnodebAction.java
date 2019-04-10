@@ -42,15 +42,22 @@ public class EnodebAction extends Action {
 			}
 
 			eNodeB.setDeviceUnderTest(true);
-			GeneralUtils.printToConsole(String.format("Creating log files for test for eNondeB %s", eNodeB.getName()));
-
-			Logger[] loggers = eNodeB.getLoggers();
-			for (Logger logger : loggers) {
-				logger.startLog(String.format("%s_%s", getMethodName(), logger.getParent().getName()));
-				logger.setCountErrorBool(true);
-			}
+			openLogsFiles(eNodeB);
 		}
 		super.init();
+	}
+
+	/** The files is used for Command Session
+	 *
+	 * @param eNodeB - eNodeB
+	 */
+	private void openLogsFiles(EnodeB eNodeB) {
+		GeneralUtils.printToConsole(String.format("Creating log files for test for eNondeB %s", eNodeB.getName()));
+		Logger[] loggers = eNodeB.getLoggers();
+		for (Logger logger : loggers) {
+			logger.startLog(String.format("%s_%s", getMethodName(), logger.getParent().getName()));
+			logger.setCountErrorBool(true);
+		}
 	}
 
 	@Override

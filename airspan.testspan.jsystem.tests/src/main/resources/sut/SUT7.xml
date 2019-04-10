@@ -98,7 +98,7 @@
 	</UpgradeServer>
 
 	<!-- Static UEs-->
-	<static1>
+	<!--static1>
 		<class>UE.GemtekUE</class>
 		<IPerfUlMachine>192.7.1.253</IPerfUlMachine>
 		<IPerfDlMachine>91.91.71.240</IPerfDlMachine>
@@ -106,10 +106,21 @@
 		<lanIpAddress>192.7.1.254</lanIpAddress>
 		<imsi>200010001002970</imsi>
 		<powerControllerMapping>aviosys/A3</powerControllerMapping>
+	</static1-->
+	
+	<static1>
+		<class>UE.GemtekUE</class>
+		<IPerfUlMachine>192.7.1.253</IPerfUlMachine>
+		<IPerfDlMachine>91.91.71.240</IPerfDlMachine>
+		<wanIpAddress>42.42.7.1</wanIpAddress>
+		<lanIpAddress>192.168.57.78</lanIpAddress>
+		<DMToolPort>27772</DMToolPort> 
+		<imsi>200010001002970</imsi>
+		<powerControllerMapping>aviosys/A3</powerControllerMapping>
 	</static1>
 
 	<!-- Dynamic UEs -->
-	<dyn2>
+	<!--dyn2>
 		<class>UE.GemtekUE</class>
 		<IPerfUlMachine>192.7.2.253</IPerfUlMachine>
 		<IPerfDlMachine>91.91.72.240</IPerfDlMachine>
@@ -117,7 +128,19 @@
 		<lanIpAddress>192.7.2.254</lanIpAddress>
 		<imsi>200010001002971</imsi>
 		<powerControllerMapping>aviosys/A3</powerControllerMapping>
+	</dyn2-->
+	
+	<dyn2>
+		<class>UE.GemtekUE</class>
+		<IPerfUlMachine>192.7.2.253</IPerfUlMachine>
+		<IPerfDlMachine>91.91.72.240</IPerfDlMachine>
+		<wanIpAddress>42.42.7.2</wanIpAddress>
+		<lanIpAddress>192.168.57.78</lanIpAddress>
+		<DMToolPort>17772</DMToolPort> 
+		<imsi>200010001002971</imsi>
+		<powerControllerMapping>aviosys/A3</powerControllerMapping>
 	</dyn2>
+	
 	<!-- 
 	<dyn3>
 		<class>UE.AndroidUE</class>

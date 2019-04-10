@@ -234,6 +234,17 @@ public class GeneralUtils {
      *
      * @author Shahaf Shuhamy
      */
+    public static void reportMultiLine(String multiLineStr) {
+        String[] strArr = multiLineStr.split("\n");
+        for(String str : strArr)
+        	report.report(str);
+    }
+    
+    /**
+     * stopping level with reporter
+     *
+     * @author Shahaf Shuhamy
+     */
     public static boolean stopLevel() {
         try {
             report.stopLevel();

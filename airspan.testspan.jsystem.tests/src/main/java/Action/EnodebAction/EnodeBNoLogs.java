@@ -21,7 +21,7 @@ import jsystem.framework.report.Reporter;
 import testsNG.Actions.AlarmsAndEvents;
 
 public class EnodeBNoLogs extends EnodebAction {
-	private EnodeB dut;
+	/*private EnodeB dut;
 	private static Map<String,Date> startDate;
 	private final int eventStartDeafult = 20;
 	private ArrayList<String> listOfAlarms;
@@ -225,5 +225,5 @@ public class EnodeBNoLogs extends EnodebAction {
         		report.report("Event with event info ["+info+"] was found ["+count+"] time"+(count==1?"":"s"));
         	}
         }
-	}
+	}*/
 }

@@ -40,6 +40,8 @@ public class GeneralUtils {
 
     public static final float ERROR_VALUE_FLOAT = -999;
 
+    public static final int TIME_TO_WAIT_FOR_REPORT = 30;
+    
     public static void clearLevelCounter() {
         levelCounter = 0;
     }
@@ -104,15 +106,15 @@ public class GeneralUtils {
     }
     
     public static boolean unSafeSleep(long timeInMS) {
-    	if(timeInMS>30*60*1000){
+    	if(timeInMS>TIME_TO_WAIT_FOR_REPORT*60*1000){
     		try {
-                Thread.sleep(30*60*1000);
-                report.report("Waited 30 minutes. Reporting to not lose connection to report");
+                Thread.sleep(TIME_TO_WAIT_FOR_REPORT*60*1000);
+                report.report("Waited "+TIME_TO_WAIT_FOR_REPORT+" minutes. Reporting to not lose connection to report");
             } catch (InterruptedException e) {
                 e.printStackTrace();
                 return false;
             }
-    		return unSafeSleep(timeInMS - 30*60*1000);
+    		return unSafeSleep(timeInMS - TIME_TO_WAIT_FOR_REPORT*60*1000);
     	}else{
     		try {
                 Thread.sleep(timeInMS);

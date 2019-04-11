@@ -40,6 +40,8 @@ public class GeneralUtils {
 
     public static final float ERROR_VALUE_FLOAT = -999;
 
+    public static final int TIME_TO_WAIT_FOR_REPORT = 30;
+    
     public static void clearLevelCounter() {
         levelCounter = 0;
     }
@@ -104,13 +106,24 @@ public class GeneralUtils {
     }
     
     public static boolean unSafeSleep(long timeInMS) {
-        try {
-            Thread.sleep(timeInMS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
+    	if(timeInMS>TIME_TO_WAIT_FOR_REPORT*60*1000){
+    		try {
+                Thread.sleep(TIME_TO_WAIT_FOR_REPORT*60*1000);
+                report.report("Waited "+TIME_TO_WAIT_FOR_REPORT+" minutes. Reporting to not lose connection to report");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                return false;
+            }
+    		return unSafeSleep(timeInMS - TIME_TO_WAIT_FOR_REPORT*60*1000);
+    	}else{
+    		try {
+                Thread.sleep(timeInMS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                return false;
+            }
+            return true;
+    	}
     }
 
     public static int milisToMinutes(long milis) {

@@ -252,7 +252,7 @@ public class MultiEnodebAction extends EnodebAction {
 		GeneralUtils.stopLevel(); // Number of HO's: stop level
 
 		if (total_attCounter == 0) {
-			report.report("There were no attempts - test failed", Reporter.WARNING);
+			report.report("There were no attempts - test failed", Reporter.FAIL);
 		} else {
 			if (theoreticalAttempts < 60) {
 				GeneralUtils.startLevel("Number of attempts out of real attenuator moves is: "

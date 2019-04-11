@@ -135,6 +135,7 @@ public class LogsAction extends EnodebAction {
 
 	/**
 	 * This Action start EnodeB logs according to user's request.
+	 * In order to get the logs file, use "stopEnodeBLogs" action.
 	 * Session Type: SSH / Serial / Both
 	 * Log Level: 1 - 6 (Default value is 6)
 	 * Modules: All / Specific Module (Specific Process and Client)

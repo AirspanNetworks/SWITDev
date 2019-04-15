@@ -1336,16 +1336,17 @@ public class TPTBase extends TestspanTest {
 			}
 			numberOfCellsStr = "CA";
 		}
-
+		int injected = use_Load_DL?Load_DL:110;
 		if (use_Expected_DL) {
-			dlPassCriteria = modifyAndPortLinkAndPrint("DL",dlPassCriteria, portsLoadPair.getElement0(), this.Expected_DL);
+			dlPassCriteria = modifyAndPortLinkAndPrint("DL",dlPassCriteria, portsLoadPair.getElement0(), this.Expected_DL, injected);
 		} else {
-			dlPassCriteria = modifyAndPortLinkAndPrint("DL",dlPassCriteria, portsLoadPair.getElement0(), passCriteria * 100);
+			dlPassCriteria = modifyAndPortLinkAndPrint("DL",dlPassCriteria, portsLoadPair.getElement0(), passCriteria * 100, injected);
 		}
+		injected = use_Load_UL?Load_UL:110;
 		if (use_Expected_UL) {
-			ulPassCriteria = modifyAndPortLinkAndPrint("UL",ulPassCriteria, portsLoadPair.getElement1(), this.Expected_UL);
+			ulPassCriteria = modifyAndPortLinkAndPrint("UL",ulPassCriteria, portsLoadPair.getElement1(), this.Expected_UL, injected);
 		} else {
-			ulPassCriteria = modifyAndPortLinkAndPrint("UL",ulPassCriteria, portsLoadPair.getElement1(), passCriteria * 100);
+			ulPassCriteria = modifyAndPortLinkAndPrint("UL",ulPassCriteria, portsLoadPair.getElement1(), passCriteria * 100, injected);
 		}
 
 		// print results
@@ -1490,13 +1491,18 @@ public class TPTBase extends TestspanTest {
 	}
 
 	private double modifyAndPortLinkAndPrint(String ul_dl,double calculatorPassWithSysModi, double systemLoadWithModifications,
-			double expectedPassCriteriaPercent) {
+			double expectedPassCriteriaPercent, int injected) {
 		Double result = 0.0;
 		Double toCalculate = 0.0;
-		if(calculatorPassWithSysModi <= systemLoadWithModifications){
+		if(injected >= 110){
 			toCalculate = calculatorPassWithSysModi;
 		}else{
 			toCalculate = systemLoadWithModifications;
+			/*if(calculatorPassWithSysModi <= systemLoadWithModifications){
+				toCalculate = calculatorPassWithSysModi;
+			}else{
+				toCalculate = systemLoadWithModifications;
+			}*/			
 		}
 		result = toCalculate * (expectedPassCriteriaPercent / 100.0);
 		report.report("Pass Criteria for "+ul_dl+": " + String.format("%.2f", result));

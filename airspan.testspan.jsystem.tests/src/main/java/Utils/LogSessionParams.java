@@ -77,6 +77,7 @@ public class LogSessionParams {
 	 * Enum represented by int to LogLevel dropdown - 1 to 6
 	 */
 	public enum LogLevel {
+		ZERO(0),
 		ONE(1),
 		TWO(2),
 		THREE(3),

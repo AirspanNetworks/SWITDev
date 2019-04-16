@@ -1494,16 +1494,11 @@ public class TPTBase extends TestspanTest {
 			double expectedPassCriteriaPercent, int injected) {
 		Double result = 0.0;
 		Double toCalculate = 0.0;
-		if(injected >= 110){
+		if(calculatorPassWithSysModi <= systemLoadWithModifications){
 			toCalculate = calculatorPassWithSysModi;
 		}else{
 			toCalculate = systemLoadWithModifications;
-			/*if(calculatorPassWithSysModi <= systemLoadWithModifications){
-				toCalculate = calculatorPassWithSysModi;
-			}else{
-				toCalculate = systemLoadWithModifications;
-			}*/			
-		}
+		}			
 		result = toCalculate * (expectedPassCriteriaPercent / 100.0);
 		report.report("Pass Criteria for "+ul_dl+": " + String.format("%.2f", result));
 

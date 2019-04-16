@@ -1336,6 +1336,7 @@ public class TPTBase extends TestspanTest {
 			}
 			numberOfCellsStr = "CA";
 		}
+		
 		if (use_Expected_DL) {
 			dlPassCriteria = modifyAndPortLinkAndPrint("DL",dlPassCriteria, portsLoadPair.getElement0(), this.Expected_DL);
 		} else {

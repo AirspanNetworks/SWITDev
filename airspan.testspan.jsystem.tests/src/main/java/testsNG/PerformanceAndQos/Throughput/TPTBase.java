@@ -1336,17 +1336,15 @@ public class TPTBase extends TestspanTest {
 			}
 			numberOfCellsStr = "CA";
 		}
-		int injected = use_Load_DL?Load_DL:110;
 		if (use_Expected_DL) {
-			dlPassCriteria = modifyAndPortLinkAndPrint("DL",dlPassCriteria, portsLoadPair.getElement0(), this.Expected_DL, injected);
+			dlPassCriteria = modifyAndPortLinkAndPrint("DL",dlPassCriteria, portsLoadPair.getElement0(), this.Expected_DL);
 		} else {
-			dlPassCriteria = modifyAndPortLinkAndPrint("DL",dlPassCriteria, portsLoadPair.getElement0(), passCriteria * 100, injected);
+			dlPassCriteria = modifyAndPortLinkAndPrint("DL",dlPassCriteria, portsLoadPair.getElement0(), passCriteria * 100);
 		}
-		injected = use_Load_UL?Load_UL:110;
 		if (use_Expected_UL) {
-			ulPassCriteria = modifyAndPortLinkAndPrint("UL",ulPassCriteria, portsLoadPair.getElement1(), this.Expected_UL, injected);
+			ulPassCriteria = modifyAndPortLinkAndPrint("UL",ulPassCriteria, portsLoadPair.getElement1(), this.Expected_UL);
 		} else {
-			ulPassCriteria = modifyAndPortLinkAndPrint("UL",ulPassCriteria, portsLoadPair.getElement1(), passCriteria * 100, injected);
+			ulPassCriteria = modifyAndPortLinkAndPrint("UL",ulPassCriteria, portsLoadPair.getElement1(), passCriteria * 100);
 		}
 
 		// print results
@@ -1491,7 +1489,7 @@ public class TPTBase extends TestspanTest {
 	}
 
 	private double modifyAndPortLinkAndPrint(String ul_dl,double calculatorPassWithSysModi, double systemLoadWithModifications,
-			double expectedPassCriteriaPercent, int injected) {
+			double expectedPassCriteriaPercent) {
 		Double result = 0.0;
 		Double toCalculate = 0.0;
 		if(calculatorPassWithSysModi <= systemLoadWithModifications){

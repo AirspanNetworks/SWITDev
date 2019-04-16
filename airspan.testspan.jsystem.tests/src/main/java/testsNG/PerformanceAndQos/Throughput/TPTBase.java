@@ -1347,7 +1347,7 @@ public class TPTBase extends TestspanTest {
 		} else {
 			ulPassCriteria = modifyAndPortLinkAndPrint("UL",ulPassCriteria, portsLoadPair.getElement1(), passCriteria * 100);
 		}
-
+		
 		// print results
 		String upRate = String.format("%.2f", ul_Divided_With_Number_Of_Streams);
 		String calcUpRate = String.format("%.2f", ulPassCriteria);
@@ -1497,7 +1497,7 @@ public class TPTBase extends TestspanTest {
 			toCalculate = calculatorPassWithSysModi;
 		}else{
 			toCalculate = systemLoadWithModifications;
-		}			
+		}
 		result = toCalculate * (expectedPassCriteriaPercent / 100.0);
 		report.report("Pass Criteria for "+ul_dl+": " + String.format("%.2f", result));
 

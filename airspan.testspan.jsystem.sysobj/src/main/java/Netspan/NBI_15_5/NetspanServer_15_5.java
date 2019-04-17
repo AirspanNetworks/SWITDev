@@ -1152,6 +1152,13 @@ public class NetspanServer_15_5 extends NetspanServer_15_2 implements Netspan_15
 				mobilityProfile.setIsThresholdBasedMeasurementDualMode(
 						factoryDetails.createEnbMobilityProfileParamsIsThresholdBasedMeasurementDualMode(
 								mobilityParams.getThresholdBasedMeasurementDual()));
+				if(mobilityParams.getThresholdBasedMeasurementDual() == true){
+					MobilityConnectedModeInterFreq interFreq = new MobilityConnectedModeInterFreq();
+					interFreq.setRsrqHysteresisForDualMode(factoryDetails.createMobilityConnectedModeFreqRsrqHysteresisForDualMode(new BigDecimal(0)));
+					interFreq.setRsrqTimeToTriggerForDualMode(factoryDetails.createMobilityConnectedModeFreqRsrqTimeToTriggerForDualMode("320"));
+					interFreq.setRsrqQOffsetFreqForDualMode(factoryDetails.createMobilityConnectedModeFreqRsrqQOffsetFreqForDualMode("0"));
+					mobilityProfile.setConnectedModeInterFrequency(interFreq);
+				}
 			}
 
 			if (mobilityParams.getThresholdBasedMeasurement() != null) {

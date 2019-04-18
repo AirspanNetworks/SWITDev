@@ -219,8 +219,6 @@ public class Logger implements Runnable {
 
 	@Override
 	public void run() {
-		long threadId = Thread.currentThread().getId();
-		GeneralUtils.printToConsole("**DEBUG2: Logger Thread ID# " + threadId + " is doing this task");
 		isLogging = true;
 		System.out.printf("[%s]: logger thread started. \n", name);
 		startLog(logFilePath);

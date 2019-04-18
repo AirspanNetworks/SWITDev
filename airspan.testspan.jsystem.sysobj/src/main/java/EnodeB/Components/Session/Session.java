@@ -210,8 +210,6 @@ public class Session implements Runnable {
 
 	@Override
 	public void run() {
-		long threadId = Thread.currentThread().getId();
-		GeneralUtils.printToConsole("**DEBUG2: Session Thread ID# " + threadId + " is doing this task");
 		while (reconnect) {
 			reconnectSSH();
 			GeneralUtils.unSafeSleep(RECONNECT_TIMEOUT);
@@ -459,8 +457,6 @@ public class Session implements Runnable {
 	 * @return true on success or false on failure
 	 */
 	public boolean updateLogLevel() {
-//		long threadId = Thread.currentThread().getId();
-//		GeneralUtils.printToConsole("DEBUG2: updateLogLevel - Thread ID# " + threadId + " is doing this task");
 		boolean verify = false;
 		GeneralUtils.printToConsole("Setting Session " + getName() +" for EnodeB "+enbComp.getIpAddress()+ "  log level to " + logLevel);
 		if (connected && logLevel >= 0) {

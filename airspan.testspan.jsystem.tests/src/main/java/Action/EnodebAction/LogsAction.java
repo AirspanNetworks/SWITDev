@@ -151,9 +151,9 @@ public class LogsAction extends EnodebAction {
 			if (logSessionParams.isSessionOpen) continue;
 			printToReportLogDetails(logSessionParams, "Open");
 			openLogSession(logSessionParams);
-			setLogLevelAndProcessByName(logSessionParams);
 			addOpenSessionToLogger(logSessionParams);
 			startLogFiles(logSessionParams);
+			setLogLevelAndProcessByName(logSessionParams);
 			logSessionParams.isSessionOpen = true;
 		}
 	}

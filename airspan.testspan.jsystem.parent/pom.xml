@@ -82,7 +82,7 @@
 			<dependency>
 				<groupId>airspan</groupId>
 				<artifactId>dmtool</artifactId>
-				<version>1.0.25</version>
+				<version>1.0.24</version>
 			</dependency>
 			<dependency>
 				<groupId>org.snmp4j</groupId>

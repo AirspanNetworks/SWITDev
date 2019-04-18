@@ -2413,7 +2413,8 @@ public abstract class EnodeB extends SystemObjectImpl {
 		DAN[] dans = ((EnodeBWithDAN) this).getDans();
 		for (DAN dan : dans) {
 			SessionManager sessionManager = dan.getSessionManager();
-			openSerialLogSession(sessionManager);
+			String danSessionName = openSerialLogSession(sessionManager);
+			dansSessionNames.add(danSessionName);
 		}
 		return dansSessionNames;
 	}

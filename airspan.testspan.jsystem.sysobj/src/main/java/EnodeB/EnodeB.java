@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.util.*;
 
+import EnodeB.Components.DAN;
 import EnodeB.Components.Session.SessionManager;
 import org.snmp4j.smi.Variable;
 
@@ -60,27 +61,27 @@ public abstract class EnodeB extends SystemObjectImpl {
 	public final long FIVE_MIN = 5 * 60 * 1000;
 
 	protected final Pair[] expectedDurationsAndStageNamesOrderedForWarmReboot = {
-			new Pair<Long, String>((long)0, "Warm Reboot."),
-			new Pair<Long, String>((long)THREE_MIN, "SNMP Availability / IPSec Bring Up."),
-			new Pair<Long, String>((long)FOUR_MIN, "All Running.")
+			new Pair<Long, String>((long) 0, "Warm Reboot."),
+			new Pair<Long, String>((long) THREE_MIN, "SNMP Availability / IPSec Bring Up."),
+			new Pair<Long, String>((long) FOUR_MIN, "All Running.")
 	};
-	
+
 	protected final Pair[] expectedDurationsAndStageNamesOrderedForColdReboot = {
-			new Pair<Long, String>((long)0, "Cold Reboot."),
-			new Pair<Long, String>((long)THREE_MIN, "SNMP Availability / IPSec Bring Up."),
-			new Pair<Long, String>((long)FIVE_MIN, "Cold eNodeB PnP."),
-			new Pair<Long, String>((long)TWO_MIN, "All Running.")
+			new Pair<Long, String>((long) 0, "Cold Reboot."),
+			new Pair<Long, String>((long) THREE_MIN, "SNMP Availability / IPSec Bring Up."),
+			new Pair<Long, String>((long) FIVE_MIN, "Cold eNodeB PnP."),
+			new Pair<Long, String>((long) TWO_MIN, "All Running.")
 	};
-	
+
 	protected final Pair[] expectedDurationsAndStageNamesOrderedWithSoftwareDownloadForColdReboot = {
-			new Pair<Long, String>((long)0, "Cold Reboot."),
-			new Pair<Long, String>((long)THREE_MIN, "SNMP Availability / IPSec Bring Up."),
-			new Pair<Long, String>((long)HALF_MIN, "Cold eNodeB PnP & Software Download."),
-			new Pair<Long, String>((long)1, "Reboot After Software Download."),
-			new Pair<Long, String>((long)THREE_MIN, "SNMP Availability / IPSec Bring Up."),
-			new Pair<Long, String>((long)FIVE_MIN, "Cold eNodeB PnP."),
-			new Pair<Long, String>((long)HALF_MIN, "eNodeb Software Activate Completed"),
-			new Pair<Long, String>((long)TWO_MIN, "All Running.")
+			new Pair<Long, String>((long) 0, "Cold Reboot."),
+			new Pair<Long, String>((long) THREE_MIN, "SNMP Availability / IPSec Bring Up."),
+			new Pair<Long, String>((long) HALF_MIN, "Cold eNodeB PnP & Software Download."),
+			new Pair<Long, String>((long) 1, "Reboot After Software Download."),
+			new Pair<Long, String>((long) THREE_MIN, "SNMP Availability / IPSec Bring Up."),
+			new Pair<Long, String>((long) FIVE_MIN, "Cold eNodeB PnP."),
+			new Pair<Long, String>((long) HALF_MIN, "eNodeb Software Activate Completed"),
+			new Pair<Long, String>((long) TWO_MIN, "All Running.")
 	};
 
 	public boolean isNetspanProfilesVerified() {
@@ -113,34 +114,62 @@ public abstract class EnodeB extends SystemObjectImpl {
 	public static final long ACTIVATE_TIMEOUT = 20 * 1000 * 60;
 	public static long WAIT_FOR_ALL_RUNNING_TIME = 30 * 1000 * 60;
 	public static long SHORT_WAIT_FOR_ALL_RUNNING_TIME = 2 * 1000 * 60;
-	/** The netspan name. */
+	/**
+	 * The netspan name.
+	 */
 	private String netspanName;
-	/** The S1 ip address. */
+	/**
+	 * The S1 ip address.
+	 */
 	private String s1IpAddress;
-	/** The enodeB version */
+	/**
+	 * The enodeB version
+	 */
 	private String enodeBversion;
 	private int interHandoverEarfcn;
-	/** The xlp. */
+	/**
+	 * The xlp.
+	 */
 	protected XLP XLP;
-	/** The phy version. */
+	/**
+	 * The phy version.
+	 */
 	private String phyVersion;
-	/** the UEs distribution in the cell */
+	/**
+	 * the UEs distribution in the cell
+	 */
 	public UEDist ueDist;
-	/** The operation mode. */
+	/**
+	 * The operation mode.
+	 */
 	private EnodeBOperationMode operationMode;
-	/** The bandwidth. */
+	/**
+	 * The bandwidth.
+	 */
 	protected EnodeBChannelBandwidth bandwidth;
-	/** The node id. */
+	/**
+	 * The node id.
+	 */
 	protected String nodeId;
-	/** The txpower. */
+	/**
+	 * The txpower.
+	 */
 	protected int txPower;
-	/** The band. */
+	/**
+	 * The band.
+	 */
 	protected int band;
-	/** The cellID. */
+	/**
+	 * The cellID.
+	 */
 	protected int cellId;
-	/** is managed by netspan flag. */
+	/**
+	 * is managed by netspan flag.
+	 */
 	private boolean isManagedByNetspan;
-	/** is netspan profiles verified flag. */
+	/**
+	 * is netspan profiles verified flag.
+	 */
 	private boolean isNetspanProfilesVerified;
 	public DefaultNetspanProfiles defaultNetspanProfiles;
 	private String[] staticUEs;
@@ -167,7 +196,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 	int SWTypeInstance;
 	private ArrayList<String> debugFlags = new ArrayList<>();
 	protected boolean hasDonor = false;
-	protected boolean hasDan;
+	protected boolean hasDan = false;
 	public ConnectionInfo connectInfo;
 	public boolean blackListed = false;
 	public boolean expecteInServiceState = true;
@@ -183,24 +212,23 @@ public abstract class EnodeB extends SystemObjectImpl {
 	/**
 	 * Inits the.
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	public void init() throws Exception {
 		super.init();
 
 		getXLPByEnodeBVersion();
 		if (connectInfo.serialInfo != null) {
-			XLP.createSerialCom(connectInfo.serialInfo.getSerialIP(), Integer.parseInt(connectInfo.serialInfo.getSerialPort()) );
+			XLP.createSerialCom(connectInfo.serialInfo.getSerialIP(), Integer.parseInt(connectInfo.serialInfo.getSerialPort()));
 			XLP.setSerialUsername(connectInfo.serialInfo.getUserName());
 		}
 		XLP.setParent(this);
 		XLP.setIpAddress(connectInfo.getIpAddress());
 		XLP.setSkipCMP(getSkipCMP());
 		XLP.setUsername(connectInfo.getUserName());
-		if(connectInfo.getReadCommunity()!=null)
+		if (connectInfo.getReadCommunity() != null)
 			XLP.setReadCommunity(connectInfo.getReadCommunity());
-		if(connectInfo.getWriteCommunity()!=null)
+		if (connectInfo.getWriteCommunity() != null)
 			XLP.setWriteCommunity(connectInfo.getWriteCommunity());
 		XLP.debugFlags = getDebugFlags();
 		XLP.hardwareName = getControlComponenetHwName();
@@ -214,7 +242,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 		XLP.setSWTypeInstnace(swType);
 //		XLP.setLogNeeded(!isInitCalledFromAction());
 		XLP.init();
-		if(ipsecTunnelEnabled){
+		if (ipsecTunnelEnabled) {
 			ArrayList<EnodeB> eNodeBs = new ArrayList<EnodeB>();
 			eNodeBs.add(this);
 			TunnelManager tunnelManager = TunnelManager.getInstance(eNodeBs, report);
@@ -229,29 +257,28 @@ public abstract class EnodeB extends SystemObjectImpl {
 	 */
 	private void getXLPByEnodeBVersion() {
 		switch (enodeBversion) {
-		case "14_5":
-		case "15_1":
-			XLP = new XLP_14_5();
-			break;
-		case "15_2":
-		case "15_5":
-			XLP = new XLP_15_2();
-			break;
-		case "16_0":
-			XLP = new XLP_16_0();
-			break;
-		default:
-			XLP = new XLP_15_2();
-			report.report("no enodeB version was found- setting to XLP_15.2 as default");
-			break;
+			case "14_5":
+			case "15_1":
+				XLP = new XLP_14_5();
+				break;
+			case "15_2":
+			case "15_5":
+				XLP = new XLP_15_2();
+				break;
+			case "16_0":
+				XLP = new XLP_16_0();
+				break;
+			default:
+				XLP = new XLP_15_2();
+				report.report("no enodeB version was found- setting to XLP_15.2 as default");
+				break;
 		}
 	}
 
 	/**
 	 * Lte cli command
 	 *
-	 * @param command
-	 *            the commands
+	 * @param command the commands
 	 * @return the string
 	 */
 	public String lteCli(String command) {
@@ -261,8 +288,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 	/**
 	 * Lte cli commands.. separated by ";"
 	 *
-	 * @param command
-	 *            the commands
+	 * @param command the commands
 	 * @return the string
 	 */
 	public String lteCli(String command, String response) {
@@ -281,45 +307,39 @@ public abstract class EnodeB extends SystemObjectImpl {
 
 	public boolean waitForAllRunning(double timeout) {
 		report.report("Wait for " + getName() + " to reach all running state.");
-		if(XLP.waitForAllRunning(timeout))
-		{
+		if (XLP.waitForAllRunning(timeout)) {
 			report.report(getName() + " reached all running state.");
 			expecteInServiceState = true;
 
 			return true;
-		}
-		else
-		{
+		} else {
 			report.report(getName() + " failed to reach all running state.", Reporter.WARNING);
 			return false;
-		}	
+		}
 	}
+
 	/**
 	 * Check running state until timeout reached
-	 *	
-	 * @param timeout
-	 *            the timeout
+	 *
+	 * @param timeout the timeout
 	 * @return true, if timeout is reached
 	 */
 	public boolean verifyNotReachAllRunningState(long timeout) {
 		report.report("Wait to see if " + getName() + " reaches all running state.");
-		if(XLP.waitForAllRunningAndInService(timeout))
-		{
+		if (XLP.waitForAllRunningAndInService(timeout)) {
 			report.report(getName() + " reached all running state.", Reporter.WARNING);
 			return false;
-		}
-		else
-		{
+		} else {
 			report.report(getName() + " did not to reach all running state.");
 			return true;
-		}	
+		}
 	}
-	
+
 	public boolean waitForReboot(long timeout) {
 		return XLP.waitForReboot(timeout);
 	}
 
-	public boolean rebootViaNetspan(RebootTypesNetspan RTNetspan){
+	public boolean rebootViaNetspan(RebootTypesNetspan RTNetspan) {
 		boolean action = false;
 		expecteInServiceState = false;
 		XLP.setExpectBooting(true);
@@ -330,33 +350,35 @@ public abstract class EnodeB extends SystemObjectImpl {
 			e.printStackTrace();
 			//report.report("Failed to reboot e",Reporter.WARNING);
 		}
-		if(action){
+		if (action) {
 			GeneralUtils.unSafeSleep(60000);
-		}else{
+		} else {
 			expecteInServiceState = true;
 			XLP.setExpectBooting(false);
 		}
 		return action;
 	}
-	
+
 	/*
 	 * the method reboot the EnodeB. its changes the state of xlp and dan to
 	 * booting, disconnecting UES & reboot
 	 */
+
 	/**
 	 * Reboot.
 	 */
 	public boolean reboot() {
 		return reboot(false, RebootType.WARM_REBOOT);
 	}
-	
+
 	public boolean reboot(RebootType rebootType) {
 		return reboot(false, rebootType);
 	}
-	
+
 	public boolean reboot(boolean swapAndReboot) {
 		return reboot(swapAndReboot, RebootType.WARM_REBOOT);
 	}
+
 	public boolean reboot(boolean swapAndReboot, RebootType rebootType) {
 		boolean rebootStatus = false;
 
@@ -365,8 +387,8 @@ public abstract class EnodeB extends SystemObjectImpl {
 			bankActionPassed = XLP.swapBank();
 		else
 			bankActionPassed = XLP.preserveBank();
-		if (!bankActionPassed){
-			report.report("Failed To Swap/Preserve Bank - Skipping Reboot.", Reporter.WARNING); 
+		if (!bankActionPassed) {
+			report.report("Failed To Swap/Preserve Bank - Skipping Reboot.", Reporter.WARNING);
 			return false;
 		}
 
@@ -375,9 +397,9 @@ public abstract class EnodeB extends SystemObjectImpl {
 		XLP.setExpectBooting(true);
 		report.report("Rebooting " + getNetspanName() + " via Netspan");
 		rebootStatus = resetNodeViaNetspan(rebootType);
-		if(!rebootStatus){
+		if (!rebootStatus) {
 			report.report("Rebooting " + getNetspanName() + " via SNMP");
-			rebootStatus = rebootExecutionViaSnmp(rebootType);			
+			rebootStatus = rebootExecutionViaSnmp(rebootType);
 		}
 		// wait 1 min to avoid fake allrunning in ipsec setups.
 		GeneralUtils.unSafeSleep(90000);
@@ -386,23 +408,23 @@ public abstract class EnodeB extends SystemObjectImpl {
 
 	private boolean resetNodeViaNetspan(RebootType rebootType) {
 		try {
-			return NetspanServer.getInstance().resetNode(getNetspanName(),rebootType);
+			return NetspanServer.getInstance().resetNode(getNetspanName(), rebootType);
 		} catch (Exception e) {
 			e.printStackTrace();
-			report.report("Failed to reboot via netspan",Reporter.WARNING);
+			report.report("Failed to reboot via netspan", Reporter.WARNING);
 		}
 		return false;
 	}
 
-	protected boolean rebootExecutionViaSnmp(RebootType rebootType){
+	protected boolean rebootExecutionViaSnmp(RebootType rebootType) {
 		return XLP.reboot(rebootType);
 	}
-	
+
 	public boolean downloadSWSnmp(String fileToInstall, ServerProtocolType downloadType, String user,
-			String password) {
+								  String password) {
 		return XLP.downloadSWSnmp(fileToInstall, downloadType, user, password);
 	}
-	
+
 	public boolean downloadSWCli(String fileToInstall, ServerProtocolType downloadType, String username, String password) {
 		return XLP.downloadSWCli(fileToInstall, downloadType, username, password);
 	}
@@ -465,8 +487,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 	/**
 	 * Sets the phy version.
 	 *
-	 * @param phyVersion
-	 *            the new phy version
+	 * @param phyVersion the new phy version
 	 */
 
 	public void setPhyVersion(String phyVersion) {
@@ -500,8 +521,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 	/**
 	 * Sets the bandwidth.
 	 *
-	 * @param bandwidth
-	 *            the new bandwidth
+	 * @param bandwidth the new bandwidth
 	 */
 
 	public void setBandwidth(EnodeBChannelBandwidth bandwidth) {
@@ -518,7 +538,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 
 	/**
 	 * Gets the txpower.
-	 * 
+	 *
 	 * @return the txpower
 	 */
 
@@ -528,7 +548,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 
 	/**
 	 * Gets the PCI.
-	 * 
+	 *
 	 * @return the PCI
 	 */
 	@IgnoreMethod
@@ -538,7 +558,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 
 	/**
 	 * Gets the band.
-	 * 
+	 *
 	 * @return the band
 	 */
 	@IgnoreMethod
@@ -548,7 +568,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 
 	/**
 	 * Gets the mac address.
-	 * 
+	 *
 	 * @return the mac address
 	 * @throws IOException
 	 */
@@ -560,7 +580,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 
 	/**
 	 * Gets the cellId.
-	 * 
+	 *
 	 * @return the cellId
 	 */
 
@@ -634,8 +654,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 	/**
 	 * Sets the uplink frequency.
 	 *
-	 * @param uplink
-	 *            the new uplink frequency
+	 * @param uplink the new uplink frequency
 	 */
 
 	public void setUplinkFrequency(int uplink) {
@@ -662,8 +681,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 	/**
 	 * Sets the downlink frequency.
 	 *
-	 * @param downlink
-	 *            the new downlink frequency
+	 * @param downlink the new downlink frequency
 	 */
 
 	public void setDownlinkFrequency(int downlink) {
@@ -700,14 +718,13 @@ public abstract class EnodeB extends SystemObjectImpl {
 	 */
 
 	public Logger[] getLoggers() {
-		return new Logger[] { XLP.getLogger() };
+		return new Logger[]{XLP.getLogger()};
 	}
 
 	/**
 	 * Db get.
 	 *
-	 * @param tableName
-	 *            the table name
+	 * @param tableName the table name
 	 * @return the hashtable
 	 */
 	public Hashtable<String, String[]> dbGet(String tableName) {
@@ -742,8 +759,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 	/**
 	 * Sets the netspan name.
 	 *
-	 * @param netspanName
-	 *            the netspanName to set
+	 * @param netspanName the netspanName to set
 	 */
 	public void setNetspanName(String netspanName) {
 		this.netspanName = netspanName;
@@ -761,8 +777,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 	/**
 	 * Sets the S1 ip address.
 	 *
-	 * @param s1IpAddress
-	 *            the s1IpAddress to set
+	 * @param s1IpAddress the s1IpAddress to set
 	 */
 	public void setS1IpAddress(String s1IpAddress) {
 		this.s1IpAddress = s1IpAddress;
@@ -787,7 +802,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 	public void setEnodeBversion(String enodeBversion) {
 		this.enodeBversion = enodeBversion;
 	}
-	
+
 	public void setProductDescription(String hardwareDescription) {
 		if (this.productDescription == null || !this.productDescription.equals(hardwareDescription)) {
 			this.productDescription = hardwareDescription;
@@ -827,8 +842,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 	}
 
 	/**
-	 * @param interHandoverEarfcn
-	 *            the interHandoverEarfcn to set
+	 * @param interHandoverEarfcn the interHandoverEarfcn to set
 	 */
 	public void setInterHandoverEarfcn(int interHandoverEarfcn) {
 		this.interHandoverEarfcn = interHandoverEarfcn;
@@ -857,8 +871,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 	}
 
 	/**
-	 * @param cellIdentity
-	 *            the cellIdentity to set
+	 * @param cellIdentity the cellIdentity to set
 	 */
 	public void setCellIdentity(String cellIdentity) {
 		this.cellIdentity = cellIdentity;
@@ -868,7 +881,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 	 * @return the mnoBroadcastPlmn
 	 * @throws IOException
 	 */
-	public String getMcc()  {
+	public String getMcc() {
 		if (mcc == null || mcc.isEmpty())
 			mcc = XLP.getMcc();
 
@@ -876,8 +889,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 	}
 
 	/**
-	 * @param mcc
-	 *            the mnoBroadcastPlmn to set
+	 * @param mcc the mnoBroadcastPlmn to set
 	 */
 	public void setMcc(String mcc) {
 		this.mcc = mcc;
@@ -895,8 +907,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 	}
 
 	/**
-	 * @param mnc
-	 *            the mnc to set
+	 * @param mnc the mnc to set
 	 */
 	public void setMnc(String mnc) {
 		this.mnc = mnc;
@@ -991,7 +1002,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 
 	public String ping(String ip, int tries) {
 		String response = XLP.shell("ping -c " + tries + " " + ip);
-		GeneralUtils.printToConsole("Response to ping: "+response);
+		GeneralUtils.printToConsole("Response to ping: " + response);
 		return response;
 	}
 
@@ -1026,10 +1037,10 @@ public abstract class EnodeB extends SystemObjectImpl {
 		return returnObject;
 	}
 
-	public boolean isPTPLocked(){
+	public boolean isPTPLocked() {
 		return this.XLP.isPTPLocked();
 	}
-	
+
 	public boolean setPLMN(ArrayList<Plmn> PlmnList) throws IOException {
 		return this.XLP.SetPLMN(PlmnList);
 	}
@@ -1051,7 +1062,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 	public boolean isInService(int cellIndex) {
 		boolean res = false;
 		String ans = this.XLP.getCellServiceState(cellIndex);
-		res = (ans!=null && ans.equals("1"));
+		res = (ans != null && ans.equals("1"));
 		return res;
 	}
 
@@ -1084,8 +1095,8 @@ public abstract class EnodeB extends SystemObjectImpl {
 
 	public boolean changePTPinterface(String newPTPip) {
 		String currentPTPip = this.getPTPInterfaceIP();
-		currentPTPip = InetAddressesHelper.toDecimalIp(currentPTPip,16);
-		
+		currentPTPip = InetAddressesHelper.toDecimalIp(currentPTPip, 16);
+
 		report.report("Remove current PTP interface");
 		if (!this.downPTPInterface(3))
 			return false;
@@ -1103,8 +1114,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 		for (int i = 0; i < tries; i++) {
 			this.XLP.shell("ifconfig br0.6 down");
 			boolean res = checkInterfaceStatus(2);
-			if (res) 
-			{
+			if (res) {
 				report.report("ifconfig br0.6 down succeeded");
 				return true;
 			}
@@ -1116,8 +1126,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 	private boolean checkInterfaceStatus(int expectedIndex) // 1 - up, 2 - down 
 	{
 		long startTime = System.currentTimeMillis(); // fetch starting time
-		while((System.currentTimeMillis() - startTime) < (2 * 60 * 1000))
-		{
+		while ((System.currentTimeMillis() - startTime) < (2 * 60 * 1000)) {
 			int interfaceStatusIndex = XLP.getInterfaceStatusAvailabilityStatus(6);
 			if (interfaceStatusIndex == expectedIndex)
 				return true;
@@ -1125,17 +1134,16 @@ public abstract class EnodeB extends SystemObjectImpl {
 		}
 		return false;
 	}
-	
-	public String getInterfaceStatusByIndex(int valueIndex,int interfaceIndex)
-	{
+
+	public String getInterfaceStatusByIndex(int valueIndex, int interfaceIndex) {
 		return XLP.getInterfaceStatusAvailabilityStatus(valueIndex, interfaceIndex);
 	}
+
 	public boolean upPTPInterface(String ptp_ip, int tries) {
 		for (int i = 0; i < tries; i++) {
 			this.XLP.shell("ifconfig br0.6 " + ptp_ip + " netmask 255.255.255.0 up");
 			boolean res = checkInterfaceStatus(1);
-			if (res) 
-			{
+			if (res) {
 				report.report("ifconfig br0.6 " + ptp_ip + " netmask 255.255.255.0 up succeeded");
 				return true;
 			}
@@ -1148,17 +1156,17 @@ public abstract class EnodeB extends SystemObjectImpl {
 		String oid = MibReader.getInstance().resolveByName("asLteStkCellCfgChannelBandwidth");
 		int value = GeneralUtils.ERROR_VALUE;
 		switch (bwInMHZ) {
-		case 5:
-			value = 2;
-			break;
-		case 10:
-			value = 3;
-			break;
-		case 20:
-			value = 5;
-			break;
-		default:
-			return false;
+			case 5:
+				value = 2;
+				break;
+			case 10:
+				value = 3;
+				break;
+			case 20:
+				value = 5;
+				break;
+			default:
+				return false;
 		}
 		return this.XLP.snmp.snmpSet(oid, value);
 	}
@@ -1174,6 +1182,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 
 	/**
 	 * this method Uses SNMP only.
+	 *
 	 * @return
 	 */
 	public int getNumberOfActiveCells() {
@@ -1181,20 +1190,20 @@ public abstract class EnodeB extends SystemObjectImpl {
 	}
 
 	/**
+	 * @return
 	 * @author Avichai Yefet enable MAC to PHY capture
-	 * @return
 	 */
-	public abstract void enableMACtoPHYcapture(SnifferFileLocation en) ;
-	
+	public abstract void enableMACtoPHYcapture(SnifferFileLocation en);
+
 	/**
-	 * @author shahaf shuhamy
 	 * @return
+	 * @author shahaf shuhamy
 	 */
 	public abstract void disableMACtoPHYcapture();
 
 	/**
-	 * @author Avichai Yefet link to MAC to PHY capture files
 	 * @return
+	 * @author Avichai Yefet link to MAC to PHY capture files
 	 */
 	public void showMACtoPHYCaptureFiles() {
 		if (isCaptureHasBeenMade) {
@@ -1215,9 +1224,9 @@ public abstract class EnodeB extends SystemObjectImpl {
 	}
 
 	/**
-	 * @author Shahaf Shuhamy
 	 * @param enb
 	 * @param url
+	 * @author Shahaf Shuhamy
 	 */
 	public Boolean setNodeLoggerUrl(EnodeB enb, String url) {
 		Boolean result = false;
@@ -1240,7 +1249,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 
 	/**
 	 * writing "logger upload all" in lte Cli for the node
-	 * 
+	 *
 	 * @author Shahaf Shuhamy
 	 */
 	public void loggerUploadAll() {
@@ -1285,7 +1294,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 	public boolean isSNMPAvailable() {
 		return XLP.snmp.isAvailable();
 	}
-	
+
 	public boolean isIpsecEnabled() {
 		PbLteNwElementStatus ne1 = XLP.getPbLteNetworkElementStatus(5);
 		if (ne1 == null) {
@@ -1293,8 +1302,8 @@ public abstract class EnodeB extends SystemObjectImpl {
 		}
 		return ne1.getGatewayIpAddress() != null;
 	}
-	
-	
+
+
 	public boolean isIpsecTunnelEnabled() {
 		return ipsecTunnelEnabled;
 	}
@@ -1310,11 +1319,11 @@ public abstract class EnodeB extends SystemObjectImpl {
 	public synchronized final void setSWTypeInstance(int sWTypeInstance) {
 		SWTypeInstance = sWTypeInstance;
 	}
-	
-	public UEDist getUEsDist(){
+
+	public UEDist getUEsDist() {
 		return ueDist;
 	}
-	
+
 	@Override
 	public void close() {
 		super.close();
@@ -1323,13 +1332,13 @@ public abstract class EnodeB extends SystemObjectImpl {
 	public int getRsrpAgingTimer() {
 		return XLP.getRsrpAgingTimer();
 	}
-	
+
 	public int getRntpAgingTimer() {
 		return XLP.getRntpAgingTimer();
 	}
 
-	public void addCliDebugFlags(String... strings){
-		for(String debugFlag : strings){
+	public void addCliDebugFlags(String... strings) {
+		for (String debugFlag : strings) {
 			debugFlags.add(debugFlag);
 		}
 	}
@@ -1338,35 +1347,34 @@ public abstract class EnodeB extends SystemObjectImpl {
 		return debugFlags;
 	}
 
-	public void getProfilerInfo(){
+	public void getProfilerInfo() {
 		Map<String, String> CLICommands = new HashMap<String, String>();
 		CLICommands.put("prcmngr show xdbwrites attribute=1", "summary of XDB writes to persistent table");
 		CLICommands.put("prcmngr show xdbwrites attribute=0 verbose=1", "summery of all XDB writes (and no writes)");
 		CLICommands.put("profiler show perfstatsperkpiconsumer", "Profiling kpi Per consumer Statisitics");
 		String result = "";
 		String[] results;
-		
+
 		GeneralUtils.startLevel("Profiler info: " + netspanName);
-		for(String command : CLICommands.keySet()){
+		for (String command : CLICommands.keySet()) {
 			result = lteCli(command, "Table Name");
-			if (!result.contains("Table Name") && !result.contains("Profile Name")){
+			if (!result.contains("Table Name") && !result.contains("Profile Name")) {
 				result = lteCli(command);
 			}
 			results = result.split("\\+", 2);
-			if (results.length < 2 ){
+			if (results.length < 2) {
 				results = result.split("\\=", 2);
 			}
-			if (results.length > 1){
+			if (results.length > 1) {
 				result = results[1].replace("\n", "</br>");
 				result = "<pre>" + result + "</pre>";
-				report.reportHtml(getNetspanName() +": "+ CLICommands.get(command), result, true);
-			}
-			else 
+				report.reportHtml(getNetspanName() + ": " + CLICommands.get(command), result, true);
+			} else
 				report.report("Couldn't get table from EnodeB");
 		}
 		GeneralUtils.stopLevel();
 	}
-	
+
 	public boolean isCaptureHasBeenMade() {
 		return isCaptureHasBeenMade;
 	}
@@ -1376,11 +1384,13 @@ public abstract class EnodeB extends SystemObjectImpl {
 	}
 
 	public boolean hasDonor() {
-		return hasDonor ;
+		return hasDonor;
 	}
+
 	public boolean hasDan() {
-		return hasDan ;
+		return hasDan;
 	}
+
 	public String getMmeStatus() {
 		return XLP.getMmeStatus();
 	}
@@ -1392,21 +1402,21 @@ public abstract class EnodeB extends SystemObjectImpl {
 	public String getAddressType() {
 		return XLP.getAddressType();
 	}
-	
+
 	public int getPfsType() {
 		return XLP.getPfsType();
 	}
-	
+
 	public boolean setPfsType(int value) {
 		return XLP.setPfsType(value);
 	}
 
-	public String getParameterValueViaWebAccess(WebGuiParameters parameter){
+	public String getParameterValueViaWebAccess(WebGuiParameters parameter) {
 		String ip = XLP.getIpAddress();
 		return webAccess.getSecuredParameterValue(parameter, ip);
 	}
-	
-	public void echoToSkipCmpv2(){
+
+	public void echoToSkipCmpv2() {
 		XLP.echoToSkipCmpv2();
 	}
 
@@ -1433,147 +1443,153 @@ public abstract class EnodeB extends SystemObjectImpl {
 	public void setIpsecCertificateMacAddress(String ipsecCertificateMacAddress) {
 		this.ipsecCertificateMacAddress = ipsecCertificateMacAddress;
 	}
-	
-	public String getIpAddress(){
+
+	public String getIpAddress() {
 		return XLP.getIpAddress();
-		
+
 	}
-	
-	public String getIpAddressType(){
+
+	public String getIpAddressType() {
 		return XLP.getIpAddressType();
-		
+
 	}
-	public String getSNMP(String strOID){
+
+	public String getSNMP(String strOID) {
 		return XLP.snmp.get(strOID);
 	}
-	
-	public String getSNMP(String oid, Integer index){
+
+	public String getSNMP(String oid, Integer index) {
 		return XLP.snmp.get(oid, index);
 	}
-	public boolean dbSet(String table, String key, String row, String value){
+
+	public boolean dbSet(String table, String key, String row, String value) {
 		return XLP.dbSet(table, key, row, value);
 	}
-	
-	public int getActiveUEPerQciAndTransmitDirection(TransmitDirection transmit, Character qci){
+
+	public int getActiveUEPerQciAndTransmitDirection(TransmitDirection transmit, Character qci) {
 		return XLP.getActiveUEPerQciAndTransmitDirection(transmit, qci);
 	}
-	
-	public Boolean getNumberOfUELinkStatusVolte(){
+
+	public Boolean getNumberOfUELinkStatusVolte() {
 		return XLP.getNumberOfUELinkStatusVolte();
 	}
-	
-	public HashMap<String, Integer> getUELinkStatusVolteTable(){
+
+	public HashMap<String, Integer> getUELinkStatusVolteTable() {
 		return XLP.getUELinkStatusVolteTable();
 	}
-	
-	public Boolean getNumberOfUELinkStatusEmergency(){
+
+	public Boolean getNumberOfUELinkStatusEmergency() {
 		return XLP.getNumberOfUELinkStatusEmergency();
 	}
-	
-	public HashMap<String, Integer> getUELinkStatusEmergencyTable(){
+
+	public HashMap<String, Integer> getUELinkStatusEmergencyTable() {
 		return XLP.getUELinkStatusEmergencyTable();
 	}
-	
-	public HashMap<String, Integer> getULCrcPer(){
+
+	public HashMap<String, Integer> getULCrcPer() {
 		return XLP.getULCrcPer();
 	}
-	
-	public HashMap<String, Integer> getDLPer(){
+
+	public HashMap<String, Integer> getDLPer() {
 		return XLP.getDLPer();
 	}
-	public boolean resetCounter(String tableName, String index, HashMap<String, String> KeyValuePairs){
+
+	public boolean resetCounter(String tableName, String index, HashMap<String, String> KeyValuePairs) {
 		return XLP.resetCounter(tableName, index, KeyValuePairs);
 	}
-	
-	public boolean snmpSet(String strOID, byte[] Value) throws IOException{
+
+	public boolean snmpSet(String strOID, byte[] Value) throws IOException {
 		return XLP.snmp.snmpSet(strOID, Value);
 	}
-	
-	public boolean snmpSet(String strOID,InetAddress Value) throws IOException{
+
+	public boolean snmpSet(String strOID, InetAddress Value) throws IOException {
 		return XLP.snmp.snmpSet(strOID, Value);
 	}
-	
-	public boolean snmpSet(String strOID, int Value) throws IOException{
+
+	public boolean snmpSet(String strOID, int Value) throws IOException {
 		return XLP.snmp.snmpSet(strOID, Value);
 	}
-	public boolean snmpSet(String strOID, String Value) throws IOException{
+
+	public boolean snmpSet(String strOID, String Value) throws IOException {
 		return XLP.snmp.snmpSet(strOID, Value);
 	}
-	public int getCountersValue(String valueName){
+
+	public int getCountersValue(String valueName) {
 		return XLP.getCountersValue(valueName);
 	}
-	
+
 	public int getSingleSampleCountersValue(String valueName) {
 		try {
-			return ((XLP_15_2)XLP).getSingleSampleCountersValue(valueName);
-		}catch(ClassCastException e) {
+			return ((XLP_15_2) XLP).getSingleSampleCountersValue(valueName);
+		} catch (ClassCastException e) {
 			report.report("XLP is not 15_2 and above - feature disabled");
 			return -1;
 		}
 	}
-	
-	public int getCellBarredMibValue(int cellNum){
+
+	public int getCellBarredMibValue(int cellNum) {
 		return XLP.getCellBarredValue(cellNum);
 	}
-	
+
 	/*
 	 * Generic methods for route add <ip> reject
 	 *                     route del <ip> reject
 	 * With support both IPv4, IPv6
 	 */
-	
-	public enum IPAddress_Type{
+
+	public enum IPAddress_Type {
 		IPv4, IPv6
 	}
-	
-	public enum RouteOperations{
+
+	public enum RouteOperations {
 		add, del
 	}
-	
+
 	private static IPAddress_Type getIPType(String ip_address) {
-		if(ip_address.contains(":"))
+		if (ip_address.contains(":"))
 			return IPAddress_Type.IPv6;
-					
+
 		return IPAddress_Type.IPv4;
 	}
-	
+
 	public String routeRejectHost(String ip_address, RouteOperations cmd) {
 		IPAddress_Type ip_type = getIPType(ip_address);
-		
+
 		Map<IPAddress_Type, String> commandTemplate = new HashMap<IPAddress_Type, String>();
 		commandTemplate.put(IPAddress_Type.IPv4, "route %s -host %s reject");
 		commandTemplate.put(IPAddress_Type.IPv6, "ip -6 route %s -host %s reject");
-		
+
 		String command = String.format(commandTemplate.get(ip_type), cmd.toString(), ip_address);
-		
+
 		return this.shell(command);
 	}
-	
-	
-	public String shell(String command){
+
+
+	public String shell(String command) {
 		return XLP.shell(command);
 	}
-	
-	public void setDeviceUnderTest(Boolean deviceUnderTest){
+
+	public void setDeviceUnderTest(Boolean deviceUnderTest) {
 		XLP.setDeviceUnderTest(deviceUnderTest);
 	}
-	
-	public void clearTestParameters(){
+
+	public void clearTestParameters() {
 		XLP.clearTestPrameters();
 	}
-	
-	public HashSet<String> getCorePathList(){
+
+	public HashSet<String> getCorePathList() {
 		return XLP.getCorePathList();
 	}
-	
+
 	public boolean isExpectBooting() {
 		return XLP.isExpectBooting();
 	}
-	public boolean isStateChangedToCoreDump(){
+
+	public boolean isStateChangedToCoreDump() {
 		return XLP.isStateChangedToCoreDump();
 	}
-	
-	public int getUnexpectedReboot(){
+
+	public int getUnexpectedReboot() {
 		return XLP.getUnexpectedReboot();
 	}
 
@@ -1582,381 +1598,383 @@ public abstract class EnodeB extends SystemObjectImpl {
 	 *
 	 * @param unexpectedReboot - number of unexpected reboot
 	 */
-	public void setUnexpectedReboot(int unexpectedReboot){
+	public void setUnexpectedReboot(int unexpectedReboot) {
 		XLP.setUnexpectedReboot(unexpectedReboot);
 	}
-	 public void updateTestedVer(){
-		 XLP.updateTestedVer();
-	 }
-	 
-	 public boolean isBankSwapped() {
-		 return XLP.isBankSwapped();
-	 }
-	 
-	 public boolean setRSI(int value) {
-		 return XLP.setRSI(value);
-	 }
-	 
-	 public int getPci(int cellIndex) {
-		 return XLP.getPci(cellIndex);
-	 }
-	 
-	 public boolean setPnpMode(int value) {
-		 return XLP.setPnpMode(value);
-	 }
-	 
-	 public boolean deleteFile(String filePath) {
-		 return XLP.deleteFile(filePath);
-	 }
-	 
-	 public boolean isFileExists(String filePath) {
-		 return XLP.isFileExists(filePath);
-	 }
-	 
-	 public Boolean getPnpMode() {
-		 return XLP.getPnpMode();
-	 }
-	 
-	 public int getGranularityPeriod() {
-		 return XLP.getGranularityPeriod();
-	 }
-	
-	 public boolean setPci(int value) {
-		 return XLP.setPci(value);
-	 }
-	 
-	 public String getCFISnmp() {
-		 return XLP.getCFISnmp();
-	 }
-	 
-	 public void setPnpWarmResetModeAdmin(int value) {
-		 XLP.setPnpWarmResetModeAdmin(value);
-	 }
-	 
-	 public void setPnpWarmRebootMask(int value) {
-		 XLP.setPnpWarmRebootMask(value);
-	 }
-	 
-	 public String getTddAckMode() {
-		 return XLP.getTddAckMode();
-	 }
-	 
-	 public String getPnpWarmResetModeAdmin() throws IOException {
-		 return XLP.getPnpWarmResetModeAdmin();
-	 }
-	 
-	 public String getPnpWarmRebootMask() throws IOException {
-		 return XLP.getPnpWarmRebootMask();
-	 }
-	 
-	 public String getParchZeroCorrrelZone() {
-		 return XLP.getParchZeroCorrrelZone();
-	 }
-	 
-	 public String getDuplexModeSnmp() throws IOException {
-		 return XLP.getDuplexModeSnmp();
-	 }
-	 
-	 public String getCAMode() {
-		 return XLP.getCAMode();
-	 }
-	 
-	 public boolean setGranularityPeriod(int value){
-		 return XLP.setGranularityPeriod(value); 
-	 }
-	 
-	 public String getBandWidthSnmp() {
-		 return XLP.getBandWidthSnmp();
-	 }
-	 
-	 public String getSpecialSubFrameSnmp() throws IOException {
-		 return XLP.getSpecialSubFrameSnmp();
-	 }
-	 
-	 public void setExpectBooting(boolean expectBooting) {
-		 if(expectBooting)
-			 expecteInServiceState = false;
-		 XLP.setExpectBooting(expectBooting);
-	 }
-	 
-	 public String getEnbType() throws IOException {
-		 return XLP.getEnbType();
-	 }
-	 
-	 public void setEnbType(int value) {
-		 XLP.setEnbType(value);
-	 }
-	 
-	 public boolean isDynamicCFIEnable() throws IOException {
-		 return XLP.isDynamicCFIEnable();
-	 }
-	 
-	 public EnbStates getRunningState() {
-		 return XLP.getRunningState();
-	 }
-	 
-	 public String getCellServiceState() {
-		 return XLP.getCellServiceState(40);
-	 }
-	 
-	 public String getCellServiceState(int cell) {
-		 return XLP.getCellServiceState(cell);
-	 }
-	 
-	 public boolean enableDynamicCFI() throws IOException {
-		 return XLP.enableDynamicCFI();
-	 }
-	 
-	 public boolean disableDynamicCFI() throws IOException {
-		 return XLP.disableDynamicCFI();
-	 }
-	 
-	 public void addListenerToLogger(LogListener listener) {
-		 XLP.addListenerToLogger(listener);
-	 }
-	 
-	 public boolean deleteAnrNeighborsBySNMP(){
-		 return XLP.deleteAnrNeighborsBySNMP();
-	 }
-	 
-	 public boolean addNbr(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
-				X2ControlStateTypes x2ControlStatus, HandoverType HandoverType, boolean isStaticNeighbor,
-				String qOffsetRange) throws IOException{
-		 return XLP.addNbr(enodeB, neighbor, hoControlStatus, x2ControlStatus, HandoverType, isStaticNeighbor, qOffsetRange);
-	 }
-	 
-	 public boolean deleteAllNeighborsByCli(){
-		 return XLP.deleteAllNeighborsByCli();
-	 }
-	 
-	 public boolean verifyNoNeighbors(){
-		 return XLP.verifyNoNeighbors();
-	 }
-	 
-	 public boolean verifyAnrNeighbor(EnodeB neighbor){
-		 return XLP.verifyAnrNeighbor(neighbor);
-	 }
-	 
-	 public void updatePLMNandEutranCellID(EnodeB neighbor) throws IOException{
-		 XLP.updatePLMNandEutranCellID(neighbor);
-	 }
-	 
-	 public boolean deleteNeighborBySNMP(EnodeB neighbor) throws IOException{
-		 return XLP.deleteNeighborBySNMP(neighbor);
-	 }
-	 
-	 public String getAnrMode() throws IOException {
-		 return XLP.getAnrMode();
-	 }
-	 
-	 public String getAnrDurationTimer() throws IOException {
-		 return XLP.getAnrDurationTimer();
-	 }
-	 
-	 public boolean verifyNbrList(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
-				X2ControlStateTypes x2ControlStatus, HandoverType HandoverType, boolean isStaticNeighbor,
-				String qOffsetRange) throws IOException{
-		 return XLP.verifyNbrList(enodeB, neighbor, hoControlStatus, x2ControlStatus, HandoverType, isStaticNeighbor, qOffsetRange);
-	 }
-	 
-	 public boolean verifyNbrList(EnodeB neighbor) throws IOException{
-		 return XLP.verifyNbrList(neighbor);
-	 }
-	 
-	 public boolean setOperationalStatus(EnbStates enbState) {
-		 return XLP.setOperationalStatus(enbState);
-	 }
-	 
-	 public int getUeNumberToEnb() {
-		 return XLP.getUeNumberToEnb();
-	 }
-	 
-	 public boolean addNewEntry(String rowStatusOid) throws IOException{
-		 return XLP.snmp.addNewEntry(rowStatusOid);
-	 }
-	 
-	 public boolean setTddAckMode(int value) {
-		 return XLP.setTddAckMode(value);
-	 }
-	 
-	 public boolean setPrachZeroCorrelZone(int value) {
-		 return XLP.setPrachZeroCorrelZone(value);
-	 }
-	 
-	 public boolean setCAMode(int value) {
-		 return XLP.setCAMode(value);
-	 }
-	 
-	 public void grantPermission(String filePath) {
-		 XLP.grantPermission(filePath);
-	 }
-	 
-	 public String getUsername() {
-		 return XLP.getUsername();
-	 }
-	 
-	 public String getPassword() {
-		 return XLP.getPassword();
-	 }
-	 
-	 public boolean isAllRunning() {
-		 return XLP.isAllRunning();
-	 }
-	 public boolean isAvailable(){
-		 return XLP.snmp.isAvailable();
-	 }
-	 
-	 public boolean waitForSnmpAvailable(long timeOut) {
-		 return XLP.waitForSnmpAvailable(timeOut);
-	 }
-	 
-	 public boolean setSheddingMode(int value) {
-		 return XLP.setSheddingMode(value);
-	 }
-	 
-	 public boolean setQci1And2ActivityTimer(int value) {
-		 return XLP.setQci1And2ActivityTimer(value);
-	 }
-	 
-	 public int getMaxVolteCalls() {
-		 return XLP.getMaxVolteCalls();
-	 }
-	 
-	 public void disableIdleModeAndReboot() {
-		 XLP.disableIdleModeAndReboot();
-	 }
-	 
-	 public void enableIdleModeAndReboot() {
-		 XLP.enableIdleModeAndReboot();
-	 }
-	 
-	 public void setSessionLogLevel(String sessionName, int level) {
-		 XLP.setSessionLogLevel(sessionName, level);
-	 }
-	 
-	 public void setSessionLogLevel(String client, String process, int level) {
-		 XLP.setSessionLogLevel(client, process, level);
-	 }
+
+	public void updateTestedVer() {
+		XLP.updateTestedVer();
+	}
+
+	public boolean isBankSwapped() {
+		return XLP.isBankSwapped();
+	}
+
+	public boolean setRSI(int value) {
+		return XLP.setRSI(value);
+	}
+
+	public int getPci(int cellIndex) {
+		return XLP.getPci(cellIndex);
+	}
+
+	public boolean setPnpMode(int value) {
+		return XLP.setPnpMode(value);
+	}
+
+	public boolean deleteFile(String filePath) {
+		return XLP.deleteFile(filePath);
+	}
+
+	public boolean isFileExists(String filePath) {
+		return XLP.isFileExists(filePath);
+	}
+
+	public Boolean getPnpMode() {
+		return XLP.getPnpMode();
+	}
+
+	public int getGranularityPeriod() {
+		return XLP.getGranularityPeriod();
+	}
+
+	public boolean setPci(int value) {
+		return XLP.setPci(value);
+	}
+
+	public String getCFISnmp() {
+		return XLP.getCFISnmp();
+	}
+
+	public void setPnpWarmResetModeAdmin(int value) {
+		XLP.setPnpWarmResetModeAdmin(value);
+	}
+
+	public void setPnpWarmRebootMask(int value) {
+		XLP.setPnpWarmRebootMask(value);
+	}
+
+	public String getTddAckMode() {
+		return XLP.getTddAckMode();
+	}
+
+	public String getPnpWarmResetModeAdmin() throws IOException {
+		return XLP.getPnpWarmResetModeAdmin();
+	}
+
+	public String getPnpWarmRebootMask() throws IOException {
+		return XLP.getPnpWarmRebootMask();
+	}
+
+	public String getParchZeroCorrrelZone() {
+		return XLP.getParchZeroCorrrelZone();
+	}
+
+	public String getDuplexModeSnmp() throws IOException {
+		return XLP.getDuplexModeSnmp();
+	}
+
+	public String getCAMode() {
+		return XLP.getCAMode();
+	}
+
+	public boolean setGranularityPeriod(int value) {
+		return XLP.setGranularityPeriod(value);
+	}
+
+	public String getBandWidthSnmp() {
+		return XLP.getBandWidthSnmp();
+	}
+
+	public String getSpecialSubFrameSnmp() throws IOException {
+		return XLP.getSpecialSubFrameSnmp();
+	}
+
+	public void setExpectBooting(boolean expectBooting) {
+		if (expectBooting)
+			expecteInServiceState = false;
+		XLP.setExpectBooting(expectBooting);
+	}
+
+	public String getEnbType() throws IOException {
+		return XLP.getEnbType();
+	}
+
+	public void setEnbType(int value) {
+		XLP.setEnbType(value);
+	}
+
+	public boolean isDynamicCFIEnable() throws IOException {
+		return XLP.isDynamicCFIEnable();
+	}
+
+	public EnbStates getRunningState() {
+		return XLP.getRunningState();
+	}
+
+	public String getCellServiceState() {
+		return XLP.getCellServiceState(40);
+	}
+
+	public String getCellServiceState(int cell) {
+		return XLP.getCellServiceState(cell);
+	}
+
+	public boolean enableDynamicCFI() throws IOException {
+		return XLP.enableDynamicCFI();
+	}
+
+	public boolean disableDynamicCFI() throws IOException {
+		return XLP.disableDynamicCFI();
+	}
+
+	public void addListenerToLogger(LogListener listener) {
+		XLP.addListenerToLogger(listener);
+	}
+
+	public boolean deleteAnrNeighborsBySNMP() {
+		return XLP.deleteAnrNeighborsBySNMP();
+	}
+
+	public boolean addNbr(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
+						  X2ControlStateTypes x2ControlStatus, HandoverType HandoverType, boolean isStaticNeighbor,
+						  String qOffsetRange) throws IOException {
+		return XLP.addNbr(enodeB, neighbor, hoControlStatus, x2ControlStatus, HandoverType, isStaticNeighbor, qOffsetRange);
+	}
+
+	public boolean deleteAllNeighborsByCli() {
+		return XLP.deleteAllNeighborsByCli();
+	}
+
+	public boolean verifyNoNeighbors() {
+		return XLP.verifyNoNeighbors();
+	}
+
+	public boolean verifyAnrNeighbor(EnodeB neighbor) {
+		return XLP.verifyAnrNeighbor(neighbor);
+	}
+
+	public void updatePLMNandEutranCellID(EnodeB neighbor) throws IOException {
+		XLP.updatePLMNandEutranCellID(neighbor);
+	}
+
+	public boolean deleteNeighborBySNMP(EnodeB neighbor) throws IOException {
+		return XLP.deleteNeighborBySNMP(neighbor);
+	}
+
+	public String getAnrMode() throws IOException {
+		return XLP.getAnrMode();
+	}
+
+	public String getAnrDurationTimer() throws IOException {
+		return XLP.getAnrDurationTimer();
+	}
+
+	public boolean verifyNbrList(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,
+								 X2ControlStateTypes x2ControlStatus, HandoverType HandoverType, boolean isStaticNeighbor,
+								 String qOffsetRange) throws IOException {
+		return XLP.verifyNbrList(enodeB, neighbor, hoControlStatus, x2ControlStatus, HandoverType, isStaticNeighbor, qOffsetRange);
+	}
+
+	public boolean verifyNbrList(EnodeB neighbor) throws IOException {
+		return XLP.verifyNbrList(neighbor);
+	}
+
+	public boolean setOperationalStatus(EnbStates enbState) {
+		return XLP.setOperationalStatus(enbState);
+	}
+
+	public int getUeNumberToEnb() {
+		return XLP.getUeNumberToEnb();
+	}
+
+	public boolean addNewEntry(String rowStatusOid) throws IOException {
+		return XLP.snmp.addNewEntry(rowStatusOid);
+	}
+
+	public boolean setTddAckMode(int value) {
+		return XLP.setTddAckMode(value);
+	}
+
+	public boolean setPrachZeroCorrelZone(int value) {
+		return XLP.setPrachZeroCorrelZone(value);
+	}
+
+	public boolean setCAMode(int value) {
+		return XLP.setCAMode(value);
+	}
+
+	public void grantPermission(String filePath) {
+		XLP.grantPermission(filePath);
+	}
+
+	public String getUsername() {
+		return XLP.getUsername();
+	}
+
+	public String getPassword() {
+		return XLP.getPassword();
+	}
+
+	public boolean isAllRunning() {
+		return XLP.isAllRunning();
+	}
+
+	public boolean isAvailable() {
+		return XLP.snmp.isAvailable();
+	}
+
+	public boolean waitForSnmpAvailable(long timeOut) {
+		return XLP.waitForSnmpAvailable(timeOut);
+	}
+
+	public boolean setSheddingMode(int value) {
+		return XLP.setSheddingMode(value);
+	}
+
+	public boolean setQci1And2ActivityTimer(int value) {
+		return XLP.setQci1And2ActivityTimer(value);
+	}
+
+	public int getMaxVolteCalls() {
+		return XLP.getMaxVolteCalls();
+	}
+
+	public void disableIdleModeAndReboot() {
+		XLP.disableIdleModeAndReboot();
+	}
+
+	public void enableIdleModeAndReboot() {
+		XLP.enableIdleModeAndReboot();
+	}
+
+	public void setSessionLogLevel(String sessionName, int level) {
+		XLP.setSessionLogLevel(sessionName, level);
+	}
+
+	public void setSessionLogLevel(String client, String process, int level) {
+		XLP.setSessionLogLevel(client, process, level);
+	}
 
 	public void setSessionLogLevelPerProcess(String sessionName, String client, String process, int level) {
-		XLP.setSessionLogLevel( sessionName, client, process, level);
+		XLP.setSessionLogLevel(sessionName, client, process, level);
 	}
 
-	public int getPacketForwardingEnable(int cellId){
-		 return XLP.getPacketForwardingEnable(cellId);
-	 }
-	 
-	 public boolean setPacketForwardingEnable(boolean value, int cellId) {
-		 return XLP.setPacketForwardingEnable(value, cellId);
-	 }
-	 
-	public HashMap<String,Variable> getUEShowLinkTable(){
+	public int getPacketForwardingEnable(int cellId) {
+		return XLP.getPacketForwardingEnable(cellId);
+	}
+
+	public boolean setPacketForwardingEnable(boolean value, int cellId) {
+		return XLP.setPacketForwardingEnable(value, cellId);
+	}
+
+	public HashMap<String, Variable> getUEShowLinkTable() {
 		return XLP.getUEShowLinkTable();
 	}
-	
+
 	public boolean setMaxVolteCalls(int value) {
 		return XLP.setMaxVolteCalls(value);
 	}
-	
+
 	public void setIpAddress(String ipAddress) {
 		XLP.setIpAddress(ipAddress);
 	}
-	
+
 	public void restartSessions() {
 		XLP.restartSessions();
 	}
-	
+
 	public void initSNMP() {
 		XLP.initSNMP();
 	}
-	
+
 	public synchronized boolean isReachable() {
 		return XLP.isReachable();
 	}
-	
+
 	public int[] getLedStatusValues() {
 		return XLP.getLedStatusValues();
 	}
-	
+
 	public Session getSSHlogSession() {
 		return XLP.getSSHlogSession();
 	}
-	
-	
-	public int getRfStatusAchievedTxPower(int cellIndex) { 
+
+
+	public int getRfStatusAchievedTxPower(int cellIndex) {
 		return XLP.getRfStatusAchievedTxPower(cellIndex);
 	}
-	
+
 	public boolean setTxPower(int value) {
 		return XLP.setTxPower(value);
 	}
-	
+
 	public boolean isInOperationalStatus() {
 		return XLP.isInOperationalStatus();
 	}
-	
+
 	public String getOperationalStatus() {
 		return XLP.getOperationalStatus();
 	}
-	
-	public void snmpSet(String readCommunityOrUserName, String writeCommunityOrPassword, String strAddress,String snmpVersion) {
-		XLP.snmp = new SNMP(readCommunityOrUserName,writeCommunityOrPassword,strAddress,snmpVersion);
-		
+
+	public void snmpSet(String readCommunityOrUserName, String writeCommunityOrPassword, String strAddress, String snmpVersion) {
+		XLP.snmp = new SNMP(readCommunityOrUserName, writeCommunityOrPassword, strAddress, snmpVersion);
+
 	}
-	
+
 	public String getSnmpVersion() {
 		return XLP.snmp.getSnmpVersion();
 	}
-	
+
 	public String getReadCommunityOrUserName() {
 		return XLP.snmp.getReadCommunityOrUserName();
 	}
-	
+
 	public String getWriteCommunityOrPassword() {
 		return XLP.snmp.getWriteCommunityOrPassword();
 	}
-	
+
 	public boolean setSmonThresholdsCriticalMin(int entry, int value) {
 		return XLP.setSmonThresholdsCriticalMin(entry, value);
 	}
-	
+
 	public EnbStates getServiceState() {
 		return XLP.getServiceState();
 	}
-	
+
 	public boolean setSmonThresholdsCriticalMax(int entry, int value) {
 		return XLP.setSmonThresholdsCriticalMax(entry, value);
 	}
-	
+
 	public int getSmonThresholdsCriticalMax(int entry) {
 		return XLP.getSmonThresholdsCriticalMax(entry);
 	}
-	
+
 	public int getTemperatureSensorsSensorReading(int entry) {
 		return XLP.getTemperatureSensorsSensorReading(entry);
 	}
-	
+
 	public int getSmonThresholdsCriticalMin(int entry) {
 		return XLP.getSmonThresholdsCriticalMin(entry);
 	}
-	
+
 	public boolean waitUntilNotAvailable(long timeOut) {
 		return XLP.snmp.waitUntilNotAvailable(timeOut);
 	}
-	
-	public ArrayList<String> getVlanIds(){
+
+	public ArrayList<String> getVlanIds() {
 		return XLP.getVlanIds();
 	}
-	
-	public String getExternalSubNetCIDR(){
+
+	public String getExternalSubNetCIDR() {
 		return XLP.getExternalSubNetCIDR();
 	}
-	
-	public ArrayList<String> getDefaultGateWayAddresses(){
+
+	public ArrayList<String> getDefaultGateWayAddresses() {
 		return XLP.getDefaultGateWayAddresses();
 	}
-	
-	public boolean remove3PartyNbrs(int numberOfNbr, final long mnoBroadcastPlmn, long startEutranCellId){
+
+	public boolean remove3PartyNbrs(int numberOfNbr, final long mnoBroadcastPlmn, long startEutranCellId) {
 		boolean result = false;
 		try {
 			result = XLP.remove3PartyNbrs(numberOfNbr, mnoBroadcastPlmn, startEutranCellId);
@@ -1966,329 +1984,329 @@ public abstract class EnodeB extends SystemObjectImpl {
 		}
 		return result;
 	}
-	
+
 	public boolean add3PartyNbrs(int numberOfNbr, final long mnoBroadcastPlmn, long startEutranCellId,
-			Integer enbType_optional, Integer qOffsetCell_optional) throws IOException{
+								 Integer enbType_optional, Integer qOffsetCell_optional) throws IOException {
 		return XLP.add3PartyNbrs(numberOfNbr, mnoBroadcastPlmn, startEutranCellId, enbType_optional, qOffsetCell_optional);
 	}
-	
+
 	public int getNrtChanges() {
 		return XLP.getNrtChanges();
 	}
-	
+
 	public boolean setRfChanges(int value) {
 		return XLP.setRfChanges(value);
 	}
-	
+
 	public int getRfChanges() {
 		return XLP.getRfChanges();
 	}
-	
+
 	public boolean setNrtChanges(int value) {
 		return XLP.setNrtChanges(value);
 	}
-	
+
 	public boolean setNetworkElementChanges(int value) {
 		return setNetworkElementChanges(value);
 	}
-	
+
 	public boolean setMmeChanges(int value) {
 		return setMmeChanges(value);
 	}
-	
+
 	public boolean setCellChanges(int value) {
 		return setCellChanges(value);
 	}
-	
+
 	public boolean setCallTraceEnbCfgTraceServerIpAddr(InetAddress inetAddress) {
 		return XLP.setCallTraceEnbCfgTraceServerIpAddr(inetAddress);
 	}
-	
+
 	public boolean provisionStartEvent() {
 		return XLP.provisionStartEvent();
 	}
-	
+
 	public boolean provisionEndedEvent() {
 		return XLP.provisionEndedEvent();
 	}
-	
+
 	public PbLteNwElementStatus getPbLteNetworkElementStatus(int networkType) {
 		return XLP.getPbLteNetworkElementStatus(networkType);
 	}
-	
+
 	public PbLteAnrStatus getPbLteSAnrStatus(long mnoBroadcastPlmn, long eutranCellId) {
 		return XLP.getPbLteSAnrStatus(mnoBroadcastPlmn, eutranCellId);
 	}
-	
+
 	public PbLteRfStatus getPbLteRfStatus(int rfPathId) {
 		return XLP.getPbLteRfStatus(rfPathId);
 	}
-	
+
 	public PbLteMmeStatus getPbLteMmeStatus(String ipAddress) {
 		return XLP.getPbLteMmeStatus(ipAddress);
 	}
-	
+
 	public PbLteCellStatus getPbLteCellStatus(int cellNumber) {
 		return XLP.getPbLteCellStatus(cellNumber);
 	}
-	
+
 	public int getNghListEnbType(long mnoBroadcastPlmn, long eutranCellId) {
 		return XLP.getNghListEnbType(mnoBroadcastPlmn, eutranCellId);
 	}
-	
+
 	public int getNghListQOffsetCell(long mnoBroadcastPlmn, long eutranCellId) {
 		return XLP.getNghListQOffsetCell(mnoBroadcastPlmn, eutranCellId);
 	}
-	
+
 	public int getNetworkElementChanges() {
 		return XLP.getNetworkElementChanges();
 	}
-	
+
 	public String getMmeStatusIpAddress() {
 		return XLP.getMmeStatusIpAddress();
 	}
-	
+
 	public String getMmeConfigIpAddress() {
 		return XLP.getMmeConfigIpAddress();
 	}
-	
+
 	public int getMmeChanges() {
 		return XLP.getMmeChanges();
 	}
-	
+
 	public int getCellChanges() {
 		return XLP.getCellChanges();
 	}
-	
+
 	public String getCallTraceEnbCfgTraceServerIpAddr() {
 		return XLP.getCallTraceEnbCfgTraceServerIpAddr();
 	}
-	
-	public boolean setBarringValues(int factorSig, int factorDat, int timeSig, int timeDat, int sigAdmin, int datAdmin,	int enable) {
+
+	public boolean setBarringValues(int factorSig, int factorDat, int timeSig, int timeDat, int sigAdmin, int datAdmin, int enable) {
 		return XLP.setBarringValues(factorSig, factorDat, timeSig, timeDat, sigAdmin, datAdmin, enable);
 	}
-	
+
 	public int connectionEstabAttSumSNMP() {
 		return XLP.connectionEstabAttSumSNMP();
 	}
-	
+
 	public int connectionEstabAttSuccSNMP() {
 		return XLP.connectionEstabAttSuccSNMP();
 	}
-	
+
 	public boolean updateIntegrityNull(int integrityNullLevel) {
 		return XLP.updateIntegrityNull(integrityNullLevel);
 	}
-	
+
 	public boolean updateIntegritySNW(int integritySNOWLevel) {
 		return XLP.updateIntegritySNW(integritySNOWLevel);
 	}
-	
+
 	public boolean updateIntegrityAES(int integrityAESLevel) {
 		return XLP.updateIntegrityAES(integrityAESLevel);
 	}
-	
+
 	public boolean updateCipheringSNW(int cipheringSNOWLevel) {
 		return XLP.updateCipheringSNW(cipheringSNOWLevel);
 	}
-	
+
 	public boolean updateCipheringNull(int cipheringNullLevel) {
 		return XLP.updateCipheringNull(cipheringNullLevel);
 	}
-	
+
 	public boolean updateCipheringAES(int cipheringAESLevel) {
 		return updateCipheringAES(cipheringAESLevel);
 	}
-	
-	public boolean setOtdoaMode(boolean value){
+
+	public boolean setOtdoaMode(boolean value) {
 		return XLP.setOtdoaMode(value);
 	}
-	
+
 	public boolean setAnrLightRatio(int val) {
 		return XLP.setAnrLightRatio(val);
 	}
-	
+
 	public boolean setAnrLightMinUes(int val) {
 		return XLP.setAnrLightMinUes(val);
 	}
-	
+
 	public int getRSRPEventTriggerGaps() {
 		return XLP.getRSRPEventTriggerGaps();
 	}
-	
+
 	public int getRSRPEventStopGaps() {
 		return XLP.getRSRPEventStopGaps();
 	}
-	
+
 	public int getAnrLightRatio() {
 		return XLP.getAnrLightRatio();
 	}
-	
+
 	public int getAnrLightMinUes() {
 		return XLP.getAnrLightMinUes();
 	}
-	
+
 	public String lteCliWithResponse(String command, String response) {
 		return XLP.lteCliWithResponse(command, response);
 	}
-	
+
 	public void setAnrMode(int value) {
 		XLP.setAnrMode(value);
 	}
-	
-	public boolean setECIDMode(boolean value){
+
+	public boolean setECIDMode(boolean value) {
 		return XLP.setECIDMode(value);
 	}
-	
-	public Integer getPrsCfgIndex(){
+
+	public Integer getPrsCfgIndex() {
 		return XLP.getPrsCfgIndex();
 	}
-	
-	public boolean getOTDOAMode(CellIndex cellIndex){
+
+	public boolean getOTDOAMode(CellIndex cellIndex) {
 		return XLP.getOTDOAMode(cellIndex);
 	}
-	
-	public Integer getECIDTimer(){
+
+	public Integer getECIDTimer() {
 		return XLP.getECIDTimer();
 	}
-	
-	public Integer getPrsPowerOffset(){
+
+	public Integer getPrsPowerOffset() {
 		return XLP.getPrsPowerOffset();
 	}
-	
-	public boolean getECIDMode(){
+
+	public boolean getECIDMode() {
 		return XLP.getECIDMode();
 	}
-	
-	public Integer getCfgPrsMutePeriod(){
+
+	public Integer getCfgPrsMutePeriod() {
 		return XLP.getCfgPrsMutePeriod();
 	}
-	
-	public Integer getCfgPrsMutePattSeq(){
+
+	public Integer getCfgPrsMutePattSeq() {
 		return XLP.getCfgPrsMutePattSeq();
 	}
-	
-	public Integer getCfgPrsBandwidth(){
+
+	public Integer getCfgPrsBandwidth() {
 		return XLP.getCfgPrsBandwidth();
 	}
-	
+
 	public long waitForUpdate(long timeout, String oid, Integer index, String expected) {
 		return XLP.snmp.waitForUpdate(timeout, oid, index, expected);
 	}
-	
+
 	public ArrayList<Plmn> getConfiguredPLMNList() {
 		return XLP.getConfiguredPLMNList();
 	}
-	
+
 	public void setNghRemoveThreshold(int value) {
 		XLP.setNghRemoveThreshold(value);
 	}
-	
+
 	public void setEvalPeriod(int value) {
 		XLP.setEvalPeriod(value);
 	}
-	
+
 	public String getX2ConStatus(String mnoBroadcastPlmn, String eutranCellId) {
 		return XLP.getX2ConStatus(mnoBroadcastPlmn, eutranCellId);
 	}
-	
+
 	public int getEvalPeriod() {
 		return XLP.getEvalPeriod();
 	}
-	
-	public int getNghRemoveThreshold(){
+
+	public int getNghRemoveThreshold() {
 		return XLP.getNghRemoveThreshold();
 	}
-	
+
 	public String getHomeCellIdentity() {
 		return XLP.getHomeCellIdentity();
 	}
-	
+
 	public String getSonCfgPciAuto() {
 		return XLP.getSonCfgPciAuto();
 	}
-	
+
 	public int getReEstablishmentSameCellPoorCoverage(CellIndex cellIndex) {
 		return XLP.getReEstablishmentSameCellPoorCoverage(cellIndex);
 	}
-	
-	public boolean setTPMMoEnable(boolean value, CellIndex cellIndex)  {
+
+	public boolean setTPMMoEnable(boolean value, CellIndex cellIndex) {
 		return XLP.setTPMMoEnable(value, cellIndex);
 	}
-	
+
 	public boolean setTPMServRsrpRlfThresh(int value, CellIndex cellIndex) {
 		return XLP.setTPMServRsrpRlfThresh(value, cellIndex);
 	}
-	
+
 	public boolean setTpmMo(int value, CellIndex cellIndex) {
 		return XLP.setTpmMo(value, cellIndex);
 	}
-	
+
 	public boolean setTpmNlPeriodic(int value, CellIndex cellIndex) {
 		return XLP.setTpmNlPeriodic(value, cellIndex);
 	}
-	
+
 	public boolean setTpmCycleMultiple(int value, CellIndex cellIndex) {
 		return XLP.setTpmCycleMultiple(value, cellIndex);
 	}
-	
+
 	public boolean setTPMNghRsrpRlfThresh(int value, CellIndex cellIndex) {
 		return XLP.setTPMNghRsrpRlfThresh(value, cellIndex);
 	}
-	
-	public boolean setTPMEnable(boolean value, CellIndex cellIndex)  {
+
+	public boolean setTPMEnable(boolean value, CellIndex cellIndex) {
 		return XLP.setTPMEnable(value, cellIndex);
 	}
-	
+
 	public int getTpmMoPwrAdj(CellIndex cellIndex) {
 		return XLP.getTpmMoPwrAdj(cellIndex);
 	}
-	
+
 	public int getTPMDelMoInc(CellIndex cellIndex) {
 		return XLP.getTPMDelMoInc(cellIndex);
 	}
-	
+
 	public int getOutgoingIntraFreqHoAttempt(CellIndex cellIndex) {
 		return XLP.getOutgoingIntraFreqHoAttempt(cellIndex);
 	}
-	
+
 	public int getTPMDelMoDec(CellIndex cellIndex) {
 		return XLP.getTPMDelMoDec(cellIndex);
 	}
-	
+
 	public int GetIntraHoTooLatePoorCoverage(CellIndex cellIndex) {
 		return XLP.GetIntraHoTooLatePoorCoverage(cellIndex);
 	}
-	
+
 	public int GetIntraHoTooLateGoodCoverageUnprepared(CellIndex cellIndex) {
 		return XLP.GetIntraHoTooLateGoodCoverageUnprepared(cellIndex);
 	}
-	
+
 	public Session getSerialSession() {
 		return XLP.getSerialSession();
 	}
-	
-	public String getXLPName(){
+
+	public String getXLPName() {
 		return XLP.getName();
 	}
 
-	public XLP getXLP(){
+	public XLP getXLP() {
 		return XLP;
 	}
 
-	public boolean isInstanceOfXLP_14_0(){
+	public boolean isInstanceOfXLP_14_0() {
 		return (XLP instanceof XLP_14_0);
 	}
-	
-	public boolean isInstanceOfXLP_15_2(){
+
+	public boolean isInstanceOfXLP_15_2() {
 		return (XLP instanceof XLP_15_2);
 	}
-	
-	public Session getDefaultSession(String componentName){
+
+	public Session getDefaultSession(String componentName) {
 		return XLP.getDefaultSession();
 	}
-	
-	public String sendCommandsOnSession(String prompt, String command, String response, int responseTimeout){
+
+	public String sendCommandsOnSession(String prompt, String command, String response, int responseTimeout) {
 		return XLP.sendCommandsOnSession(XLP.getDefaultSession().getName(), prompt, command, response, responseTimeout);
 	}
 
@@ -2303,11 +2321,11 @@ public abstract class EnodeB extends SystemObjectImpl {
 	public String getScpPassword() {
 		return XLP.getScpPassword();
 	}
-	
+
 	public String getScpUsername() {
 		return XLP.getScpUsername();
 	}
-	
+
 	public int getScpPort() {
 		return XLP.getScpPort();
 	}
@@ -2323,9 +2341,11 @@ public abstract class EnodeB extends SystemObjectImpl {
 	public EnabledStates getOperateBehindHenbGw() {
 		return XLP.getOperateBehindHenbGw();
 	}
+
 	public String getSkipCMP() {
 		return SkipCMP;
 	}
+
 	public void setSkipCMP(String skipCMP) {
 		SkipCMP = skipCMP;
 	}
@@ -2335,9 +2355,9 @@ public abstract class EnodeB extends SystemObjectImpl {
 	}
 
 	public Pair<Long, String>[] getExpectedDurationsAndStageNamesOrderedForColdReboot() {
-		if(swUpgradeDuringPnP){
+		if (swUpgradeDuringPnP) {
 			return expectedDurationsAndStageNamesOrderedWithSoftwareDownloadForColdReboot;
-		}else{
+		} else {
 			return expectedDurationsAndStageNamesOrderedForColdReboot;
 		}
 	}
@@ -2345,26 +2365,24 @@ public abstract class EnodeB extends SystemObjectImpl {
 	public Pair<Long, String>[] getExpectedDurationsAndStageNamesOrderedForWarmReboot() {
 		return expectedDurationsAndStageNamesOrderedForWarmReboot;
 	}
-	
+
 	public boolean getLoggerDebugCapEnable() {
 		return XLP.getLoggerDebugCapEnable();
 	}
-	
+
 	public boolean setLoggerDebugCapEnable(boolean enable) {
-		return XLP.setLoggerDebugCapEnable(enable); 
+		return XLP.setLoggerDebugCapEnable(enable);
 	}
-	
-	public int getNumberOfCells(){
+
+	public int getNumberOfCells() {
 		return XLP.getNumberOfCells();
 	}
 
 	/**
 	 * open Serial Log Session if not opened
 	 */
-	public String openSerialLogSession(EnodeB enodeB) {
-		SessionManager sessionManager = enodeB.getXLP().getSessionManager();
-		if ((sessionManager.getSerialSession() == null)){
-			enodeB.getXLP().initSerialCom();
+	public String openSerialLogSession(SessionManager sessionManager) {
+		if (sessionManager.getSerialSession() == null) {
 			sessionManager.openSerialLogSession();
 			sessionManager.getSerialSession().setLoggedSession(true);
 			sessionManager.getSerialSession().setEnableCliBuffer(false);
@@ -2375,8 +2393,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 	/**
 	 * open SSH Log Session if not opened
 	 */
-	public String openSSHLogSession(EnodeB enodeB){
-		SessionManager sessionManager = enodeB.getXLP().getSessionManager();
+	public String openSSHLogSession(SessionManager sessionManager) {
 		if (sessionManager.getSSHlogSession() == null) {
 			sessionManager.openSSHLogSession();
 			sessionManager.getSSHlogSession().setLoggedSession(true);
@@ -2386,15 +2403,84 @@ public abstract class EnodeB extends SystemObjectImpl {
 	}
 
 	/**
-	 * Add all the open session that opened in the eNB to loggedSessions array in order to stream through Logger thread.
-	 *
-	 * @param enodeB - enodeB
+	 * Open Serial log session for all DANs
+	 * SerialCom was already created and initialized in EnodeB-DAN component.
+	 * return empty list if there are no DANs
 	 */
-	public void addToLoggedSession(EnodeB enodeB){
-		SessionManager sessionManager = enodeB.getXLP().getSessionManager();
-		Logger logger = enodeB.getXLP().getLogger();
-		synchronized (logger.lockLoggedSessionList){
-			logger.addLoggedSessions(sessionManager);
+	public ArrayList<String> openSerialLogSessionForDANs() {
+		ArrayList<String> dansSessionNames = new ArrayList<>();
+		if (!this.hasDan()) return dansSessionNames;
+		DAN[] dans = ((EnodeBWithDAN) this).getDans();
+		for (DAN dan : dans) {
+			SessionManager sessionManager = dan.getSessionManager();
+			openSerialLogSession(sessionManager);
+		}
+		return dansSessionNames;
+	}
+
+	/**
+	 * Add all the open session in the XLP eNB to loggedSessions array in order to stream through Logger thread.
+	 */
+	public void addToLoggedSessionArray() {
+		SessionManager sessionManagerXLP = this.getXLP().getSessionManager();
+		Logger loggerXLP = this.getXLP().getLogger();
+		addToLoggedSessionArray(loggerXLP, sessionManagerXLP);
+	}
+
+	/**
+	 * Add all DANS open session in the eNB to loggedSessions array in order to stream through Logger thread.
+	 */
+	public void addDansSessionsToLoggedSessionArray() {
+		if (!this.hasDan()) return;
+		DAN[] dansArray = ((EnodeBWithDAN) this).getDans();
+		for (DAN dan : dansArray) {
+			SessionManager sessionManagerDAN = dan.getSessionManager();
+			Logger loggerDAN = dan.getLogger();
+			addToLoggedSessionArray(loggerDAN, sessionManagerDAN);
+		}
+	}
+
+	/**
+	 * Add all the open session in the XLP eNB to loggedSessions array in order to stream through Logger thread.
+	 */
+	public void removeXLPSessionsFromLoggedSessionArray(Session session) {
+		Logger loggerXLP = this.getXLP().getLogger();
+		removeFromLoggedSessionArray(loggerXLP, session);
+	}
+
+	/**
+	 * Add all DANS open *Serial* session in the eNB to loggedSessions array in order to stream through Logger thread.
+	 */
+	public void removeDansSessionsFromLoggedSessionArray() {
+		if (!this.hasDan()) return;
+		DAN[] dansArray = ((EnodeBWithDAN) this).getDans();
+		for (DAN dan : dansArray) {
+			Logger loggerDAN = dan.getLogger();
+			removeFromLoggedSessionArray(loggerDAN, dan.getSerialSession());
+		}
+	}
+
+	/**
+	 * Add all the open session in the XLP eNB to loggedSessions array in order to stream through Logger thread.
+	 *
+	 * @param sessionManager - sessionManager
+	 * @param logger         - logger
+	 */
+	private void addToLoggedSessionArray(Logger logger, SessionManager sessionManager) {
+		synchronized (logger.lockLoggedSessionList) {
+			logger.addAllOpenSessionsToLoggedSessions(sessionManager);
+		}
+	}
+
+	/**
+	 * Add all the open session in the XLP eNB to loggedSessions array in order to stream through Logger thread.
+	 *
+	 * @param logger  - logger
+	 * @param session - session
+	 */
+	private void removeFromLoggedSessionArray(Logger logger, Session session) {
+		synchronized (logger.lockLoggedSessionList) {
+			logger.removeFromLoggedSessions(session);
 		}
 	}
 }

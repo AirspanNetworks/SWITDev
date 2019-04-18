@@ -140,8 +140,9 @@ public class TestspanTest extends SystemTestCase4 {
      */
     private void initEnodeB(EnodeB eNodeB) {
         openSessions(eNodeB);
-        initUnexpectedRebootOfEnB(eNodeB);
+        //todo check if it's opening files for DANs
         createEnodeBLogFiles(eNodeB);
+        initUnexpectedRebootOfEnB(eNodeB);
         addEnodeBToUnexpectedRebootMap(eNodeB.getNetspanName());
         EnodeBConfig.getInstance().isEnodebManaged(eNodeB);
         eNodeB.setDeviceUnderTest(true);
@@ -167,9 +168,11 @@ public class TestspanTest extends SystemTestCase4 {
      */
     //todo deal with DAN
     private void openSessions(EnodeB eNodeB) {
-        eNodeB.openSerialLogSession(eNodeB);
-        eNodeB.openSSHLogSession(eNodeB);
-        eNodeB.addToLoggedSession(eNodeB);
+        eNodeB.openSerialLogSession(eNodeB.getXLP().getSessionManager());
+        eNodeB.openSSHLogSession(eNodeB.getXLP().getSessionManager());
+        eNodeB.openSerialLogSessionForDANs();
+        eNodeB.addToLoggedSessionArray();
+        eNodeB.addDansSessionsToLoggedSessionArray();
     }
 
     /**

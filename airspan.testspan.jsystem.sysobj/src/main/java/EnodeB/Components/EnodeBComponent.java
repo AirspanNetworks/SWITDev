@@ -213,6 +213,7 @@ public abstract class EnodeBComponent implements LogListener {
 		deviceUnderTest = false;
 		isStateChangedToCoreDump = false;
 		initSNMP();
+		initSerialCom();
 		sessionManager = new SessionManager(this);
 		sessionManager.openSSHCommandSession();
 		startLogStreamer();

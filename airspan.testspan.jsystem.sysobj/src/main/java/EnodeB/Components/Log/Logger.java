@@ -81,7 +81,7 @@ public class Logger implements Runnable {
 			setLoggedSessions(new ArrayList<Session>());
 		}
 		synchronized (lockLoggedSessionList) {
-			addLoggedSessions(sessionManager);
+			addAllOpenSessionsToLoggedSessions(sessionManager);
 		}
 		initLoggedSessions();
 	}
@@ -121,7 +121,7 @@ public class Logger implements Runnable {
 	 *
 	 * @param sessionManager - sessionManager
 	 */
-	public void addLoggedSessions(SessionManager sessionManager) {
+	public void addAllOpenSessionsToLoggedSessions(SessionManager sessionManager) {
 		// Console session
 		if (sessionManager.getSerialSession() != null && (!getLoggedSessions().contains(sessionManager.getSerialSession()))) {
 			addToLoggedSessions(sessionManager.getSerialSession());

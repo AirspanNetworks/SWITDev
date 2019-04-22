@@ -30,9 +30,11 @@ import Netspan.API.Lte.AlarmInfo;
 import Netspan.API.Lte.EnbCellProperties;
 import Netspan.API.Lte.EventInfo;
 import Netspan.API.Lte.LteBackhaul;
+import Utils.DebugFtpServer;
 import Utils.GeneralUtils;
 import Utils.GeneralUtils.RebootTypesNetspan;
 import Utils.GeneralUtils.RelayScanType;
+import Utils.Snmp.MibReader;
 import Utils.SysObjUtils;
 import jsystem.framework.ParameterProperties;
 import jsystem.framework.TestProperties;
@@ -1468,4 +1470,39 @@ public class Enodeb extends EnodebAction {
         }
 	}
 	
+	@Test
+	@TestProperties(name = "Set Debug Ftp Server", returnParam = "LastStatus", paramsInclude = { "DUT" })
+	public void setDebugFtpServer() {
+		if(isDutNull()){
+			return;
+		}
+		DebugFtpServer debugFtpServer = DebugFtpServer.getInstance();
+        boolean action = true;
+        try {
+	        GeneralUtils.printToConsole("Set debug FTP server.");
+	        String oid = MibReader.getInstance().resolveByName("asLteStkDebugFtpServerCfgFtpAddressType");
+	        if(dut.getSNMP(oid).equals("noSuchInstance"))
+	        	dut.lteCli("db add debugftpserver [1]");
+	        if(!dut.getSNMP(oid).equals(debugFtpServer.addressType))
+	        	dut.snmpSet(oid, Integer.parseInt(debugFtpServer.addressType));
+	        action = dut.snmpSet(oid, Integer.parseInt(debugFtpServer.addressType));
+	        oid = MibReader.getInstance().resolveByName("asLteStkDebugFtpServerCfgFtpServerIp");
+	        action &= dut.snmpSet(oid, debugFtpServer.getDebugFtpServerIP());
+	        oid = MibReader.getInstance().resolveByName("asLteStkDebugFtpServerCfgFtpAddress");
+	        action &= dut.snmpSet(oid, debugFtpServer.getDebugFtpServerIPInBytes());
+	        oid = MibReader.getInstance().resolveByName("asLteStkDebugFtpServerCfgFtpUser");
+	        action &= dut.snmpSet(oid, debugFtpServer.getDebugFtpServerUser());
+	        oid = MibReader.getInstance().resolveByName("asLteStkDebugFtpServerCfgFtpPassword");
+	        action &= dut.snmpSet(oid, debugFtpServer.getDebugFtpServerPassword());
+        } catch (IOException e) {
+        	action = false;
+        	e.printStackTrace();
+        }
+        if(!action){
+        	report.report("Failed to set debug FTP server", Reporter.FAIL);
+        	reason = "Failed to set debug FTP server";
+        }else{
+        	report.report("Succeeded to set debug FTP server");
+        }
+	}
 }

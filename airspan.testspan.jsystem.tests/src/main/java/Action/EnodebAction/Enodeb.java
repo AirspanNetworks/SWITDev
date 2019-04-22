@@ -1502,7 +1502,7 @@ public class Enodeb extends EnodebAction {
         	report.report("Failed to set debug FTP server", Reporter.FAIL);
         	reason = "Failed to set debug FTP server";
         }else{
-        	report.report("Succeeded to set debug FTP server");
+        	report.report("Succeeded to set debug FTP server: "+debugFtpServer.getDebugFtpServerIP());
         }
 	}
 }

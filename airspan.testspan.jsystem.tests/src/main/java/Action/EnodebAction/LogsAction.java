@@ -504,6 +504,34 @@ public class LogsAction extends EnodebAction {
 		}
 
 	/**
+	 * Start Log files on all DAN loggers
+	 *
+	 * @param logSessionParamsSet - logSessionParamsSet
+	 */
+	private void startDANLogs(LogSessionParams logSessionParamsSet) {
+		if (logSessionParamsSet.dansSerialSessionNames.isEmpty()) return;
+		DAN[] dans = ((EnodeBWithDAN) logSessionParamsSet.enodeB).getDans();
+		for (int i = 0; i < dans.length; i++) {
+			Logger logger = dans[i].getLogger();
+			logger.startEnodeBLog(logSessionParamsSet.dansSerialSessionNames.get(i), LOG_ACTION);
+		}
+	}
+
+	/**
+	 * Stop Log files on all DAN loggers
+	 *
+	 * @param logSessionParamsSet - logSessionParamsSet
+	 */
+	private void stopDANLogs(LogSessionParams logSessionParamsSet) {
+		if (logSessionParamsSet.dansSerialSessionNames.isEmpty()) return;
+		DAN[] dans = ((EnodeBWithDAN) logSessionParamsSet.enodeB).getDans();
+		for (int i = 0; i < dans.length; i++) {
+			Logger logger = dans[i].getLogger();
+			logger.closeEnodeBLog(logSessionParamsSet.dansSerialSessionNames.get(i), LOG_ACTION);
+		}
+	}
+
+	/**
 	 * Handle UI to Jsystem for startEnodeBLogs Action
 	 *
 	 * @param map        - map
@@ -543,34 +571,6 @@ public class LogsAction extends EnodebAction {
 		} else {
 			map.get(PROCESS_STRING).setValue(EVERY_MODULE_STRING);
 			map.get(CLIENT_STRING).setValue(EVERY_MODULE_STRING);
-		}
-	}
-
-	/**
-	 * Start Log files on all DAN loggers
-	 *
-	 * @param logSessionParamsSet - logSessionParamsSet
-	 */
-	private void startDANLogs(LogSessionParams logSessionParamsSet) {
-		if (logSessionParamsSet.dansSerialSessionNames.isEmpty()) return;
-		DAN[] dans = ((EnodeBWithDAN) logSessionParamsSet.enodeB).getDans();
-		for (int i = 0; i < dans.length; i++) {
-			Logger logger = dans[i].getLogger();
-			logger.startEnodeBLog(logSessionParamsSet.dansSerialSessionNames.get(i), LOG_ACTION);
-		}
-	}
-
-	/**
-	 * Stop Log files on all DAN loggers
-	 *
-	 * @param logSessionParamsSet - logSessionParamsSet
-	 */
-	private void stopDANLogs(LogSessionParams logSessionParamsSet) {
-		if (logSessionParamsSet.dansSerialSessionNames.isEmpty()) return;
-		DAN[] dans = ((EnodeBWithDAN) logSessionParamsSet.enodeB).getDans();
-		for (int i = 0; i < dans.length; i++) {
-			Logger logger = dans[i].getLogger();
-			logger.closeEnodeBLog(logSessionParamsSet.dansSerialSessionNames.get(i), LOG_ACTION);
 		}
 	}
 }

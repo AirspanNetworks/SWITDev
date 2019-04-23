@@ -2,6 +2,8 @@ package Utils;
 
 import EnodeB.EnodeB;
 
+import java.util.ArrayList;
+
 
 /**
  * LogSessionParams per EnB
@@ -12,21 +14,26 @@ public class LogSessionParams {
 	/**
 	 * Parameter set vars, for each Session
 	 */
-	public Pair<EnodeB, Session> enBSessionPair;
 	public EnodeB enodeB;
 	public Session session;
 	public Modules module;
 	public String process;
 	public String client;
 	public LogLevel logLevel;
+
+	/**
+	 * flag - true if session was opened
+	 */
 	public boolean isSessionOpen;
 
 	/**
-	 * SSH and serial session names are being used when we open the relevant session.
+	 * SSH and Serial (DANs and XLP) session names are being used when we open the relevant session.
 	 * Separated constants in order to parallel track each, while the scenario is running.
 	 */
 	public String sshSessionName;
 	public String serialSessionName;
+	public ArrayList<String> dansSerialSessionNames;
+
 
 	/**
 	 * This constructor will be created for every session in order to save all the session params
@@ -40,7 +47,6 @@ public class LogSessionParams {
 		this.client = inputClient;
 		this.logLevel = inputLogLevel;
 		this.isSessionOpen = false;
-		this.enBSessionPair = new Pair<>(eNodeB, inputSession);
 	}
 
 	/**

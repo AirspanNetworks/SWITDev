@@ -30,6 +30,7 @@ import Netspan.API.Lte.AlarmInfo;
 import Netspan.API.Lte.EnbCellProperties;
 import Netspan.API.Lte.EventInfo;
 import Netspan.API.Lte.LteBackhaul;
+import Netspan.NBI_17_0.Netspan_17_0_abilities;
 import Utils.DebugFtpServer;
 import Utils.GeneralUtils;
 import Utils.GeneralUtils.RebootTypesNetspan;
@@ -156,6 +157,7 @@ public class Enodeb extends EnodebAction {
 	private final int eventStartDeafult = 20;
 	private ArrayList<String> listOfAlarms;
 	private ArrayList<String> listOfEvents;
+	private ArrayList<Integer> emergencyAreaIds;
 	private verifyAlarmAction verifyAction = verifyAlarmAction.Equals;
 	
 	public synchronized RelayScanType getScanType() {
@@ -982,6 +984,20 @@ public class Enodeb extends EnodebAction {
 			}
 		}
 	}
+	
+	@Test
+	@TestProperties(name = "Set Emergency Area Ids", returnParam = "LastStatus", paramsInclude = { "DUT", "EmergencyAreaIds" })
+	public void setEmergencyAreaIds() throws Exception {
+		NetspanServer netspan = NetspanServer.getInstance();
+		report.report("Set Emergency Area Ids");
+		boolean flag = ((Netspan_17_0_abilities) netspan).setEmergencyAreaIds(dut, emergencyAreaIds);
+		if (!flag) {
+			report.report("Set Emergency Area Ids Failed", Reporter.FAIL);
+			reason = "Set Emergency Area Ids Failed";
+		} else {
+			report.report("Set Emergency Area Ids Succeeded");
+		}
+	}
 
 	private boolean rebootAndWaitForAllrunning() {
 		int inserviceTime = 0;
@@ -1293,6 +1309,12 @@ public class Enodeb extends EnodebAction {
 	@ParameterProperties(description = "List of events info, separated by #")
 	public void setListOfEvents(String listOfEvents) {
 		this.listOfEvents = new ArrayList<String>(Arrays.asList(listOfEvents.split("#")));
+	}
+	
+	@ParameterProperties(description = "List of EmergencyAreaIds, separated by \",\"")
+	public void setEmergencyAreaIds(String emergencyAreaIds) {
+		this.emergencyAreaIds = new ArrayList<>();
+		for(String s : emergencyAreaIds.split(",")) this.emergencyAreaIds.add(Integer.valueOf(s));
 	}
 
 	@Test

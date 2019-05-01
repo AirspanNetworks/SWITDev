@@ -1,10 +1,17 @@
 package Netspan.NBI_17_0;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import EnodeB.EnodeB;
 import Netspan.NBIVersion;
+import Netspan.NBI_17_0.Lte.LteCellSetWs;
+import Netspan.NBI_17_0.Lte.EaidsParams;
+import Netspan.NBI_17_0.Lte.EnbTypesWs;
+import Netspan.NBI_17_0.Lte.LteEnbDetailsSetWs;
+import Netspan.NBI_17_0.Lte.NodeActionResult;
+import Netspan.NBI_17_0.Lte.ObjectFactory;
 import Netspan.NBI_16_0.NetspanServer_16_0;
 import Netspan.Profiles.ConnectedUETrafficDirection;
 import Utils.GeneralUtils;
@@ -99,5 +106,35 @@ public class NetspanServer_17_0 extends NetspanServer_16_0 implements Netspan_17
         }
         return ret;
     }
+
+	@Override
+	public boolean setEmergencyAreaIds(EnodeB dut, ArrayList<Integer> ids) {
+		String nodeName = dut.getNetspanName();
+		LteEnbDetailsSetWs enbConfigSet = new LteEnbDetailsSetWs();
+		ObjectFactory factoryDetails = new ObjectFactory();
+		LteCellSetWs lteCellSet = new LteCellSetWs();
+		EaidsParams eaidsParams = factoryDetails.createEaidsParams();
+		eaidsParams.getEmergencyAreaId().addAll(ids);
+		lteCellSet.setCellNumber(factoryDetails.createLteCellSetWsCellNumber(String.valueOf(dut.getCellContextID())));
+		lteCellSet.setEmergencyAreaIds(eaidsParams);
+		enbConfigSet.getLteCell().add(lteCellSet);
+		try {
+			NodeActionResult result = soapHelper_17_0.getLteSoap().enbConfigSet(nodeName, null,
+					enbConfigSet, null, credentialsLte);
+			if (result.getErrorCode() == Netspan.NBI_17_0.Lte.ErrorCodes.OK) {
+				report.report(String.format("%s - Succeeded to set Emergency Area Ids", nodeName));
+				return true;
+			} else {
+				report.report("enbConfigSet via Netspan Failed : " + result.getErrorString(), Reporter.WARNING);
+				return false;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			report.report(nodeName + ": enbConfigSet via Netspan Failed due to: ", Reporter.WARNING);
+			return false;
+		} finally {
+			soapHelper_17_0.endLteSoap();
+		}
+	}
     
 }

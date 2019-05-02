@@ -570,12 +570,14 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 			boolean state){
 		
 		ArrayList<ArrayList<String>> enableDisableStreams = new ArrayList<ArrayList<String>>();
+		enableDisableStreams.add(new ArrayList<String>());
+		enableDisableStreams.add(new ArrayList<String>());
 		tpDlCountersFileNames = "";
 		tpUlCountersFileNames = "";
 		for(UEIPerf ueIPerf : allUEsIPerfList){
 			ArrayList<ArrayList<String>> enableDisableUeIPerfStreams = ueIPerf.setStreamsState(protocol,ueNameList, qciList, transmitDirection, state);
-			enableDisableStreams.add(enableDisableUeIPerfStreams.get(0));
-			enableDisableStreams.add(enableDisableUeIPerfStreams.get(1));
+			enableDisableStreams.get(0).addAll(enableDisableUeIPerfStreams.get(0));
+			enableDisableStreams.get(1).addAll(enableDisableUeIPerfStreams.get(1));
 			tpDlCountersFileNames += (" " + ueIPerf.getDlActiveStreamFileNames());
 			tpUlCountersFileNames += (" " + ueIPerf.getUlActiveStreamFileNames());
 		}
@@ -589,12 +591,14 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 			boolean state){
 		
 		ArrayList<ArrayList<String>> enableDisableStreams = new ArrayList<ArrayList<String>>();
+		enableDisableStreams.add(new ArrayList<String>());
+		enableDisableStreams.add(new ArrayList<String>());
 		tpDlCountersFileNames = "";
 		tpUlCountersFileNames = "";
 		for(UEIPerf ueIPerf : allUEsIPerfList){
 			ArrayList<ArrayList<String>> enableDisableUeIPerfStreams = ueIPerf.setStreamsStateAndNoChangeOthers(protocol,ueNameList, qciList, transmitDirection, state);
-			enableDisableStreams.add(enableDisableUeIPerfStreams.get(0));
-			enableDisableStreams.add(enableDisableUeIPerfStreams.get(1));
+			enableDisableStreams.get(0).addAll(enableDisableUeIPerfStreams.get(0));
+			enableDisableStreams.get(1).addAll(enableDisableUeIPerfStreams.get(1));
 			tpDlCountersFileNames += (" " + ueIPerf.getDlActiveStreamFileNames());
 			tpUlCountersFileNames += (" " + ueIPerf.getUlActiveStreamFileNames());
 		}

@@ -1213,10 +1213,13 @@ public class P0 extends TestspanTest {
 	}
 
 	private void stopCommandsAndAttachFiles() {
-		commandsThread1.stopCommands();
-		commandsThread2.stopCommands();
-		commandsThread1.moveFileToReporterAndAddLink();
-		commandsThread2.moveFileToReporterAndAddLink();
+		if(commandsThread1 != null){
+			commandsThread1.stopCommands();
+			commandsThread1.moveFileToReporterAndAddLink();			
+		}
+		if(commandsThread2 != null){
+			commandsThread2.stopCommands();
+			commandsThread2.moveFileToReporterAndAddLink();			
+		}
 	}
-
 }

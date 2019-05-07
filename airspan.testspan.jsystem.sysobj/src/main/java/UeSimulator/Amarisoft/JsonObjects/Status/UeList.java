@@ -154,12 +154,12 @@ public class UeList {
         this.powerOn = powerOn;
     }
 
-    @JsonProperty("ip")
+    @JsonProperty("ipv4")
     public String getIp() {
         return ip;
     }
 
-    @JsonProperty("ip")
+    @JsonProperty("ipv4")
     public void setIp(String ip) {
         this.ip = ip;
     }

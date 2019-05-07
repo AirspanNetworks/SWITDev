@@ -19,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "rnti",
     "cell_index",
     "power_on",
-    "ip",
+    "ipv4",
     "dl_bitrate",
     "ul_bitrate",
     "dl_rx_count",
@@ -51,7 +51,7 @@ public class UeList {
     private Integer cell_index;
     @JsonProperty("power_on")
     private Boolean powerOn;
-    @JsonProperty("ip")
+    @JsonProperty("ipv4")
 	private String ip;
     @JsonProperty("dl_bitrate")
     private Double dlBitrate;

@@ -2,6 +2,7 @@
 package UeSimulator.Amarisoft.JsonObjects.Status;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
@@ -19,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "rnti",
     "cell_index",
     "power_on",
-    "ipv4",
+    "ip",
     "dl_bitrate",
     "ul_bitrate",
     "dl_rx_count",
@@ -51,7 +52,7 @@ public class UeList {
     private Integer cell_index;
     @JsonProperty("power_on")
     private Boolean powerOn;
-    @JsonProperty("ipv4")
+    @JsonProperty("ip")
 	private String ip;
     @JsonProperty("dl_bitrate")
     private Double dlBitrate;
@@ -81,6 +82,8 @@ public class UeList {
     private Double snr;
     @JsonProperty("emm_state")
     private String emmState;
+    @JsonProperty("pdn_list")
+    private List<PdnList> pdnList = null;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
@@ -154,12 +157,12 @@ public class UeList {
         this.powerOn = powerOn;
     }
 
-    @JsonProperty("ipv4")
+    @JsonProperty("ip")
     public String getIp() {
         return ip;
     }
 
-    @JsonProperty("ipv4")
+    @JsonProperty("ip")
     public void setIp(String ip) {
         this.ip = ip;
     }
@@ -304,6 +307,16 @@ public class UeList {
         this.emmState = emmState;
     }
 
+    @JsonProperty("pdn_list")
+    public List<PdnList> getPdnList() {
+        return pdnList;
+    }
+
+    @JsonProperty("pdn_list")
+    public void setPdnList(List<PdnList> pdnList) {
+        this.pdnList = pdnList;
+    }
+    
     @JsonAnyGetter
     public Map<String, Object> getAdditionalProperties() {
         return this.additionalProperties;

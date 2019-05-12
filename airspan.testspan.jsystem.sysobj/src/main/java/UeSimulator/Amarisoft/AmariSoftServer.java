@@ -1113,6 +1113,9 @@ public class AmariSoftServer extends SystemObjectImpl{
 				if (ueStatus.getUeList() != null && ueStatus.getUeList().size() > 0) {
 					if (ueStatus.getUeList().get(0) != null) {
 						ueIp = ueStatus.getUeList().get(0).getIp();
+						if(ueIp == null){
+							ueIp = ueStatus.getUeList().get(0).getPdnList().get(0).getIpv4();
+						}
 						GeneralUtils.printToConsole("Found IP " + ueIp);
 					}
 				}

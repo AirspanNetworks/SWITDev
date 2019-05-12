@@ -34,7 +34,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "cell_id",
     "rsrp",
     "snr",
-    "emm_state"
+    "emm_state",
+    "pdn_list"
 })
 public class UeList {
 

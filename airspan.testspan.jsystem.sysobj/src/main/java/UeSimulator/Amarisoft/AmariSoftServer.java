@@ -96,8 +96,18 @@ public class AmariSoftServer extends SystemObjectImpl{
 	private boolean connected = false;
 	private boolean saveLogFile = false;
 	private boolean running = false;
+	private String pathPreConfig = null;
+	private String currentConfigFile;
 
-    @Override
+    public synchronized String getPathPreConfig() {
+		return pathPreConfig;
+	}
+
+	public synchronized void setPathPreConfig(String pathPreConfig) {
+		this.pathPreConfig = pathPreConfig;
+	}
+
+	@Override
 	public void init() throws Exception {
 		super.init();
 		port = 900 + sdrList[0];
@@ -321,7 +331,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     	boolean result = false;
 		if (running) {
 			sendCommands("quit", "#", lteUeTerminal, true);
-			if (!sendCommands("ps -aux |grep lteue", "/root/ue/config/automationConfigFile", lteUecommands, false)) {
+			if (!sendCommands("ps -aux |grep lteue", "/root/ue/config/"+currentConfigFile, lteUecommands, false)) {
 				running = false;
 				result =  true;
 			} else {
@@ -350,8 +360,18 @@ public class AmariSoftServer extends SystemObjectImpl{
     
     public boolean startServer(ArrayList<EnodeB> duts){
     	connect();
+    	if(pathPreConfig != null){
+    		if(startServer(pathPreConfig)){
+    			currentConfigFile = pathPreConfig;
+    			return true;
+    		}
+    	}
     	setConfig(duts, Integer.parseInt(timingAdvance));
-    	return startServer(ueConfigFileName);
+    	if(startServer(ueConfigFileName)){
+    		currentConfigFile = ueConfigFileName;
+    		return true;
+    	}
+    	return false;
     }
     
     public boolean startServer(String configFile){
@@ -362,7 +382,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     			running = false;
     			return false;
 			}
-    		if(!sendCommands("ps -aux |grep lteue", " /root/ue/config/automationConfigFile", lteUecommands, false)) {
+    		if(!sendCommands("ps -aux |grep lteue", " /root/ue/config/" + configFile, lteUecommands, false)) {
     			GeneralUtils.printToConsole("Failed starting server with config file: " + configFile);
     			running = false;
     			return false;

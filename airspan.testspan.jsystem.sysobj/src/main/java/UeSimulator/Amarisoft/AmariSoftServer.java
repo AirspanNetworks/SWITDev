@@ -99,11 +99,11 @@ public class AmariSoftServer extends SystemObjectImpl{
 	private String pathPreConfig = null;
 	private String currentConfigFile;
 
-    public synchronized String getPathPreConfig() {
+    public String getPathPreConfig() {
 		return pathPreConfig;
 	}
 
-	public synchronized void setPathPreConfig(String pathPreConfig) {
+	public void setPathPreConfig(String pathPreConfig) {
 		this.pathPreConfig = pathPreConfig;
 	}
 

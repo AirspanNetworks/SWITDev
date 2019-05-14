@@ -362,6 +362,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     	connect();
     	if(pathPreConfig != null){
     		if(startServer(pathPreConfig)){
+    			getEarfcnList(duts);
     			report.report("Using configuration file: "+pathPreConfig);
     			currentConfigFile = pathPreConfig;
     			return true;

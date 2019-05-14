@@ -362,12 +362,14 @@ public class AmariSoftServer extends SystemObjectImpl{
     	connect();
     	if(pathPreConfig != null){
     		if(startServer(pathPreConfig)){
+    			report.report("Using configuration file: "+pathPreConfig);
     			currentConfigFile = pathPreConfig;
     			return true;
     		}
     	}
     	setConfig(duts, Integer.parseInt(timingAdvance));
     	if(startServer(ueConfigFileName)){
+    		report.report("Using configuration file: "+ueConfigFileName);
     		currentConfigFile = ueConfigFileName;
     		return true;
     	}

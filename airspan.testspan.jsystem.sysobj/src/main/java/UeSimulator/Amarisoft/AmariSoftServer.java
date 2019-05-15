@@ -873,6 +873,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			String message = mapper.writeValueAsString(addUE);
+			GeneralUtils.printToConsole(message);
 			Object ans = sendSynchronizedMessage(message);
 			UeAdd ueAdd = (UeAdd)ans;
 			List<String> info = ueAdd.getInfo();

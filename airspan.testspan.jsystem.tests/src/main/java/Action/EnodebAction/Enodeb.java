@@ -986,10 +986,11 @@ public class Enodeb extends EnodebAction {
 	}
 	
 	@Test
-	@TestProperties(name = "Set Emergency Area Ids", returnParam = "LastStatus", paramsInclude = { "DUT", "EmergencyAreaIds" })
+	@TestProperties(name = "Set Emergency Area Ids", returnParam = "LastStatus", paramsInclude = { "DUT", "EmergencyAreaIds", "CellId" })
 	public void setEmergencyAreaIds() throws Exception {
 		NetspanServer netspan = NetspanServer.getInstance();
 		report.report("Set Emergency Area Ids");
+		dut.setCellContextNumber(cellId);
 		boolean flag = ((Netspan_17_0_abilities) netspan).setEmergencyAreaIds(dut, emergencyAreaIds);
 		if (!flag) {
 			report.report("Set Emergency Area Ids Failed", Reporter.FAIL);
@@ -997,6 +998,7 @@ public class Enodeb extends EnodebAction {
 		} else {
 			report.report("Set Emergency Area Ids Succeeded");
 		}
+		dut.setCellContextNumber(1);
 	}
 
 	private boolean rebootAndWaitForAllrunning() {

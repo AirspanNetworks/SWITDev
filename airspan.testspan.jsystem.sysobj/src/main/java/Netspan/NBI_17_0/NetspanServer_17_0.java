@@ -130,7 +130,7 @@ public class NetspanServer_17_0 extends NetspanServer_16_0 implements Netspan_17
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			report.report(nodeName + ": enbConfigSet via Netspan Failed due to: ", Reporter.WARNING);
+			report.report(nodeName + ": enbConfigSet via Netspan Failed due to: "+e.getMessage(), Reporter.WARNING);
 			return false;
 		} finally {
 			soapHelper_17_0.endLteSoap();

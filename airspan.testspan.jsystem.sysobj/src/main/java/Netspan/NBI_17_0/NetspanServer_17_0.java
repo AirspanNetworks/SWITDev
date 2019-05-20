@@ -5,13 +5,13 @@ import java.util.List;
 
 import EnodeB.EnodeB;
 import Netspan.NBIVersion;
-import Netspan.NBI_16_0.NetspanServer_16_0;
+import Netspan.NBI_16_5.NetspanServer_16_5;
 import Netspan.Profiles.ConnectedUETrafficDirection;
 import Utils.GeneralUtils;
 import jsystem.framework.report.Reporter;
 
 
-public class NetspanServer_17_0 extends NetspanServer_16_0 implements Netspan_17_0_abilities{
+public class NetspanServer_17_0 extends NetspanServer_16_5 implements Netspan_17_0_abilities{
 	public SoapHelper soapHelper_17_0;
 	private static final String USERNAME = "wsadmin";
 	private static final String PASSWORD = "password";

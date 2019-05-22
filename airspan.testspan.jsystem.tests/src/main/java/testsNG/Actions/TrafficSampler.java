@@ -71,10 +71,12 @@ public class TrafficSampler implements Runnable{
 			for(Long lon:temp){
 				tpt += lon;
 			}
-			if(name.contains("UL")){
-				meanUl += tpt/temp.size();
-			}else{
-				meanDl += tpt/temp.size();
+			if(temp.size() != 0){
+				if(name.contains("UL")){
+					meanUl += tpt/temp.size();					
+				}else{
+					meanDl += tpt/temp.size();
+				}				
 			}
 		}
 		ArrayList<Long> ret = new ArrayList<Long>();

@@ -1862,8 +1862,4 @@ public class Traffic {
             ArrayList<ArrayList<StreamParams>> listOfStreamList2) {
         return trafficGenerator.getResultsAfterTest(listOfStreamList2);
     }
-    
-    /*public ArrayList<Long> getMeanByFile(ArrayList<String> streamList) {
-    	return trafficGenerator.getMeanByFile(streamList);
-    }*/
 }

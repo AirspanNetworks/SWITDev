@@ -762,12 +762,13 @@ public class UEIPerf {
 		}
 		Pattern p = Pattern.compile("(\\d+.\\d+-\\s*\\d+.\\d+).*KBytes\\s+(\\d+|\\d+.\\d+)\\s+Kbits/sec.*");
 		Long tpt = 0L;
+		int sampleIndex = 0;
+
 		try{
 			FileReader read = new FileReader(file);
 			BufferedReader br = new BufferedReader(read);
 			String line;
 			//long sampleTime = ips.getTimeStart();
-			//int sampleIndex = 0;
 			while((line = br.readLine()) != null){
 				Matcher m = p.matcher(line);
 				if(m.find()){
@@ -780,7 +781,7 @@ public class UEIPerf {
 					}else{
 						currentValue = Long.valueOf(m.group(2));
 					}
-					tpt += currentValue*1000;
+					tpt += currentValue;
 					/*StreamParams tempStreamParams = new StreamParams();
 					tempStreamParams.setName(ips.getStreamName());
 					tempStreamParams.setTimeStamp(sampleTime);
@@ -797,7 +798,7 @@ public class UEIPerf {
 						ret.add(new ArrayList<StreamParams>());
 					}
 					ret.get(sampleIndex).add(tempStreamParams);*/
-					//sampleIndex++;
+					sampleIndex++;
 				}
 			}
 			br.close();
@@ -805,7 +806,10 @@ public class UEIPerf {
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-		return tpt;
+		if(sampleIndex == 0){
+			return 0L;
+		}
+		return tpt/sampleIndex*1000;
 	}
 	
 	public ArrayList<ArrayList<StreamParams>> getAllStreamsResults(ArrayList<String> streamList) {

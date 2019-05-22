@@ -66,10 +66,29 @@ public class TrafficSampler implements Runnable{
 	
 	private void compareResults(Long uLrxTotal, Long dlrxTotal, ArrayList<ArrayList<StreamParams>> listOfStreamList) {
 		reason = StringUtils.EMPTY;
+		
+		int sizeDlStreams = 0;
+		int sizeUlStreams = 0;
+		
+		for(ArrayList<StreamParams> streams:listOfStreamList){
+			boolean promoteDl = true;
+			boolean promoteUl = true;
+			for(StreamParams stream:streams){
+				if(stream.getName().contains("DL") && promoteDl){
+					sizeDlStreams++;
+					promoteDl = false;
+				}
+				if(stream.getName().contains("UL") && promoteUl){
+					sizeUlStreams++;
+					promoteUl = false;
+				}
+			}
+		}
+		
 		double ul_Divided_With_Number_Of_Streams = 0;
 		if(ULExpected != null){
-			if(listOfStreamList.size() != 0){
-				ul_Divided_With_Number_Of_Streams = uLrxTotal / 1000000.0 / listOfStreamList.size();
+			if(sizeUlStreams != 0){
+				ul_Divided_With_Number_Of_Streams = uLrxTotal / 1000000.0 / sizeUlStreams;
 				String expectedUlToReport = convertTo3DigitsAfterPoint(ULExpected);
 				String actualUlToReport = convertTo3DigitsAfterPoint(ul_Divided_With_Number_Of_Streams);
 				report.report("Expected UL: "+expectedUlToReport+" Mbps");
@@ -89,8 +108,8 @@ public class TrafficSampler implements Runnable{
 		}
 		double dl_Divided_With_Number_Of_Streams = 0;
 		if(DLExpected != null){
-			if(listOfStreamList.size() != 0){
-				dl_Divided_With_Number_Of_Streams = dlrxTotal / 1000000.0 / listOfStreamList.size();			
+			if(sizeDlStreams != 0){
+				dl_Divided_With_Number_Of_Streams = dlrxTotal / 1000000.0 / sizeDlStreams;			
 				String expectedDlToReport = convertTo3DigitsAfterPoint(DLExpected);
 				String actualDlToReport = convertTo3DigitsAfterPoint(dl_Divided_With_Number_Of_Streams);
 

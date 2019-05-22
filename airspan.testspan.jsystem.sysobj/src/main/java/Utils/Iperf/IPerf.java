@@ -837,6 +837,34 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 	}
 	
 	@Override
+	public ArrayList<Long> getMeanByFile(ArrayList<String> streamList) {
+		ArrayList<Long> toReturn = new ArrayList<Long>();
+		toReturn.add(0L);
+		toReturn.add(0L);
+		Long dl = 0L;
+		Long ul = 0L;
+		for(UEIPerf ueIPerf : allUEsIPerfList){	
+			ArrayList<Long> temp = ueIPerf.getMeanByFiles(streamList);
+			dl = temp.get(0) + toReturn.get(0);
+			ul = temp.get(1) + toReturn.get(1);
+			toReturn.clear();
+			toReturn.add(dl);
+			toReturn.add(ul);
+			/*for(int index=0;index<temp.size();index++){
+				Long dl = 
+				try{
+					toReturn.get(index);
+				}catch(Exception e){
+					toReturn.add(new ArrayList<StreamParams>());
+				}
+				toReturn.get(index).addAll(temp.get(index));
+			}*/
+		}
+		return toReturn;
+	}
+
+	
+	@Override
 	public ArrayList<ArrayList<StreamParams>> getAllStreamsResults(ArrayList<String> streamList) {
 		ArrayList<ArrayList<StreamParams>> toReturn = new ArrayList<ArrayList<StreamParams>>();
 		for(UEIPerf ueIPerf : allUEsIPerfList){	

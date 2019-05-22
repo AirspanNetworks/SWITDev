@@ -52,16 +52,55 @@ public class TrafficSampler implements Runnable{
 		report.report("Statistics for traffic "+getName());
 		ArrayList<ArrayList<StreamParams>> temp = trafficInstance.getAllStreamsResults(streamList);
 		printPerStreamTables(temp);
-		compareWithCalculator(temp);
+		ArrayList<Long> dl_ul = trafficInstance.getMeanByFile(streamList);
+		compareWithCalculator(dl_ul);
 		trafficInstance.getResultFilesByList(streamList);
 	}
 	
-	private void compareWithCalculator(ArrayList<ArrayList<StreamParams>> listOfStreamList2){
-		ArrayList<Long> listUlAndDl = new ArrayList<Long>();
+	private void compareWithCalculator(ArrayList<Long> dl_ul){
+		reason = StringUtils.EMPTY;
+		double ul_Divided_With_Number_Of_Streams = 0;
+		if(ULExpected != null){
+			ul_Divided_With_Number_Of_Streams = dl_ul.get(0) / 1000000.0;
+			String expectedUlToReport = convertTo3DigitsAfterPoint(ULExpected);
+			String actualUlToReport = convertTo3DigitsAfterPoint(ul_Divided_With_Number_Of_Streams);
+			report.report("Expected UL: "+expectedUlToReport+" Mbps");
+			report.report("Actual average UL tpt: "+actualUlToReport+" Mbps");
+			if(ul_Divided_With_Number_Of_Streams < ULExpected){
+				report.report("UL actual is lower than expected", Reporter.FAIL);
+				reason = name+":<br> ";
+				reason += "Expected UL: "+expectedUlToReport+" Mbps. Actual UL: "+actualUlToReport+" Mbps.<br> ";
+			}else{
+				report.step("UL actual is above expected");
+			}				
+		}
+		double dl_Divided_With_Number_Of_Streams = 0;
+		if(DLExpected != null){
+			dl_Divided_With_Number_Of_Streams = dl_ul.get(1) / 1000000.0;			
+			String expectedDlToReport = convertTo3DigitsAfterPoint(DLExpected);
+			String actualDlToReport = convertTo3DigitsAfterPoint(dl_Divided_With_Number_Of_Streams);
+	
+			report.report("Expected DL: "+expectedDlToReport+" Mbps");
+			report.report("Actual average DL tpt: "+actualDlToReport+" Mbps");
+			if(dl_Divided_With_Number_Of_Streams < DLExpected){
+				report.report("DL actual is lower than expected", Reporter.FAIL);
+				if(reason.isEmpty()){
+					reason = name+":<br> ";
+				}
+				reason += "Expected DL: "+expectedDlToReport+" Mbps. Actual DL: "+actualDlToReport+" Mbps.<br> ";
+			}else{
+				report.step("DL actual is above expected");
+			}			
+		}
+		TPTBase.createHTMLTableWithResults(ul_Divided_With_Number_Of_Streams, ULExpected, dl_Divided_With_Number_Of_Streams,
+				DLExpected, dlLoad, ulLoad, null);
+		
+		
+		/*ArrayList<Long> listUlAndDl = new ArrayList<Long>();
 		Long ULrxTotal = new Long(0);
 		Long DlrxTotal = new Long(0);
 		listUlAndDl = getUlDlResultsFromList(ULrxTotal, DlrxTotal, listOfStreamList2);
-		compareResults(listUlAndDl.get(0), listUlAndDl.get(1), listOfStreamList2);
+		compareResults(listUlAndDl.get(0), listUlAndDl.get(1), listOfStreamList2);*/
 	}
 	
 	private void compareResults(Long uLrxTotal, Long dlrxTotal, ArrayList<ArrayList<StreamParams>> listOfStreamList) {

@@ -3,6 +3,7 @@ package testsNG.Actions;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -39,7 +40,7 @@ public class TrafficSampler implements Runnable{
 	private Double ulLoad = null;
 	private Double dlLoad = null;
 	private String reason;
-	private Map<String,ArrayList<Long>> meanArray;
+	private Map<String,ArrayList<Long>> meanArray = new HashMap<String,ArrayList<Long>>();
 	
 	public synchronized String getReason() {
 		return reason;
@@ -51,6 +52,7 @@ public class TrafficSampler implements Runnable{
 	}
 	
 	public void getStatistics(){
+		meanArray.clear();
 		report.report("Statistics for traffic "+getName());
 		ArrayList<ArrayList<StreamParams>> temp = trafficInstance.getAllStreamsResults(streamList);
 		printPerStreamTables(temp);

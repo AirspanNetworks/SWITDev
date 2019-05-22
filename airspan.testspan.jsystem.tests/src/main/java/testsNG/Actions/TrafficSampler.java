@@ -3,6 +3,7 @@ package testsNG.Actions;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -38,6 +39,7 @@ public class TrafficSampler implements Runnable{
 	private Double ulLoad = null;
 	private Double dlLoad = null;
 	private String reason;
+	private Map<String,ArrayList<Long>> meanArray;
 	
 	public synchronized String getReason() {
 		return reason;
@@ -52,16 +54,38 @@ public class TrafficSampler implements Runnable{
 		report.report("Statistics for traffic "+getName());
 		ArrayList<ArrayList<StreamParams>> temp = trafficInstance.getAllStreamsResults(streamList);
 		printPerStreamTables(temp);
-		ArrayList<Long> dl_ul = trafficInstance.getMeanByFile(streamList);
+		ArrayList<Long> dl_ul = getMeanByStream();
 		compareWithCalculator(dl_ul);
 		trafficInstance.getResultFilesByList(streamList);
 	}
 	
+	private ArrayList<Long> getMeanByStream() {
+		
+		Long meanDl = 0L;
+		Long meanUl = 0L;
+		for(String name:meanArray.keySet()){
+			ArrayList<Long> temp = meanArray.get(name);
+			Long tpt = 0L;
+			for(Long lon:temp){
+				tpt += lon;
+			}
+			if(name.contains("UL")){
+				meanUl += tpt/temp.size();
+			}else{
+				meanDl += tpt/temp.size();
+			}
+		}
+		ArrayList<Long> ret = new ArrayList<Long>();
+		ret.add(meanDl);
+		ret.add(meanUl);
+		return ret;
+	}
+
 	private void compareWithCalculator(ArrayList<Long> dl_ul){
 		reason = StringUtils.EMPTY;
 		double ul_Divided_With_Number_Of_Streams = 0;
 		if(ULExpected != null){
-			ul_Divided_With_Number_Of_Streams = dl_ul.get(0) / 1000000.0;
+			ul_Divided_With_Number_Of_Streams = dl_ul.get(1) / 1000000.0;
 			String expectedUlToReport = convertTo3DigitsAfterPoint(ULExpected);
 			String actualUlToReport = convertTo3DigitsAfterPoint(ul_Divided_With_Number_Of_Streams);
 			report.report("Expected UL: "+expectedUlToReport+" Mbps");
@@ -76,7 +100,7 @@ public class TrafficSampler implements Runnable{
 		}
 		double dl_Divided_With_Number_Of_Streams = 0;
 		if(DLExpected != null){
-			dl_Divided_With_Number_Of_Streams = dl_ul.get(1) / 1000000.0;			
+			dl_Divided_With_Number_Of_Streams = dl_ul.get(0) / 1000000.0;			
 			String expectedDlToReport = convertTo3DigitsAfterPoint(DLExpected);
 			String actualDlToReport = convertTo3DigitsAfterPoint(dl_Divided_With_Number_Of_Streams);
 	
@@ -215,6 +239,10 @@ public class TrafficSampler implements Runnable{
 				valuesList.add(longToString3DigitFormat(stream.getRxRate()));
 				String dateFormat = GeneralUtils.timeFormat(stream.getTimeStamp());
 				TablePrinter.addValues(stream.getName(), dateFormat, headLines, valuesList);
+				if(meanArray.get(stream.getName())==null){
+					meanArray.put(stream.getName(),new ArrayList<Long>());
+				}
+				meanArray.get(stream.getName()).add(stream.getRxRate());
 			}			
 		}
 		for (String stream : streamList) {

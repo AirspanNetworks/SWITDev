@@ -1863,7 +1863,7 @@ public class Traffic {
         return trafficGenerator.getResultsAfterTest(listOfStreamList2);
     }
     
-    public ArrayList<Long> getMeanByFile(ArrayList<String> streamList) {
+    /*public ArrayList<Long> getMeanByFile(ArrayList<String> streamList) {
     	return trafficGenerator.getMeanByFile(streamList);
-    }
+    }*/
 }

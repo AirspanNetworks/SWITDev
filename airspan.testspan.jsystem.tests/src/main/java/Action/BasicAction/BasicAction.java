@@ -622,7 +622,7 @@ public class BasicAction extends Action {
 						}
 					}else{
 						if(performAction == PerformAction.CountLines){
-							report.report("Number of lines expected is "+ammount+" and is not bigger than the actual size "+ammountInFile);
+							report.report("Number of lines expected is "+ammount+" and is not bigger than the actual size "+ammountInFile,Reporter.FAIL);
 						}else{
 							report.report("Number of time expected for pattern is "+ammount+" and is not bigger than the actual size "+ammountInFile,Reporter.FAIL);
 						}
@@ -637,7 +637,7 @@ public class BasicAction extends Action {
 						}
 					}else{
 						if(performAction == PerformAction.CountLines){
-							report.report("Number of lines expected is "+ammount+" and is not smaller than the actual size "+ammountInFile);
+							report.report("Number of lines expected is "+ammount+" and is not smaller than the actual size "+ammountInFile,Reporter.FAIL);
 						}else{
 							report.report("Number of time expected for pattern is "+ammount+" and is not smaller than the actual size "+ammountInFile,Reporter.FAIL);
 						}

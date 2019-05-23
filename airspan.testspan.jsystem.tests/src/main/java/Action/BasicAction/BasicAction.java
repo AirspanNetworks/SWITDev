@@ -1,6 +1,9 @@
 package Action.BasicAction;
 
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +17,7 @@ import PowerControllers.PowerController;
 import PowerControllers.PowerControllerPort;
 import Utils.GeneralUtils;
 import Utils.SSHConnector;
+import Utils.ScpClient;
 import Utils.ConnectionManager.ConnectionInfo;
 import Utils.ConnectionManager.ConnectorTypes;
 import Utils.ConnectionManager.UserInfo.UserSequence;
@@ -25,9 +29,11 @@ import Utils.ConnectionManager.UserInfo.UserInfoFactory;
 import jsystem.framework.ParameterProperties;
 import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
+import jsystem.framework.report.ReporterHelper;
 import Utils.ConnectionManager.terminal.exCLI;
 //import systemobject.terminal.Prompt;
 import Utils.ConnectionManager.terminal.exPrompt;
+import ch.ethz.ssh2.SCPClient;
 import systemobject.terminal.Telnet;
 import systemobject.terminal.Terminal;
 
@@ -38,7 +44,53 @@ public class BasicAction extends Action {
 	private String debugCommands;
 	private String serialCommand;
 	private String expectedPatern;
+	private Comparison comparison = Comparison.EQUAL_TO;
+	private PerformAction performAction = PerformAction.CountLines;
+	private int ammount = 1;
+	private String fileName;
 	
+	private enum Comparison {
+		EQUAL_TO, BIGGER_THAN, SMALLER_THAN
+	}
+	
+	public String getFileName() {
+		return fileName;
+	}
+	
+	@ParameterProperties(description = "Full name of file, with full path")
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
+	public int getAmmount() {
+		return ammount;
+	}
+
+	@ParameterProperties(description = "Number of appearances/lines wanted in file. Default = 1")
+	public void setAmmount(String ammount) {
+		this.ammount = Integer.valueOf(ammount);
+	}
+
+	public PerformAction getPerformAction() {
+		return performAction;
+	}
+
+	public void setPerformAction(PerformAction performAction) {
+		this.performAction = performAction;
+	}
+
+	private enum PerformAction{
+		CountLines, FindPattern;
+	}
+	
+	public Comparison getComparison() {
+		return comparison;
+	}
+
+	public void setComparison(Comparison comparison) {
+		this.comparison = comparison;
+	}
+
 	@ParameterProperties(description = "Evaluate if pattern exists in output (Ignored if omitted")
 	public String getExpectedPatern() {
 		return expectedPatern;
@@ -477,5 +529,133 @@ public class BasicAction extends Action {
 			result = null;
 		}
 		return result;
+	}
+	
+	@Test
+	@TestProperties(name = "Verify Input In File", returnParam = "LastStatus", paramsInclude = { "Ip", "Password",
+			"UserName", "Comparison","ExpectedPatern", "PerformAction","Ammount","FileName" })
+	public void verifyInputInFile() {
+		boolean isNull = false;
+		if(ip == null){
+			report.report("IP cannot be empty",Reporter.FAIL);
+			isNull = true;
+		}
+		if(userName == null){
+			report.report("UserName cannot be empty",Reporter.FAIL);
+			isNull = true;
+		}
+		if(password == null){
+			report.report("Password cannot be empty",Reporter.FAIL);
+			isNull = true;
+		}
+		if(fileName == null){
+			report.report("fileName cannot be empty",Reporter.FAIL);
+			isNull = true;
+		}
+		if(performAction == PerformAction.FindPattern){
+			if(expectedPatern == null){
+				report.report("ExpectedPatern cannot be empty",Reporter.FAIL);
+				isNull = true;
+			}			
+		}
+		
+		if(isNull){
+			reason = "Some of parameters not valid";
+			return;
+		}
+		
+		if(performAction == PerformAction.FindPattern){
+			report.report("Pattern to search: "+expectedPatern);
+		}
+		report.report("Number of times: "+ammount);
+		report.report("Comparison: "+comparison.toString());
+
+		ScpClient scpClient = new ScpClient(ip, userName, password);
+		if(scpClient.getFiles(System.getProperty("user.dir"),fileName) == false){
+			report.report("Failed to get file", Reporter.FAIL);
+			scpClient.close();
+			int ammountInFile = 0;
+			
+			File toUpload = new File(fileName);
+			try{
+				FileReader read = new FileReader(toUpload);
+				BufferedReader br = new BufferedReader(read);
+				String line;
+				Pattern p = Pattern.compile(expectedPatern);
+				
+				while((line = br.readLine()) != null){
+					if(performAction == PerformAction.CountLines){
+						ammountInFile++;
+					}else{
+						Matcher m = p.matcher(line);
+						if(m.find()){
+							ammountInFile++;
+						}
+					}
+				}
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+
+			switch(comparison){
+				case EQUAL_TO:
+					if(ammount == ammountInFile){
+						if(performAction == PerformAction.CountLines){
+							report.report("Number of lines in file is "+ammount+" as expected");
+						}else{
+							report.report("Pattern was found "+ammount+" times as expected");
+						}
+					}else{
+						if(performAction == PerformAction.CountLines){
+							report.report("Number of lines in file is "+ammountInFile+" instead of "+ammount,Reporter.FAIL);
+						}else{
+							report.report("Pattern was found "+ammountInFile+" times instead of "+ammount,Reporter.FAIL);
+						}
+					}
+					break;
+				case BIGGER_THAN:
+					if(ammount > ammountInFile){
+						if(performAction == PerformAction.CountLines){
+							report.report("Number of lines in file is "+ammountInFile+" and is bigger than the expected "+ammount);
+						}else{
+							report.report("Pattern was found "+ammountInFile+" times and is bigger than the expected "+ammount);
+						}
+					}else{
+						if(performAction == PerformAction.CountLines){
+							report.report("Number of lines in file is "+ammountInFile+" and is smaller than the expected "+ammount,Reporter.FAIL);
+						}else{
+							report.report("Pattern was found "+ammountInFile+" times and is smaller than the expected "+ammount,Reporter.FAIL);
+						}
+					}
+					break;
+				case SMALLER_THAN:
+					if(ammount < ammountInFile){
+						if(performAction == PerformAction.CountLines){
+							report.report("Number of lines in file is "+ammountInFile+" and is smaller than the expected "+ammount);
+						}else{
+							report.report("Pattern was found "+ammountInFile+" times and is smaller than the expected "+ammount);
+						}
+					}else{
+						if(performAction == PerformAction.CountLines){
+							report.report("Number of lines in file is "+ammountInFile+" and is bigger than the expected "+ammount,Reporter.FAIL);
+						}else{
+							report.report("Pattern was found "+ammountInFile+" times and is bigger than the expected "+ammount,Reporter.FAIL);
+						}
+					}
+					break;
+			
+			}
+			
+			try {
+				ReporterHelper.copyFileToReporterAndAddLink(report, toUpload, toUpload.getName());
+			} catch (Exception e) {
+				GeneralUtils.printToConsole("FAIL to upload TP Result File: " + fileName);
+				e.printStackTrace();
+			}
+			scpClient.close();
+		}else{
+			report.report("Failed to connect to device",Reporter.FAIL);
+			reason = "Failed to connect to device";
+		}
 	}
 }

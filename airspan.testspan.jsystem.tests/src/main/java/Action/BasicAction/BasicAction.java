@@ -578,7 +578,10 @@ public class BasicAction extends Action {
 				FileReader read = new FileReader(toUpload);
 				BufferedReader br = new BufferedReader(read);
 				String line;
-				Pattern p = Pattern.compile(expectedPatern);
+				Pattern p=null;
+				if(expectedPatern!=null){
+					p = Pattern.compile(expectedPatern);					
+				}
 				
 				while((line = br.readLine()) != null){
 					if(performAction == PerformAction.CountLines){

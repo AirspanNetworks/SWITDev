@@ -571,7 +571,7 @@ public class BasicAction extends Action {
 		report.report("Comparison: "+comparison.toString());
 
 		ScpClient scpClient = new ScpClient(ip, userName, password);
-		if(scpClient.getFiles(System.getProperty("user.dir"),fileName) == false){
+		if(scpClient.getFiles(System.getProperty("user.dir"),fileName)){
 			report.report("Failed to get file", Reporter.FAIL);
 			scpClient.close();
 			int ammountInFile = 0;

@@ -572,10 +572,7 @@ public class BasicAction extends Action {
 
 		ScpClient scpClient = new ScpClient(ip, userName, password);
 		if(scpClient.getFiles(System.getProperty("user.dir"),fileName)){
-			report.report("Failed to get file", Reporter.FAIL);
-			scpClient.close();
 			int ammountInFile = 0;
-			
 			File toUpload = new File(fileName);
 			try{
 				FileReader read = new FileReader(toUpload);
@@ -657,5 +654,6 @@ public class BasicAction extends Action {
 			report.report("Failed to connect to device",Reporter.FAIL);
 			reason = "Failed to connect to device";
 		}
+		scpClient.close();
 	}
 }

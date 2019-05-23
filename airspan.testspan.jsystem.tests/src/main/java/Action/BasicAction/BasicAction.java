@@ -613,30 +613,30 @@ public class BasicAction extends Action {
 				case BIGGER_THAN:
 					if(ammount > ammountInFile){
 						if(performAction == PerformAction.CountLines){
-							report.report("Number of lines in file is "+ammountInFile+" and is bigger than the expected "+ammount);
+							report.report("Number of lines expected is "+ammount+" and is bigger than the actual size "+ammountInFile);
 						}else{
-							report.report("Pattern was found "+ammountInFile+" times and is bigger than the expected "+ammount);
+							report.report("Number of time expected for pattern is "+ammount+" and is bigger than the actual size "+ammountInFile);
 						}
 					}else{
 						if(performAction == PerformAction.CountLines){
-							report.report("Number of lines in file is "+ammountInFile+" and is smaller than the expected "+ammount,Reporter.FAIL);
+							report.report("Number of lines expected is "+ammount+" and is not bigger than the actual size "+ammountInFile);
 						}else{
-							report.report("Pattern was found "+ammountInFile+" times and is smaller than the expected "+ammount,Reporter.FAIL);
+							report.report("Number of time expected for pattern is "+ammount+" and is not bigger than the actual size "+ammountInFile,Reporter.FAIL);
 						}
 					}
 					break;
 				case SMALLER_THAN:
 					if(ammount < ammountInFile){
 						if(performAction == PerformAction.CountLines){
-							report.report("Number of lines in file is "+ammountInFile+" and is smaller than the expected "+ammount);
+							report.report("Number of lines expected is "+ammount+" and is smaller than the actual size "+ammountInFile);
 						}else{
-							report.report("Pattern was found "+ammountInFile+" times and is smaller than the expected "+ammount);
+							report.report("Number of time expected for pattern is "+ammount+" and is smaller than the actual size "+ammountInFile);
 						}
 					}else{
 						if(performAction == PerformAction.CountLines){
-							report.report("Number of lines in file is "+ammountInFile+" and is bigger than the expected "+ammount,Reporter.FAIL);
+							report.report("Number of lines expected is "+ammount+" and is not smaller than the actual size "+ammountInFile);
 						}else{
-							report.report("Pattern was found "+ammountInFile+" times and is bigger than the expected "+ammount,Reporter.FAIL);
+							report.report("Number of time expected for pattern is "+ammount+" and is not smaller than the actual size "+ammountInFile,Reporter.FAIL);
 						}
 					}
 					break;

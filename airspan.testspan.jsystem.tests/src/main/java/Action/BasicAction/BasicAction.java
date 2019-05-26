@@ -6,12 +6,17 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.junit.Test;
 
 import Action.Action;
+import Action.TrafficAction.TrafficAction.ExpectedType;
+import Action.TrafficAction.TrafficAction.LoadType;
+import Entities.ITrafficGenerator.Protocol;
+import Entities.ITrafficGenerator.TransmitDirection;
 import Netspan.NetspanServer;
 import PowerControllers.PowerController;
 import PowerControllers.PowerControllerPort;
@@ -30,6 +35,7 @@ import jsystem.framework.ParameterProperties;
 import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
 import jsystem.framework.report.ReporterHelper;
+import jsystem.framework.scenario.Parameter;
 import Utils.ConnectionManager.terminal.exCLI;
 //import systemobject.terminal.Prompt;
 import Utils.ConnectionManager.terminal.exPrompt;
@@ -652,11 +658,27 @@ public class BasicAction extends Action {
 				GeneralUtils.printToConsole("FAIL to upload TP Result File: " + fileName);
 				e.printStackTrace();
 			}
-			scpClient.close();
 		}else{
 			report.report("Failed to connect to device",Reporter.FAIL);
 			reason = "Failed to connect to device";
 		}
 		scpClient.close();
+	}
+	
+	@Override
+	public void handleUIEvent(HashMap<String, Parameter> map, String methodName) throws Exception {
+
+		if (methodName.equals("verifyInputInFile")) {
+			handleUIEventVerifyInputInFile(map);
+		}
+	}
+
+	private void handleUIEventVerifyInputInFile(HashMap<String, Parameter> map) {
+		map.get("ExpectedPatern").setVisible(true);
+		Parameter performAction = map.get("PerformAction");
+
+		if(PerformAction.CountLines == PerformAction.valueOf(performAction.getValue().toString())){
+			map.get("ExpectedPatern").setVisible(false);
+		}
 	}
 }

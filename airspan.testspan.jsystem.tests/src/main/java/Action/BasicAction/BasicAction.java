@@ -87,6 +87,7 @@ public class BasicAction extends Action {
 		return comparison;
 	}
 
+	@ParameterProperties(description = "Actual [BIGGER/SMALLER] than expected or equals")
 	public void setComparison(Comparison comparison) {
 		this.comparison = comparison;
 	}
@@ -614,36 +615,35 @@ public class BasicAction extends Action {
 					}
 					break;
 				case BIGGER_THAN:
-					if(ammount > ammountInFile){
+					if(ammountInFile > ammount){
 						if(performAction == PerformAction.CountLines){
-							report.report("Number of lines expected is "+ammount+" and is bigger than the actual size "+ammountInFile);
+							report.report("Number of actual lines is "+ammountInFile+" and is bigger than the expected "+ammount);
 						}else{
-							report.report("Number of time expected for pattern is "+ammount+" and is bigger than the actual size "+ammountInFile);
+							report.report("Number of actual times for pattern is "+ammountInFile+" and is bigger than the expected "+ammount);
 						}
 					}else{
 						if(performAction == PerformAction.CountLines){
-							report.report("Number of lines expected is "+ammount+" and is not bigger than the actual size "+ammountInFile,Reporter.FAIL);
+							report.report("Number of actual lines is "+ammountInFile+" and is not bigger than the expected "+ammount,Reporter.FAIL);
 						}else{
-							report.report("Number of time expected for pattern is "+ammount+" and is not bigger than the actual size "+ammountInFile,Reporter.FAIL);
+							report.report("Number of actual times for pattern is "+ammountInFile+" and is not bigger than the expected "+ammount,Reporter.FAIL);
 						}
 					}
 					break;
 				case SMALLER_THAN:
-					if(ammount < ammountInFile){
+					if(ammountInFile < ammount){
 						if(performAction == PerformAction.CountLines){
-							report.report("Number of lines expected is "+ammount+" and is smaller than the actual size "+ammountInFile);
+							report.report("Number of actual lines is "+ammountInFile+" and is smaller than the expected "+ammount);
 						}else{
-							report.report("Number of time expected for pattern is "+ammount+" and is smaller than the actual size "+ammountInFile);
+							report.report("Number of actual times for pattern is "+ammountInFile+" and is smaller than the expected "+ammount);
 						}
 					}else{
 						if(performAction == PerformAction.CountLines){
-							report.report("Number of lines expected is "+ammount+" and is not smaller than the actual size "+ammountInFile,Reporter.FAIL);
+							report.report("Number of actual lines is "+ammountInFile+" and is not smaller than the expected "+ammount,Reporter.FAIL);
 						}else{
-							report.report("Number of time expected for pattern is "+ammount+" and is not smaller than the actual size "+ammountInFile,Reporter.FAIL);
+							report.report("Number of actual times for pattern is "+ammountInFile+" and is not smaller than the expected "+ammount,Reporter.FAIL);
 						}
 					}
 					break;
-			
 			}
 			
 			try {

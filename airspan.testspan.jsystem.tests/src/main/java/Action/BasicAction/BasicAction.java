@@ -376,7 +376,7 @@ public class BasicAction extends Action {
 			report.report("Connection: " + conn_info.toString());
 			Terminal terminal = new Telnet(conn_info.host, conn_info.port);
 			cli = new exCLI(terminal);
-			cli.setGraceful(true);
+			cli.setGraceful(false);
 			cli.setEnterStr("\n");
 			GeneralUtils.startLevel("Prepare session");
 			

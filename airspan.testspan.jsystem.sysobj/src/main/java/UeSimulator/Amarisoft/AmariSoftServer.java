@@ -863,7 +863,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 		ueProperties.setImeisv("1234567891234567");
 		ueProperties.setK("5C95978B5E89488CB7DB44381E237809");
 		ueProperties.setOp("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
-		ueProperties.setTunSetupScript("ue-ifup_auto");
+		ueProperties.setTunSetupScript("ue-automation");
 		ueProperties.setUeId(ueId);
 		//ueList.setAdditionalProperty("ue_count", 5);
 		ueLists.add(ueProperties);

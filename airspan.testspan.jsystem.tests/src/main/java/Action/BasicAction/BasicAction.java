@@ -391,9 +391,12 @@ public class BasicAction extends Action {
 			
 			
 			exPrompt current_pr = cli.waitWithGrace(sleepTime * 100);
-			
-			if((user_login.enforceSessionReset() || current_pr.getPrompt() != user_login.getFinalPrompt().getPrompt()) && 
-					current_pr.getPrompt() != PromptsCommandsInfo.LOGIN_PATTERN) {
+			report.report("Current prompt is: " + current_pr.getPrompt());
+			if((user_login.enforceSessionReset() ||	(
+					current_pr.getPrompt() != user_login.getFinalPrompt().getPrompt()) &&
+					current_pr.getPrompt() != PromptsCommandsInfo.LOGIN_PATTERN
+				)
+			) {
 				// Session require reset current state and login
 				report.report("Session reset needed (Current prompt: '" + current_pr.getPrompt() + "' vs. desired: '" + user_login.getFinalPrompt().getPrompt() + "')");
 				

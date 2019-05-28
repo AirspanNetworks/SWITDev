@@ -116,26 +116,35 @@ public class exCLI extends Cli {
 			
 		return readFile(log_cache.getAbsolutePath());
 	}
-	
+
+	public exPrompt waitWithGrace(long timeout) throws Exception {
+		return waitWithGrace(timeout, 3);
+	}
+
 	/**
 	 * 
 	 * @return
 	 * @throws Exception
 	 */	
-	public exPrompt waitWithGrace(long timeout) throws Exception {
-		
-		try {
-			exPrompt p = (exPrompt)terminal.waitForPrompt(timeout);
-//			result.append(terminal.getResult());
-			return p;
-		} catch (Exception e) {
-			if ((!isGraceful()) || (getWaitWithGraceCounter() > 3)) {
-				throw e;
+	public exPrompt waitWithGrace(long timeout, int counter) throws Exception {
+		exPrompt p;
+		do {
+			try {
+				p = (exPrompt) terminal.waitForPrompt(timeout);
+			} catch (Exception e) {
+				if (!isGraceful())
+					throw e;
+
+				p = sendEnter(Math.min(15 * 1000, timeout));
+			} finally {
+				counter--;
 			}
+		}while (p == null && counter >= 0);
 
-			return (exPrompt)sendEnter(Math.min(15 * 1000, timeout));
-		}
+		if(p == null)
+			throw new IOException("Cannot occur prompt");
 
+		return p;
 	}
 	
 	public exPrompt sendEnter(long timeout) throws Exception {

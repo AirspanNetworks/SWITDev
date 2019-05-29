@@ -142,7 +142,7 @@ public class exCLI extends Cli {
 		}while (p == null && counter >= 0);
 
 		if(p == null)
-			throw new IOException("Cannot occur prompt");
+			throw new IOException("exCLI: Cannot occur prompt");
 
 		return p;
 	}

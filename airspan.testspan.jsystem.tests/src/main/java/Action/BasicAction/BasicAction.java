@@ -376,7 +376,7 @@ public class BasicAction extends Action {
 			Terminal terminal = new Telnet(conn_info.host, conn_info.port);
 			cli = new exCLI(terminal);
 			cli.setGraceful(true);
-			cli.setEnterStr("\n");
+			cli.setEnterStr("\r\n");
 			GeneralUtils.startLevel("Prepare session; waiting to current prompt");
 			
 			// Read current prompt for decide to reset it
@@ -394,7 +394,7 @@ public class BasicAction extends Action {
 				
 				cli.login(sleepTime * 1000, UserInfoFactory.getExitSequence().toArray(new exPrompt[] {}));
                 report.report("Session reset completed waiting for prompt");
-				current_pr = cli.waitWithGrace(sleepTime * 100);
+				current_pr = cli.waitWithGrace(sleepTime * 1000);
 				report.report("Session reset completed (Prompt: '" + current_pr.getPrompt() + "')");
 				
 			}else {

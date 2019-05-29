@@ -133,7 +133,6 @@ public class IPerfLinuxMachine extends IPerfMachine{
 	@Override
 	public ArrayList<File> getFileList(String fileName) {
 		ArrayList<File> fileToRet = new ArrayList<File>();
-		fileName += " aaaaaaabbbbbb";
 		String[] allNames = fileName.split(" ");
 		/*String namesToGet = "";
 		for(String str : allNames){

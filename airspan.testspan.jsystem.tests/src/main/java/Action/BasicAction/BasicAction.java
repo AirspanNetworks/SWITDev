@@ -401,7 +401,7 @@ public class BasicAction extends Action {
 				report.report("Session reset needed (Current prompt: '" + current_pr.getPrompt() + "' vs. desired: '" + user_login.getFinalPrompt().getPrompt() + "')");
 				
 				cli.login(sleepTime * 1000, exit_sequence.toArray(new exPrompt[] {}));
-				
+                report.report("Session reset completed waiting for prompt");
 				current_pr = cli.waitWithGrace(sleepTime * 100);
 				report.report("Session reset completed (Prompt: '" + current_pr.getPrompt() + "')");
 				

@@ -1862,4 +1862,9 @@ public class Traffic {
             ArrayList<ArrayList<StreamParams>> listOfStreamList2) {
         return trafficGenerator.getResultsAfterTest(listOfStreamList2);
     }
+    
+    public boolean copyFilesByList(ArrayList<String> streamList) {
+        return trafficGenerator.copyAllResultFiles(streamList);
+    }
+
 }

@@ -53,6 +53,7 @@ public class TrafficSampler implements Runnable{
 	
 	public void getStatistics(){
 		meanArray.clear();
+		trafficInstance.copyFilesByList(streamList);
 		report.report("Statistics for traffic "+getName());
 		ArrayList<ArrayList<StreamParams>> temp = trafficInstance.getAllStreamsResults(streamList);
 		printPerStreamTables(temp);

@@ -143,7 +143,6 @@ public class IPerfLinuxMachine extends IPerfMachine{
 		if(scpClient.getFiles(System.getProperty("user.dir"), allNames)){
 			for(String str : allNames){
 				File ret = new File(str);
-				GeneralUtils.printToConsole("File created: "+str);
 				fileToRet.add(ret);
 			}
 		}

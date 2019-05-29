@@ -749,12 +749,12 @@ public class UEIPerf {
 	
 	private ArrayList<ArrayList<StreamParams>> extractStatisticsFromFile(IPerfStream ips, ArrayList<ArrayList<StreamParams>> ret){
 		//ArrayList<StreamParams> toReturn = new ArrayList<StreamParams>();
-		File file;
-		if(ips.getTransmitDirection() == TransmitDirection.UL){
+		File file = new File(ips.getTpFileName());
+		/*if(ips.getTransmitDirection() == TransmitDirection.UL){
 			file = iperfMachineDL.getFile(ips.getTpFileName());
 		}else{
 			file = iperfMachineUL.getFile(ips.getTpFileName());
-		}
+		}*/
 		Pattern p = Pattern.compile("(\\d+.\\d+-\\s*\\d+.\\d+).*KBytes\\s+(\\d+|\\d+.\\d+)\\s+Kbits/sec.*");
 		try{
 			FileReader read = new FileReader(file);
@@ -807,28 +807,23 @@ public class UEIPerf {
 		if(iperfMachineDL != null){
 			for(IPerfStream ulIPerfStream : ulStreamArrayList){
 				if(streamList.contains(ulIPerfStream.getStreamName())){
-					filesToGet += ulIPerfStream.getTpFileName()+" ";
+					File resultFile = new File(ulIPerfStream.getTpFileName());
+					resultFiles.add(resultFile);
 					//File resultFile = iperfMachineDL.getFile(ulIPerfStream.getTpFileName());
 					//resultFiles.add(resultFile);
 				}
 			}
-			filesToGet = filesToGet.substring(0,filesToGet.length()-1);
-			ArrayList<File> temp = iperfMachineDL.getFileList(filesToGet);
-			resultFiles.addAll(temp);
 		}
 		filesToGet = "";
 		if(iperfMachineUL != null){
 			for(IPerfStream dlIPerfStream : dlStreamArrayList){
 				if(streamList.contains(dlIPerfStream.getStreamName())){
-					filesToGet += dlIPerfStream.getTpFileName()+" ";
-
+					File resultFile = new File(dlIPerfStream.getTpFileName());
+					resultFiles.add(resultFile);
 					/*File resultFile = iperfMachineUL.getFile(dlIPerfStream.getTpFileName());
 					resultFiles.add(resultFile);*/
 				}
 			}
-			filesToGet = filesToGet.substring(0,filesToGet.length()-1);
-			ArrayList<File> temp = iperfMachineUL.getFileList(filesToGet);
-			resultFiles.addAll(temp);
 		}
 		return resultFiles;
 	}
@@ -839,7 +834,8 @@ public class UEIPerf {
 		if(iperfMachineUL != null){
 			for(IPerfStream ulIPerfStream : ulStreamArrayList){
 				if(streamList.contains(ulIPerfStream.getStreamName())){
-					filesToGet += ulIPerfStream.getClientOutputFileName()+" ";
+					File resultFile = new File(ulIPerfStream.getClientOutputFileName());
+					resultFiles.add(resultFile);
 					//File resultFile = iperfMachineDL.getFile(ulIPerfStream.getTpFileName());
 					//resultFiles.add(resultFile);
 				}
@@ -852,8 +848,8 @@ public class UEIPerf {
 		if(iperfMachineDL != null){
 			for(IPerfStream dlIPerfStream : dlStreamArrayList){
 				if(streamList.contains(dlIPerfStream.getStreamName())){
-					filesToGet += dlIPerfStream.getClientOutputFileName()+" ";
-
+					File resultFile = new File(dlIPerfStream.getClientOutputFileName());
+					resultFiles.add(resultFile);
 					/*File resultFile = iperfMachineUL.getFile(dlIPerfStream.getTpFileName());
 					resultFiles.add(resultFile);*/
 				}
@@ -915,6 +911,41 @@ public class UEIPerf {
 			toReturn = extractStatisticsFromFile(ips,toReturn);
 		}
 		return toReturn;
+	}
+
+	public String getAllNamesInDlMachine(ArrayList<String> streamList) {
+		String names = "";
+		for(IPerfStream ips : dlStreamArrayList){
+			if(streamList.contains(ips.getStreamName())){
+				names += ips.getClientOutputFileName()+" ";
+			}
+		}
+		for(IPerfStream ips : ulStreamArrayList){
+			if(streamList.contains(ips.getStreamName())){
+				names += ips.getTpFileName()+" ";
+			}
+		}
+		return names;
+	}
+
+	public String getAllNamesInUlMachine(ArrayList<String> streamList) {
+		String names = "";
+		for(IPerfStream ips : dlStreamArrayList){
+			if(streamList.contains(ips.getStreamName())){
+				names += ips.getTpFileName()+" ";
+			}
+		}
+		for(IPerfStream ips : ulStreamArrayList){
+			if(streamList.contains(ips.getStreamName())){
+				names += ips.getClientOutputFileName()+" ";
+			}
+		}
+		return names;
+	}
+
+	public void copyAllFiles(String filesDl, String filesUl) {
+		iperfMachineDL.getFileList(filesDl);
+		iperfMachineUL.getFileList(filesUl);
 	}
 
 

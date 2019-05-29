@@ -871,4 +871,20 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		}
 		return toReturn;
 	}
+	
+	@Override
+	public boolean copyAllResultFiles(ArrayList<String> streamList){
+		String filesDl = "";
+		String filesUl = "";
+		for(UEIPerf ueIPerf : allUEsIPerfList){
+			filesDl += ueIPerf.getAllNamesInDlMachine(streamList);
+		}
+		for(UEIPerf ueIPerf : allUEsIPerfList){
+			filesUl += ueIPerf.getAllNamesInUlMachine(streamList);
+		}
+		for(UEIPerf ueIPerf : allUEsIPerfList){
+			ueIPerf.copyAllFiles(filesDl,filesUl);
+		}
+		return true;
+	}
 }

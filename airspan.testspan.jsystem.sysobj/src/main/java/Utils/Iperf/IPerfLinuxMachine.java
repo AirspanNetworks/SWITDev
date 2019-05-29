@@ -138,10 +138,9 @@ public class IPerfLinuxMachine extends IPerfMachine{
 		for(String str : allNames){
 			namesToGet += "\""+preAddressTpFile + str +"\",";
 		}
-		namesToGet += "\"hdfjhgkdjfhgkjfghdfkjg\",";
 		namesToGet = namesToGet.substring(0, namesToGet.length()-1);
 		ScpClient scpClient = new ScpClient(hostname, username, password);
-		if(scpClient.getFiles(System.getProperty("user.dir"), namesToGet)){
+		if(scpClient.getFiles(System.getProperty("user.dir"), namesToGet,"ddddddddd")){
 			for(String str : allNames){
 				File ret = new File(str);
 				GeneralUtils.printToConsole("File created: "+str);

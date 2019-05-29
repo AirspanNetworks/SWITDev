@@ -449,7 +449,7 @@ public class BasicAction extends Action {
 		finally {
 			
 			if(user_login.enforceSessionReset()) {
-				cli.login(2000, exit_sequence.toArray(new exPrompt[] {}));
+				cli.login(2000, UserInfoFactory.getExitSequence().toArray(new exPrompt[] {}));
 			}
 			
 			if(cli != null) {

@@ -387,7 +387,7 @@ public class BasicAction extends Action {
 					new exPrompt(PromptsCommandsInfo.LTECLI_PATTERN, false),
 					new exPrompt(PromptsCommandsInfo.LOGIN_PATTERN, false),
 					new exPrompt(PromptsCommandsInfo.PASSWORD_PATTERN, false),
-					new exPrompt(PromptsCommandsInfo.ТNЕТ_PATTERN, false));
+					new exPrompt(PromptsCommandsInfo.ТNЕТ_PATTERN, true));
 			
 			
 			exPrompt current_pr = cli.waitWithGrace(sleepTime * 100);

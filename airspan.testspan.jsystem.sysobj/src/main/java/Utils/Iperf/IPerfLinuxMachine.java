@@ -133,14 +133,15 @@ public class IPerfLinuxMachine extends IPerfMachine{
 	@Override
 	public ArrayList<File> getFileList(String fileName) {
 		ArrayList<File> fileToRet = new ArrayList<File>();
+		fileName += " aaaaaaabbbbbb";
 		String[] allNames = fileName.split(" ");
-		String namesToGet = "";
+		/*String namesToGet = "";
 		for(String str : allNames){
 			namesToGet += "\""+preAddressTpFile + str +"\",";
 		}
-		namesToGet = namesToGet.substring(0, namesToGet.length()-1);
+		namesToGet = namesToGet.substring(0, namesToGet.length()-1);*/
 		ScpClient scpClient = new ScpClient(hostname, username, password);
-		if(scpClient.getFiles(System.getProperty("user.dir"), namesToGet,"ddddddddd")){
+		if(scpClient.getFiles(System.getProperty("user.dir"), allNames)){
 			for(String str : allNames){
 				File ret = new File(str);
 				GeneralUtils.printToConsole("File created: "+str);

@@ -405,11 +405,17 @@ public class BasicAction extends Action {
 			if(current_pr.getPrompt() == PromptsCommandsInfo.LOGIN_PATTERN) {
 				// Session require login only
 				report.report("Login needed:\n" + user_login.toString());
-				if(!cli.login(sleepTime * 1000, user_login)) {
-					report.report("Login failed (Prompt: '" + current_pr.getPrompt() + "')", Reporter.WARNING);
-					throw new IOException("Login failed (Prompt: '" + current_pr.getPrompt() + "')");
+				try {
+					if (!cli.login(sleepTime * 1000, user_login)) {
+						report.report("Login failed (Prompt: '" + current_pr.getPrompt() + "')", Reporter.WARNING);
+						throw new IOException("Login failed (Prompt: '" + current_pr.getPrompt() + "')");
+					}
+					report.report("Login to serial completed");
 				}
-				report.report("Login to serial completed");
+				catch (Exception e){
+					report.report("Login failed; Reason " + e.getMessage(), Reporter.FAIL);
+					throw e;
+				}
 			}
 			current_pr = cli.waitWithGrace(sleepTime * 100);
 			report.report("Session prepare completed (Prompt: '" + current_pr.getPrompt() + "')");

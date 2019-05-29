@@ -884,6 +884,7 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 		}
 		for(UEIPerf ueIPerf : allUEsIPerfList){
 			ueIPerf.copyAllFiles(filesDl,filesUl);
+			break;
 		}
 		return true;
 	}

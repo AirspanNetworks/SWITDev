@@ -172,6 +172,7 @@ public class exCLI extends Cli {
 		removePrompts();
 		addPrompts(prompts);
 		try {
+			sendEnter(1000);
 			super.login(timeout, true);
 		}
 		finally {

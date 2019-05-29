@@ -381,14 +381,7 @@ public class BasicAction extends Action {
 			GeneralUtils.startLevel("Prepare session; waiting to current prompt");
 			
 			// Read current prompt for decide to reset it
-			cli.addPrompts(
-					new exPrompt(userPrompt, false, true), 
-					new exPrompt(PromptsCommandsInfo.ROOT_PATTERN, false),
-					new exPrompt(PromptsCommandsInfo.LTECLI_PATTERN, false),
-					new exPrompt(PromptsCommandsInfo.LOGIN_PATTERN, false),
-					new exPrompt(PromptsCommandsInfo.PASSWORD_PATTERN, false),
-					new exPrompt(PromptsCommandsInfo.ТNЕТ_PATTERN, false));
-			
+			cli.addPrompts(UserInfoFactory.getAvaliablePrompts(userPrompt).toArray(new exPrompt[] {}));
 			
 			exPrompt current_pr = cli.waitWithGrace(sleepTime * 100);
 			report.report("Current prompt is: " + current_pr.getPrompt());

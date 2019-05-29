@@ -376,9 +376,9 @@ public class BasicAction extends Action {
 			report.report("Connection: " + conn_info.toString());
 			Terminal terminal = new Telnet(conn_info.host, conn_info.port);
 			cli = new exCLI(terminal);
-			cli.setGraceful(false);
+			cli.setGraceful(true);
 			cli.setEnterStr("\n");
-			GeneralUtils.startLevel("Prepare session");
+			GeneralUtils.startLevel("Prepare session; waiting to current prompt");
 			
 			// Read current prompt for decide to reset it
 			cli.addPrompts(
@@ -387,7 +387,7 @@ public class BasicAction extends Action {
 					new exPrompt(PromptsCommandsInfo.LTECLI_PATTERN, false),
 					new exPrompt(PromptsCommandsInfo.LOGIN_PATTERN, false),
 					new exPrompt(PromptsCommandsInfo.PASSWORD_PATTERN, false),
-					new exPrompt(PromptsCommandsInfo.ТNЕТ_PATTERN, true));
+					new exPrompt(PromptsCommandsInfo.ТNЕТ_PATTERN, false));
 			
 			
 			exPrompt current_pr = cli.waitWithGrace(sleepTime * 100);

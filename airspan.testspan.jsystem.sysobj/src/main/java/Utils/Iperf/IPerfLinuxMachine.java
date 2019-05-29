@@ -133,7 +133,6 @@ public class IPerfLinuxMachine extends IPerfMachine{
 	@Override
 	public ArrayList<File> getFileList(String fileName) {
 		ArrayList<File> fileToRet = new ArrayList<File>();
-		GeneralUtils.printToConsole(fileName);
 		String[] allNames = fileName.split(" ");
 		ScpClient scpClient = new ScpClient(hostname, username, password);
 		if(scpClient.getFiles(System.getProperty("user.dir"), allNames)){

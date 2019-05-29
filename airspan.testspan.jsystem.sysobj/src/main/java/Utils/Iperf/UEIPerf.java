@@ -803,27 +803,72 @@ public class UEIPerf {
 
 	public ArrayList<File> getResultFiles(ArrayList<String> streamList) {
 		ArrayList<File> resultFiles = new ArrayList<File>();
+		String filesToGet = "";
 		if(iperfMachineDL != null){
 			for(IPerfStream ulIPerfStream : ulStreamArrayList){
 				if(streamList.contains(ulIPerfStream.getStreamName())){
-					File resultFile = iperfMachineDL.getFile(ulIPerfStream.getTpFileName());
-					resultFiles.add(resultFile);
+					filesToGet += ulIPerfStream.getTpFileName()+" ";
+					//File resultFile = iperfMachineDL.getFile(ulIPerfStream.getTpFileName());
+					//resultFiles.add(resultFile);
 				}
 			}
+			filesToGet = filesToGet.substring(0,filesToGet.length()-1);
+			ArrayList<File> temp = iperfMachineDL.getFileList(filesToGet);
+			resultFiles.addAll(temp);
 		}
+		filesToGet = "";
 		if(iperfMachineUL != null){
 			for(IPerfStream dlIPerfStream : dlStreamArrayList){
 				if(streamList.contains(dlIPerfStream.getStreamName())){
-					File resultFile = iperfMachineUL.getFile(dlIPerfStream.getTpFileName());
-					resultFiles.add(resultFile);
+					filesToGet += dlIPerfStream.getTpFileName()+" ";
+
+					/*File resultFile = iperfMachineUL.getFile(dlIPerfStream.getTpFileName());
+					resultFiles.add(resultFile);*/
 				}
-			}	
+			}
+			filesToGet = filesToGet.substring(0,filesToGet.length()-1);
+			ArrayList<File> temp = iperfMachineUL.getFileList(filesToGet);
+			resultFiles.addAll(temp);
 		}
 		return resultFiles;
 	}
 
 	public ArrayList<File> getTransmitOutputFiles(ArrayList<String> streamList) {
 		ArrayList<File> resultFiles = new ArrayList<File>();
+		String filesToGet = "";
+		if(iperfMachineUL != null){
+			for(IPerfStream ulIPerfStream : ulStreamArrayList){
+				if(streamList.contains(ulIPerfStream.getStreamName())){
+					filesToGet += ulIPerfStream.getClientOutputFileName()+" ";
+					//File resultFile = iperfMachineDL.getFile(ulIPerfStream.getTpFileName());
+					//resultFiles.add(resultFile);
+				}
+			}
+			filesToGet = filesToGet.substring(0,filesToGet.length()-1);
+			ArrayList<File> temp = iperfMachineUL.getFileList(filesToGet);
+			resultFiles.addAll(temp);
+		}
+		filesToGet = "";
+		if(iperfMachineDL != null){
+			for(IPerfStream dlIPerfStream : dlStreamArrayList){
+				if(streamList.contains(dlIPerfStream.getStreamName())){
+					filesToGet += dlIPerfStream.getClientOutputFileName()+" ";
+
+					/*File resultFile = iperfMachineUL.getFile(dlIPerfStream.getTpFileName());
+					resultFiles.add(resultFile);*/
+				}
+			}
+			filesToGet = filesToGet.substring(0,filesToGet.length()-1);
+			ArrayList<File> temp = iperfMachineDL.getFileList(filesToGet);
+			resultFiles.addAll(temp);
+		}
+		return resultFiles;
+		
+		
+		
+		
+		
+		/*ArrayList<File> resultFiles = new ArrayList<File>();
 		if(iperfMachineUL != null){
 			for(IPerfStream ulIPerfStream : ulStreamArrayList){
 				if(streamList.contains(ulIPerfStream.getStreamName())){
@@ -840,7 +885,7 @@ public class UEIPerf {
 				}
 			}	
 		}
-		return resultFiles;
+		return resultFiles;*/
 	}
 
 	public Protocol getProtocolToStart() {

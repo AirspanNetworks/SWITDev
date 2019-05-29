@@ -130,7 +130,8 @@ public class exCLI extends Cli {
 		exPrompt p;
 		do {
 			try {
-				p = (exPrompt) terminal.waitForPrompt(timeout);
+//				p = (exPrompt) terminal.waitForPrompt(timeout);
+                p = sendEnter(Math.min(15 * 1000, timeout));
 			} catch (Exception e) {
 				if (!isGraceful())
 					throw e;

@@ -803,25 +803,19 @@ public class UEIPerf {
 
 	public ArrayList<File> getResultFiles(ArrayList<String> streamList) {
 		ArrayList<File> resultFiles = new ArrayList<File>();
-		String filesToGet = "";
 		if(iperfMachineDL != null){
 			for(IPerfStream ulIPerfStream : ulStreamArrayList){
 				if(streamList.contains(ulIPerfStream.getStreamName())){
 					File resultFile = new File(ulIPerfStream.getTpFileName());
 					resultFiles.add(resultFile);
-					//File resultFile = iperfMachineDL.getFile(ulIPerfStream.getTpFileName());
-					//resultFiles.add(resultFile);
 				}
 			}
 		}
-		filesToGet = "";
 		if(iperfMachineUL != null){
 			for(IPerfStream dlIPerfStream : dlStreamArrayList){
 				if(streamList.contains(dlIPerfStream.getStreamName())){
 					File resultFile = new File(dlIPerfStream.getTpFileName());
 					resultFiles.add(resultFile);
-					/*File resultFile = iperfMachineUL.getFile(dlIPerfStream.getTpFileName());
-					resultFiles.add(resultFile);*/
 				}
 			}
 		}
@@ -830,58 +824,23 @@ public class UEIPerf {
 
 	public ArrayList<File> getTransmitOutputFiles(ArrayList<String> streamList) {
 		ArrayList<File> resultFiles = new ArrayList<File>();
-		String filesToGet = "";
 		if(iperfMachineUL != null){
 			for(IPerfStream ulIPerfStream : ulStreamArrayList){
 				if(streamList.contains(ulIPerfStream.getStreamName())){
 					File resultFile = new File(ulIPerfStream.getClientOutputFileName());
 					resultFiles.add(resultFile);
-					//File resultFile = iperfMachineDL.getFile(ulIPerfStream.getTpFileName());
-					//resultFiles.add(resultFile);
 				}
 			}
-			filesToGet = filesToGet.substring(0,filesToGet.length()-1);
-			ArrayList<File> temp = iperfMachineUL.getFileList(filesToGet);
-			resultFiles.addAll(temp);
 		}
-		filesToGet = "";
 		if(iperfMachineDL != null){
 			for(IPerfStream dlIPerfStream : dlStreamArrayList){
 				if(streamList.contains(dlIPerfStream.getStreamName())){
 					File resultFile = new File(dlIPerfStream.getClientOutputFileName());
 					resultFiles.add(resultFile);
-					/*File resultFile = iperfMachineUL.getFile(dlIPerfStream.getTpFileName());
-					resultFiles.add(resultFile);*/
 				}
 			}
-			filesToGet = filesToGet.substring(0,filesToGet.length()-1);
-			ArrayList<File> temp = iperfMachineDL.getFileList(filesToGet);
-			resultFiles.addAll(temp);
 		}
 		return resultFiles;
-		
-		
-		
-		
-		
-		/*ArrayList<File> resultFiles = new ArrayList<File>();
-		if(iperfMachineUL != null){
-			for(IPerfStream ulIPerfStream : ulStreamArrayList){
-				if(streamList.contains(ulIPerfStream.getStreamName())){
-					File resultFile = iperfMachineUL.getFile(ulIPerfStream.getClientOutputFileName());
-					resultFiles.add(resultFile);
-				}
-			}
-		}
-		if(iperfMachineDL != null){
-			for(IPerfStream dlIPerfStream : dlStreamArrayList){
-				if(streamList.contains(dlIPerfStream.getStreamName())){
-					File resultFile = iperfMachineDL.getFile(dlIPerfStream.getClientOutputFileName());
-					resultFiles.add(resultFile);
-				}
-			}	
-		}
-		return resultFiles;*/
 	}
 
 	public Protocol getProtocolToStart() {

@@ -368,8 +368,7 @@ public class BasicAction extends Action {
 		
 		// Read login sequence by user name (if sudo and/or lte required - also)
 		UserSequence user_login = UserInfoFactory.getLoginSequenceForUser(userName, password, sudoRequired, lteCliRequired);
-		ArrayList<exPrompt> exit_sequence = UserInfoFactory.getExitSequence();
-		
+
 		try {
 			report.report("Login properties:\n" + user_login.toString());
 			conn_info = new ConnectionInfo("Serial", ip, port, userName, password, ConnectorTypes.Telnet);
@@ -393,7 +392,7 @@ public class BasicAction extends Action {
 				// Session require reset current state and login
 				report.report("Session reset needed (Current prompt: '" + current_pr.getPrompt() + "' vs. desired: '" + user_login.getFinalPrompt().getPrompt() + "')");
 				
-				cli.login(sleepTime * 1000, exit_sequence.toArray(new exPrompt[] {}));
+				cli.login(sleepTime * 1000, UserInfoFactory.getExitSequence().toArray(new exPrompt[] {}));
                 report.report("Session reset completed waiting for prompt");
 				current_pr = cli.waitWithGrace(sleepTime * 100);
 				report.report("Session reset completed (Prompt: '" + current_pr.getPrompt() + "')");

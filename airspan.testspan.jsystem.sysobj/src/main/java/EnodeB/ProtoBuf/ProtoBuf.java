@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.google.protobuf.GeneratedMessageV3;
 
-import EnodeB.ProtoBuf.LteStatsV1291650068.PbLteStats;
+import EnodeB.ProtoBuf.LteStatsV1291600016.PbLteStats;
 import EnodeB.ProtoBuf.PbLteStatusOuterClass.PbLteAnrStatus;
 import EnodeB.ProtoBuf.PbLteStatusOuterClass.PbLteCellStatus;
 import EnodeB.ProtoBuf.PbLteStatusOuterClass.PbLteMmeStatus;

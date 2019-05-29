@@ -135,11 +135,6 @@ public class IPerfLinuxMachine extends IPerfMachine{
 		ArrayList<File> fileToRet = new ArrayList<File>();
 		GeneralUtils.printToConsole(fileName);
 		String[] allNames = fileName.split(" ");
-		/*String namesToGet = "";
-		for(String str : allNames){
-			namesToGet += "\""+preAddressTpFile + str +"\",";
-		}
-		namesToGet = namesToGet.substring(0, namesToGet.length()-1);*/
 		ScpClient scpClient = new ScpClient(hostname, username, password);
 		if(scpClient.getFiles(System.getProperty("user.dir"), allNames)){
 			for(String str : allNames){

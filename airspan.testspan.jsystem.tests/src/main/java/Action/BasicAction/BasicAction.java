@@ -406,8 +406,9 @@ public class BasicAction extends Action {
 				// Session require login only
 				report.report("Login needed:\n" + user_login.toString());
 				try {
-					if (!cli.login(sleepTime * 1000, user_login)) {
-						report.report("Login failed (Prompt: '" + current_pr.getPrompt() + "')", Reporter.WARNING);
+					//if (!cli.login(sleepTime * 1000, user_login)) {
+					if (!cli.CRTLogin(user_login)) {
+//						report.report("Login failed (Prompt: '" + current_pr.getPrompt() + "')", Reporter.WARNING);
 						throw new IOException("Login failed (Prompt: '" + current_pr.getPrompt() + "')");
 					}
 					report.report("Login to serial completed");

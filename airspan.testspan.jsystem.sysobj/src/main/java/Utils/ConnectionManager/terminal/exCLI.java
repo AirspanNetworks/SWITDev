@@ -206,7 +206,22 @@ public class exCLI extends Cli {
 		}
 		return true;
 	}
+
+	public boolean CRTLogin(UserSequence prompts) throws Exception{
+		return CRTLogin(prompts, 2000);
+	}
 	
+	public boolean CRTLogin(UserSequence prompts, long timeout) throws Exception{
+	    String full_login_expression = prompts.getFullExpression("\\r\\n");
+	    sendString(full_login_expression, true);
+
+		exPrompt current_pr = waitWithGrace(timeout);
+		if(current_pr.getPrompt() != prompts.getFinalPrompt().getPrompt()) {
+			return false;
+		}
+		return true;
+    }
+
 	/**
 	 * Refresh session. results buffer
 	 * @throws IOException

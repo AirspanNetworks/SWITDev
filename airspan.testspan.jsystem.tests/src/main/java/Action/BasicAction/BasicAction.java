@@ -430,9 +430,7 @@ public class BasicAction extends Action {
 			String result_text = "Test completed";
 			
 			if(expectedPatern != null) {
-//				report.report("Pattern verification not implemented", Reporter.WARNING);
 				result_text += " as following:\n";
-//				
 				for(String key : expectedPatern.split("\\s*;\\s*")) {
 					int local_stat = output_str.contains(key) ? Reporter.PASS : Reporter.FAIL;
 					result_text += String.format("Expected pattern '%s' %s exists in output\n", key, local_stat == Reporter.PASS ? "" : "not");

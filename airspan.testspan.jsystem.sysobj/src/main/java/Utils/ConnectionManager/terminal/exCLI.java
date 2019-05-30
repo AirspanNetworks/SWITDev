@@ -210,8 +210,10 @@ public class exCLI extends Cli {
 //	    sendString(full_login_expression, true);
 
         for (exPrompt prompt : prompts){
-            sendString(prompt.getStringToSend() + '\r', true);
-            Thread.sleep(1500);
+        	if(prompt.getStringToSend() != null) {
+				sendString(prompt.getStringToSend() + '\r', true);
+				Thread.sleep(1500);
+			}
         }
 
         UserSequence instance = prompts;

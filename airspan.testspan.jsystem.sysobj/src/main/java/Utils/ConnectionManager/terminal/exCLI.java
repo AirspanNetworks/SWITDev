@@ -122,25 +122,26 @@ public class exCLI extends Cli {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 * @throws Exception
-	 */	
+	 */
 	public exPrompt waitWithGrace(long timeout, int counter) throws Exception {
 		exPrompt p;
-		do {
+//		do {
 			try {
-//				p = (exPrompt) terminal.waitForPrompt(timeout);
-                p = sendEnter(Math.min(15 * 1000, timeout));
+//				exPrompt p = (exPrompt) terminal.waitForPrompt(timeout);
+				p = (exPrompt) terminal.waitForPrompt(Math.min(15 * 1000, timeout));
 			} catch (Exception e) {
 				if (!isGraceful())
 					throw e;
 
 				p = sendEnter(Math.min(15 * 1000, timeout));
-			} finally {
-				counter--;
 			}
-		}while (p == null && counter >= 0);
+//			finally {
+//				counter--;
+//			}
+//		}while (p == null && counter >= 0);
 
 		if(p == null)
 			throw new IOException("exCLI: Cannot occur prompt");
@@ -173,7 +174,7 @@ public class exCLI extends Cli {
 		removePrompts();
 		addPrompts(prompts);
 		try {
-			sendEnter(1000);
+//			sendEnter(1000);
 			super.login(timeout, true);
 		}
 		finally {

@@ -382,7 +382,7 @@ public class BasicAction extends Action {
 			// Read current prompt for decide to reset it
 			cli.addPrompts(UserInfoFactory.getAvaliablePrompts(userPrompt).toArray(new exPrompt[] {}));
 			
-			exPrompt current_pr = cli.waitWithGrace(sleepTime * 100);
+			exPrompt current_pr = cli.waitWithGrace(sleepTime * 1000);
 			report.report("Current prompt is: " + current_pr.getPrompt());
 			if((user_login.enforceSessionReset() ||	(
 					current_pr.getPrompt() != user_login.getFinalPrompt().getPrompt()) &&

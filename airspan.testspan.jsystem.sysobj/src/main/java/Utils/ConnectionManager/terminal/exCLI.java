@@ -210,7 +210,7 @@ public class exCLI extends Cli {
 //	    sendString(full_login_expression, true);
 
         for (exPrompt prompt : prompts){
-            sendString(prompt.getStringToSend() + "\\r\\n", true);
+            sendString(prompt.getStringToSend() + '\r' + '\n', true);
             Thread.sleep(1000);
         }
 

@@ -117,20 +117,18 @@ public class exCLI extends Cli {
 		return readFile(log_cache.getAbsolutePath());
 	}
 
-	public exPrompt waitWithGrace(long timeout) throws Exception {
-		return waitWithGrace(timeout, 3);
-	}
+//	public exPrompt waitWithGrace(long timeout) throws Exception {
+//		return waitWithGrace(timeout, 3);
+//	}
 
 	/**
 	 *
 	 * @return
 	 * @throws Exception
 	 */
-	public exPrompt waitWithGrace(long timeout, int counter) throws Exception {
+	public exPrompt waitWithGrace(long timeout) throws Exception {
 		exPrompt p;
-//		do {
 			try {
-//				exPrompt p = (exPrompt) terminal.waitForPrompt(timeout);
 				p = (exPrompt) terminal.waitForPrompt(Math.min(15 * 1000, timeout));
 			} catch (Exception e) {
 				if (!isGraceful())
@@ -138,10 +136,6 @@ public class exCLI extends Cli {
 
 				p = sendEnter(Math.min(15 * 1000, timeout));
 			}
-//			finally {
-//				counter--;
-//			}
-//		}while (p == null && counter >= 0);
 
 		if(p == null)
 			throw new IOException("exCLI: Cannot occur prompt");
@@ -210,10 +204,17 @@ public class exCLI extends Cli {
 	public boolean CRTLogin(UserSequence prompts) throws Exception{
 		return CRTLogin(prompts, 2000);
 	}
-	
+
 	public boolean CRTLogin(UserSequence prompts, long timeout) throws Exception{
 	    String full_login_expression = prompts.getFullExpression("\\r\\n");
 	    sendString(full_login_expression, true);
+
+        UserSequence instance = prompts;
+        while(instance.hasNext()) {
+            instance = instance.next();
+//            login(timeout, instance.toArray(new exPrompt[] {}));
+            CRTLogin(instance, timeout);
+        }
 
 		exPrompt current_pr = waitWithGrace(timeout);
 		if(current_pr.getPrompt() != prompts.getFinalPrompt().getPrompt()) {

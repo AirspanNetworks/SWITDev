@@ -206,8 +206,13 @@ public class exCLI extends Cli {
 	}
 
 	public boolean CRTLogin(UserSequence prompts, long timeout) throws Exception{
-	    String full_login_expression = prompts.getFullExpression("\\r\\n");
-	    sendString(full_login_expression, true);
+//	    String full_login_expression = prompts.getFullExpression("\\r\\n");
+//	    sendString(full_login_expression, true);
+
+        for (exPrompt prompt : prompts){
+            sendString(prompt.getStringToSend() + "\\r\\n", true);
+            Thread.sleep(1000);
+        }
 
         UserSequence instance = prompts;
         while(instance.hasNext()) {

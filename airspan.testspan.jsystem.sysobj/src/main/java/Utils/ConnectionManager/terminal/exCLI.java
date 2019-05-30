@@ -144,14 +144,11 @@ public class exCLI extends Cli {
 	}
 	
 	public exPrompt sendEnter(long timeout) throws Exception {
-		long startTime = System.currentTimeMillis();
 		terminal.sendString(getEnterStr(), false);
-//		result.append(terminal.getResult());
 
 		Prompt p = terminal.waitForPrompt(timeout);
 		p.setCommandEnd(p.getStringToSend() == null);
-		
-//		result.append(terminal.getResult());
+
 		return (exPrompt)p;
 	}
 	

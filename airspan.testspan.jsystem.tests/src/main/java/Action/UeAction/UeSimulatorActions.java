@@ -29,7 +29,17 @@ public class UeSimulatorActions extends Action {
 	private int cellId = 1;
 	private String groupName;
 	private UesOptions uesOptions = UesOptions.AMOUNT;
+	private String preConfigFileName = null;
 
+	public String getPreConfigFileName() {
+		return preConfigFileName;
+	}
+
+	@ParameterProperties(description = "Pre config file name. If not exist - leave empty")
+	public void setPreConfigFileName(String preConfigFileName) {
+		this.preConfigFileName = preConfigFileName;
+	}
+	
 	public enum UesOptions{
 		AMOUNT, GROUPNAME
 	}
@@ -316,7 +326,7 @@ public class UeSimulatorActions extends Action {
 	}
 	
 	@Test											
-	@TestProperties(name = "start UE Simulator", returnParam = "LastStatus", paramsInclude = { "DUTs" })
+	@TestProperties(name = "start UE Simulator", returnParam = "LastStatus", paramsInclude = { "DUTs","PreConfigFileName" })
 	public void startUeSimulator() {
 		try {
 			if (duts == null) {
@@ -335,7 +345,7 @@ public class UeSimulatorActions extends Action {
 			}
 			report.report("There are " + sdrCounter + " Cells in the enodeBs given, so " + sdrCounter + " are requiered.");
 			AmariSoftServer amariSoftServer = AmariSoftServer.getInstance();	
-			if (amariSoftServer.startServer(duts)) 
+			if (amariSoftServer.startServer(duts,preConfigFileName)) 
 				report.report("UE simulator has started as expected");
 			else{
 				report.report("UE simulator didn't start", Reporter.FAIL);

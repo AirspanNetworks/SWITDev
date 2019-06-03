@@ -99,14 +99,6 @@ public class AmariSoftServer extends SystemObjectImpl{
 	private String pathPreConfig = null;
 	private String currentConfigFile;
 
-    public String getPathPreConfig() {
-		return pathPreConfig;
-	}
-
-	public void setPathPreConfig(String pathPreConfig) {
-		this.pathPreConfig = pathPreConfig;
-	}
-
 	@Override
 	public void init() throws Exception {
 		super.init();
@@ -352,14 +344,15 @@ public class AmariSoftServer extends SystemObjectImpl{
 			e.printStackTrace();
 		}
     }
-    public boolean startServer(EnodeB dut){
+    public boolean startServer(EnodeB dut,String namePreConfig){
     	ArrayList<EnodeB> tempEnodebList = new ArrayList<>();
     	tempEnodebList.add(dut);
-    	return startServer(tempEnodebList);
+    	return startServer(tempEnodebList,namePreConfig);
     }
     
-    public boolean startServer(ArrayList<EnodeB> duts){
+    public boolean startServer(ArrayList<EnodeB> duts,String namePreConfig){
     	connect();
+    	pathPreConfig = namePreConfig;
     	if(pathPreConfig != null){
     		if(startServer(pathPreConfig)){
     			getEarfcnList(duts);

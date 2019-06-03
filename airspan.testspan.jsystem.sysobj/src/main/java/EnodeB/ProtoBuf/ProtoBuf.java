@@ -60,12 +60,6 @@ public class ProtoBuf {
 			    if (isMethodContainsExist(counterName, temp.getClass())) 
 			     return extractCounter(temp, counterName); 
 			   }
-			   
-			   PbLteStatsPerEtwsWarningType warn = PbLteStatsPerEtwsWarningType.parseFrom(protoBuf);
-			   if(isMethodContainsExist(counterName, warn.getClass())){
-				   return extractCounter(warn, counterName);
-			   }
-			   
 			  }catch (Exception e) {
 			   e.printStackTrace();
 			  }

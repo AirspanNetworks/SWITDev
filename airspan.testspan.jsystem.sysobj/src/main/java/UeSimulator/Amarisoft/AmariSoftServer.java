@@ -1189,7 +1189,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 			rfDriver = new StringBuilder(rfDriver).replace(ind, ind+1,"").toString();
 		System.out.println("rfDriver String after: " + rfDriver);
 
-		configObject.setBandwidth(duts.get(0).getBandwidth().getBw());
+		configObject.setBandwidth(20/*duts.get(0).getBandwidth().getBw()*/);
 		configObject.setCells(cells);
 		configObject.setTxGain(txgain);
 		configObject.setRxGain(rxgain);

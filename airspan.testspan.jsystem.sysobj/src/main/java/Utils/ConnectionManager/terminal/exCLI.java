@@ -116,37 +116,39 @@ public class exCLI extends Cli {
 			
 		return readFile(log_cache.getAbsolutePath());
 	}
-	
+
+//	public exPrompt waitWithGrace(long timeout) throws Exception {
+//		return waitWithGrace(timeout, 3);
+//	}
+
 	/**
-	 * 
+	 *
 	 * @return
 	 * @throws Exception
-	 */	
+	 */
 	public exPrompt waitWithGrace(long timeout) throws Exception {
-		
-		try {
-			exPrompt p = (exPrompt)terminal.waitForPrompt(timeout);
-//			result.append(terminal.getResult());
-			return p;
-		} catch (Exception e) {
-			if ((!isGraceful()) || (getWaitWithGraceCounter() > 3)) {
-				throw e;
+		exPrompt p;
+			try {
+				p = (exPrompt) terminal.waitForPrompt(Math.min(15 * 1000, timeout));
+			} catch (Exception e) {
+				if (!isGraceful())
+					throw e;
+
+				p = sendEnter(Math.min(15 * 1000, timeout));
 			}
 
-			return (exPrompt)sendEnter(Math.min(15 * 1000, timeout));
-		}
+		if(p == null)
+			throw new IOException("exCLI: Cannot occur prompt");
 
+		return p;
 	}
 	
 	public exPrompt sendEnter(long timeout) throws Exception {
-		long startTime = System.currentTimeMillis();
 		terminal.sendString(getEnterStr(), false);
-//		result.append(terminal.getResult());
 
 		Prompt p = terminal.waitForPrompt(timeout);
 		p.setCommandEnd(p.getStringToSend() == null);
-		
-//		result.append(terminal.getResult());
+
 		return (exPrompt)p;
 	}
 	
@@ -163,7 +165,8 @@ public class exCLI extends Cli {
 		removePrompts();
 		addPrompts(prompts);
 		try {
-			super.login(timeout);
+//			sendEnter(1000);
+			super.login(timeout, true);
 		}
 		finally {
 			terminal.removePrompts();
@@ -194,7 +197,36 @@ public class exCLI extends Cli {
 		}
 		return true;
 	}
-	
+
+	public boolean CRTLogin(UserSequence prompts) throws Exception{
+		return CRTLogin(prompts, 2000);
+	}
+
+	public boolean CRTLogin(UserSequence prompts, long timeout) throws Exception{
+//	    String full_login_expression = prompts.getFullExpression("\\r\\n");
+//	    sendString(full_login_expression, true);
+
+        for (exPrompt prompt : prompts){
+        	if(prompt.getStringToSend() != null) {
+				sendString(prompt.getStringToSend() + '\r', true);
+				Thread.sleep(1500);
+			}
+        }
+
+        UserSequence instance = prompts;
+        while(instance.hasNext()) {
+            instance = instance.next();
+//            login(timeout, instance.toArray(new exPrompt[] {}));
+            CRTLogin(instance, timeout);
+        }
+
+		exPrompt current_pr = waitWithGrace(timeout);
+		if(current_pr.getPrompt() != prompts.getFinalPrompt().getPrompt()) {
+			return false;
+		}
+		return true;
+    }
+
 	/**
 	 * Refresh session. results buffer
 	 * @throws IOException

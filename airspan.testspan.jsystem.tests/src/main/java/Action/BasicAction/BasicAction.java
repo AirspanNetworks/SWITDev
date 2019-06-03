@@ -368,8 +368,7 @@ public class BasicAction extends Action {
 		
 		// Read login sequence by user name (if sudo and/or lte required - also)
 		UserSequence user_login = UserInfoFactory.getLoginSequenceForUser(userName, password, sudoRequired, lteCliRequired);
-		ArrayList<exPrompt> exit_sequence = UserInfoFactory.getExitSequence();
-		
+
 		try {
 			report.report("Login properties:\n" + user_login.toString());
 			conn_info = new ConnectionInfo("Serial", ip, port, userName, password, ConnectorTypes.Telnet);
@@ -377,29 +376,25 @@ public class BasicAction extends Action {
 			Terminal terminal = new Telnet(conn_info.host, conn_info.port);
 			cli = new exCLI(terminal);
 			cli.setGraceful(true);
-			cli.setEnterStr("\n");
-			GeneralUtils.startLevel("Prepare session");
+			cli.setEnterStr("\r\n");
+			GeneralUtils.startLevel("Prepare session; waiting to current prompt");
 			
 			// Read current prompt for decide to reset it
-			cli.addPrompts(
-					new exPrompt(userPrompt, false, true), 
-					new exPrompt(PromptsCommandsInfo.ROOT_PATTERN, false),
-					new exPrompt(PromptsCommandsInfo.LTECLI_PATTERN, false),
-					new exPrompt(PromptsCommandsInfo.LOGIN_PATTERN, false),
-					new exPrompt(PromptsCommandsInfo.PASSWORD_PATTERN, false),
-					new exPrompt(PromptsCommandsInfo.ТNЕТ_PATTERN, false));
+			cli.addPrompts(UserInfoFactory.getAvaliablePrompts(userPrompt).toArray(new exPrompt[] {}));
 			
-			
-			exPrompt current_pr = cli.waitWithGrace(sleepTime * 100);
-			
-			if((user_login.enforceSessionReset() || current_pr.getPrompt() != user_login.getFinalPrompt().getPrompt()) && 
-					current_pr.getPrompt() != PromptsCommandsInfo.LOGIN_PATTERN) {
+			exPrompt current_pr = cli.waitWithGrace(sleepTime * 1000);
+			report.report("Current prompt is: " + current_pr.getPrompt());
+			if((user_login.enforceSessionReset() ||	(
+					current_pr.getPrompt() != user_login.getFinalPrompt().getPrompt()) &&
+					current_pr.getPrompt() != PromptsCommandsInfo.LOGIN_PATTERN
+				)
+			) {
 				// Session require reset current state and login
 				report.report("Session reset needed (Current prompt: '" + current_pr.getPrompt() + "' vs. desired: '" + user_login.getFinalPrompt().getPrompt() + "')");
 				
-				cli.login(sleepTime * 1000, exit_sequence.toArray(new exPrompt[] {}));
-				
-				current_pr = cli.waitWithGrace(sleepTime * 100);
+				cli.login(sleepTime * 1000, UserInfoFactory.getExitSequence().toArray(new exPrompt[] {}));
+                report.report("Session reset completed waiting for prompt");
+				current_pr = cli.waitWithGrace(sleepTime * 1000);
 				report.report("Session reset completed (Prompt: '" + current_pr.getPrompt() + "')");
 				
 			}else {
@@ -410,11 +405,18 @@ public class BasicAction extends Action {
 			if(current_pr.getPrompt() == PromptsCommandsInfo.LOGIN_PATTERN) {
 				// Session require login only
 				report.report("Login needed:\n" + user_login.toString());
-				if(!cli.login(sleepTime * 1000, user_login)) {
-					report.report("Login failed (Prompt: '" + current_pr.getPrompt() + "')", Reporter.WARNING);
-					throw new IOException("Login failed (Prompt: '" + current_pr.getPrompt() + "')");
+				try {
+//					if (!cli.login(sleepTime * 1000, user_login)) {
+					if (!cli.CRTLogin(user_login)) {
+//						report.report("Login failed (Prompt: '" + current_pr.getPrompt() + "')", Reporter.WARNING);
+						throw new IOException("Login failed (Prompt: '" + current_pr.getPrompt() + "')");
+					}
+					report.report("Login to serial completed");
 				}
-				report.report("Login to serial completed");
+				catch (Exception e){
+					report.report("Login failed; Reason " + e.getMessage(), Reporter.FAIL);
+					throw e;
+				}
 			}
 			current_pr = cli.waitWithGrace(sleepTime * 100);
 			report.report("Session prepare completed (Prompt: '" + current_pr.getPrompt() + "')");
@@ -428,9 +430,7 @@ public class BasicAction extends Action {
 			String result_text = "Test completed";
 			
 			if(expectedPatern != null) {
-//				report.report("Pattern verification not implemented", Reporter.WARNING);
 				result_text += " as following:\n";
-//				
 				for(String key : expectedPatern.split("\\s*;\\s*")) {
 					int local_stat = output_str.contains(key) ? Reporter.PASS : Reporter.FAIL;
 					result_text += String.format("Expected pattern '%s' %s exists in output\n", key, local_stat == Reporter.PASS ? "" : "not");
@@ -454,7 +454,7 @@ public class BasicAction extends Action {
 		finally {
 			
 			if(user_login.enforceSessionReset()) {
-				cli.login(2000, exit_sequence.toArray(new exPrompt[] {}));
+				cli.login(2000, UserInfoFactory.getExitSequence().toArray(new exPrompt[] {}));
 			}
 			
 			if(cli != null) {

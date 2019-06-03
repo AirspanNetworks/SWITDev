@@ -52,6 +52,7 @@ public final class UserInfoFactory {
 		result.add(new exPrompt(PromptsCommandsInfo.LOGIN_PATTERN, false));
 		result.add(new exPrompt(PromptsCommandsInfo.PASSWORD_PATTERN, false));
 		result.add(new exPrompt(PromptsCommandsInfo.ТNЕТ_PATTERN, false));
+		result.add(new exPrompt(PromptsCommandsInfo.LOGIN_PATTERN, false));
 		return result;
 	}
 

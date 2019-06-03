@@ -3550,7 +3550,7 @@ public abstract class XLP extends EnodeBComponent {
     public abstract boolean setGranularityPeriod(int value);
 
     public int getGranularityPeriod() {
-        String oid = MibReader.getInstance().resolveByName("asLteStatsIfControlRbStatsGranularityPeriod");
+        String oid = MibReader.getInstance().resolveByName("asLteStatsEnbControlStatsGranularityPeriod");
         String response = "";
         try {
             response = snmp.get(oid);

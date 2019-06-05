@@ -20,8 +20,6 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.WebSocketContainer;
 
-import org.python.modules.synchronize;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -110,8 +108,6 @@ public class AmariSoftServer extends SystemObjectImpl{
     	if (UEgroup != null)
     		checkIfGroupsAreIdentical();
 	}
-    
-
 
 	public void easyInit()
     {
@@ -128,6 +124,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     	if (UEgroup != null)
     		checkIfGroupsAreIdentical();
     }
+	
     private void checkIfGroupsAreIdentical() {
 		for(int i = 0; i < UEgroup.length; i++) {
 			AmarisoftGroup group1 = UEgroup[i];
@@ -139,7 +136,6 @@ public class AmariSoftServer extends SystemObjectImpl{
 		
 	}
 
-
 	private void compareGroups(AmarisoftGroup group1, AmarisoftGroup group2) {
 		for(Long imsi1: group1.getIMSIs()) {
 			for(Long imsi2: group2.getIMSIs()) {
@@ -149,6 +145,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 		}
 		
 	}
+	
 	private void fillUeList() {
 		int ueId = 1;
 		unusedUEs = new ArrayList<>();
@@ -185,6 +182,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 		}
 		return false;
 	}
+	
 	private void checkGroupsValidation() {	
 		boolean imsiWasFound = false;
 		for(AmarisoftGroup group: UEgroup) {		
@@ -344,6 +342,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 			e.printStackTrace();
 		}
     }
+    
     public boolean startServer(EnodeB dut,String namePreConfig){
     	ArrayList<EnodeB> tempEnodebList = new ArrayList<>();
     	tempEnodebList.add(dut);
@@ -448,8 +447,6 @@ public class AmariSoftServer extends SystemObjectImpl{
 	}
 
 	public void closeSocket() {
-		
-		
 	}
 
 	public boolean sendCommands(String cmd, String response, Terminal terminal, boolean isRunningTerminal) {
@@ -767,16 +764,21 @@ public class AmariSoftServer extends SystemObjectImpl{
 		return ans;
 	}
 	
-	public boolean addUes(String groupName, int release, int category) {
-		return addUes(groupName, release, category, 0);
+	public boolean addUes(String groupName, int release, int category, Boolean powerControlEnabled,
+			String channelType, String speed, String direction,String position) {
+		return addUes(groupName, release, category, 0, powerControlEnabled,
+				channelType, speed, direction,position);
 	}
 	
-	public boolean addUes(String groupName, int release, int category, EnodeB enodeB, int cellId) {
+	public boolean addUes(String groupName, int release, int category, EnodeB enodeB, int cellId, Boolean powerControlEnabled,
+			String channelType, String speed, String direction,String position) {
 		int amarisoftCellId = getCellId(enodeB, cellId);
-		return addUes(groupName, release, category, amarisoftCellId);
+		return addUes(groupName, release, category, amarisoftCellId, powerControlEnabled,
+				channelType, speed, direction,position);
 	}
 	
-	private boolean addUes(String groupName, int release, int category, int cellId) {
+	private boolean addUes(String groupName, int release, int category, int cellId, Boolean powerControlEnabled,
+			String channelType, String speed, String direction,String position) {
 		GeneralUtils.startLevel("Adding UEs to Amarisoft simulator from group " + groupName);
 		boolean result = true;
 		boolean atListOneUE = false;
@@ -787,7 +789,8 @@ public class AmariSoftServer extends SystemObjectImpl{
 			if (groupName.equals("amarisoft")) {
 				while (unusedUEs.size() > 0) {
 					int ueId = unusedUEs.get(0).ueId;
-					result = result && addUe(unusedUEs.get(0), release, category, ueId, cellId);
+					result = result && addUe(unusedUEs.get(0), release, category, ueId, cellId, powerControlEnabled,
+							channelType, speed, direction,position);
 				}
 			}
 			else {
@@ -799,7 +802,8 @@ public class AmariSoftServer extends SystemObjectImpl{
 					for(String group: groups) {
 						if (group.equals(groupName)){
 							int ueId = unusedUEs.get(i).ueId;
-							result = result && addUe(unusedUEs.get(i), release, category, ueId, cellId);
+							result = result && addUe(unusedUEs.get(i), release, category, ueId, cellId, powerControlEnabled,
+									channelType, speed, direction,position);
 							wasAdded = true;
 							atListOneUE = true;
 						}	
@@ -814,18 +818,23 @@ public class AmariSoftServer extends SystemObjectImpl{
 		return result;
 	}
 
-	public boolean addUes(int amount, int release, int category, EnodeB enodeB, int cellId)
+	public boolean addUes(int amount, int release, int category, EnodeB enodeB, int cellId, Boolean powerControlEnabled,
+			String channelType, String speed, String direction,String position)
 	{
 		int amarisoftCellId = getCellId(enodeB, cellId);
-		return addUes(amount, release, category, amarisoftCellId);
+		return addUes(amount, release, category, amarisoftCellId, powerControlEnabled,
+				channelType, speed, direction,position);
 	}
 
-	public boolean addUes(int amount, int release, int category)
+	public boolean addUes(int amount, int release, int category, Boolean powerControlEnabled,
+			String channelType, String speed, String direction,String position)
 	{
-		return addUes(amount, release, category, 0);
+		return addUes(amount, release, category, 0, powerControlEnabled,
+				channelType, speed, direction,position);
 	}
 
-	public boolean addUes(int amount, int release, int category, int cellId)
+	public boolean addUes(int amount, int release, int category, int cellId, Boolean powerControlEnabled,
+			String channelType, String speed, String direction,String position)
 	{
 		GeneralUtils.startLevel("Adding " + amount + " UEs to Amarisoft simulator.");
 		boolean result = true;
@@ -835,13 +844,15 @@ public class AmariSoftServer extends SystemObjectImpl{
 				return false;
 			}
 			int ueId = unusedUEs.get(0).ueId;
-			result = result && addUe(unusedUEs.get(0), release, category, ueId, cellId);
+			result = result && addUe(unusedUEs.get(0), release, category, ueId, cellId, powerControlEnabled,
+					 channelType,  speed,  direction, position);
 		}
 		GeneralUtils.stopLevel();
 		return result;
 	}
 	
-	public boolean addUe(UE ue, int release, int category, int ueId, int cellId)
+	public boolean addUe(UE ue, int release, int category, int ueId, int cellId, Boolean powerControlEnabled,
+			String channelType, String speed, String direction,String position)
 	{
 		ArrayList<UeList> ueLists = new ArrayList<UeList>();
 		UeList ueProperties = new UeList();
@@ -858,6 +869,16 @@ public class AmariSoftServer extends SystemObjectImpl{
 		ueProperties.setOp("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
 		ueProperties.setTunSetupScript(".ue-ifup_auto");
 		ueProperties.setUeId(ueId);
+		ueProperties.setPowerControlEnabled(true);
+		Channel ch = new Channel();
+		ch.setType("awgn");
+		ueProperties.setChannel(ch);
+		ueProperties.setSpeed(Float.valueOf("0"));
+		ueProperties.setDirection(Float.valueOf("0"));
+		List<Float> lst = new ArrayList<>();
+		lst.add(50f);
+		lst.add(40f);
+		ueProperties.setPosition(lst);
 		//ueList.setAdditionalProperty("ue_count", 5);
 		ueLists.add(ueProperties);
 		UEAction addUE = new UEAction();

@@ -25,7 +25,7 @@ public class Program {
 			a.setDlMachineNetworks("91.91.117.240");
 			a.easyInit();
 			a.startServer("automationConfigFile");
-			a.addUes(10, 13, 6);
+			a.addUes(10, 13, 6,null,null,null,null,null);
 			
 			a.stopServer();
 		}

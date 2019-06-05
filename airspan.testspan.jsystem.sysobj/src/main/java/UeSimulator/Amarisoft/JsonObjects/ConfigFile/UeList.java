@@ -24,7 +24,12 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "K",
     "op",
     "tun_setup_script",
-    "sim_events"
+    "sim_events",
+    "power_control_enabled",
+    "channel",
+    "speed",
+    "direction",
+    "position"
 })
 public class UeList {
 
@@ -59,6 +64,16 @@ public class UeList {
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
     //ue_id
+    @JsonProperty("power_control_enabled")
+    private Boolean powerControlEnabled;
+    @JsonProperty("channel")
+    private Channel channel;
+    @JsonProperty("speed")
+    private Float speed;
+    @JsonProperty("direction")
+    private Float direction;
+    @JsonProperty("position")
+    private List<Float> position;
 
     @JsonProperty("ue_id")
     public Integer getUeId() {
@@ -210,6 +225,53 @@ public class UeList {
         this.additionalProperties.put(name, value);
     }
 
-	
+    @JsonProperty("power_control_enabled")
+    public Boolean getPowerControlEnabled() {
+        return powerControlEnabled;
+    }
 
+    @JsonProperty("power_control_enabled")
+    public void setPowerControlEnabled(Boolean powerControlEnabled) {
+        this.powerControlEnabled = powerControlEnabled;
+    }
+
+    @JsonProperty("channel")
+    public Channel getChannel() {
+        return channel;
+    }
+
+    @JsonProperty("channel")
+    public void setChannel(Channel channel) {
+        this.channel = channel;
+    }
+    
+    @JsonProperty("speed")
+    public Float getSpeed() {
+        return speed;
+    }
+
+    @JsonProperty("speed")
+    public void setSpeed(Float speed) {
+        this.speed = speed;
+    }
+    
+    @JsonProperty("direction")
+    public Float getDirection() {
+        return direction;
+    }
+
+    @JsonProperty("direction")
+    public void setDirection(Float direction) {
+        this.direction = direction;
+    }
+    
+    @JsonProperty("position")
+    public List<Float> getPosition() {
+        return position;
+    }
+
+    @JsonProperty("position")
+    public void setPosition(List<Float> position) {
+        this.position = position;
+    }
 }

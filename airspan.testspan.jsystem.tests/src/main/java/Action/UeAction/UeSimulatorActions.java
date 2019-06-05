@@ -225,10 +225,12 @@ public class UeSimulatorActions extends Action {
 			else{
 				if (dut == null) {
 					report.report("No DUT provided, attaching UE to first available Cell.");
-					flag = amariSoftServer.addUes(groupName, release, category,null,null,null,null,null);
+					flag = amariSoftServer.addUes(groupName, release, category, powerControlEnabled,
+							channelType, speed, direction, position);
 				} else {
 					report.report("Attaching UE to " + dut.getName() + " cell " + cellId);
-					flag = amariSoftServer.addUes(groupName, release, category, dut, cellId,null,null,null,null,null);
+					flag = amariSoftServer.addUes(groupName, release, category, dut, cellId, powerControlEnabled,
+							channelType, speed, direction, position);
 				}
 			}
 		} catch (Exception e) {
@@ -262,10 +264,12 @@ public class UeSimulatorActions extends Action {
 			else{
 				if (dut == null) {
 					report.report("No DUT provided, attaching UE to first available Cell.");
-					flag = amariSoftServer.addUes(numUes, release, category,null,null,null,null,null);
+					flag = amariSoftServer.addUes(numUes, release, category, powerControlEnabled,
+							channelType, speed, direction, position);
 				} else {
 					report.report("Attaching UE to " + dut.getName() + " cell " + cellId);
-					flag = amariSoftServer.addUes(numUes, release, category, dut, cellId,null,null,null,null,null);
+					flag = amariSoftServer.addUes(numUes, release, category, dut, cellId, powerControlEnabled,
+							channelType, speed, direction, position);
 				}
 			}
 		} catch (Exception e) {

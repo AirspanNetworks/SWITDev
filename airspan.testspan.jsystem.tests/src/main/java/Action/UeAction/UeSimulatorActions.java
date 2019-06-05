@@ -30,6 +30,57 @@ public class UeSimulatorActions extends Action {
 	private String groupName;
 	private UesOptions uesOptions = UesOptions.AMOUNT;
 	private String preConfigFileName = null;
+	
+	private Boolean powerControlEnabled = false;
+	private String position = null;
+	private String direction = null;
+	private String speed = null;
+	private String channelType = null;
+
+	public Boolean getPowerControlEnabled() {
+		return powerControlEnabled;
+	}
+
+	@ParameterProperties(description = "Default is false, so only if field is true it will be added to message")
+	public void setPowerControlEnabled(boolean powerControlEnabled) {
+		this.powerControlEnabled = powerControlEnabled;
+	}
+
+	public String getPosition() {
+		return position;
+	}
+
+	@ParameterProperties(description = "2 coordinates, separated by comma. e.g. x,y")
+	public void setPosition(String position) {
+		this.position = position;
+	}
+
+	
+	public String getDirection() {
+		return direction;
+	}
+	 
+	@ParameterProperties(description = "UE direction in degrees")
+	public void setDirection(String direction) {
+		this.direction = direction;
+	}
+
+	public String getSpeed() {
+		return speed;
+	}
+
+	@ParameterProperties(description = "UE speed in kilometers per hour")
+	public void setSpeed(String speed) {
+		this.speed = speed;
+	}
+
+	public String getChannelType() {
+		return channelType;
+	}
+
+	public void setChannelType(String channelType) {
+		this.channelType = channelType;
+	}
 
 	public String getPreConfigFileName() {
 		return preConfigFileName;
@@ -127,7 +178,8 @@ public class UeSimulatorActions extends Action {
 	}
 	
 	@Test											
-	@TestProperties(name = "Add UEs", returnParam = "LastStatus", paramsInclude = {"Release", "Category", "DUT", "CellId" , "UesOptions","GroupName","NumUes"})
+	@TestProperties(name = "Add UEs", returnParam = "LastStatus", paramsInclude = {"Release", "Category", "DUT", "CellId" , "UesOptions","GroupName","NumUes",
+			"PowerControlEnabled","Position","Speed","Direction","ChannelType"})
 	public void addUes() {
 		boolean res = true;
 		try {

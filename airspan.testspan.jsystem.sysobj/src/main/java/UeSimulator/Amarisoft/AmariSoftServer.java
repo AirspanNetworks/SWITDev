@@ -869,16 +869,35 @@ public class AmariSoftServer extends SystemObjectImpl{
 		ueProperties.setOp("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
 		ueProperties.setTunSetupScript(".ue-ifup_auto");
 		ueProperties.setUeId(ueId);
-		ueProperties.setPowerControlEnabled(true);
-		Channel ch = new Channel();
-		ch.setType("awgn");
-		ueProperties.setChannel(ch);
-		ueProperties.setSpeed(Float.valueOf("0"));
-		ueProperties.setDirection(Float.valueOf("0"));
-		List<Float> lst = new ArrayList<>();
-		lst.add(50f);
-		lst.add(40f);
-		ueProperties.setPosition(lst);
+		if(powerControlEnabled){
+			ueProperties.setPowerControlEnabled(true);			
+		}
+		if(channelType != null){
+			Channel ch = new Channel();
+			ch.setType(channelType);
+			ueProperties.setChannel(ch);			
+		}
+		if(speed != null){
+			ueProperties.setSpeed(Float.valueOf(speed));			
+		}
+		if(direction != null){
+			ueProperties.setDirection(Float.valueOf(direction));			
+		}
+		if(position != null){
+			String[] temp = position.split(",");
+			if(temp.length == 2){
+				try{
+					float f1 = Float.valueOf(temp[0]);
+					float f2 = Float.valueOf(temp[1]);
+					List<Float> lst = new ArrayList<>();
+					lst.add(f1);
+					lst.add(f2);
+					ueProperties.setPosition(lst);
+				}catch(Exception e){
+					e.printStackTrace();
+				}
+			}
+		}
 		//ueList.setAdditionalProperty("ue_count", 5);
 		ueLists.add(ueProperties);
 		UEAction addUE = new UEAction();

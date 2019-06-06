@@ -322,6 +322,8 @@ public class UeAction extends Action {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		GeneralUtils.printToConsole("Response from DM tool:");
+		GeneralUtils.printToConsole(response);
 		BufferedWriter writerDlServer = new BufferedWriter(new FileWriter(fileName));
 		writerDlServer.write(response);
 		writerDlServer.close();

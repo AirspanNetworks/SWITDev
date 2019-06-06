@@ -878,10 +878,20 @@ public class AmariSoftServer extends SystemObjectImpl{
 			ueProperties.setChannel(ch);			
 		}
 		if(speed != null){
-			ueProperties.setSpeed(Float.valueOf(speed));			
+			try{
+				float sp = Float.valueOf(speed);
+				ueProperties.setSpeed(sp);							
+			}catch(Exception e){
+				e.printStackTrace();
+			}
 		}
 		if(direction != null){
-			ueProperties.setDirection(Float.valueOf(direction));			
+			try{
+				float di = Float.valueOf(direction);
+				ueProperties.setDirection(di);						
+			}catch(Exception e){
+				e.printStackTrace();
+			}
 		}
 		if(position != null){
 			String[] temp = position.split(",");

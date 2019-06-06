@@ -50,7 +50,7 @@ public class UeSimulatorActions extends Action {
 		return position;
 	}
 
-	@ParameterProperties(description = "2 coordinates, separated by comma. e.g. x,y")
+	@ParameterProperties(description = "2 coordinates of the UE in meters, separated by comma")
 	public void setPosition(String position) {
 		this.position = position;
 	}
@@ -60,7 +60,7 @@ public class UeSimulatorActions extends Action {
 		return direction;
 	}
 	 
-	@ParameterProperties(description = "UE direction in degrees")
+	@ParameterProperties(description = "UE direction in degrees. Default - 0")
 	public void setDirection(String direction) {
 		this.direction = direction;
 	}
@@ -69,7 +69,7 @@ public class UeSimulatorActions extends Action {
 		return speed;
 	}
 
-	@ParameterProperties(description = "UE speed in kilometers per hour")
+	@ParameterProperties(description = "UE speed in kilometers per hour. Default - 0")
 	public void setSpeed(String speed) {
 		this.speed = speed;
 	}
@@ -77,7 +77,8 @@ public class UeSimulatorActions extends Action {
 	public String getChannelType() {
 		return channelType;
 	}
-
+	 
+	@ParameterProperties(description = "Simulated channel type")
 	public void setChannelType(String channelType) {
 		this.channelType = channelType;
 	}

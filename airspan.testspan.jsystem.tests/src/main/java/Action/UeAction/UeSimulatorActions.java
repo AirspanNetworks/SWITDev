@@ -507,12 +507,14 @@ public class UeSimulatorActions extends Action {
 							if (ue.getLanIpAddress() != null) {
 								report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") started in amarisoft. IP: " + ue.getLanIpAddress());
 								ueStarted++;
+								amariSoftServer.addUEWithIP(ue);
 							}
 							else {
 								if (ue.reboot()) {
 									if (ue.getLanIpAddress() != null) {
 										report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") started in amarisoft. IP: " + ue.getLanIpAddress());
 										ueStarted++;
+										amariSoftServer.addUEWithIP(ue);
 									}
 									else
 										report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") was not started as expected after 2 tries. IP: " + ue.getLanIpAddress(), Reporter.WARNING);

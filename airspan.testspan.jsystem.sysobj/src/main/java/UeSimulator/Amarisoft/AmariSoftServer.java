@@ -82,6 +82,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     public AmarisoftGroup[] UEgroup ;
     private ArrayList<AmarisoftUE> ueMap;
 	private ArrayList<AmarisoftUE> unusedUEs;
+	private ArrayList<AmarisoftUE> uesWithIP;
     private HashMap<String, Integer> sdrCellsMap;
     volatile private Object returnValue;
 	private String loggerBuffer="";
@@ -103,6 +104,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 		port = 900 + sdrList[0];
     	//connect();
     	ueMap = new ArrayList();
+    	uesWithIP = new ArrayList<AmarisoftUE>();
     	sdrCellsMap = new HashMap<>();
     	fillUeList();
     	if (UEgroup != null)
@@ -117,6 +119,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     	port="9000";
     	connect();
     	ueMap = new ArrayList();
+    	uesWithIP = new ArrayList<AmarisoftUE>();
     	sdrCellsMap = new HashMap<>();
     	setImsiStartList("200010001008301");
     	setImsiStopList("200010001008400");
@@ -1438,10 +1441,11 @@ public class AmariSoftServer extends SystemObjectImpl{
     	sendSynchronizedMessage("t g");
     }
 
-
-
-
-
-
-	
+    public void addUEWithIP(AmarisoftUE ue){
+    	uesWithIP.add(ue);
+    }
+    
+    public ArrayList<UE> getUeWithIPList() {
+		return new ArrayList<UE>(uesWithIP);
+	}
 }

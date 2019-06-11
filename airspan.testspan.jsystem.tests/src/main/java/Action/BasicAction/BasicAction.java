@@ -680,6 +680,7 @@ public class BasicAction extends Action {
 
 		if(PerformAction.CountLines == PerformAction.valueOf(performAction.getValue().toString())){
 			map.get("ExpectedPatern").setVisible(false);
+			map.get("ExpectedPatern").setValue(null);
 		}
 	}
 }

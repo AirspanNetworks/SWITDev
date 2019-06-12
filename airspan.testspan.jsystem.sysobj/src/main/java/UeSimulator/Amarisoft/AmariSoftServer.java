@@ -1448,7 +1448,9 @@ public class AmariSoftServer extends SystemObjectImpl{
     }
 
     public void addUEWithIP(AmarisoftUE ue){
-    	uesWithIP.add(ue);
+    	if(!uesWithIP.contains(ue)){
+    		uesWithIP.add(ue);    		
+    	}
     }
     
     public ArrayList<UE> getUeWithIPList() {

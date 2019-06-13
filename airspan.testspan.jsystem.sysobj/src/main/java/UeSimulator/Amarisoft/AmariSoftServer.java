@@ -371,12 +371,15 @@ public class AmariSoftServer extends SystemObjectImpl{
     
     public boolean startServer(String configFile){
     	try {   
-    		boolean ans = sendCommands("/root/ue/lteue /root/ue/config/" + configFile,"sample_rate=", lteUeTerminal, true);
+    		GeneralUtils.printToConsole("Send command to start simulator");
+    		boolean ans = sendCommands("/root/ue/lteue /root/ue/config/" + configFile,"", lteUeTerminal, true);
     		if (!ans) {
     			GeneralUtils.printToConsole("Failed starting server with config file: " + configFile);
     			running = false;
     			return false;
 			}
+    		GeneralUtils.unSafeSleep(5000);
+    		GeneralUtils.printToConsole("Send command for ps -aux");
     		if(!sendCommands("ps -aux |grep lteue", " /root/ue/config/" + configFile, lteUecommands, false)) {
     			GeneralUtils.printToConsole("Failed starting server with config file: " + configFile);
     			running = false;
@@ -389,9 +392,11 @@ public class AmariSoftServer extends SystemObjectImpl{
             startMessageHandler();
             running  = true;
         } catch (Exception e) {
-        	GeneralUtils.printToConsole("Failed starting server with config file: " + configFile);
+        	GeneralUtils.printToConsole("Exception in starting server with config file: " + configFile);
         	e.printStackTrace();
-            return false;
+        	GeneralUtils.printToConsole("Closing server");
+        	sendCommands("quit", "#", lteUeTerminal, true);
+        	return false;
         }
     	return true;
     }

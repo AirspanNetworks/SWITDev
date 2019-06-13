@@ -374,6 +374,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     
     public boolean startServer(String configFile){
     	try {   
+    		GeneralUtils.printToConsole("Send command to start simulator");
     		boolean ans = sendCommands("/root/ue/lteue /root/ue/config/" + configFile,"", lteUeTerminal, true);
     		if (!ans) {
     			GeneralUtils.printToConsole("Failed starting server with config file: " + configFile);
@@ -381,6 +382,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     			return false;
 			}
     		GeneralUtils.unSafeSleep(5000);
+    		GeneralUtils.printToConsole("Send command for ps -aux");
     		if(!sendCommands("ps -aux |grep lteue", " /root/ue/config/" + configFile, lteUecommands, false)) {
     			GeneralUtils.printToConsole("Failed starting server with config file: " + configFile);
     			running = false;
@@ -475,6 +477,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 				e1.printStackTrace();
 			}
 			ans += privateBuffer;
+			GeneralUtils.printToConsole(ans);
 			if (ans.contains(response)){
 				waitForResponse = false;
 				return true;			

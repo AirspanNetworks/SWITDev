@@ -477,7 +477,6 @@ public class AmariSoftServer extends SystemObjectImpl{
 				e1.printStackTrace();
 			}
 			ans += privateBuffer;
-			GeneralUtils.printToConsole(ans);
 			if (ans.contains(response)){
 				waitForResponse = false;
 				return true;			

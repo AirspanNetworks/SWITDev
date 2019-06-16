@@ -395,9 +395,11 @@ public class AmariSoftServer extends SystemObjectImpl{
             startMessageHandler();
             running  = true;
         } catch (Exception e) {
-        	GeneralUtils.printToConsole("Failed starting server with config file: " + configFile);
+        	GeneralUtils.printToConsole("Exception in starting server with config file: " + configFile);
         	e.printStackTrace();
-            return false;
+        	GeneralUtils.printToConsole("Closing server");
+        	sendCommands("quit", "#", lteUeTerminal, true);
+        	return false;
         }
     	return true;
     }

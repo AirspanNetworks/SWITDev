@@ -29,7 +29,69 @@ public class UeSimulatorActions extends Action {
 	private int cellId = 1;
 	private String groupName;
 	private UesOptions uesOptions = UesOptions.AMOUNT;
+	private String preConfigFileName = null;
+	
+	private Boolean powerControlEnabled = false;
+	private String position = null;
+	private String direction = null;
+	private String speed = null;
+	private String channelType = null;
 
+	public Boolean getPowerControlEnabled() {
+		return powerControlEnabled;
+	}
+
+	@ParameterProperties(description = "Default is false, so only if field is true it will be added to message")
+	public void setPowerControlEnabled(boolean powerControlEnabled) {
+		this.powerControlEnabled = powerControlEnabled;
+	}
+
+	public String getPosition() {
+		return position;
+	}
+
+	@ParameterProperties(description = "2 coordinates of the UE in meters, separated by comma")
+	public void setPosition(String position) {
+		this.position = position;
+	}
+
+	
+	public String getDirection() {
+		return direction;
+	}
+	 
+	@ParameterProperties(description = "UE direction in degrees. Default - 0")
+	public void setDirection(String direction) {
+		this.direction = direction;
+	}
+
+	public String getSpeed() {
+		return speed;
+	}
+
+	@ParameterProperties(description = "UE speed in kilometers per hour. Default - 0")
+	public void setSpeed(String speed) {
+		this.speed = speed;
+	}
+
+	public String getChannelType() {
+		return channelType;
+	}
+	 
+	@ParameterProperties(description = "Simulated channel type")
+	public void setChannelType(String channelType) {
+		this.channelType = channelType;
+	}
+
+	public String getPreConfigFileName() {
+		return preConfigFileName;
+	}
+
+	@ParameterProperties(description = "Pre config file name. If not exist - leave empty")
+	public void setPreConfigFileName(String preConfigFileName) {
+		this.preConfigFileName = preConfigFileName;
+	}
+	
 	public enum UesOptions{
 		AMOUNT, GROUPNAME
 	}
@@ -117,7 +179,8 @@ public class UeSimulatorActions extends Action {
 	}
 	
 	@Test											
-	@TestProperties(name = "Add UEs", returnParam = "LastStatus", paramsInclude = {"Release", "Category", "DUT", "CellId" , "UesOptions","GroupName","NumUes"})
+	@TestProperties(name = "Add UEs", returnParam = "LastStatus", paramsInclude = {"Release", "Category", "DUT", "CellId" , "UesOptions","GroupName","NumUes",
+			"PowerControlEnabled","Position","Speed","Direction","ChannelType"})
 	public void addUes() {
 		boolean res = true;
 		try {
@@ -163,10 +226,12 @@ public class UeSimulatorActions extends Action {
 			else{
 				if (dut == null) {
 					report.report("No DUT provided, attaching UE to first available Cell.");
-					flag = amariSoftServer.addUes(groupName, release, category);
+					flag = amariSoftServer.addUes(groupName, release, category, powerControlEnabled,
+							channelType, speed, direction, position);
 				} else {
 					report.report("Attaching UE to " + dut.getName() + " cell " + cellId);
-					flag = amariSoftServer.addUes(groupName, release, category, dut, cellId);
+					flag = amariSoftServer.addUes(groupName, release, category, dut, cellId, powerControlEnabled,
+							channelType, speed, direction, position);
 				}
 			}
 		} catch (Exception e) {
@@ -200,10 +265,12 @@ public class UeSimulatorActions extends Action {
 			else{
 				if (dut == null) {
 					report.report("No DUT provided, attaching UE to first available Cell.");
-					flag = amariSoftServer.addUes(numUes, release, category);
+					flag = amariSoftServer.addUes(numUes, release, category, powerControlEnabled,
+							channelType, speed, direction, position);
 				} else {
 					report.report("Attaching UE to " + dut.getName() + " cell " + cellId);
-					flag = amariSoftServer.addUes(numUes, release, category, dut, cellId);
+					flag = amariSoftServer.addUes(numUes, release, category, dut, cellId, powerControlEnabled,
+							channelType, speed, direction, position);
 				}
 			}
 		} catch (Exception e) {
@@ -316,7 +383,7 @@ public class UeSimulatorActions extends Action {
 	}
 	
 	@Test											
-	@TestProperties(name = "start UE Simulator", returnParam = "LastStatus", paramsInclude = { "DUTs" })
+	@TestProperties(name = "start UE Simulator", returnParam = "LastStatus", paramsInclude = { "DUTs","PreConfigFileName" })
 	public void startUeSimulator() {
 		try {
 			if (duts == null) {
@@ -335,7 +402,7 @@ public class UeSimulatorActions extends Action {
 			}
 			report.report("There are " + sdrCounter + " Cells in the enodeBs given, so " + sdrCounter + " are requiered.");
 			AmariSoftServer amariSoftServer = AmariSoftServer.getInstance();	
-			if (amariSoftServer.startServer(duts)) 
+			if (amariSoftServer.startServer(duts,preConfigFileName)) 
 				report.report("UE simulator has started as expected");
 			else{
 				report.report("UE simulator didn't start", Reporter.FAIL);
@@ -440,12 +507,14 @@ public class UeSimulatorActions extends Action {
 							if (ue.getLanIpAddress() != null) {
 								report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") started in amarisoft. IP: " + ue.getLanIpAddress());
 								ueStarted++;
+								amariSoftServer.addUEWithIP(ue);
 							}
 							else {
 								if (ue.reboot()) {
 									if (ue.getLanIpAddress() != null) {
 										report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") started in amarisoft. IP: " + ue.getLanIpAddress());
 										ueStarted++;
+										amariSoftServer.addUEWithIP(ue);
 									}
 									else
 										report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") was not started as expected after 2 tries. IP: " + ue.getLanIpAddress(), Reporter.WARNING);

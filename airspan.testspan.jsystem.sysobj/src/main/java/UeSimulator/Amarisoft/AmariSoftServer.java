@@ -20,8 +20,6 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.WebSocketContainer;
 
-import org.python.modules.synchronize;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -84,6 +82,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     public AmarisoftGroup[] UEgroup ;
     private ArrayList<AmarisoftUE> ueMap;
 	private ArrayList<AmarisoftUE> unusedUEs;
+	private ArrayList<AmarisoftUE> uesWithIP;
     private HashMap<String, Integer> sdrCellsMap;
     volatile private Object returnValue;
 	private String loggerBuffer="";
@@ -96,20 +95,21 @@ public class AmariSoftServer extends SystemObjectImpl{
 	private boolean connected = false;
 	private boolean saveLogFile = false;
 	private boolean running = false;
+	private String pathPreConfig = null;
+	private String currentConfigFile;
 
-    @Override
+	@Override
 	public void init() throws Exception {
 		super.init();
 		port = 900 + sdrList[0];
     	//connect();
     	ueMap = new ArrayList();
+    	uesWithIP = new ArrayList<AmarisoftUE>();
     	sdrCellsMap = new HashMap<>();
     	fillUeList();
     	if (UEgroup != null)
     		checkIfGroupsAreIdentical();
 	}
-    
-
 
 	public void easyInit()
     {
@@ -119,6 +119,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     	port="9000";
     	connect();
     	ueMap = new ArrayList();
+    	uesWithIP = new ArrayList<AmarisoftUE>();
     	sdrCellsMap = new HashMap<>();
     	setImsiStartList("200010001008301");
     	setImsiStopList("200010001008400");
@@ -126,6 +127,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     	if (UEgroup != null)
     		checkIfGroupsAreIdentical();
     }
+	
     private void checkIfGroupsAreIdentical() {
 		for(int i = 0; i < UEgroup.length; i++) {
 			AmarisoftGroup group1 = UEgroup[i];
@@ -137,7 +139,6 @@ public class AmariSoftServer extends SystemObjectImpl{
 		
 	}
 
-
 	private void compareGroups(AmarisoftGroup group1, AmarisoftGroup group2) {
 		for(Long imsi1: group1.getIMSIs()) {
 			for(Long imsi2: group2.getIMSIs()) {
@@ -147,6 +148,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 		}
 		
 	}
+	
 	private void fillUeList() {
 		int ueId = 1;
 		unusedUEs = new ArrayList<>();
@@ -183,6 +185,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 		}
 		return false;
 	}
+	
 	private void checkGroupsValidation() {	
 		boolean imsiWasFound = false;
 		for(AmarisoftGroup group: UEgroup) {		
@@ -321,7 +324,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     	boolean result = false;
 		if (running) {
 			sendCommands("quit", "#", lteUeTerminal, true);
-			if (!sendCommands("ps -aux |grep lteue", "/root/ue/config/automationConfigFile", lteUecommands, false)) {
+			if (!sendCommands("ps -aux |grep lteue", "/root/ue/config/"+currentConfigFile, lteUecommands, false)) {
 				running = false;
 				result =  true;
 			} else {
@@ -342,27 +345,45 @@ public class AmariSoftServer extends SystemObjectImpl{
 			e.printStackTrace();
 		}
     }
-    public boolean startServer(EnodeB dut){
+    
+    public boolean startServer(EnodeB dut,String namePreConfig){
     	ArrayList<EnodeB> tempEnodebList = new ArrayList<>();
     	tempEnodebList.add(dut);
-    	return startServer(tempEnodebList);
+    	return startServer(tempEnodebList,namePreConfig);
     }
     
-    public boolean startServer(ArrayList<EnodeB> duts){
+    public boolean startServer(ArrayList<EnodeB> duts,String namePreConfig){
     	connect();
+    	pathPreConfig = namePreConfig;
+    	if(pathPreConfig != null){
+    		if(startServer(pathPreConfig)){
+    			getEarfcnList(duts);
+    			report.report("Using configuration file: "+pathPreConfig);
+    			currentConfigFile = pathPreConfig;
+    			return true;
+    		}
+    	}
     	setConfig(duts, Integer.parseInt(timingAdvance));
-    	return startServer(ueConfigFileName);
+    	if(startServer(ueConfigFileName)){
+    		report.report("Using configuration file: "+ueConfigFileName);
+    		currentConfigFile = ueConfigFileName;
+    		return true;
+    	}
+    	return false;
     }
     
     public boolean startServer(String configFile){
     	try {   
-    		boolean ans = sendCommands("/root/ue/lteue /root/ue/config/" + configFile,"sample_rate=", lteUeTerminal, true);
+    		GeneralUtils.printToConsole("Send command to start simulator");
+    		boolean ans = sendCommands("/root/ue/lteue /root/ue/config/" + configFile,"", lteUeTerminal, true);
     		if (!ans) {
     			GeneralUtils.printToConsole("Failed starting server with config file: " + configFile);
     			running = false;
     			return false;
 			}
-    		if(!sendCommands("ps -aux |grep lteue", " /root/ue/config/automationConfigFile", lteUecommands, false)) {
+    		GeneralUtils.unSafeSleep(5000);
+    		GeneralUtils.printToConsole("Send command for ps -aux");
+    		if(!sendCommands("ps -aux |grep lteue", " /root/ue/config/" + configFile, lteUecommands, false)) {
     			GeneralUtils.printToConsole("Failed starting server with config file: " + configFile);
     			running = false;
     			return false;
@@ -374,9 +395,11 @@ public class AmariSoftServer extends SystemObjectImpl{
             startMessageHandler();
             running  = true;
         } catch (Exception e) {
-        	GeneralUtils.printToConsole("Failed starting server with config file: " + configFile);
+        	GeneralUtils.printToConsole("Exception in starting server with config file: " + configFile);
         	e.printStackTrace();
-            return false;
+        	GeneralUtils.printToConsole("Closing server");
+        	sendCommands("quit", "#", lteUeTerminal, true);
+        	return false;
         }
     	return true;
     }
@@ -432,8 +455,6 @@ public class AmariSoftServer extends SystemObjectImpl{
 	}
 
 	public void closeSocket() {
-		
-		
 	}
 
 	public boolean sendCommands(String cmd, String response, Terminal terminal, boolean isRunningTerminal) {
@@ -751,16 +772,21 @@ public class AmariSoftServer extends SystemObjectImpl{
 		return ans;
 	}
 	
-	public boolean addUes(String groupName, int release, int category) {
-		return addUes(groupName, release, category, 0);
+	public boolean addUes(String groupName, int release, int category, Boolean powerControlEnabled,
+			String channelType, String speed, String direction,String position) {
+		return addUes(groupName, release, category, 0, powerControlEnabled,
+				channelType, speed, direction,position);
 	}
 	
-	public boolean addUes(String groupName, int release, int category, EnodeB enodeB, int cellId) {
+	public boolean addUes(String groupName, int release, int category, EnodeB enodeB, int cellId, Boolean powerControlEnabled,
+			String channelType, String speed, String direction,String position) {
 		int amarisoftCellId = getCellId(enodeB, cellId);
-		return addUes(groupName, release, category, amarisoftCellId);
+		return addUes(groupName, release, category, amarisoftCellId, powerControlEnabled,
+				channelType, speed, direction,position);
 	}
 	
-	private boolean addUes(String groupName, int release, int category, int cellId) {
+	private boolean addUes(String groupName, int release, int category, int cellId, Boolean powerControlEnabled,
+			String channelType, String speed, String direction,String position) {
 		GeneralUtils.startLevel("Adding UEs to Amarisoft simulator from group " + groupName);
 		boolean result = true;
 		boolean atListOneUE = false;
@@ -771,7 +797,8 @@ public class AmariSoftServer extends SystemObjectImpl{
 			if (groupName.equals("amarisoft")) {
 				while (unusedUEs.size() > 0) {
 					int ueId = unusedUEs.get(0).ueId;
-					result = result && addUe(unusedUEs.get(0), release, category, ueId, cellId);
+					result = result && addUe(unusedUEs.get(0), release, category, ueId, cellId, powerControlEnabled,
+							channelType, speed, direction,position);
 				}
 			}
 			else {
@@ -783,7 +810,8 @@ public class AmariSoftServer extends SystemObjectImpl{
 					for(String group: groups) {
 						if (group.equals(groupName)){
 							int ueId = unusedUEs.get(i).ueId;
-							result = result && addUe(unusedUEs.get(i), release, category, ueId, cellId);
+							result = result && addUe(unusedUEs.get(i), release, category, ueId, cellId, powerControlEnabled,
+									channelType, speed, direction,position);
 							wasAdded = true;
 							atListOneUE = true;
 						}	
@@ -798,18 +826,23 @@ public class AmariSoftServer extends SystemObjectImpl{
 		return result;
 	}
 
-	public boolean addUes(int amount, int release, int category, EnodeB enodeB, int cellId)
+	public boolean addUes(int amount, int release, int category, EnodeB enodeB, int cellId, Boolean powerControlEnabled,
+			String channelType, String speed, String direction,String position)
 	{
 		int amarisoftCellId = getCellId(enodeB, cellId);
-		return addUes(amount, release, category, amarisoftCellId);
+		return addUes(amount, release, category, amarisoftCellId, powerControlEnabled,
+				channelType, speed, direction,position);
 	}
 
-	public boolean addUes(int amount, int release, int category)
+	public boolean addUes(int amount, int release, int category, Boolean powerControlEnabled,
+			String channelType, String speed, String direction,String position)
 	{
-		return addUes(amount, release, category, 0);
+		return addUes(amount, release, category, 0, powerControlEnabled,
+				channelType, speed, direction,position);
 	}
 
-	public boolean addUes(int amount, int release, int category, int cellId)
+	public boolean addUes(int amount, int release, int category, int cellId, Boolean powerControlEnabled,
+			String channelType, String speed, String direction,String position)
 	{
 		GeneralUtils.startLevel("Adding " + amount + " UEs to Amarisoft simulator.");
 		boolean result = true;
@@ -819,13 +852,15 @@ public class AmariSoftServer extends SystemObjectImpl{
 				return false;
 			}
 			int ueId = unusedUEs.get(0).ueId;
-			result = result && addUe(unusedUEs.get(0), release, category, ueId, cellId);
+			result = result && addUe(unusedUEs.get(0), release, category, ueId, cellId, powerControlEnabled,
+					 channelType,  speed,  direction, position);
 		}
 		GeneralUtils.stopLevel();
 		return result;
 	}
 	
-	public boolean addUe(UE ue, int release, int category, int ueId, int cellId)
+	public boolean addUe(UE ue, int release, int category, int ueId, int cellId, Boolean powerControlEnabled,
+			String channelType, String speed, String direction,String position)
 	{
 		ArrayList<UeList> ueLists = new ArrayList<UeList>();
 		UeList ueProperties = new UeList();
@@ -842,6 +877,45 @@ public class AmariSoftServer extends SystemObjectImpl{
 		ueProperties.setOp("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
 		ueProperties.setTunSetupScript(".ue-ifup_auto");
 		ueProperties.setUeId(ueId);
+		if(powerControlEnabled){
+			ueProperties.setPowerControlEnabled(true);			
+		}
+		if(channelType != null){
+			Channel ch = new Channel();
+			ch.setType(channelType);
+			ueProperties.setChannel(ch);			
+		}
+		if(speed != null){
+			try{
+				float sp = Float.valueOf(speed);
+				ueProperties.setSpeed(sp);							
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+		}
+		if(direction != null){
+			try{
+				float di = Float.valueOf(direction);
+				ueProperties.setDirection(di);						
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+		}
+		if(position != null){
+			String[] temp = position.split(",");
+			if(temp.length == 2){
+				try{
+					float f1 = Float.valueOf(temp[0]);
+					float f2 = Float.valueOf(temp[1]);
+					List<Float> lst = new ArrayList<>();
+					lst.add(f1);
+					lst.add(f2);
+					ueProperties.setPosition(lst);
+				}catch(Exception e){
+					e.printStackTrace();
+				}
+			}
+		}
 		//ueList.setAdditionalProperty("ue_count", 5);
 		ueLists.add(ueProperties);
 		UEAction addUE = new UEAction();
@@ -850,6 +924,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			String message = mapper.writeValueAsString(addUE);
+			GeneralUtils.printToConsole(message);
 			Object ans = sendSynchronizedMessage(message);
 			UeAdd ueAdd = (UeAdd)ans;
 			List<String> info = ueAdd.getInfo();
@@ -913,7 +988,9 @@ public class AmariSoftServer extends SystemObjectImpl{
 			report.report("Deleting UE : " + UEId+i);
 			boolean deleteUEResult = deleteUE(UEId + i);
 			if (deleteUEResult) {
+				UE rem = ueMap.get(UEId + i);
 				ueMap.remove(UEId + i);
+				uesWithIP.remove(rem);
 				AmarisoftUE ue = new AmarisoftUE(UEId + i, null, this);
 				unusedUEs.add(UEId + i, ue);
 				unusedUEs.add(UEId + i, ue);
@@ -936,7 +1013,9 @@ public class AmariSoftServer extends SystemObjectImpl{
 				int lastUE = ueMap.size()-1;
 				AmarisoftUE tempue = ueMap.get(lastUE);
 				if(deleteUE(tempue.ueId)) {
+					UE rem = ueMap.get(lastUE);
 					ueMap.remove(lastUE);
+					uesWithIP.remove(rem);
 					deletedAmount++;
 					report.report("UE : " + tempue.ueId + " ( " + tempue.getImsi() + " ) was deleted");
 					unusedUEs.add(tempue);
@@ -961,7 +1040,9 @@ public class AmariSoftServer extends SystemObjectImpl{
 				if (group.equals(groupName)) {
 					int ueNum = ueMap.get(i).ueId;
 					if (deleteUE(ueNum)) {
+						UE rem = ueMap.get(ueNum);
 						ueMap.remove(ueNum);
+						uesWithIP.remove(rem);
 						AmarisoftUE ue = new AmarisoftUE(ueNum, null, this);
 						report.report("UE : " + ueNum + " ( " + ue.getImsi() + " ) was deleted");
 						unusedUEs.add(ue);
@@ -1113,6 +1194,11 @@ public class AmariSoftServer extends SystemObjectImpl{
 				if (ueStatus.getUeList() != null && ueStatus.getUeList().size() > 0) {
 					if (ueStatus.getUeList().get(0) != null) {
 						ueIp = ueStatus.getUeList().get(0).getIp();
+						if(ueIp == null){
+							if(ueStatus.getUeList().get(0).getPdnList() != null){
+								ueIp = ueStatus.getUeList().get(0).getPdnList().get(0).getIpv4();								
+							}
+						}
 						GeneralUtils.printToConsole("Found IP " + ueIp);
 					}
 				}
@@ -1366,10 +1452,13 @@ public class AmariSoftServer extends SystemObjectImpl{
     	sendSynchronizedMessage("t g");
     }
 
-
-
-
-
-
-	
+    public void addUEWithIP(AmarisoftUE ue){
+    	if(!uesWithIP.contains(ue)){
+    		uesWithIP.add(ue);    		
+    	}
+    }
+    
+    public ArrayList<UE> getUeWithIPList() {
+		return new ArrayList<UE>(uesWithIP);
+	}
 }

@@ -264,7 +264,7 @@ public class TrafficAction extends Action {
 			if (ueArray[i].toLowerCase().trim().equals(AmariSoftServer.amarisoftIdentifier)) {
 				try {
 					AmariSoftServer uesim = AmariSoftServer.getInstance();
-					tempUes.addAll(uesim.getUeList());
+					tempUes.addAll(uesim.getUeWithIPList());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

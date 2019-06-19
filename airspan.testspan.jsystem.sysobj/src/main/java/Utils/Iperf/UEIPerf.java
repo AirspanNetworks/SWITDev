@@ -749,12 +749,12 @@ public class UEIPerf {
 	
 	private ArrayList<ArrayList<StreamParams>> extractStatisticsFromFile(IPerfStream ips, ArrayList<ArrayList<StreamParams>> ret){
 		//ArrayList<StreamParams> toReturn = new ArrayList<StreamParams>();
-		File file;
-		if(ips.getTransmitDirection() == TransmitDirection.UL){
+		File file = new File(ips.getTpFileName());
+		/*if(ips.getTransmitDirection() == TransmitDirection.UL){
 			file = iperfMachineDL.getFile(ips.getTpFileName());
 		}else{
 			file = iperfMachineUL.getFile(ips.getTpFileName());
-		}
+		}*/
 		Pattern p = Pattern.compile("(\\d+.\\d+-\\s*\\d+.\\d+).*KBytes\\s+(\\d+|\\d+.\\d+)\\s+Kbits/sec.*");
 		try{
 			FileReader read = new FileReader(file);
@@ -806,7 +806,7 @@ public class UEIPerf {
 		if(iperfMachineDL != null){
 			for(IPerfStream ulIPerfStream : ulStreamArrayList){
 				if(streamList.contains(ulIPerfStream.getStreamName())){
-					File resultFile = iperfMachineDL.getFile(ulIPerfStream.getTpFileName());
+					File resultFile = new File(ulIPerfStream.getTpFileName());
 					resultFiles.add(resultFile);
 				}
 			}
@@ -814,10 +814,10 @@ public class UEIPerf {
 		if(iperfMachineUL != null){
 			for(IPerfStream dlIPerfStream : dlStreamArrayList){
 				if(streamList.contains(dlIPerfStream.getStreamName())){
-					File resultFile = iperfMachineUL.getFile(dlIPerfStream.getTpFileName());
+					File resultFile = new File(dlIPerfStream.getTpFileName());
 					resultFiles.add(resultFile);
 				}
-			}	
+			}
 		}
 		return resultFiles;
 	}
@@ -827,7 +827,7 @@ public class UEIPerf {
 		if(iperfMachineUL != null){
 			for(IPerfStream ulIPerfStream : ulStreamArrayList){
 				if(streamList.contains(ulIPerfStream.getStreamName())){
-					File resultFile = iperfMachineUL.getFile(ulIPerfStream.getClientOutputFileName());
+					File resultFile = new File(ulIPerfStream.getClientOutputFileName());
 					resultFiles.add(resultFile);
 				}
 			}
@@ -835,10 +835,10 @@ public class UEIPerf {
 		if(iperfMachineDL != null){
 			for(IPerfStream dlIPerfStream : dlStreamArrayList){
 				if(streamList.contains(dlIPerfStream.getStreamName())){
-					File resultFile = iperfMachineDL.getFile(dlIPerfStream.getClientOutputFileName());
+					File resultFile = new File(dlIPerfStream.getClientOutputFileName());
 					resultFiles.add(resultFile);
 				}
-			}	
+			}
 		}
 		return resultFiles;
 	}
@@ -864,12 +864,101 @@ public class UEIPerf {
 	public ArrayList<ArrayList<StreamParams>> getResultsAfterTest() {
 		ArrayList<ArrayList<StreamParams>> toReturn = new ArrayList<ArrayList<StreamParams>>();
 		for(IPerfStream ips : dlStreamArrayList){
-			toReturn = extractStatisticsFromFile(ips,toReturn);
+			toReturn = extractStatisticsFromFileWithDownloadFile(ips,toReturn);
 		}
 		for(IPerfStream ips : ulStreamArrayList){
-			toReturn = extractStatisticsFromFile(ips,toReturn);
+			toReturn = extractStatisticsFromFileWithDownloadFile(ips,toReturn);
 		}
 		return toReturn;
+	}
+
+	private ArrayList<ArrayList<StreamParams>> extractStatisticsFromFileWithDownloadFile(IPerfStream ips, ArrayList<ArrayList<StreamParams>> ret){
+		//ArrayList<StreamParams> toReturn = new ArrayList<StreamParams>();
+		File file = new File(ips.getTpFileName());
+		if(ips.getTransmitDirection() == TransmitDirection.UL){
+			file = iperfMachineDL.getFile(ips.getTpFileName());
+		}else{
+			file = iperfMachineUL.getFile(ips.getTpFileName());
+		}
+		Pattern p = Pattern.compile("(\\d+.\\d+-\\s*\\d+.\\d+).*KBytes\\s+(\\d+|\\d+.\\d+)\\s+Kbits/sec.*");
+		try{
+			FileReader read = new FileReader(file);
+			BufferedReader br = new BufferedReader(read);
+			String line;
+			long sampleTime = ips.getTimeStart();
+			int sampleIndex = 0;
+			while((line = br.readLine()) != null){
+				Matcher m = p.matcher(line);
+				if(m.find()){
+					//System.out.println(m.group(1));
+					//System.out.println(m.group(2));
+					//String sampleTime = m.group(1);
+					Long currentValue = 0L;
+					if(m.group(2).contains(".")){
+						currentValue = Long.valueOf(m.group(2).split("\\.")[0]);
+					}else{
+						currentValue = Long.valueOf(m.group(2));
+					}
+					
+					StreamParams tempStreamParams = new StreamParams();
+					tempStreamParams.setName(ips.getStreamName());
+					tempStreamParams.setTimeStamp(sampleTime);
+					tempStreamParams.setActive(true);
+					tempStreamParams.setUnit(CounterUnit.BITS_PER_SECOND);
+					tempStreamParams.setTxRate((long)(ips.getStreamLoad()*1000*1000));
+					tempStreamParams.setRxRate(currentValue*1000);
+					tempStreamParams.setPacketSize(ips.getFrameSize());
+					sampleTime+=1000;
+					try{
+						ret.get(sampleIndex);
+					}catch(Exception e){
+						ret.add(new ArrayList<StreamParams>());
+					}
+					ret.get(sampleIndex).add(tempStreamParams);
+					sampleIndex++;
+				}
+			}
+			br.close();
+			read.close();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return ret;
+	}
+	
+	public String getAllNamesInDlMachine(ArrayList<String> streamList) {
+		String names = "";
+		for(IPerfStream ips : dlStreamArrayList){
+			if(streamList.contains(ips.getStreamName())){
+				names += ips.getClientOutputFileName()+" ";
+			}
+		}
+		for(IPerfStream ips : ulStreamArrayList){
+			if(streamList.contains(ips.getStreamName())){
+				names += ips.getTpFileName()+" ";
+			}
+		}
+		return names;
+	}
+
+	public String getAllNamesInUlMachine(ArrayList<String> streamList) {
+		String names = "";
+		for(IPerfStream ips : dlStreamArrayList){
+			if(streamList.contains(ips.getStreamName())){
+				names += ips.getTpFileName()+" ";
+			}
+		}
+		for(IPerfStream ips : ulStreamArrayList){
+			if(streamList.contains(ips.getStreamName())){
+				names += ips.getClientOutputFileName()+" ";
+			}
+		}
+		return names;
+	}
+
+	public void copyAllFiles(String filesDl, String filesUl) {
+		iperfMachineDL.getFileList(filesDl);
+		iperfMachineUL.getFileList(filesUl);
 	}
 
 

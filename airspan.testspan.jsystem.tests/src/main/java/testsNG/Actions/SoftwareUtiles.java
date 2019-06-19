@@ -1472,6 +1472,7 @@ public class SoftwareUtiles {
 	private void updateCurrentSwStatus(EnodebSwStatus enbSWDetails, String build, SoftwareStatus softwareStatus) {
 		if (softwareStatus != null) {
 			report.report(enbSWDetails.geteNodeB().getName() + "'s Running Version: " + softwareStatus.RunningVersion);
+			report.report(enbSWDetails.geteNodeB().getName() + "'s Standby Version: " + softwareStatus.StandbyVersion);
 			if (softwareStatus.RunningVersion.equals(build)) {
 				enbSWDetails.setTargetEqualRunning(true);
 				report.step("Running Version equals Target Version - No Need To Upgrade.");

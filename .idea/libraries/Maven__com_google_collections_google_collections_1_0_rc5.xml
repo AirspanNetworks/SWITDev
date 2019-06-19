@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.google.collections:google-collections:1.0-rc5">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/google/collections/google-collections/1.0-rc5/google-collections-1.0-rc5.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/google/collections/google-collections/1.0-rc5/google-collections-1.0-rc5-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/google/collections/google-collections/1.0-rc5/google-collections-1.0-rc5-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

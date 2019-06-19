@@ -205,7 +205,7 @@ public class AutomationTests extends TestspanTest{
 		GeneralUtils.printToConsole("getIp: " + as.getIp());
 		GeneralUtils.printToConsole("getusername: " + as.getusername());
 
-		as.startServer(duts);
+		as.startServer(duts,null);
 		report.report("Finished amarisoft test.");
 	}
 

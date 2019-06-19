@@ -7,6 +7,8 @@ public class PromptsCommandsInfo {
 	public static final String ADMIN_PATTERN = "$";
 	public static final String ROOT_PATTERN = "#";
 	public static final String LTECLI_PATTERN = "lte_cli:>>";
+        public static final String ТNЕТ_PATTERN = " tnet > ";
+	public static final String QUIT_COMMAND = "quit";
 	public static final String EXIT_COMMAND = "exit";
 	public static final String CntrC_COMMAND = "\u0003";
 	public static final String SUDO_COMMAND = "sudo su";

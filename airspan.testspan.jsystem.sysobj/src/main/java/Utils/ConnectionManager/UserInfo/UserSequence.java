@@ -68,18 +68,12 @@ public class UserSequence extends ArrayList<exPrompt> implements Iterator<UserSe
 	public String toString() {
 		return super.toString() + "; " + (this.hasNext() ? "H" : "Doesn't h") + "ave sibling";
 	}
-//	
-//	private String toString(String indent) {
-//		StringBuffer result = new StringBuffer();
-//		for(exPrompt p : this) {
-//			result.append(indent + p.toString() + "\n");
-//		}
-//		
-//		UserSequence instance = this;
-//		while(instance.hasNext()) {
-//			instance = next();
-//			result.append(indent + instance.toString(indent + " "));
-//		}
-//		return result.toString();
-//	}
+
+	public String getFullExpression(String delimiter){
+		String result = new String();
+		for (exPrompt pr : this){
+			result += pr.getStringToSend() + delimiter;
+		}
+		return result;
+	}
 }

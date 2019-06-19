@@ -189,6 +189,7 @@ public class LteThroughputCalculator {
 		}
 	}
 	public enum MaxSupportedUEsEnum{
+		MSU16("16"),
 		MSU64("64"),
 		MSU128("128"),
 		MSU256("256"),
@@ -203,6 +204,9 @@ public class LteThroughputCalculator {
 		public static MaxSupportedUEsEnum get(int maxSupportedUEs) {
 			MaxSupportedUEsEnum maxSupportedUEsEnum = null;
 			switch (maxSupportedUEs) {
+			case 16:
+				maxSupportedUEsEnum = MSU16;
+				break;
 			case 64:
 				maxSupportedUEsEnum = MSU64;
 				break;

@@ -1,5 +1,8 @@
 package Action.UeAction;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -34,6 +37,26 @@ public class UeAction extends Action {
 	private EventListener evl;
 	private String payload;
 	private DmEventType eventType;
+	private String command;
+	private String fileName;
+
+	public String getCommand() {
+		return command;
+	}
+
+	@ParameterProperties(description = "Command from dm tool")
+	public void setCommand(String command) {
+		this.command = command;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	@ParameterProperties(description = "File name to write response from dm tool - full path")
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
 
 	private EventListener getEvl(String ueName) {
 		if (evlMap == null)
@@ -267,4 +290,43 @@ public class UeAction extends Action {
 		}
 	}
 
+	@Test // 11
+	@TestProperties(name = "Get Table From DMTool", returnParam = "LastStatus", paramsInclude = { "UE","FileName","Command" })
+	public void getTableFromDMTool() throws IOException {
+		if(ue == null){
+			report.report("No UE configured",Reporter.FAIL);
+			reason = "No UE configured";
+		}
+		if(command == null){
+			report.report("No command configured",Reporter.FAIL);
+			reason = "No command configured";
+		}
+		if(fileName == null){
+			report.report("No fileName configured",Reporter.FAIL);
+			reason = "No fileName configured";
+		}
+		report.report("Getting command: "+command+" from UE: "+ue.getName());
+		dm = new DMtool();
+		dm.setUeIP(ue.getLanIpAddress());
+		dm.setPORT(ue.getDMToolPort());
+		try {
+			dm.init();
+		} catch (Exception e) {
+			e.printStackTrace();
+			report.report("Failed to connect to DM tool",Reporter.FAIL);
+		}
+		String response = "";
+		try {
+			response = dm.cli(command);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		GeneralUtils.printToConsole("Response from DM tool:");
+		GeneralUtils.printToConsole(response);
+		BufferedWriter writerDlServer = new BufferedWriter(new FileWriter(fileName));
+		writerDlServer.write(response);
+		writerDlServer.close();
+		dm.close();
+	} 
 }

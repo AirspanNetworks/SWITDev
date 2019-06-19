@@ -3,6 +3,8 @@ package testsNG.Actions;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -38,6 +40,7 @@ public class TrafficSampler implements Runnable{
 	private Double ulLoad = null;
 	private Double dlLoad = null;
 	private String reason;
+	private Map<String,ArrayList<Long>> meanArray = new HashMap<String,ArrayList<Long>>();
 	
 	public synchronized String getReason() {
 		return reason;
@@ -49,27 +52,111 @@ public class TrafficSampler implements Runnable{
 	}
 	
 	public void getStatistics(){
+		meanArray.clear();
+		trafficInstance.copyFilesByList(streamList);
 		report.report("Statistics for traffic "+getName());
 		ArrayList<ArrayList<StreamParams>> temp = trafficInstance.getAllStreamsResults(streamList);
 		printPerStreamTables(temp);
-		compareWithCalculator(temp);
+		ArrayList<Long> dl_ul = getMeanByStream();
+		compareWithCalculator(dl_ul);
 		trafficInstance.getResultFilesByList(streamList);
 	}
 	
-	private void compareWithCalculator(ArrayList<ArrayList<StreamParams>> listOfStreamList2){
-		ArrayList<Long> listUlAndDl = new ArrayList<Long>();
+	private ArrayList<Long> getMeanByStream() {
+		
+		Long meanDl = 0L;
+		Long meanUl = 0L;
+		for(String name:meanArray.keySet()){
+			ArrayList<Long> temp = meanArray.get(name);
+			Long tpt = 0L;
+			for(Long lon:temp){
+				tpt += lon;
+			}
+			if(temp.size() != 0){
+				if(name.contains("UL")){
+					meanUl += tpt/temp.size();					
+				}else{
+					meanDl += tpt/temp.size();
+				}				
+			}
+		}
+		ArrayList<Long> ret = new ArrayList<Long>();
+		ret.add(meanDl);
+		ret.add(meanUl);
+		return ret;
+	}
+
+	private void compareWithCalculator(ArrayList<Long> dl_ul){
+		reason = StringUtils.EMPTY;
+		double ul_Divided_With_Number_Of_Streams = 0;
+		if(ULExpected != null){
+			ul_Divided_With_Number_Of_Streams = dl_ul.get(1) / 1000000.0;
+			String expectedUlToReport = convertTo3DigitsAfterPoint(ULExpected);
+			String actualUlToReport = convertTo3DigitsAfterPoint(ul_Divided_With_Number_Of_Streams);
+			report.report("Expected UL: "+expectedUlToReport+" Mbps");
+			report.report("Actual average UL tpt: "+actualUlToReport+" Mbps");
+			if(ul_Divided_With_Number_Of_Streams < ULExpected){
+				report.report("UL actual is lower than expected", Reporter.FAIL);
+				reason = name+":<br> ";
+				reason += "Expected UL: "+expectedUlToReport+" Mbps. Actual UL: "+actualUlToReport+" Mbps.<br> ";
+			}else{
+				report.step("UL actual is above expected");
+			}				
+		}
+		double dl_Divided_With_Number_Of_Streams = 0;
+		if(DLExpected != null){
+			dl_Divided_With_Number_Of_Streams = dl_ul.get(0) / 1000000.0;			
+			String expectedDlToReport = convertTo3DigitsAfterPoint(DLExpected);
+			String actualDlToReport = convertTo3DigitsAfterPoint(dl_Divided_With_Number_Of_Streams);
+	
+			report.report("Expected DL: "+expectedDlToReport+" Mbps");
+			report.report("Actual average DL tpt: "+actualDlToReport+" Mbps");
+			if(dl_Divided_With_Number_Of_Streams < DLExpected){
+				report.report("DL actual is lower than expected", Reporter.FAIL);
+				if(reason.isEmpty()){
+					reason = name+":<br> ";
+				}
+				reason += "Expected DL: "+expectedDlToReport+" Mbps. Actual DL: "+actualDlToReport+" Mbps.<br> ";
+			}else{
+				report.step("DL actual is above expected");
+			}			
+		}
+		TPTBase.createHTMLTableWithResults(ul_Divided_With_Number_Of_Streams, ULExpected, dl_Divided_With_Number_Of_Streams,
+				DLExpected, dlLoad, ulLoad, null);
+		
+		
+		/*ArrayList<Long> listUlAndDl = new ArrayList<Long>();
 		Long ULrxTotal = new Long(0);
 		Long DlrxTotal = new Long(0);
 		listUlAndDl = getUlDlResultsFromList(ULrxTotal, DlrxTotal, listOfStreamList2);
-		compareResults(listUlAndDl.get(0), listUlAndDl.get(1), listOfStreamList2);
+		compareResults(listUlAndDl.get(0), listUlAndDl.get(1), listOfStreamList2);*/
 	}
 	
 	private void compareResults(Long uLrxTotal, Long dlrxTotal, ArrayList<ArrayList<StreamParams>> listOfStreamList) {
 		reason = StringUtils.EMPTY;
+		
+		int sizeDlStreams = 0;
+		int sizeUlStreams = 0;
+		
+		for(ArrayList<StreamParams> streams:listOfStreamList){
+			boolean promoteDl = true;
+			boolean promoteUl = true;
+			for(StreamParams stream:streams){
+				if(stream.getName().contains("DL") && promoteDl){
+					sizeDlStreams++;
+					promoteDl = false;
+				}
+				if(stream.getName().contains("UL") && promoteUl){
+					sizeUlStreams++;
+					promoteUl = false;
+				}
+			}
+		}
+		
 		double ul_Divided_With_Number_Of_Streams = 0;
 		if(ULExpected != null){
-			if(listOfStreamList.size() != 0){
-				ul_Divided_With_Number_Of_Streams = uLrxTotal / 1000000.0 / listOfStreamList.size();
+			if(sizeUlStreams != 0){
+				ul_Divided_With_Number_Of_Streams = uLrxTotal / 1000000.0 / sizeUlStreams;
 				String expectedUlToReport = convertTo3DigitsAfterPoint(ULExpected);
 				String actualUlToReport = convertTo3DigitsAfterPoint(ul_Divided_With_Number_Of_Streams);
 				report.report("Expected UL: "+expectedUlToReport+" Mbps");
@@ -89,8 +176,8 @@ public class TrafficSampler implements Runnable{
 		}
 		double dl_Divided_With_Number_Of_Streams = 0;
 		if(DLExpected != null){
-			if(listOfStreamList.size() != 0){
-				dl_Divided_With_Number_Of_Streams = dlrxTotal / 1000000.0 / listOfStreamList.size();			
+			if(sizeDlStreams != 0){
+				dl_Divided_With_Number_Of_Streams = dlrxTotal / 1000000.0 / sizeDlStreams;			
 				String expectedDlToReport = convertTo3DigitsAfterPoint(DLExpected);
 				String actualDlToReport = convertTo3DigitsAfterPoint(dl_Divided_With_Number_Of_Streams);
 
@@ -157,6 +244,10 @@ public class TrafficSampler implements Runnable{
 				valuesList.add(longToString3DigitFormat(stream.getRxRate()));
 				String dateFormat = GeneralUtils.timeFormat(stream.getTimeStamp());
 				TablePrinter.addValues(stream.getName(), dateFormat, headLines, valuesList);
+				if(meanArray.get(stream.getName())==null){
+					meanArray.put(stream.getName(),new ArrayList<Long>());
+				}
+				meanArray.get(stream.getName()).add(stream.getRxRate());
 			}			
 		}
 		for (String stream : streamList) {

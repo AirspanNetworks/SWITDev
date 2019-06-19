@@ -30,7 +30,7 @@ import Netspan.API.Lte.AlarmInfo;
 import Netspan.API.Lte.EnbCellProperties;
 import Netspan.API.Lte.EventInfo;
 import Netspan.API.Lte.LteBackhaul;
-import Netspan.NBI_17_0.Netspan_17_0_abilities;
+import Netspan.NBI_16_5.Netspan_16_5_abilities;
 import Utils.DebugFtpServer;
 import Utils.GeneralUtils;
 import Utils.GeneralUtils.RebootTypesNetspan;
@@ -986,17 +986,19 @@ public class Enodeb extends EnodebAction {
 	}
 	
 	@Test
-	@TestProperties(name = "Set Emergency Area Ids", returnParam = "LastStatus", paramsInclude = { "DUT", "EmergencyAreaIds" })
+	@TestProperties(name = "Set Emergency Area Ids", returnParam = "LastStatus", paramsInclude = { "DUT", "EmergencyAreaIds", "CellId" })
 	public void setEmergencyAreaIds() throws Exception {
 		NetspanServer netspan = NetspanServer.getInstance();
-		report.report("Set Emergency Area Ids");
-		boolean flag = ((Netspan_17_0_abilities) netspan).setEmergencyAreaIds(dut, emergencyAreaIds);
+		report.report("Set Emergency Area Ids to cell: "+cellId);
+		dut.setCellContextNumber(cellId);
+		boolean flag = ((Netspan_16_5_abilities) netspan).setEmergencyAreaIds(dut, emergencyAreaIds);
 		if (!flag) {
 			report.report("Set Emergency Area Ids Failed", Reporter.FAIL);
 			reason = "Set Emergency Area Ids Failed";
 		} else {
 			report.report("Set Emergency Area Ids Succeeded");
 		}
+		dut.setCellContextNumber(1);
 	}
 
 	private boolean rebootAndWaitForAllrunning() {

@@ -1,19 +1,28 @@
 package Action.BasicAction;
 
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.junit.Test;
 
 import Action.Action;
+import Action.TrafficAction.TrafficAction.ExpectedType;
+import Action.TrafficAction.TrafficAction.LoadType;
+import Entities.ITrafficGenerator.Protocol;
+import Entities.ITrafficGenerator.TransmitDirection;
 import Netspan.NetspanServer;
 import PowerControllers.PowerController;
 import PowerControllers.PowerControllerPort;
 import Utils.GeneralUtils;
 import Utils.SSHConnector;
+import Utils.ScpClient;
 import Utils.ConnectionManager.ConnectionInfo;
 import Utils.ConnectionManager.ConnectorTypes;
 import Utils.ConnectionManager.UserInfo.UserSequence;
@@ -25,9 +34,12 @@ import Utils.ConnectionManager.UserInfo.UserInfoFactory;
 import jsystem.framework.ParameterProperties;
 import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
+import jsystem.framework.report.ReporterHelper;
+import jsystem.framework.scenario.Parameter;
 import Utils.ConnectionManager.terminal.exCLI;
 //import systemobject.terminal.Prompt;
 import Utils.ConnectionManager.terminal.exPrompt;
+import ch.ethz.ssh2.SCPClient;
 import systemobject.terminal.Telnet;
 import systemobject.terminal.Terminal;
 
@@ -38,7 +50,54 @@ public class BasicAction extends Action {
 	private String debugCommands;
 	private String serialCommand;
 	private String expectedPatern;
+	private Comparison comparison = Comparison.EQUAL_TO;
+	private PerformAction performAction = PerformAction.CountLines;
+	private int ammount = 1;
+	private String fileName;
 	
+	private enum Comparison {
+		EQUAL_TO, BIGGER_THAN, SMALLER_THAN
+	}
+	
+	public String getFileName() {
+		return fileName;
+	}
+	
+	@ParameterProperties(description = "Full name of file, with full path")
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
+	public int getAmmount() {
+		return ammount;
+	}
+
+	@ParameterProperties(description = "Number of appearances/lines wanted in file. Default = 1")
+	public void setAmmount(String ammount) {
+		this.ammount = Integer.valueOf(ammount);
+	}
+
+	public PerformAction getPerformAction() {
+		return performAction;
+	}
+
+	public void setPerformAction(PerformAction performAction) {
+		this.performAction = performAction;
+	}
+
+	private enum PerformAction{
+		CountLines, FindPattern;
+	}
+	
+	public Comparison getComparison() {
+		return comparison;
+	}
+
+	@ParameterProperties(description = "Actual [BIGGER/SMALLER] than expected or equals")
+	public void setComparison(Comparison comparison) {
+		this.comparison = comparison;
+	}
+
 	@ParameterProperties(description = "Evaluate if pattern exists in output (Ignored if omitted")
 	public String getExpectedPatern() {
 		return expectedPatern;
@@ -309,8 +368,7 @@ public class BasicAction extends Action {
 		
 		// Read login sequence by user name (if sudo and/or lte required - also)
 		UserSequence user_login = UserInfoFactory.getLoginSequenceForUser(userName, password, sudoRequired, lteCliRequired);
-		ArrayList<exPrompt> exit_sequence = UserInfoFactory.getExitSequence();
-		
+
 		try {
 			report.report("Login properties:\n" + user_login.toString());
 			conn_info = new ConnectionInfo("Serial", ip, port, userName, password, ConnectorTypes.Telnet);
@@ -318,28 +376,25 @@ public class BasicAction extends Action {
 			Terminal terminal = new Telnet(conn_info.host, conn_info.port);
 			cli = new exCLI(terminal);
 			cli.setGraceful(true);
-			cli.setEnterStr("\n");
-			GeneralUtils.startLevel("Prepare session");
+			cli.setEnterStr("\r\n");
+			GeneralUtils.startLevel("Prepare session; waiting to current prompt");
 			
 			// Read current prompt for decide to reset it
-			cli.addPrompts(
-					new exPrompt(userPrompt, false, true), 
-					new exPrompt(PromptsCommandsInfo.ROOT_PATTERN, false),
-					new exPrompt(PromptsCommandsInfo.LTECLI_PATTERN, false),
-					new exPrompt(PromptsCommandsInfo.LOGIN_PATTERN, false),
-					new exPrompt(PromptsCommandsInfo.PASSWORD_PATTERN, false));
+			cli.addPrompts(UserInfoFactory.getAvaliablePrompts(userPrompt).toArray(new exPrompt[] {}));
 			
-			
-			exPrompt current_pr = cli.waitWithGrace(sleepTime * 100);
-			
-			if((user_login.enforceSessionReset() || current_pr.getPrompt() != user_login.getFinalPrompt().getPrompt()) && 
-					current_pr.getPrompt() != PromptsCommandsInfo.LOGIN_PATTERN) {
+			exPrompt current_pr = cli.waitWithGrace(sleepTime * 1000);
+			report.report("Current prompt is: " + current_pr.getPrompt());
+			if((user_login.enforceSessionReset() ||	(
+					current_pr.getPrompt() != user_login.getFinalPrompt().getPrompt()) &&
+					current_pr.getPrompt() != PromptsCommandsInfo.LOGIN_PATTERN
+				)
+			) {
 				// Session require reset current state and login
 				report.report("Session reset needed (Current prompt: '" + current_pr.getPrompt() + "' vs. desired: '" + user_login.getFinalPrompt().getPrompt() + "')");
 				
-				cli.login(sleepTime * 1000, exit_sequence.toArray(new exPrompt[] {}));
-				
-				current_pr = cli.waitWithGrace(sleepTime * 100);
+				cli.login(sleepTime * 1000, UserInfoFactory.getExitSequence().toArray(new exPrompt[] {}));
+                report.report("Session reset completed waiting for prompt");
+				current_pr = cli.waitWithGrace(sleepTime * 1000);
 				report.report("Session reset completed (Prompt: '" + current_pr.getPrompt() + "')");
 				
 			}else {
@@ -350,11 +405,18 @@ public class BasicAction extends Action {
 			if(current_pr.getPrompt() == PromptsCommandsInfo.LOGIN_PATTERN) {
 				// Session require login only
 				report.report("Login needed:\n" + user_login.toString());
-				if(!cli.login(sleepTime * 1000, user_login)) {
-					report.report("Login failed (Prompt: '" + current_pr.getPrompt() + "')", Reporter.WARNING);
-					throw new IOException("Login failed (Prompt: '" + current_pr.getPrompt() + "')");
+				try {
+//					if (!cli.login(sleepTime * 1000, user_login)) {
+					if (!cli.CRTLogin(user_login)) {
+//						report.report("Login failed (Prompt: '" + current_pr.getPrompt() + "')", Reporter.WARNING);
+						throw new IOException("Login failed (Prompt: '" + current_pr.getPrompt() + "')");
+					}
+					report.report("Login to serial completed");
 				}
-				report.report("Login to serial completed");
+				catch (Exception e){
+					report.report("Login failed; Reason " + e.getMessage(), Reporter.FAIL);
+					throw e;
+				}
 			}
 			current_pr = cli.waitWithGrace(sleepTime * 100);
 			report.report("Session prepare completed (Prompt: '" + current_pr.getPrompt() + "')");
@@ -368,9 +430,7 @@ public class BasicAction extends Action {
 			String result_text = "Test completed";
 			
 			if(expectedPatern != null) {
-//				report.report("Pattern verification not implemented", Reporter.WARNING);
 				result_text += " as following:\n";
-//				
 				for(String key : expectedPatern.split("\\s*;\\s*")) {
 					int local_stat = output_str.contains(key) ? Reporter.PASS : Reporter.FAIL;
 					result_text += String.format("Expected pattern '%s' %s exists in output\n", key, local_stat == Reporter.PASS ? "" : "not");
@@ -394,7 +454,7 @@ public class BasicAction extends Action {
 		finally {
 			
 			if(user_login.enforceSessionReset()) {
-				cli.login(2000, exit_sequence.toArray(new exPrompt[] {}));
+				cli.login(2000, UserInfoFactory.getExitSequence().toArray(new exPrompt[] {}));
 			}
 			
 			if(cli != null) {
@@ -477,5 +537,150 @@ public class BasicAction extends Action {
 			result = null;
 		}
 		return result;
+	}
+	
+	@Test
+	@TestProperties(name = "Verify Input In File", returnParam = "LastStatus", paramsInclude = { "Ip", "Password",
+			"UserName", "Comparison","ExpectedPatern", "PerformAction","Ammount","FileName" })
+	public void verifyInputInFile() {
+		boolean isNull = false;
+		if(ip == null){
+			report.report("IP cannot be empty",Reporter.FAIL);
+			isNull = true;
+		}
+		if(userName == null){
+			report.report("UserName cannot be empty",Reporter.FAIL);
+			isNull = true;
+		}
+		if(password == null){
+			report.report("Password cannot be empty",Reporter.FAIL);
+			isNull = true;
+		}
+		if(fileName == null){
+			report.report("fileName cannot be empty",Reporter.FAIL);
+			isNull = true;
+		}
+		if(performAction == PerformAction.FindPattern){
+			if(expectedPatern == null){
+				report.report("ExpectedPatern cannot be empty",Reporter.FAIL);
+				isNull = true;
+			}			
+		}
+		
+		if(isNull){
+			reason = "Some of parameters not valid";
+			return;
+		}
+		
+		if(performAction == PerformAction.FindPattern){
+			report.report("Pattern to search: "+expectedPatern);
+		}
+		report.report("Number of times: "+ammount);
+		report.report("Comparison: "+comparison.toString());
+
+		ScpClient scpClient = new ScpClient(ip, userName, password);
+		if(scpClient.getFiles(System.getProperty("user.dir"),fileName)){
+			int ammountInFile = 0;
+			File toUpload = new File(fileName);
+			try{
+				FileReader read = new FileReader(toUpload);
+				BufferedReader br = new BufferedReader(read);
+				String line;
+				Pattern p=null;
+				if(expectedPatern!=null){
+					p = Pattern.compile(expectedPatern);					
+				}
+				
+				while((line = br.readLine()) != null){
+					if(performAction == PerformAction.CountLines){
+						ammountInFile++;
+					}else{
+						Matcher m = p.matcher(line);
+						if(m.find()){
+							ammountInFile++;
+						}
+					}
+				}
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+
+			switch(comparison){
+				case EQUAL_TO:
+					if(ammount == ammountInFile){
+						if(performAction == PerformAction.CountLines){
+							report.report("Number of lines in file is "+ammount+" as expected");
+						}else{
+							report.report("Pattern was found "+ammount+" times as expected");
+						}
+					}else{
+						if(performAction == PerformAction.CountLines){
+							report.report("Number of lines in file is "+ammountInFile+" instead of "+ammount,Reporter.FAIL);
+						}else{
+							report.report("Pattern was found "+ammountInFile+" times instead of "+ammount,Reporter.FAIL);
+						}
+					}
+					break;
+				case BIGGER_THAN:
+					if(ammountInFile > ammount){
+						if(performAction == PerformAction.CountLines){
+							report.report("Number of actual lines is "+ammountInFile+" and is bigger than the expected "+ammount);
+						}else{
+							report.report("Number of actual times for pattern is "+ammountInFile+" and is bigger than the expected "+ammount);
+						}
+					}else{
+						if(performAction == PerformAction.CountLines){
+							report.report("Number of actual lines is "+ammountInFile+" and is not bigger than the expected "+ammount,Reporter.FAIL);
+						}else{
+							report.report("Number of actual times for pattern is "+ammountInFile+" and is not bigger than the expected "+ammount,Reporter.FAIL);
+						}
+					}
+					break;
+				case SMALLER_THAN:
+					if(ammountInFile < ammount){
+						if(performAction == PerformAction.CountLines){
+							report.report("Number of actual lines is "+ammountInFile+" and is smaller than the expected "+ammount);
+						}else{
+							report.report("Number of actual times for pattern is "+ammountInFile+" and is smaller than the expected "+ammount);
+						}
+					}else{
+						if(performAction == PerformAction.CountLines){
+							report.report("Number of actual lines is "+ammountInFile+" and is not smaller than the expected "+ammount,Reporter.FAIL);
+						}else{
+							report.report("Number of actual times for pattern is "+ammountInFile+" and is not smaller than the expected "+ammount,Reporter.FAIL);
+						}
+					}
+					break;
+			}
+			
+			try {
+				ReporterHelper.copyFileToReporterAndAddLink(report, toUpload, toUpload.getName());
+			} catch (Exception e) {
+				GeneralUtils.printToConsole("FAIL to upload TP Result File: " + fileName);
+				e.printStackTrace();
+			}
+		}else{
+			report.report("Failed to connect to device",Reporter.FAIL);
+			reason = "Failed to connect to device";
+		}
+		scpClient.close();
+	}
+	
+	@Override
+	public void handleUIEvent(HashMap<String, Parameter> map, String methodName) throws Exception {
+
+		if (methodName.equals("verifyInputInFile")) {
+			handleUIEventVerifyInputInFile(map);
+		}
+	}
+
+	private void handleUIEventVerifyInputInFile(HashMap<String, Parameter> map) {
+		map.get("ExpectedPatern").setVisible(true);
+		Parameter performAction = map.get("PerformAction");
+
+		if(PerformAction.CountLines == PerformAction.valueOf(performAction.getValue().toString())){
+			map.get("ExpectedPatern").setVisible(false);
+			map.get("ExpectedPatern").setValue(null);
+		}
 	}
 }

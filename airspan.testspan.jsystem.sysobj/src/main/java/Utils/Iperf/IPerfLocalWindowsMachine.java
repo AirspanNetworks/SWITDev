@@ -2,10 +2,16 @@ package Utils.Iperf;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+
 import Utils.GeneralUtils;
 import Utils.Pair;
+import Utils.ScpClient;
 
 public class IPerfLocalWindowsMachine extends IPerfWindowsMachine{
 
@@ -59,5 +65,11 @@ public class IPerfLocalWindowsMachine extends IPerfWindowsMachine{
 	public boolean putFile(String fileName) {
 		return false;
 		
+	}
+	
+	@Override
+	public ArrayList<File> getFileList(String fileName) {
+		
+		return new ArrayList<File>();
 	}
 }

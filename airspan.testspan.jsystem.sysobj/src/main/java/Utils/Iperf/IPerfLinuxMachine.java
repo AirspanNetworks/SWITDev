@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 
 import Entities.ITrafficGenerator.TransmitDirection;
 import Utils.GeneralUtils;
@@ -127,6 +128,21 @@ public class IPerfLinuxMachine extends IPerfMachine{
 		}
 		scpClient.close();
 		return new File(fileName);
+	}
+	
+	@Override
+	public ArrayList<File> getFileList(String fileName) {
+		ArrayList<File> fileToRet = new ArrayList<File>();
+		String[] allNames = fileName.split(" ");
+		ScpClient scpClient = new ScpClient(hostname, username, password);
+		if(scpClient.getFiles(System.getProperty("user.dir"), allNames)){
+			for(String str : allNames){
+				File ret = new File(str);
+				fileToRet.add(ret);
+			}
+		}
+		scpClient.close();
+		return fileToRet;
 	}
 
 	@Override

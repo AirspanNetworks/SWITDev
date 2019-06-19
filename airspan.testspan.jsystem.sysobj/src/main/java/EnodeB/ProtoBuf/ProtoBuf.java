@@ -59,7 +59,7 @@ public class ProtoBuf {
 			    if (isMethodContainsExist(counterName, temp.getClass())) 
 			     return extractCounter(temp, counterName); 
 			   }
-
+			   
 			  }catch (Exception e) {
 			   e.printStackTrace();
 			  }

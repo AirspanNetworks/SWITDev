@@ -2,6 +2,7 @@
 package UeSimulator.Amarisoft.JsonObjects.Status;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
@@ -33,7 +34,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "cell_id",
     "rsrp",
     "snr",
-    "emm_state"
+    "emm_state",
+    "pdn_list"
 })
 public class UeList {
 
@@ -81,6 +83,8 @@ public class UeList {
     private Double snr;
     @JsonProperty("emm_state")
     private String emmState;
+    @JsonProperty("pdn_list")
+    private List<PdnList> pdnList = null;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
@@ -304,6 +308,16 @@ public class UeList {
         this.emmState = emmState;
     }
 
+    @JsonProperty("pdn_list")
+    public List<PdnList> getPdnList() {
+        return pdnList;
+    }
+
+    @JsonProperty("pdn_list")
+    public void setPdnList(List<PdnList> pdnList) {
+        this.pdnList = pdnList;
+    }
+    
     @JsonAnyGetter
     public Map<String, Object> getAdditionalProperties() {
         return this.additionalProperties;

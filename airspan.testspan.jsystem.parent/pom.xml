@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>airspan.testspan.jsystem</groupId>
 	<artifactId>airspan.testspan.jsystem.parent</artifactId>
-	<version>1.22.7</version> 
+	<version>1.22.15</version> 
 	<packaging>pom</packaging>
 	<properties>
 		<jsystem.version>6.1.11</jsystem.version>
@@ -77,12 +77,12 @@
 			<dependency>
 				<groupId>airspan</groupId>
 				<artifactId>netspan</artifactId>
-				<version>1.1.54</version>
+				<version>1.1.56</version>
 			</dependency>
 			<dependency>
 				<groupId>airspan</groupId>
 				<artifactId>dmtool</artifactId>
-				<version>1.0.26</version>
+				<version>1.0.27</version>
 			</dependency>
 			<dependency>
 				<groupId>org.snmp4j</groupId>
@@ -203,7 +203,7 @@
 			<dependency>
 				<groupId>airspan</groupId>
 				<artifactId>RestSTC</artifactId>
-				<version>1.0.101</version>
+				<version>1.0.104</version>
 			</dependency>
 			<dependency>
 				<groupId>com.google.collections</groupId>

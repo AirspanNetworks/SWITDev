@@ -2,6 +2,7 @@ package Utils.Iperf;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import Utils.GeneralUtils;
 import Utils.Pair;
@@ -46,5 +47,11 @@ public class IPerfRemoteWindowsMachine extends IPerfWindowsMachine{
 	public boolean putFile(String fileName) {
 		return false;
 		
+	}
+	
+	@Override
+	public ArrayList<File> getFileList(String fileName) {
+		
+		return new ArrayList<File>();
 	}
 }

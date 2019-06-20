@@ -360,7 +360,7 @@ public class SoftwareUtiles {
 			 * this wait will not affect runtime but will help up to make the
 			 * code simpler and not wait for reboot event at this point
 			 */
-			GeneralUtils.unSafeSleep(2 * 60 * 1000);
+			GeneralUtils.unSafeSleep(7 * 60 * 1000);
 			enodeB.setUnexpectedReboot(0);
 			if (enodeB.waitForAllRunningAndInService(EnodeB.WAIT_FOR_ALL_RUNNING_TIME)) {
 				// After swapping, again - Get details via SNMP or Netspan

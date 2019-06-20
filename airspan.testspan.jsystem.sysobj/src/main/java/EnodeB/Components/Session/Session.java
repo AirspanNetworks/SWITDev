@@ -5,6 +5,7 @@ import java.util.concurrent.Semaphore;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import Utils.PasswordUtils;
 import systemobject.terminal.SSH;
 import systemobject.terminal.Terminal;
 import EnodeB.Components.EnodeBComponent;
@@ -130,7 +131,7 @@ public class Session implements Runnable {
 		
 		while (System.currentTimeMillis() - startTime <= 30*1000) {
 			GeneralUtils.printToConsole("Attempt #" + i++);
-			String ans = this.sendCommands(EnodeBComponent.SHELL_PROMPT,"exit","login");			
+			String ans = this.sendCommands(EnodeBComponent.SHELL_PROMPT,"exit","login");
 			if (ans.contains("login")) {
 				return true;
 			}
@@ -235,7 +236,7 @@ public class Session implements Runnable {
 					return;
 				}
 
-				if (enbComp.getUsername() != EnodeBComponent.UNSECURED_USERNAME) {					
+				if (enbComp.getUsername() != enbComp.getMatchingPassword(PasswordUtils.ROOT_USERNAME)) {
 					boolean ans = false;
 					try {
 						sshConnectionLock.acquire();
@@ -245,11 +246,11 @@ public class Session implements Runnable {
 						GeneralUtils.printToConsole(enbComp.getName() + " is in a secured mode, switching to root with '" + suCommand + "' command.");
 						try {
 							sendCommands(suCommand, "Password");
-							ans = sendCommands(EnodeBComponent.ADMIN_PASSWORD, "#");
+							ans = sendCommands(enbComp.getMatchingPassword(PasswordUtils.ADMIN_USERNAME), "#");
 
 							if (!ans) {
 								sendCommands(suCommand, "Password");
-								sendRawCommand(EnodeBComponent.ADMIN_PASSWORD);
+								sendRawCommand(enbComp.getMatchingPassword(PasswordUtils.ADMIN_USERNAME));
 							}
 						} finally {
 							sshConnectionLock.release();

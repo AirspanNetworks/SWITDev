@@ -16,7 +16,6 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import Attenuators.AttenuatorSet;
 import EnodeB.EnodeB;
 import EnodeB.Ninja;
-import EnodeB.Components.UEDist;
 import Entities.ITrafficGenerator.Protocol;
 import Entities.ITrafficGenerator.TransmitDirection;
 import Entities.StreamParams;
@@ -88,7 +87,6 @@ public class TPTBase extends TestspanTest {
 	protected Integer packetSize;
 	protected Integer numberParallelStreams;
 	protected Double windowSizeInKbits;
-	protected UEDist ueDist;
 	protected StreamList debugPrinter = new StreamList();
 	protected ArrayList<String> stringArrayStreamNames;
 	protected String streamsMode;

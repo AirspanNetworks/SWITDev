@@ -5,6 +5,8 @@ package EnodeB.Components.XLP;
 
 import java.io.IOException;
 import java.util.HashMap;
+
+import Utils.PasswordUtils;
 import org.snmp4j.smi.Variable;
 import java.util.Hashtable;
 import EnodeB.EnodeB;
@@ -526,11 +528,11 @@ public class XLP_14_5 extends XLP {
 
 	@Override
 	public String getDefaultSSHUsername(){
-		return ADMIN_USERNAME;
+		return PasswordUtils.ADMIN_USERNAME;
 	}
 	
 	@Override
 	public String getDefaultSerialUsername(){
-		return ADMIN_USERNAME;
+		return PasswordUtils.ADMIN_USERNAME;
 	}
 }

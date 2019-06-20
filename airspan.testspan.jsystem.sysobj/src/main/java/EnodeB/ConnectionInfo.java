@@ -5,11 +5,12 @@ import jsystem.framework.system.SystemObjectImpl;
 public class ConnectionInfo extends SystemObjectImpl{
 	private String ipAddress;
 	private String userName;
+	private String password;
 	private String readCommunity;
 	private String writeCommunity;
 	public SerialConnectionInfo serialInfo;
 	public SerialConnectionInfo[] danInfo;
-	
+
 	public String getIpAddress() {
 		return ipAddress;
 	}
@@ -33,5 +34,11 @@ public class ConnectionInfo extends SystemObjectImpl{
 	}
 	public void setUserName(String userName) {
 		this.userName = userName;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
 	}
 }

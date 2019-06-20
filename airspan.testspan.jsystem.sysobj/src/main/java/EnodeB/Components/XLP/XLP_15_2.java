@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
+import Utils.PasswordUtils;
 import org.snmp4j.smi.OctetString;
 import org.snmp4j.smi.Variable;
 import EnodeB.ProtoBuf.ProtoBuf;
@@ -292,11 +293,11 @@ public class XLP_15_2 extends XLP_14_5 {
 
 	@Override
 	public String getDefaultSSHUsername(){
-		return ADMIN_USERNAME;
+		return PasswordUtils.ADMIN_USERNAME;
 	}
 	
 	@Override
 	public String getDefaultSerialUsername(){
-		return ADMIN_USERNAME;
+		return PasswordUtils.ADMIN_USERNAME;
 	}
 }

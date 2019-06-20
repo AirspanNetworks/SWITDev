@@ -4,7 +4,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import EnodeB.Components.EnodeBComponent;
-import EnodeB.Components.XLP.DebugPort;
 import Netspan.API.Enums.ImageType;
 
 public class Ninja extends EnodeBWithDonor{	
@@ -12,8 +11,8 @@ public class Ninja extends EnodeBWithDonor{
 	public Ninja() {
 		super();
 		debugPort.setDEBUG_PORT("192.168.0.20");
-		debugPort.setDEBUG_PORT_USERNAME(EnodeBComponent.ADMIN_USERNAME);
-		debugPort.setDEBUG_PORT_PASSWOED(EnodeBComponent.ADMIN_PASSWORD);
+//		debugPort.setDEBUG_PORT_USERNAME(PasswordUtils.ADMIN_USERNAME);
+//		debugPort.setDEBUG_PORT_PASSWORD(PasswordUtils.ADMIN_PASSWORD);
 		WAIT_FOR_ALL_RUNNING_TIME = 10 * 60 * 1000;
 		setSWTypeInstance(22);
 		//addCliDebugFlags("db set debugFlags [*] bhQosSimulateCpeResp=1","!echo 'SKIP_CMPV2=1' > /bs/data/debug_security.cfg");

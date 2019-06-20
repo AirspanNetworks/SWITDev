@@ -4,6 +4,7 @@ import jsystem.framework.system.SystemObjectImpl;
 
 public class SerialConnectionInfo extends SystemObjectImpl{
 	private String userName;
+	private String password;
 	private String serialPort;
 	private String serialIP;
 	
@@ -24,5 +25,11 @@ public class SerialConnectionInfo extends SystemObjectImpl{
 	}
 	public void setUserName(String userName) {
 		this.userName = userName;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
 	}
 }

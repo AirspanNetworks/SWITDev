@@ -2,6 +2,7 @@ package EnodeB.Components;
 
 import java.util.Hashtable;
 
+import EnodeB.Components.Cli.Cli;
 import jsystem.framework.report.Reporter;
 import EnodeB.Components.Log.LoggerEvent;
 import Utils.GeneralUtils;
@@ -18,7 +19,7 @@ public class DAN extends EnodeBComponent {
 	private String lastStatusTable;
 	
 	public void init() throws Exception {
-		this.statusTableFlag = false;	
+		this.statusTableFlag = false;
 		super.init();
 	}
 	

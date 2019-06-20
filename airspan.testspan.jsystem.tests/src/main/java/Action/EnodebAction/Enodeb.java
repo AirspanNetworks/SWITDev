@@ -1459,10 +1459,10 @@ public class Enodeb extends EnodebAction {
         		}
         	}
         	if(count == 0){
-        		report.report("Alarm with type id ["+id+"] was not found",Reporter.FAIL);
+        		report.report("Alarm with type id ["+id+"] was not found", Reporter.FAIL);
         		reason += "Alarm with type id ["+id+"] was not found.<br> ";
         	}else{
-        		report.report("Alarm with type id ["+id+"] was found ["+count+"] time"+(count==1?"":"s"));
+        		report.report("Alarm with type id ["+id+"] was found ["+count+"] time"+(count==1?"":"s"), Reporter.PASS);
         	}
         }
 	}

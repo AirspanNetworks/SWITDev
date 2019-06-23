@@ -1531,7 +1531,7 @@ public class Enodeb extends EnodebAction {
 	}
 	
 	@Test
-	@TestProperties(name = "Configuration - Enable Multi-Cell", returnParam = { "LastStatus" }, paramsInclude = {
+	@TestProperties(name = "Enable Multi-Cell", returnParam = { "LastStatus" }, paramsInclude = {
 			"DUT" })
 	public void enableMultiCell() throws Exception {
 		if(dut == null){
@@ -1547,7 +1547,7 @@ public class Enodeb extends EnodebAction {
 	}
 
 	@Test
-	@TestProperties(name = "Configuration - Disable Multi-Cell", returnParam = { "LastStatus" }, paramsInclude = {
+	@TestProperties(name = "Disable Multi-Cell", returnParam = { "LastStatus" }, paramsInclude = {
 			"DUT" })
 	public void disableMultiCell() throws Exception {
 		if(dut == null){

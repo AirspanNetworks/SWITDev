@@ -1529,4 +1529,36 @@ public class Enodeb extends EnodebAction {
         	report.report("Succeeded to set debug FTP server: "+debugFtpServer.getDebugFtpServerIP());
         }
 	}
+	
+	@Test
+	@TestProperties(name = "Configuration - Enable Multi-Cell", returnParam = { "LastStatus" }, paramsInclude = {
+			"DUT" })
+	public void enableMultiCell() throws Exception {
+		if(dut == null){
+			report.report("No dut was configured",Reporter.FAIL);
+		}
+		report.report(dut.getName()+" - Trying to enable Multi-Cell.");
+		if (!EnodeBConfig.getInstance().setMultiCellstate(dut, true)) {
+			report.report(String.format("%s - Failed to enable Multi-Cell.", dut.getName()), Reporter.FAIL);
+		}
+		else{
+			report.report(String.format("%s - Succeeded to enable Multi-Cell.", dut.getName()));
+		}
+	}
+
+	@Test
+	@TestProperties(name = "Configuration - Disable Multi-Cell", returnParam = { "LastStatus" }, paramsInclude = {
+			"DUT" })
+	public void disableMultiCell() throws Exception {
+		if(dut == null){
+			report.report("No dut was configured",Reporter.FAIL);
+		}
+		report.report(dut.getName()+" - Trying to disable Multi-Cell.");
+		if (!EnodeBConfig.getInstance().setMultiCellstate(dut, false)) {
+			report.report(String.format("%s - Failed to disable Multi-Cell.", dut.getName()), Reporter.FAIL);
+		}
+		else{
+			report.report(String.format("%s - Succeeded to disable Multi-Cell.", dut.getName()));
+		}
+	}
 }

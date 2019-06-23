@@ -6,6 +6,10 @@ import java.util.List;
 import EnodeB.EnodeB;
 import Netspan.NBIVersion;
 import Netspan.NBI_16_5.NetspanServer_16_5;
+import Netspan.NBI_17_0.Lte.LteCellSetWs;
+import Netspan.NBI_17_0.Lte.LteEnbDetailsSetWs;
+import Netspan.NBI_17_0.Lte.NodeResultValues;
+import Netspan.NBI_17_0.Lte.ObjectFactory;
 import Netspan.Profiles.ConnectedUETrafficDirection;
 import Utils.GeneralUtils;
 import jsystem.framework.report.Reporter;
@@ -99,4 +103,47 @@ public class NetspanServer_17_0 extends NetspanServer_16_5 implements Netspan_17
         }
         return ret;
     }
+    
+    @Override
+    public boolean setMultiCellState(EnodeB node, Boolean isEnabled) {
+        LteEnbDetailsSetWs enbConfigSet = new LteEnbDetailsSetWs();
+        LteCellSetWs lteCellSet = new LteCellSetWs();
+        ObjectFactory factoryDetails = new ObjectFactory();
+        lteCellSet.setCellNumber(factoryDetails.createLteCellSetWsCellNumber("2"));
+        lteCellSet.setIsEnabled(factoryDetails.createLteCellGetWsIsEnabled(isEnabled));
+        enbConfigSet.getLteCell().add(lteCellSet);
+        return setNodeConfig(node, enbConfigSet);
+    }
+    
+    private boolean setNodeConfig(EnodeB enodeB, LteEnbDetailsSetWs netspanConfig) {
+        try {
+            if (getPnpNode(enodeB.getNetspanName()) != null) {
+                GeneralUtils
+                    .printToConsole("eNodeB " + enodeB.getNetspanName() + " is located in PnP list, skipping set.");
+                return true;
+            }
+            GeneralUtils.printToConsole("Sending NBI requeset \"enbConfigSet\" for eNodeB " + enodeB.getNetspanName());
+            Netspan.NBI_17_0.Lte.NodeActionResult result = soapHelper_17_0
+                .getLteSoap().enbConfigSet(enodeB.getNetspanName(),null, netspanConfig, null, credentialsLte);
+            GeneralUtils.printToConsole(String.format("NBI method \"enbConfigSet\" for eNodeB %s returned value: %s",
+                enodeB.getNetspanName(), result.getErrorCode() + ":" + result.getErrorString()));
+            if (result.getErrorCode() == Netspan.NBI_17_0.Lte.ErrorCodes.OK)
+                return true;
+            else {
+                for (Netspan.NBI_17_0.Lte.NodeResult node : result.getNode()) {
+                    if (node.getNodeResultCode() == NodeResultValues.NODE_ERROR) {
+                        report.report("[NMS] ERROR in " + node.getName() + ": " + node.getNodeResultString());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            report.report("enbConfigSet via Netspan Failed due to: " + e.getMessage(), Reporter.WARNING);
+            e.printStackTrace();
+            return false;
+        } finally {
+            soapHelper_17_0.endLteSoap();
+        }
+        return false;
+    }
+
 }

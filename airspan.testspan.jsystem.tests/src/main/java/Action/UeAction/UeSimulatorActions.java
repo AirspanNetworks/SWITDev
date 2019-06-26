@@ -528,6 +528,10 @@ public class UeSimulatorActions extends Action {
 				
 			}
 			GeneralUtils.stopLevel();
+			int actual = amariSoftServer.getUeWithIPList().size();
+			if(amount != actual){
+				report.report("Number of UEs connected is "+actual+" instead of "+amount,Reporter.WARNING);
+			}
 		} catch (Exception e) {
 			report.report(e.getMessage());
 		}

@@ -97,6 +97,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 	private boolean running = false;
 	private String pathPreConfig = null;
 	private String currentConfigFile;
+	private boolean webSocketConnected = false;
 
 	@Override
 	public void init() throws Exception {
@@ -373,42 +374,44 @@ public class AmariSoftServer extends SystemObjectImpl{
     }
     
     public boolean startServer(String configFile){
+    	  
+    	GeneralUtils.printToConsole("Send command to start simulator");
+    	boolean ans = sendCommands("/root/ue/lteue /root/ue/config/" + configFile,"", lteUeTerminal, true);
+    	if (!ans) {
+    		GeneralUtils.printToConsole("Failed starting server with config file: " + configFile);
+    		running = false;
+    		return false;
+		}
+    	GeneralUtils.unSafeSleep(5000);
+    	GeneralUtils.printToConsole("Send command for ps -aux");
+    	if(!sendCommands("ps -aux |grep lteue", " /root/ue/config/" + configFile, lteUecommands, false)) {
+    		GeneralUtils.printToConsole("Failed starting server with config file: " + configFile);
+    		running = false;
+    		return false;
+    	}
+        running  = true;
+    	return true;
+    }
+
+    public boolean connectToWebServer(){
     	try {   
-    		GeneralUtils.printToConsole("Send command to start simulator");
-    		boolean ans = sendCommands("/root/ue/lteue /root/ue/config/" + configFile,"", lteUeTerminal, true);
-    		if (!ans) {
-    			GeneralUtils.printToConsole("Failed starting server with config file: " + configFile);
-    			running = false;
-    			return false;
-			}
-    		GeneralUtils.unSafeSleep(5000);
-    		GeneralUtils.printToConsole("Send command for ps -aux");
-    		if(!sendCommands("ps -aux |grep lteue", " /root/ue/config/" + configFile, lteUecommands, false)) {
-    			GeneralUtils.printToConsole("Failed starting server with config file: " + configFile);
-    			running = false;
-    			return false;
-    		}
-    		
         	URI endpointURI = new URI("ws://"+ip+":"+port);
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             container.connectToServer(this, endpointURI);
             startMessageHandler();
-            running  = true;
+            return true;
         } catch (Exception e) {
-        	GeneralUtils.printToConsole("Exception in starting server with config file: " + configFile);
+        	GeneralUtils.printToConsole("Exception in connecting to web server socket");
         	e.printStackTrace();
-        	GeneralUtils.printToConsole("Closing server");
-        	sendCommands("quit", "#", lteUeTerminal, true);
-        	return false;
         }
-    	return true;
+    	return false;
     }
-
+    
 	private void startMessageHandler() {
 		addMessageHandler(new AmariSoftServer.MessageHandler() {
 			public void handleMessage(String message) {
 				synchronized (waitLock) {
-					System.out.println("Message recieved: " + message);
+					System.out.println("Message received: " + message);
 					ObjectMapper mapper = new ObjectMapper();
 
 					// Convert JSON string to Object
@@ -511,6 +514,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     public void onOpen(Session userSession) {
         System.out.println("opening websocket");
         this.userSession = userSession;
+        webSocketConnected = true;
     }
 
     /**
@@ -523,9 +527,10 @@ public class AmariSoftServer extends SystemObjectImpl{
     @OnClose
     public void onClose(Session userSession, CloseReason reason) throws IOException {
         System.out.println("closing websocket: " + reason.toString());
-        running = false;
+        webSocketConnected = false;
         this.userSession.close();
         this.userSession = null;
+        waitLock.notify();
     }
 
     /**
@@ -554,12 +559,18 @@ public class AmariSoftServer extends SystemObjectImpl{
      *
      * @param message
      */
-    public void sendMessage(String message) {
+    public boolean sendMessage(String message) {
+    	if(!webSocketConnected){
+    		if(!connectToWebServer()){
+    			return false;
+    		}
+    	}
     	try {
 			this.userSession.getBasicRemote().sendText(message);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+    	return true;
     }
 
     /**
@@ -715,21 +726,32 @@ public class AmariSoftServer extends SystemObjectImpl{
     
     synchronized private Object sendSynchronizedMessage(String message)
 	{
-    	Object ans;
+    	Object ans = null;
     	if (!running) {
 			report.report("attpempted to send message \"" + message + "\" to amarisoft server that is not running." , Reporter.WARNING);
 			return null;
 		}
 		synchronized (waitLock) {
-			sendMessage(message);
-			try {
-				waitLock.wait();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-				waitLock.notify();
+			for(int i=0;i<2;i++){
+				if(!sendMessage(message)){
+					if(i==0){
+						continue;
+					}else{
+						return null;
+					}
+				}
+				try {
+					waitLock.wait();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+					waitLock.notify();
+				}
+				if(returnValue != null){
+					ans = returnValue;
+					returnValue = null;
+					break;
+				}
 			}
-			ans = returnValue;
-			returnValue = null;
 		}
 		
 		return ans;

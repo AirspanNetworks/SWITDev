@@ -11,6 +11,7 @@ import Netspan.API.Enums.HoControlStateTypes;
 import Netspan.API.Enums.SonAnrStates;
 import Netspan.API.Enums.X2ControlStateTypes;
 import Utils.GeneralUtils;
+import Utils.PasswordUtils;
 import Utils.Snmp.MibReader;
 import jsystem.framework.report.Reporter;
 
@@ -143,11 +144,11 @@ public class XLP_14_0 extends XLP{
 
 	@Override
 	public String getDefaultSSHUsername(){
-		return UNSECURED_USERNAME;
+		return PasswordUtils.ROOT_USERNAME;
 	}
 	
 	@Override
 	public String getDefaultSerialUsername(){
-		return UNSECURED_USERNAME;
+		return PasswordUtils.ROOT_USERNAME;
 	}	
 }

@@ -12,8 +12,8 @@ public class ScpClient extends SystemObjectImpl {
 
     
     private static final int NUMBER_OF_RETRIES = 5;
-	private String username = "root";
-	private String password = "air4best";
+	private String username = PasswordUtils.ROOT_USERNAME;
+	private String password = PasswordUtils.ROOT_PASSWORD;
 
 	private SCPClient scpClient = null;
 	private boolean authenticated = false;

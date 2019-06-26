@@ -161,21 +161,21 @@ public abstract class XLP extends EnodeBComponent {
         setSerialSwitchUserCommand(getMatchingSwitchUserCommand(getSerialUsername()));
     }
 
-    private String getMatchingPassword(String username) {
+    public String getMatchingPassword(String username) {
         String ans = "";
         switch (username) {
             case "root":
-                ans = UNSECURED_PASSWORD;
+                ans = PasswordUtils.ROOT_PASSWORD;
                 break;
             case "admin":
-                ans = ADMIN_PASSWORD;
+                ans = PasswordUtils.ADMIN_PASSWORD;
                 break;
             case "op":
-                ans = SECURED_PASSWORD;
+                ans = PasswordUtils.COSTUMER_PASSWORD;
                 break;
             default:
                 GeneralUtils.printToConsole("Unrecognised username: " + username + ". using admin password as default.");
-                ans = ADMIN_PASSWORD;
+                ans = PasswordUtils.ADMIN_PASSWORD;
                 break;
         }
         return ans;
@@ -221,8 +221,11 @@ public abstract class XLP extends EnodeBComponent {
     public void addPrompts(Cli cli) {
         super.addPrompts(cli);
         cli.addPrompt(LTE_CLI_PROMPT, SHELL_PROMPT,
-                new String[]{"su -", EnodeBComponent.ADMIN_PASSWORD, "/bs/lteCli"}, "quit");
-        cli.addPrompt(SHELL_PROMPT_OP, SHELL_PROMPT, new String[]{"su -", EnodeBComponent.ADMIN_PASSWORD}, "exit");
+                new String[]{"su -",  getMatchingPassword(PasswordUtils.ADMIN_USERNAME), "/bs/lteCli"},
+                "quit");
+        cli.addPrompt(SHELL_PROMPT_OP, SHELL_PROMPT,
+                new String[]{"su -",getMatchingPassword(PasswordUtils.ADMIN_USERNAME)},
+                "exit");
     }
 
     /**

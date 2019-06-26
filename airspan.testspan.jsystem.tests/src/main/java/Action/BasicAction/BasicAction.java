@@ -288,28 +288,6 @@ public class BasicAction extends Action {
 			e.printStackTrace();
 		}
 	}
-	
-	private void setUnitTestforserial() {
-		setIp("192.168.58.169");
-		setPort(2001);
-		setUserName("admin");
-		
-//		setIp("192.168.58.12");
-//		setPort(4004);
-//		setUserName("op");
-		
-		setPassword("HeWGEUx66m=_4!ND");
-//		setPassword("Ss%7^q7NC#Uj!AnX====HeWGEUx66m=_4!ND");
-		setSerialCommand("ls -la /");
-//		setSerialCommand("ue show link");
-//		setSerialCommand("show banks");
-		
-		setSudoRequired(true);
-		setLteCliRequired(false);
-		setSleepTime(10);
-		
-	}
-	
 
 	@Test
 	@TestProperties(name = "Send Commands To Serial", returnParam = "LastStatus", paramsInclude = { "Ip", "Port",
@@ -318,10 +296,6 @@ public class BasicAction extends Action {
 		boolean isNull = false;
 		ConnectionInfo conn_info;
 		exCLI cli = null;
-		
-		/* Internal unittest only */
-//		 setUnitTestforserial();
-		 
 		// Verify input parameters
 		try {
 			if(ip == null){

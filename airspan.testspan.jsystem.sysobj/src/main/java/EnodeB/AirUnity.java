@@ -1,6 +1,5 @@
 package EnodeB;
 
-import EnodeB.Components.EnodeBComponent;
 import Netspan.NetspanServer;
 import Netspan.API.Enums.ImageType;
 import Netspan.API.Software.SoftwareStatus;
@@ -13,9 +12,9 @@ public class AirUnity extends EnodeBWithDonor{
 	
 	public AirUnity() {
 		super();
-		debugPort.setDEBUG_PORT("169.254.1.128");
-		debugPort.setDEBUG_PORT_USERNAME(EnodeBComponent.SECURED_USERNAME);
-		debugPort.setDEBUG_PORT_PASSWOED(EnodeBComponent.SECURED_PASSWORD);
+//		debugPort.setDEBUG_PORT("169.254.1.128");
+//		debugPort.setDEBUG_PORT_USERNAME(PasswordUtils.COSTUMER_USERNAME);
+//		debugPort.setDEBUG_PORT_PASSWORD(PasswordUtils.COSTUMER_PASSWORD);
 		WAIT_FOR_ALL_RUNNING_TIME = 20 * 60 * 1000;
 	}
 	

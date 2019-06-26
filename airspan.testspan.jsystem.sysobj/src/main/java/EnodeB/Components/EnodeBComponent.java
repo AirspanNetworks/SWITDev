@@ -40,15 +40,7 @@ public abstract class EnodeBComponent implements LogListener {
 	private SystemObject parent = null;
 	protected Reporter report = ListenerstManager.getInstance();
 
-    public static final String SECURED_USERNAME = "op";
-    public static final String SECURED_PASSWORD = "Ss%7^q7NC#Uj!AnX";
-    private final String VER_PREFIX = "ver_";
-
-    public static final String ADMIN_USERNAME = "admin";
-    public static final String ADMIN_PASSWORD = "HeWGEUx66m=_4!ND";
-
-    public static final String UNSECURED_USERNAME = "root";
-    public static final String UNSECURED_PASSWORD = "air4best";
+	private final String VER_PREFIX = "ver_";
 
     public static final String UNSECURED_READCOMMUNITY = "public";
     public static final String UNSECURED_WRITECOMMUNITY = "private";
@@ -74,10 +66,11 @@ public abstract class EnodeBComponent implements LogListener {
 
     private String ipAddress;
 
-    private String username = SECURED_USERNAME;
-    private String password = SECURED_PASSWORD;
-    private String scpUsername = ADMIN_USERNAME;
-    private String scpPassword = ADMIN_PASSWORD;
+    private String username = PasswordUtils.COSTUMER_USERNAME;
+    private String password = PasswordUtils.COSTUMER_PASSWORD;
+	private String adminPassword = PasswordUtils.ADMIN_PASSWORD;
+    private String scpUsername = PasswordUtils.ADMIN_USERNAME;
+    private String scpPassword = PasswordUtils.ADMIN_PASSWORD;
     private int scpPort = 22;
     private String serialUserName;
     private String serialPassword;
@@ -265,7 +258,8 @@ public abstract class EnodeBComponent implements LogListener {
      */
     public void addPrompts(Cli cli) {
         cli.setPrompt(LOGIN_PROMPT);
-        cli.addPrompt(SHELL_PROMPT, LOGIN_PROMPT, new String[]{serialUserName, serialPassword, serialSwitchUserCommand, EnodeBComponent.ADMIN_PASSWORD}, "exit");
+        cli.addPrompt(SHELL_PROMPT, LOGIN_PROMPT, new String[]{getSerialUsername(), getSerialPassword(), getSerialSwitchUserCommand(),
+				getAdminPassword()}, "exit");
     }
 
     /**
@@ -434,7 +428,11 @@ public abstract class EnodeBComponent implements LogListener {
         this.serialSwitchUserCommand = switchUserCommand;
     }
 
-    /**
+	public String getSerialSwitchUserCommand() {
+		return serialSwitchUserCommand;
+	}
+
+	/**
      * Sends the "pkill" command to the component's shell.
      *
      * @param process - The name of the process we want to kill.
@@ -1077,4 +1075,32 @@ public abstract class EnodeBComponent implements LogListener {
     public void setScpPort(int scpPort) {
         this.scpPort = scpPort;
     }
+
+	public String getAdminPassword() {
+		return adminPassword;
+	}
+
+	public void setAdminPassword(String adminPassword) {
+		this.adminPassword = adminPassword;
+	}
+
+	public String getMatchingPassword(String username) {
+		String ans = "";
+		switch (username) {
+			case "root":
+				ans = PasswordUtils.ROOT_PASSWORD;
+				break;
+			case "admin":
+				ans = PasswordUtils.ADMIN_PASSWORD;
+				break;
+			case "op":
+				ans = PasswordUtils.COSTUMER_PASSWORD;
+				break;
+			default:
+				GeneralUtils.printToConsole("Unrecognised username: " + username + ". using admin password as default.");
+				ans = PasswordUtils.ADMIN_PASSWORD;
+				break;
+		}
+		return ans;
+	}
 }

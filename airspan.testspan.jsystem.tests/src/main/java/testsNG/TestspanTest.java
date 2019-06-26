@@ -166,7 +166,6 @@ public class TestspanTest extends SystemTestCase4 {
      *
      * @param eNodeB - eNodeB
      */
-    //todo deal with DAN
     private void openSessions(EnodeB eNodeB) {
         eNodeB.openSerialLogSession(eNodeB.getXLP().getSessionManager());
         eNodeB.openSSHLogSession(eNodeB.getXLP().getSessionManager());

@@ -6,18 +6,13 @@ import java.util.*;
 
 import EnodeB.Components.DAN;
 import EnodeB.Components.Session.SessionManager;
+import EnodeB.Components.XLP.*;
 import org.snmp4j.smi.Variable;
 
-import EnodeB.Components.UEDist;
 import EnodeB.Components.Log.LogListener;
 import EnodeB.Components.Log.Logger;
 import EnodeB.Components.Session.Session;
-import EnodeB.Components.XLP.XLP;
 import EnodeB.Components.XLP.XLP.SwStatus;
-import EnodeB.Components.XLP.XLP_14_0;
-import EnodeB.Components.XLP.XLP_14_5;
-import EnodeB.Components.XLP.XLP_15_2;
-import EnodeB.Components.XLP.XLP_16_0;
 import EnodeB.ProtoBuf.PbLteStatusOuterClass.PbLteAnrStatus;
 import EnodeB.ProtoBuf.PbLteStatusOuterClass.PbLteCellStatus;
 import EnodeB.ProtoBuf.PbLteStatusOuterClass.PbLteMmeStatus;
@@ -135,10 +130,6 @@ public abstract class EnodeB extends SystemObjectImpl {
 	 * The phy version.
 	 */
 	private String phyVersion;
-	/**
-	 * the UEs distribution in the cell
-	 */
-	public UEDist ueDist;
 	/**
 	 * The operation mode.
 	 */
@@ -267,6 +258,10 @@ public abstract class EnodeB extends SystemObjectImpl {
 				break;
 			case "16_0":
 				XLP = new XLP_16_0();
+				break;
+			case "16_5":
+			case "17_0":
+				XLP = new XLP_16_5();
 				break;
 			default:
 				XLP = new XLP_15_2();
@@ -1318,10 +1313,6 @@ public abstract class EnodeB extends SystemObjectImpl {
 
 	public synchronized final void setSWTypeInstance(int sWTypeInstance) {
 		SWTypeInstance = sWTypeInstance;
-	}
-
-	public UEDist getUEsDist() {
-		return ueDist;
 	}
 
 	@Override

@@ -236,7 +236,7 @@ public class Session implements Runnable {
 					return;
 				}
 
-				if (enbComp.getUsername() != enbComp.getMatchingPassword(PasswordUtils.ROOT_USERNAME)) {
+				if (enbComp.getUsername() != PasswordUtils.ROOT_USERNAME) {
 					boolean ans = false;
 					try {
 						sshConnectionLock.acquire();

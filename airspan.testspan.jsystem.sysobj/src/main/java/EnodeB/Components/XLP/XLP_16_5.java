@@ -19,6 +19,7 @@ public class XLP_16_5 extends XLP_16_0 {
 		String ans;
 		switch (username) {
 			case "root":
+			case "airspansu":
 				ans = PasswordUtils.ROOT_PASSWORD_16_50;
 				break;
 			case "admin":

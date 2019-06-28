@@ -168,6 +168,7 @@ public abstract class XLP extends EnodeBComponent {
                 ans = PasswordUtils.ROOT_PASSWORD;
                 break;
             case "admin":
+            case "airspansu":
                 ans = PasswordUtils.ADMIN_PASSWORD;
                 break;
             case "op":

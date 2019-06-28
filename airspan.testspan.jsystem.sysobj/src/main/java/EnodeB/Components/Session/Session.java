@@ -242,15 +242,15 @@ public class Session implements Runnable {
 						sshConnectionLock.acquire();
 						String suCommand = "su -";
 						if (sendCommands("", "lte_cli:>>"))
-							suCommand = "airspansu";
+							suCommand = PasswordUtils.AIRSPANSU_USERNAME;
 						GeneralUtils.printToConsole(enbComp.getName() + " is in a secured mode, switching to root with '" + suCommand + "' command.");
 						try {
 							sendCommands(suCommand, "Password");
-							ans = sendCommands(enbComp.getMatchingPassword(PasswordUtils.ADMIN_USERNAME), "#");
+							ans = sendCommands(enbComp.getMatchingPassword(PasswordUtils.AIRSPANSU_USERNAME), "#");
 
 							if (!ans) {
 								sendCommands(suCommand, "Password");
-								sendRawCommand(enbComp.getMatchingPassword(PasswordUtils.ADMIN_USERNAME));
+								sendRawCommand(enbComp.getMatchingPassword(PasswordUtils.AIRSPANSU_USERNAME));
 							}
 						} finally {
 							sshConnectionLock.release();

@@ -6,6 +6,7 @@ public class PasswordUtils {
 	public static final String COSTUMER_USERNAME = "op";
 	public static final String ADMIN_USERNAME = "admin";
 	public static final String ROOT_USERNAME = "root";
+	public static final String AIRSPANSU_USERNAME = "airspansu";
 
 	/** Password until version 14.5 */
 	public static final String ROOT_PASSWORD = "air4best";

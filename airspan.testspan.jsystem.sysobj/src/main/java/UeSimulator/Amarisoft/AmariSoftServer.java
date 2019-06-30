@@ -580,8 +580,6 @@ public class AmariSoftServer extends SystemObjectImpl{
     		}else{
     			numberFailedConnections = 0;
     		}
-    	}else{
-    		return false;
     	}
     	try {
 			this.userSession.getBasicRemote().sendText(message);

@@ -98,6 +98,8 @@ public class AmariSoftServer extends SystemObjectImpl{
 	private String pathPreConfig = null;
 	private String currentConfigFile;
 	private boolean webSocketConnected = false;
+	private int numberFailedConnections = 0;
+	private boolean failedConnectionServer = false;
 
 	@Override
 	public void init() throws Exception {
@@ -355,6 +357,9 @@ public class AmariSoftServer extends SystemObjectImpl{
     
     public boolean startServer(ArrayList<EnodeB> duts,String namePreConfig){
     	connect();
+    	numberFailedConnections = 0;
+    	failedConnectionServer = false;
+
     	pathPreConfig = namePreConfig;
     	if(pathPreConfig != null){
     		if(startServer(pathPreConfig)){
@@ -560,10 +565,23 @@ public class AmariSoftServer extends SystemObjectImpl{
      * @param message
      */
     public boolean sendMessage(String message) {
-    	if(!webSocketConnected){
+    	if(!webSocketConnected && !failedConnectionServer){
     		if(!connectToWebServer()){
+    			numberFailedConnections++;
+    			if(numberFailedConnections == 10){
+    				failedConnectionServer = true;
+    				report.report("Connection to web socket server is failing. Failing test and closing server", Reporter.FAIL);
+    				stopServer();
+    		    	ueMap = new ArrayList();
+    		    	uesWithIP = new ArrayList<AmarisoftUE>();
+    		    	fillUeList();
+    			}
     			return false;
+    		}else{
+    			numberFailedConnections = 0;
     		}
+    	}else{
+    		return false;
     	}
     	try {
 			this.userSession.getBasicRemote().sendText(message);

@@ -11,7 +11,7 @@ import PowerControllers.PowerController;
 import PowerControllers.PowerControllerPort;
 import Utils.GeneralUtils;
 
-public abstract class UE extends SystemObjectImpl implements Comparable{
+public abstract class UE extends SystemObjectImpl{
     private static final String POWER_CONTROLLER_PORT_MAPPING_DELIMITER = "/";
     private static final int POWER_CONTROLLER_PORT_MAPPING_CONTROLLER_INDEX = 0;
     private static final int POWER_CONTROLLER_PORT_MAPPING_PORT_INDEX = 1;
@@ -281,12 +281,4 @@ public abstract class UE extends SystemObjectImpl implements Comparable{
         report.report("Wait 2 minutes for UE to turn on");
         GeneralUtils.unSafeSleep(2 * 60 * 1000);
     }
-    
-    @Override
-	public int compareTo(Object arg0) {
-		if(imsi.equals(((UE) arg0).getImsi())){
-			return 1;				
-		}
-		return 0;
-	}
 }

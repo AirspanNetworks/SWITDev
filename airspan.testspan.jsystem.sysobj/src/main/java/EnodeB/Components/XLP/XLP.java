@@ -213,21 +213,21 @@ public abstract class XLP extends EnodeBComponent {
         this.testerVer = this.getRunningVersion();
     }
 
-    /**
-     * (non-Javadoc)
-     *
-     * @see EnodeB.Components.EnodeBComponent addPrompts()
-     */
-    @Override
-    public void addPrompts(Cli cli) {
-        super.addPrompts(cli);
-        cli.addPrompt(LTE_CLI_PROMPT, SHELL_PROMPT,
-                new String[]{"su -",  getMatchingPassword(PasswordUtils.ADMIN_USERNAME), "/bs/lteCli"},
-                "quit");
-        cli.addPrompt(SHELL_PROMPT_OP, SHELL_PROMPT,
-                new String[]{"su -",getMatchingPassword(PasswordUtils.ADMIN_USERNAME)},
-                "exit");
-    }
+//    /**
+//     * (non-Javadoc)
+//     *
+//     * @see EnodeB.Components.EnodeBComponent addPrompts()
+//     */
+//    @Override
+//    public void addPrompts(Cli cli) {
+//        super.addPrompts(cli);
+//        cli.addPrompt(LTE_CLI_PROMPT, SHELL_PROMPT,
+//                new String[]{"su -",  getMatchingPassword(PasswordUtils.ADMIN_USERNAME), "/bs/lteCli"},
+//                "quit");
+//        cli.addPrompt(SHELL_PROMPT_OP, SHELL_PROMPT,
+//                new String[]{"su -",getMatchingPassword(PasswordUtils.ADMIN_USERNAME)},
+//                "exit");
+//    }
 
     /**
      * Db get.

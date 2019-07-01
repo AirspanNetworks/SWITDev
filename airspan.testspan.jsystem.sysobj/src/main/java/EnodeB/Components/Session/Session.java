@@ -77,7 +77,7 @@ public class Session implements Runnable {
 		privateBuffer = cliBuffer = loggerBuffer = "";
 		cli = new Cli(this);
 
-		enbComp.addPrompts(cli);
+//		enbComp.addPrompts(cli);
 
 		this.setEnableCliBuffer(true);
 		this.logLevel=logLevel;

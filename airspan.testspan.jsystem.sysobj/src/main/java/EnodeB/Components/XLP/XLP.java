@@ -222,10 +222,10 @@ public abstract class XLP extends EnodeBComponent {
     public void addPrompts(Cli cli) {
         super.addPrompts(cli);
         cli.addPrompt(LTE_CLI_PROMPT, SHELL_PROMPT,
-                new String[]{"su -",  getMatchingPassword(PasswordUtils.ADMIN_USERNAME), "/bs/lteCli"},
+                new String[]{"su -",  getMatchingPassword(PasswordUtils.ROOT_USERNAME), "/bs/lteCli"},
                 "quit");
         cli.addPrompt(SHELL_PROMPT_OP, SHELL_PROMPT,
-                new String[]{"su -",getMatchingPassword(PasswordUtils.ADMIN_USERNAME)},
+                new String[]{"su -",getMatchingPassword(PasswordUtils.ROOT_USERNAME)},
                 "exit");
     }
 

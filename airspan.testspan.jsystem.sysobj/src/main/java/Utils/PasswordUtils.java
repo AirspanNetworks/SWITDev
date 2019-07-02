@@ -17,6 +17,5 @@ public class PasswordUtils {
 
 	/** Passwords from 16.5 and above */
 	public static final String COSTUMER_PASSWORD_16_50 = "PZ8Hfy3=Ve7fQkt*";
-	public static final String ADMIN_PASSWORD_16_50 = "KBLY*X4_ynA2j-*H";
 	public static final String ROOT_PASSWORD_16_50 = "S-N<&t8{<wu98wCD";
 }

@@ -9,7 +9,7 @@ public class XLP_16_5 extends XLP_16_0 {
 	public void init() throws Exception {
 		setScpUsername(PasswordUtils.ROOT_USERNAME);
 		setScpPort(2020);
-		setScpPassword(PasswordUtils.ADMIN_PASSWORD_16_50);
+		setScpPassword(PasswordUtils.ROOT_PASSWORD_16_50);
 		setPassword(PasswordUtils.COSTUMER_PASSWORD_16_50);
 		super.init();
 	}
@@ -22,15 +22,12 @@ public class XLP_16_5 extends XLP_16_0 {
 			case "airspansu":
 				ans = PasswordUtils.ROOT_PASSWORD_16_50;
 				break;
-			case "admin":
-				ans = PasswordUtils.ADMIN_PASSWORD_16_50;
-				break;
 			case "op":
 				ans = PasswordUtils.COSTUMER_PASSWORD_16_50;
 				break;
 			default:
 				GeneralUtils.printToConsole("Unrecognised username: " + username + ". using admin password as default.");
-				ans = PasswordUtils.ADMIN_PASSWORD_16_50;
+				ans = PasswordUtils.ROOT_PASSWORD_16_50;
 				break;
 		}
 		return ans;

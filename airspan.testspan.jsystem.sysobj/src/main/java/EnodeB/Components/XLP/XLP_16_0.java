@@ -18,6 +18,6 @@ public class XLP_16_0 extends XLP_15_2 {
 	
 	@Override
 	public String getDefaultSerialUsername(){
-		return PasswordUtils.COSTUMER_USERNAME;
+		return PasswordUtils.ROOT_USERNAME;
 	}
 }

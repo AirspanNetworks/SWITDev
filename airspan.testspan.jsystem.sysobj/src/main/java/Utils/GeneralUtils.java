@@ -686,7 +686,10 @@ public class GeneralUtils {
     public static boolean isArrayMadeOfIntegers(String[] arrStrings) {
         String oneString = arrayToString(arrStrings);
         try {
-            Integer.parseInt(oneString);
+            int temp = Integer.parseInt(oneString);
+            if(temp == GeneralUtils.ERROR_VALUE){
+            	return false;
+            }
         } catch (NumberFormatException e) {
             return false;
         }

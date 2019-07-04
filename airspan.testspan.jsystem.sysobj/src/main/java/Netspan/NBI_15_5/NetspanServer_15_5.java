@@ -2106,7 +2106,7 @@ public class NetspanServer_15_5 extends NetspanServer_15_2 implements Netspan_15
 					enbConfigSet = injectContentToWsEnbObject(enbConfigSet, enbProfiles, profileType);
 				}
 			} else {
-				report.report("Profile type : " + profileType + ", is not exists in Netspan : " + this.getHostname(), Reporter.WARNING);
+				report.report("Profile type : " + profileType + ", does not exists in netspan : " + this.getHostname(), Reporter.WARNING);
 			}
 		}
 		return enbConfigSet;
@@ -2156,7 +2156,7 @@ public class NetspanServer_15_5 extends NetspanServer_15_2 implements Netspan_15
 					lteCellSetWs = injectContentToWsCellObject15_5(lteCellSetWs, enbProfiles, cellProfiles, profileType);
 				}
 			} else
-				report.report("Profile type : " + profileType + ", is not exists in Netspan : " + this.getHostname(), Reporter.WARNING);
+				report.report("Profile type : " + profileType + ", does not exists in netspan : " + this.getHostname(), Reporter.WARNING);
 		}
 		return lteCellSetWs;
 	}

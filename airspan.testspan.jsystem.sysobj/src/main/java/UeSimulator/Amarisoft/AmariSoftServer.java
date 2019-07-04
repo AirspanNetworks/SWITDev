@@ -742,7 +742,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     
     synchronized private Object sendSynchronizedMessage(String message)
 	{
-    	Object ans = null;
+    	Object ans = new Object();
     	if (!running) {
 			report.report("attpempted to send message \"" + message + "\" to amarisoft server that is not running." , Reporter.WARNING);
 			return null;
@@ -757,7 +757,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 					}
 				}
 				try {
-					waitLock.wait();
+					waitLock.wait(5*1000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 					waitLock.notify();

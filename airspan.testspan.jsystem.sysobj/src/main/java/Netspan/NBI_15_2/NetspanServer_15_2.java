@@ -4197,7 +4197,7 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
                 soapHelper_15_2.getLteSoap().cellAdvancedProfileConfigGet(name, credentialsLte);
                 break;
             case Neighbour_Management_Profile:
-                report.report("Neighbour management profile is not exists in netspan 15_2");
+                report.report("Neighbour management profile does not exists in netspan 15_2");
                 break;
             case MultiCell_Profile:
                 soapHelper_15_2.getLteSoapRaw().multiCellProfileGet(name, credentialsLte);

@@ -753,7 +753,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 					if(i==0){
 						continue;
 					}else{
-						return null;
+						return ans;
 					}
 				}
 				try {
@@ -1026,12 +1026,12 @@ public class AmariSoftServer extends SystemObjectImpl{
 			report.report("Deleting UE : " + UEId+i);
 			boolean deleteUEResult = deleteUE(UEId + i);
 			if (deleteUEResult) {
-				UE rem = ueMap.get(UEId + i);
+				AmarisoftUE rem = ueMap.get(UEId + i);
 				ueMap.remove(UEId + i);
 				uesWithIP.remove(rem);
 				AmarisoftUE ue = new AmarisoftUE(UEId + i, null, this);
 				unusedUEs.add(UEId + i, ue);
-				unusedUEs.add(UEId + i, ue);
+				//unusedUEs.add(UEId + i, ue);
 			}
 			result = result && deleteUEResult;
 		}
@@ -1051,7 +1051,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 				int lastUE = ueMap.size()-1;
 				AmarisoftUE tempue = ueMap.get(lastUE);
 				if(deleteUE(tempue.ueId)) {
-					UE rem = ueMap.get(lastUE);
+					AmarisoftUE rem = ueMap.get(lastUE);
 					ueMap.remove(lastUE);
 					uesWithIP.remove(rem);
 					deletedAmount++;
@@ -1078,7 +1078,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 				if (group.equals(groupName)) {
 					int ueNum = ueMap.get(i).ueId;
 					if (deleteUE(ueNum)) {
-						UE rem = ueMap.get(ueNum);
+						AmarisoftUE rem = ueMap.get(ueNum);
 						ueMap.remove(ueNum);
 						uesWithIP.remove(rem);
 						AmarisoftUE ue = new AmarisoftUE(ueNum, null, this);

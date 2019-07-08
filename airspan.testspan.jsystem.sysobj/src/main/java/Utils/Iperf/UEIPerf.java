@@ -756,6 +756,8 @@ public class UEIPerf {
 			file = iperfMachineUL.getFile(ips.getTpFileName());
 		}*/
 		Pattern p = Pattern.compile("(\\d+.\\d+-\\s*\\d+.\\d+).*KBytes\\s+(\\d+|\\d+.\\d+)\\s+Kbits/sec.*");
+		int tcpCount = 0;
+		boolean tcpName = ips.getTpFileName().contains("TCP");
 		try{
 			FileReader read = new FileReader(file);
 			BufferedReader br = new BufferedReader(read);
@@ -765,6 +767,10 @@ public class UEIPerf {
 			while((line = br.readLine()) != null){
 				Matcher m = p.matcher(line);
 				if(m.find()){
+					if(tcpName && tcpCount<20){
+						tcpCount++;
+						continue;
+					}
 					//System.out.println(m.group(1));
 					//System.out.println(m.group(2));
 					//String sampleTime = m.group(1);
@@ -887,9 +893,15 @@ public class UEIPerf {
 			String line;
 			long sampleTime = ips.getTimeStart();
 			int sampleIndex = 0;
+			int tcpCount = 0;
+			boolean tcpName = ips.getTpFileName().contains("TCP");
 			while((line = br.readLine()) != null){
 				Matcher m = p.matcher(line);
 				if(m.find()){
+					if(tcpName && tcpCount<20){
+						tcpCount++;
+						continue;
+					}
 					//System.out.println(m.group(1));
 					//System.out.println(m.group(2));
 					//String sampleTime = m.group(1);

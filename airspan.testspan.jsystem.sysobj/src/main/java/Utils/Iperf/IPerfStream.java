@@ -67,7 +67,7 @@ public class IPerfStream {
 	
 	void generateIPerfCommands(){
 		if(!isRunningTraffic()){
-			String runTimeTraffic = (runTime != null ? (this.protocol == Protocol.TCP?String.valueOf(runTime):String.valueOf(runTime+10)):UEIPerf.IPERF_TIME_LIMIT);
+			String runTimeTraffic = (runTime != null ? (this.protocol == Protocol.TCP?String.valueOf(runTime+20):String.valueOf(runTime+10)):UEIPerf.IPERF_TIME_LIMIT);
 
 			if(this.protocol == Protocol.UDP){
 				String frame = this.frameSize == null?"1400":String.valueOf(this.frameSize);

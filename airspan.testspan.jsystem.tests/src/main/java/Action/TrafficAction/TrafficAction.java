@@ -13,6 +13,7 @@ import jsystem.framework.TestProperties;
 import jsystem.framework.report.Reporter;
 import jsystem.framework.scenario.Parameter;
 import testsNG.Actions.Traffic.GeneratorType;
+import testsNG.Actions.Traffic.TrafficType;
 import testsNG.Actions.TrafficManager;
 import Action.Action;
 import EnodeB.EnodeB;
@@ -333,6 +334,9 @@ public class TrafficAction extends Action {
 		GeneralUtils.stopLevel();
 		if (!validateStreams())
 			return;
+		if(trafficType == Protocol.TCP){
+			report.report("Traffic wanted is TCP. Will add 20 seconds to traffic and ignore first 20 samples from files");
+		}
 		trafficManagerInstance.startTraffic(semanticName, convertUeToNamesList(ues), qci, loadType, ULLoad, DLLoad,
 				transmitDirection, expectedLoadType, ULExpected, DLExpected, dut, parallelStreams, windowSize, mss,
 				frameSize, trafficType, runTime, toCheck);

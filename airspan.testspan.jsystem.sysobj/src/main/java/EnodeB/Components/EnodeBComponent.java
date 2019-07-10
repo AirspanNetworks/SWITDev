@@ -5,10 +5,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.snmp4j.smi.Variable;
 
 import EnodeB.EnodeB;
 import EnodeB.Components.Cli.Cli;
@@ -95,6 +98,7 @@ public abstract class EnodeBComponent implements LogListener {
     public int SWTypeInstnace;
     public ArrayList<String> debugFlags;
     public boolean SkipCMP = false;
+    public boolean skipDestTrap = false;
     private volatile WaitForSrialPromptAndEchoToSkipCMP waitForSrialPromptAndEchoToSkipCMP;
 
 	/**
@@ -144,6 +148,14 @@ public abstract class EnodeBComponent implements LogListener {
         SkipCMP = Boolean.parseBoolean(skipCMP);
     }
 
+    public boolean isSkipDestTrap() {
+        return skipDestTrap;
+    }
+    
+    public void setSkipDestTrap(String skipDestTrap) {
+    	this.skipDestTrap = Boolean.parseBoolean(skipDestTrap);
+    }
+    
 	public  SessionManager getSessionManager() {
 		return this.sessionManager;
 	}
@@ -737,12 +749,16 @@ public abstract class EnodeBComponent implements LogListener {
     }
 
     private void handleReboots(){
-    	 failOrReportOverReboot();
-         handleSkipCMP();
-         setTrapDestenation();
+    	failOrReportOverReboot();
+        handleSkipCMP();
+        setTrapDestenation();        	 
     }
 
     private void setTrapDestenation(){
+    	if(skipDestTrap){
+    		GeneralUtils.printToConsole("SkipTrapDest flag is true. Skipping setting trap destination");
+    		return;
+    	}
     	GeneralUtils.printToConsole(this.getName() +  " - setTrapDestination thread after reboot started");
     	WaitForSNMPAndSetTrapDest setTrapThread = new WaitForSNMPAndSetTrapDest();
     	setTrapThread.start();
@@ -774,6 +790,13 @@ public abstract class EnodeBComponent implements LogListener {
     	String oid = MibReader.getInstance().resolveByName("wmanDevCmnSnmpV1V2TrapDest");
     	boolean actionPassed = true;
     	try {
+    		HashMap<String, Variable> ipAdd = snmp.SnmpWalk(oid + ".3");
+    		while(ipAdd.isEmpty()){
+    			GeneralUtils.printToConsole("snmpTrapDest table empty. Wait 10 seconds and try again");
+    			GeneralUtils.unSafeSleep(10*1000);
+    			ipAdd = snmp.SnmpWalk(oid + ".3");
+    		}
+    		GeneralUtils.unSafeSleep(10*1000);
     		String nmsHostName = NetspanServer.getInstance().getHostname();
     		String currentNmsIp = snmp.get(oid + ".3.4");
     		GeneralUtils.printToConsole(this.getName() +  " - setTrapDestination thread currentNmsIp = " + currentNmsIp);

@@ -699,7 +699,8 @@ public class EnodeBConfig {
 				report.report("setMultiCellstate via netspan failed.", Reporter.WARNING);
 			}
 			GeneralUtils.unSafeSleep(10000);
-			return dut.getCellServiceState(41).equals((isEnabled ? "1" : "0"));
+			boolean enabled = dut.getCellEnabled(41);
+			return enabled == (isEnabled ? true : false);
 		} catch (Exception e) {
 			report.report("setMultiCellstate failed due to: " + e.getMessage(), Reporter.WARNING);
 			e.printStackTrace();

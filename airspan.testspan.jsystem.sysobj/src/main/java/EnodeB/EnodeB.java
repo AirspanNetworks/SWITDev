@@ -1710,7 +1710,11 @@ public abstract class EnodeB extends SystemObjectImpl {
 	public String getCellServiceState(int cell) {
 		return XLP.getCellServiceState(cell);
 	}
-
+	
+	public boolean getCellEnabled(int cell){
+		return XLP.getCellEnabled(cell);
+	}
+	
 	public boolean enableDynamicCFI() throws IOException {
 		return XLP.enableDynamicCFI();
 	}

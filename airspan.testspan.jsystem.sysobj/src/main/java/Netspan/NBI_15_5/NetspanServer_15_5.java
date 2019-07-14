@@ -734,8 +734,17 @@ public class NetspanServer_15_5 extends NetspanServer_15_2 implements Netspan_15
 			AuRelayDetails relayDetails = new AuRelayDetails();
 			relayDetails.setRelayProfile(profileName);
 			return setRelayEnbConfig(node, null, relayDetails, null, null, null);
-		} else
-			return super.setProfile(node, cellid, profileType, profileName);
+		} else if(profileType == EnbProfiles.Radio_Profile){
+			ObjectFactory objectFactory = new ObjectFactory();
+			LteEnbDetailsSetWs enbConfigSet = new LteEnbDetailsSetWs();
+			LteCellSetWs lteCellSet = new LteCellSetWs();
+			lteCellSet.setCellNumber(objectFactory.createLteCellGetWsCellNumber(String.valueOf(cellid)));
+			lteCellSet.setRadioProfile(profileName);
+			enbConfigSet.getLteCell().add(lteCellSet);
+			return enbSetContent(node, null, enbConfigSet, null);
+		}else{
+			return super.setProfile(node, cellid, profileType, profileName);			
+		}
 	}
 
 	private boolean setRelayEnbConfig(EnodeB node, AuNodeDetailsWs nodeDetail,

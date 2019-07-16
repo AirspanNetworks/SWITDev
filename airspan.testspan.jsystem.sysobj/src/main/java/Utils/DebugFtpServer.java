@@ -46,7 +46,11 @@ public class DebugFtpServer extends SystemObjectImpl{
 		String[] octets = debugFtpServerIP.split(delimiter);
 		ipInHex = new byte[octets.length];
 		for(int i=0;i<octets.length ; i++){
-			ipInHex[i] = (byte) Integer.parseInt(octets[i]);
+			try{
+				ipInHex[i] = (byte) Integer.parseInt(octets[i]);				
+			}catch(Exception e){
+				ipInHex[i] = (byte) Integer.parseInt(octets[i],16);
+			}
 		}
 		return ipInHex;
 	}

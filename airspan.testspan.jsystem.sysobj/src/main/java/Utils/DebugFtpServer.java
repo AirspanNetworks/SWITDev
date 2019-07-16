@@ -42,7 +42,7 @@ public class DebugFtpServer extends SystemObjectImpl{
 	
 	public byte[] getDebugFtpServerIPInBytes() {
 		byte[] ipInHex;
-		String delimiter = addressType.equals(2) ? ":" : "\\.";
+		String delimiter = addressType.equals("2") ? ":" : "\\.";
 		String[] octets = debugFtpServerIP.split(delimiter);
 		ipInHex = new byte[octets.length];
 		for(int i=0;i<octets.length ; i++){

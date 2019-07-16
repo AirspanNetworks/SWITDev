@@ -1,5 +1,8 @@
 package Utils;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 import jsystem.framework.system.SystemManagerImpl;
 import jsystem.framework.system.SystemObjectImpl;
 
@@ -41,7 +44,18 @@ public class DebugFtpServer extends SystemObjectImpl{
 	}
 	
 	public byte[] getDebugFtpServerIPInBytes() {
-		byte[] ipInHex;
+		InetAddress a = null;
+		try {
+			a = InetAddress.getByName(debugFtpServerIP);
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    byte[] bytes = a.getAddress();
+	    return bytes;
+		
+		
+		/*byte[] ipInHex;
 		String delimiter = addressType.equals("2") ? ":" : "\\.";
 		String[] octets = debugFtpServerIP.split(delimiter);
 		ipInHex = new byte[octets.length];
@@ -52,7 +66,7 @@ public class DebugFtpServer extends SystemObjectImpl{
 				ipInHex[i] = (byte) Integer.parseInt(octets[i],16);
 			}
 		}
-		return ipInHex;
+		return ipInHex;*/
 	}
 	
 	public void setDebugFtpServerUser(String debugFtpServerUser) {

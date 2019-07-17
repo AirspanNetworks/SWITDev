@@ -44,29 +44,17 @@ public class DebugFtpServer extends SystemObjectImpl{
 	}
 	
 	public byte[] getDebugFtpServerIPInBytes() {
-		InetAddress a = null;
+		InetAddress addr = null;
+		byte[] bytes = null;
 		try {
-			a = InetAddress.getByName(debugFtpServerIP);
+			addr = InetAddress.getByName(debugFtpServerIP);
+			bytes = addr.getAddress();
+			return bytes;
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	    byte[] bytes = a.getAddress();
-	    return bytes;
-		
-		
-		/*byte[] ipInHex;
-		String delimiter = addressType.equals("2") ? ":" : "\\.";
-		String[] octets = debugFtpServerIP.split(delimiter);
-		ipInHex = new byte[octets.length];
-		for(int i=0;i<octets.length ; i++){
-			try{
-				ipInHex[i] = (byte) Integer.parseInt(octets[i]);				
-			}catch(Exception e){
-				ipInHex[i] = (byte) Integer.parseInt(octets[i],16);
-			}
-		}
-		return ipInHex;*/
+	    
+	    return null;
 	}
 	
 	public void setDebugFtpServerUser(String debugFtpServerUser) {

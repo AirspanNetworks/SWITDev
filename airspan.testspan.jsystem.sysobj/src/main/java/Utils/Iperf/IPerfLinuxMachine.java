@@ -81,16 +81,16 @@ public class IPerfLinuxMachine extends IPerfMachine{
 	@Override
 	public String startIPerfTraffic(String clientCommand, String clientOutputFileName, TransmitDirection transmitDirection){
 		//Return linux Client Command
-		return "nohup iperf " + clientCommand + " &> "+ preAddressTpFile + clientOutputFileName +" &";
+		return "nohup iperf3 " + clientCommand + " &> "+ preAddressTpFile + clientOutputFileName +" &";
 	}
 
 	@Override
 	public String startIPerfListener(Integer numberOfParallelIPerfStreams, String serverCommand, String tpFileName, TransmitDirection transmitDirection){
 		String linuxServerCommand = "";
 		if(numberOfParallelIPerfStreams != null && numberOfParallelIPerfStreams > 1){
-			linuxServerCommand = "nohup iperf " + serverCommand + " | grep SUM --line-buffered &> " + preAddressTpFile + tpFileName + " &";
+			linuxServerCommand = "nohup iperf3 " + serverCommand + " | grep SUM --line-buffered &> " + preAddressTpFile + tpFileName + " &";
 		}else{
-			linuxServerCommand = "nohup iperf " + serverCommand + " &> " + preAddressTpFile + tpFileName + " &";
+			linuxServerCommand = "nohup iperf3 " + serverCommand + " &> " + preAddressTpFile + tpFileName + " &";
 		}
 		return linuxServerCommand;
 	}

@@ -39,7 +39,7 @@ public class AmarisoftIperf extends UEIPerf{
 		if(iperfMachineUL != null){
 			for(IPerfStream ulIPerfStream : ulStreamArrayList){
 				if(ulIPerfStream.isActive() && !ulIPerfStream.isRunningTraffic()){
-					String linuxClientCommand = "sudo ip netns exec ue"+((AmarisoftUE)ue).ueId+" nohup iperf " + ulIPerfStream.getIperfClientCommand() + " &> "+ iperfMachineUL.getPreAddressTpFile() + ulIPerfStream.getClientOutputFileName() +" &";
+					String linuxClientCommand = "sudo ip netns exec ue"+((AmarisoftUE)ue).ueId+" nohup iperf3 " + ulIPerfStream.getIperfClientCommand() + " &> "+ iperfMachineUL.getPreAddressTpFile() + ulIPerfStream.getClientOutputFileName() +" &";
 					IPerf.commandsUlClient += linuxClientCommand+"\n";//iperfMachineUL.sendCommand(linuxClientCommand).getElement0();
 					ulIPerfStream.setRunningTraffic(true);
 					ulIPerfStream.setTimeStart(startTime);
@@ -57,9 +57,9 @@ public class AmarisoftIperf extends UEIPerf{
 				if(dlIPerfStream.isActive() && !dlIPerfStream.isRunningTraffic()){
 					String linuxServerCommand = "";
 					if(dlIPerfStream.getNumberOfParallelIPerfStreams() != null && dlIPerfStream.getNumberOfParallelIPerfStreams() > 1){
-						linuxServerCommand = "sudo ip netns exec ue"+((AmarisoftUE)ue).ueId+" nohup iperf " + dlIPerfStream.getIperfServerCommand() + " | grep SUM --line-buffered &> " +  iperfMachineUL.getPreAddressTpFile() + dlIPerfStream.getTpFileName() + " &";
+						linuxServerCommand = "sudo ip netns exec ue"+((AmarisoftUE)ue).ueId+" nohup iperf3 " + dlIPerfStream.getIperfServerCommand() + " | grep SUM --line-buffered &> " +  iperfMachineUL.getPreAddressTpFile() + dlIPerfStream.getTpFileName() + " &";
 					}else{
-						linuxServerCommand = "sudo ip netns exec ue"+((AmarisoftUE)ue).ueId+" nohup iperf " + dlIPerfStream.getIperfServerCommand() + " &> " +  iperfMachineUL.getPreAddressTpFile() + dlIPerfStream.getTpFileName() + " &";
+						linuxServerCommand = "sudo ip netns exec ue"+((AmarisoftUE)ue).ueId+" nohup iperf3 " + dlIPerfStream.getIperfServerCommand() + " &> " +  iperfMachineUL.getPreAddressTpFile() + dlIPerfStream.getTpFileName() + " &";
 					}
 					IPerf.commandsDlServer += linuxServerCommand+"\n";//iperfMachineUL.sendCommand(linuxServerCommand).getElement0();
 				}

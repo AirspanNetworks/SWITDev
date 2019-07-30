@@ -71,8 +71,8 @@ public class IPerfStream {
 
 			if(this.protocol == Protocol.UDP){
 				String frame = this.frameSize == null?"1400":String.valueOf(this.frameSize);
-				this.iperfClientCommand = "-c " + this.destIpAddress + " -u -i 3 -p " + (5000+this.qci) + " -l " + frame + ".0B -b " + convertTo3DigitsAfterPoint(this.streamLoad) + "M -t " + runTimeTraffic;
-				this.iperfServerCommand = "-s -u -i 3 -p " + (5000+this.qci) + " -B " + this.srcIpAddress + " -l " + frame + ".0B -f k -t "+ runTimeTraffic;
+				this.iperfClientCommand = "-c " + this.destIpAddress + " -u -i 1 -p " + (5000+this.qci) + " -l " + frame + ".0B -b " + convertTo3DigitsAfterPoint(this.streamLoad) + "M -t " + runTimeTraffic;
+				this.iperfServerCommand = "-s -u -i 1 -p " + (5000+this.qci) + " -B " + this.srcIpAddress + " -l " + frame + ".0B -f k -t "+ runTimeTraffic;
 			}else if(this.protocol == Protocol.TCP){
 				this.iperfClientCommand = "-c " + this.destIpAddress;
 				this.iperfServerCommand = "-s";
@@ -80,8 +80,8 @@ public class IPerfStream {
 					this.iperfClientCommand += " -P "+numberOfParallelIPerfStreams;
 					this.iperfServerCommand += " -P "+numberOfParallelIPerfStreams;
 				}
-				this.iperfClientCommand += " -i 3 -p " + (5010+this.qci);
-				this.iperfServerCommand += " -i 3 -p " + (5010+this.qci);
+				this.iperfClientCommand += " -i 1 -p " + (5010+this.qci);
+				this.iperfServerCommand += " -i 1 -p " + (5010+this.qci);
 				if(this.windowSizeInKbits != null){
 					this.iperfClientCommand += " -w "+this.windowSizeInKbits+"k";
 					this.iperfServerCommand += " -w "+this.windowSizeInKbits+"k";

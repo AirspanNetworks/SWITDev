@@ -571,6 +571,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     			if(numberFailedConnections == 10){
     				failedConnectionServer = true;
     				report.report("Connection to web socket server is failing. Failing test and closing server", Reporter.FAIL);
+    				GeneralUtils.stopAllLevels();
     				stopServer();
     		    	ueMap = new ArrayList();
     		    	uesWithIP = new ArrayList<AmarisoftUE>();
@@ -835,8 +836,8 @@ public class AmariSoftServer extends SystemObjectImpl{
 			if (groupName.equals("amarisoft")) {
 				while (unusedUEs.size() > 0) {
 					int ueId = unusedUEs.get(0).ueId;
-					result = result && addUe(unusedUEs.get(0), release, category, ueId, cellId, powerControlEnabled,
-							channelType, speed, direction,position);
+					result = addUe(unusedUEs.get(0), release, category, ueId, cellId, powerControlEnabled,
+							channelType, speed, direction,position) && result;
 				}
 			}
 			else {
@@ -848,8 +849,8 @@ public class AmariSoftServer extends SystemObjectImpl{
 					for(String group: groups) {
 						if (group.equals(groupName)){
 							int ueId = unusedUEs.get(i).ueId;
-							result = result && addUe(unusedUEs.get(i), release, category, ueId, cellId, powerControlEnabled,
-									channelType, speed, direction,position);
+							result = addUe(unusedUEs.get(i), release, category, ueId, cellId, powerControlEnabled,
+									channelType, speed, direction,position) && result;
 							wasAdded = true;
 							atListOneUE = true;
 						}	
@@ -890,8 +891,8 @@ public class AmariSoftServer extends SystemObjectImpl{
 				return false;
 			}
 			int ueId = unusedUEs.get(0).ueId;
-			result = result && addUe(unusedUEs.get(0), release, category, ueId, cellId, powerControlEnabled,
-					 channelType,  speed,  direction, position);
+			result = addUe(unusedUEs.get(0), release, category, ueId, cellId, powerControlEnabled,
+					 channelType,  speed,  direction, position) && result;
 		}
 		GeneralUtils.stopLevel();
 		return result;
@@ -1066,7 +1067,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 					unusedUEs.add(tempue);
 				}
 				else {
-					report.report("UE :" + tempue.ueId + " ( " + tempue.getImsi() + " ) haven't been deleted from ue simulator");
+					report.report("UE :" + tempue.ueId + " ( " + tempue.getImsi() + " ) haven't been deleted from ue simulator", Reporter.WARNING);
 					result = false;
 				}
 			}

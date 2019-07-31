@@ -203,8 +203,6 @@ public class UeSimulatorActions extends Action {
 		if (!res) {
 			report.report("Adding UEs Failed", Reporter.FAIL);
 			reason = "Adding UEs Failed";
-		} else {
-			report.report("Adding UEs Succeeded");
 		}
 	}
 	private boolean addUes(String groupName) {
@@ -240,8 +238,8 @@ public class UeSimulatorActions extends Action {
 		}
 
 		if (!flag) {
-			report.report("Add UEs Failed", Reporter.FAIL);
-			reason = "Add UEs Failed";
+			report.report("Not all UEs were added", Reporter.WARNING);
+			reason = "Not all UEs were added";
 			return  false;
 		} else {
 			report.report("Add UEs Succeeded");
@@ -279,8 +277,8 @@ public class UeSimulatorActions extends Action {
 		}
 
 		if (!flag) {
-			report.report("Add UEs Failed", Reporter.FAIL);
-			reason = "Add UEs Failed";
+			report.report("Not all UEs were added", Reporter.WARNING);
+			reason = "Not all UEs were added";
 			return false;
 		} else {
 			report.report("Add UEs Succeeded");
@@ -316,8 +314,6 @@ public class UeSimulatorActions extends Action {
 		if (!res) {
 			report.report("delete UEs Failed", Reporter.FAIL);
 			reason = "delete UEs Failed";
-		} else {
-			report.report("delete UEs Succeeded");
 		}
 		AmariSoftServer amariSoftServer;
 		try {

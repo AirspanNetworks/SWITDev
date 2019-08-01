@@ -257,6 +257,7 @@ public class Radio extends TestspanTest {
 			report.report("Update Failed", Reporter.FAIL);
 			return;
 		}
+		GeneralUtils.unSafeSleep(10*1000);
 		if (performReboot) {
 			status = rebootAndWaitForAllrunning();
 			if (status) {

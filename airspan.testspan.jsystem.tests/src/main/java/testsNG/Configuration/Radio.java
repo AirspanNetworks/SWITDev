@@ -258,6 +258,7 @@ public class Radio extends TestspanTest {
 			return;
 		}
 		GeneralUtils.unSafeSleep(10*1000);
+		report.reportHtml("db get cellcfg", dut.lteCli("db get cellcfg"), true);
 		if (performReboot) {
 			status = rebootAndWaitForAllrunning();
 			if (status) {

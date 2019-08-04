@@ -265,6 +265,7 @@ public class Radio extends TestspanTest {
 				report.report("Enodeb Reached all running and in service succefully");
 			}
 		}
+		report.reportHtml("db get cellcfg", dut.lteCli("db get cellcfg"), true);
 	}
 
 	private void removeClonedProfiles(EnodeB node) {

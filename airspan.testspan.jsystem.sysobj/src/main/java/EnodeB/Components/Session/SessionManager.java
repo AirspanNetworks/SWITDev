@@ -32,14 +32,12 @@ public class SessionManager {
 	/**
 	 * open Serial Log Session
 	 */
-	public void openSerialLogSession() {
+	public boolean openSerialLogSession() {
 		serialLogLevel = setDefaultCommandSessionLevelFromPropFile(CONSOLE_LOG_LEVEL_PROPERTY_NAME);
 		if (enodeBComponent.serialCom != null){
-			openSerialSession();
-//			if(SSHCommandSession == null && getEnodeBComponent() instanceof DAN){
-//				SSHCommandSession = getSerialSession();
-//			}
+			return openSerialSession();
 		}
+		return false;
 	}
 
 	/**
@@ -111,10 +109,12 @@ public class SessionManager {
 		boolean ans = newConsoleSession.waitForSessionToConnect(SESSION_WAIT_TIMEOUT);
 		sessions.add(newConsoleSession);
 		setSerialSession(newConsoleSession);
-		boolean loginSuccess = newConsoleSession.loginSerial();
-		String idResult = newConsoleSession.sendCommands(EnodeBComponent.SHELL_PROMPT, "id", "");
-		GeneralUtils.printToConsole("serial id: " + idResult);
-		GeneralUtils.printToConsole("Session " + newConsoleSession.getName() + " opened Status:" + ans);
+		boolean loginSuccess = newConsoleSession.loginSerial(enodeBComponent.getSerialUsername());
+		if(loginSuccess){
+			String idResult = newConsoleSession.sendCommands(EnodeBComponent.SHELL_PROMPT, "id", "");
+			GeneralUtils.printToConsole("serial id: " + idResult);
+			GeneralUtils.printToConsole("Session " + newConsoleSession.getName() + " opened Status:" + ans);			
+		}
 		return loginSuccess;
 	}
 
@@ -233,6 +233,13 @@ public class SessionManager {
 	 */
 	public Session getSSHCommandSession() {
 		return SSHCommandSession;
+	}
+	
+	/** Command Session
+	 * @return - SSHCommandSession
+	 */
+	public void setSSHCommandSession(Session sshCommandSession) {
+		this.SSHCommandSession = sshCommandSession;
 	}
 	
 	public Session getSSHlogSession() {

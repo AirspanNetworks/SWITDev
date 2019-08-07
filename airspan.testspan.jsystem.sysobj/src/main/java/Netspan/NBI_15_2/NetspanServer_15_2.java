@@ -2194,11 +2194,11 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
     }
 
     @Override
-    public String getRunningVer(EnodeB enb) {
+    public String getRunningVer(String nodeName) {
         NodeSoftwareGetResult NodeSoftwareGetResult = null;
         try {
             NodeSoftwareGetResult = soapHelper_15_2.getStatusSoap()
-                .nodeSoftwareStatusGet(enb.getNetspanName(), credentialsStatus);
+                .nodeSoftwareStatusGet(nodeName, credentialsStatus);
             if (NodeSoftwareGetResult.getErrorCode() != Netspan.NBI_15_2.Status.ErrorCodes.OK) {
                 report.report("nodeSoftwareStatusGet via Netspan Failed : " + NodeSoftwareGetResult.getErrorString(),
                     Reporter.WARNING);
@@ -2215,11 +2215,11 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
     }
 
     @Override
-    public String getStandbyVer(EnodeB enb) {
+    public String getStandbyVer(String nodeName) {
         NodeSoftwareGetResult NodeSoftwareGetResult = null;
         try {
             NodeSoftwareGetResult = soapHelper_15_2.getStatusSoap()
-                .nodeSoftwareStatusGet(enb.getNetspanName(), credentialsStatus);
+                .nodeSoftwareStatusGet(nodeName, credentialsStatus);
             if (NodeSoftwareGetResult.getErrorCode() != Netspan.NBI_15_2.Status.ErrorCodes.OK) {
                 report.report("nodeSoftwareStatusGet via Netspan Failed", Reporter.WARNING);
                 report.report(NodeSoftwareGetResult.getErrorString(), Reporter.WARNING);

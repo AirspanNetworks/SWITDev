@@ -1743,6 +1743,8 @@ public class SoftwareUtiles {
 	private void followSoftwareActivateProgress(ArrayList<EnodebSwStatus> eNodebSwStatusList) {
 		GeneralUtils.startLevel("Verify Software Activation.");
 		verifyActivateInProgress(new ArrayList<>(eNodebSwStatusList));
+		for (EnodebSwStatus enodebSwStatus : eNodebSwStatusList)
+			enodebSwStatus.geteNodeB().updateVersions();
 		waitForAllRunningAndInService(new ArrayList<>(eNodebSwStatusList));
 		GeneralUtils.stopLevel();
 	}

@@ -38,9 +38,10 @@ import jsystem.framework.system.SystemObject;
  *
  */
 public abstract class EnodeBComponent implements LogListener {
-
+	
+	
 	private String name = null;
-	private SystemObject parent = null;
+	protected SystemObject parent = null;
 	protected Reporter report = ListenerstManager.getInstance();
 
 	private final String VER_PREFIX = "ver_";
@@ -220,16 +221,16 @@ public abstract class EnodeBComponent implements LogListener {
 		initSNMP();
 		initSerialCom();
 		sessionManager = new SessionManager(this);
-		sessionManager.openSSHCommandSession();
-		startLogStreamer();
-
-		if (ipAddress != null) {
-			// Init secure copy object with EnodeB IP
-			secureCopy = new ScpClient(getIpAddress());
-		}
 		this.waitForSrialPromptAndEchoToSkipCMP = new WaitForSrialPromptAndEchoToSkipCMP(WAIT_FOR_SERIAL_PROMPT);
 	}
 
+    protected void initScpClient(){
+    	if (ipAddress != null) {
+			// Init secure copy object with EnodeB IP
+			secureCopy = new ScpClient(getIpAddress());
+		}
+    }
+    
 	public void initSerialCom() {
 		if (serialCom != null) {
 			try {
@@ -245,7 +246,7 @@ public abstract class EnodeBComponent implements LogListener {
 	/**
 	 * start Log Streamer (Thread)
 	 */
-	private void startLogStreamer() {
+	protected void startLogStreamer() {
 		if (logFilePath == null) {
 			logFilePath = System.getProperty("user.dir") + "\\" + getName() + ".log";
 		}
@@ -270,8 +271,9 @@ public abstract class EnodeBComponent implements LogListener {
      */
     public void addPrompts(Cli cli) {
         cli.setPrompt(LOGIN_PROMPT);
+        // TODO create validate credentials + set active password
         cli.addPrompt(SHELL_PROMPT, LOGIN_PROMPT, new String[]{getSerialUsername(), getSerialPassword(), getSerialSwitchUserCommand(),
-				getAdminPassword()}, "exit");
+        		getSerialPassword()}, "exit");
     }
 
     /**
@@ -866,7 +868,7 @@ public abstract class EnodeBComponent implements LogListener {
         public void run() {
             long startTime = System.currentTimeMillis();
             while ((System.currentTimeMillis() - startTime) < this.timeout) {
-                if (sessionManager.getSerialSession().loginSerial()) {
+                if (sessionManager.getSerialSession().loginSerial(getSerialUsername())) {
                     echoToSkipCmpv2();
                     break;
                 }

@@ -1581,11 +1581,11 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 	}
 
 	@Override
-	public String getRunningVer(EnodeB enb) {
+	public String getRunningVer(String nodeName) {
 		NodeSoftwareGetResult NodeSoftwareGetResult;
 		try {
 			NodeSoftwareGetResult = (NodeSoftwareGetResult) helper_14_50.execute("nodeSoftwareStatusGet",
-					enb.getNetspanName());
+					nodeName);
 			return NodeSoftwareGetResult.getSwList().getSwStatusWs().get(0).getRunningVersion();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1594,11 +1594,11 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 	}
 
 	@Override
-	public String getStandbyVer(EnodeB enb) {
+	public String getStandbyVer(String nodeName) {
 		NodeSoftwareGetResult NodeSoftwareGetResult;
 		try {
 			NodeSoftwareGetResult = (NodeSoftwareGetResult) helper_14_50.execute("nodeSoftwareStatusGet",
-					enb.getNetspanName());
+					nodeName);
 			return NodeSoftwareGetResult.getSwList().getSwStatusWs().get(0).getStandbyVersion();
 		} catch (Exception e) {
 			e.printStackTrace();

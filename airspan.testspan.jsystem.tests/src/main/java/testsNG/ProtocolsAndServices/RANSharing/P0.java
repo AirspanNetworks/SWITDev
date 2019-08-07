@@ -1158,12 +1158,12 @@ public class P0 extends TestspanTest {
 	}
 
 	private void setCountersValue() {
-		if (dut1.isInstanceOfXLP_14_0()) {
+		if (Float.parseFloat(dut1.getEnodeBversion()) == 14.0) {
 			succCounterName = "IntraFreqOutSucc";
 			succCounterNameSNMP = "asLteStatsHoIntraFreqOutSucc";
 			attCounterName = "IntraFreqOutAtt";
 			attCounterNameSNMP = "asLteStatsHoIntraFreqOutAtt";
-		} else if (dut1.isInstanceOfXLP_15_2()) {
+		} else if (Float.parseFloat(dut1.getEnodeBversion()) == 15.2) {
 			succCounterName = "HoX2IntraFreqInCompSuccRnlRadioRsn";
 			succCounterNameSNMP = "HoX2IntraFreqInCompSuccRnlRadioRsn";
 			attCounterName = "HoX2IntraFreqInAttRnlRadioRsn";

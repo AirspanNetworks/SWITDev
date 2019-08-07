@@ -21,8 +21,10 @@ public class DAN extends EnodeBComponent {
 	public void init() throws Exception {
 		this.statusTableFlag = false;
 		super.init();
+		sessionManager.openSSHCommandSession();
+		super.startLogStreamer();
+		super.initScpClient();
 	}
-	
 	
 	@Override
 	public void getLogLine(LoggerEvent e) {

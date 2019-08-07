@@ -479,9 +479,9 @@ public abstract class NetspanServer extends SystemObjectImpl {
 
     public abstract boolean is3rdPartyExist(String partyName);
 
-    public abstract String getRunningVer(EnodeB enb);
+    public abstract String getRunningVer(String nodeName);
 
-    public abstract String getStandbyVer(EnodeB enb);
+    public abstract String getStandbyVer(String nodeName);
 
     public abstract boolean delete3rdParty(ArrayList<String> names);
 

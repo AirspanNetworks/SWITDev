@@ -124,7 +124,7 @@ public class Session implements Runnable {
 		this.logLevel = logLevel;
 	}
 
-	public boolean loginSerial() {
+	public boolean loginSerial(String user) {
 		GeneralUtils.printToConsole("getting to login prompt in serial:");
 		int i = 1;
 		long startTime = System.currentTimeMillis();
@@ -132,12 +132,15 @@ public class Session implements Runnable {
 		while (System.currentTimeMillis() - startTime <= 30*1000) {
 			GeneralUtils.printToConsole("Attempt #" + i++);
 			String ans = this.sendCommands(EnodeBComponent.SHELL_PROMPT,"exit","login");
+			this.getCliBuffer();
 			if (ans.contains("login")) {
+				ans = this.sendCommands(EnodeBComponent.SHELL_PROMPT, "whoami", user);
+				if(ans.contains("Login incorrect"))
+					return false;
 				return true;
 			}
 			GeneralUtils.unSafeSleep(500);
 		}
-		
 		return false;
 	}
 

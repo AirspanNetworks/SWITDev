@@ -207,7 +207,6 @@ public abstract class EnodeB extends SystemObjectImpl {
 	 */
 	public void init() throws Exception {
 		super.init();
-
 		getXLPByEnodeBVersion();
 		if (connectInfo.serialInfo != null) {
 			XLP.createSerialCom(connectInfo.serialInfo.getSerialIP(), Integer.parseInt(connectInfo.serialInfo.getSerialPort()));
@@ -248,28 +247,20 @@ public abstract class EnodeB extends SystemObjectImpl {
 	 */
 	private void getXLPByEnodeBVersion() {
 		switch (enodeBversion) {
-			case "14_5":
-			case "15_1":
+			case "14.5":
+			case "15.1":
 				XLP = new XLP_14_5();
 				break;
-			case "15_2":
-			case "15_5":
-				XLP = new XLP_15_2();
-				break;
-			case "16_0":
-				XLP = new XLP_16_0();
-				break;
-			case "16_5":
-			case "17_0":
-				XLP = new XLP_16_5();
-				break;
 			default:
-				XLP = new XLP_15_2();
-				report.report("no enodeB version was found- setting to XLP_15.2 as default");
+				XLP = new XLP();
 				break;
 		}
 	}
 
+	public void updateVersions(){
+		XLP.updateVersions();
+	}
+	
 	/**
 	 * Lte cli command
 	 *
@@ -795,7 +786,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 	}
 
 	public void setEnodeBversion(String enodeBversion) {
-		this.enodeBversion = enodeBversion;
+		this.enodeBversion = enodeBversion.replace("_", ".");
 	}
 
 	public void setProductDescription(String hardwareDescription) {
@@ -1511,7 +1502,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 
 	public int getSingleSampleCountersValue(String valueName) {
 		try {
-			return ((XLP_15_2) XLP).getSingleSampleCountersValue(valueName);
+			return XLP.getSingleSampleCountersValue(valueName);
 		} catch (ClassCastException e) {
 			report.report("XLP is not 15_2 and above - feature disabled");
 			return -1;
@@ -2289,12 +2280,8 @@ public abstract class EnodeB extends SystemObjectImpl {
 		return XLP;
 	}
 
-	public boolean isInstanceOfXLP_14_0() {
-		return (XLP instanceof XLP_14_0);
-	}
-
 	public boolean isInstanceOfXLP_15_2() {
-		return (XLP instanceof XLP_15_2);
+		return Float.parseFloat(enodeBversion) >= 15.2;
 	}
 
 	public Session getDefaultSession(String componentName) {

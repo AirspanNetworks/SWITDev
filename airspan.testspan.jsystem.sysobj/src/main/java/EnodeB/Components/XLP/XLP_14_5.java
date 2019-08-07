@@ -28,6 +28,32 @@ public class XLP_14_5 extends XLP {
 	String eutranCellId = null;
 
 	@Override
+	public int getCountersValue(String valueName) {
+		String counters = MibReader.getInstance().resolveByName(valueName);
+		int returnValue = 0;
+		String temp;
+
+		for (int i = 0; i < 3; i++) {
+			returnValue = 0;
+
+			HashMap<String, Variable> countersValues = snmp.SnmpWalk(counters);
+
+			if (countersValues == null) {
+				report.report("Cannot get Neighbor table Using SNMP", Reporter.WARNING);
+				return 0;
+			}
+
+			for (Variable count : countersValues.values()) {
+				temp = "" + count;
+				returnValue += Integer.parseInt(temp);
+			}
+			if (returnValue != 0)
+				return returnValue;
+		}
+		return returnValue;
+	}
+	
+	@Override
 	public boolean addNbr(EnodeB enodeB, EnodeB neighbor, HoControlStateTypes hoControlStatus,X2ControlStateTypes x2ControlStatus, HandoverType HandoverType, boolean isStaticNeighbor,String qOffsetRange) throws IOException {
 		//Initialize qOffSet, in case the user doesn't want to fill it (It's optional)
 		int qOffSet = 0;
@@ -524,15 +550,5 @@ public class XLP_14_5 extends XLP {
 	public boolean setGranularityPeriod(int value) {
 		report.report("No setting granularity period. Only valid for XLP 15.2 and up");
 		return false;
-	}	
-
-	@Override
-	public String getDefaultSSHUsername(){
-		return PasswordUtils.ADMIN_USERNAME;
-	}
-	
-	@Override
-	public String getDefaultSerialUsername(){
-		return PasswordUtils.ADMIN_USERNAME;
 	}
 }

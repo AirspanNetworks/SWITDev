@@ -571,6 +571,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     			if(numberFailedConnections == 10){
     				failedConnectionServer = true;
     				report.report("Connection to web socket server is failing. Failing test and closing server", Reporter.FAIL);
+    				GeneralUtils.stopAllLevels();
     				stopServer();
     		    	ueMap = new ArrayList();
     		    	uesWithIP = new ArrayList<AmarisoftUE>();
@@ -835,8 +836,8 @@ public class AmariSoftServer extends SystemObjectImpl{
 			if (groupName.equals("amarisoft")) {
 				while (unusedUEs.size() > 0) {
 					int ueId = unusedUEs.get(0).ueId;
-					result = result && addUe(unusedUEs.get(0), release, category, ueId, cellId, powerControlEnabled,
-							channelType, speed, direction,position);
+					result = addUe(unusedUEs.get(0), release, category, ueId, cellId, powerControlEnabled,
+							channelType, speed, direction,position) && result;
 				}
 			}
 			else {
@@ -848,8 +849,8 @@ public class AmariSoftServer extends SystemObjectImpl{
 					for(String group: groups) {
 						if (group.equals(groupName)){
 							int ueId = unusedUEs.get(i).ueId;
-							result = result && addUe(unusedUEs.get(i), release, category, ueId, cellId, powerControlEnabled,
-									channelType, speed, direction,position);
+							result = addUe(unusedUEs.get(i), release, category, ueId, cellId, powerControlEnabled,
+									channelType, speed, direction,position) && result;
 							wasAdded = true;
 							atListOneUE = true;
 						}	
@@ -890,8 +891,8 @@ public class AmariSoftServer extends SystemObjectImpl{
 				return false;
 			}
 			int ueId = unusedUEs.get(0).ueId;
-			result = result && addUe(unusedUEs.get(0), release, category, ueId, cellId, powerControlEnabled,
-					 channelType,  speed,  direction, position);
+			result = addUe(unusedUEs.get(0), release, category, ueId, cellId, powerControlEnabled,
+					 channelType,  speed,  direction, position) && result;
 		}
 		GeneralUtils.stopLevel();
 		return result;
@@ -976,6 +977,8 @@ public class AmariSoftServer extends SystemObjectImpl{
 			}
 		} catch (Exception e1) {
 			e1.printStackTrace();
+			report.report("Failed adding Ue " + ueId + " to simulator");
+			return false;
 		}		
 		
 		//check that RSRP is not 0
@@ -1008,6 +1011,11 @@ public class AmariSoftServer extends SystemObjectImpl{
 			GeneralUtils.printToConsole("Failed to delete ue: " + ueId);
 			GeneralUtils.printToConsole(e.getMessage());
 			e.printStackTrace();
+			return false;
+		}catch(ClassCastException e1){
+			GeneralUtils.printToConsole("Failed to delete ue: " + ueId);
+			GeneralUtils.printToConsole(e1.getMessage());
+			e1.printStackTrace();
 			return false;
 		}
 		return true;
@@ -1059,7 +1067,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 					unusedUEs.add(tempue);
 				}
 				else {
-					report.report("UE :" + tempue.ueId + " ( " + tempue.getImsi() + " ) haven't been deleted from ue simulator");
+					report.report("UE :" + tempue.ueId + " ( " + tempue.getImsi() + " ) haven't been deleted from ue simulator", Reporter.WARNING);
 					result = false;
 				}
 			}
@@ -1117,7 +1125,12 @@ public class AmariSoftServer extends SystemObjectImpl{
 			System.out.println(e.getMessage());
 			e.printStackTrace();
 			return false;
-		}		
+		} catch(ClassCastException e1){
+			System.out.println("Failed uePowerOn to ue " + ueId);
+			System.out.println(e1.getMessage());
+			e1.printStackTrace();
+			return false;
+		}
 		if (ue.getLanIpAddress() == null) {
 			String ip = getIpAddress(ueId);
 			if (ip != null) {
@@ -1150,6 +1163,9 @@ public class AmariSoftServer extends SystemObjectImpl{
 		} catch (JsonProcessingException e) {
 			GeneralUtils.printToConsole("Failed config_ue");
 			e.printStackTrace();
+		}catch (ClassCastException e1){
+			GeneralUtils.printToConsole("Failed config_ue");
+			e1.printStackTrace();
 		}
 		return config;
 
@@ -1217,6 +1233,9 @@ public class AmariSoftServer extends SystemObjectImpl{
 		} catch (JsonProcessingException e) {
 			GeneralUtils.printToConsole("Failed get_ue " + ueId);
 			e.printStackTrace();
+		}catch(ClassCastException e1){
+			GeneralUtils.printToConsole("Failed get_ue " + ueId);
+			e1.printStackTrace();
 		}
 		return ueStatus;
 
@@ -1262,6 +1281,11 @@ public class AmariSoftServer extends SystemObjectImpl{
 			GeneralUtils.printToConsole("Failed uePowerOff to ue " + ueId);
 			GeneralUtils.printToConsole(e.getMessage());
 			e.printStackTrace();
+			return false;
+		}catch (ClassCastException e1){
+			GeneralUtils.printToConsole("Failed uePowerOff to ue " + ueId);
+			GeneralUtils.printToConsole(e1.getMessage());
+			e1.printStackTrace();
 			return false;
 		}
 		return true;
@@ -1481,6 +1505,11 @@ public class AmariSoftServer extends SystemObjectImpl{
 			GeneralUtils.printToConsole("Failed reestablish to ue " + ueId);
 			GeneralUtils.printToConsole(e.getMessage());
 			e.printStackTrace();
+			return false;
+		}catch (ClassCastException e1){
+			GeneralUtils.printToConsole("Failed reestablish to ue " + ueId);
+			GeneralUtils.printToConsole(e1.getMessage());
+			e1.printStackTrace();
 			return false;
 		}
 		return true;

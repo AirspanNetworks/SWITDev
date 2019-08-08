@@ -1,27 +1,5 @@
 package EnodeB.Components.XLP;
 
-import EnodeB.Components.Cli.Cli;
-import EnodeB.Components.EnodeBComponent;
-import EnodeB.Components.Session.SessionManager;
-import EnodeB.EnodeB;
-import EnodeB.EnodeBUpgradeServer;
-import EnodeB.PhyState;
-import EnodeB.ProtoBuf.ProtoBuf;
-import EnodeB.ProtoBuf.PbLteStatusOuterClass.*;
-import Entities.ITrafficGenerator.TransmitDirection;
-import Netspan.NetspanServer;
-import Netspan.API.Enums.*;
-import Netspan.API.Lte.RFStatus;
-import Netspan.Profiles.NetworkParameters.Plmn;
-import Utils.*;
-import Utils.GeneralUtils.CellIndex;
-import Utils.Snmp.MibReader;
-import jsystem.framework.IgnoreMethod;
-import jsystem.framework.report.Reporter;
-import jsystem.framework.system.SystemManagerImpl;
-import org.snmp4j.smi.OctetString;
-import org.snmp4j.smi.Variable;
-
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -31,6 +9,45 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.snmp4j.smi.OctetString;
+import org.snmp4j.smi.Variable;
+
+import EnodeB.EnodeB;
+import EnodeB.EnodeBUpgradeServer;
+import EnodeB.PhyState;
+import EnodeB.Components.EnodeBComponent;
+import EnodeB.Components.Cli.Cli;
+import EnodeB.Components.Session.SessionManager;
+import EnodeB.ProtoBuf.PbLteStatusOuterClass.PbLteAnrStatus;
+import EnodeB.ProtoBuf.PbLteStatusOuterClass.PbLteCellStatus;
+import EnodeB.ProtoBuf.PbLteStatusOuterClass.PbLteMmeStatus;
+import EnodeB.ProtoBuf.PbLteStatusOuterClass.PbLteNwElementStatus;
+import EnodeB.ProtoBuf.PbLteStatusOuterClass.PbLteRfStatus;
+import EnodeB.ProtoBuf.PbLteStatusOuterClass.PbLteSgwStatus;
+import EnodeB.ProtoBuf.ProtoBuf;
+import Entities.ITrafficGenerator.TransmitDirection;
+import Netspan.NetspanServer;
+import Netspan.API.Enums.EnabledStates;
+import Netspan.API.Enums.EnbStates;
+import Netspan.API.Enums.HandoverType;
+import Netspan.API.Enums.HoControlStateTypes;
+import Netspan.API.Enums.ServerProtocolType;
+import Netspan.API.Enums.SonAnrStates;
+import Netspan.API.Enums.X2ControlStateTypes;
+import Netspan.API.Lte.RFStatus;
+import Netspan.Profiles.NetworkParameters.Plmn;
+import Utils.Earfcn;
+import Utils.GeneralUtils;
+import Utils.GeneralUtils.CellIndex;
+import Utils.InetAddressesHelper;
+import Utils.MoxaCom;
+import Utils.Pair;
+import Utils.PasswordUtils;
+import Utils.Snmp.MibReader;
+import jsystem.framework.IgnoreMethod;
+import jsystem.framework.report.Reporter;
+import jsystem.framework.system.SystemManagerImpl;
 
 /**
  * The Class XLP.
@@ -166,6 +183,7 @@ public class XLP extends EnodeBComponent {
 	public void init() throws Exception {
 		super.init();
 		updateVersions();
+		sessionManager.openSSHCommandSession();
 		super.startLogStreamer();
 		super.initScpClient();
 		try {
@@ -176,32 +194,36 @@ public class XLP extends EnodeBComponent {
 		}
 	}
 
-	public void updateVersions(){
+	public void updateVersions() {
 		getMajorVersions();
 		setUserNameAndPassword(enodebRunningVersion);
 		setScpParams(enodebRunningVersion);
-		if(!validateCredentials()){
+		if (!validateCredentials()) {
 			report.report("Trying to login with standby version");
 			resetCredentials();
 			setUserNameAndPassword(enodebStandbyVersion);
 			setScpParams(enodebStandbyVersion);
-			if(!validateCredentials()){
+			if (!validateCredentials()) {
 				report.report("Failed to login with standby version", Reporter.WARNING);
 				return;
 			}
 		}
-		if(sessionManager.getSSHCommandSession() != null){
-			//TODO solve for all sessions
-			sessionManager.getSSHCommandSession().close();
-			sessionManager.setSSHCommandSession(null);
-		}
-		sessionManager.openSSHCommandSession();
+		/*
+		 * if(sessionManager.getSSHCommandSession() != null){ //TODO solve for
+		 * all sessions
+		 * sessionManager.closeSession(sessionManager.getSSHCommandSession().
+		 * getName()); sessionManager.setSSHCommandSession(null); }
+		 */
+
 	}
-	
+
 	private boolean validateCredentials() {
-		GeneralUtils.printToConsole("Trying to connect to serial with user:" + getSerialUsername() + " password:" + getSerialPassword());
-		if(!sessionManager.openSerialLogSession()){
-			report.report("Failed to login to serial with user:" + getSerialUsername() + " password:" + getSerialPassword(), Reporter.WARNING);
+		GeneralUtils.printToConsole(
+				"Trying to connect to serial with user:" + getSerialUsername() + " password:" + getSerialPassword());
+		if (!sessionManager.openSerialLogSession()) {
+			report.report(
+					"Failed to login to serial with user:" + getSerialUsername() + " password:" + getSerialPassword(),
+					Reporter.WARNING);
 			return false;
 		}
 		return true;
@@ -218,18 +240,17 @@ public class XLP extends EnodeBComponent {
 	}
 
 	private void getMajorVersions() {
-		
-		try{
+
+		try {
 			if (snmp != null) {
 				enodebRunningVersion = getMajorVer(getRunningVersion());
 				enodebStandbyVersion = getMajorVer(getSecondaryVersion());
 			}
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 			report.report("Couldn't get SW version from SNMP", Reporter.WARNING);
 		}
-		if (enodebRunningVersion == null) {		
+		if (enodebRunningVersion == null) {
 			try {
 				enodebRunningVersion = getMajorVer(
 						NetspanServer.getInstance().getRunningVer(((EnodeB) parent).getNetspanName()));
@@ -246,12 +267,12 @@ public class XLP extends EnodeBComponent {
 	}
 
 	private String getMajorVer(String ver) {
-		if (ver != null && ver.length() > 4){
+		if (ver != null && ver.length() > 4) {
 			int start = ver.indexOf(".") + 1;
 			int end = ver.lastIndexOf(".");
-			if(end > 0)
+			if (end > 0)
 				return ver.substring(start, end);
-		}	
+		}
 		return null;
 	}
 
@@ -304,7 +325,7 @@ public class XLP extends EnodeBComponent {
 	public String getMatchingPassword(String username) {
 		return getMatchingPassword(username, enodebRunningVersion);
 	}
-	
+
 	public String getMatchingPassword(String username, String majorVersion) {
 		String ans = "";
 		if (Float.parseFloat(majorVersion) < 16.5) {
@@ -394,7 +415,8 @@ public class XLP extends EnodeBComponent {
 		cli.addPrompt(LTE_CLI_PROMPT, SHELL_PROMPT,
 				new String[] { "su -", getMatchingPassword(PasswordUtils.ROOT_USERNAME), "/bs/lteCli" }, "quit");
 		cli.addPrompt(SHELL_PROMPT_OP, SHELL_PROMPT,
-				new String[] { "su -", getMatchingPassword(PasswordUtils.ROOT_USERNAME) }, "exit"); // remove ?
+				new String[] { "su -", getMatchingPassword(PasswordUtils.ROOT_USERNAME) }, "exit"); // remove
+																									// ?
 	}
 
 	/**

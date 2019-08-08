@@ -32,7 +32,7 @@ public class Session implements Runnable {
 	private Terminal terminal;
 	private volatile boolean reconnect;
 	private volatile boolean connected;
-	private EnodeBComponent enbComp;
+	private volatile EnodeBComponent enbComp;
 	private String privateBuffer;
 	private String loggerBuffer;
 	private String cliBuffer;

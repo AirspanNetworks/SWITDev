@@ -1474,7 +1474,7 @@ public class XLP extends EnodeBComponent {
 		String bank0 = getPrimaryVersion();
 		String bank1 = getSecondaryVersion();
 		String running = getRunningVersion();
-		return running.equals(bank1) ? bank1 : bank0;
+		return running.equals(bank1) ? bank0 : bank1;
 	}
 
 	/**

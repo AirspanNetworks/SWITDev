@@ -262,7 +262,7 @@ public class XLP extends EnodeBComponent {
 		try {
 			if (snmp != null) {
 				enodebRunningVersion = getMajorVer(getRunningVersion());
-				enodebStandbyVersion = getMajorVer(getSecondaryVersion());
+				enodebStandbyVersion = getMajorVer(getStandbyVersion());
 				GeneralUtils.printToConsole(
 						"SNMP returned running ver: " + enodebRunningVersion + " , standby: " + enodebStandbyVersion);
 				return true;
@@ -1468,6 +1468,13 @@ public class XLP extends EnodeBComponent {
 	public String getPrimaryVersion() throws IOException {
 		String oid = MibReader.getInstance().resolveByName("asMaxBsCmSwPrimaryVersion") + "." + SWTypeInstnace;
 		return snmp.get(oid);
+	}
+	
+	public String getStandbyVersion() throws IOException {
+		String bank0 = getPrimaryVersion();
+		String bank1 = getSecondaryVersion();
+		String running = getRunningVersion();
+		return running.equals(bank1) ? bank1 : bank0;
 	}
 
 	/**

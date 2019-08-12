@@ -716,7 +716,7 @@ public class AutoPCIBase extends TestspanTest {
     }
 
     protected boolean shouldReboot() {
-        int version = Integer.valueOf(dut.getEnodeBversion().split("_")[0]);
+        int version = Integer.valueOf(dut.getEnodeBversion());
         return version < threshold || dut.getArchitecture() == Architecture.XLP;
     }
 }

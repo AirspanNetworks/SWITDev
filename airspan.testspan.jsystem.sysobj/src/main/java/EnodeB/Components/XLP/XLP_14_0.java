@@ -143,12 +143,12 @@ public class XLP_14_0 extends XLP{
 	}
 
 	@Override
-	public String getDefaultSSHUsername(){
+	public String getDefaultSSHUsername(String majorVer){
 		return PasswordUtils.ROOT_USERNAME;
 	}
 	
 	@Override
-	public String getDefaultSerialUsername(){
+	public String getDefaultSerialUsername(String majorVer){
 		return PasswordUtils.ROOT_USERNAME;
 	}	
 }

@@ -15,7 +15,7 @@
 		<nodes>Velocity86</nodes>
 		<staticUEs>static1</staticUEs>
 		<!--dynamicUEs>dyn2,dyn3,dyn4</dynamicUEs-->
-		<dynamicUEs>dyn2</dynamicUEs>
+		<!--dynamicUEs>dyn2</dynamicUEs-->
 		<UE_Restart>SNMP</UE_Restart>
 		<passCriteriaTPT>70</passCriteriaTPT>    
 		<interEarfcn>39150</interEarfcn>
@@ -64,7 +64,7 @@
 	<!-- Netspan -->
 	<NMS>
 		<class>Netspan.NBI_15_5.NetspanServer_15_5</class>
-		<hostname>192.168.58.47</hostname>
+		<hostname>192.168.58.44</hostname>
 	</NMS>
 	
 	<NMS1>
@@ -130,52 +130,19 @@
 		<powerControllerMapping>aviosys/A3</powerControllerMapping>
 	</dyn2-->
 	
-	<dyn2>
-		<class>UE.GemtekUE</class>
-		<IPerfUlMachine>192.7.2.253</IPerfUlMachine>
-		<IPerfDlMachine>91.91.72.240</IPerfDlMachine>
-		<wanIpAddress>42.42.7.2</wanIpAddress>
-		<lanIpAddress>192.168.57.78</lanIpAddress>
-		<DMToolPort>17772</DMToolPort> 
-		<imsi>200010001002971</imsi>
-		<powerControllerMapping>aviosys/A3</powerControllerMapping>
-	</dyn2>
-	
-	<!-- 
-	<dyn3>
-		<class>UE.AndroidUE</class>
-		<deviceId>eece68cb9804</deviceId>
-		<IPerfUlMachine>42.42.7.3</IPerfUlMachine>
-		<IPerfDlMachine>91.91.73.240</IPerfDlMachine>
-		<wanIpAddress>42.42.7.3</wanIpAddress>
-		<imsi>200010001007822</imsi>
-	</dyn3>
-	
-	<dyn4>
-		<class>UE.AndroidUE</class>
-		<deviceId>1222ce649804</deviceId>
-		<IPerfUlMachine>42.42.7.4</IPerfUlMachine>
-		<IPerfDlMachine>91.91.74.240</IPerfDlMachine>
-		<wanIpAddress>42.42.7.4</wanIpAddress>
-		<imsi>200010001008864</imsi>
-	</dyn4>
-	-->
-	<!-- EnodeBs configuration -->
-	
 	<Velocity86>
 		<class>EnodeB.AirVelocity</class>
 		<netspanName>SWIT7-Velocity86</netspanName>
 		<s1IpAddress>20.20.107.4</s1IpAddress>
-		<staticUEs>static1</staticUEs>
-		<enodeBVersion>15_5</enodeBVersion>
+		<enodeBVersion>15.5</enodeBVersion>
 		<connectInfo>
 			<class>EnodeB.ConnectionInfo</class>
 			<ipAddress>20.20.2.86</ipAddress>
-			<xlpInfo>
+			<serialInfo>
 				<class>EnodeB.SerialConnectionInfo</class>
 				<serialIP>192.168.58.94</serialIP>
 				<serialPort>4012</serialPort>
-			</xlpInfo>
+			</serialInfo>
 		</connectInfo>
 		<defaultNetspanProfiles>
 			<class>Utils.DefaultNetspanProfiles</class>
@@ -206,15 +173,15 @@
 		<class>EnodeB.AirVelocity</class>
 		<netspanName>SWIT7-Velocity87</netspanName>
 		<s1IpAddress>20.20.107.5</s1IpAddress>
-		<enodeBVersion>15_5</enodeBVersion>
+		<enodeBVersion>15.5</enodeBVersion>
 		<connectInfo>
 			<class>EnodeB.ConnectionInfo</class>
 			<ipAddress>20.20.2.87</ipAddress>
-			<xlpInfo>
+			<serialInfo>
 				<class>EnodeB.SerialConnectionInfo</class>
 				<serialIP>192.168.58.94</serialIP>
 				<serialPort>4013</serialPort>
-			</xlpInfo>
+			</serialInfo>
 		</connectInfo>
 		<defaultNetspanProfiles>
 			<class>Utils.DefaultNetspanProfiles</class>

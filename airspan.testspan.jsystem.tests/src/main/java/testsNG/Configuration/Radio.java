@@ -257,12 +257,15 @@ public class Radio extends TestspanTest {
 			report.report("Update Failed", Reporter.FAIL);
 			return;
 		}
+		GeneralUtils.unSafeSleep(10*1000);
+		report.reportHtml("db get cellcfg", dut.lteCli("db get cellcfg"), true);
 		if (performReboot) {
 			status = rebootAndWaitForAllrunning();
 			if (status) {
 				report.report("Enodeb Reached all running and in service succefully");
 			}
 		}
+		report.reportHtml("db get cellcfg", dut.lteCli("db get cellcfg"), true);
 	}
 
 	private void removeClonedProfiles(EnodeB node) {

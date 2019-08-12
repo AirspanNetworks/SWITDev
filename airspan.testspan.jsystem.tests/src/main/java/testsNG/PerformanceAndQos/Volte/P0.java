@@ -961,7 +961,7 @@ public class P0 extends TPTBase{
 	}
 	
 	protected boolean shouldReboot(){
-		int version = Integer.valueOf(dut.getEnodeBversion());
+		double version = Double.valueOf(dut.getEnodeBversion().split(".")[0]);
 		return version<threshold;
 	}
 	

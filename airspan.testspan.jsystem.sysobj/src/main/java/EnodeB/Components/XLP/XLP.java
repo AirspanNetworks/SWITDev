@@ -194,27 +194,45 @@ public class XLP extends EnodeBComponent {
 		}
 	}
 
-	public void updateVersions() {
-		getMajorVersions();
-		setUserNameAndPassword(enodebRunningVersion);
-		setScpParams(enodebRunningVersion);
-		if (!validateCredentials()) {
-			report.report("Trying to login with standby version");
-			resetCredentials();
-			setUserNameAndPassword(enodebStandbyVersion);
-			setScpParams(enodebStandbyVersion);
-			if (!validateCredentials()) {
-				report.report("Failed to login with standby version", Reporter.WARNING);
-				return;
+	private boolean try2Connect(String ver){
+		GeneralUtils.printToConsole("Connecting with version " + ver + " Credentials");
+		setUserNameAndPassword(ver);
+		setScpParams(ver);
+		return validateCredentials();
+	}
+	
+	private boolean try2ConnectMultiVersion(String... ver){
+		for(String version : ver){
+			if(try2Connect(version)){
+				enodebRunningVersion = version;
+				return true;
 			}
+			GeneralUtils.printToConsole("Failed to connect with version " + ver + " Credentials");
 		}
-		/*
-		 * if(sessionManager.getSSHCommandSession() != null){ //TODO solve for
-		 * all sessions
-		 * sessionManager.closeSession(sessionManager.getSSHCommandSession().
-		 * getName()); sessionManager.setSSHCommandSession(null); }
-		 */
-
+		return false;
+	}
+	
+	public void updateVersions() {
+		// get versions from SNMP/NMS
+		if(getMajorVersions()){
+			try2ConnectMultiVersion(enodebRunningVersion, enodebStandbyVersion, "16.0");
+		}
+		
+		// try all versions with sut priority in case getMajors failed. 
+		else{
+			switch (enodebRunningVersion) {
+			case "17.0":
+			case "16.5":
+				try2ConnectMultiVersion("16.5", "16.0", "15.5");
+				break;
+			case "16.0":
+				try2ConnectMultiVersion("16.0", "16.5", "15.5");
+				break;
+			default:
+				try2ConnectMultiVersion("15.5", "16.0", "16.5");
+				break;
+			}					
+		}
 	}
 
 	private boolean validateCredentials() {
@@ -239,31 +257,35 @@ public class XLP extends EnodeBComponent {
 		setPassword(null);
 	}
 
-	private void getMajorVersions() {
-
+	private boolean getMajorVersions() {
+		GeneralUtils.printToConsole("Get Major Versions");
 		try {
 			if (snmp != null) {
 				enodebRunningVersion = getMajorVer(getRunningVersion());
 				enodebStandbyVersion = getMajorVer(getSecondaryVersion());
+				GeneralUtils.printToConsole(
+						"SNMP returned running ver: " + enodebRunningVersion + " , standby: " + enodebStandbyVersion);
+				return true;
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			report.report("Couldn't get SW version from SNMP", Reporter.WARNING);
 		}
-		if (enodebRunningVersion == null) {
+		/*if (enodebRunningVersion == null) {
 			try {
 				enodebRunningVersion = getMajorVer(
 						NetspanServer.getInstance().getRunningVer(((EnodeB) parent).getNetspanName()));
 				enodebStandbyVersion = getMajorVer(
 						NetspanServer.getInstance().getStandbyVer(((EnodeB) parent).getNetspanName()));
+				GeneralUtils.printToConsole(
+						"Netspan returned running ver: " + enodebRunningVersion + " , standby: " + enodebStandbyVersion);
+				return true;
 			} catch (Exception e) {
 				e.printStackTrace();
 				report.report("Couldn't get SW version from Netspan", Reporter.WARNING);
 			}
-		}
-		if (enodebRunningVersion == null) {
-			enodebRunningVersion = ((EnodeB) parent).getEnodeBversion();
-		}
+		}*/
+		return false;
 	}
 
 	private String getMajorVer(String ver) {

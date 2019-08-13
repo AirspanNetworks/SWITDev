@@ -227,7 +227,7 @@ public class Session implements Runnable {
 			if (!connected) {
 				GeneralUtils.printToConsole("Trying to connect to Session " + getName() + " with user " + enbComp.getUsername());
 				
-				if(this.hostname != enbComp.getIpAddress()){//If the Terminal's hostname isn't updated.
+				if(this.hostname != enbComp.getIpAddress() || !connected){//If the Terminal's hostname isn't updated.
 					GeneralUtils.printToConsole("EnodeBComponent's IP Address have been changed from: "+this.hostname+" to: "+enbComp.getIpAddress());
 					this.terminal = new SSH(enbComp.getIpAddress(), enbComp.getUsername(), enbComp.getPassword());
 					this.hostname = enbComp.getIpAddress();

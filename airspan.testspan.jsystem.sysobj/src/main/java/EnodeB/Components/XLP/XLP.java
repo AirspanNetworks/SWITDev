@@ -194,21 +194,22 @@ public class XLP extends EnodeBComponent {
 		}
 	}
 
-	private boolean try2Connect(String ver){
-		GeneralUtils.printToConsole("Connecting with version " + ver + " Credentials");
-		setUserNameAndPassword(ver);
-		setScpParams(ver);
+	private boolean try2Connect(String version){
+		GeneralUtils.printToConsole("Connecting with version " + version + " Credentials");
+		setUserNameAndPassword(version);
+		setScpParams(version);
 		return validateCredentials();
 	}
 	
-	private boolean try2ConnectMultiVersion(String... ver){
-		for(String version : ver){
+	private boolean try2ConnectMultiVersion(String... versions){
+		for(String version : versions){
 			if(try2Connect(version)){
 				enodebRunningVersion = version;
-				GeneralUtils.printToConsole("Connect with version " + ver + " Credentials succeded");
+				report.report(getName() + " - Connected with version " + version + " Credentials");
 				return true;
 			}
-			GeneralUtils.printToConsole("Failed to connect with version " + ver + " Credentials");
+			GeneralUtils.printToConsole("Failed to connect with version " + version + " Credentials");
+			resetCredentials();
 		}
 		return false;
 	}
@@ -241,9 +242,8 @@ public class XLP extends EnodeBComponent {
 		GeneralUtils.printToConsole(
 				"Trying to connect to serial with user:" + getSerialUsername() + " password:" + getSerialPassword());
 		if (!sessionManager.openSerialLogSession()) {
-			report.report(
-					"Failed to login to serial with user:" + getSerialUsername() + " password:" + getSerialPassword(),
-					Reporter.WARNING);
+			GeneralUtils.printToConsole(
+					"Failed to login to serial with user:" + getSerialUsername() + " password:" + getSerialPassword());
 			return false;
 		}
 		return true;

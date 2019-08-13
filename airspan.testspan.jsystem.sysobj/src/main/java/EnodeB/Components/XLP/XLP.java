@@ -205,6 +205,7 @@ public class XLP extends EnodeBComponent {
 		for(String version : ver){
 			if(try2Connect(version)){
 				enodebRunningVersion = version;
+				GeneralUtils.printToConsole("Connect with version " + ver + " Credentials succeded");
 				return true;
 			}
 			GeneralUtils.printToConsole("Failed to connect with version " + ver + " Credentials");
@@ -220,6 +221,7 @@ public class XLP extends EnodeBComponent {
 		
 		// try all versions with sut priority in case getMajors failed. 
 		else{
+			enodebRunningVersion = ((EnodeB) parent).getEnodeBversion();
 			switch (enodebRunningVersion) {
 			case "17.0":
 			case "16.5":

@@ -868,7 +868,7 @@ public abstract class EnodeBComponent implements LogListener {
         public void run() {
             long startTime = System.currentTimeMillis();
             while ((System.currentTimeMillis() - startTime) < this.timeout) {
-                if (sessionManager.getSerialSession().loginSerial(getSerialUsername())) {
+                if (updateVersions()) {
                     echoToSkipCmpv2();
                     break;
                 }
@@ -1127,5 +1127,10 @@ public abstract class EnodeBComponent implements LogListener {
 				break;
 		}
 		return ans;
+	}
+
+	public boolean updateVersions() {
+		// implementation in XLP		
+		return true;
 	}
 }

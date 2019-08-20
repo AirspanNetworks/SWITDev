@@ -214,10 +214,11 @@ public class XLP extends EnodeBComponent {
 		return false;
 	}
 	
-	public void updateVersions() {
+	@Override
+	public boolean updateVersions() {
 		// get versions from SNMP/NMS
 		if(getMajorVersions()){
-			try2ConnectMultiVersion(enodebRunningVersion, enodebStandbyVersion, "16.0");
+			return try2ConnectMultiVersion(enodebRunningVersion, enodebStandbyVersion, "16.0");
 		}
 		
 		// try all versions with sut priority in case getMajors failed. 
@@ -226,14 +227,11 @@ public class XLP extends EnodeBComponent {
 			switch (enodebRunningVersion) {
 			case "17.0":
 			case "16.5":
-				try2ConnectMultiVersion("16.5", "16.0", "15.5");
-				break;
+				return try2ConnectMultiVersion("16.5", "16.0", "15.5");				
 			case "16.0":
-				try2ConnectMultiVersion("16.0", "16.5", "15.5");
-				break;
+				return try2ConnectMultiVersion("16.0", "16.5", "15.5");
 			default:
-				try2ConnectMultiVersion("15.5", "16.0", "16.5");
-				break;
+				return try2ConnectMultiVersion("15.5", "16.0", "16.5");
 			}					
 		}
 	}

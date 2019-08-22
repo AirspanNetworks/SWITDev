@@ -70,7 +70,7 @@ public class IPerfLinuxMachine extends IPerfMachine{
 	
 	@Override
 	public Pair<Boolean,String> sendCommand(String command) {
-		return sendCommand(command, 200);
+		return sendCommand(command, 1000);
 	}
 
 	@Override

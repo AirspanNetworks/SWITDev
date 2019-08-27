@@ -89,6 +89,7 @@ import Netspan.NBI_15_5.Lte.PnpDetailWs;
 import Netspan.NBI_15_5.Lte.ProfileResponse;
 import Netspan.NBI_15_5.Lte.QosEarfcn;
 import Netspan.NBI_15_5.Lte.QosMobilityConnectedModeFreqEarfcnListContainer;
+import Netspan.NBI_15_5.Lte.RelayEnodeBConfigGetResult;
 import Netspan.NBI_15_5.Lte.RsiRange;
 import Netspan.NBI_15_5.Lte.RsiRangeListContainer;
 import Netspan.NBI_15_5.Lte.S1ListContainer;
@@ -1628,18 +1629,12 @@ public class NetspanServer_15_5 extends NetspanServer_15_2 implements Netspan_15
 	public boolean convertToPnPConfig(EnodeB node) {
 		try {
 			NodeActionResult result = null;
-			HardwareCategory hardwareCategory = getHardwareCategory(node);
-			ArrayList<HardwareCategory> relayEnodeBs = new ArrayList<>();
-			relayEnodeBs.add(HardwareCategory.AIR_DENSITY);
-			relayEnodeBs.add(HardwareCategory.AIR_SPEED);
-			relayEnodeBs.add(HardwareCategory.AIR_UNITY);
-
 			String swImageName = null;
 			if (node.isSwUpgradeDuringPnP()) {
 				swImageName = node.getDefaultNetspanProfiles().getSoftwareImage();
 			}
 
-			if (relayEnodeBs.contains(hardwareCategory)) {
+			if (isRelayEnodeb(node.getNetspanName())) {
 				AuPnpDetailWs pnpDetail = null;
 				if (swImageName != null) {
 					pnpDetail = new AuPnpDetailWs();
@@ -1673,6 +1668,28 @@ public class NetspanServer_15_5 extends NetspanServer_15_2 implements Netspan_15
 		}
 
 		return false;
+	}
+
+	@Override
+	public boolean isRelayEnodeb(String nodeName) {
+		try {
+			ArrayList<String> nameList = new ArrayList<>();
+			nameList.add(nodeName);
+			RelayEnodeBConfigGetResult result = soapHelper_15_5.getLteSoap().relayEnbConfigGet(nameList, credentialsLte);
+			if (result.getErrorCode() == Netspan.NBI_15_5.Lte.ErrorCodes.OK) {
+				report.report(nodeName + " has relay");
+				return true;
+			}else{
+				report.report(nodeName + " has no relay");
+				return true;
+			}				
+		} catch (Exception e) {
+			e.printStackTrace();
+			report.report("Failed to determine if " + nodeName + " has relay, due to: " + e.getMessage(), Reporter.WARNING);
+			return false;
+		} finally {
+			soapHelper_15_5.endLteSoap();
+		}
 	}
 
 	private EnbDetailsGet convertPnPToEnb(LtePnpConfigGetResult result) {

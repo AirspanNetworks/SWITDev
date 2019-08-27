@@ -4448,4 +4448,10 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+	@Override
+	public boolean isRelayEnodeb(String nodeName) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

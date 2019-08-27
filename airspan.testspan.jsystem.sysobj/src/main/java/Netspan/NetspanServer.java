@@ -701,4 +701,6 @@ public abstract class NetspanServer extends SystemObjectImpl {
 	public abstract void initSoapHelper() throws Exception;
 	
 	public abstract boolean relayScan(EnodeB enodeB, RelayScanType scanType);
+
+	public abstract boolean isRelayEnodeb(String nodeName);
 }

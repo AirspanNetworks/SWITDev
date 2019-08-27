@@ -3112,4 +3112,10 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 		report.report("relayScan function is not implemented for this netspan(14_5)!");
 		return false;
 	}
+
+	@Override
+	public boolean isRelayEnodeb(String nodeName) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

@@ -1681,7 +1681,7 @@ public class NetspanServer_15_5 extends NetspanServer_15_2 implements Netspan_15
 				return true;
 			}else{
 				report.report(nodeName + " has no relay");
-				return true;
+				return false;
 			}				
 		} catch (Exception e) {
 			e.printStackTrace();

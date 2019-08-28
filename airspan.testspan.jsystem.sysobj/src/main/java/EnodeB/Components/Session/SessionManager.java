@@ -2,6 +2,8 @@ package EnodeB.Components.Session;
 
 import java.util.ArrayList;
 
+import org.python.modules.synchronize;
+
 import EnodeB.Components.EnodeBComponent;
 import Utils.GeneralUtils;
 import Utils.Properties.TestspanConfigurationsManager;
@@ -29,6 +31,10 @@ public class SessionManager {
 		this.sessions = new ArrayList<Session>();
 	}
 
+	private synchronized ArrayList<Session> getSessions(){
+		return this.sessions;
+	}
+	
 	/**
 	 * open Serial Log Session
 	 */
@@ -107,7 +113,7 @@ public class SessionManager {
 	private synchronized boolean openSerialSession() {
 		Session newConsoleSession = new Session(getEnodeBComponent().getName() + "_" + SERIAL_SESSION_NAME, getEnodeBComponent(), getEnodeBComponent().serialCom.getSerial(), serialLogLevel);
 		boolean ans = newConsoleSession.waitForSessionToConnect(SESSION_WAIT_TIMEOUT);
-		sessions.add(newConsoleSession);
+		getSessions().add(newConsoleSession);
 		setSerialSession(newConsoleSession);
 		boolean loginSuccess = newConsoleSession.loginSerial(enodeBComponent.getSerialUsername());
 		if(loginSuccess){
@@ -119,7 +125,7 @@ public class SessionManager {
 	}
 
 	public synchronized String openSession() {
-		return openSession(SSH_SESSION_NAME + (sessions.size() + 1));
+		return openSession(SSH_SESSION_NAME + (getSessions().size() + 1));
 	}
 
 	public synchronized String openSession(String name, int loglevel) {
@@ -129,7 +135,7 @@ public class SessionManager {
 				Session session = new Session(name, getEnodeBComponent(), loglevel);
 				session.init();
 				boolean ans = session.waitForSessionToConnect(SESSION_WAIT_TIMEOUT);
-				sessions.add(session);
+				getSessions().add(session);
 				GeneralUtils.printToConsole("Session " + name + " opened Status:" + ans);
 				return name;
 			}
@@ -142,24 +148,24 @@ public class SessionManager {
 	}
 
 	public Session[] getAllSessions() {
-		return sessions.toArray(new Session[] { null });
+		return getSessions().toArray(new Session[] { null });
 	}
 
 	public void restartSessions() {
-		for (Session session : sessions) {
+		for (Session session : getSessions()) {
 			session.reStartReconnectionThread();
 		}
 	}
 	
 	public void updateAllSessionsLogLevel(){
-		for (Session session : sessions) {
+		for (Session session : getSessions()) {
 			GeneralUtils.printToConsole("update log level from updateAllSessionsLogLevel");
 			session.updateLogLevel();
 		}
 	}
 
 	public void showLoginStatus() {
-		for (Session session : sessions) {
+		for (Session session : getSessions()) {
 			if (!session.getName().contains(SERIAL_SESSION_NAME)) {
 				session.showLoginStatus();
 			}			
@@ -167,7 +173,7 @@ public class SessionManager {
 	}
 	
 	public Session getSession(String name) {
-		for (Session session : sessions) {
+		for (Session session : getSessions()) {
 			if (session.getName().equals(name))
 				return session;
 		}
@@ -179,14 +185,14 @@ public class SessionManager {
 		if (session != null) {
 			GeneralUtils.printToConsole("Closing session " + name);
 			session.close();
-			sessions.remove(session);
+			getSessions().remove(session);
 			return true;
 		}
 		return false;
 	}
 
 	public synchronized void closeAllSessions() {
-		ArrayList<Session> clonedSessions = (ArrayList<Session>) sessions.clone();
+		ArrayList<Session> clonedSessions = (ArrayList<Session>) getSessions().clone();
 		for (Session session : clonedSessions) {
 			closeSession(session.getName());
 		}

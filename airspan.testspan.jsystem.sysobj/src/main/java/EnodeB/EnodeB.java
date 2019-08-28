@@ -213,7 +213,6 @@ public abstract class EnodeB extends SystemObjectImpl {
 			XLP.setSerialUsername(connectInfo.serialInfo.getUserName());
 		}
 		XLP.setParent(this);
-		XLP.setIpAddress(connectInfo.getIpAddress());
 		XLP.setSkipCMP(getSkipCMP());
 		XLP.setUsername(connectInfo.getUserName());
 		if (connectInfo.getReadCommunity() != null)
@@ -223,6 +222,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 		XLP.debugFlags = getDebugFlags();
 		XLP.hardwareName = getControlComponenetHwName();
 		XLP.setName(getName());
+		XLP.setIpAddress(connectInfo.getIpAddress());
 		int swType;
 		try {
 			swType = getSWTypeInstance();

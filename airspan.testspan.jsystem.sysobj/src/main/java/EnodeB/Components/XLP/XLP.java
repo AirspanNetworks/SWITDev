@@ -194,56 +194,54 @@ public class XLP extends EnodeBComponent {
 		}
 	}
 
-	private boolean try2Connect(String version){
-		GeneralUtils.printToConsole("Connecting with version " + version + " Credentials");
+	private boolean try2Connect(String version) {
+		GeneralUtils.printToConsole(getName() + " - Connecting with version " + version + " Credentials");
 		setUserNameAndPassword(version);
 		setScpParams(version);
 		return validateCredentials();
 	}
-	
-	private boolean try2ConnectMultiVersion(String... versions){
-		for(String version : versions){
-			if(try2Connect(version)){
+
+	private boolean try2ConnectMultiVersion(String... versions) {
+		for (String version : versions) {
+			if (try2Connect(version)) {
 				enodebRunningVersion = version;
 				report.report(getName() + " - Connected with version " + version + " Credentials");
 				return true;
 			}
-			GeneralUtils.printToConsole("Failed to connect with version " + version + " Credentials");
+			GeneralUtils.printToConsole(getName() + " - Failed to connect with version " + version + " Credentials");
 			resetCredentials();
 		}
 		return false;
 	}
-	
-	public void updateVersions() {
+
+	@Override
+	public boolean updateVersions() {
 		// get versions from SNMP/NMS
-		if(getMajorVersions()){
-			try2ConnectMultiVersion(enodebRunningVersion, enodebStandbyVersion, "16.0");
+		if (getMajorVersions()) {
+			return try2ConnectMultiVersion(enodebRunningVersion, enodebStandbyVersion, "16.0");
 		}
-		
-		// try all versions with sut priority in case getMajors failed. 
-		else{
+
+		// try all versions with sut priority in case getMajors failed.
+		else {
 			enodebRunningVersion = ((EnodeB) parent).getEnodeBversion();
 			switch (enodebRunningVersion) {
 			case "17.0":
 			case "16.5":
-				try2ConnectMultiVersion("16.5", "16.0", "15.5");
-				break;
+				return try2ConnectMultiVersion("16.5", "16.0", "15.5");
 			case "16.0":
-				try2ConnectMultiVersion("16.0", "16.5", "15.5");
-				break;
+				return try2ConnectMultiVersion("16.0", "16.5", "15.5");
 			default:
-				try2ConnectMultiVersion("15.5", "16.0", "16.5");
-				break;
-			}					
+				return try2ConnectMultiVersion("15.5", "16.0", "16.5");
+			}
 		}
 	}
 
 	private boolean validateCredentials() {
-		GeneralUtils.printToConsole(
-				"Trying to connect to serial with user:" + getSerialUsername() + " password:" + getSerialPassword());
+		GeneralUtils.printToConsole(getName() + " - Trying to connect to serial with user:" + getSerialUsername()
+				+ " password:" + getSerialPassword());
 		if (!sessionManager.openSerialLogSession()) {
-			GeneralUtils.printToConsole(
-					"Failed to login to serial with user:" + getSerialUsername() + " password:" + getSerialPassword());
+			GeneralUtils.printToConsole(getName() + " - Failed to login to serial with user:" + getSerialUsername()
+					+ " password:" + getSerialPassword());
 			return false;
 		}
 		return true;
@@ -267,28 +265,27 @@ public class XLP extends EnodeBComponent {
 				enodebStandbyVersion = getMajorVer(getStandbyVersion());
 				GeneralUtils.printToConsole(
 						"SNMP returned running ver: " + enodebRunningVersion + " , standby: " + enodebStandbyVersion);
-				if(enodebRunningVersion == null || enodebStandbyVersion == null)
+				if (enodebRunningVersion == null || enodebStandbyVersion == null) {
+					GeneralUtils.printToConsole("One or more of the versions is null.");
 					return false;
+				}
 				return true;
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			report.report("Couldn't get SW version from SNMP", Reporter.WARNING);
+			report.report(getName() + " - Couldn't get SW version from SNMP", Reporter.WARNING);
 		}
-		/*if (enodebRunningVersion == null) {
-			try {
-				enodebRunningVersion = getMajorVer(
-						NetspanServer.getInstance().getRunningVer(((EnodeB) parent).getNetspanName()));
-				enodebStandbyVersion = getMajorVer(
-						NetspanServer.getInstance().getStandbyVer(((EnodeB) parent).getNetspanName()));
-				GeneralUtils.printToConsole(
-						"Netspan returned running ver: " + enodebRunningVersion + " , standby: " + enodebStandbyVersion);
-				return true;
-			} catch (Exception e) {
-				e.printStackTrace();
-				report.report("Couldn't get SW version from Netspan", Reporter.WARNING);
-			}
-		}*/
+		/*
+		 * if (enodebRunningVersion == null) { try { enodebRunningVersion =
+		 * getMajorVer( NetspanServer.getInstance().getRunningVer(((EnodeB)
+		 * parent).getNetspanName())); enodebStandbyVersion = getMajorVer(
+		 * NetspanServer.getInstance().getStandbyVer(((EnodeB)
+		 * parent).getNetspanName())); GeneralUtils.printToConsole(
+		 * "Netspan returned running ver: " + enodebRunningVersion +
+		 * " , standby: " + enodebStandbyVersion); return true; } catch
+		 * (Exception e) { e.printStackTrace(); report.report(
+		 * "Couldn't get SW version from Netspan", Reporter.WARNING); } }
+		 */
 		return false;
 	}
 
@@ -1473,7 +1470,7 @@ public class XLP extends EnodeBComponent {
 		String oid = MibReader.getInstance().resolveByName("asMaxBsCmSwPrimaryVersion") + "." + SWTypeInstnace;
 		return snmp.get(oid);
 	}
-	
+
 	public String getStandbyVersion() throws IOException {
 		String bank0 = getPrimaryVersion();
 		String bank1 = getSecondaryVersion();

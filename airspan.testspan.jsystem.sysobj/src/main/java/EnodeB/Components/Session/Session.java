@@ -131,11 +131,13 @@ public class Session implements Runnable {
 		
 		while (System.currentTimeMillis() - startTime <= 30*1000) {
 			GeneralUtils.printToConsole("Attempt #" + i++);
-			String ans = this.sendCommands(EnodeBComponent.SHELL_PROMPT,"exit","login");
 			this.getCliBuffer();
+			String ans = this.sendCommands(EnodeBComponent.SHELL_PROMPT,"exit","login");
 			if (ans.contains("login")) {
+				this.getCliBuffer();
 				ans = this.sendCommands(EnodeBComponent.SHELL_PROMPT, "whoami", user);
-				if(ans.contains("Login incorrect"))
+				GeneralUtils.printToConsole(enbComp.getName() + " - whoami response: " + ans);
+				if(ans.contains("Login incorrect") || ans.contains(enbComp.getSerialPassword()))
 					return false;
 				return true;
 			}

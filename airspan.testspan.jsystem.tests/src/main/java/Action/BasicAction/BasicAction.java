@@ -179,7 +179,7 @@ public class BasicAction extends Action {
 		this.sleepTime = sleepTime;
 	}
 
-	@ParameterProperties(description = "IP for SSH")
+	@ParameterProperties(description = "IP")
 	public void setIp(String ip) {
 		this.ip = ip;
 	}

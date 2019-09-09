@@ -63,9 +63,12 @@ public class P0 extends AutoPCIBase {
 				+ pciStart + ") and same Downlink EARFCN=" + dut.getEarfcn() + ", and add to eNB");
 		String cmd = addr.getHostAddress();
 		String[] separated = cmd.split("\\.");
-		
+		boolean isIpv6 = dut.getIpAddress().contains(":");
 		for (int i = 0, indexPci = pciStart; i < 9; i++, indexPci++) {
 			String IPAdress = i + ".99." + separated[2] + "." + separated[3];
+			if(isIpv6){
+	        	IPAdress = "abcd::" + i + ":99:" + separated[2] + ":" + separated[3];
+			}
 			if (indexPci == pciStart) {
 				indexPci++;
 			}

@@ -1,9 +1,7 @@
 package EnodeB.Components.Session;
 
 import java.util.ArrayList;
-
-import org.python.modules.synchronize;
-
+import java.util.concurrent.CopyOnWriteArrayList;
 import EnodeB.Components.EnodeBComponent;
 import Utils.GeneralUtils;
 import Utils.Properties.TestspanConfigurationsManager;
@@ -18,7 +16,7 @@ public class SessionManager {
 	private final static String CONSOLE_LOG_LEVEL_PROPERTY_NAME = "logger.consoleSessionLogLevel";
 	private final static String COMMAND_LOG_LEVEL_PROPERTY_NAME = "logger.commandSessionLogLevel";
 	private final static int LOG_LEVEL_NO_VALUE = -2;
-	private ArrayList<Session> sessions;
+	private CopyOnWriteArrayList<Session> sessions;
 	private Session SSHCommandSession;
 	private Session SSHlogSession;
 	private Session serialSession;
@@ -26,21 +24,23 @@ public class SessionManager {
 	private int SSHlogLevel = -1;
 	private int serialLogLevel = -1;
 	private int commandsLogLevel = -1;
+
 	public SessionManager(EnodeBComponent enodeBComponent) {
 		this.enodeBComponent = enodeBComponent;
-		this.sessions = new ArrayList<Session>();
+		this.sessions = new CopyOnWriteArrayList<Session>();
 	}
 
-	private synchronized ArrayList<Session> getSessions(){
+	private synchronized CopyOnWriteArrayList<Session> getSessions() {
+		GeneralUtils.printToConsole("### get sessions called by:" + Thread.currentThread().getName());
 		return this.sessions;
 	}
-	
+
 	/**
 	 * open Serial Log Session
 	 */
 	public boolean openSerialLogSession() {
 		serialLogLevel = setDefaultCommandSessionLevelFromPropFile(CONSOLE_LOG_LEVEL_PROPERTY_NAME);
-		if (enodeBComponent.serialCom != null){
+		if (enodeBComponent.serialCom != null) {
 			return openSerialSession();
 		}
 		return false;
@@ -53,7 +53,7 @@ public class SessionManager {
 	 */
 	public void openSerialLogSession(int logLevel) {
 		serialLogLevel = logLevel;
-		if (enodeBComponent.serialCom != null){
+		if (enodeBComponent.serialCom != null) {
 			openSerialSession();
 		}
 	}
@@ -66,8 +66,7 @@ public class SessionManager {
 	public void openSSHLogSession(int logLevel) {
 		SSHlogLevel = logLevel;
 		String sessionName = openSession(getEnodeBComponent().getName() + "_" + SSH_LOG_SESSION_NAME, SSHlogLevel);
-		if (sessionName != null)
-		{
+		if (sessionName != null) {
 			SSHlogSession = getSession(sessionName);
 			SSHlogSession.setShouldStayInCli(true);
 		}
@@ -79,8 +78,7 @@ public class SessionManager {
 	public void openSSHLogSession() {
 		SSHlogLevel = setDefaultCommandSessionLevelFromPropFile(LOG_LEVEL_PROPERTY_NAME);
 		String sessionName = openSession(getEnodeBComponent().getName() + "_" + SSH_LOG_SESSION_NAME, SSHlogLevel);
-		if (sessionName != null)
-		{
+		if (sessionName != null) {
 			SSHlogSession = getSession(sessionName);
 			SSHlogSession.setShouldStayInCli(true);
 		}
@@ -91,7 +89,8 @@ public class SessionManager {
 	 */
 	public void openSSHCommandSession() {
 		commandsLogLevel = setDefaultCommandSessionLevelFromPropFile(COMMAND_LOG_LEVEL_PROPERTY_NAME);
-		String sessionName = openSession(getEnodeBComponent().getName() + "_" + SSH_COMMANDS_SESSION_NAME, commandsLogLevel);
+		String sessionName = openSession(getEnodeBComponent().getName() + "_" + SSH_COMMANDS_SESSION_NAME,
+				commandsLogLevel);
 		if (sessionName != null)
 			SSHCommandSession = getSession(sessionName);
 	}
@@ -104,22 +103,25 @@ public class SessionManager {
 		try {
 			logLevel = Integer.parseInt(TestspanConfigurationsManager.getInstance().getConfig(propTitle));
 		} catch (Exception e) {
-			GeneralUtils.printToConsole(propTitle + " is not defined in testpan.properties file. Can't set sessions log level!");
-			logLevel = LOG_LEVEL_NO_VALUE; // property doesn't exist so don't use it.
+			GeneralUtils.printToConsole(
+					propTitle + " is not defined in testpan.properties file. Can't set sessions log level!");
+			logLevel = LOG_LEVEL_NO_VALUE; // property doesn't exist so don't
+											// use it.
 		}
 		return logLevel;
 	}
 
 	private synchronized boolean openSerialSession() {
-		Session newConsoleSession = new Session(getEnodeBComponent().getName() + "_" + SERIAL_SESSION_NAME, getEnodeBComponent(), getEnodeBComponent().serialCom.getSerial(), serialLogLevel);
+		Session newConsoleSession = new Session(getEnodeBComponent().getName() + "_" + SERIAL_SESSION_NAME,
+				getEnodeBComponent(), getEnodeBComponent().serialCom.getSerial(), serialLogLevel);
 		boolean ans = newConsoleSession.waitForSessionToConnect(SESSION_WAIT_TIMEOUT);
 		getSessions().add(newConsoleSession);
 		setSerialSession(newConsoleSession);
 		boolean loginSuccess = newConsoleSession.loginSerial(enodeBComponent.getSerialUsername());
-		if(loginSuccess){
+		if (loginSuccess) {
 			String idResult = newConsoleSession.sendCommands(EnodeBComponent.SHELL_PROMPT, "id", "");
 			GeneralUtils.printToConsole("serial id: " + idResult);
-			GeneralUtils.printToConsole("Session " + newConsoleSession.getName() + " opened Status:" + ans);			
+			GeneralUtils.printToConsole("Session " + newConsoleSession.getName() + " opened Status:" + ans);
 		}
 		return loginSuccess;
 	}
@@ -143,6 +145,7 @@ public class SessionManager {
 		}
 		return null;
 	}
+
 	public synchronized String openSession(String name) {
 		return openSession(name, SSHlogLevel);
 	}
@@ -156,8 +159,8 @@ public class SessionManager {
 			session.reStartReconnectionThread();
 		}
 	}
-	
-	public void updateAllSessionsLogLevel(){
+
+	public void updateAllSessionsLogLevel() {
 		for (Session session : getSessions()) {
 			GeneralUtils.printToConsole("update log level from updateAllSessionsLogLevel");
 			session.updateLogLevel();
@@ -168,10 +171,10 @@ public class SessionManager {
 		for (Session session : getSessions()) {
 			if (!session.getName().contains(SERIAL_SESSION_NAME)) {
 				session.showLoginStatus();
-			}			
+			}
 		}
 	}
-	
+
 	public Session getSession(String name) {
 		for (Session session : getSessions()) {
 			if (session.getName().equals(name))
@@ -192,17 +195,20 @@ public class SessionManager {
 	}
 
 	public synchronized void closeAllSessions() {
-		ArrayList<Session> clonedSessions = (ArrayList<Session>) getSessions().clone();
+		CopyOnWriteArrayList<Session> clonedSessions = (CopyOnWriteArrayList<Session>) getSessions().clone();
 		for (Session session : clonedSessions) {
 			closeSession(session.getName());
 		}
 	}
 
-	public synchronized String sendCommandDefaultSession(String prompt, String command, String response, int responseTimeout) {
+	public synchronized String sendCommandDefaultSession(String prompt, String command, String response,
+			int responseTimeout) {
 		return sendCommands(this.SSHCommandSession.getName(), prompt, command, response, responseTimeout);
 	}
 
-	/** Wrapper tp sendCommands with an option to response Timeout
+	/**
+	 * Wrapper tp sendCommands with an option to response Timeout
+	 * 
 	 * @param sessionName
 	 * @param prompt
 	 * @param command
@@ -210,10 +216,11 @@ public class SessionManager {
 	 * @return
 	 */
 	public synchronized String sendCommands(String sessionName, String prompt, String command, String response) {
-		return sendCommands( sessionName,  prompt,  command,  response, 10);
+		return sendCommands(sessionName, prompt, command, response, 10);
 	}
 
-	public synchronized String sendCommands(String sessionName, String prompt, String command, String response, int responseTimeout) {
+	public synchronized String sendCommands(String sessionName, String prompt, String command, String response,
+			int responseTimeout) {
 		Session session = getSession(sessionName);
 		if (session != null) {
 			if (session.isConnected() || session.waitForSessionToConnect(SESSION_WAIT_TIMEOUT))
@@ -234,23 +241,27 @@ public class SessionManager {
 		return getEnodeBComponent().getName();
 	}
 
-	/** Command Session
+	/**
+	 * Command Session
+	 * 
 	 * @return - SSHCommandSession
 	 */
 	public Session getSSHCommandSession() {
 		return SSHCommandSession;
 	}
-	
-	/** Command Session
+
+	/**
+	 * Command Session
+	 * 
 	 * @return - SSHCommandSession
 	 */
 	public void setSSHCommandSession(Session sshCommandSession) {
 		this.SSHCommandSession = sshCommandSession;
 	}
-	
+
 	public Session getSSHlogSession() {
 		return SSHlogSession;
-	}	
+	}
 
 	public boolean isSessionConnected(String sessionName) {
 		Session session = getSession(sessionName);

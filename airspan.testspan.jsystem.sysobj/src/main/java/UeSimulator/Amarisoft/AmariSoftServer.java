@@ -330,6 +330,9 @@ public class AmariSoftServer extends SystemObjectImpl{
 			if (!sendCommands("ps -aux |grep lteue", "/root/ue/config/"+currentConfigFile, lteUecommands, false)) {
 				running = false;
 				result =  true;
+				ueMap = new ArrayList();
+		    	uesWithIP = new ArrayList<AmarisoftUE>();
+		    	fillUeList();
 			} else {
 				report.report("Closing server failed.", Reporter.WARNING);
 				running = true;

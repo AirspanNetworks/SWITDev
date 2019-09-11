@@ -370,7 +370,9 @@ public class TrafficManager {
 				}
 				int cells = EnodeBConfig.getInstance().getNumberOfActiveCells(dut);
 				if(EnodeBConfig.getInstance().isCAEnableInNode(dut)){
-					loadStreamDl = loadStreamDl* cells;
+					if(loadStreamDl != null){
+						loadStreamDl = loadStreamDl* cells;						
+					}
 				}else{
 					if(loadStreamDl != null){
 						loadStreamDl = loadStreamDl* cells;						

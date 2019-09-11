@@ -234,10 +234,11 @@ public class IPerf extends SystemObjectImpl implements ITrafficGenerator{
 			iperfMachineUL.sendCommand("cat "+ ulclientCommandsFileWithPrefix);
 			iperfMachineUL.sendCommand(ulclientCommandsFileWithPrefix);
 		}else{
-			iperfMachineDL.sendCommand("cat " +dlclientCommandsFileWithPrefix);
-			iperfMachineDL.sendCommand(dlclientCommandsFileWithPrefix);
 			iperfMachineUL.sendCommand("cat "+ulclientCommandsFileWithPrefix);
 			iperfMachineUL.sendCommand(ulclientCommandsFileWithPrefix);
+			GeneralUtils.unSafeSleep(1000);
+			iperfMachineDL.sendCommand("cat " +dlclientCommandsFileWithPrefix);
+			iperfMachineDL.sendCommand(dlclientCommandsFileWithPrefix);
 			GeneralUtils.unSafeSleep(10000);
 			iperfMachineDL.sendCommand("cat " +ulServerCommandsFileWithPrefix);
 			iperfMachineDL.sendCommand(ulServerCommandsFileWithPrefix);

@@ -54,7 +54,11 @@ public class EsonServer extends SystemObjectImpl {
 	}
 
 	public void setServerIp(String serverIp) {
-		this.serverIp = serverIp;
+		if(serverIp.contains(":")){
+			this.serverIp = "["+serverIp+"]";
+		}else{
+			this.serverIp = serverIp;			
+		}
 	}
 
 	public String getUser() {

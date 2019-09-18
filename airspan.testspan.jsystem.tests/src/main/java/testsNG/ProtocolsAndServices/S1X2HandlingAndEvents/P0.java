@@ -3,6 +3,8 @@ package testsNG.ProtocolsAndServices.S1X2HandlingAndEvents;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import org.junit.Test;
@@ -99,10 +101,20 @@ public class P0 extends TestspanTest{
 			return;
 		}
 		
+		String addCommand = "route add -host "+addressNetspan+" reject";
+		if(addressNetspan.contains(":")){
+			addCommand = "ip -6 route add blackhole "+addressNetspan;
+		}
+		
+		String delCommand = "route delete -host "+addressNetspan+" reject";
+		if(addressNetspan.contains(":")){
+			delCommand = "ip -6 route delete blackhole "+addressNetspan;
+		}
+		
 		report.report("Sending CLI command to disconnect MME:");
 		dut.expecteInServiceState = false;
-		report.report("route add -host "+addressNetspan+" reject");
-		String response = dut.shell("route add -host "+addressNetspan+" reject");
+		report.report(addCommand);
+		String response = dut.shell(addCommand);
 		report.report("Shell response: " + response);
 		report.report("Ping response: " + dut.ping(addressNetspan,1));
 		GeneralUtils.printToConsole("MME-IP:"+addressNetspan);
@@ -110,17 +122,17 @@ public class P0 extends TestspanTest{
 			report.report("EnodeB did not disconnect from MME and is still in service",Reporter.FAIL);
 			reason="EnodeB did not disconnect from MME and is still in service";
 			report.report("Sending CLI command to reconnect MME due to failure");
-			report.report("route delete -host "+addressNetspan+" reject");
-			dut.shell("route delete -host "+addressNetspan+" reject");
+			report.report(delCommand);
+			dut.shell(delCommand);
 			return;
 		}else{
 			report.report("EnodeB disconnected from MME and is out of service");
 		}			
 		
 		report.report("Sending CLI command to reconnect MME:");
-		report.report("route delete -host "+addressNetspan+" reject");
-		String ans = dut.shell("route delete -host "+addressNetspan+" reject");
-		GeneralUtils.printToConsole("route delete -host "+addressNetspan+" reject\n" + ans);
+		report.report(delCommand);
+		String ans = dut.shell(delCommand);
+		GeneralUtils.printToConsole(delCommand+"\n" + ans);
 		if(!checkEnbConnectedToMmeAndInService(3*60*1000)){
 			String failReason = "";
 			if(!checkConnectionToMME()){
@@ -151,8 +163,19 @@ public class P0 extends TestspanTest{
 	private boolean checkMmeAddress(String addressNetspan) {
 		GeneralUtils.startLevel("Verify EnodeB is connected to MME via correct address");
 		String mmeAddress = dut.getMmeStatusIpAddress();
-		if(addressNetspan !=null && addressNetspan.equals(mmeAddress)){
-			report.report("EnodeB is connected to MME via correct address: "+mmeAddress);
+		if(addressNetspan !=null){
+			InetAddress addrInetAddress = null;
+			try {
+				addrInetAddress = InetAddress.getByName(addressNetspan);
+			} catch (UnknownHostException e) {
+				e.printStackTrace();
+			}
+			String addrStr = addrInetAddress.getHostAddress();
+			if(addrStr.equals(mmeAddress)){
+				report.report("EnodeB is connected to MME via correct address: "+mmeAddress);
+			}else{
+				report.report("EnodeB is not connected to MME via correct address: "+mmeAddress,Reporter.FAIL);
+			}
 		}else{
 			report.report("EnodeB is not connected to MME via correct address: "+mmeAddress,Reporter.FAIL);
 			GeneralUtils.stopLevel();

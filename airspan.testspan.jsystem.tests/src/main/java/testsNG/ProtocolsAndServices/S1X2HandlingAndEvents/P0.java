@@ -108,7 +108,7 @@ public class P0 extends TestspanTest{
 		
 		String delCommand = "route delete -host "+addressNetspan+" reject";
 		if(addressNetspan.contains(":")){
-			addCommand = "ip -6 route delete blackhole "+addressNetspan;
+			delCommand = "ip -6 route delete blackhole "+addressNetspan;
 		}
 		
 		report.report("Sending CLI command to disconnect MME:");

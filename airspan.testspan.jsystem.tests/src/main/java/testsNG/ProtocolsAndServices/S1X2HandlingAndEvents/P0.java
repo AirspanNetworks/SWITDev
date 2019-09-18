@@ -101,10 +101,20 @@ public class P0 extends TestspanTest{
 			return;
 		}
 		
+		String addCommand = "route add -host "+addressNetspan+" reject";
+		if(addressNetspan.contains(":")){
+			addCommand = "ip -6 route add blackhole "+addressNetspan;
+		}
+		
+		String delCommand = "route delete -host "+addressNetspan+" reject";
+		if(addressNetspan.contains(":")){
+			addCommand = "ip -6 route delete blackhole "+addressNetspan;
+		}
+		
 		report.report("Sending CLI command to disconnect MME:");
 		dut.expecteInServiceState = false;
-		report.report("route add -host "+addressNetspan+" reject");
-		String response = dut.shell("route add -host "+addressNetspan+" reject");
+		report.report(addCommand);
+		String response = dut.shell(addCommand);
 		report.report("Shell response: " + response);
 		report.report("Ping response: " + dut.ping(addressNetspan,1));
 		GeneralUtils.printToConsole("MME-IP:"+addressNetspan);
@@ -112,17 +122,17 @@ public class P0 extends TestspanTest{
 			report.report("EnodeB did not disconnect from MME and is still in service",Reporter.FAIL);
 			reason="EnodeB did not disconnect from MME and is still in service";
 			report.report("Sending CLI command to reconnect MME due to failure");
-			report.report("route delete -host "+addressNetspan+" reject");
-			dut.shell("route delete -host "+addressNetspan+" reject");
+			report.report(delCommand);
+			dut.shell(delCommand);
 			return;
 		}else{
 			report.report("EnodeB disconnected from MME and is out of service");
 		}			
 		
 		report.report("Sending CLI command to reconnect MME:");
-		report.report("route delete -host "+addressNetspan+" reject");
-		String ans = dut.shell("route delete -host "+addressNetspan+" reject");
-		GeneralUtils.printToConsole("route delete -host "+addressNetspan+" reject\n" + ans);
+		report.report(delCommand);
+		String ans = dut.shell(delCommand);
+		GeneralUtils.printToConsole(delCommand+"\n" + ans);
 		if(!checkEnbConnectedToMmeAndInService(3*60*1000)){
 			String failReason = "";
 			if(!checkConnectionToMME()){

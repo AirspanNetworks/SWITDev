@@ -3,6 +3,8 @@ package testsNG.ProtocolsAndServices.S1X2HandlingAndEvents;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import org.junit.Test;
@@ -151,8 +153,19 @@ public class P0 extends TestspanTest{
 	private boolean checkMmeAddress(String addressNetspan) {
 		GeneralUtils.startLevel("Verify EnodeB is connected to MME via correct address");
 		String mmeAddress = dut.getMmeStatusIpAddress();
-		if(addressNetspan !=null && addressNetspan.equals(mmeAddress)){
-			report.report("EnodeB is connected to MME via correct address: "+mmeAddress);
+		if(addressNetspan !=null){
+			InetAddress addrInetAddress = null;
+			try {
+				addrInetAddress = InetAddress.getByName(addressNetspan);
+			} catch (UnknownHostException e) {
+				e.printStackTrace();
+			}
+			String addrStr = addrInetAddress.getHostAddress();
+			if(addrStr.equals(mmeAddress)){
+				report.report("EnodeB is connected to MME via correct address: "+mmeAddress);
+			}else{
+				report.report("EnodeB is not connected to MME via correct address: "+mmeAddress,Reporter.FAIL);
+			}
 		}else{
 			report.report("EnodeB is not connected to MME via correct address: "+mmeAddress,Reporter.FAIL);
 			GeneralUtils.stopLevel();

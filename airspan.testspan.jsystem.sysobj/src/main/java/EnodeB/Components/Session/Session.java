@@ -137,7 +137,7 @@ public class Session implements Runnable {
 				this.getCliBuffer();
 				ans = this.sendCommands(EnodeBComponent.SHELL_PROMPT, "whoami", user);
 				GeneralUtils.printToConsole(enbComp.getName() + " - whoami response: " + ans);
-				if(ans.contains("Login incorrect") || ans.contains(enbComp.getSerialPassword()))
+				if(ans.contains("Login incorrect") || ans.contains(enbComp.getSerialPassword()) || !ans.contains(EnodeBComponent.SHELL_PROMPT))
 					return false;
 				return true;
 			}

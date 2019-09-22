@@ -53,12 +53,13 @@ public class CustomerCLI extends TestspanTest {
 
 		report.report("adding test filters");
 		testExpressions.add("br0");
+		testExpressions.add("eth3");
 		report.report(testExpressions.toString());
 
-		if(checkResponseWithTestFilter(response,testExpressions)) {
-			report.report("all expressions are in data!");
+		if(checkResponseWithTestFilterOr(response,testExpressions)) {
+			report.report("At least one expression is in data!");
 		}else {
-			report.report("not all expressions are in data!",Reporter.FAIL);
+			report.report("None of the expressions are in data!",Reporter.FAIL);
 		}
 	}
 
@@ -139,6 +140,19 @@ public class CustomerCLI extends TestspanTest {
 			if(!data.contains(mustHave)) {
 				report.report("expression : '"+mustHave+"' is not in data!");
 				result = false;
+			}
+		}
+		return result;
+	}
+	
+	private boolean checkResponseWithTestFilterOr(String data,List<String> singleTestExpressions) {
+		boolean result = false;
+		report.report("checking if at least one expression is in data as required");
+		for(String mustHave : singleTestExpressions) {
+			if(!data.contains(mustHave)) {
+				report.report("expression : '"+mustHave+"' is not in data!",Reporter.WARNING);
+			}else{
+				result = true;
 			}
 		}
 		return result;

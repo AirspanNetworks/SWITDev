@@ -57,7 +57,7 @@ public class CustomerCLI extends TestspanTest {
 		report.report(testExpressions.toString());
 
 		if(checkResponseWithTestFilterOr(response,testExpressions)) {
-			report.report("At least one expression is in data!");
+			report.report("At least one expression is in data");
 		}else {
 			report.report("None of the expressions are in data!",Reporter.FAIL);
 		}
@@ -152,6 +152,7 @@ public class CustomerCLI extends TestspanTest {
 			if(!data.contains(mustHave)) {
 				report.report("expression : '"+mustHave+"' is not in data!",Reporter.WARNING);
 			}else{
+				report.report("expression : '"+mustHave+"' is in data!");
 				result = true;
 			}
 		}

@@ -247,7 +247,7 @@ public class XLP extends EnodeBComponent {
 	}
 
 	private void resetCredentials() {
-		if(sessionManager.getSerialSession().getName() != null)
+		if(sessionManager.getSerialSession() != null)
 			sessionManager.closeSession(sessionManager.getSerialSession().getName());
 		sessionManager.setSerialSession(null);
 		serialCom.reset();

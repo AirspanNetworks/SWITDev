@@ -56,7 +56,7 @@ public class CustomerCLI extends TestspanTest {
 		testExpressions.add("eth3");
 		report.report(testExpressions.toString());
 
-		if(checkResponseWithTestFilterOr(response,testExpressions)) {
+		if(checkResponseWithTestFilterAtLeastOne(response,testExpressions)) {
 			report.report("At least one expression is in data");
 		}else {
 			report.report("None of the expressions are in data!",Reporter.FAIL);
@@ -145,7 +145,7 @@ public class CustomerCLI extends TestspanTest {
 		return result;
 	}
 	
-	private boolean checkResponseWithTestFilterOr(String data,List<String> singleTestExpressions) {
+	private boolean checkResponseWithTestFilterAtLeastOne(String data,List<String> singleTestExpressions) {
 		boolean result = false;
 		report.report("checking if at least one expression is in data as required");
 		for(String mustHave : singleTestExpressions) {

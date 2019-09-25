@@ -217,8 +217,9 @@ public class XLP extends EnodeBComponent {
 	@Override
 	public boolean updateVersions() {
 		// get versions from SNMP/NMS
+		boolean connected;
 		if (getMajorVersions()) {
-			return try2ConnectMultiVersion(getEnodebRunningVersion(), enodebStandbyVersion, "16.0");
+			connected = try2ConnectMultiVersion(getEnodebRunningVersion(), enodebStandbyVersion, "16.0");
 		}
 
 		// try all versions with sut priority in case getMajors failed.
@@ -226,13 +227,18 @@ public class XLP extends EnodeBComponent {
 			switch (enodebRunningVersion) {
 			case "17.0":
 			case "16.5":
-				return try2ConnectMultiVersion("16.5", "16.0", "15.5");
+				connected = try2ConnectMultiVersion("16.5", "16.0", "15.5");
 			case "16.0":
-				return try2ConnectMultiVersion("16.0", "16.5", "15.5");
+				connected = try2ConnectMultiVersion("16.0", "16.5", "15.5");
 			default:
-				return try2ConnectMultiVersion("15.5", "16.0", "16.5");
+				connected = try2ConnectMultiVersion("15.5", "16.0", "16.5");
 			}
 		}
+		if (!connected){
+			setUserNameAndPassword(((EnodeB) parent).getEnodeBversion());
+			report.report("Login to serial failed, failing test", Reporter.FAIL);
+		}
+		return connected;
 	}
 
 	private boolean validateCredentials() {
@@ -247,6 +253,7 @@ public class XLP extends EnodeBComponent {
 	}
 
 	private void resetCredentials() {
+		GeneralUtils.printToConsole(getName() +  " - Resseting credentials");
 		if(sessionManager.getSerialSession() != null)
 			sessionManager.closeSession(sessionManager.getSerialSession().getName());
 		sessionManager.setSerialSession(null);

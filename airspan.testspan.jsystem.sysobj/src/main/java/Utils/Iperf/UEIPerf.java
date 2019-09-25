@@ -765,38 +765,40 @@ public class UEIPerf {
 			long sampleTime = ips.getTimeStart();
 			int sampleIndex = 0;
 			while((line = br.readLine()) != null){
-				Matcher m = p.matcher(line);
-				if(m.find()){
-					if(tcpName && tcpCount<20){
-						tcpCount++;
-						continue;
+				if((tcpName && line.contains("SUM")) || !tcpName){
+					Matcher m = p.matcher(line);
+					if(m.find()){
+						if(tcpName && tcpCount<20){
+							tcpCount++;
+							continue;
+						}
+						//System.out.println(m.group(1));
+						//System.out.println(m.group(2));
+						//String sampleTime = m.group(1);
+						Long currentValue = 0L;
+						if(m.group(2).contains(".")){
+							currentValue = Long.valueOf(m.group(2).split("\\.")[0]);
+						}else{
+							currentValue = Long.valueOf(m.group(2));
+						}
+						
+						StreamParams tempStreamParams = new StreamParams();
+						tempStreamParams.setName(ips.getStreamName());
+						tempStreamParams.setTimeStamp(sampleTime);
+						tempStreamParams.setActive(true);
+						tempStreamParams.setUnit(CounterUnit.BITS_PER_SECOND);
+						tempStreamParams.setTxRate((long)(ips.getStreamLoad()*1000*1000));
+						tempStreamParams.setRxRate(currentValue*1000);
+						tempStreamParams.setPacketSize(ips.getFrameSize());
+						sampleTime+=1000;
+						try{
+							ret.get(sampleIndex);
+						}catch(Exception e){
+							ret.add(new ArrayList<StreamParams>());
+						}
+						ret.get(sampleIndex).add(tempStreamParams);
+						sampleIndex++;
 					}
-					//System.out.println(m.group(1));
-					//System.out.println(m.group(2));
-					//String sampleTime = m.group(1);
-					Long currentValue = 0L;
-					if(m.group(2).contains(".")){
-						currentValue = Long.valueOf(m.group(2).split("\\.")[0]);
-					}else{
-						currentValue = Long.valueOf(m.group(2));
-					}
-					
-					StreamParams tempStreamParams = new StreamParams();
-					tempStreamParams.setName(ips.getStreamName());
-					tempStreamParams.setTimeStamp(sampleTime);
-					tempStreamParams.setActive(true);
-					tempStreamParams.setUnit(CounterUnit.BITS_PER_SECOND);
-					tempStreamParams.setTxRate((long)(ips.getStreamLoad()*1000*1000));
-					tempStreamParams.setRxRate(currentValue*1000);
-					tempStreamParams.setPacketSize(ips.getFrameSize());
-					sampleTime+=1000;
-					try{
-						ret.get(sampleIndex);
-					}catch(Exception e){
-						ret.add(new ArrayList<StreamParams>());
-					}
-					ret.get(sampleIndex).add(tempStreamParams);
-					sampleIndex++;
 				}
 			}
 			br.close();
@@ -896,38 +898,40 @@ public class UEIPerf {
 			int tcpCount = 0;
 			boolean tcpName = ips.getTpFileName().contains("TCP");
 			while((line = br.readLine()) != null){
-				Matcher m = p.matcher(line);
-				if(m.find()){
-					if(tcpName && tcpCount<20){
-						tcpCount++;
-						continue;
+				if((tcpName && line.contains("SUM")) || !tcpName){
+					Matcher m = p.matcher(line);
+					if(m.find()){
+						if(tcpName && tcpCount<20){
+							tcpCount++;
+							continue;
+						}
+						//System.out.println(m.group(1));
+						//System.out.println(m.group(2));
+						//String sampleTime = m.group(1);
+						Long currentValue = 0L;
+						if(m.group(2).contains(".")){
+							currentValue = Long.valueOf(m.group(2).split("\\.")[0]);
+						}else{
+							currentValue = Long.valueOf(m.group(2));
+						}
+						
+						StreamParams tempStreamParams = new StreamParams();
+						tempStreamParams.setName(ips.getStreamName());
+						tempStreamParams.setTimeStamp(sampleTime);
+						tempStreamParams.setActive(true);
+						tempStreamParams.setUnit(CounterUnit.BITS_PER_SECOND);
+						tempStreamParams.setTxRate((long)(ips.getStreamLoad()*1000*1000));
+						tempStreamParams.setRxRate(currentValue*1000);
+						tempStreamParams.setPacketSize(ips.getFrameSize());
+						sampleTime+=1000;
+						try{
+							ret.get(sampleIndex);
+						}catch(Exception e){
+							ret.add(new ArrayList<StreamParams>());
+						}
+						ret.get(sampleIndex).add(tempStreamParams);
+						sampleIndex++;
 					}
-					//System.out.println(m.group(1));
-					//System.out.println(m.group(2));
-					//String sampleTime = m.group(1);
-					Long currentValue = 0L;
-					if(m.group(2).contains(".")){
-						currentValue = Long.valueOf(m.group(2).split("\\.")[0]);
-					}else{
-						currentValue = Long.valueOf(m.group(2));
-					}
-					
-					StreamParams tempStreamParams = new StreamParams();
-					tempStreamParams.setName(ips.getStreamName());
-					tempStreamParams.setTimeStamp(sampleTime);
-					tempStreamParams.setActive(true);
-					tempStreamParams.setUnit(CounterUnit.BITS_PER_SECOND);
-					tempStreamParams.setTxRate((long)(ips.getStreamLoad()*1000*1000));
-					tempStreamParams.setRxRate(currentValue*1000);
-					tempStreamParams.setPacketSize(ips.getFrameSize());
-					sampleTime+=1000;
-					try{
-						ret.get(sampleIndex);
-					}catch(Exception e){
-						ret.add(new ArrayList<StreamParams>());
-					}
-					ret.get(sampleIndex).add(tempStreamParams);
-					sampleIndex++;
 				}
 			}
 			br.close();

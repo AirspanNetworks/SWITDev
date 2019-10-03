@@ -236,7 +236,7 @@ public class XLP extends EnodeBComponent {
 		}
 		if (!connected){
 			setUserNameAndPassword(((EnodeB) parent).getEnodeBversion());
-			report.report("Login to serial failed, failing test", Reporter.FAIL);
+			report.report("Login to serial failed, failing test", Reporter.WARNING);
 		}
 		return connected;
 	}

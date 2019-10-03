@@ -758,6 +758,11 @@ public class UEIPerf {
 		Pattern p = Pattern.compile("(\\d+.\\d+-\\s*\\d+.\\d+).*KBytes\\s+(\\d+|\\d+.\\d+)\\s+Kbits/sec.*");
 		int tcpCount = 0;
 		boolean tcpName = ips.getTpFileName().contains("TCP");
+		Integer oneStream = ips.getNumberOfParallelIPerfStreams();
+		boolean moreThanOneStream = false;
+		if(oneStream != null && oneStream > 1){
+			moreThanOneStream = true;
+		}
 		try{
 			FileReader read = new FileReader(file);
 			BufferedReader br = new BufferedReader(read);
@@ -765,7 +770,7 @@ public class UEIPerf {
 			long sampleTime = ips.getTimeStart();
 			int sampleIndex = 0;
 			while((line = br.readLine()) != null){
-				if((tcpName && line.contains("SUM")) || !tcpName){
+				if(!tcpName || (tcpName && (line.contains("SUM") || !moreThanOneStream))){//    (tcpName && line.contains("SUM")) || !tcpName || (tcpName && !moreThanOneStream)){
 					Matcher m = p.matcher(line);
 					if(m.find()){
 						if(tcpName && tcpCount<20){
@@ -897,8 +902,13 @@ public class UEIPerf {
 			int sampleIndex = 0;
 			int tcpCount = 0;
 			boolean tcpName = ips.getTpFileName().contains("TCP");
+			Integer oneStream = ips.getNumberOfParallelIPerfStreams();
+			boolean moreThanOneStream = false;
+			if(oneStream != null && oneStream > 1){
+				moreThanOneStream = true;
+			}
 			while((line = br.readLine()) != null){
-				if((tcpName && line.contains("SUM")) || !tcpName){
+				if(!tcpName || (tcpName && (line.contains("SUM") || !moreThanOneStream))){
 					Matcher m = p.matcher(line);
 					if(m.find()){
 						if(tcpName && tcpCount<20){

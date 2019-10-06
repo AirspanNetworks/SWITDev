@@ -35,6 +35,7 @@ import Utils.DebugFtpServer;
 import Utils.GeneralUtils;
 import Utils.GeneralUtils.RebootTypesNetspan;
 import Utils.GeneralUtils.RelayScanType;
+import Utils.GeneralUtils.CellToUse;
 import Utils.Snmp.MibReader;
 import Utils.SysObjUtils;
 import jsystem.framework.ParameterProperties;
@@ -49,6 +50,8 @@ public class Enodeb extends EnodebAction {
 
 	public static final String VERIFY_COUNTER_VALUE_METHOD_NAME = "verifyCounterValue";
 	public static final String VERIFY_DISCOVERED_PROPERTIES_METHOD_NAME = "verifyDiscoveredProperties";
+
+
 
 	public enum TargetShell {
 		CLI, MAIN_SHELL, DAN
@@ -159,7 +162,16 @@ public class Enodeb extends EnodebAction {
 	private ArrayList<String> listOfEvents;
 	private ArrayList<Integer> emergencyAreaIds;
 	private verifyAlarmAction verifyAction = verifyAlarmAction.Equals;
-	
+	private CellToUse cellToUse = CellToUse.MULTI_CELL;
+
+	public CellToUse getCellToUse() {
+		return cellToUse;
+	}
+
+	public void setCellToUse(CellToUse cellToUse) {
+		this.cellToUse = cellToUse;
+	}
+
 	public synchronized RelayScanType getScanType() {
 		return scanType;
 	}
@@ -168,7 +180,6 @@ public class Enodeb extends EnodebAction {
 		this.scanType = scanType;
 	}
 
-	
 	
 	// Backhaul and Ethernet
 	protected BackhaulEthernetName backhaulEthernetName;
@@ -1561,4 +1572,21 @@ public class Enodeb extends EnodebAction {
 			report.report(String.format("%s - Succeeded to disable Multi-Cell.", dut.getName()));
 		}
 	}
+
+
+	@Test
+	@TestProperties(name = "Cell To Use", returnParam = "LastStatus", paramsInclude = { "DUT","CellToUse" })
+	public void changeCellToUse(){
+		if(dut == null){
+			report.report("No dut was configured",Reporter.FAIL);
+		}
+		report.report(dut.getName()+" - Trying to change Cell To Use parameter.");
+		if (!EnodeBConfig.getInstance().changeCellToUse(dut, cellToUse)) {
+			report.report(String.format("%s - Failed to change Cell To Use parameter.", dut.getName()), Reporter.FAIL);
+		}
+		else{
+			report.report(String.format("%s - Succeeded to change Cell To Use parameter.", dut.getName()));
+		}
+	}
+
 }

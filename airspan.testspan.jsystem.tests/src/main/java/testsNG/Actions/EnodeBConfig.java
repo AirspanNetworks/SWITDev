@@ -8,6 +8,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
+import Action.EnodebAction.Enodeb;
 import EnodeB.EnodeB;
 import EnodeB.Ninja;
 import Netspan.EnbProfiles;
@@ -49,6 +50,7 @@ import Utils.GeneralUtils;
 import Utils.Pair;
 import Utils.GeneralUtils.RebootType;
 import Utils.GeneralUtils.RelayScanType;
+import Utils.GeneralUtils.CellToUse;
 import Utils.Snmp.MibReader;
 import jsystem.framework.report.ListenerstManager;
 import jsystem.framework.report.Reporter;
@@ -2089,5 +2091,9 @@ public class EnodeBConfig {
 	
 	public boolean relayScan(EnodeB enodeB, RelayScanType scanType){
 		return netspanServer.relayScan(enodeB, scanType);
+	}
+
+	public boolean changeCellToUse(EnodeB enodeB, CellToUse cellToUse){
+		return netspanServer.changeCellToUse(enodeB, cellToUse);
 	}
 }

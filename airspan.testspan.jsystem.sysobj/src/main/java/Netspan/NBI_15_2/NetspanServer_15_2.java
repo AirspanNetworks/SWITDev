@@ -164,6 +164,7 @@ import Utils.GeneralUtils;
 import Utils.GeneralUtils.RebootType;
 import Utils.GeneralUtils.RebootTypesNetspan;
 import Utils.GeneralUtils.RelayScanType;
+import Utils.GeneralUtils.CellToUse;
 import Utils.Pair;
 import Utils.Triple;
 import jsystem.framework.report.Reporter;
@@ -4454,4 +4455,10 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+    @Override
+    public boolean changeCellToUse(EnodeB node, CellToUse cellToUse) {
+        report.report("changeCellToUse function is not implemented for this netspan(15_2)!");
+        return false;
+    }
 }

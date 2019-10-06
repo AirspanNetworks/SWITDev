@@ -6,12 +6,11 @@ import java.util.List;
 import EnodeB.EnodeB;
 import Netspan.NBIVersion;
 import Netspan.NBI_16_5.NetspanServer_16_5;
-import Netspan.NBI_17_0.Lte.LteCellSetWs;
-import Netspan.NBI_17_0.Lte.LteEnbDetailsSetWs;
-import Netspan.NBI_17_0.Lte.NodeResultValues;
-import Netspan.NBI_17_0.Lte.ObjectFactory;
+import Netspan.NBI_17_0.Lte.*;
 import Netspan.Profiles.ConnectedUETrafficDirection;
+import UeSimulator.Amarisoft.JsonObjects.ConfigFile.Cell;
 import Utils.GeneralUtils;
+import Utils.GeneralUtils.CellToUse;
 import jsystem.framework.report.Reporter;
 
 
@@ -144,6 +143,21 @@ public class NetspanServer_17_0 extends NetspanServer_16_5 implements Netspan_17
             soapHelper_17_0.endLteSoap();
         }
         return false;
+    }
+
+    @Override
+    public boolean changeCellToUse(EnodeB node, CellToUse cellToUse) {
+        LteEnbDetailsSetWs enbConfigSet = new LteEnbDetailsSetWs();
+        ObjectFactory factoryDetails = new ObjectFactory();
+        CellToUseValues cellToUseParam = null;
+        if (cellToUse == CellToUse.MULTI_CELL){
+            cellToUseParam = CellToUseValues.MULTI_CELL;
+        }
+        else{
+            cellToUseParam = CellToUseValues.LITE_COMP;
+        }
+        enbConfigSet.setCellToUse(factoryDetails.createLteEnbDetailsSetWsPnpParamsCellToUse(cellToUseParam));
+        return setNodeConfig(node, enbConfigSet);
     }
 
 }

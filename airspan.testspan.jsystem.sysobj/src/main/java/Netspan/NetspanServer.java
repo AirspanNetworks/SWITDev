@@ -48,9 +48,11 @@ import Netspan.Profiles.SecurityParameters;
 import Netspan.Profiles.SonParameters;
 import Netspan.Profiles.SyncParameters;
 import Netspan.Profiles.SystemDefaultParameters;
+import Utils.GeneralUtils;
 import Utils.GeneralUtils.RebootType;
 import Utils.GeneralUtils.RebootTypesNetspan;
 import Utils.GeneralUtils.RelayScanType;
+import Utils.GeneralUtils.CellToUse;
 import Utils.Pair;
 import jsystem.framework.system.SystemManagerImpl;
 import jsystem.framework.system.SystemObjectImpl;
@@ -703,4 +705,6 @@ public abstract class NetspanServer extends SystemObjectImpl {
 	public abstract boolean relayScan(EnodeB enodeB, RelayScanType scanType);
 
 	public abstract boolean isRelayEnodeb(String nodeName);
+
+    public abstract boolean changeCellToUse(EnodeB node, CellToUse cellToUse);
 }

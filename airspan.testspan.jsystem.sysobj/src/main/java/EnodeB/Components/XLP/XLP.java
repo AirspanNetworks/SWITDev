@@ -27,7 +27,6 @@ import EnodeB.ProtoBuf.PbLteStatusOuterClass.PbLteRfStatus;
 import EnodeB.ProtoBuf.PbLteStatusOuterClass.PbLteSgwStatus;
 import EnodeB.ProtoBuf.ProtoBuf;
 import Entities.ITrafficGenerator.TransmitDirection;
-import Netspan.NetspanServer;
 import Netspan.API.Enums.EnabledStates;
 import Netspan.API.Enums.EnbStates;
 import Netspan.API.Enums.HandoverType;
@@ -228,10 +227,13 @@ public class XLP extends EnodeBComponent {
 			case "17.0":
 			case "16.5":
 				connected = try2ConnectMultiVersion("16.5", "16.0", "15.5");
+				break;
 			case "16.0":
 				connected = try2ConnectMultiVersion("16.0", "16.5", "15.5");
+				break;
 			default:
 				connected = try2ConnectMultiVersion("15.5", "16.0", "16.5");
+				break;
 			}
 		}
 		if (!connected){

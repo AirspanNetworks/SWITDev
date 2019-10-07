@@ -924,9 +924,27 @@ public class UEIPerf {
 					}
 				}
 			}
-			if (tcpName && results.size() > 20){
-				for(int i=0;i<20;i++){
-					results.remove(0);
+			if (tcpName){
+				if(results.size() > 20){
+					for(int i=0;i<20;i++){
+						results.remove(0);
+					}
+				}
+				if(results.size() == 0){
+					br = new BufferedReader(read);
+					while((line = br.readLine()) != null){
+						results = new ArrayList<Long>();
+						Matcher m = p.matcher(line);
+						if(m.find()){
+							Long currentValue = 0L;
+							if(m.group(2).contains(".")){
+								currentValue = Long.valueOf(m.group(2).split("\\.")[0]);
+							}else{
+								currentValue = Long.valueOf(m.group(2));
+							}
+							results.add(currentValue);
+						}
+					}
 				}
 			}
 			long sampleTime = ips.getTimeStart();

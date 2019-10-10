@@ -819,7 +819,6 @@ public class UEIPerf {
 	}
 
 	private ArrayList<ArrayList<StreamParams>> extractStatisticsFromFile(IPerfStream ips, ArrayList<ArrayList<StreamParams>> ret, boolean download){
-		//ArrayList<StreamParams> toReturn = new ArrayList<StreamParams>();
 		File file = new File(ips.getTpFileName());
 		if(download){
 			if(ips.getTransmitDirection() == TransmitDirection.UL){
@@ -834,7 +833,6 @@ public class UEIPerf {
 			BufferedReader br = new BufferedReader(read);
 			String line;
 			int sampleIndex = 0;
-			//int tcpCount = 0;
 			boolean tcpName = ips.getTpFileName().contains("TCP");
 			Integer oneStream = ips.getNumberOfParallelIPerfStreams();
 			boolean moreThanOneStream = false;
@@ -842,8 +840,6 @@ public class UEIPerf {
 				moreThanOneStream = true;
 			}
 			ArrayList<Long> results = new ArrayList<Long>();
-			
-			
 			while((line = br.readLine()) != null){
 				if(!tcpName || (tcpName && (line.contains("SUM") || !moreThanOneStream))){
 					Matcher m = p.matcher(line);
@@ -866,8 +862,8 @@ public class UEIPerf {
 				}
 				if(results.size() == 0){
 					br = new BufferedReader(read);
+					results = new ArrayList<Long>();
 					while((line = br.readLine()) != null){
-						results = new ArrayList<Long>();
 						Matcher m = p.matcher(line);
 						if(m.find()){
 							Long currentValue = 0L;
@@ -900,44 +896,6 @@ public class UEIPerf {
 				ret.get(sampleIndex).add(tempStreamParams);
 				sampleIndex++;
 			}
-			
-			/*while((line = br.readLine()) != null){
-				if(!tcpName || (tcpName && (line.contains("SUM") || !moreThanOneStream))){
-					Matcher m = p.matcher(line);
-					if(m.find()){
-						if(tcpName && tcpCount<20){
-							tcpCount++;
-							continue;
-						}
-						//System.out.println(m.group(1));
-						//System.out.println(m.group(2));
-						//String sampleTime = m.group(1);
-						Long currentValue = 0L;
-						if(m.group(2).contains(".")){
-							currentValue = Long.valueOf(m.group(2).split("\\.")[0]);
-						}else{
-							currentValue = Long.valueOf(m.group(2));
-						}
-						
-						StreamParams tempStreamParams = new StreamParams();
-						tempStreamParams.setName(ips.getStreamName());
-						tempStreamParams.setTimeStamp(sampleTime);
-						tempStreamParams.setActive(true);
-						tempStreamParams.setUnit(CounterUnit.BITS_PER_SECOND);
-						tempStreamParams.setTxRate((long)(ips.getStreamLoad()*1000*1000));
-						tempStreamParams.setRxRate(currentValue*1000);
-						tempStreamParams.setPacketSize(ips.getFrameSize());
-						sampleTime+=1000;
-						try{
-							ret.get(sampleIndex);
-						}catch(Exception e){
-							ret.add(new ArrayList<StreamParams>());
-						}
-						ret.get(sampleIndex).add(tempStreamParams);
-						sampleIndex++;
-					}
-				}
-			}*/
 			br.close();
 			read.close();
 		}catch(Exception e){

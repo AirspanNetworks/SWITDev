@@ -736,82 +736,15 @@ public class UEIPerf {
 		ArrayList<ArrayList<StreamParams>> toReturn = new ArrayList<ArrayList<StreamParams>>();
 		for(IPerfStream ips : dlStreamArrayList){
 			if(streamList.contains(ips.getStreamName())){
-				toReturn = extractStatisticsFromFile(ips,toReturn);
+				toReturn = extractStatisticsFromFile(ips,toReturn,false);
 			}
 		}
 		for(IPerfStream ips : ulStreamArrayList){
 			if(streamList.contains(ips.getStreamName())){
-				toReturn = extractStatisticsFromFile(ips,toReturn);
+				toReturn = extractStatisticsFromFile(ips,toReturn,false);
 			}
 		}
 		return toReturn;
-	}
-	
-	private ArrayList<ArrayList<StreamParams>> extractStatisticsFromFile(IPerfStream ips, ArrayList<ArrayList<StreamParams>> ret){
-		//ArrayList<StreamParams> toReturn = new ArrayList<StreamParams>();
-		File file = new File(ips.getTpFileName());
-		/*if(ips.getTransmitDirection() == TransmitDirection.UL){
-			file = iperfMachineDL.getFile(ips.getTpFileName());
-		}else{
-			file = iperfMachineUL.getFile(ips.getTpFileName());
-		}*/
-		Pattern p = Pattern.compile("(\\d+.\\d+-\\s*\\d+.\\d+).*KBytes\\s+(\\d+|\\d+.\\d+)\\s+Kbits/sec.*");
-		int tcpCount = 0;
-		boolean tcpName = ips.getTpFileName().contains("TCP");
-		Integer oneStream = ips.getNumberOfParallelIPerfStreams();
-		boolean moreThanOneStream = false;
-		if(oneStream != null && oneStream > 1){
-			moreThanOneStream = true;
-		}
-		try{
-			FileReader read = new FileReader(file);
-			BufferedReader br = new BufferedReader(read);
-			String line;
-			long sampleTime = ips.getTimeStart();
-			int sampleIndex = 0;
-			while((line = br.readLine()) != null){
-				if(!tcpName || (tcpName && (line.contains("SUM") || !moreThanOneStream))){//    (tcpName && line.contains("SUM")) || !tcpName || (tcpName && !moreThanOneStream)){
-					Matcher m = p.matcher(line);
-					if(m.find()){
-						if(tcpName && tcpCount<20){
-							tcpCount++;
-							continue;
-						}
-						//System.out.println(m.group(1));
-						//System.out.println(m.group(2));
-						//String sampleTime = m.group(1);
-						Long currentValue = 0L;
-						if(m.group(2).contains(".")){
-							currentValue = Long.valueOf(m.group(2).split("\\.")[0]);
-						}else{
-							currentValue = Long.valueOf(m.group(2));
-						}
-						
-						StreamParams tempStreamParams = new StreamParams();
-						tempStreamParams.setName(ips.getStreamName());
-						tempStreamParams.setTimeStamp(sampleTime);
-						tempStreamParams.setActive(true);
-						tempStreamParams.setUnit(CounterUnit.BITS_PER_SECOND);
-						tempStreamParams.setTxRate((long)(ips.getStreamLoad()*1000*1000));
-						tempStreamParams.setRxRate(currentValue*1000);
-						tempStreamParams.setPacketSize(ips.getFrameSize());
-						sampleTime+=1000;
-						try{
-							ret.get(sampleIndex);
-						}catch(Exception e){
-							ret.add(new ArrayList<StreamParams>());
-						}
-						ret.get(sampleIndex).add(tempStreamParams);
-						sampleIndex++;
-					}
-				}
-			}
-			br.close();
-			read.close();
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		return ret;
 	}
 
 	public ArrayList<File> getResultFiles(ArrayList<String> streamList) {
@@ -877,21 +810,23 @@ public class UEIPerf {
 	public ArrayList<ArrayList<StreamParams>> getResultsAfterTest() {
 		ArrayList<ArrayList<StreamParams>> toReturn = new ArrayList<ArrayList<StreamParams>>();
 		for(IPerfStream ips : dlStreamArrayList){
-			toReturn = extractStatisticsFromFileWithDownloadFile(ips,toReturn);
+			toReturn = extractStatisticsFromFile(ips,toReturn,true);
 		}
 		for(IPerfStream ips : ulStreamArrayList){
-			toReturn = extractStatisticsFromFileWithDownloadFile(ips,toReturn);
+			toReturn = extractStatisticsFromFile(ips,toReturn,true);
 		}
 		return toReturn;
 	}
 
-	private ArrayList<ArrayList<StreamParams>> extractStatisticsFromFileWithDownloadFile(IPerfStream ips, ArrayList<ArrayList<StreamParams>> ret){
+	private ArrayList<ArrayList<StreamParams>> extractStatisticsFromFile(IPerfStream ips, ArrayList<ArrayList<StreamParams>> ret, boolean download){
 		//ArrayList<StreamParams> toReturn = new ArrayList<StreamParams>();
 		File file = new File(ips.getTpFileName());
-		if(ips.getTransmitDirection() == TransmitDirection.UL){
-			file = iperfMachineDL.getFile(ips.getTpFileName());
-		}else{
-			file = iperfMachineUL.getFile(ips.getTpFileName());
+		if(download){
+			if(ips.getTransmitDirection() == TransmitDirection.UL){
+				file = iperfMachineDL.getFile(ips.getTpFileName());
+			}else{
+				file = iperfMachineUL.getFile(ips.getTpFileName());
+			}			
 		}
 		Pattern p = Pattern.compile("(\\d+.\\d+-\\s*\\d+.\\d+).*KBytes\\s+(\\d+|\\d+.\\d+)\\s+Kbits/sec.*");
 		try{
@@ -910,7 +845,6 @@ public class UEIPerf {
 			
 			
 			while((line = br.readLine()) != null){
-				results = new ArrayList<Long>();
 				if(!tcpName || (tcpName && (line.contains("SUM") || !moreThanOneStream))){
 					Matcher m = p.matcher(line);
 					if(m.find()){

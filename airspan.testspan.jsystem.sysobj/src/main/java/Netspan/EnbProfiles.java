@@ -1,5 +1,7 @@
 package Netspan;
 
+import Netspan.NBI_15_1.Lte.TrafficManagementProfile;
+
 public enum EnbProfiles {
 	Cell_Advanced_Profile("cellAdvanced"),
 	Radio_Profile("radio"),
@@ -13,7 +15,10 @@ public enum EnbProfiles {
  	Management_Profile("management"),
  	MultiCell_Profile("multiCell"),
 	Neighbour_Management_Profile("neighbourManagement"),
-	Relay_Profile("relay");
+	Relay_Profile("relay"),
+	eMBMS_Profile("eMBMS"),
+	Traffic_Management_Profile("trafficManagement"),
+	Call_Trace_Profile("callTraceProfile");
     
     private final String value;
 

@@ -18,7 +18,6 @@ import Netspan.API.Enums.CategoriesLte;
 import Netspan.API.Enums.DuplexType;
 import Netspan.API.Enums.EnabledStates;
 import Netspan.API.Enums.EnbTypes;
-import Netspan.API.Enums.HardwareCategory;
 import Netspan.API.Enums.ServerProtocolType;
 import Netspan.API.Enums.SonAnrStates;
 import Netspan.API.Lte.CarrierAggregationModes;

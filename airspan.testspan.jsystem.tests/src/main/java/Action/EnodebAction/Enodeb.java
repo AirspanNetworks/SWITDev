@@ -51,8 +51,6 @@ public class Enodeb extends EnodebAction {
 	public static final String VERIFY_COUNTER_VALUE_METHOD_NAME = "verifyCounterValue";
 	public static final String VERIFY_DISCOVERED_PROPERTIES_METHOD_NAME = "verifyDiscoveredProperties";
 
-
-
 	public enum TargetShell {
 		CLI, MAIN_SHELL, DAN
 	}
@@ -180,6 +178,7 @@ public class Enodeb extends EnodebAction {
 		this.scanType = scanType;
 	}
 
+	
 	
 	// Backhaul and Ethernet
 	protected BackhaulEthernetName backhaulEthernetName;
@@ -1589,4 +1588,25 @@ public class Enodeb extends EnodebAction {
 		}
 	}
 
+
+	@Test
+	@TestProperties(name = "Copy from cell 1", returnParam = "LastStatus", paramsInclude = { "DUT","ProfileName" })
+	public void copyCell1() throws Exception {
+		if(dut == null){
+			report.report("No dut was configured",Reporter.FAIL);
+		}
+		report.report(dut.getName()+" - Trying to copy cell 1 profiles to cell 2.");
+		String cellAdvancedConfigurationProfileName = EnodeBConfig.getInstance().getCurrentCellAdvancedConfigurationProfileName(dut);
+		String mobilityProfileName = EnodeBConfig.getInstance().getCurrentMobilityProfileName(dut);
+		String eMBMSProfileName = EnodeBConfig.getInstance().getCurrenteMBMSProfileName(dut);
+		String trafficManagementProfileName =  EnodeBConfig.getInstance().getCurrentTrafficManagementProfileName(dut);
+		String callTraceProfileName  = EnodeBConfig.getInstance().getCurrentCallTraceProfileName(dut);
+
+		dut.setCellContextNumber(2);//return to 1 at the end
+
+		if (NetspanServer.getInstance().copyFromCell1(dut, cellAdvancedConfigurationProfileName, profileName, mobilityProfileName, eMBMSProfileName, trafficManagementProfileName, callTraceProfileName))
+			report.report("profiles were copied from cell 1 to cell 2");
+		else
+			report.report("couldn't copy the profiles to cell 2");
+	}
 }

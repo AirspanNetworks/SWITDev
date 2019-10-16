@@ -416,11 +416,22 @@ public class EnodeBConfig {
 	public String getCurrentEnbAdvancedConfigurationProfileName(EnodeB enb) {
 		return netspanServer.getCurrentEnbAdvancedConfigurationProfileName(enb);
 	}
-	
+
 	public String getCurrentCellAdvancedConfigurationProfileName(EnodeB enb) {
 		return netspanServer.getCurrentCellAdvancedConfigurationProfileName(enb);
 	}
 
+	public String getCurrenteMBMSProfileName(EnodeB enb) {
+		return netspanServer.getCurrentCallTraceProfileName(enb);
+	}
+
+	public String getCurrentTrafficManagementProfileName(EnodeB enb) {
+		return netspanServer.getCurrentTrafficManagementProfileName(enb);
+	}
+
+	public String getCurrentCallTraceProfileName(EnodeB enb) {
+		return netspanServer.getCurrentCallTraceProfileName(enb);
+	}
 	public String getCurrentNetWorkProfileName(EnodeB enb) {
 		return netspanServer.getCurrentNetworkProfileName(enb);
 	}

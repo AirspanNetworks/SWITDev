@@ -1591,7 +1591,7 @@ public class Enodeb extends EnodebAction {
 
 	@Test
 	@TestProperties(name = "Copy from cell 1", returnParam = "LastStatus", paramsInclude = { "DUT","ProfileName" })
-	public void copyCell1() throws Exception {
+	public void copyCellOne() throws Exception {
 		if(dut == null){
 			report.report("No dut was configured",Reporter.FAIL);
 		}

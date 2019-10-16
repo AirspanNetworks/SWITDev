@@ -108,6 +108,7 @@ public class AmariSoftServer extends SystemObjectImpl{
     	//connect();
     	ueMap = new ArrayList();
     	uesWithIP = new ArrayList<AmarisoftUE>();
+    	unusedUEs = new ArrayList();
     	sdrCellsMap = new HashMap<>();
     	fillUeList();
     	if (UEgroup != null)
@@ -332,6 +333,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 				result =  true;
 				ueMap = new ArrayList();
 		    	uesWithIP = new ArrayList<AmarisoftUE>();
+		    	unusedUEs = new ArrayList();
 		    	fillUeList();
 			} else {
 				report.report("Closing server failed.", Reporter.WARNING);

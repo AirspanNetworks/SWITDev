@@ -33,17 +33,17 @@ public class AmarisoftIPerfStream extends IPerfStream {
 				this.iperfServerCommand = "-s";
 				if(this.numberOfParallelIPerfStreams != null){
 					this.iperfClientCommand += " -P "+numberOfParallelIPerfStreams;
-					this.iperfServerCommand += " -P "+numberOfParallelIPerfStreams;
+					//this.iperfServerCommand += " -P "+numberOfParallelIPerfStreams;
 				}
 				this.iperfClientCommand += " -i 1 -p " + (5010+this.qci);
 				this.iperfServerCommand += " -i 1 -p " + (5010+this.qci);
 				if(this.windowSizeInKbits != null){
 					this.iperfClientCommand += " -w "+this.windowSizeInKbits+"k";
-					this.iperfServerCommand += " -w "+this.windowSizeInKbits+"k";
+					//this.iperfServerCommand += " -w "+this.windowSizeInKbits+"k";
 				}
 				if(this.frameSize != null){
 					this.iperfClientCommand += " -M "+this.frameSize;
-					this.iperfServerCommand += " -M "+this.frameSize;
+					//this.iperfServerCommand += " -M "+this.frameSize;
 				}
 				this.iperfClientCommand += " -t " + runTimeTraffic;
 				this.iperfServerCommand += " -f k";

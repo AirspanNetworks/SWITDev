@@ -1592,8 +1592,7 @@ public class Enodeb extends EnodebAction {
 	@Test
 	@TestProperties(name = "Copy from cell 1", returnParam = "LastStatus", paramsInclude = { "DUT","ProfileName" })
 	public void copyCellOne() throws Exception {
-		report.report("This is a copy from cell 1 function");
-		/*if(dut == null){
+		if(dut == null){
 			report.report("No dut was configured",Reporter.FAIL);
 		}
 		report.report(dut.getName()+" - Trying to copy cell 1 profiles to cell 2.");
@@ -1608,6 +1607,6 @@ public class Enodeb extends EnodebAction {
 		if (NetspanServer.getInstance().copyFromCell1(dut, cellAdvancedConfigurationProfileName, profileName, mobilityProfileName, eMBMSProfileName, trafficManagementProfileName, callTraceProfileName))
 			report.report("profiles were copied from cell 1 to cell 2");
 		else
-			report.report("couldn't copy the profiles to cell 2");*/
+			report.report("couldn't copy the profiles to cell 2");
 	}
 }

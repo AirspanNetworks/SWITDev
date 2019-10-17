@@ -1595,6 +1595,11 @@ public class Enodeb extends EnodebAction {
 		if(dut == null){
 			report.report("No dut was configured",Reporter.FAIL);
 		}
+		if (dut.getCellEnabled(41)){
+			report.report("Cell 2 is disabled- changing stste to enable");
+			EnodeBConfig.getInstance().setMultiCellstate(dut, true);
+		}
+
 		report.report(dut.getName()+" - Trying to copy cell 1 profiles to cell 2.");
 		String cellAdvancedConfigurationProfileName = EnodeBConfig.getInstance().getCurrentCellAdvancedConfigurationProfileName(dut);
 		String mobilityProfileName = EnodeBConfig.getInstance().getCurrentMobilityProfileName(dut);
@@ -1604,8 +1609,10 @@ public class Enodeb extends EnodebAction {
 
 		dut.setCellContextNumber(2);//return to 1 at the end
 
-		if (NetspanServer.getInstance().copyFromCell1(dut, cellAdvancedConfigurationProfileName, profileName, mobilityProfileName, eMBMSProfileName, trafficManagementProfileName, callTraceProfileName))
+		if (NetspanServer.getInstance().copyFromCell1(dut, cellAdvancedConfigurationProfileName, profileName, mobilityProfileName, eMBMSProfileName, trafficManagementProfileName, callTraceProfileName)){
 			report.report("profiles were copied from cell 1 to cell 2");
+		}
+
 		else
 			report.report("couldn't copy the profiles to cell 2");
 	}

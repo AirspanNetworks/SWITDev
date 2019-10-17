@@ -142,6 +142,7 @@ public class Enodeb extends EnodebAction {
 	private Comparison comparison;
 	private EnbProfiles enbProfile;
 	private String profileName;
+	private String radioProfileName;
 
 	private NodeManagementModes managedMode;
 	private boolean enableCell;
@@ -354,6 +355,11 @@ public class Enodeb extends EnodebAction {
 	@ParameterProperties(description = "Profile Name")
 	public void setProfileName(String profileName) {
 		this.profileName = profileName;
+	}
+
+	@ParameterProperties(description = "Radio Profile Name")
+	public void setRadioProfileName(String radioProfileName) {
+		this.radioProfileName = radioProfileName;
 	}
 
 	@ParameterProperties(description = "Backhaul and Ethernet Name")
@@ -1595,7 +1601,7 @@ public class Enodeb extends EnodebAction {
 		if(dut == null){
 			report.report("No dut was configured",Reporter.FAIL);
 		}
-		if (dut.getCellEnabled(41)){
+		if (!dut.getCellEnabled(41)){
 			report.report("Cell 2 is disabled- changing stste to enable");
 			EnodeBConfig.getInstance().setMultiCellstate(dut, true);
 		}
@@ -1609,8 +1615,14 @@ public class Enodeb extends EnodebAction {
 
 		dut.setCellContextNumber(2);//return to 1 at the end
 
-		if (NetspanServer.getInstance().copyFromCell1(dut, cellAdvancedConfigurationProfileName, profileName, mobilityProfileName, eMBMSProfileName, trafficManagementProfileName, callTraceProfileName)){
+		if (NetspanServer.getInstance().copyFromCell1(dut, cellAdvancedConfigurationProfileName, radioProfileName, mobilityProfileName, eMBMSProfileName, trafficManagementProfileName, callTraceProfileName)){
 			report.report("profiles were copied from cell 1 to cell 2");
+			report.report("Cell Advanced Configuration Profile: " + cellAdvancedConfigurationProfileName);
+			report.report("Radio Profile: " + radioProfileName);
+			report.report("mobility Profile: " + mobilityProfileName);
+			report.report("eMBMS Profile: " + eMBMSProfileName);
+			report.report("Traffic Management Profile: " + eMBMSProfileName);
+			report.report("call Trace Profile: " + eMBMSProfileName);
 		}
 
 		else

@@ -260,7 +260,6 @@ public class NetspanServer_17_0 extends NetspanServer_16_5 implements Netspan_17
     }
 
     public boolean copyFromCell1(EnodeB node, String cellAdvancedProfile, String radioProfile, String MobilityProfile, String eMBMSProfile, String TrafficManagementProfile, String callTraceProfile){
-       report.report("Netspan_17_actions");
         ObjectFactory objectFactory = new ObjectFactory();
         LteEnbDetailsSetWs enbConfigSet = new LteEnbDetailsSetWs();
         LteCellSetWs lteCellSet = new LteCellSetWs();

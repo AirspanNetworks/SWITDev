@@ -1617,12 +1617,14 @@ public class Enodeb extends EnodebAction {
 
 		if (NetspanServer.getInstance().copyFromCell1(dut, cellAdvancedConfigurationProfileName, radioProfileName, mobilityProfileName, eMBMSProfileName, trafficManagementProfileName, callTraceProfileName)){
 			report.report("profiles were copied from cell 1 to cell 2");
-			report.report("Cell Advanced Configuration Profile: " + cellAdvancedConfigurationProfileName);
-			report.report("Radio Profile: " + radioProfileName);
-			report.report("mobility Profile: " + mobilityProfileName);
-			report.report("eMBMS Profile: " + eMBMSProfileName);
-			report.report("Traffic Management Profile: " + eMBMSProfileName);
-			report.report("call Trace Profile: " + eMBMSProfileName);
+			report.startLevel("profiles info");
+				report.report("Cell Advanced Configuration Profile: " + cellAdvancedConfigurationProfileName);
+				report.report("Radio Profile: " + radioProfileName);
+				report.report("mobility Profile: " + mobilityProfileName);
+				report.report("eMBMS Profile: " + eMBMSProfileName);
+				report.report("Traffic Management Profile: " + eMBMSProfileName);
+				report.report("call Trace Profile: " + eMBMSProfileName);
+			report.stopLevel();
 		}
 
 		else

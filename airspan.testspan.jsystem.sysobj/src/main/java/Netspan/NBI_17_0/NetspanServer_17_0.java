@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import EnodeB.EnodeB;
+import Netspan.EnbProfiles;
 import Netspan.NBIVersion;
 import Netspan.NBI_16_5.NetspanServer_16_5;
 import Netspan.NBI_17_0.Lte.*;
@@ -159,5 +160,120 @@ public class NetspanServer_17_0 extends NetspanServer_16_5 implements Netspan_17
         enbConfigSet.setCellToUse(factoryDetails.createLteEnbDetailsSetWsPnpParamsCellToUse(cellToUseParam));
         return setNodeConfig(node, enbConfigSet);
     }
+
+    private LteEnbDetailsSetWs addProfile(EnodeB node, int cellNumber, EnbProfiles profileType, String profileName,
+                                          LteEnbDetailsSetWs enbConfigSet) {
+        switch (profileType) {
+            case System_Default_Profile:
+                enbConfigSet.setSystemDefaultProfile(profileName);
+                break;
+            case Management_Profile:
+                enbConfigSet.setManagementProfile(profileName);
+                break;
+
+            case Mobility_Profile:
+                if (cellNumber < 1) {
+                    report.report("Cell ID need to be greater than 0", Reporter.WARNING);
+                    return null;
+                }
+                getActiveIfActiveCell(enbConfigSet, cellNumber).setMobilityProfile(profileName);
+                break;
+
+            case Radio_Profile:
+                if (cellNumber < 1) {
+                    report.report("Cell ID need to be greater than 0", Reporter.WARNING);
+                    return null;
+                }
+                getActiveIfActiveCell(enbConfigSet, cellNumber).setRadioProfile(profileName);
+                break;
+
+            case Network_Profile:
+                enbConfigSet.setNetworkProfile(profileName);
+                break;
+            case Security_Profile:
+                enbConfigSet.setSecurityProfile(profileName);
+                break;
+            case Son_Profile:
+                enbConfigSet.setSonProfile(profileName);
+                break;
+            case Sync_Profile:
+                enbConfigSet.setSyncProfile(profileName);
+                break;
+            case EnodeB_Advanced_Profile:
+                enbConfigSet.setAdvancedConfigProfile(profileName);
+                break;
+            case Cell_Advanced_Profile:
+                if (cellNumber < 1) {
+                    report.report("Cell ID need to be greater than 0", Reporter.WARNING);
+                    return null;
+                }
+                getActiveIfActiveCell(enbConfigSet, cellNumber).setCellAdvancedConfigurationProfile(profileName);
+                break;
+            case MultiCell_Profile:
+                enbConfigSet.setMultiCellProfile(profileName);
+                break;
+            case eMBMS_Profile:
+                if (cellNumber < 1) {
+                    report.report("Cell ID need to be greater than 0", Reporter.WARNING);
+                    return null;
+                }
+                getActiveIfActiveCell(enbConfigSet, cellNumber).setEmbmsProfile(profileName);
+                break;
+            case Traffic_Management_Profile:
+                if (cellNumber < 1) {
+                    report.report("Cell ID need to be greater than 0", Reporter.WARNING);
+                    return null;
+                }
+                getActiveIfActiveCell(enbConfigSet, cellNumber).setTrafficManagementProfile(profileName);
+                break;
+            case Call_Trace_Profile:
+                if (cellNumber < 1) {
+                    report.report("Cell ID need to be greater than 0", Reporter.WARNING);
+                    return null;
+                }
+                getActiveIfActiveCell(enbConfigSet, cellNumber).setCallTraceProfile(profileName);
+                break;
+            default:
+                report.report("In method addProfile : No Enum EnbProfile", Reporter.WARNING);
+                return null;
+        }
+        return enbConfigSet;
+    }
+
+    private LteCellSetWs getActiveIfActiveCell(LteEnbDetailsSetWs enbConfigSet, int cellNumber) {
+        ObjectFactory objectFactory = new ObjectFactory();
+        LteCellSetWs newCell = new LteCellSetWs();
+        for (LteCellSetWs tempCell : enbConfigSet.getLteCell()) {
+            if (tempCell.getCellNumber().getValue().equals(String.valueOf(cellNumber)))
+                return tempCell;
+        }
+        newCell.setCellNumber(objectFactory.createLteCellGetWsCellNumber(String.valueOf(cellNumber)));
+        enbConfigSet.getLteCell().add(newCell);
+        return newCell;
+        /*
+         * try { for (int i = 0; i <= enbConfigSet.getLteCell().size(); i++) {
+         * String cellStr =
+         * enbConfigSet.getLteCell().get(i).getCellNumber().getValue(); int
+         * cellInt = Integer.valueOf(cellStr); if (cellInt == cellNumber) {
+         * return i; } } } catch (Exception e) { return -1; } return -1;
+         */
+    }
+
+    public boolean copyFromCell1(EnodeB node, String cellAdvancedProfile, String radioProfile, String MobilityProfile, String eMBMSProfile, String TrafficManagementProfile, String callTraceProfile){
+        ObjectFactory objectFactory = new ObjectFactory();
+        LteEnbDetailsSetWs enbConfigSet = new LteEnbDetailsSetWs();
+        LteCellSetWs lteCellSet = new LteCellSetWs();
+        lteCellSet.setCellNumber(objectFactory.createLteCellGetWsCellNumber(String.valueOf(2)));
+
+        enbConfigSet = addProfile(node, 2, EnbProfiles.Cell_Advanced_Profile, cellAdvancedProfile, enbConfigSet);
+        enbConfigSet = addProfile(node, 2, EnbProfiles.Radio_Profile, radioProfile, enbConfigSet);
+        enbConfigSet = addProfile(node, 2, EnbProfiles.Mobility_Profile, MobilityProfile, enbConfigSet);
+        enbConfigSet = addProfile(node, 2, EnbProfiles.eMBMS_Profile, eMBMSProfile, enbConfigSet);
+        enbConfigSet = addProfile(node, 2, EnbProfiles.Traffic_Management_Profile, TrafficManagementProfile, enbConfigSet);
+        enbConfigSet = addProfile(node, 2, EnbProfiles.Call_Trace_Profile, callTraceProfile, enbConfigSet);
+
+        return setNodeConfig(node, enbConfigSet);
+    }
+
 
 }

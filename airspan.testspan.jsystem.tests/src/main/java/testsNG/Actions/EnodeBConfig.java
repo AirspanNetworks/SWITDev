@@ -422,7 +422,7 @@ public class EnodeBConfig {
 	}
 
 	public String getCurrenteMBMSProfileName(EnodeB enb) {
-		return netspanServer.getCurrentCallTraceProfileName(enb);
+		return netspanServer.getCurrenteMBMSProfileName(enb);
 	}
 
 	public String getCurrentTrafficManagementProfileName(EnodeB enb) {

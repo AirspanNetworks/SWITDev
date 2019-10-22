@@ -3127,8 +3127,8 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 	}
 
     @Override
-    public boolean copyFromCell1(EnodeB node, String cellAdvancedProfile, String radioProfile, String MobilityProfile, String eMBMSProfile, String TrafficManagementProfile, String callTraceProfile) {
-        report.report("copyFromCell1 function is not implemented for this netspan(14_5)!");
+    public boolean setProfilesInCell2(EnodeB node, String cellAdvancedProfile, String radioProfile, String MobilityProfile, String eMBMSProfile, String TrafficManagementProfile, String callTraceProfile) {
+        report.report("setProfilesInCell2 function is not implemented for this netspan(14_5)!");
         return false;
     }
 

@@ -1602,7 +1602,7 @@ public class Enodeb extends EnodebAction {
 			report.report("No dut was configured",Reporter.FAIL);
 		}
 		if (!dut.getCellEnabled(41)){
-			report.report("Cell 2 is disabled- changing stste to enable");
+			report.report("Cell 2 is disabled- changing state to enable");
 			EnodeBConfig.getInstance().setMultiCellstate(dut, true);
 		}
 
@@ -1613,21 +1613,24 @@ public class Enodeb extends EnodebAction {
 		String trafficManagementProfileName =  EnodeBConfig.getInstance().getCurrentTrafficManagementProfileName(dut);
 		String callTraceProfileName  = EnodeBConfig.getInstance().getCurrentCallTraceProfileName(dut);
 
-		dut.setCellContextNumber(2);//return to 1 at the end
+		dut.setCellContextNumber(2);
 
-		if (NetspanServer.getInstance().copyFromCell1(dut, cellAdvancedConfigurationProfileName, radioProfileName, mobilityProfileName, eMBMSProfileName, trafficManagementProfileName, callTraceProfileName)){
+		report.startLevel("profiles info");
+		report.report("Cell Advanced Configuration Profile: " + cellAdvancedConfigurationProfileName);
+		report.report("Radio Profile: " + radioProfileName);
+		report.report("mobility Profile: " + mobilityProfileName);
+		report.report("eMBMS Profile: " + eMBMSProfileName);
+		report.report("Traffic Management Profile: " + eMBMSProfileName);
+		report.report("call Trace Profile: " + eMBMSProfileName);
+		report.stopLevel();
+
+		if (NetspanServer.getInstance().setProfilesInCell2(dut, cellAdvancedConfigurationProfileName, radioProfileName, mobilityProfileName, eMBMSProfileName, trafficManagementProfileName, callTraceProfileName)){
 			report.report("profiles were copied from cell 1 to cell 2");
-			report.startLevel("profiles info");
-				report.report("Cell Advanced Configuration Profile: " + cellAdvancedConfigurationProfileName);
-				report.report("Radio Profile: " + radioProfileName);
-				report.report("mobility Profile: " + mobilityProfileName);
-				report.report("eMBMS Profile: " + eMBMSProfileName);
-				report.report("Traffic Management Profile: " + eMBMSProfileName);
-				report.report("call Trace Profile: " + eMBMSProfileName);
-			report.stopLevel();
 		}
 
 		else
 			report.report("couldn't copy the profiles to cell 2");
+
+		dut.setCellContextNumber(1);
 	}
 }

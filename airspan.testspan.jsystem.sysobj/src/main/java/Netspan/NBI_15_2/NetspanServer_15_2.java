@@ -790,20 +790,9 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
         return enbSetContent(node, enbConfigSet, null);
     }
 
-    public boolean copyFromCell1(EnodeB node, String cellAdvancedProfile, String radioProfile, String MobilityProfile, String eMBMSProfile, String TrafficManagementProfile, String callTraceProfile){
-        ObjectFactory objectFactory = new ObjectFactory();
-        LteEnbDetailsSetWs enbConfigSet = new LteEnbDetailsSetWs();
-        LteCellSetWs lteCellSet = new LteCellSetWs();
-        lteCellSet.setCellNumber(objectFactory.createLteCellGetWsCellNumber(String.valueOf(2)));
-
-        enbConfigSet = addProfile(node, 2, EnbProfiles.Cell_Advanced_Profile, cellAdvancedProfile, enbConfigSet);
-        enbConfigSet = addProfile(node, 2, EnbProfiles.Radio_Profile, radioProfile, enbConfigSet);
-        enbConfigSet = addProfile(node, 2, EnbProfiles.Mobility_Profile, MobilityProfile, enbConfigSet);
-        enbConfigSet = addProfile(node, 2, EnbProfiles.eMBMS_Profile, eMBMSProfile, enbConfigSet);
-        enbConfigSet = addProfile(node, 2, EnbProfiles.Traffic_Management_Profile, TrafficManagementProfile, enbConfigSet);
-        enbConfigSet = addProfile(node, 2, EnbProfiles.Call_Trace_Profile, callTraceProfile, enbConfigSet);
-
-        return enbSetContent(node, enbConfigSet, null);
+    public boolean setProfilesInCell2(EnodeB node, String cellAdvancedProfile, String radioProfile, String MobilityProfile, String eMBMSProfile, String TrafficManagementProfile, String callTraceProfile){
+        report.report("setProfilesInCell2 function is not implemented for this netspan(15_2)!");
+        return false;
     }
 
     /**

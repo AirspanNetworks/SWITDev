@@ -48,7 +48,6 @@ import Netspan.Profiles.SecurityParameters;
 import Netspan.Profiles.SonParameters;
 import Netspan.Profiles.SyncParameters;
 import Netspan.Profiles.SystemDefaultParameters;
-import Utils.GeneralUtils;
 import Utils.GeneralUtils.RebootType;
 import Utils.GeneralUtils.RebootTypesNetspan;
 import Utils.GeneralUtils.RelayScanType;
@@ -708,7 +707,7 @@ public abstract class NetspanServer extends SystemObjectImpl {
 
     public abstract boolean changeCellToUse(EnodeB node, CellToUse cellToUse);
 
-    public abstract boolean copyFromCell1(EnodeB node, String cellAdvancedProfile, String radioProfile, String MobilityProfile, String eMBMSProfile, String TrafficManagementProfile, String callTraceProfile);
+    public abstract boolean setProfilesInCell2(EnodeB node, String cellAdvancedProfile, String radioProfile, String MobilityProfile, String eMBMSProfile, String TrafficManagementProfile, String callTraceProfile);
 
     public abstract String getCurrentCallTraceProfileName(EnodeB enb);
 

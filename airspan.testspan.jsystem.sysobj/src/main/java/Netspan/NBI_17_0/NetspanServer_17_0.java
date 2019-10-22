@@ -9,7 +9,6 @@ import Netspan.NBIVersion;
 import Netspan.NBI_16_5.NetspanServer_16_5;
 import Netspan.NBI_17_0.Lte.*;
 import Netspan.Profiles.ConnectedUETrafficDirection;
-import UeSimulator.Amarisoft.JsonObjects.ConfigFile.Cell;
 import Utils.GeneralUtils;
 import Utils.GeneralUtils.CellToUse;
 import jsystem.framework.report.Reporter;
@@ -259,7 +258,7 @@ public class NetspanServer_17_0 extends NetspanServer_16_5 implements Netspan_17
          */
     }
 
-    public boolean copyFromCell1(EnodeB node, String cellAdvancedProfile, String radioProfile, String MobilityProfile, String eMBMSProfile, String TrafficManagementProfile, String callTraceProfile){
+    public boolean setProfilesInCell2(EnodeB node, String cellAdvancedProfile, String radioProfile, String MobilityProfile, String eMBMSProfile, String TrafficManagementProfile, String callTraceProfile){
         ObjectFactory objectFactory = new ObjectFactory();
         LteEnbDetailsSetWs enbConfigSet = new LteEnbDetailsSetWs();
         LteCellSetWs lteCellSet = new LteCellSetWs();

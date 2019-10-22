@@ -1,6 +1,4 @@
 
-<<<<<<< HEAD
-=======
 
 ### Eclipse ###
 .metadata
@@ -130,6 +128,5 @@ modules.xml
 hs_err_pid*
 
 # End of https://www.gitignore.io/api/java,eclipse,intellij
->>>>>>> remotes/origin/master
 # Default ignored files
 /workspace.xml

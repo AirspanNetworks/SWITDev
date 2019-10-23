@@ -1,7 +1,7 @@
 package Netspan;
 
 public enum NBIVersion {
-	NBI_14_5("14_5"), NBI_15_2("15_2"), NBI_15_5("15_5"), NBI_16_0("16_0"), NBI_16_5("16_5"), NBI_17_0("17_0");
+	NBI_14_5("14_5"), NBI_15_2("15_2"), NBI_15_5("15_5"), NBI_16_0("16_0"), NBI_16_5("16_5"), NBI_17_0("17_0"),NBI_17_5("17_5");
 
 	private final String value;
 

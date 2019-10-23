@@ -1,5 +1,7 @@
 package Netspan.NBI_17_0;
 
-public interface Netspan_17_0_abilities {
+import Netspan.NBI_16_5.Netspan_16_5_abilities;
+
+public interface Netspan_17_0_abilities extends Netspan_16_5_abilities {
 	
 }

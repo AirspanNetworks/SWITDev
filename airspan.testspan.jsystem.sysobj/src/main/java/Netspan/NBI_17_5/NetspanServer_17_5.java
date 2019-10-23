@@ -70,6 +70,7 @@ import Netspan.NBI_17_5.Lte.AddlSpectrumEmissions;
 import Netspan.NBI_17_5.Lte.AirSonWs;
 import Netspan.NBI_17_5.Lte.AnrFreq;
 import Netspan.NBI_17_5.Lte.AnrFreqListContainer;
+import Netspan.NBI_17_5.Lte.CellToUseValues;
 import Netspan.NBI_17_5.Lte.Duplex;
 import Netspan.NBI_17_5.Lte.DuplexModeTypes;
 import Netspan.NBI_17_5.Lte.EaidsParams;
@@ -184,6 +185,7 @@ import Netspan.Profiles.SyncParameters;
 import Netspan.Profiles.SystemDefaultParameters;
 import Utils.FileServer;
 import Utils.GeneralUtils;
+import Utils.GeneralUtils.CellToUse;
 import Utils.GeneralUtils.RebootType;
 import Utils.GeneralUtils.RebootTypesNetspan;
 import Utils.GeneralUtils.RelayScanType;
@@ -783,62 +785,98 @@ public class NetspanServer_17_5 extends NetspanServer implements Netspan_17_5_ab
         return enbSetContent(node,null, enbConfigSet, null);
     }
 
+    @Override
+    public boolean changeCellToUse(EnodeB node, CellToUse cellToUse) {
+        LteEnbDetailsSetWs enbConfigSet = new LteEnbDetailsSetWs();
+        ObjectFactory factoryDetails = new ObjectFactory();
+        CellToUseValues cellToUseParam = null;
+        if (cellToUse == CellToUse.MULTI_CELL){
+            cellToUseParam = CellToUseValues.MULTI_CELL;
+        }
+        else{
+            cellToUseParam = CellToUseValues.LITE_COMP;
+        }
+        enbConfigSet.setCellToUse(factoryDetails.createLteEnbDetailsSetWsPnpParamsCellToUse(cellToUseParam));
+        return setNodeConfig(node, enbConfigSet);
+    }
+    
     private LteEnbDetailsSetWs addProfile(EnodeB node, int cellNumber, EnbProfiles profileType, String profileName,
                                           LteEnbDetailsSetWs enbConfigSet) {
-        switch (profileType) {
-            case System_Default_Profile:
-                enbConfigSet.setSystemDefaultProfile(profileName);
-                break;
-            case Management_Profile:
-                enbConfigSet.setManagementProfile(profileName);
-                break;
-
-            case Mobility_Profile:
-                if (cellNumber < 1) {
-                    report.report("Cell ID need to be greater than 0", Reporter.WARNING);
-                    return null;
-                }
-                getActiveIfActiveCell(enbConfigSet, cellNumber).setMobilityProfile(profileName);
-                break;
-
-            case Radio_Profile:
-                if (cellNumber < 1) {
-                    report.report("Cell ID need to be greater than 0", Reporter.WARNING);
-                    return null;
-                }
-                getActiveIfActiveCell(enbConfigSet, cellNumber).setRadioProfile(profileName);
-                break;
-
-            case Network_Profile:
-                enbConfigSet.setNetworkProfile(profileName);
-                break;
-            case Security_Profile:
-                enbConfigSet.setSecurityProfile(profileName);
-                break;
-            case Son_Profile:
-                enbConfigSet.setSonProfile(profileName);
-                break;
-            case Sync_Profile:
-                enbConfigSet.setSyncProfile(profileName);
-                break;
-            case EnodeB_Advanced_Profile:
-                enbConfigSet.setAdvancedConfigProfile(profileName);
-                break;
-            case Cell_Advanced_Profile:
-                if (cellNumber < 1) {
-                    report.report("Cell ID need to be greater than 0", Reporter.WARNING);
-                    return null;
-                }
-                getActiveIfActiveCell(enbConfigSet, cellNumber).setCellAdvancedConfigurationProfile(profileName);
-                break;
-            case MultiCell_Profile:
-                enbConfigSet.setMultiCellProfile(profileName);
-                break;
-            default:
-                report.report("In method addProfile : No Enum EnbProfile", Reporter.WARNING);
-                return null;
-        }
-        return enbConfigSet;
+    	switch (profileType) {
+	        case System_Default_Profile:
+	            enbConfigSet.setSystemDefaultProfile(profileName);
+	            break;
+	        case Management_Profile:
+	            enbConfigSet.setManagementProfile(profileName);
+	            break;
+	
+	        case Mobility_Profile:
+	            if (cellNumber < 1) {
+	                report.report("Cell ID need to be greater than 0", Reporter.WARNING);
+	                return null;
+	            }
+	            getActiveIfActiveCell(enbConfigSet, cellNumber).setMobilityProfile(profileName);
+	            break;
+	
+	        case Radio_Profile:
+	            if (cellNumber < 1) {
+	                report.report("Cell ID need to be greater than 0", Reporter.WARNING);
+	                return null;
+	            }
+	            getActiveIfActiveCell(enbConfigSet, cellNumber).setRadioProfile(profileName);
+	            break;
+	
+	        case Network_Profile:
+	            enbConfigSet.setNetworkProfile(profileName);
+	            break;
+	        case Security_Profile:
+	            enbConfigSet.setSecurityProfile(profileName);
+	            break;
+	        case Son_Profile:
+	            enbConfigSet.setSonProfile(profileName);
+	            break;
+	        case Sync_Profile:
+	            enbConfigSet.setSyncProfile(profileName);
+	            break;
+	        case EnodeB_Advanced_Profile:
+	            enbConfigSet.setAdvancedConfigProfile(profileName);
+	            break;
+	        case Cell_Advanced_Profile:
+	            if (cellNumber < 1) {
+	                report.report("Cell ID need to be greater than 0", Reporter.WARNING);
+	                return null;
+	            }
+	            getActiveIfActiveCell(enbConfigSet, cellNumber).setCellAdvancedConfigurationProfile(profileName);
+	            break;
+	        case MultiCell_Profile:
+	            enbConfigSet.setMultiCellProfile(profileName);
+	            break;
+	        case eMBMS_Profile:
+	            if (cellNumber < 1) {
+	                report.report("Cell ID need to be greater than 0", Reporter.WARNING);
+	                return null;
+	            }
+	            getActiveIfActiveCell(enbConfigSet, cellNumber).setEmbmsProfile(profileName);
+	            break;
+	        case Traffic_Management_Profile:
+	            if (cellNumber < 1) {
+	                report.report("Cell ID need to be greater than 0", Reporter.WARNING);
+	                return null;
+	            }
+	            getActiveIfActiveCell(enbConfigSet, cellNumber).setTrafficManagementProfile(profileName);
+	            break;
+	        case Call_Trace_Profile:
+	            if (cellNumber < 1) {
+	                report.report("Cell ID need to be greater than 0", Reporter.WARNING);
+	                return null;
+	            }
+	            getActiveIfActiveCell(enbConfigSet, cellNumber).setCallTraceProfile(profileName);
+	            break;
+	        default:
+	            report.report("In method addProfile : No Enum EnbProfile", Reporter.WARNING);
+	            return null;
+	    }
+	    return enbConfigSet;
     }
 
     private LteCellSetWs getActiveIfActiveCell(LteEnbDetailsSetWs enbConfigSet, int cellNumber) {
@@ -2440,6 +2478,24 @@ public class NetspanServer_17_5 extends NetspanServer implements Netspan_17_5_ab
         return this.getCurrentRadioProfileName(enb, cell);
     }
 
+    @Override
+    public String getCurrenteMBMSProfileName(EnodeB enb) {
+        int cell = enb.getCellContextID();
+        return this.getCurrenteMBMsProfileName(enb, cell);
+    }
+
+    @Override
+    public String getCurrentTrafficManagementProfileName(EnodeB enb) {
+        int cell = enb.getCellContextID();
+        return this.getCurrentTrafficManagementProfileName(enb, cell);
+    }
+
+    @Override
+    public String getCurrentCallTraceProfileName(EnodeB enb) {
+        int cell = enb.getCellContextID();
+        return this.getCurrentCallTraceProfileName(enb, cell);
+    }
+    
     @Override
     public String getCurrentManagmentProfileName(EnodeB enb) {
         EnbDetailsGet nodeConfig = getNodeConfig(enb);
@@ -4963,4 +5019,62 @@ public class NetspanServer_17_5 extends NetspanServer implements Netspan_17_5_ab
 		}
 		return mmeStatuses;
 	}
+	
+	public boolean setProfilesInCell2(EnodeB node, String cellAdvancedProfile, String radioProfile, String MobilityProfile, String eMBMSProfile, String TrafficManagementProfile, String callTraceProfile){
+        ObjectFactory objectFactory = new ObjectFactory();
+        LteEnbDetailsSetWs enbConfigSet = new LteEnbDetailsSetWs();
+        LteCellSetWs lteCellSet = new LteCellSetWs();
+        lteCellSet.setCellNumber(objectFactory.createLteCellGetWsCellNumber(String.valueOf(2)));
+
+        enbConfigSet = addProfile(node, 2, EnbProfiles.Cell_Advanced_Profile, cellAdvancedProfile, enbConfigSet);
+        enbConfigSet = addProfile(node, 2, EnbProfiles.Radio_Profile, radioProfile, enbConfigSet);
+        enbConfigSet = addProfile(node, 2, EnbProfiles.Mobility_Profile, MobilityProfile, enbConfigSet);
+        enbConfigSet = addProfile(node, 2, EnbProfiles.eMBMS_Profile, eMBMSProfile, enbConfigSet);
+        enbConfigSet = addProfile(node, 2, EnbProfiles.Traffic_Management_Profile, TrafficManagementProfile, enbConfigSet);
+        enbConfigSet = addProfile(node, 2, EnbProfiles.Call_Trace_Profile, callTraceProfile, enbConfigSet);
+
+        return setNodeConfig(node, enbConfigSet);
+    }
+	
+	private String getCurrentTrafficManagementProfileName(EnodeB enb, int cellNumber) {
+        EnbDetailsGet nodeConfig = getNodeConfig(enb);
+        if (nodeConfig != null) {
+            for (LteCellGetWs cell : nodeConfig.getLteCell()) {
+                int tempCellNumber = Integer.valueOf(cell.getCellNumber().getValue());
+                if (tempCellNumber == cellNumber) {
+                    GeneralUtils.printToConsole("Traffic management Profile From Netspan: " + cell.getTrafficManagementProfile() + " for cell : " + cell.getCellNumber().getValue());
+                    return cell.getTrafficManagementProfile();
+                }
+            }
+        }
+        return null;
+    }
+
+    private String getCurrentCallTraceProfileName(EnodeB enb, int cellNumber) {
+        EnbDetailsGet nodeConfig = getNodeConfig(enb);
+        if (nodeConfig != null) {
+            for (LteCellGetWs cell : nodeConfig.getLteCell()) {
+                int tempCellNumber = Integer.valueOf(cell.getCellNumber().getValue());
+                if (tempCellNumber == cellNumber) {
+                    GeneralUtils.printToConsole("Traffic management Profile From Netspan: " + cell.getCallTraceProfile() + " for cell : " + cell.getCellNumber().getValue());
+                    return cell.getCallTraceProfile();
+                }
+            }
+        }
+        return null;
+    }
+
+    private String getCurrenteMBMsProfileName(EnodeB enb, int cellNumber) {
+        EnbDetailsGet nodeConfig = getNodeConfig(enb);
+        if (nodeConfig != null) {
+            for (LteCellGetWs cell : nodeConfig.getLteCell()) {
+                int tempCellNumber = Integer.valueOf(cell.getCellNumber().getValue());
+                if (tempCellNumber == cellNumber) {
+                    GeneralUtils.printToConsole("eMBMS Profile From Netspan: " + cell.getEmbmsProfile() + " for cell : " + cell.getCellNumber().getValue());
+                    return cell.getEmbmsProfile();
+                }
+            }
+        }
+        return null;
+    }
 }

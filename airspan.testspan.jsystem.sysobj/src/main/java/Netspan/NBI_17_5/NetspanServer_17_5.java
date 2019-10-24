@@ -18,6 +18,7 @@ import EnodeB.EnodeB;
 import EnodeB.EnodeBChannelBandwidth;
 import EnodeB.EnodeBUpgradeImage;
 import EnodeB.EnodeBUpgradeServer;
+import Netspan.CellProfiles;
 import Netspan.EnbProfiles;
 import Netspan.NBIVersion;
 import Netspan.NetspanServer;
@@ -44,6 +45,7 @@ import Netspan.API.Lte.CarrierAggregationModes;
 import Netspan.API.Lte.EnbCellProperties;
 import Netspan.API.Lte.EventInfo;
 import Netspan.API.Lte.LteBackhaul;
+import Netspan.API.Lte.LteSonDynIcic;
 import Netspan.API.Lte.NodeInfo;
 import Netspan.API.Lte.PTPStatus;
 import Netspan.API.Lte.PciStatusCell;
@@ -65,12 +67,17 @@ import Netspan.NBI_17_5.Inventory.DiscoveryTaskActionResult;
 import Netspan.NBI_17_5.Inventory.NodeActionResult;
 import Netspan.NBI_17_5.Inventory.NodeDetailGetResult;
 import Netspan.NBI_17_5.Inventory.NodeManagementMode;
+import Netspan.NBI_17_5.Inventory.NodeProvisioningGetResult;
+import Netspan.NBI_17_5.Inventory.NodeProvisioningGetWs;
 import Netspan.NBI_17_5.Inventory.WsResponse;
 import Netspan.NBI_17_5.Lte.AddlSpectrumEmissions;
 import Netspan.NBI_17_5.Lte.AirSonWs;
 import Netspan.NBI_17_5.Lte.AnrFreq;
 import Netspan.NBI_17_5.Lte.AnrFreqListContainer;
+import Netspan.NBI_17_5.Lte.AuPnpDetailWs;
 import Netspan.NBI_17_5.Lte.CellToUseValues;
+import Netspan.NBI_17_5.Lte.ClockContainer;
+import Netspan.NBI_17_5.Lte.ClockSource;
 import Netspan.NBI_17_5.Lte.Duplex;
 import Netspan.NBI_17_5.Lte.DuplexModeTypes;
 import Netspan.NBI_17_5.Lte.EaidsParams;
@@ -79,14 +86,17 @@ import Netspan.NBI_17_5.Lte.EnbAdvancedProfile;
 import Netspan.NBI_17_5.Lte.EnbCellAdvancedProfile;
 import Netspan.NBI_17_5.Lte.EnbDetailsGet;
 import Netspan.NBI_17_5.Lte.EnbDetailsGetPnp;
+import Netspan.NBI_17_5.Lte.EnbManagementProfile;
 import Netspan.NBI_17_5.Lte.EnbMobilityProfile;
 import Netspan.NBI_17_5.Lte.EnbMultiCellProfile;
+import Netspan.NBI_17_5.Lte.EnbNeighbourProfile;
 import Netspan.NBI_17_5.Lte.EnbNetworkProfile;
 import Netspan.NBI_17_5.Lte.EnbPnpConfig;
 import Netspan.NBI_17_5.Lte.EnbRadioProfile;
 import Netspan.NBI_17_5.Lte.EnbSecurityProfile;
 import Netspan.NBI_17_5.Lte.EnbSonProfile;
 import Netspan.NBI_17_5.Lte.EnbSyncProfile;
+import Netspan.NBI_17_5.Lte.EnbTypesWs;
 import Netspan.NBI_17_5.Lte.EtwsModes;
 import Netspan.NBI_17_5.Lte.EtwsWs;
 import Netspan.NBI_17_5.Lte.Lte3RdPartyGetResult;
@@ -109,6 +119,8 @@ import Netspan.NBI_17_5.Lte.LteSecurityProfileGetResult;
 import Netspan.NBI_17_5.Lte.LteSonCSonWs;
 import Netspan.NBI_17_5.Lte.LteSyncProfileGetResult;
 import Netspan.NBI_17_5.Lte.LteSyncProfileResult;
+import Netspan.NBI_17_5.Lte.LteSystemDefaultProfile;
+import Netspan.NBI_17_5.Lte.MaintenanceWindowConfigurationWs;
 import Netspan.NBI_17_5.Lte.MobilityConnectedModeFreq;
 import Netspan.NBI_17_5.Lte.MobilityConnectedModeInterDefaultContainer;
 import Netspan.NBI_17_5.Lte.MobilityConnectedModeIntraFrequencyListContainer;
@@ -117,10 +129,26 @@ import Netspan.NBI_17_5.Lte.MobilityConnectedModeThresholdBasedListContainer;
 import Netspan.NBI_17_5.Lte.MultiCellProfileGetResult;
 import Netspan.NBI_17_5.Lte.MultiCellProfileResult;
 import Netspan.NBI_17_5.Lte.NameResult;
+import Netspan.NBI_17_5.Lte.NeighbourHomeEnbBandConfig;
+import Netspan.NBI_17_5.Lte.NeighbourHomeEnbBandListContainer;
+import Netspan.NBI_17_5.Lte.NeighbourHomeEnbDefaultConfig;
+import Netspan.NBI_17_5.Lte.NeighbourHomeEnbEarfcnConfig;
+import Netspan.NBI_17_5.Lte.NeighbourHomeEnbEarfcnListContainer;
+import Netspan.NBI_17_5.Lte.NeighbourHomeEnbPciWs;
+import Netspan.NBI_17_5.Lte.NeighbourNrtBandConfig;
+import Netspan.NBI_17_5.Lte.NeighbourNrtBandListContainer;
+import Netspan.NBI_17_5.Lte.NeighbourNrtDefaultConfig;
+import Netspan.NBI_17_5.Lte.NeighbourNrtEarfcnConfig;
+import Netspan.NBI_17_5.Lte.NeighbourNrtEarfcnListContainer;
+import Netspan.NBI_17_5.Lte.NeighbourNrtPciWs;
+import Netspan.NBI_17_5.Lte.NlmIntraFreqScan;
+import Netspan.NBI_17_5.Lte.NlmIntraFreqScanListContainer;
 import Netspan.NBI_17_5.Lte.NodeListResult;
 import Netspan.NBI_17_5.Lte.NodeProperty;
+import Netspan.NBI_17_5.Lte.NodeResult;
 import Netspan.NBI_17_5.Lte.NodeSimple;
 import Netspan.NBI_17_5.Lte.ObjectFactory;
+import Netspan.NBI_17_5.Lte.PciConflictHandlingValues;
 import Netspan.NBI_17_5.Lte.PciRange;
 import Netspan.NBI_17_5.Lte.PciRangeListContainer;
 import Netspan.NBI_17_5.Lte.PlmnListContainer;
@@ -130,6 +158,7 @@ import Netspan.NBI_17_5.Lte.PnpHardwareTypes;
 import Netspan.NBI_17_5.Lte.ProfileResponse;
 import Netspan.NBI_17_5.Lte.RelayEnodeBConfigGetResult;
 import Netspan.NBI_17_5.Lte.ResourceManagementTypes;
+import Netspan.NBI_17_5.Lte.RfSubframe;
 import Netspan.NBI_17_5.Lte.RsiRange;
 import Netspan.NBI_17_5.Lte.RsiRangeListContainer;
 import Netspan.NBI_17_5.Lte.S1ListContainer;
@@ -137,6 +166,7 @@ import Netspan.NBI_17_5.Lte.SfrThresholdTypes;
 import Netspan.NBI_17_5.Lte.SnmpDetailSetWs;
 import Netspan.NBI_17_5.Lte.SnmpDetailWs;
 import Netspan.NBI_17_5.Lte.TddFrameConfigurationsSupported;
+import Netspan.NBI_17_5.Lte.TimeZones;
 import Netspan.NBI_17_5.Server.FileServerProtocolType;
 import Netspan.NBI_17_5.Server.FileServerResponse;
 import Netspan.NBI_17_5.Server.FileServerWs;
@@ -176,6 +206,8 @@ import Netspan.Profiles.ManagementParameters;
 import Netspan.Profiles.MobilityParameters;
 import Netspan.Profiles.MultiCellParameters;
 import Netspan.Profiles.NeighbourManagementParameters;
+import Netspan.Profiles.NeighbourManagementParameters.HomeEnbPci;
+import Netspan.Profiles.NeighbourManagementParameters.NrtPci;
 import Netspan.Profiles.NetworkParameters;
 import Netspan.Profiles.NetworkParameters.Plmn;
 import Netspan.Profiles.RadioParameters;
@@ -183,6 +215,8 @@ import Netspan.Profiles.SecurityParameters;
 import Netspan.Profiles.SonParameters;
 import Netspan.Profiles.SyncParameters;
 import Netspan.Profiles.SystemDefaultParameters;
+import Utils.CellNetspanProfiles;
+import Utils.DefaultNetspanProfiles;
 import Utils.FileServer;
 import Utils.GeneralUtils;
 import Utils.GeneralUtils.CellToUse;
@@ -652,6 +686,9 @@ public class NetspanServer_17_5 extends NetspanServer implements Netspan_17_5_ab
                     response = soapHelper_17_5.getLteSoap().multiCellProfileDelete(nameList,
                         credentialsLte);
                     break;
+                case Neighbour_Management_Profile:
+                	response = soapHelper_17_5.getLteSoap().neighbourProfileDelete(nameList, credentialsLte);
+                	break;
                 default:
                     report.report("deleteEnbProfile get EnbProfiles type not exist: " + profileType, Reporter.WARNING);
                     return false;
@@ -729,7 +766,9 @@ public class NetspanServer_17_5 extends NetspanServer implements Netspan_17_5_ab
                     response = soapHelper_17_5.getLteSoap().multiCellProfileGet(nameList,null,null,
                         credentialsLte);
                     break;
-
+                case Neighbour_Management_Profile:
+                	response = soapHelper_17_5.getLteSoap().neighbourProfileGet(nameList, null,null,
+    						credentialsLte);
                 default:
                     report.report("isProfileExists get error EnbProfiles type: " + profileType, Reporter.WARNING);
             }
@@ -872,6 +911,9 @@ public class NetspanServer_17_5 extends NetspanServer implements Netspan_17_5_ab
 	            }
 	            getActiveIfActiveCell(enbConfigSet, cellNumber).setCallTraceProfile(profileName);
 	            break;
+	        case Neighbour_Management_Profile:
+	        	enbConfigSet.setNeighbourProfile(profileName);
+				break;
 	        default:
 	            report.report("In method addProfile : No Enum EnbProfile", Reporter.WARNING);
 	            return null;
@@ -1027,50 +1069,151 @@ public class NetspanServer_17_5 extends NetspanServer implements Netspan_17_5_ab
     }
 
     protected EnbRadioProfile createEnbRadioProfile(RadioParameters radioParams) {
-        ObjectFactory factoryDetails = new ObjectFactory();
-        EnbRadioProfile radioProfile = new EnbRadioProfile();
+    	ObjectFactory factoryObject = new ObjectFactory();
+		EnbRadioProfile radio = new EnbRadioProfile();
+		
+		
+		if (radioParams.getProfileName() == null) {
+			return new EnbRadioProfile();
+		} else {
+			radio.setName(radioParams.getProfileName());
+		}
 
-        if (radioParams.getProfileName() == null) {
-            return new EnbRadioProfile();
-        } else {
-            radioProfile.setName(radioParams.getProfileName());
-        }
+		if (radioParams.getBand() != null) {
+			radio.setBand(factoryObject.createEnbRadioProfileParamsBand(radioParams.getBand()));
+		}
 
-        if (radioParams.getBand() != null) {
-            radioProfile.setBand(factoryDetails.createEnbRadioProfileParamsBand(radioParams.getBand()));
-        }
+		if (radioParams.getBandwidth() != null) {
+			radio.setBandwidthMhz(factoryObject.createEnbRadioProfileParamsBandwidthMhz(radioParams.getBandwidth()));
+		}
+		if (radioParams.getDownLinkFrequency() != null) {
+			radio.setDownlinkFreqKHz(factoryObject.createEnbRadioProfileParamsUplinkFreqKHz(radioParams.getDownLinkFrequency()));
+		}
 
-        if (radioParams.getBandwidth() != null) {
-            radioProfile.setBandwidthMhz(factoryDetails.createEnbRadioProfileParamsBandwidthMhz(radioParams.getBandwidth()));
-        }
-        if (radioParams.getDownLinkFrequency() != null) {
-            radioProfile.setDownlinkFreqKHz(
-                factoryDetails.createEnbRadioProfileParamsUplinkFreqKHz(radioParams.getDownLinkFrequency()));
-        }
+		if (radioParams.getDuplex() != null) {
+			DuplexModeTypes duplexMode = radioParams.getDuplex().contains("1") ? DuplexModeTypes.FDD
+					: DuplexModeTypes.TDD;
+			radio.setDuplexMode(factoryObject.createEnbRadioProfileParamsDuplexMode(duplexMode));
+		}
+		if (radioParams.getEarfcn() != null) {
+			radio.setEarfcn(factoryObject.createEnbRadioProfileParamsEarfcn(radioParams.getEarfcn()));
+		}
+		if (radioParams.getFrameConfig() != null) {
+			TddFrameConfigurationsSupported fc = radioParams.getFrameConfig().contains("1")
+					? TddFrameConfigurationsSupported.DL_40_UL_40_SP_20
+					: TddFrameConfigurationsSupported.DL_60_UL_20_SP_20;
+			radio.setFrameConfig(factoryObject.createEnbRadioProfileParamsFrameConfig(fc));
+		}
+		if (radioParams.getTxpower() != null) {
+			radio.setTxPower(factoryObject.createEnbRadioProfileParamsTxPower(radioParams.getTxpower()));
+		}
 
-        if (radioParams.getDuplex() != null) {
-        	DuplexModeTypes duplexMode = radioParams.getDuplex().contains("1") ? DuplexModeTypes.FDD
-                : DuplexModeTypes.TDD;
-            radioProfile.setDuplexMode(factoryDetails.createEnbRadioProfileParamsDuplexMode(duplexMode));
-        }
-        if (radioParams.getEarfcn() != null) {
-            radioProfile.setEarfcn(factoryDetails.createEnbRadioProfileParamsEarfcn(radioParams.getEarfcn()));
-        }
-        if (radioParams.getFrameConfig() != null) {
-            TddFrameConfigurationsSupported fc = radioParams.getFrameConfig().contains("1")
-                ? TddFrameConfigurationsSupported.DL_40_UL_40_SP_20
-                : TddFrameConfigurationsSupported.DL_60_UL_20_SP_20;
-            radioProfile.setFrameConfig(factoryDetails.createEnbRadioProfileParamsFrameConfig(fc));
-        }
-        if (radioParams.getTxpower() != null) {
-            radioProfile.setTxPower(factoryDetails.createEnbRadioProfileParamsTxPower(radioParams.getTxpower()));
-        }
-
-        if (radioParams.getUpLinkFrequency() != null) {
-            radioProfile.setUplinkFreqKHz(
-                factoryDetails.createEnbRadioProfileParamsUplinkFreqKHz(radioParams.getUpLinkFrequency()));
-        }
-        return radioProfile;
+		if (radioParams.getUpLinkFrequency() != null) {
+			radio.setUplinkFreqKHz(factoryObject.createEnbRadioProfileParamsUplinkFreqKHz(radioParams.getUpLinkFrequency()));
+		}
+		
+		Boolean ecid = radioParams.getECIDMode();
+		if(ecid != null){
+			EnabledStates ecidParam;
+			ecidParam = ecid ? EnabledStates.ENABLED : EnabledStates.DISABLED;
+			radio.setEcidMode(factoryObject.createEnbRadioProfileParamsEcidMode(ecidParam));
+		}
+		
+		Integer ecidTimer = radioParams.getECIDProcedureTimer();
+		if(ecidTimer != null){
+			radio.setEcidTimer(factoryObject.createEnbRadioProfileParamsEcidTimer(ecidTimer));
+		}
+		
+		Boolean otdoa = radioParams.getOTDOAMode();
+		if(otdoa != null){
+			EnabledStates otdoaParam;
+			otdoaParam = otdoa ? EnabledStates.ENABLED : EnabledStates.DISABLED;
+			radio.setOtdoaMode(factoryObject.createEnbRadioProfileParamsOtdoaMode(otdoaParam));
+		}
+		
+		if(otdoa){
+			String subFrames = radioParams.getSubframes();
+			if(subFrames != null){
+				String[] framsArr = subFrames.split(",");
+				RfSubframe subFramesObj = new RfSubframe();
+				for(String frame : framsArr){
+					frame = frame.trim();
+					switch(frame){
+					case "0":
+						subFramesObj.setSubFrame0(factoryObject.createRfSubframeSubFrame0(EnabledStates.ENABLED));
+						break;
+					case "1":
+						subFramesObj.setSubFrame1(factoryObject.createRfSubframeSubFrame1(EnabledStates.ENABLED));
+						break;
+					case "2":
+						subFramesObj.setSubFrame2(factoryObject.createRfSubframeSubFrame2(EnabledStates.ENABLED));
+						break;
+					case "3":
+						subFramesObj.setSubFrame3(factoryObject.createRfSubframeSubFrame3(EnabledStates.ENABLED));
+						break;
+					case "4":
+						subFramesObj.setSubFrame4(factoryObject.createRfSubframeSubFrame4(EnabledStates.ENABLED));
+						break;
+					case "5":
+						subFramesObj.setSubFrame5(factoryObject.createRfSubframeSubFrame5(EnabledStates.ENABLED));
+						break;
+					case "6":
+						subFramesObj.setSubFrame6(factoryObject.createRfSubframeSubFrame6(EnabledStates.ENABLED));
+						break;
+					case "7":
+						subFramesObj.setSubFrame7(factoryObject.createRfSubframeSubFrame7(EnabledStates.ENABLED));
+						break;
+					case "8":
+						subFramesObj.setSubFrame8(factoryObject.createRfSubframeSubFrame8(EnabledStates.ENABLED));
+						break;
+					case "9":
+						subFramesObj.setSubFrame9(factoryObject.createRfSubframeSubFrame9(EnabledStates.ENABLED));
+						break;
+					default:
+						break;	
+					}
+				}
+				
+				radio.setRfSubframes(subFramesObj);
+			}
+				
+			if(radioParams.getPRSBandWidth() != null){
+				Integer prsBw = radioParams.getPRSBandWidth().getPRS();
+				if(prsBw != null){
+					radio.setOtdoaPrsBw(factoryObject.createEnbRadioProfileParamsOtdoaPrsBw(prsBw.toString()));
+				}
+			}
+		
+			if(radioParams.getPRSPeriodicly() != null){
+				Integer prsPeriodicity = radioParams.getPRSPeriodicly().getPRS();
+				if(prsPeriodicity != null){
+					radio.setOtdaPrsPeriodicity(factoryObject.createEnbRadioProfileParamsOtdaPrsPeriodicity(prsPeriodicity.toString()));
+				}
+			}
+		
+			Integer prsOffSet = radioParams.getPRSOffset();
+			if(prsOffSet != null){
+				radio.setOtdaPrsOffset(factoryObject.createEnbRadioProfileParamsOtdaPrsOffset(prsOffSet));
+			}
+			
+			Integer prsPowerOffSet = radioParams.getPRSPowerOffset();
+			if(prsPowerOffSet != null){
+				radio.setOtdoaPrsTxOff(factoryObject.createEnbRadioProfileParamsOtdoaPrsTxOff(prsPowerOffSet));
+			}
+		
+			if(radioParams.getPRSMutingPeriodicly() != null){
+				Integer prsMutingPeriodicity = radioParams.getPRSMutingPeriodicly().getPRS();
+				if(prsMutingPeriodicity != null){
+					radio.setOtdoaPrsMutePeriod(factoryObject.createEnbRadioProfileParamsOtdoaPrsMutePeriod(prsMutingPeriodicity.toString()));
+				}
+			}
+			
+			String prsMutingPattern = radioParams.getPRSMutingPattern();
+			if(prsMutingPattern != null){
+				radio.setOtdoaPrsMutePattSeq(prsMutingPattern);
+			}
+		}
+		return radio;
     }
 
     /**
@@ -1088,127 +1231,30 @@ public class NetspanServer_17_5 extends NetspanServer implements Netspan_17_5_ab
      */
     @Override
     public boolean cloneSonProfile(EnodeB node, String cloneFromName, SonParameters sonParmas) {
-        try {
-            ObjectFactory factoryDetails = new ObjectFactory();
-            EnbSonProfile sonProfile = new EnbSonProfile();
-            EnbDetailsGet nodeConf = getNodeConfig(node);
-            CategoriesLte category = null;
-            try {
-                category = CategoriesLte.fromValue(nodeConf.getHardware());
-            } catch (Exception e) {
-                report.report("Incompatible HardWare Type in inner Netspan method!", Reporter.WARNING);
-                GeneralUtils.printToConsole("Error : " + e.getMessage() + ", nodeConfig :" + nodeConf.getHardware());
-                return false;
-            }
+    	try {
 
-            sonProfile.setHardwareCategory(factoryDetails.createCallTraceProfileHardwareCategory(category));
-            sonProfile.setName(sonParmas.getProfileName());
+			EnbSonProfile sonProfile = parseSonParameters(node, sonParmas);
+			ProfileResponse cloneResult = soapHelper_17_5.getLteSoap().sonProfileClone(cloneFromName,
+					sonProfile, credentialsLte);
 
-            if (sonParmas.isSonCommissioning() != null && sonParmas.isSonCommissioning()) {
-                sonProfile.setSonCommissioningEnabled(
-                    factoryDetails.createEnbSonProfileParamsSonCommissioningEnabled(sonParmas.isSonCommissioning()));
-                // disable change of parameter due to NBI Change of param from
-                // boolean to enum
-                sonProfile.setPciEnabled(factoryDetails.createEnbSonProfileParamsPciEnabled(sonParmas.isAutoPCIEnabled()));
-                if (sonParmas.isAutoPCIEnabled() != null && sonParmas.isAutoPCIEnabled()) {
-                    PciRangeListContainer ranges = new PciRangeListContainer();
-                    List<Pair<Integer, Integer>> rangesList = sonParmas.getRangesList();
-                    if (rangesList != null) {
-                        for (Pair<Integer, Integer> pair : rangesList) {
-                            PciRange pciRange = new PciRange();
-                            pciRange.setPciStart(factoryDetails.createPciRangePciStart(pair.getElement0()));
-                            pciRange.setPciEnd(factoryDetails.createPciRangePciEnd(pair.getElement1()));
-                            ranges.getPciRange().add(pciRange);
-                        }
-                    }
-                    sonProfile.setPciRangeList(ranges);
-                }
-                sonProfile.setRsiEnabled(factoryDetails.createEnbSonProfileParamsRsiEnabled(sonParmas.isAutoRSIEnabled()));
-                if (sonParmas.isAutoRSIEnabled() != null && sonParmas.isAutoRSIEnabled()) {
-                    RsiRangeListContainer ranges = new RsiRangeListContainer();
-                    List<Triple<Integer, Integer, Integer>> rangesRsiList = sonParmas.getRangesRSIList();
-                    if (rangesRsiList != null) {
-                        for (Triple<Integer, Integer, Integer> triple : rangesRsiList) {
-                            RsiRange rsiRange = new RsiRange();
-                            rsiRange.setRsiStart(factoryDetails.createRsiRangeRsiStart(triple.getLeftElement()));
-                            rsiRange.setRsiStep(factoryDetails.createRsiRangeRsiStep(triple.getMiddleElement()));
-                            rsiRange.setRsiListSize(factoryDetails.createRsiRangeRsiListSize(triple.getRightElement()));
-                            ranges.getRsiRange().add(rsiRange);
-                        }
-                    }
-                    sonProfile.setRsiRangeList(ranges);
-                }
-                SonAnrStates anrState = sonParmas.getAnrState() != null ? sonParmas.getAnrState()
-                    : SonAnrStates.DISABLED;
-                sonProfile.setAnrState(factoryDetails.createEnbSonProfileParamsAnrState(anrState));
-                sonProfile.setPnpMode(factoryDetails.createEnbSonProfileParamsPnpMode(sonParmas.getPnpMode()));
-                if (anrState != SonAnrStates.DISABLED) {
-                    // getting the current list and add new freqs
-                    AnrFreqListContainer anrFrequency = new AnrFreqListContainer();
-                    AnrFreq anrFreq;
-                    List<Integer> anrFrequencyList = sonParmas.getAnrFrequencyList();
-                    if (anrFrequencyList != null) {
-                        for (Integer integer : anrFrequencyList) {
-                            anrFreq = new AnrFreq();
-                            anrFreq.setFrequency(integer);
-                            anrFrequency.getAnrFrequency().add(anrFreq);
-                        }
-                        sonProfile.setAnrFrequencyList(anrFrequency);
-                    }
-                    if (anrState == SonAnrStates.HO_MEASUREMENT) {
-                        sonProfile.setMinAllowedHoSuccessRate(factoryDetails
-                            .createEnbSonProfileParamsMinAllowedHoSuccessRate(sonParmas.getMinAllowedHoSuccessRate()));
-                    }
+			if (cloneResult == null) {
+				report.report("Fail to get Son profile cloning resut", Reporter.WARNING);
+				return false;
+			} else if (cloneResult.getErrorCode() == Netspan.NBI_17_5.Lte.ErrorCodes.OK) {
+				report.report("Succeeded to clone Son profile, new profile name: " + sonParmas.getProfileName());
+				return true;
+			} else {
+				report.report("Failed to clone Son profile, reason: " + cloneResult.getErrorString(), Reporter.WARNING);
+				return false;
+			}
 
-                }
-            }
-            if (sonParmas.isCSonEnabled() != null && sonParmas.isCSonEnabled()) {
-                LteSonCSonWs sonProfileCSon = factoryDetails.createLteSonCSonWs();
-                sonProfileCSon
-                    .setIsCSonEnabled(factoryDetails.createLteSonCSonWsIsCSonEnabled(sonParmas.isCSonEnabled()));
-                sonProfileCSon.setIsCSonRachEnabled(
-                    factoryDetails.createLteSonCSonWsIsCSonRachEnabled(sonParmas.iscSonRachMode()));
-                sonProfileCSon.setIsCSonMcimEnabled(
-                    factoryDetails.createLteSonCSonWsIsCSonMcimEnabled(sonParmas.iscSonMcimMode()));
-                sonProfileCSon.setIsCSonMroEnabled(
-                    factoryDetails.createLteSonCSonWsIsCSonMroEnabled(sonParmas.iscSonMroMode()));
-                sonProfileCSon.setIsCSonMlbEnabled(
-                    factoryDetails.createLteSonCSonWsIsCSonMlbEnabled(sonParmas.iscSonMlbMode()));
-                sonProfileCSon.setCSonMlbCapacityClassValue(
-                    factoryDetails.createLteSonCSonWsCSonMlbCapacityClassValue(sonParmas.getcSonCapacityClass()));
-                sonProfileCSon.setCSonMlbPdschLoadThresh(
-                    factoryDetails.createLteSonCSonWsCSonMlbPdschLoadThresh(sonParmas.getcSonPDSCHLoad()));
-                sonProfileCSon.setCSonMlbPuschLoadThresh(
-                    factoryDetails.createLteSonCSonWsCSonMlbPuschLoadThresh(sonParmas.getcSonPUSCHLoad()));
-                sonProfileCSon.setCSonMlbRrcLoadThresh(
-                    factoryDetails.createLteSonCSonWsCSonMlbRrcLoadThresh(sonParmas.getcSonRRCLoad()));
-                sonProfileCSon.setCSonMlbCpuLoadThresh(
-                    factoryDetails.createLteSonCSonWsCSonMlbCpuLoadThresh(sonParmas.getcSonCPUCHLoad()));
-                sonProfile.setCSon(sonProfileCSon);
-            }
-            ProfileResponse cloneResult = soapHelper_17_5.getLteSoap().sonProfileClone(cloneFromName,
-                sonProfile, credentialsLte);
-
-            boolean result = false;
-            if (cloneResult == null) {
-                report.report("Fail to get Son profile cloning resut", Reporter.WARNING);
-                result = false;
-            } else if (cloneResult.getErrorCode() == Netspan.NBI_17_5.Lte.ErrorCodes.OK) {
-                report.report("Succeeded to clone Son profile, new profile name: " + sonParmas.getProfileName());
-                result = true;
-            } else {
-                report.report("Failed to clone Son profile, reason: " + cloneResult.getErrorString(), Reporter.WARNING);
-                result = false;
-            }
-            return result;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            report.report("Failed to clone Son profile, due to: " + e.getMessage(), Reporter.WARNING);
-            return false;
-        } finally {
-            soapHelper_17_5.endLteSoap();
-        }
+		} catch (Exception e) {
+			e.printStackTrace();
+			report.report("Failed to clone Son profile, due to: " + e.getMessage(), Reporter.WARNING);
+			return false;
+		} finally {
+			soapHelper_17_5.endLteSoap();
+		}
     }
 
     /**
@@ -1221,68 +1267,87 @@ public class NetspanServer_17_5 extends NetspanServer implements Netspan_17_5_ab
     @Override
     public boolean cloneSyncProfile(EnodeB node, String cloneFromName, SyncParameters syncParams) {
 
-        EnbSyncProfile syncProfile = new EnbSyncProfile();
-        syncProfile.setName(syncParams.getProfileName());
-        ObjectFactory objectFactory = new ObjectFactory();
+    	EnbSyncProfile syncProfile = new EnbSyncProfile();
+		syncProfile.setName(syncParams.getProfileName());
+		ObjectFactory objectFactory = new ObjectFactory();
 
-        if (syncParams.getPrimaryMasterIpAddress() != null) {
-            syncProfile.setPrimaryMasterIpAddress(syncParams.getPrimaryMasterIpAddress());
-        }
-        if (syncParams.getPrimaryMasterDomain() != null) {
-            syncProfile.setPrimaryMasterDomain(
-                objectFactory.createEnbSyncProfileParamsPrimaryMasterDomain(syncParams.getPrimaryMasterDomain()));
-        }
-        if (syncParams.getSecondaryMasterIpAddress() != null) {
-            syncProfile.setSecondaryMasterIpAddress(syncParams.getSecondaryMasterIpAddress());
-            if (!syncParams.getSecondaryMasterIpAddress().equals("0.0.0.0")) {
-                if (syncParams.getSecondaryMasterDomain() != null) {
-                    syncProfile.setSecondaryMasterDomain(objectFactory
-                        .createEnbSyncProfileParamsSecondaryMasterDomain(syncParams.getSecondaryMasterDomain()));
-                }
-            }
-        }
-        if (syncParams.getAnnounceRateInMsgPerSec() != null) {
-            syncProfile.setAnnounceRateInMsgPerSec(objectFactory.createEnbSyncProfileParamsAnnounceRateInMsgPerSec(
-                syncParams.getAnnounceRateInMsgPerSec().value()));
-        }
-        if (syncParams.getSyncRateInMsgPerSec() != null) {
-            syncProfile.setSyncRateInMsgPerSec(objectFactory
-                .createEnbSyncProfileParamsSyncRateInMsgPerSec(syncParams.getSyncRateInMsgPerSec().value()));
-        }
-        if (syncParams.getDelayRequestResponseRateInMsgPerSec() != null) {
-            syncProfile.setDelayRequestResponseRateInMsgPerSec(
-                objectFactory.createEnbSyncProfileParamsDelayRequestResponseRateInMsgPerSec(
-                    syncParams.getDelayRequestResponseRateInMsgPerSec().value()));
-        }
-        if (syncParams.getLeaseDurationInSec() != null) {
-            syncProfile.setLeaseDurationInSec(
-                objectFactory.createEnbSyncProfileParamsLeaseDurationInSec(syncParams.getLeaseDurationInSec()));
-        }
-        try {
-            ProfileResponse cloneResult = soapHelper_17_5.getLteSoap().syncProfileClone(cloneFromName,
-                syncProfile, credentialsLte);
+		
+		if (syncParams.getPrimaryClockSource() != null){
+			//syncProfile.setPrimaryClockSource(objectFactory.createEnbSyncProfileParamsPrimaryClockSource(ClockSources.fromValue(syncParams.getPrimaryClockSource())));
+			if(syncParams.getPrimaryClockSource().equals("NLM")){
+				syncProfile.setNlmIntraFreqScanMode(objectFactory.createEnbSyncProfileParamsNlmIntraFreqScanMode(syncParams.getNlmIntraFrequencyScanMode()));
+				
+				NlmIntraFreqScanListContainer array = new NlmIntraFreqScanListContainer();
+				for(Integer earfcn : syncParams.getNlmIntraFrequencyScanList()){
+					NlmIntraFreqScan freq = new NlmIntraFreqScan();
+					freq.setEarfcn(earfcn);
+					array.getNlmIntraFreqScan().add(freq);
+				}
+				syncProfile.setNlmIntraFreqScanList(array);
+			}
+			else {
+				if (syncParams.getPrimaryMasterIpAddress() != null) {
+					syncProfile.setPrimaryMasterIpAddress(syncParams.getPrimaryMasterIpAddress());
+				}
+				if (syncParams.getPrimaryMasterDomain() != null) {
+					syncProfile.setPrimaryMasterDomain(
+							objectFactory.createEnbSyncProfileParamsPrimaryMasterDomain(syncParams.getPrimaryMasterDomain()));
+				}
+				if (syncParams.getSecondaryMasterIpAddress() != null) {
+					syncProfile.setSecondaryMasterIpAddress(syncParams.getSecondaryMasterIpAddress());
+					if (!syncParams.getSecondaryMasterIpAddress().equals("0.0.0.0")) {
+						if (syncParams.getSecondaryMasterDomain() != null) {
+							syncProfile.setSecondaryMasterDomain(objectFactory
+									.createEnbSyncProfileParamsSecondaryMasterDomain(syncParams.getSecondaryMasterDomain()));
+						}
+					}
+				}
+				if (syncParams.getAnnounceRateInMsgPerSec() != null) {
+					syncProfile.setAnnounceRateInMsgPerSec(objectFactory.createEnbSyncProfileParamsAnnounceRateInMsgPerSec(
+							syncParams.getAnnounceRateInMsgPerSec().value()));
+				}
+				if (syncParams.getSyncRateInMsgPerSec() != null) {
+					syncProfile.setSyncRateInMsgPerSec(objectFactory
+							.createEnbSyncProfileParamsSyncRateInMsgPerSec(syncParams.getSyncRateInMsgPerSec().value()));
+				}
+				if (syncParams.getDelayRequestResponseRateInMsgPerSec() != null) {
+					syncProfile.setDelayRequestResponseRateInMsgPerSec(
+							objectFactory.createEnbSyncProfileParamsDelayRequestResponseRateInMsgPerSec(
+									syncParams.getDelayRequestResponseRateInMsgPerSec().value()));
+				}
+				if (syncParams.getLeaseDurationInSec() != null) {
+					syncProfile.setLeaseDurationInSec(
+							objectFactory.createEnbSyncProfileParamsLeaseDurationInSec(syncParams.getLeaseDurationInSec()));
+				}
+			}
+		}
+		
+		try {
+			ProfileResponse cloneResult = (ProfileResponse) soapHelper_17_5.getLteSoap().syncProfileClone(cloneFromName,
+					syncProfile, credentialsLte);
 
-            boolean result = false;
-            if (cloneResult == null) {
-                report.report("Fail to get Sync profile cloning result", Reporter.WARNING);
-                result = false;
-            } else if (cloneResult.getErrorCode() == Netspan.NBI_17_5.Lte.ErrorCodes.OK) {
-                report.report("Succeeded to clone Sync profile, new profile name: " + syncParams.getProfileName());
-                result = true;
-            } else {
-                report.report("Failed to clone Sync profile, reason: " + cloneResult.getErrorString(),
-                    Reporter.WARNING);
-                result = false;
-            }
-            return result;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            report.report("cloneSyncProfile Failed, due to: " + e.getMessage(), Reporter.WARNING);
-            return false;
-        } finally {
-            soapHelper_17_5.endLteSoap();
-        }
+			boolean result = false;
+			if (cloneResult == null) {
+				report.report("Fail to get Sync profile cloning result", Reporter.WARNING);
+				result = false;
+			} else if (cloneResult.getErrorCode() == Netspan.NBI_17_5.Lte.ErrorCodes.OK) {
+				report.report("Succeeded to clone Sync profile, new profile name: " + syncParams.getProfileName());
+				result = true;
+			} else {
+				report.report("Failed to clone Sync profile, reason: " + cloneResult.getErrorString(),
+						Reporter.WARNING);
+				result = false;
+			}
+			getNetspanProfile(node,syncParams.getProfileName(), syncParams);
+			return result;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			report.report("cloneSyncProfile Failed, due to: " + e.getMessage(), Reporter.WARNING);
+			return false;
+		} finally {
+			soapHelper_17_5.endLteSoap();
+		}
     }
 
     @Override
@@ -1295,8 +1360,17 @@ public class NetspanServer_17_5 extends NetspanServer implements Netspan_17_5_ab
 		
 		try{
 			LteSyncProfileGetResult syncProfile = (LteSyncProfileGetResult) soapHelper_17_5.getLteSoap().syncProfileGet(nameList, cat ,null, credentialsLte);
-			ClockSources clockSource = syncProfile.getSyncProfileResult().get(FIRST_ELEMENT).getSyncProfile()
-					.getClockSourceList().getClockSource().get(0).getClock();
+			ClockSources clockSource = null;
+								
+			ClockContainer clockList = syncProfile.getSyncProfileResult().get(FIRST_ELEMENT).getSyncProfile()
+					.getClockSourceList();
+			for (ClockSource cs : clockList.getClockSource()){
+				if(cs.getPriority() == 1){
+					clockSource = cs.getClock();
+					break;
+				}
+			}
+			
 			if(clockSource == ClockSources.NONE){
 				return PrimaryClockSourceEnum.NONE;
 			}
@@ -1352,7 +1426,10 @@ public class NetspanServer_17_5 extends NetspanServer implements Netspan_17_5_ab
 
                 case MultiCell_Profile:
                     return getMultiCellProfileName(node);
-
+                    
+                case Neighbour_Management_Profile:
+                	return getCurrentNeighborManagmentProfileName(node);
+                	
                 default:
                     report.report("Enum: No Such EnbProfile", Reporter.WARNING);
                     return "";
@@ -1363,6 +1440,17 @@ public class NetspanServer_17_5 extends NetspanServer implements Netspan_17_5_ab
             return "";
         }
     }
+    
+    public String getCurrentNeighborManagmentProfileName(EnodeB enb) {
+		EnbDetailsGet nodeConfig = getNodeConfig(enb);
+		try {
+			return nodeConfig.getNeighbourProfile();
+		} catch (Exception e) {
+			e.printStackTrace();
+			report.report("Error in getCurrentNeighborManagmentProfileName: " + e.getMessage(), Reporter.WARNING);
+			return "";
+		}
+	}
 
     @Override
     public String getMultiCellProfileName(EnodeB enb) {
@@ -1414,6 +1502,10 @@ public class NetspanServer_17_5 extends NetspanServer implements Netspan_17_5_ab
                 case MultiCell_Profile:
                     return cloneMultiCellProfile(node, cloneFromName, (MultiCellParameters) profileParams);
 
+                case Neighbour_Management_Profile:
+                	return cloneNeighborManagementProfile(node, cloneFromName,
+    						(NeighbourManagementParameters) profileParams);
+                	
                 default:
                     report.report("Enum: No Such EnbProfile", Reporter.WARNING);
                     return false;
@@ -1532,61 +1624,22 @@ public class NetspanServer_17_5 extends NetspanServer implements Netspan_17_5_ab
     @Override
     public boolean cloneNetworkProfile(EnodeB node, String cloneFromName, NetworkParameters networkParams)
         throws Exception {
-        EnbNetworkProfile networkProfile = new EnbNetworkProfile();
-        if (networkParams.getProfileName() == null) {
-            return false;
-        }
-        networkProfile.setName(networkParams.getProfileName());
-        // incase of plmn item to change in the profile
-        if (networkParams.getPlmn() != null) {
-            PlmnListContainer containerPlmn = new PlmnListContainer();
-            ArrayList<LtePlmnEntryWs> listPlmnWs = new ArrayList<LtePlmnEntryWs>();
-            for (Plmn item : networkParams.getPlmn()) {
-                LtePlmnEntryWs plmnWs = new LtePlmnEntryWs();
-                plmnWs.setMcc(item.getMCC());
-                plmnWs.setMnc(item.getMNC());
-                listPlmnWs.add(plmnWs);
-                containerPlmn.getPlmn().add(plmnWs);
-            }
-            networkProfile.setPlmnList(containerPlmn);
-        }
-        // in case of mme ip to change in the profile
-        if (networkParams.getMMEIP() != null) {
-            S1ListContainer tempContainer = new S1ListContainer();
-            LteS1EntryWs tempLteS1Entry = new LteS1EntryWs();
-            tempLteS1Entry.setMmeIpAddress(networkParams.getMMEIP());
-            tempContainer.getS1().add(tempLteS1Entry);
-            // add IPG ip in the List
-            networkProfile.setS1X2List(tempContainer);
-        }
-        if (networkParams.getcSonConfig() != null) {
-            ObjectFactory factoryDetails = new ObjectFactory();
-            LteCSonEntryWs cSonConfig = new LteCSonEntryWs();
-            cSonConfig.setIsCSonConfigured(
-                factoryDetails.createLteCSonEntryWsIsCSonConfigured(networkParams.getIsCSonConfigured()));
-            cSonConfig.setCSonIpAddress(networkParams.getcSonIpAddress());
-            cSonConfig.setCSonServerPort(
-                factoryDetails.createLteCSonEntryWsCSonServerPort(networkParams.getcSonServerPort()));
-            networkProfile.setCSONConfig(cSonConfig);
-        }
-        ProfileResponse cloneResult = soapHelper_17_5.getLteSoap().networkProfileClone(cloneFromName,
-            networkProfile, credentialsLte);
-        boolean result = false;
-        if (cloneResult == null) {
-            report.report("Fail to get Network profile cloning result", Reporter.WARNING);
-            soapHelper_17_5.endLteSoap();
-            result = false;
-        } else if (cloneResult.getErrorCode() == Netspan.NBI_17_5.Lte.ErrorCodes.OK) {
-            report.report("Succeeded to clone Network profile, new profile name: " + networkParams.getProfileName());
-            soapHelper_17_5.endLteSoap();
-            result = true;
-        } else {
-            report.report("Failed to clone Network profile, reason: " + cloneResult.getErrorString(), Reporter.WARNING);
-            soapHelper_17_5.endLteSoap();
-            result = false;
-        }
-
-        return result;
+    	EnbNetworkProfile networkProfile = parseNetworkParameters(node, networkParams);
+		ProfileResponse cloneResult = soapHelper_17_5.getLteSoap().networkProfileClone(cloneFromName,
+				networkProfile, credentialsLte);
+		if (cloneResult == null) {
+			report.report("Fail to get Network profile cloning result", Reporter.WARNING);
+			soapHelper_17_5.endLteSoap();
+			return false;
+		} else if (cloneResult.getErrorCode() == Netspan.NBI_17_5.Lte.ErrorCodes.OK) {
+			report.report("Succeeded to clone Network profile, new profile name: " + networkParams.getProfileName());
+			soapHelper_17_5.endLteSoap();
+			return true;
+		} else {
+			report.report("Failed to clone Network profile, reason: " + cloneResult.getErrorString(), Reporter.WARNING);
+			soapHelper_17_5.endLteSoap();
+			return false;
+		}
     }
 
     @Override
@@ -1661,16 +1714,47 @@ public class NetspanServer_17_5 extends NetspanServer implements Netspan_17_5_ab
 
     @Override
     public boolean convertToPnPConfig(EnodeB node) {
-        boolean actionSucceeded;
-        LteEnbDetailsSetWs enbConfigSet = EnbConfigGetToSet(getNodeConfig(node));
-        PnpDetailWs pnpDetail = getPnpDetails(node);
-        PnpConfigCreate pnpConfigCreate = new PnpConfigCreate();
-        pnpConfigCreate.setENBDetail(enbConfigSet);
-        pnpConfigCreate.setPnpDetail(pnpDetail);
-        removeDiscoveryTask(node.getNetspanName());
-        removeNode(node.getNetspanName());
-        actionSucceeded = createPnpNode(pnpConfigCreate);
-        return actionSucceeded;
+    	try {
+			Netspan.NBI_17_5.Lte.NodeActionResult result = null;
+			String swImageName = null;
+			if (node.isSwUpgradeDuringPnP()) {
+				swImageName = node.getDefaultNetspanProfiles().getSoftwareImage();
+			}
+
+			if (isRelayEnodeb(node.getNetspanName())) {
+				AuPnpDetailWs pnpDetail = null;
+				if (swImageName != null) {
+					pnpDetail = new AuPnpDetailWs();
+					pnpDetail.setPnpSwImageName(swImageName);
+				}
+				result = soapHelper_17_5.getLteSoap().relayEnbPnpConfigConvertFromNode(
+						node.getNetspanName(), null, pnpDetail, null, null, null, null, credentialsLte);
+			} else {
+				PnpDetailWs pnpDetail = null;
+				if (swImageName != null) {
+					pnpDetail = new PnpDetailWs();
+					pnpDetail.setPnpSwImageName(swImageName);
+				}
+				result = soapHelper_17_5.getLteSoap().pnpConfigConvertFromNode(node.getNetspanName(),
+						null, pnpDetail, null, credentialsLte);
+			}
+
+			if (result == null) {
+				report.report("Fail to get System Default Profile cloning result", Reporter.WARNING);
+				return false;
+			} else if (result.getErrorCode() == Netspan.NBI_17_5.Lte.ErrorCodes.OK) {
+				report.report("Succeeded to Convert From Node to PnP Config.");
+				return true;
+			} else {
+				report.report("Failed to Convert From Node to PnP Config.", Reporter.WARNING);
+				return false;
+			}
+		} catch (Exception e) {
+			GeneralUtils
+					.printToConsole("Could not execute pnpConfigConvertFromNodeMethodName on " + node.getNetspanName());
+		}
+
+		return false;
     }
 
     public boolean removeNode(EnodeB node) {
@@ -3380,28 +3464,317 @@ public class NetspanServer_17_5 extends NetspanServer implements Netspan_17_5_ab
 
     @Override
     public boolean setEnbType(String nodeName, EnbTypes type) {
-        // TODO Auto-generated method stub
-        return false;
+    	LteEnbDetailsSetWs enbConfigSet = new LteEnbDetailsSetWs();
+		ObjectFactory factoryDetails = new ObjectFactory();
+		enbConfigSet.setENodeBType(factoryDetails.createEnbDetailsGetPnpENodeBType(EnbTypesWs.fromValue(type.value())));
+		try {
+			Netspan.NBI_17_5.Lte.NodeActionResult result = soapHelper_17_5.getLteSoap().enbConfigSet(nodeName, null,null,
+					enbConfigSet, null, credentialsLte);
+			if (result.getErrorCode() == Netspan.NBI_17_5.Lte.ErrorCodes.OK) {
+				report.report(String.format("%s - Succeeded to set eNodeB Type", nodeName));
+				return true;
+			} else {
+				report.report("enbConfigSet via Netspan Failed : " + result.getErrorString(), Reporter.WARNING);
+				return false;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			report.report(nodeName + ": enbConfigSet via Netspan Failed due to: ", Reporter.WARNING);
+			return false;
+		} finally {
+			soapHelper_17_5.endLteSoap();
+		}
     }
 
     @Override
     public boolean checkIfEsonServerConfigured(EnodeB enb) {
-        // TODO Auto-generated method stub
-        return false;
+    	try {
+			EnbNetworkProfile networkProfile = getNetworkProfile(enb.getDefaultNetspanProfiles().getNetwork());
+			if (networkProfile.getCSONConfig().getIsCSonConfigured().getValue()) {
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		return false;
     }
 
+    private EnbNetworkProfile getNetworkProfile(String profileName) {
+		try {
+			LteNetworkProfileGetResult result = null;
+			List<String> a = new ArrayList<String>();
+			a.add(profileName);
+			result = soapHelper_17_5.getLteSoap().networkProfileGet(a, null,null,
+					credentialsLte);
+			if (result.getErrorCode() != Netspan.NBI_17_5.Lte.ErrorCodes.OK) {
+				report.report("networkProfileGet via Netspan Failed : " + result.getErrorString(), Reporter.WARNING);
+			}
+			return result.getNetworkProfileResult().get(0).getNetworkProfile();
+		} catch (Exception e) {
+			e.printStackTrace();
+			report.report("networkProfileGet via Netspan Failed due to: " + e.getMessage(), Reporter.WARNING);
+			return null;
+		} finally {
+			soapHelper_17_5.endLteSoap();
+		}
+	}
+    
     @Override
     public boolean performReProvision(String nodeName) {
-        // TODO Auto-generated method stub
-        return false;
+    	try {
+			if (verifyReProvisionResponseRetries(nodeName, 10)) {
+				return true;
+			} else {
+				report.report("performReProvision via Netspan Failed due to: Some actions are still Queued or Failed.", Reporter.WARNING);
+				return false;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			report.report("performReProvision via Netspan Failed due to: " + e.getMessage(), Reporter.WARNING);
+			return false;
+		} finally {
+			soapHelper_17_5.endInventorySoap();
+		}
     }
+    
+    private boolean verifyReProvisionResponseRetries(String nodeName, int numOfRetries) {
+		List<String> nodeList = new ArrayList<String>();
+		nodeList.add(nodeName);
+		boolean isReProPass = false;
+		Netspan.NBI_17_5.Inventory.NodeActionResult nodeReProvisionResult = soapHelper_17_5
+				.getInventorySoap().nodeReprovision(nodeList, null, credentialsInventory);
+		if (nodeReProvisionResult.getErrorCode() == Netspan.NBI_17_5.Inventory.ErrorCodes.OK) {
+			report.report(String.format("%s - ReProvision started.", nodeName));
+			for (int i = 0; i < numOfRetries; i++) {
+				NodeProvisioningGetResult statusGetResult = soapHelper_17_5
+						.getInventorySoap().nodeProvisioningStatusGet(nodeList, null, credentialsInventory);
+				isReProPass = verifyActionsTableIsEmpty(isReProPass, nodeReProvisionResult, statusGetResult);
+				if (isReProPass) {
+					report.report(String.format("%s - ReProvision succeeded.", nodeName));
+					return true;
+				} else {
+					GeneralUtils.unSafeSleep(10000);
+				}
+			}
+		} else {
+			report.report("nodeReProvision via Netspan Failed : " + nodeReProvisionResult.getErrorString(), Reporter.WARNING);
+		}
+		return false;
+	}
 
+    private boolean verifyActionsTableIsEmpty(boolean reProPass, Netspan.NBI_17_5.Inventory.NodeActionResult nodeReProvisionResult, NodeProvisioningGetResult statusGetResult) {
+		if (statusGetResult.getErrorCode() == Netspan.NBI_17_5.Inventory.ErrorCodes.OK) {
+			NodeProvisioningGetWs getNodeProvisioningDetail = statusGetResult.getNodeResult().get(0).getNodeProvisioningDetail();
+			//Get Values
+			Integer queuedValue = getNodeProvisioningDetail.getConfigQueued().getValue();
+			Integer pendingValue = getNodeProvisioningDetail.getConfigPending().getValue();
+			Integer failedValue = getNodeProvisioningDetail.getConfigFailed().getValue();
+			//Verify values
+			reProPass = (queuedValue == 0);
+			reProPass &= (pendingValue == 0);
+			reProPass &= (failedValue == 0);
+		} else {
+			report.report("nodeProvisioningStatusGet via Netspan Failed : "
+					+ nodeReProvisionResult.getErrorString(), Reporter.WARNING);
+		}
+		return reProPass;
+	}
+    
     @Override
     public boolean checkAndSetDefaultProfiles(EnodeB node, boolean setProfile) {
-        report.report("setDefaultProfiles method is not implemented for this netspan(17_5)!");
-        return false;
+    	GeneralUtils.startLevel("checking default profiles for node : " + node.getNetspanName());
+		LteEnbDetailsSetWs enbConfigSet = new LteEnbDetailsSetWs();
+		LteCellSetWs lteCellSet = new LteCellSetWs();
+		ObjectFactory factoryDetails = new ObjectFactory();
+		if (!isNetspanReachable()) {
+			GeneralUtils.stopLevel();
+			return false;
+		}
+		try {
+			DefaultNetspanProfiles enbProfiles = node.getDefaultNetspanProfiles();
+			for (CellNetspanProfiles cellProfiles : enbProfiles.cellProfiles) {
+				lteCellSet.setCellNumber(factoryDetails.createLteCellGetWsCellNumber(String.valueOf(cellProfiles.getCellId())));
+				GeneralUtils.startLevel("checking profiles for Cell : " + String.valueOf(cellProfiles.getCellId()));
+				lteCellSet = checkForExistsCellProfileAndSet17_5(enbProfiles, lteCellSet, cellProfiles, CellProfiles.Cell_Advanced_Profile, setProfile);
+				lteCellSet = checkForExistsCellProfileAndSet17_5(enbProfiles, lteCellSet, cellProfiles, CellProfiles.Radio_Profile, setProfile);
+				lteCellSet = checkForExistsCellProfileAndSet17_5(enbProfiles, lteCellSet, cellProfiles, CellProfiles.Mobility_Profile, setProfile);
+				lteCellSet = checkForExistsCellProfileAndSet17_5(enbProfiles, lteCellSet, cellProfiles, CellProfiles.Embms_Profile, setProfile);
+				lteCellSet = checkForExistsCellProfileAndSet17_5(enbProfiles, lteCellSet, cellProfiles, CellProfiles.Traffic_Management_Profile, setProfile);
+				lteCellSet = checkForExistsCellProfileAndSet17_5(enbProfiles, lteCellSet, cellProfiles, CellProfiles.Call_Trace_Profile, setProfile);
+				enbConfigSet.getLteCell().add(lteCellSet);
+				GeneralUtils.stopLevel();
+			}
+			GeneralUtils.startLevel("checking profiles for node : " + node.getNetspanName());
+			enbConfigSet = checkForExistsNodeProfileAndSet17_5(enbProfiles, enbConfigSet, EnbProfiles.System_Default_Profile, setProfile);
+			enbConfigSet = checkForExistsNodeProfileAndSet17_5(enbProfiles, enbConfigSet, EnbProfiles.EnodeB_Advanced_Profile, setProfile);
+			enbConfigSet = checkForExistsNodeProfileAndSet17_5(enbProfiles, enbConfigSet, EnbProfiles.Network_Profile, setProfile);
+			enbConfigSet = checkForExistsNodeProfileAndSet17_5(enbProfiles, enbConfigSet, EnbProfiles.Sync_Profile, setProfile);
+			enbConfigSet = checkForExistsNodeProfileAndSet17_5(enbProfiles, enbConfigSet, EnbProfiles.Security_Profile, setProfile);
+			enbConfigSet = checkForExistsNodeProfileAndSet17_5(enbProfiles, enbConfigSet, EnbProfiles.Son_Profile, setProfile);
+			enbConfigSet = checkForExistsNodeProfileAndSet17_5(enbProfiles, enbConfigSet, EnbProfiles.Management_Profile, setProfile);
+			enbConfigSet = checkForExistsNodeProfileAndSet17_5(enbProfiles, enbConfigSet, EnbProfiles.Neighbour_Management_Profile, setProfile);
+			GeneralUtils.stopLevel();
+
+			if (!setProfile) {
+				return true;
+			}
+
+			Netspan.NBI_17_5.Lte.NodeActionResult result = soapHelper_17_5
+					.getLteSoap().enbConfigSet(node.getNetspanName(), new NodeProperty(),null, enbConfigSet,
+							new SnmpDetailSetWs(), credentialsLte);
+
+			if (result.getErrorCode() != Netspan.NBI_17_5.Lte.ErrorCodes.OK) {
+				report.report("Set default profiles via Netspan Failed : " + result.getErrorString());
+				List<NodeResult> nodeErrors = result.getNode();
+				for (NodeResult error : nodeErrors) {
+					if (error != null) {
+						report.report("SubResultError:" + error.getNodeResultString(), Reporter.WARNING);
+					}
+				}
+				return false;
+			} else
+				return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			report.report("Set default profiles via Netspan Failed due to: " + e.getMessage());
+			return false;
+		} finally {
+			soapHelper_17_5.endLteSoap();
+			GeneralUtils.stopLevel();
+		}
     }
 
+    private LteCellSetWs checkForExistsCellProfileAndSet17_5(DefaultNetspanProfiles enbProfiles, LteCellSetWs lteCellSetWs, CellNetspanProfiles cellProfiles, CellProfiles profileType, boolean setProfile) {
+		String profileName = cellProfiles.getProfile(profileType);
+		if (profileName != null) {
+			if (isProfileExists(profileName, profileType)) {
+				if (setProfile) {
+					lteCellSetWs = injectContentToWsCellObject17_5(lteCellSetWs, enbProfiles, cellProfiles, profileType);
+				}
+			} else
+				report.report("Profile type : " + profileType + ", does not exist in netspan : " + this.getHostname(), Reporter.WARNING);
+		}
+		return lteCellSetWs;
+	}
+    
+    private boolean isProfileExists(String profileName, CellProfiles profileType) {
+		ArrayList<String> nameList = new ArrayList<String>();
+		nameList.add(profileName);
+		Netspan.NBI_17_5.Lte.WsResponse response = null;
+		try {
+			switch (profileType) {
+				case Cell_Advanced_Profile:
+					response = soapHelper_17_5.getLteSoap()
+							.cellAdvancedConfigProfileGet(nameList,null,null, credentialsLte);
+					break;
+				case Radio_Profile:
+					response = soapHelper_17_5.getLteSoap()
+							.radioProfileGet(nameList, null,null, credentialsLte);
+					break;
+				case Mobility_Profile:
+					response = soapHelper_17_5.getLteSoap()
+							.mobilityProfileGet(nameList, null,null, credentialsLte);
+					break;
+				case Embms_Profile:
+					response = soapHelper_17_5.getLteSoap()
+							.embmsProfileGet(nameList, null,null, credentialsLte);
+					break;
+				case Traffic_Management_Profile:
+					response = soapHelper_17_5.getLteSoap()
+							.trafficManagementProfileGet(nameList, null,null, credentialsLte);
+					break;
+				case Call_Trace_Profile:
+					response = soapHelper_17_5.getLteSoap()
+							.callTraceProfileGet(nameList, null,null, credentialsLte);
+					break;
+				default:
+					report.report("isProfileExists get error CellProfiles type: " + profileType, Reporter.WARNING);
+			}
+			return response.getErrorCode() == Netspan.NBI_17_5.Lte.ErrorCodes.OK;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			report.report(profileType.value() + "ProfileGet Failed, due to: " + e.getMessage(), Reporter.WARNING);
+			return false;
+		} finally {
+			soapHelper_17_5.endLteSoap();
+		}
+	}
+    
+    private LteEnbDetailsSetWs checkForExistsNodeProfileAndSet17_5(DefaultNetspanProfiles enbProfiles, LteEnbDetailsSetWs enbConfigSet, EnbProfiles profileType, boolean setProfile) {
+		String profileName = enbProfiles.getDefaultProfile(profileType);
+		if (profileName != null) {
+			if (isProfileExists(profileName, profileType)) {
+				if (setProfile) {
+					enbConfigSet = injectContentToWsEnbObject(enbConfigSet, enbProfiles, profileType);
+				}
+			} else {
+				report.report("Profile type : " + profileType + ", does not exist in netspan : " + this.getHostname(), Reporter.WARNING);
+			}
+		}
+		return enbConfigSet;
+	}
+    
+    private LteEnbDetailsSetWs injectContentToWsEnbObject(LteEnbDetailsSetWs enbConfigSet, DefaultNetspanProfiles enbProfiles, EnbProfiles profileType) {
+		switch (profileType) {
+			case System_Default_Profile:
+				enbConfigSet.setSystemDefaultProfile(enbProfiles.getSystemDefault());
+				break;
+			case EnodeB_Advanced_Profile:
+				enbConfigSet.setAdvancedConfigProfile(enbProfiles.getEnodeBAdvanced());
+				break;
+			case Network_Profile:
+				enbConfigSet.setNetworkProfile(enbProfiles.getNetwork());
+				break;
+			case Sync_Profile:
+				enbConfigSet.setSyncProfile(enbProfiles.getSynchronisation());
+				break;
+			case Security_Profile:
+				enbConfigSet.setSecurityProfile(enbProfiles.getSecurity());
+				break;
+			case Son_Profile:
+				enbConfigSet.setSonProfile(enbProfiles.getSON());
+				break;
+			case Management_Profile:
+				enbConfigSet.setManagementProfile(enbProfiles.getManagement());
+				break;
+			case MultiCell_Profile:
+				enbConfigSet.setMultiCellProfile(enbProfiles.getMultiCell());
+				break;
+			case Neighbour_Management_Profile:
+				enbConfigSet.setNeighbourProfile(enbProfiles.getNeighbourManagement());
+				break;
+			default:
+				report.report("there is no Node Profile with the type : " + profileType);
+		}
+		return enbConfigSet;
+	}
+    
+    private LteCellSetWs injectContentToWsCellObject17_5(LteCellSetWs lteCellSetWs, DefaultNetspanProfiles enbProfiles, CellNetspanProfiles cellProfiles, CellProfiles profileType) {
+		switch (profileType) {
+			case Cell_Advanced_Profile:
+				lteCellSetWs.setCellAdvancedConfigurationProfile(enbProfiles.getCellAdvanced());
+				break;
+			case Radio_Profile:
+				lteCellSetWs.setRadioProfile(cellProfiles.getRadio());
+				break;
+			case Mobility_Profile:
+				lteCellSetWs.setMobilityProfile(cellProfiles.getMobility());
+				break;
+			case Embms_Profile:
+				lteCellSetWs.setEmbmsProfile(cellProfiles.getEmbms());
+				break;
+			case Traffic_Management_Profile:
+				lteCellSetWs.setTrafficManagementProfile(cellProfiles.getTrafficManagement());
+				break;
+			case Call_Trace_Profile:
+				lteCellSetWs.setCallTraceProfile(cellProfiles.getCallTrace());
+				break;
+		}
+		return lteCellSetWs;
+	}
+    
     @Override
     public SONStatus getSONStatus(EnodeB dut) {
         // EnbSonPciStatusGet
@@ -3454,40 +3827,41 @@ public class NetspanServer_17_5 extends NetspanServer implements Netspan_17_5_ab
 
     @Override
     public EnbCellProperties getEnbCellProperties(EnodeB enb) {
-        EnbDetailsGet enbDetails = getNodeConfig(enb);
-        for (LteCellGetWs lteCell : enbDetails.getLteCell()) {
-            if ((lteCell.getCellNumber() != null)
-                && (Integer.parseInt(lteCell.getCellNumber().getValue()) == enb.getCellContextID())) {
-                EnbCellProperties res = new EnbCellProperties();
-                res.cellNumber = (lteCell.getCellNumber() != null) ? lteCell.getCellNumber().getValue() : null;
-                res.cellIdForEci = (lteCell.getCellIdForEci() != null) ? lteCell.getCellIdForEci().getValue() : null;
-                res.cellIdentity28Bit = (lteCell.getCellIdentity28Bit() != null)
-                    ? lteCell.getCellIdentity28Bit().getValue() : null;
-                res.physicalLayerCellGroup = (lteCell.getPhysicalLayerCellGroup() != null)
-                    ? lteCell.getPhysicalLayerCellGroup().getValue() : null;
-                res.physicalLayerIdentity = (lteCell.getPhysicalLayerIdentity() != null)
-                    ? lteCell.getPhysicalLayerIdentity().getValue() : null;
-                res.physicalCellId = (lteCell.getPhysicalCellId() != null) ? lteCell.getPhysicalCellId().getValue()
-                    : null;
-                res.prachRsi = (lteCell.getPrachRsi() != null) ? lteCell.getPrachRsi().getValue() : null;
-                res.trackingAreaCode = (lteCell.getTrackingAreaCode() != null)
-                    ? lteCell.getTrackingAreaCode().getValue() : null;
-                res.emergencyAreaId = (lteCell.getEmergencyAreaIds() != null) ? lteCell.getEmergencyAreaIds().getEmergencyAreaId().get(0)
-                    : null;
-                res.prachFreqOffset = (lteCell.getPrachFreqOffset() != null) ? lteCell.getPrachFreqOffset().getValue()
-                    : null;
-                res.cellAdvancedConfigurationProfile = lteCell.getCellAdvancedConfigurationProfile();
-                res.radioProfile = lteCell.getRadioProfile();
-                res.mobilityProfile = lteCell.getMobilityProfile();
-                res.embmsProfile = lteCell.getEmbmsProfile();
-                res.trafficManagementProfile = lteCell.getTrafficManagementProfile();
-                res.callTraceProfile = lteCell.getCallTraceProfile();
-
-                res.isEnabled = (lteCell.getIsEnabled() != null) ? lteCell.getIsEnabled().getValue() : null;
-                return res;
-            }
-        }
-        return null;
+    	EnbDetailsGet enbDetails = getNodeConfig(enb);
+		for (LteCellGetWs lteCell : enbDetails.getLteCell()) {
+			if ((lteCell.getCellNumber() != null)
+					&& (Integer.parseInt(lteCell.getCellNumber().getValue()) == enb.getCellContextID())) {
+				EnbCellProperties res = new EnbCellProperties();
+				res.cellNumber = (lteCell.getCellNumber() != null) ? lteCell.getCellNumber().getValue() : null;
+				res.cellIdForEci = (lteCell.getCellIdForEci() != null) ? lteCell.getCellIdForEci().getValue() : null;
+				res.cellIdentity28Bit = (lteCell.getCellIdentity28Bit() != null)
+						? lteCell.getCellIdentity28Bit().getValue() : null;
+				res.physicalLayerCellGroup = (lteCell.getPhysicalLayerCellGroup() != null)
+						? lteCell.getPhysicalLayerCellGroup().getValue() : null;
+				res.physicalLayerIdentity = (lteCell.getPhysicalLayerIdentity() != null)
+						? lteCell.getPhysicalLayerIdentity().getValue() : null;
+				res.physicalCellId = (lteCell.getPhysicalCellId() != null) ? lteCell.getPhysicalCellId().getValue()
+						: null;
+				res.prachRsi = (lteCell.getPrachRsi() != null) ? lteCell.getPrachRsi().getValue() : null;
+				res.trackingAreaCode = (lteCell.getTrackingAreaCode() != null)
+						? lteCell.getTrackingAreaCode().getValue() : null;
+			    res.emergencyAreaId = (lteCell.getEmergencyAreaIds() != null) ? lteCell.getEmergencyAreaIds().getEmergencyAreaId().get(0)
+					    : null;
+				res.prachFreqOffset = (lteCell.getPrachFreqOffset() != null) ? lteCell.getPrachFreqOffset().getValue()
+						: null;
+				res.cellAdvancedConfigurationProfile = lteCell.getCellAdvancedConfigurationProfile();
+				res.radioProfile = lteCell.getRadioProfile();
+				res.mobilityProfile = lteCell.getMobilityProfile();
+				res.embmsProfile = lteCell.getEmbmsProfile();
+				res.trafficManagementProfile = lteCell.getTrafficManagementProfile();
+				res.callTraceProfile = lteCell.getCallTraceProfile();
+				res.cellBarringPolicy = lteCell.getCellBarringPolicy().getValue();
+				res.closedSubscriberGroupMode = lteCell.getCsgMode().getValue();
+				res.isEnabled = (lteCell.getIsEnabled() != null) ? lteCell.getIsEnabled().getValue() : null;
+				return res;
+			}
+		}
+		return null;
     }
 
     @Override
@@ -3522,17 +3896,246 @@ public class NetspanServer_17_5 extends NetspanServer implements Netspan_17_5_ab
 
     @Override
     public boolean cloneManagementProfile(EnodeB node, String cloneFromName, ManagementParameters managementParmas) {
-        // TODO Auto-generated method stub
-        return false;
+    	if (cloneFromName != null) {
+			GeneralUtils.printToConsole("Trying to create automation Management Profile " + cloneFromName
+					+ " via NBIF , creating an automation profiles for the run.");
+		} else {
+			GeneralUtils.printToConsole(
+					"Trying to create automation Management Profile from the current Profile that in use via NBIF ,"
+							+ " creating an automation profiles for the run.");
+			cloneFromName = node.getDefaultNetspanProfiles().getManagement();
+		}
+
+		EnbManagementProfile managementProfile = CreateEnbManagementProfile(managementParmas);
+		if (managementProfile == null) {
+			return false;
+		}
+
+		try {
+			ProfileResponse cloneResult = soapHelper_17_5.getLteSoap()
+					.managementProfileClone(cloneFromName, managementProfile, credentialsLte);
+
+			if (cloneResult == null) {
+				report.report("Fail to get Management Profile cloning result", Reporter.WARNING);
+				return false;
+			} else if (cloneResult.getErrorCode() == Netspan.NBI_17_5.Lte.ErrorCodes.OK) {
+				report.report("Succeeded to clone Management Profile, new profile name: "
+						+ managementParmas.getProfileName());
+				return true;
+			} else {
+				report.report("Failed to clone Management Profile, reason: " + cloneResult.getErrorString(),
+						Reporter.WARNING);
+				return false;
+			}
+		} catch (Exception e) {
+			GeneralUtils.printToConsole("Could not execute ManagementProfileClone on " + cloneFromName);
+		}
+		return false;
     }
 
+    private EnbManagementProfile CreateEnbManagementProfile(ManagementParameters managementParmas) {
+		ObjectFactory factoryDetails = new ObjectFactory();
+
+		EnbManagementProfile managementProfile = factoryDetails.createEnbManagementProfile();
+		managementProfile.setName(managementParmas.profileName);
+
+		if (managementParmas.maintenanceWindow != null) {
+			managementProfile.setMaintenanceWindowIsEnabled(factoryDetails
+					.createEnbManagementProfileParamsMaintenanceWindowIsEnabled(managementParmas.maintenanceWindow));
+			if (managementParmas.maintenanceWindow) {
+				MaintenanceWindowConfigurationWs maintenanceWindowConfigurationWs = factoryDetails
+						.createMaintenanceWindowConfigurationWs();
+				maintenanceWindowConfigurationWs
+						.setTimeZone(factoryDetails.createMaintenanceWindowConfigurationWsTimeZone(
+								TimeZones.fromValue(managementParmas.timeZone)));
+				maintenanceWindowConfigurationWs.setStartTime(managementParmas.maintenanceWindowStartTime);
+				maintenanceWindowConfigurationWs.setEndTime(managementParmas.maintenanceWindowEndTime);
+				maintenanceWindowConfigurationWs.setMaxRandomDelay(
+						factoryDetails.createRelayProfileParamsMaxRandomDelay(managementParmas.maxRandomDelayPercent));
+				managementProfile.setMaintenanceWindowConfiguration(maintenanceWindowConfigurationWs);
+
+			}
+		}
+		return managementProfile;
+	}
+    
     @Override
     public boolean cloneSystemDefaultProfile(EnodeB node, String cloneFromName,
                                              SystemDefaultParameters systemDefaultParmas) {
-        // TODO Auto-generated method stub
-        return false;
+    	if (cloneFromName != null) {
+			GeneralUtils.printToConsole("Trying to create automation System Default Profile " + cloneFromName
+					+ " via NBIF , creating an automation profiles for the run.");
+		} else {
+			GeneralUtils.printToConsole(
+					"Trying to create automation System Default Profile from the current Profile that in use via NBIF ,"
+							+ " creating an automation profiles for the run.");
+			cloneFromName = node.getDefaultNetspanProfiles().getRadio();
+		}
+
+		LteSystemDefaultProfile systemDefaultProfile = new LteSystemDefaultProfile();
+		systemDefaultProfile.setName(systemDefaultParmas.getProfileName());
+
+		try {
+			ProfileResponse cloneResult = soapHelper_17_5.getLteSoap()
+					.systemDefaultProfileClone(cloneFromName, systemDefaultProfile, credentialsLte);
+
+			if (cloneResult == null) {
+				report.report("Fail to get System Default Profile cloning result", Reporter.WARNING);
+				return false;
+			} else if (cloneResult.getErrorCode() == Netspan.NBI_17_5.Lte.ErrorCodes.OK) {
+				report.report("Succeeded to clone System Default Profile, new profile name: "
+						+ systemDefaultParmas.getProfileName());
+				return true;
+			} else {
+				report.report("Failed to clone System Default Profile, reason: " + cloneResult.getErrorString(),
+						Reporter.WARNING);
+				return false;
+			}
+		} catch (Exception e) {
+			GeneralUtils.printToConsole("Could not execute SystemDefaultProfileClone on " + cloneFromName);
+		}
+		return false;
     }
 
+    private EnbSonProfile parseSonParameters(EnodeB node, SonParameters sonParmas) {
+		ObjectFactory factoryDetails = new ObjectFactory();
+		EnbSonProfile sonProfile = new EnbSonProfile();
+		sonProfile.setName(sonParmas.getProfileName());
+		EnbDetailsGet nodeConf = getNodeConfig(node);
+		CategoriesLte category = null;
+		try {
+			category = CategoriesLte.fromValue(nodeConf.getHardware());
+		} catch (Exception e) {
+			report.report("Incompatible HardWare Type in inner Netspan method!", Reporter.WARNING);
+			GeneralUtils.printToConsole("Error : " + e.getMessage() + ", nodeConfig :" + nodeConf.getHardware());
+		}
+		sonProfile.setHardwareCategory(factoryDetails.createCallTraceProfileHardwareCategory(category));
+		if (sonParmas.isSonCommissioning() != null) {
+			sonProfile.setSonCommissioningEnabled(
+					factoryDetails.createEnbSonProfileParamsSonCommissioningEnabled(sonParmas.isSonCommissioning()));
+			// disable change of parameter due to NBI Change of param from
+			// boolean to enum
+			if (sonParmas.isSonCommissioning()) {
+				sonProfile.setPciEnabled(
+						factoryDetails.createEnbSonProfileParamsPciEnabled(sonParmas.isAutoPCIEnabled()));
+				if (sonParmas.isAutoPCIEnabled() != null && sonParmas.isAutoPCIEnabled()) {
+					if (sonParmas.getPciCollisionHandling() != null) {
+						sonProfile.setPciCollisionHandling(factoryDetails.createEnbSonProfileParamsPciCollisionHandling(
+								PciConflictHandlingValues.fromValue(sonParmas.getPciCollisionHandling().value())));
+					}
+
+					if (sonParmas.getPciConfusionHandling() != null) {
+						sonProfile.setPciConfusionHandling(factoryDetails.createEnbSonProfileParamsPciConfusionHandling(
+								PciConflictHandlingValues.fromValue(sonParmas.getPciConfusionHandling().value())));
+					}
+					if (sonParmas.getPciPolicyViolationHandling() != null) {
+						sonProfile.setPciPolicyViolationHandling(factoryDetails
+								.createEnbSonProfileParamsPciPolicyViolationHandling(PciConflictHandlingValues
+										.fromValue(sonParmas.getPciPolicyViolationHandling().value())));
+					}
+					PciRangeListContainer ranges = new PciRangeListContainer();
+					List<Pair<Integer, Integer>> rangesList = sonParmas.getRangesList();
+					if (rangesList != null) {
+						for (Pair<Integer, Integer> pair : rangesList) {
+							PciRange pciRange = new PciRange();
+							pciRange.setPciStart(factoryDetails.createPciRangePciStart(pair.getElement0()));
+							pciRange.setPciEnd(factoryDetails.createPciRangePciEnd(pair.getElement1()));
+							ranges.getPciRange().add(pciRange);
+						}
+					}
+					sonProfile.setPciRangeList(ranges);
+				}
+				sonProfile.setRsiEnabled(
+						factoryDetails.createEnbSonProfileParamsRsiEnabled(sonParmas.isAutoRSIEnabled()));
+				if (sonParmas.isAutoRSIEnabled() != null && sonParmas.isAutoRSIEnabled()) {
+					RsiRangeListContainer ranges = new RsiRangeListContainer();
+					List<Triple<Integer, Integer, Integer>> rangesRsiList = sonParmas.getRangesRSIList();
+					if (rangesRsiList != null) {
+						for (Triple<Integer, Integer, Integer> triple : rangesRsiList) {
+							RsiRange rsiRange = new RsiRange();
+							rsiRange.setRsiStart(factoryDetails.createRsiRangeRsiStart(triple.getLeftElement()));
+							rsiRange.setRsiStep(factoryDetails.createRsiRangeRsiStep(triple.getMiddleElement()));
+							rsiRange.setRsiListSize(factoryDetails.createRsiRangeRsiListSize(triple.getRightElement()));
+							ranges.getRsiRange().add(rsiRange);
+						}
+					}
+					sonProfile.setRsiRangeList(ranges);
+				}
+				SonAnrStates anrState = sonParmas.getAnrState() != null ? sonParmas.getAnrState()
+						: SonAnrStates.DISABLED;
+				sonProfile.setAnrState(factoryDetails.createEnbSonProfileParamsAnrState(anrState));// createEnbSonProfileAnrState(anrState));
+				sonProfile.setPnpMode(factoryDetails.createEnbSonProfileParamsPnpMode(sonParmas.getPnpMode()));
+				if (anrState != SonAnrStates.DISABLED) {
+					// getting the current list and add new freqs
+					AnrFreqListContainer anrFrequency = new AnrFreqListContainer();
+					AnrFreq anrFreq;
+					List<Integer> anrFrequencyList = sonParmas.getAnrFrequencyList();
+					if (anrFrequencyList != null) {
+						for (Integer integer : anrFrequencyList) {
+							anrFreq = new AnrFreq();
+							anrFreq.setFrequency(integer);
+							anrFrequency.getAnrFrequency().add(anrFreq);
+						}
+						sonProfile.setAnrFrequencyList(anrFrequency);
+					}
+					if (sonParmas.getMinAllowedHoSuccessRate() != null) {
+						sonProfile.setMinAllowedHoSuccessRate(
+								factoryDetails.createEnbSonProfileParamsMinAllowedHoSuccessRate(
+										sonParmas.getMinAllowedHoSuccessRate()));
+					}
+				}
+			}
+		}
+
+		if (sonParmas.getOptimizationMode() != null) {
+			sonProfile.setOptimizationMode(
+					factoryDetails.createEnbSonProfileParamsOptimizationMode(sonParmas.getOptimizationMode()));
+			if (sonParmas.getOptimizationMode().equals(EnabledStates.ENABLED)) {
+				LteSonDynIcic lteSonDynIcic = new LteSonDynIcic();
+				if (sonParmas.getIcicMode() != null && sonParmas.getIcicMode().equals(EnabledStates.ENABLED)) {
+					lteSonDynIcic.setIcicMode(factoryDetails.createLteSonDynIcicIcicMode(sonParmas.getIcicMode()));
+					lteSonDynIcic.setIcicSchemeType(
+							factoryDetails.createLteSonDynIcicIcicSchemeType(sonParmas.getIcicSchemeType()));
+					lteSonDynIcic.setMinThresholdCeu(
+							factoryDetails.createLteSonDynIcicMinThresholdCeu(sonParmas.getMinThresholdCeu()));
+					lteSonDynIcic.setMaxThresholdCeu(
+							factoryDetails.createLteSonDynIcicMaxThresholdCeu(sonParmas.getMaxThresholdCeu()));
+					lteSonDynIcic.setUnmanagedInterferenceHandling(
+							factoryDetails.createLteSonDynIcicUnmanagedInterferenceHandling(
+									sonParmas.getUnmanagedInterferenceHandling()));
+					sonProfile.setDynamicIcic(lteSonDynIcic);
+				}
+			}
+		}
+
+		if (sonParmas.isCSonEnabled() != null) {
+			LteSonCSonWs sonProfileCSon = factoryDetails.createLteSonCSonWs();
+			sonProfileCSon.setIsCSonEnabled(factoryDetails.createLteSonCSonWsIsCSonEnabled(sonParmas.isCSonEnabled()));
+			if (sonParmas.isCSonEnabled()) {
+				sonProfileCSon.setIsCSonRachEnabled(
+						factoryDetails.createLteSonCSonWsIsCSonRachEnabled(sonParmas.iscSonRachMode()));
+				sonProfileCSon.setIsCSonMcimEnabled(
+						factoryDetails.createLteSonCSonWsIsCSonMcimEnabled(sonParmas.iscSonMcimMode()));
+				sonProfileCSon.setIsCSonMroEnabled(
+						factoryDetails.createLteSonCSonWsIsCSonMroEnabled(sonParmas.iscSonMroMode()));
+				sonProfileCSon.setIsCSonMlbEnabled(
+						factoryDetails.createLteSonCSonWsIsCSonMlbEnabled(sonParmas.iscSonMlbMode()));
+				sonProfileCSon.setCSonMlbCapacityClassValue(
+						factoryDetails.createLteSonCSonWsCSonMlbCapacityClassValue(sonParmas.getcSonCapacityClass()));
+				sonProfileCSon.setCSonMlbPdschLoadThresh(
+						factoryDetails.createLteSonCSonWsCSonMlbPdschLoadThresh(sonParmas.getcSonPDSCHLoad()));
+				sonProfileCSon.setCSonMlbPuschLoadThresh(
+						factoryDetails.createLteSonCSonWsCSonMlbPuschLoadThresh(sonParmas.getcSonPUSCHLoad()));
+				sonProfileCSon.setCSonMlbRrcLoadThresh(
+						factoryDetails.createLteSonCSonWsCSonMlbRrcLoadThresh(sonParmas.getcSonRRCLoad()));
+				sonProfileCSon.setCSonMlbCpuLoadThresh(
+						factoryDetails.createLteSonCSonWsCSonMlbCpuLoadThresh(sonParmas.getcSonCPUCHLoad()));
+			}
+			sonProfile.setCSon(sonProfileCSon);
+		}
+		return sonProfile;
+	}
+    
     @Override
     public boolean isRebootRequestedMaintenanceWindowStatus(EnodeB node) {
         // TODO Auto-generated method stub
@@ -3596,86 +4199,335 @@ public class NetspanServer_17_5 extends NetspanServer implements Netspan_17_5_ab
     }
 
     @Override
-    public boolean updateNeighborManagementProfile(EnodeB node, String cloneFromName,
+    public boolean updateNeighborManagementProfile(EnodeB node, String profileName,
                                                    NeighbourManagementParameters neighbourManagementParams) {
-        report.report("updateNeighborManagementProfile via NBI_17_5 Failed : Try to use correct NBI version",
-            Reporter.WARNING);
-        return false;
+    	try {
+			EnbNeighbourProfile neighbourProfile = parseNeighbourManagementParameters(neighbourManagementParams);
+			ProfileResponse cloneResult = soapHelper_17_5.getLteSoap()
+					.neighbourProfileUpdate(profileName, neighbourProfile, credentialsLte);
+
+			if (cloneResult == null) {
+				report.report("Fail to get Neighbour Management profile update result.", Reporter.WARNING);
+				return false;
+			} else if (cloneResult.getErrorCode() == Netspan.NBI_17_5.Lte.ErrorCodes.OK) {
+				report.report(String.format("Succeeded to update Neighbour Management profile \"%s\" via Netspan.",
+						profileName));
+				return true;
+			} else {
+				report.report("Failed to update Neighbour Management profile, reason: " + cloneResult.getErrorString(),
+						Reporter.WARNING);
+				return false;
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			report.report("neighbourProfileUpdate via Netspan Failed due to: " + e.getMessage(), Reporter.WARNING);
+		} finally {
+			soapHelper_17_5.endLteSoap();
+		}
+		return false;
     }
 
+    private EnbNeighbourProfile parseNeighbourManagementParameters(
+			NeighbourManagementParameters neighbourManagementParams) {
+		EnbNeighbourProfile neighbourProfile = new EnbNeighbourProfile();
+		neighbourProfile.setName(neighbourManagementParams.profileName);
+		ObjectFactory factoryDetails = new ObjectFactory();
+		if (neighbourManagementParams.homeEnbBandList != null) {
+			NeighbourHomeEnbBandListContainer container = new NeighbourHomeEnbBandListContainer();
+			if (neighbourManagementParams.homeEnbBandList.HomeEnbBandList.size() != 0) {
+				NeighbourHomeEnbBandConfig config = new NeighbourHomeEnbBandConfig();
+				config.setBand(factoryDetails.createNeighbourHomeEnbBandConfigBand(
+						neighbourManagementParams.homeEnbBandList.HomeEnbBandList.get(FIRST_ELEMENT).band));
+				for (HomeEnbPci pci : neighbourManagementParams.homeEnbBandList.HomeEnbBandList
+						.get(FIRST_ELEMENT).pciList) {
+					NeighbourHomeEnbPciWs homePci = new NeighbourHomeEnbPciWs();
+					homePci.setPciEnd(factoryDetails.createPciRangePciEnd(pci.pciEnd));
+					homePci.setPciStart(factoryDetails.createPciRangePciStart(pci.pciStart));
+					config.getPci().add(homePci);
+				}
+				container.getHomeEnbBand().add(config);
+			}
+			neighbourProfile.setHomeEnbBandList(container);
+		}
+		if (neighbourManagementParams.homeEnbEarfcnList != null) {
+			NeighbourHomeEnbEarfcnListContainer container = new NeighbourHomeEnbEarfcnListContainer();
+			if (neighbourManagementParams.homeEnbEarfcnList.HomeEnbEarfcnList.size() != 0) {
+				NeighbourHomeEnbEarfcnConfig config = new NeighbourHomeEnbEarfcnConfig();
+				config.setEarfcn(factoryDetails.createNeighbourHomeEnbEarfcnConfigEarfcn(
+						neighbourManagementParams.homeEnbEarfcnList.HomeEnbEarfcnList.get(FIRST_ELEMENT).earfcn));
+				for (HomeEnbPci pci : neighbourManagementParams.homeEnbEarfcnList.HomeEnbEarfcnList
+						.get(FIRST_ELEMENT).pciList) {
+					NeighbourHomeEnbPciWs homePci = new NeighbourHomeEnbPciWs();
+					homePci.setPciEnd(factoryDetails.createPciRangePciEnd(pci.pciEnd));
+					homePci.setPciStart(factoryDetails.createPciRangePciStart(pci.pciStart));
+					config.getPci().add(homePci);
+				}
+				container.getHomeEnbEarfcn().add(config);
+			}
+			neighbourProfile.setHomeEnbEarfcnList(container);
+		}
+		if (neighbourManagementParams.homeEnbDefaultConfig != null) {
+			NeighbourHomeEnbDefaultConfig config = new NeighbourHomeEnbDefaultConfig();
+			for (HomeEnbPci pci : neighbourManagementParams.homeEnbDefaultConfig.HomeEnbDefaultConfig) {
+				NeighbourHomeEnbPciWs homePci = new NeighbourHomeEnbPciWs();
+				homePci.setPciEnd(factoryDetails.createPciRangePciEnd(pci.pciEnd));
+				homePci.setPciStart(factoryDetails.createPciRangePciStart(pci.pciStart));
+				config.getPci().add(homePci);
+			}
+			neighbourProfile.setHomeEnbDefaultConfig(config);
+		}
+		if (neighbourManagementParams.nrtBandList != null) {
+			NeighbourNrtBandListContainer container = new NeighbourNrtBandListContainer();
+			if (neighbourManagementParams.nrtBandList.NrtBandList.size() != 0) {
+				NeighbourNrtBandConfig config = new NeighbourNrtBandConfig();
+				config.setBand(factoryDetails.createNeighbourNrtBandConfigBand(
+						neighbourManagementParams.nrtBandList.NrtBandList.get(FIRST_ELEMENT).band));
+				for (NrtPci pci : neighbourManagementParams.nrtBandList.NrtBandList.get(FIRST_ELEMENT).pciList) {
+					NeighbourNrtPciWs nrtPci = new NeighbourNrtPciWs();
+					nrtPci.setPciEnd(factoryDetails.createPciRangePciEnd(pci.pciEnd));
+					nrtPci.setPciStart(factoryDetails.createPciRangePciStart(pci.pciStart));
+					nrtPci.setHoType(factoryDetails.createNeighbourNrtPciWsHoType(pci.hoType));
+					nrtPci.setAllowX2(factoryDetails.createNeighbourNrtPciWsAllowX2(pci.allowX2));
+					config.getPci().add(nrtPci);
+				}
+				container.getNrtBand().add(config);
+			}
+			neighbourProfile.setNrtBandList(container);
+		}
+		if (neighbourManagementParams.nrtEarfcnList != null) {
+			NeighbourNrtEarfcnListContainer container = new NeighbourNrtEarfcnListContainer();
+			if (neighbourManagementParams.nrtEarfcnList.NrtEarfcnList.size() != 0) {
+				NeighbourNrtEarfcnConfig config = new NeighbourNrtEarfcnConfig();
+				config.setEarfcn(factoryDetails.createNeighbourNrtEarfcnConfigEarfcn(
+						neighbourManagementParams.nrtEarfcnList.NrtEarfcnList.get(FIRST_ELEMENT).earfcn));
+				for (NrtPci pci : neighbourManagementParams.nrtEarfcnList.NrtEarfcnList.get(FIRST_ELEMENT).pciList) {
+					NeighbourNrtPciWs nrtPci = new NeighbourNrtPciWs();
+					nrtPci.setPciEnd(factoryDetails.createPciRangePciEnd(pci.pciEnd));
+					nrtPci.setPciStart(factoryDetails.createPciRangePciStart(pci.pciStart));
+					nrtPci.setHoType(factoryDetails.createNeighbourNrtPciWsHoType(pci.hoType));
+					nrtPci.setAllowX2(factoryDetails.createNeighbourNrtPciWsAllowX2(pci.allowX2));
+					config.getPci().add(nrtPci);
+				}
+				container.getNrtEarfcn().add(config);
+			}
+			neighbourProfile.setNrtEarfcnList(container);
+		}
+		if (neighbourManagementParams.nrtDefaultConfig != null) {
+			NeighbourNrtDefaultConfig config = new NeighbourNrtDefaultConfig();
+			for (NrtPci pci : neighbourManagementParams.nrtDefaultConfig.NrtDefaultConfig) {
+				NeighbourNrtPciWs nrtPci = new NeighbourNrtPciWs();
+				nrtPci.setPciEnd(factoryDetails.createPciRangePciEnd(pci.pciEnd));
+				nrtPci.setPciStart(factoryDetails.createPciRangePciStart(pci.pciStart));
+				nrtPci.setHoType(factoryDetails.createNeighbourNrtPciWsHoType(pci.hoType));
+				nrtPci.setAllowX2(factoryDetails.createNeighbourNrtPciWsAllowX2(pci.allowX2));
+				config.getPci().add(nrtPci);
+			}
+			neighbourProfile.setNrtDefaultConfig(config);
+		}
+		return neighbourProfile;
+	}
+    
     @Override
-    public boolean cloneNeighborManagementProfile(EnodeB node, String cloneFromName,
+    public boolean cloneNeighborManagementProfile(EnodeB node, String profileName,
                                                   NeighbourManagementParameters neighbourManagementParams) {
-        report.report("cloneNeighborManagementProfile via NBI_17_5 Failed : Try to use correct NBI version",
-            Reporter.WARNING);
-        return false;
+    	try {
+			EnbNeighbourProfile neighbourProfile = parseNeighbourManagementParameters(neighbourManagementParams);
+			ProfileResponse cloneResult = soapHelper_17_5.getLteSoap()
+					.neighbourProfileClone(profileName, neighbourProfile, credentialsLte);
+
+			if (cloneResult == null) {
+				report.report("Fail to get Neighbour Manangement profile clone result.", Reporter.WARNING);
+				return false;
+			} else if (cloneResult.getErrorCode() == Netspan.NBI_17_5.Lte.ErrorCodes.OK) {
+				report.report("Succeeded to clone Neighbour Manangement profile, new profile name: "
+						+ neighbourManagementParams.profileName);
+				return true;
+			} else {
+				report.report("Failed to clone Neighbour Manangement profile, reason: " + cloneResult.getErrorString(),
+						Reporter.WARNING);
+				return false;
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			report.report("mobilityProfileClone via Netspan Failed due to: ", Reporter.WARNING);
+		} finally {
+			soapHelper_17_5.endLteSoap();
+		}
+		return false;
     }
 
     @Override
     public String getNeighborManagmentProfile(String nodeName) {
-        report.report("getNeighborManagmentProfile via NBI_17_5 Failed : Try to use correct NBI version",
-            Reporter.WARNING);
-        return null;
+    	ArrayList<String> nodeListName = new ArrayList<String>();
+		nodeListName.add(nodeName);
+		LteEnbConfigGetResult result = null;
+		try {
+			result = soapHelper_17_5.getLteSoap().enbConfigGet(nodeListName,null, credentialsLte);
+		} catch (Exception e) {
+			report.report("enbConfigGet via Netspan Failed due to: " + e.getMessage(), Reporter.WARNING);
+			e.printStackTrace();
+			return null;
+		} finally {
+			soapHelper_17_5.endLteSoap();
+		}
+		if (result.getErrorCode() != Netspan.NBI_17_5.Lte.ErrorCodes.OK) {
+			GeneralUtils.printToConsole("enbConfigGet via Netspan Failed : " + result.getErrorString());
+			return null;
+		}
+		return result.getNodeResult().get(FIRST_ELEMENT).getEnbConfig().getNeighbourProfile();
     }
 
     @Override
     public NeighborData getNeighborData(String nodeName, String nghName) {
-        // TODO Auto-generated method stub
-        return null;
+    	LteSonAnrGetResult AnrResult = soapHelper_17_5.getStatusSoap().enbSonAnrStatusGet(nodeName,
+				credentialsStatus);
+		if (!AnrResult.getAnr().isEmpty()) {
+			for (LteAnrStatusWs ngh : AnrResult.getAnr()) {
+				if (ngh.getName().equals(nghName)) {
+					report.report("Getting neighbor data from Netspan.");
+					return parseNeighborData(ngh);
+				}
+			}
+		}
+		report.report(String.format("Could not find %s in %s ngh list.", nghName, nodeName));
+		return null;
     }
+    
+    private NeighborData parseNeighborData(LteAnrStatusWs ngh) {
+		try {
+			NeighborData nghData = new NeighborData();
+			nghData.name = ngh.getName();
+			nghData.pci = ngh.getPci().getValue();
+			nghData.enbType = ngh.getEnbType().getValue();
+			nghData.enbId = ngh.getEnbId();
+			nghData.cellId = ngh.getCellId().getValue();
+			nghData.cellIdentity = ngh.getCellIdentity().getValue();
+			nghData.tac = ngh.getTac().getValue();
+			nghData.downlinkEarfcn = ngh.getDownlinkEarfcn().getValue();
+			nghData.mcc = ngh.getMcc();
+			nghData.mnc = ngh.getMnc();
+			nghData.hoControlStatus = ngh.getHoControlStatus().getValue();
+			nghData.x2ControlStatus = ngh.getX2ControlStatus().getValue();
+			nghData.HandoverType = ngh.getHandoverType().getValue();
+			nghData.discoveredBy = ngh.getDiscoveredBy().getValue();
+			nghData.isStaticNeighbour = ngh.getIsStaticNeighbour().getValue();
+			nghData.hoSuccessRate = ngh.getHoSuccessRate().getValue();
+			nghData.pi = ngh.getPi().getValue();
+			nghData.qOffset = ngh.getQOffset().getValue();
+			nghData.activeQOffset = ngh.getActiveQOffset().getValue();
+			nghData.mvno1Mcc = ngh.getMvno1Mcc();
+			nghData.mvno1Mnc = ngh.getMvno1Mnc();
+			nghData.mvno2Mcc = ngh.getMvno2Mcc();
+			nghData.mvno2Mnc = ngh.getMvno2Mnc();
+			nghData.mvno3Mcc = ngh.getMvno3Mcc();
+			nghData.mvno3Mnc = ngh.getMvno3Mnc();
+			nghData.mvno4Mcc = ngh.getMvno4Mcc();
+			nghData.mvno4Mnc = ngh.getMvno4Mnc();
+			nghData.mvno5Mcc = ngh.getMvno5Mcc();
+			nghData.mvno5Mnc = ngh.getMvno5Mnc();
+			nghData.cellIndividualOffset = ngh.getCellIndividualOffset().getValue();
+			nghData.activeCellIndividualOffset = ngh.getActiveCellIndividualOffset().getValue();
+			nghData.prachRsi = ngh.getPrachRsi().getValue();
+			nghData.prachRsi0CorelZoneConfig = ngh.getPrachRsi0CorelZoneConfig().getValue();
+			nghData.prachFreqOffset = ngh.getPrachFreqOffset().getValue();
+			nghData.prachCfgIndex = ngh.getPrachCfgIndex().getValue();
+			nghData.commsStatus = ngh.getCommsStatus().getValue();
+			nghData.commsStatusDisplay = ngh.getCommsStatusDisplay();
+			nghData.neighbourOfCell = ngh.getNeighbourOfCell();
+			nghData.cellStatus = ngh.getCellStatus().getValue();
+			// nghData.csgId = ngh.getCsgId().getValue();
+			nghData.avgRsrp = ngh.getAvgRsrp().getValue();
+			nghData.interferingNeighbor = ngh.getInterferingNeighbor().getValue();
+			return nghData;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 
+    
     @Override
     public boolean setEnbCellProperties(EnodeB dut, EnbCellProperties cellProperties) {
-        LteEnbDetailsSetWs enbConfigSet = new LteEnbDetailsSetWs();
-        ObjectFactory objectFactory = new ObjectFactory();
-        LteCellSetWs lteCellSet = new LteCellSetWs();
-        try {
-            lteCellSet
-                .setCellNumber(objectFactory.createLteCellSetWsCellNumber(String.valueOf(dut.getCellContextID())));
-            lteCellSet.setCellIdForEci(objectFactory.createLteCellSetWsCellIdForEci(cellProperties.cellIdForEci));
-            if (cellProperties.physicalCellId != null) {
-                lteCellSet.setPhysicalLayerCellGroup(
-                    objectFactory.createLteCellSetWsPhysicalLayerCellGroup(cellProperties.physicalCellId / 3));
-                lteCellSet.setPhysicalLayerIdentity(
-                    objectFactory.createLteCellSetWsPhysicalLayerIdentity(cellProperties.physicalCellId % 3));
-            } else {
-                lteCellSet.setPhysicalLayerCellGroup(
-                    objectFactory.createLteCellSetWsPhysicalLayerCellGroup(cellProperties.physicalLayerCellGroup));
-                lteCellSet.setPhysicalLayerIdentity(
-                    objectFactory.createLteCellSetWsPhysicalLayerIdentity(cellProperties.physicalLayerIdentity));
-            }
-            lteCellSet.setPrachRsi(objectFactory.createLteCellSetWsPrachRsi(cellProperties.prachRsi));
-            lteCellSet.setTrackingAreaCode(
-                objectFactory.createLteCellSetWsTrackingAreaCode(cellProperties.trackingAreaCode));
-            EaidsParams eaids = new EaidsParams();
-            eaids.getEmergencyAreaId().add(cellProperties.emergencyAreaId);
-            lteCellSet.setEmergencyAreaIds(eaids);
-            lteCellSet.setPrachFreqOffset(
-                objectFactory.createLteCellSetWsPrachFreqOffset(cellProperties.prachFreqOffset));
-            enbConfigSet.getLteCell().add(lteCellSet);
+    	LteEnbDetailsSetWs enbConfigSet = new LteEnbDetailsSetWs();
+		ObjectFactory objectFactory = new ObjectFactory();
+		LteCellSetWs lteCellSet = new LteCellSetWs();
+		try {
+			lteCellSet
+					.setCellNumber(objectFactory.createLteCellSetWsCellNumber(String.valueOf(dut.getCellContextID())));
+			lteCellSet.setCellIdForEci(objectFactory.createLteCellSetWsCellIdForEci(cellProperties.cellIdForEci));
 
-            Netspan.NBI_17_5.Lte.NodeActionResult result = soapHelper_17_5
-                .getLteSoap().enbConfigSet(dut.getNetspanName(),null,null, enbConfigSet, null, credentialsLte);
+			if (cellProperties.physicalCellId != null) {
+				lteCellSet.setPhysicalLayerCellGroup(
+						objectFactory.createLteCellSetWsPhysicalLayerCellGroup(cellProperties.physicalCellId / 3));
+				lteCellSet.setPhysicalLayerIdentity(
+						objectFactory.createLteCellSetWsPhysicalLayerIdentity(cellProperties.physicalCellId % 3));
+			} else {
+				lteCellSet.setPhysicalLayerCellGroup(
+						objectFactory.createLteCellSetWsPhysicalLayerCellGroup(cellProperties.physicalLayerCellGroup));
+				lteCellSet.setPhysicalLayerIdentity(
+						objectFactory.createLteCellSetWsPhysicalLayerIdentity(cellProperties.physicalLayerIdentity));
+			}
 
-            if (result.getErrorCode() != Netspan.NBI_17_5.Lte.ErrorCodes.OK) {
-                report.report("setEnbCellProperties via Netspan Failed : " + result.getErrorString(), Reporter.WARNING);
-                return false;
-            } else
-                return true;
+			lteCellSet.setPrachRsi(objectFactory.createLteCellSetWsPrachRsi(cellProperties.prachRsi));
+			lteCellSet.setTrackingAreaCode(
+					objectFactory.createLteCellSetWsTrackingAreaCode(cellProperties.trackingAreaCode));
+		    EaidsParams eaids = new EaidsParams();
+		    eaids.getEmergencyAreaId().add(cellProperties.emergencyAreaId);
+		    lteCellSet.setEmergencyAreaIds(eaids);
+			lteCellSet.setPrachFreqOffset(
+					objectFactory.createLteCellSetWsPrachFreqOffset(cellProperties.prachFreqOffset));
+			lteCellSet.setCellBarringPolicy(
+					objectFactory.createLteCellSetWsCellBarringPolicy(cellProperties.cellBarringPolicy));
+			lteCellSet.setCsgMode(objectFactory.createLteCellSetWsCsgMode(cellProperties.closedSubscriberGroupMode));
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            report.report("setEnbCellProperties via Netspan Failed due to: " + e.getMessage(), Reporter.WARNING);
-            return false;
-        } finally {
-            soapHelper_17_5.endLteSoap();
-        }
+			enbConfigSet.getLteCell().add(lteCellSet);
+
+			Netspan.NBI_17_5.Lte.NodeActionResult result = soapHelper_17_5
+					.getLteSoap().enbConfigSet(dut.getNetspanName(),null, null, enbConfigSet, null, credentialsLte);
+
+			if (result.getErrorCode() != Netspan.NBI_17_5.Lte.ErrorCodes.OK) {
+				report.report("setEnbCellProperties via Netspan Failed : " + result.getErrorString(), Reporter.WARNING);
+				return false;
+			} else
+				return true;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			report.report("setEnbCellProperties via Netspan Failed due to: " + e.getMessage(), Reporter.WARNING);
+			return false;
+		} finally {
+			soapHelper_17_5.endLteSoap();
+		}
     }
 
     @Override
-    public boolean updateSonProfile(EnodeB node, String cloneFromName, SonParameters sonParmas) {
-        // TODO Auto-generated method stub
-        return false;
+    public boolean updateSonProfile(EnodeB node, String cloneFromName, SonParameters sonParams) {
+    	try {
+			EnbSonProfile sonProfile = parseSonParameters(node, sonParams);
+			ProfileResponse updateResult = soapHelper_17_5.getLteSoap()
+					.sonProfileUpdate(cloneFromName, sonProfile, credentialsLte);
+
+			if (updateResult == null) {
+				report.report("Fail to get Son profile update result", Reporter.WARNING);
+				return false;
+			} else if (updateResult.getErrorCode() == Netspan.NBI_17_5.Lte.ErrorCodes.OK) {
+				report.report("Succeeded to update Son profile " + sonParams.getProfileName());
+				return true;
+			} else {
+				report.report("Failed to update Son profile, reason: " + updateResult.getErrorString(),
+						Reporter.WARNING);
+				return false;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			report.report("Failed to update Son profile, due to: " + e.getMessage(), Reporter.WARNING);
+			return false;
+		} finally {
+			soapHelper_17_5.endLteSoap();
+		}
     }
 
     @Override
@@ -3788,56 +4640,53 @@ public class NetspanServer_17_5 extends NetspanServer implements Netspan_17_5_ab
 
     @Override
     public boolean cloneMultiCellProfile(EnodeB node, String cloneFromName, MultiCellParameters multiCellParams) {
-        try {
-            ObjectFactory factoryObject = new ObjectFactory();
-            EnbMultiCellProfile multiCellProfile = new EnbMultiCellProfile();
+    	try {
+			ObjectFactory factoryObject = new ObjectFactory();
+			EnbMultiCellProfile multiCellProfile = new EnbMultiCellProfile();
 
-            multiCellProfile.setName(multiCellParams.getProfileName());
+			multiCellProfile.setName(multiCellParams.getProfileName());
 
-            CarrierAggregationModes caMode;
-            if (multiCellParams.getCarrierAggMode()) {
-                caMode = CarrierAggregationModes.CONTIGUOUS;
-            } else {
-                caMode = CarrierAggregationModes.DISABLE;
-            }
-            multiCellProfile.setCarrierAggMode(factoryObject.createEnbMultiCellProfileParamsCarrierAggMode(caMode));
+			CarrierAggregationModes caMode;
+			if (multiCellParams.getCarrierAggMode()) {
+				caMode = CarrierAggregationModes.CONTIGUOUS;
+			} else {
+				caMode = CarrierAggregationModes.DISABLE;
+			}
+			multiCellProfile.setCarrierAggMode(factoryObject.createEnbMultiCellProfileParamsCarrierAggMode(caMode));
 
-            if (multiCellParams.getIntraEnbLoadBalanceMode() != null) {
-                multiCellProfile
-                    .setIntraEnbLoadBalancingMode(factoryObject.createEnbMultiCellProfileParamsIntraEnbLoadBalancingMode(
-                        multiCellParams.getIntraEnbLoadBalanceMode()));
-            }
+			if (multiCellParams.getIntraEnbLoadBalanceMode() != null) {
+				multiCellProfile.setIntraEnbLoadBalancingMode(
+						factoryObject.createEnbMultiCellProfileParamsIntraEnbLoadBalancingMode(
+								multiCellParams.getIntraEnbLoadBalanceMode()));
+			}
 
-            if (multiCellParams.getIntraEnbLoadBalanceMode() == EnabledStates.ENABLED) {
-                // compositeLoadMax
-                multiCellProfile.setCompositeLoadDiffMax(factoryObject
-                    .createEnbMultiCellProfileParamsCompositeLoadDiffMax(multiCellParams.getCompositeLoadDiffMax()));
-                // compositeLoadMin
-                multiCellProfile.setCompositeLoadDiffMin(factoryObject
-                    .createEnbMultiCellProfileParamsCompositeLoadDiffMin(multiCellParams.getCompositeLoadDiffMin()));
-                // calcInterval
-                multiCellProfile.setCalculationInterval(factoryObject
-                    .createEnbMultiCellProfileParamsCalculationInterval(multiCellParams.getCalculationInterval()));
-            }
+			if (multiCellParams.getIntraEnbLoadBalanceMode() == EnabledStates.ENABLED) {
+				multiCellProfile
+						.setCompositeLoadDiffMax(factoryObject.createEnbMultiCellProfileParamsCompositeLoadDiffMax(
+								multiCellParams.getCompositeLoadDiffMax()));
+				multiCellProfile
+						.setCompositeLoadDiffMin(factoryObject.createEnbMultiCellProfileParamsCompositeLoadDiffMin(
+								multiCellParams.getCompositeLoadDiffMin()));
+				multiCellProfile.setCalculationInterval(factoryObject
+						.createEnbMultiCellProfileParamsCalculationInterval(multiCellParams.getCalculationInterval()));
+			}
 
-            ProfileResponse cloneResult = soapHelper_17_5.getLteSoap()
-                .multiCellProfileClone(cloneFromName, multiCellProfile, credentialsLte);
-            boolean result = false;
-            if (cloneResult.getErrorCode() == Netspan.NBI_17_5.Lte.ErrorCodes.OK) {
-                report.report(
-                    "Succeeded to clone MultiCell profile, new profile name: " + multiCellParams.getProfileName());
-                result = true;
-            } else {
-                report.report("Failed to clone MultiCell profile, reason: " + cloneResult.getErrorString(),
-                    Reporter.WARNING);
-                result = false;
-            }
-            return result;
+			ProfileResponse cloneResult = soapHelper_17_5.getLteSoap()
+					.multiCellProfileClone(cloneFromName, multiCellProfile, credentialsLte);
+			if (cloneResult.getErrorCode() == Netspan.NBI_17_5.Lte.ErrorCodes.OK) {
+				report.report(
+						"Succeeded to clone MultiCell profile, new profile name: " + multiCellParams.getProfileName());
+				return true;
+			} else {
+				report.report("Failed to clone MultiCell profile, reason: " + cloneResult.getErrorString(),
+						Reporter.WARNING);
+				return false;
+			}
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
     }
 
     @Override
@@ -4088,16 +4937,22 @@ public class NetspanServer_17_5 extends NetspanServer implements Netspan_17_5_ab
     }
 
     public int getDLTPTPerQci(String nodeName, int qci) {
-        LteIpThroughputGetResult result = soapHelper_17_5.getStatusSoap()
-            .enbIpThroughputStatusGet(nodeName, credentialsStatus);
-        List<LteIpThroughputQciWs> a = result.getCell().get(0).getQciData();
+    	LteIpThroughputGetResult result = soapHelper_17_5.getStatusSoap()
+				.enbIpThroughputStatusGet(nodeName, credentialsStatus);
+		List<LteIpThroughputQciWs> a = null;
+		try {
+			a = result.getCell().get(0).getQciData();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return GeneralUtils.ERROR_VALUE;
+		}
 
-        for (LteIpThroughputQciWs qciData : a) {
-            if (qciData.getQci().getValue() == qci) {
-                return qciData.getMacTrafficKbpsUl().getValue();
-            }
-        }
-        return GeneralUtils.ERROR_VALUE;
+		for (LteIpThroughputQciWs qciData : a) {
+			if (qciData.getQci().getValue() == qci) {
+				return qciData.getMacTrafficKbpsDl().getValue();
+			}
+		}
+		return GeneralUtils.ERROR_VALUE;
     }
 
     @Override
@@ -4109,10 +4964,107 @@ public class NetspanServer_17_5 extends NetspanServer implements Netspan_17_5_ab
 
     @Override
     public boolean updateNetworkProfile(EnodeB node, String cloneFromName, NetworkParameters networkParams) {
-        // TODO Auto-generated method stub
-        return false;
+    	try {
+			EnbNetworkProfile networkProfile = parseNetworkParameters(node, networkParams);
+			ProfileResponse updateResult = soapHelper_17_5.getLteSoap()
+					.networkProfileUpdate(cloneFromName, networkProfile, credentialsLte);
+
+			if (updateResult == null) {
+				report.report("Fail to get Network profile update result", Reporter.WARNING);
+				return false;
+			} else if (updateResult.getErrorCode() == Netspan.NBI_17_5.Lte.ErrorCodes.OK) {
+				report.report("Succeeded to update Network profile " + networkProfile.getName());
+				return true;
+			} else {
+				report.report("Failed to update Network profile, reason: " + updateResult.getErrorString(),
+						Reporter.WARNING);
+				return false;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			report.report("Failed to update Network profile, due to: " + e.getMessage(), Reporter.WARNING);
+			return false;
+		} finally {
+			soapHelper_17_5.endLteSoap();
+		}
     }
 
+    private EnbNetworkProfile parseNetworkParameters(EnodeB node, NetworkParameters networkParams) {
+		ObjectFactory factoryDetails = new ObjectFactory();
+		EnbNetworkProfile networkProfile = new EnbNetworkProfile();
+		networkProfile.setName(networkParams.getProfileName());
+
+		// Backhaul Qos
+		if (networkParams.getBackhaulQosAdmin() != null) {
+			networkProfile.setBhQosAdmin(
+					factoryDetails.createEnbNetworkProfileParamsBhQosAdmin(networkParams.getBackhaulQosAdmin()));
+			networkProfile.setBhQosMinReservedForCallsNotYetAttempted(
+					factoryDetails.createEnbNetworkProfileParamsBhQosMinReservedForCallsNotYetAttempted(
+							networkParams.getBackhaulQosMinReservedForCalls()));
+		}
+
+		// HeNB
+		if (networkParams.getOperateBehindHenbGw() != null) {
+			networkProfile.setOperateBehindHenbGw(factoryDetails
+					.createEnbNetworkProfileParamsOperateBehindHenbGw(networkParams.getOperateBehindHenbGw()));
+		}
+
+		// ETWS Logging
+		if (networkParams.getEtwsEnabled() != null) {
+			networkProfile.setEtwsEnabled(
+					factoryDetails.createEnbNetworkProfileParamsEtwsEnabled(networkParams.getEtwsEnabled()));
+			networkProfile.setEtwsUploadPeriod(
+					factoryDetails.createEnbNetworkProfileParamsEtwsUploadPeriod(networkParams.getEtwsUploadPeriod()));
+			networkProfile.setEtwsUploadPeriodNoData(factoryDetails
+					.createEnbNetworkProfileParamsEtwsUploadPeriodNoData(networkParams.getEtwsUploadPeriodNoData()));
+			networkProfile.setEtwsFileServer(networkParams.getEtwsFileServerName());
+		}
+
+		// incase of plmn item to change in the profile
+		if (networkParams.getPlmn() != null) {
+			PlmnListContainer containerPlmn = new PlmnListContainer();
+			ArrayList<LtePlmnEntryWs> listPlmnWs = new ArrayList<LtePlmnEntryWs>();
+			for (Plmn item : networkParams.getPlmn()) {
+				LtePlmnEntryWs plmnWs = new LtePlmnEntryWs();
+				plmnWs.setMcc(item.getMCC());
+				plmnWs.setMnc(item.getMNC());
+				listPlmnWs.add(plmnWs);
+				containerPlmn.getPlmn().add(plmnWs);
+			}
+			networkProfile.setPlmnList(containerPlmn);
+		}
+
+		// in case of mme ip to change in the profile
+		if (networkParams.getMMEIPS() != null) {
+			S1ListContainer tempContainer = new S1ListContainer();
+			LteS1EntryWs tempLteS1Entry = null;
+			for (String mmeip : networkParams.getMMEIPS()) {
+				tempLteS1Entry = new LteS1EntryWs();
+				tempLteS1Entry.setMmeIpAddress(mmeip);
+				tempContainer.getS1().add(tempLteS1Entry);
+			}
+			// add IPG ip in the List
+			networkProfile.setS1X2List(tempContainer);
+		}
+
+		if (networkParams.getcSonConfig() != null) {
+			LteCSonEntryWs cSonConfig = new LteCSonEntryWs();
+			cSonConfig.setIsCSonConfigured(
+					factoryDetails.createLteCSonEntryWsIsCSonConfigured(networkParams.getIsCSonConfigured()));
+			cSonConfig.setCSonIpAddress(networkParams.getcSonIpAddress());
+			cSonConfig.setCSonServerPort(
+					factoryDetails.createLteCSonEntryWsCSonServerPort(networkParams.getcSonServerPort()));
+			networkProfile.setCSONConfig(cSonConfig);
+		}
+
+		if (networkParams.getCdrxConnectedMode() != null) {
+			networkProfile.setConnectedModeDrx(
+					factoryDetails.createEnbNetworkProfileParamsConnectedModeDrx(networkParams.getCdrxConnectedMode()));
+		}
+		return networkProfile;
+	}
+    
     @Override
     public boolean getNetspanProfile(EnodeB node, String cloneFromName, INetspanProfile profileParams) {
         try {
@@ -4141,6 +5093,14 @@ public class NetspanServer_17_5 extends NetspanServer implements Netspan_17_5_ab
                 case EnodeB_Advanced_Profile:
                     return getAdvancedConfigurationProfile(node, cloneFromName);
 
+                case System_Default_Profile:
+                	return getSystemDefaultProfile(node, cloneFromName);
+                	
+                case Neighbour_Management_Profile:
+                	return getNeighborManagementProfile(node, cloneFromName);
+                	
+                case MultiCell_Profile:
+                	return getMultiCellProfile(node, cloneFromName);
                 default:
                     report.report("Enum: No Such EnbProfile", Reporter.WARNING);
                     return false;
@@ -4152,6 +5112,30 @@ public class NetspanServer_17_5 extends NetspanServer implements Netspan_17_5_ab
         }
     }
 
+    private boolean getSystemDefaultProfile(EnodeB node, String cloneFromName) {
+		List<String> names = new ArrayList<>();
+		List<CategoriesLte> hardwares = new ArrayList<CategoriesLte>();
+		EnbDetailsGet nodeConf = getNodeConfig(node);
+		CategoriesLte category = null;
+		try {
+			category = CategoriesLte.fromValue(nodeConf.getHardware());
+		} catch (Exception e) {
+			report.report("Incompatible HardWare Type in inner Netspan method!", Reporter.WARNING);
+			GeneralUtils.printToConsole("Error : " + e.getMessage() + ", nodeConfig :" + nodeConf.getHardware());
+			return false;
+		}
+		hardwares.add(category);
+		names.add(cloneFromName);
+		try {
+			soapHelper_17_5.getLteSoap().systemDefaultProfileGet(names, hardwares,null, credentialsLte);
+		} catch (Exception e) {
+			e.printStackTrace();
+			soapHelper_17_5.endLteSoap();
+			return false;
+		}
+		return true;
+	}
+    
     @Override
     public boolean getManagementProfile(EnodeB node, String cloneFromName) {
         List<String> names = new ArrayList<>();
@@ -4739,7 +5723,7 @@ public class NetspanServer_17_5 extends NetspanServer implements Netspan_17_5_ab
 		} catch (Exception e) {
 			e.printStackTrace();
 		}finally{
-			//soapHelper_17_5.end
+			soapHelper_17_5.endStatusSoap();
 		}
 		if (maxUeSupported <= 0) {
 			report.report("Failed to get Actual Max UE Supported Cell 1", Reporter.WARNING);
@@ -4780,10 +5764,10 @@ public class NetspanServer_17_5 extends NetspanServer implements Netspan_17_5_ab
 			result = soapHelper_17_5.getInventorySoap().nodeReset(listEnb, null,false, credentialsInventory);
 		}else if(rebootType == RebootTypesNetspan.Forced_Reset_Node){
 			result = soapHelper_17_5.getInventorySoap().nodeResetForced(listEnb, null,false, credentialsInventory);
+		}else if(rebootType == RebootTypesNetspan.Cold_Reset_Node){
+			result = soapHelper_17_5.getInventorySoap().nodeResetCold(listEnb, null, credentialsInventory);
 		}else{
-			report.report("Reboot type is not available in version 15.2", Reporter.FAIL);
-			soapHelper_17_5.endInventorySoap();
-			return false;
+			result = soapHelper_17_5.getInventorySoap().nodeResetForcedCold(listEnb, null, credentialsInventory);
 		}
 		boolean rebooted = result.getErrorCode() == Netspan.NBI_17_5.Inventory.ErrorCodes.OK;
 		soapHelper_17_5.endInventorySoap();

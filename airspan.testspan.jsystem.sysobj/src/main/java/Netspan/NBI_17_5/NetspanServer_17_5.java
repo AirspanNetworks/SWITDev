@@ -4891,7 +4891,7 @@ public class NetspanServer_17_5 extends NetspanServer implements Netspan_17_5_ab
 			int numberOfSoftwareStatus = result.getNodeSoftwareStatus().get(0).getSoftwareStatus().size();
 			for(int i = 0; i < numberOfSoftwareStatus; i++){
 				NodeSoftwareStatus softwareStatus = result.getNodeSoftwareStatus().get(0).getSoftwareStatus().get(i);
-				if((numberOfSoftwareStatus == 1) || (imageType == null) || imageType.value().equals(softwareStatus.getImageType())){
+				if((numberOfSoftwareStatus == 1) || (imageType == null) || imageType.value().equals(softwareStatus.getImageType().getValue().value())){
 					newsoftwareStatus = new SoftwareStatus();
 					newsoftwareStatus.ImageType = softwareStatus.getImageType().equals("Combined LTE + Relay") ? ImageType.COMBINED_LTE_RELAY.value() : softwareStatus.getImageType().getValue().value();
 					newsoftwareStatus.RunningVersion = softwareStatus.getRunningVersion();

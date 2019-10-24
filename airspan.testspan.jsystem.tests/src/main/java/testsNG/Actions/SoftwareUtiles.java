@@ -1484,6 +1484,8 @@ public class SoftwareUtiles {
 				enbSWDetails.setTargetEqualStandby(true);
 				report.report("Standby Version equals Target Version - No Need To Upgrade.");
 			}
+		}else{
+			report.report("softwareStatus is null",Reporter.WARNING);
 		}
 	}
 

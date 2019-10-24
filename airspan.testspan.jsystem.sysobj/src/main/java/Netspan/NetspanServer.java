@@ -51,6 +51,7 @@ import Netspan.Profiles.SystemDefaultParameters;
 import Utils.GeneralUtils.RebootType;
 import Utils.GeneralUtils.RebootTypesNetspan;
 import Utils.GeneralUtils.RelayScanType;
+import Utils.GeneralUtils.CellToUse;
 import Utils.Pair;
 import jsystem.framework.system.SystemManagerImpl;
 import jsystem.framework.system.SystemObjectImpl;
@@ -703,4 +704,14 @@ public abstract class NetspanServer extends SystemObjectImpl {
 	public abstract boolean relayScan(EnodeB enodeB, RelayScanType scanType);
 
 	public abstract boolean isRelayEnodeb(String nodeName);
+
+    public abstract boolean changeCellToUse(EnodeB node, CellToUse cellToUse);
+
+    public abstract boolean setProfilesInCell2(EnodeB node, String cellAdvancedProfile, String radioProfile, String MobilityProfile, String eMBMSProfile, String TrafficManagementProfile, String callTraceProfile);
+
+    public abstract String getCurrentCallTraceProfileName(EnodeB enb);
+
+    public abstract String getCurrentTrafficManagementProfileName(EnodeB enb);
+
+    public abstract String getCurrenteMBMSProfileName(EnodeB enb);
 }

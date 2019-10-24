@@ -49,6 +49,7 @@ import Utils.GeneralUtils;
 import Utils.Pair;
 import Utils.GeneralUtils.RebootType;
 import Utils.GeneralUtils.RelayScanType;
+import Utils.GeneralUtils.CellToUse;
 import Utils.Snmp.MibReader;
 import jsystem.framework.report.ListenerstManager;
 import jsystem.framework.report.Reporter;
@@ -414,11 +415,22 @@ public class EnodeBConfig {
 	public String getCurrentEnbAdvancedConfigurationProfileName(EnodeB enb) {
 		return netspanServer.getCurrentEnbAdvancedConfigurationProfileName(enb);
 	}
-	
+
 	public String getCurrentCellAdvancedConfigurationProfileName(EnodeB enb) {
 		return netspanServer.getCurrentCellAdvancedConfigurationProfileName(enb);
 	}
 
+	public String getCurrenteMBMSProfileName(EnodeB enb) {
+		return netspanServer.getCurrenteMBMSProfileName(enb);
+	}
+
+	public String getCurrentTrafficManagementProfileName(EnodeB enb) {
+		return netspanServer.getCurrentTrafficManagementProfileName(enb);
+	}
+
+	public String getCurrentCallTraceProfileName(EnodeB enb) {
+		return netspanServer.getCurrentCallTraceProfileName(enb);
+	}
 	public String getCurrentNetWorkProfileName(EnodeB enb) {
 		return netspanServer.getCurrentNetworkProfileName(enb);
 	}
@@ -2089,5 +2101,9 @@ public class EnodeBConfig {
 	
 	public boolean relayScan(EnodeB enodeB, RelayScanType scanType){
 		return netspanServer.relayScan(enodeB, scanType);
+	}
+
+	public boolean changeCellToUse(EnodeB enodeB, CellToUse cellToUse){
+		return netspanServer.changeCellToUse(enodeB, cellToUse);
 	}
 }

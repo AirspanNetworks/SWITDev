@@ -35,6 +35,7 @@ import Utils.DebugFtpServer;
 import Utils.GeneralUtils;
 import Utils.GeneralUtils.RebootTypesNetspan;
 import Utils.GeneralUtils.RelayScanType;
+import Utils.GeneralUtils.CellToUse;
 import Utils.Snmp.MibReader;
 import Utils.SysObjUtils;
 import jsystem.framework.ParameterProperties;
@@ -141,6 +142,7 @@ public class Enodeb extends EnodebAction {
 	private Comparison comparison;
 	private EnbProfiles enbProfile;
 	private String profileName;
+	private String radioProfileName;
 
 	private NodeManagementModes managedMode;
 	private boolean enableCell;
@@ -159,7 +161,16 @@ public class Enodeb extends EnodebAction {
 	private ArrayList<String> listOfEvents;
 	private ArrayList<Integer> emergencyAreaIds;
 	private verifyAlarmAction verifyAction = verifyAlarmAction.Equals;
-	
+	private CellToUse cellToUse = CellToUse.MULTI_CELL;
+
+	public CellToUse getCellToUse() {
+		return cellToUse;
+	}
+
+	public void setCellToUse(CellToUse cellToUse) {
+		this.cellToUse = cellToUse;
+	}
+
 	public synchronized RelayScanType getScanType() {
 		return scanType;
 	}
@@ -344,6 +355,11 @@ public class Enodeb extends EnodebAction {
 	@ParameterProperties(description = "Profile Name")
 	public void setProfileName(String profileName) {
 		this.profileName = profileName;
+	}
+
+	@ParameterProperties(description = "Radio Profile Name")
+	public void setRadioProfileName(String radioProfileName) {
+		this.radioProfileName = radioProfileName;
 	}
 
 	@ParameterProperties(description = "Backhaul and Ethernet Name")
@@ -1560,5 +1576,61 @@ public class Enodeb extends EnodebAction {
 		else{
 			report.report(String.format("%s - Succeeded to disable Multi-Cell.", dut.getName()));
 		}
+	}
+
+
+	@Test
+	@TestProperties(name = "Cell To Use", returnParam = "LastStatus", paramsInclude = { "DUT","CellToUse" })
+	public void changeCellToUse(){
+		if(dut == null){
+			report.report("No dut was configured",Reporter.FAIL);
+		}
+		report.report(dut.getName()+" - Trying to change Cell To Use parameter.");
+		if (!EnodeBConfig.getInstance().changeCellToUse(dut, cellToUse)) {
+			report.report(String.format("%s - Failed to change Cell To Use parameter.", dut.getName()), Reporter.FAIL);
+		}
+		else{
+			report.report(String.format("%s - Succeeded to change Cell To Use parameter.", dut.getName()));
+		}
+	}
+
+
+	@Test
+	@TestProperties(name = "Copy from cell 1", returnParam = "LastStatus", paramsInclude = { "DUT","radioProfileName" })
+	public void copyCellOne() throws Exception {
+		if(dut == null){
+			report.report("No dut was configured",Reporter.FAIL);
+		}
+		if (!dut.getCellEnabled(41)){
+			report.report("Cell 2 is disabled- changing state to enable");
+			EnodeBConfig.getInstance().setMultiCellstate(dut, true);
+		}
+
+		report.report(dut.getName()+" - Trying to copy cell 1 profiles to cell 2.");
+		String cellAdvancedConfigurationProfileName = EnodeBConfig.getInstance().getCurrentCellAdvancedConfigurationProfileName(dut);
+		String mobilityProfileName = EnodeBConfig.getInstance().getCurrentMobilityProfileName(dut);
+		String eMBMSProfileName = EnodeBConfig.getInstance().getCurrenteMBMSProfileName(dut);
+		String trafficManagementProfileName =  EnodeBConfig.getInstance().getCurrentTrafficManagementProfileName(dut);
+		String callTraceProfileName  = EnodeBConfig.getInstance().getCurrentCallTraceProfileName(dut);
+
+		dut.setCellContextNumber(2);
+
+		report.startLevel("profiles info");
+		report.report("Cell Advanced Configuration Profile: " + cellAdvancedConfigurationProfileName);
+		report.report("Radio Profile: " + radioProfileName);
+		report.report("mobility Profile: " + mobilityProfileName);
+		report.report("eMBMS Profile: " + eMBMSProfileName);
+		report.report("Traffic Management Profile: " + eMBMSProfileName);
+		report.report("call Trace Profile: " + eMBMSProfileName);
+		report.stopLevel();
+
+		if (NetspanServer.getInstance().setProfilesInCell2(dut, cellAdvancedConfigurationProfileName, radioProfileName, mobilityProfileName, eMBMSProfileName, trafficManagementProfileName, callTraceProfileName)){
+			report.report("profiles were copied from cell 1 to cell 2");
+		}
+
+		else
+			report.report("couldn't copy the profiles to cell 2");
+
+		dut.setCellContextNumber(1);
 	}
 }

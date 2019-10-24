@@ -132,6 +132,7 @@ import Utils.GeneralUtils;
 import Utils.GeneralUtils.RebootType;
 import Utils.GeneralUtils.RebootTypesNetspan;
 import Utils.GeneralUtils.RelayScanType;
+import Utils.GeneralUtils.CellToUse;
 import Utils.Pair;
 import jsystem.framework.IgnoreMethod;
 import jsystem.framework.report.Reporter;
@@ -3117,5 +3118,35 @@ public class NetspanServer_14_5 extends Netspan.NetspanServer {
 	public boolean isRelayEnodeb(String nodeName) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public boolean changeCellToUse(EnodeB node, CellToUse cellToUse) {
+		report.report("changeCellToUse function is not implemented for this netspan(14_5)!");
+		return false;
+	}
+
+    @Override
+    public boolean setProfilesInCell2(EnodeB node, String cellAdvancedProfile, String radioProfile, String MobilityProfile, String eMBMSProfile, String TrafficManagementProfile, String callTraceProfile) {
+        report.report("setProfilesInCell2 function is not implemented for this netspan(14_5)!");
+        return false;
+    }
+
+	@Override
+	public String getCurrenteMBMSProfileName(EnodeB enb) {
+		report.report("getCurrenteMBMSProfileName function is not implemented for this netspan(14_5)!");
+		return null;
+	}
+
+	@Override
+	public String getCurrentTrafficManagementProfileName(EnodeB enb) {
+		report.report("getCurrentTrafficManagementProfileName function is not implemented for this netspan(14_5)!");
+		return null;
+	}
+
+	@Override
+	public String getCurrentCallTraceProfileName(EnodeB enb) {
+		report.report("getCurrentCallTraceProfileName function is not implemented for this netspan(14_5)!");
+		return null;
 	}
 }

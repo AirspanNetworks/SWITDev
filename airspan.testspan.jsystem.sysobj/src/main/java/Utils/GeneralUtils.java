@@ -476,6 +476,11 @@ public class GeneralUtils {
     public enum RelayScanType{
     	Scan, ForceScan;
     }
+
+    public enum CellToUse {
+        MULTI_CELL, LITE_COMP
+    }
+
     
     /**
      * extract gz file to a new file with the given prefix

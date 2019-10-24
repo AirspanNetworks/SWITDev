@@ -195,7 +195,7 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
         }
         super.init();
     }
-    
+
     /**
      * Init soap  helper objects.
      *
@@ -219,7 +219,7 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
         credentialsSoftware.setUsername(USERNAME);
         credentialsSoftware.setPassword(PASSWORD);
     }
-    
+
     /**
      * Populate node names.
      *
@@ -299,6 +299,48 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
                 if (tempCellNumber == cellNumber) {
                     GeneralUtils.printToConsole("Radio Profile From Netspan: " + cell.getRadioProfile() + " for cell : " + cell.getCellNumber().getValue());
                     return cell.getRadioProfile();
+                }
+            }
+        }
+        return null;
+    }
+
+    private String getCurrentTrafficManagementProfileName(EnodeB enb, int cellNumber) {
+        EnbDetailsGet nodeConfig = getNodeConfig(enb);
+        if (nodeConfig != null) {
+            for (LteCellGetWs cell : nodeConfig.getLteCell()) {
+                int tempCellNumber = Integer.valueOf(cell.getCellNumber().getValue());
+                if (tempCellNumber == cellNumber) {
+                    GeneralUtils.printToConsole("Traffic management Profile From Netspan: " + cell.getTrafficManagementProfile() + " for cell : " + cell.getCellNumber().getValue());
+                    return cell.getTrafficManagementProfile();
+                }
+            }
+        }
+        return null;
+    }
+
+    private String getCurrentCallTraceProfileName(EnodeB enb, int cellNumber) {
+        EnbDetailsGet nodeConfig = getNodeConfig(enb);
+        if (nodeConfig != null) {
+            for (LteCellGetWs cell : nodeConfig.getLteCell()) {
+                int tempCellNumber = Integer.valueOf(cell.getCellNumber().getValue());
+                if (tempCellNumber == cellNumber) {
+                    GeneralUtils.printToConsole("Traffic management Profile From Netspan: " + cell.getCallTraceProfile() + " for cell : " + cell.getCellNumber().getValue());
+                    return cell.getCallTraceProfile();
+                }
+            }
+        }
+        return null;
+    }
+
+    private String getCurrenteMBMsProfileName(EnodeB enb, int cellNumber) {
+        EnbDetailsGet nodeConfig = getNodeConfig(enb);
+        if (nodeConfig != null) {
+            for (LteCellGetWs cell : nodeConfig.getLteCell()) {
+                int tempCellNumber = Integer.valueOf(cell.getCellNumber().getValue());
+                if (tempCellNumber == cellNumber) {
+                    GeneralUtils.printToConsole("eMBMS Profile From Netspan: " + cell.getEmbmsProfile() + " for cell : " + cell.getCellNumber().getValue());
+                    return cell.getEmbmsProfile();
                 }
             }
         }
@@ -748,6 +790,11 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
         return enbSetContent(node, enbConfigSet, null);
     }
 
+    public boolean setProfilesInCell2(EnodeB node, String cellAdvancedProfile, String radioProfile, String MobilityProfile, String eMBMSProfile, String TrafficManagementProfile, String callTraceProfile){
+        report.report("setProfilesInCell2 function is not implemented for this netspan(15_2)!");
+        return false;
+    }
+
     /**
      * set Profiles with a map for each profile with his cell number.
      */
@@ -814,6 +861,27 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
                 break;
             case MultiCell_Profile:
                 enbConfigSet.setMultiCellProfile(profileName);
+                break;
+            case eMBMS_Profile:
+                if (cellNumber < 1) {
+                    report.report("Cell ID need to be greater than 0", Reporter.WARNING);
+                    return null;
+                }
+                getActiveIfActiveCell(enbConfigSet, cellNumber).setEmbmsProfile(profileName);
+                break;
+            case Traffic_Management_Profile:
+                if (cellNumber < 1) {
+                    report.report("Cell ID need to be greater than 0", Reporter.WARNING);
+                    return null;
+                }
+                getActiveIfActiveCell(enbConfigSet, cellNumber).setTrafficManagementProfile(profileName);
+                break;
+            case Call_Trace_Profile:
+                if (cellNumber < 1) {
+                    report.report("Cell ID need to be greater than 0", Reporter.WARNING);
+                    return null;
+                }
+                getActiveIfActiveCell(enbConfigSet, cellNumber).setCallTraceProfile(profileName);
                 break;
             default:
                 report.report("In method addProfile : No Enum EnbProfile", Reporter.WARNING);
@@ -2109,7 +2177,7 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
     /**
      * (non-Javadoc)
      *
-     * @see Netspan.NetspanServer#changeNbrAutoX2ControlFlag(EnodeB.EnodeB,
+     * @see Netspan.NetspanServer#changeNbrAutoX2ControlFlag(EnodeB,
      * boolean)
      */
     @Override
@@ -2124,7 +2192,7 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
     /**
      * (non-Javadoc)
      *
-     * @see Netspan.NetspanServer#changeNbrX2ConfiguratioUpdateFlag(EnodeB.EnodeB,
+     * @see Netspan.NetspanServer#changeNbrX2ConfiguratioUpdateFlag(EnodeB,
      * boolean)
      */
     @Override
@@ -2282,7 +2350,7 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
     	LteUeGetResult lteUeGetResult;
         HashMap<Integer, Integer> res = new HashMap<>();
         HashMap<ConnectedUETrafficDirection, HashMap<Integer, Integer>> ret = new HashMap<>();
-        
+
         try {
         	StatusSoap status = soapHelper_15_2.getStatusSoap();
         	lteUeGetResult = status.enbConnectedUeStatusGet(enb.getNetspanName(), credentialsStatus);
@@ -2408,6 +2476,24 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
     public String getCurrentRadioProfileName(EnodeB enb) {
         int cell = enb.getCellContextID();
         return this.getCurrentRadioProfileName(enb, cell);
+    }
+
+    @Override
+    public String getCurrenteMBMSProfileName(EnodeB enb) {
+        int cell = enb.getCellContextID();
+        return this.getCurrenteMBMsProfileName(enb, cell);
+    }
+
+    @Override
+    public String getCurrentTrafficManagementProfileName(EnodeB enb) {
+        int cell = enb.getCellContextID();
+        return this.getCurrentTrafficManagementProfileName(enb, cell);
+    }
+
+    @Override
+    public String getCurrentCallTraceProfileName(EnodeB enb) {
+        int cell = enb.getCellContextID();
+        return this.getCurrentCallTraceProfileName(enb, cell);
     }
 
     @Override
@@ -2968,7 +3054,7 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
         List<LteAddNeighbourWs> neighbourConfigList = new ArrayList<>();
         LteAddNeighbourWs neighbourConfig = new LteAddNeighbourWs();
         ObjectFactory factoryDetails = new ObjectFactory();
-        
+
         neighbourConfig.setHandoverType(factoryDetails.createLteAddNeighbourWsHandoverType(HandoverType));
         neighbourConfig.setHoControlState(factoryDetails.createLteAddNeighbourWsHoControlState(hoControlStatus));
         neighbourConfig.setIsStaticNeighbour(factoryDetails.createLteAddNeighbourWsIsStaticNeighbour(isStaticNeighbor));
@@ -3509,6 +3595,7 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
         }
         return nodeConfig.getSonProfile();
     }
+
 
     @Override
     public boolean updateNeighborManagementProfile(EnodeB node, String cloneFromName,
@@ -4454,4 +4541,10 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+    @Override
+    public boolean changeCellToUse(EnodeB node, GeneralUtils.CellToUse cellToUse) {
+        report.report("changeCellToUse method is not implemented for this netspan(15_2)!", Reporter.WARNING);
+        return false;
+    }
 }

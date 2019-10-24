@@ -769,6 +769,7 @@ public class NetspanServer_17_5 extends NetspanServer implements Netspan_17_5_ab
                 case Neighbour_Management_Profile:
                 	response = soapHelper_17_5.getLteSoap().neighbourProfileGet(nameList, null,null,
     						credentialsLte);
+                	break;
                 default:
                     report.report("isProfileExists get error EnbProfiles type: " + profileType, Reporter.WARNING);
             }
@@ -3049,15 +3050,19 @@ public class NetspanServer_17_5 extends NetspanServer implements Netspan_17_5_ab
             switch (radioParams.getAdditionalSpectrumEmission()) {
                 case "NS 01": {
                     addSpecValue = AddlSpectrumEmissions.NS_01;
+                    break;
                 }
                 case "NS 04": {
                     addSpecValue = AddlSpectrumEmissions.NS_04;
+                    break;
                 }
                 case "NS 12": {
                     addSpecValue = AddlSpectrumEmissions.NS_12;
+                    break;
                 }
                 case "NS 13": {
                     addSpecValue = AddlSpectrumEmissions.NS_13;
+                    break;
                 }
             }
             radioProfile

@@ -35,7 +35,7 @@ public class CliPrompt{
 	private Cli cli;
 	
 	/** The buffer. */
-	private String buffer;
+	private volatile String buffer;
 	
 	/**
 	 * Instantiates a new cli prompt.
@@ -89,8 +89,8 @@ public class CliPrompt{
 	 */
 	public String execute(String targetPrompt, String command, String response, int responseTimeout) throws Exception {
 		flushBuffer();
-		sendNewLine();
-		getBuffer();
+		/*sendNewLine();
+		getBuffer();*/
 		if (targetPrompt.equals(prompt) && isActivePrompt()) {
 			//GeneralUtils.printToConsole(this + ": is the current active prompt.");
 			flushBuffer();
@@ -110,7 +110,7 @@ public class CliPrompt{
 				            break;
 						}
 					}
-					sendNewLine();
+					/*sendNewLine();*/
 					getBuffer();
 					GeneralUtils.unSafeSleep(1000);
 				}
@@ -118,7 +118,7 @@ public class CliPrompt{
 				while(true){
 					if (System.currentTimeMillis() > endTimeMillis)
 						break;
-					sendNewLine();
+					/*sendNewLine();*/
 					getBuffer();
 					GeneralUtils.unSafeSleep(1000);
 				}

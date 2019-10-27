@@ -4009,7 +4009,7 @@ public class NetspanServer_17_5 extends NetspanServer implements Netspan_17_5_ab
 		EnbDetailsGet nodeConf = getNodeConfig(node);
 		CategoriesLte category = null;
 		try {
-			category = CategoriesLte.fromValue(nodeConf.getHardware());
+			category = CategoriesLte.fromValue(removeDigitsAndSpaces(nodeConf.getHardware()));
 		} catch (Exception e) {
 			report.report("Incompatible HardWare Type in inner Netspan method!", Reporter.WARNING);
 			GeneralUtils.printToConsole("Error : " + e.getMessage() + ", nodeConfig :" + nodeConf.getHardware());
@@ -5123,7 +5123,7 @@ public class NetspanServer_17_5 extends NetspanServer implements Netspan_17_5_ab
 		EnbDetailsGet nodeConf = getNodeConfig(node);
 		CategoriesLte category = null;
 		try {
-			category = CategoriesLte.fromValue(nodeConf.getHardware());
+			category = CategoriesLte.fromValue(removeDigitsAndSpaces(nodeConf.getHardware()));
 		} catch (Exception e) {
 			report.report("Incompatible HardWare Type in inner Netspan method!", Reporter.WARNING);
 			GeneralUtils.printToConsole("Error : " + e.getMessage() + ", nodeConfig :" + nodeConf.getHardware());
@@ -5866,7 +5866,7 @@ public class NetspanServer_17_5 extends NetspanServer implements Netspan_17_5_ab
 		EnbDetailsGet nodeConf = getNodeConfig(node);
 		CategoriesLte hardware = null;
 		try {
-			hardware = CategoriesLte.fromValue(nodeConf.getHardware());
+			hardware = CategoriesLte.fromValue(removeDigitsAndSpaces(nodeConf.getHardware()));
 		} catch (Exception e) {
 			report.report("Incompetible HardWare Type in inner Netspan method!", Reporter.WARNING);
 			GeneralUtils.printToConsole("Error : " + e.getMessage() + ", nodeConfig :" + nodeConf.getHardware());
@@ -5890,7 +5890,7 @@ public class NetspanServer_17_5 extends NetspanServer implements Netspan_17_5_ab
 		EnbDetailsGet nodeConf = getNodeConfig(node);
 		CategoriesLte hardware = null;
 		try {
-			hardware = CategoriesLte.fromValue(nodeConf.getHardware());
+			hardware = CategoriesLte.fromValue(removeDigitsAndSpaces(nodeConf.getHardware()));
 		} catch (Exception e) {
 			report.report("Incompatible HardWare Type in inner Netspan method!", Reporter.WARNING);
 			GeneralUtils.printToConsole("Error : " + e.getMessage() + ", nodeConfig :" + nodeConf.getHardware());
@@ -5929,6 +5929,12 @@ public class NetspanServer_17_5 extends NetspanServer implements Netspan_17_5_ab
 		return false;
 	}
 
+	private String removeDigitsAndSpaces(String toRem){
+		String ret = toRem.replaceAll("[0-9]", "");
+		ret = ret.replace(" ", "");
+		return ret;
+	}
+	
 	@Override
 	public boolean createFileServer(FileServer fileServer) {
 		Netspan.NBI_17_5.Server.ObjectFactory objectFactory = new Netspan.NBI_17_5.Server.ObjectFactory();
@@ -5964,7 +5970,7 @@ public class NetspanServer_17_5 extends NetspanServer implements Netspan_17_5_ab
 		List<CategoriesLte> categoryList = new ArrayList<>();
 		EnbDetailsGet nodeConf = getNodeConfig(node);
 		try {
-			category = CategoriesLte.fromValue(nodeConf.getHardware());
+			category = CategoriesLte.fromValue(removeDigitsAndSpaces(nodeConf.getHardware()));
 		} catch (Exception e) {
 			report.report("Incompatible HardWare Type in inner Netspan method!", Reporter.WARNING);
 			GeneralUtils.printToConsole("Error : " + e.getMessage() + ", nodeConfig :" + nodeConf.getHardware());

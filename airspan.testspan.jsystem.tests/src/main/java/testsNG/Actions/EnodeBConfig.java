@@ -2043,11 +2043,13 @@ public class EnodeBConfig {
 		}catch(ClassCastException e){
 			report.report("could not access netspan method in current version!",Reporter.WARNING);
 			report.report(e.getMessage());
+			GeneralUtils.stopLevel();
 			return null;
 		}
 		
 		if(mc == null){
-			report.report("could not get multiCell profile from netspan");
+			report.report("could not get multiCell profile from netspan",Reporter.WARNING);
+			GeneralUtils.stopLevel();
 			return null;
 		}
 		

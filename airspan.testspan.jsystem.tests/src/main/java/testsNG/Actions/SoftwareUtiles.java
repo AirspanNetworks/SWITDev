@@ -1437,6 +1437,7 @@ public class SoftwareUtiles {
 					upgradeImage.setImageType(ImageType.RELAY.value());
 					upgradeImage.setBuildPath(relayBuildFileName);
 					upgradeImage.setVersion(relayBuild);
+					upgradeImage.setUpgradeServerName("100.100.0.250_SFTP");
 					// Set HW cat to fix Netspan bug!! NEED to remove.
 					upgradeImage.setHardwareCategory(netspanServer.getHardwareCategory(eNodeB));
 					if (softwareStatus != null) {

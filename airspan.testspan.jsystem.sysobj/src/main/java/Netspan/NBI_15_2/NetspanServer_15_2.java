@@ -3082,7 +3082,7 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
                 LteNeighbourResponse result = soapHelper_15_2.getLteSoap()
                     .lteNeighbourAddByCellNumber(neighbourConfigList, credentialsLte);
                 if (result.getErrorCode() != Netspan.NBI_15_2.Lte.ErrorCodes.OK) {
-                    report.report("lteNeighbourAdd via Netspan Failed : " + result.getErrorString(), Reporter.WARNING);
+                    report.report("lteNeighbourAdd via Netspan Failed : " + result.getLteNeighbourResult().get(0).getResultString(), Reporter.WARNING);
                     if (i == numOfretries || !result.getErrorString().contains("deadlocked")) {
                         return false;
                     }

@@ -3171,7 +3171,7 @@ public class NetspanServer_17_5 extends NetspanServer implements Netspan_17_5_ab
                 LteNeighbourResponse result = soapHelper_17_5.getLteSoap()
                     .lteNeighbourAddByCellNumber(neighbourConfigList, credentialsLte);
                 if (result.getErrorCode() != Netspan.NBI_17_5.Lte.ErrorCodes.OK) {
-                    report.report("lteNeighbourAdd via Netspan Failed : " + result.getErrorString(), Reporter.WARNING);
+                    report.report("lteNeighbourAdd via Netspan Failed : " + result.getLteNeighbourResult().get(0).getResultString(), Reporter.WARNING);
                     if (i == numOfretries || !result.getErrorString().contains("deadlocked")) {
                         return false;
                     }

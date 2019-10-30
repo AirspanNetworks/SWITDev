@@ -258,7 +258,7 @@ public class XLP extends EnodeBComponent {
 
 	private void resetCredentials() {
 		GeneralUtils.printToConsole(getName() +  " - Resseting credentials");
-		this.getLogger().getLoggedSessions().remove(sessionManager.getSerialSession());
+		this.getLogger().getLoggedSessions().removeIf(s -> s.getName() == sessionManager.getSerialSession().getName());
 		if(sessionManager.getSerialSession() != null)
 			sessionManager.closeSession(sessionManager.getSerialSession().getName());
 		sessionManager.setSerialSession(null);

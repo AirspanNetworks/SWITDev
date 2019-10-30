@@ -126,6 +126,7 @@ public class AutoPCIBase extends TestspanTest {
         SONStatus startSONStatus = status.getSONStatus(dut);
         if (startSONStatus == null) {
             reason = dut.getNetspanName() + " failed to get SON status Information from Netspan";
+            GeneralUtils.stopLevel();
             return;
         } else if (startSONStatus.pciStatus != null && startSONStatus.pciStatus.equals("Automatic")) {
             configureAutoPciToDisableViaNms();

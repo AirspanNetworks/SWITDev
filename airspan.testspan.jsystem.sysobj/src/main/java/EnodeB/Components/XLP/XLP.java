@@ -46,6 +46,7 @@ import Utils.PasswordUtils;
 import Utils.Snmp.MibReader;
 import jsystem.framework.IgnoreMethod;
 import jsystem.framework.report.Reporter;
+import jsystem.framework.system.Semaphore;
 import jsystem.framework.system.SystemManagerImpl;
 
 /**
@@ -251,14 +252,17 @@ public class XLP extends EnodeBComponent {
 					+ " password:" + getSerialPassword());
 			return false;
 		}
+		sessionManager.getSerialSession().setLoggedSession(true);
 		return true;
 	}
 
 	private void resetCredentials() {
 		GeneralUtils.printToConsole(getName() +  " - Resseting credentials");
+		this.getLogger().getLoggedSessions().remove(sessionManager.getSerialSession());
 		if(sessionManager.getSerialSession() != null)
 			sessionManager.closeSession(sessionManager.getSerialSession().getName());
 		sessionManager.setSerialSession(null);
+		serialCom.reset();
 		setSerialUsername(null);
 		setSerialPassword(null);
 		setUsername(null);

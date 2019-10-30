@@ -259,7 +259,6 @@ public class XLP extends EnodeBComponent {
 		if(sessionManager.getSerialSession() != null)
 			sessionManager.closeSession(sessionManager.getSerialSession().getName());
 		sessionManager.setSerialSession(null);
-		serialCom.reset();
 		setSerialUsername(null);
 		setSerialPassword(null);
 		setUsername(null);

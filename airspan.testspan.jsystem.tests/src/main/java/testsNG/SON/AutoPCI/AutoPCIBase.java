@@ -393,13 +393,13 @@ public class AutoPCIBase extends TestspanTest {
             GeneralUtils.stopLevel();
             return false;
         } else {
+        	list3Party.add(newParty);
             report.report("3rd party enb was created successfully");
         }
         boolean add = neighborsUtils.addNeighbor(dut, newParty, HoControlStateTypes.ALLOWED,
                 X2ControlStateTypes.AUTOMATIC, HandoverType.TRIGGER_X_2, true, "0");
         if (add) {
             report.report("3rd party enb was added as neighbor");
-            list3Party.add(newParty);
         } else {
             report.report("Failed to add 3rd party enb as neighbor", Reporter.WARNING);
         }

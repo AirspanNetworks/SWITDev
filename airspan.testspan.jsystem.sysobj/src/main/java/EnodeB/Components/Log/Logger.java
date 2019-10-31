@@ -99,7 +99,7 @@ public class Logger implements Runnable {
 	}
 
 	public synchronized void removeFromLoggedSessions(Session session) {
-		loggedSessions.remove(session);
+		loggedSessions.removeIf(s -> s.getName().equals(session.getName()));
 	}
 
 

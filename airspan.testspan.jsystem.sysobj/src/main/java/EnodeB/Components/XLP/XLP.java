@@ -253,14 +253,16 @@ public class XLP extends EnodeBComponent {
 			return false;
 		}
 		sessionManager.getSerialSession().setLoggedSession(true);
-		getLogger().addToLoggedSessions(sessionManager.getSerialSession());
+		if(getLogger() != null)
+			getLogger().addToLoggedSessions(sessionManager.getSerialSession());
 		return true;
 	}
 
 	private void resetCredentials() {
 		GeneralUtils.printToConsole(getName() +  " - Resseting credentials");
 		if(sessionManager.getSerialSession() != null){
-			getLogger().removeFromLoggedSessions(sessionManager.getSerialSession());
+			if(getLogger() != null)
+				getLogger().removeFromLoggedSessions(sessionManager.getSerialSession());
 			sessionManager.closeSession(sessionManager.getSerialSession().getName());
 		}
 		sessionManager.setSerialSession(null);

@@ -92,6 +92,7 @@ public class AutoPCIBase extends TestspanTest {
 
         super.init();
         GeneralUtils.startLevel("Init");
+        generatePciStartAndEnd();
 
         otherEnb = (ArrayList<EnodeB>) enbInSetup.clone();
         otherEnb.remove(dut);
@@ -154,7 +155,6 @@ public class AutoPCIBase extends TestspanTest {
 			report.report("Exception while deleting 3rd party EnodeBs", Reporter.WARNING);
 		}
         GeneralUtils.stopLevel();
-        generatePciStartAndEnd();
         startDate = new Date();
         if (startSONStatus == null || !startSONStatus.pciStatus.equals("Manual")) {
             org.junit.Assume.assumeTrue(false);

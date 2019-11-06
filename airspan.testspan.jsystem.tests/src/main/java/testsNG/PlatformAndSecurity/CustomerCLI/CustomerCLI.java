@@ -54,6 +54,7 @@ public class CustomerCLI extends TestspanTest {
 		report.report("adding test filters");
 		testExpressions.add("br0");
 		testExpressions.add("eth3");
+		testExpressions.add("eth0");
 		report.report(testExpressions.toString());
 
 		if(checkResponseWithTestFilterAtLeastOne(response,testExpressions)) {

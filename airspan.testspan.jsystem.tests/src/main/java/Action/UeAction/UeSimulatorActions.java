@@ -508,7 +508,6 @@ public class UeSimulatorActions extends Action {
 				}
 				else 
 					break;
-				
 			}
 			for(AmarisoftUE ue : started) {
 				ue.discoverIp();
@@ -531,34 +530,6 @@ public class UeSimulatorActions extends Action {
 					}
 				}				
 			}
-			/*for(AmarisoftUE ue : amariSoftServer.getUeMap()) {
-				if(ueStarted < amount) {
-					String status = amariSoftServer.getUeStatus(ue.ueId);
-					if(status.equals("disconnected")) {
-						if (ue.start() ) {
-							if (ue.getLanIpAddress() != null) {
-								report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") started in amarisoft. IP: " + ue.getLanIpAddress());
-								ueStarted++;
-								amariSoftServer.addUEWithIP(ue);
-							}
-							else {
-								if (ue.reboot()) {
-									if (ue.getLanIpAddress() != null) {
-										report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") started in amarisoft. IP: " + ue.getLanIpAddress());
-										ueStarted++;
-										amariSoftServer.addUEWithIP(ue);
-									}
-									else
-										report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") was not started as expected after 2 tries. IP: " + ue.getLanIpAddress(), Reporter.WARNING);
-								}
-							}
-						}
-					}
-				}
-				else 
-					break;
-				
-			}*/
 			GeneralUtils.stopLevel();
 			int actual = amariSoftServer.getUeWithIPList().size();
 			if(amount != actual){

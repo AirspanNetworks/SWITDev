@@ -1006,6 +1006,7 @@ public class Enodeb extends EnodebAction {
 	public void setEmergencyAreaIds() throws Exception {
 		NetspanServer netspan = NetspanServer.getInstance();
 		report.report("Set Emergency Area Ids to cell: "+cellId);
+		report.report("Trying to set area ids: "+emergencyAreaIds.toArray());
 		dut.setCellContextNumber(cellId);
 		boolean flag = ((Netspan_16_5_abilities) netspan).setEmergencyAreaIds(dut, emergencyAreaIds);
 		if (!flag) {

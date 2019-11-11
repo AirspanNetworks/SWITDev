@@ -179,6 +179,7 @@ public class P0 extends AutoPCIBase {
 		report.reportHtml("cell show autoPCI list=1", dut.lteCli("cell show autoPCI list=1"), true);
 
 		String cmd = addr.getHostAddress();
+		GeneralUtils.printToConsole("**** Host address: "+cmd+" ****");
 		String[] separated = cmd.split("\\.");
 		Random rand = new Random();
 		int random = rand.nextInt(254)+1;

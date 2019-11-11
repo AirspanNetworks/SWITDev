@@ -59,7 +59,7 @@ public class P0 extends AutoPCIBase {
 		changeEnodeBPciAndReboot();
 		startTrafficAndCheckIfUEConnected();
 
-		GeneralUtils.startLevel("Configure 9 3rd Party eNB with PCIs between " + pciStart + "-" + pciEnd + "(without "
+		GeneralUtils.startLevel("Configure 9 3rd Party eNB with PCIs between " + pciStart + "-" + pciEnd + " (without "
 				+ pciStart + ") and same Downlink EARFCN=" + dut.getEarfcn() + ", and add to eNB");
 		String cmd = addr.getHostAddress();
 		String[] separated = cmd.split("\\.");

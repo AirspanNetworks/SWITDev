@@ -2,6 +2,7 @@ package testsNG.SON.AutoPCI;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import org.junit.Test;
 
@@ -64,15 +65,17 @@ public class P0 extends AutoPCIBase {
 		String cmd = addr.getHostAddress();
 		String[] separated = cmd.split("\\.");
 		boolean isIpv6 = dut.getIpAddress().contains(":");
+		Random rand = new Random();
 		for (int i = 0, indexPci = pciStart; i < 9; i++, indexPci++) {
-			String IPAdress = i + ".99." + separated[2] + "." + separated[3];
+			int random = rand.nextInt(254)+1;
+			String IPAdress = i + "."+random+"." + separated[2] + "." + separated[3];
 			if(isIpv6){
-	        	IPAdress = "abcd::" + i + ":99:" + separated[2] + ":" + separated[3];
+	        	IPAdress = "abcd::" + i + ":"+random+":" + separated[2] + ":" + separated[3];
 			}
 			if (indexPci == pciStart) {
 				indexPci++;
 			}
-			addingToEnbViaNmsNeighborWithStaticPCI(dut, addr.getHostName() + "_AutoPCI_" + i, IPAdress, indexPci, i);
+			addingToEnbViaNmsNeighborWithStaticPCI(dut, addr.getHostName() + "_AutoPCI_" +i+"_"+ random, IPAdress, indexPci, i);
 		}
 		report.reportHtml("db get nghList", dut.lteCli("db get nghList") , true);
 		GeneralUtils.stopLevel();
@@ -177,12 +180,14 @@ public class P0 extends AutoPCIBase {
 
 		String cmd = addr.getHostAddress();
 		String[] separated = cmd.split("\\.");
-		String IPAdress = "" + 0 + ".99." + separated[2] + "." + separated[3];
+		Random rand = new Random();
+		int random = rand.nextInt(254)+1;
+		String IPAdress = "" + 0 + "."+random+"." + separated[2] + "." + separated[3];
 
 		if(dut.getIpAddress().contains(":"))
-        	IPAdress = "abcd::" + 0 + ":99:" + separated[2] + ":" + separated[3];
+        	IPAdress = "abcd::" + 0 + ":"+random+":" + separated[2] + ":" + separated[3];
 		
-		if(!addingToEnbViaNmsNeighborWithStaticPCI(dut, addr.getHostName() + "_AutoPCI_A", IPAdress, pciStart+3, 0)){
+		if(!addingToEnbViaNmsNeighborWithStaticPCI(dut, addr.getHostName() + "_AutoPCI_"+random, IPAdress, pciStart+3, 0)){
 			report.report("Failed to add neighbor",Reporter.FAIL);
 			return;
 		}

@@ -1112,8 +1112,7 @@ public class AmariSoftServer extends SystemObjectImpl{
 		return result;
 	}
 	
-	public boolean uePowerOn(int ueId)
-	{
+	public boolean uePowerOn(int ueId,boolean waitForIp){
 		UE ue = getUEbyUEID(ueMap, ueId);
 		if (ue == null) {
 			GeneralUtils.printToConsole("Cant turn on Ueid " + ueId + " because it does not exist on the simulator.");
@@ -1136,23 +1135,30 @@ public class AmariSoftServer extends SystemObjectImpl{
 			e1.printStackTrace();
 			return false;
 		}
-		if (ue.getLanIpAddress() == null) {
-			String ip = getIpAddress(ueId);
-			if (ip != null) {
-				ue.setLanIpAddress(ip);
-				ue.setWanIpAddress(ip);
-				if(dlMachineNetworks.size() == 1) 
-					ue.setIPerfDlMachine(dlMachineNetworks.get(0));
-				else {
-					if(ue.getIPerfDlMachine() == null)
-						ue.setIPerfDlMachine(dlMachineNetworks.pop());
-				}
-				ue.setIPerfUlMachine(ip);
-			}	
+		if(waitForIp){			
+			if (ue.getLanIpAddress() == null) {
+				String ip = getIpAddress(ueId);
+				if (ip != null) {
+					ue.setLanIpAddress(ip);
+					ue.setWanIpAddress(ip);
+					if(dlMachineNetworks.size() == 1) 
+						ue.setIPerfDlMachine(dlMachineNetworks.get(0));
+					else {
+						if(ue.getIPerfDlMachine() == null)
+							ue.setIPerfDlMachine(dlMachineNetworks.pop());
+					}
+					ue.setIPerfUlMachine(ip);
+				}	
+			}
 		}
 		return true;
+	}
+	
+	public boolean uePowerOn(int ueId)
+	{
+		return uePowerOn(ueId,true);
 	}	
-
+	
 	public ConfigGet getConfig() {
 		ConfigGet config = null;
 		try {
@@ -1532,5 +1538,23 @@ public class AmariSoftServer extends SystemObjectImpl{
     
     public ArrayList<UE> getUeWithIPList() {
 		return new ArrayList<UE>(uesWithIP);
+	}
+
+	public void discoverIp(int ueId) {
+		UE ue = getUEbyUEID(ueMap, ueId);
+		if (ue.getLanIpAddress() == null) {
+			String ip = getIpAddress(ueId);
+			if (ip != null) {
+				ue.setLanIpAddress(ip);
+				ue.setWanIpAddress(ip);
+				if(dlMachineNetworks.size() == 1) 
+					ue.setIPerfDlMachine(dlMachineNetworks.get(0));
+				else {
+					if(ue.getIPerfDlMachine() == null)
+						ue.setIPerfDlMachine(dlMachineNetworks.pop());
+				}
+				ue.setIPerfUlMachine(ip);
+			}	
+		}
 	}
 }

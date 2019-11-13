@@ -109,6 +109,7 @@ public class AutoPCIBase extends TestspanTest {
 
         SONStatus sonStatus = netspan.getSONStatus(dut);
         printRSIPCIDebug(sonStatus);
+        shouldReboot = shouldReboot();
 
         report.report("Change other eNodeBs to out of service");
         for (EnodeB enb : otherEnb) {
@@ -139,6 +140,7 @@ public class AutoPCIBase extends TestspanTest {
             report.reportHtml("db get AutoPciCell", dut.lteCli("db get AutoPciCell"), true);
             enodeBConfig.printEnodebState(dut, true);
         }
+        startSONStatus = status.getSONStatus(dut);
         printSONStatus(startSONStatus, "Manual");
 
         GeneralUtils.startLevel("Verify no neighbours");
@@ -159,7 +161,6 @@ public class AutoPCIBase extends TestspanTest {
         if (startSONStatus == null || !startSONStatus.pciStatus.equals("Manual")) {
             org.junit.Assume.assumeTrue(false);
         }
-        shouldReboot = shouldReboot();
     }
 
     protected void changeEnodeBPciAndReboot() {

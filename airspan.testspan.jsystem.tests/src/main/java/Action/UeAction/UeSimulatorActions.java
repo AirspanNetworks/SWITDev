@@ -495,33 +495,40 @@ public class UeSimulatorActions extends Action {
 			int ueStarted = 0;
 			GeneralUtils.startLevel("starting " + amount + " UEs");
 			AmariSoftServer amariSoftServer = AmariSoftServer.getInstance();
+			ArrayList<AmarisoftUE> started = new ArrayList<AmarisoftUE>();
 			for(AmarisoftUE ue : amariSoftServer.getUeMap()) {
 				if(ueStarted < amount) {
 					String status = amariSoftServer.getUeStatus(ue.ueId);
 					if(status.equals("disconnected")) {
-						if (ue.start() ) {
-							if (ue.getLanIpAddress() != null) {
-								report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") started in amarisoft. IP: " + ue.getLanIpAddress());
-								ueStarted++;
-								amariSoftServer.addUEWithIP(ue);
-							}
-							else {
-								if (ue.reboot()) {
-									if (ue.getLanIpAddress() != null) {
-										report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") started in amarisoft. IP: " + ue.getLanIpAddress());
-										ueStarted++;
-										amariSoftServer.addUEWithIP(ue);
-									}
-									else
-										report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") was not started as expected after 2 tries. IP: " + ue.getLanIpAddress(), Reporter.WARNING);
-								}
-							}
+						if (ue.start(false) ) {
+							started.add(ue);
+							ueStarted++;
 						}
 					}
 				}
 				else 
 					break;
-				
+			}
+			for(AmarisoftUE ue : started) {
+				ue.discoverIp();
+				if (ue.getLanIpAddress() != null) {
+					report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") started in amarisoft. IP: " + ue.getLanIpAddress());
+					ueStarted++;
+					amariSoftServer.addUEWithIP(ue);
+				}
+				else {
+					if (ue.reboot()) {
+						if (ue.getLanIpAddress() != null) {
+							report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") started in amarisoft. IP: " + ue.getLanIpAddress());
+							ueStarted++;
+							amariSoftServer.addUEWithIP(ue);
+						}
+						else{
+							report.report("UE: " + ue.ueId + " (" + ue.getImsi() + ") was not started as expected after 2 tries. IP: " + ue.getLanIpAddress(), Reporter.WARNING);
+							ue.stop();
+						}
+					}
+				}				
 			}
 			GeneralUtils.stopLevel();
 			int actual = amariSoftServer.getUeWithIPList().size();

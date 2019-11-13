@@ -23,11 +23,19 @@ public class AmarisoftUE extends UE implements Comparable{
 		setName("AmarisoftUE" + (10000 + ueId));
 	}
 
+	public void discoverIp(){
+		server.discoverIp(ueId);
+	}
+	
 	@Override
 	public boolean start() {
 		return server.uePowerOn(ueId);
 	}
 
+	public boolean start(boolean waitForIp){
+		return server.uePowerOn(ueId, waitForIp);
+	}
+	
 	@Override
 	public boolean reboot() {
 		boolean flag = server.uePowerOff(ueId);

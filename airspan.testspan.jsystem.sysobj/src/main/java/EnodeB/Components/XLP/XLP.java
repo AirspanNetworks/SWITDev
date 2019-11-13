@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.python.modules.synchronize;
 import org.snmp4j.smi.OctetString;
 import org.snmp4j.smi.Variable;
 
@@ -215,7 +216,7 @@ public class XLP extends EnodeBComponent {
 	}
 
 	@Override
-	public boolean updateVersions() {
+	public synchronized boolean updateVersions() {
 		// get versions from SNMP/NMS
 		boolean connected;
 		if (getMajorVersions()) {

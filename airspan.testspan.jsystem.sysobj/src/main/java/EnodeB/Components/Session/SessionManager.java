@@ -31,7 +31,6 @@ public class SessionManager {
 	}
 
 	private synchronized CopyOnWriteArrayList<Session> getSessions() {
-		GeneralUtils.printToConsole("### get sessions called by:" + Thread.currentThread().getName());
 		return this.sessions;
 	}
 

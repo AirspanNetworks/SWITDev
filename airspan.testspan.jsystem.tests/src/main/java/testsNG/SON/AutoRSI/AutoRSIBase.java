@@ -48,6 +48,7 @@ public class AutoRSIBase extends TestspanTest {
 	protected DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss a");
 	protected AttenuatorSet attenuatorSetUnderTest;
 	protected boolean rsiInitAutoStatus;
+	protected boolean pciInitAutoStatus;
 	protected String initSonProfileName;
 	protected ArrayList<Integer> initRsiList = new ArrayList<>();
 	protected Neighbors neighbors;
@@ -68,6 +69,7 @@ public class AutoRSIBase extends TestspanTest {
 		peripheralsConfig = PeripheralsConfig.getInstance();
 		neighbors = Neighbors.getInstance();
 		rsiInitAutoStatus = true;
+		pciInitAutoStatus = true;
 
 		super.init();
 
@@ -125,7 +127,11 @@ public class AutoRSIBase extends TestspanTest {
 				}
 				GeneralUtils.stopLevel();
 			}
-			if (!rsiInitAutoStatus) {
+			if(!sonStatus.pciStatus.equals("Manual")){
+				report.report("Changing AutoPci state to Manual)");
+				pciInitAutoStatus = false;
+			}
+			if (!rsiInitAutoStatus || !pciInitAutoStatus) {
 				configureAutoRSIToDisableViaNms();
 			}
 		}
@@ -339,8 +345,14 @@ public class AutoRSIBase extends TestspanTest {
 
 		SonParameters sonParams = new SonParameters();
 		sonParams.setIsSonCommissioningEnabled(true);
-		sonParams.setAutoRSIEnabled(false);
-		GeneralUtils.startLevel(dut.getNetspanName() + " configure Auto RSI to Disable via NMS");
+		if(!rsiInitAutoStatus){
+			sonParams.setAutoRSIEnabled(false);			
+		}
+		if(!pciInitAutoStatus){
+			sonParams.setAutoPCIEnabled(false);
+		}
+		GeneralUtils.startLevel(dut.getNetspanName() + " configure "+(!rsiInitAutoStatus?"Auto RSI":"")+
+				(!pciInitAutoStatus?" And AutoPCI ":"")+" to Disable via NMS");
 		boolean generalFlag = enodeBConfig.cloneAndSetSonProfileViaNetspan(dut, netspan.getCurrentSonProfileName(dut),
 				sonParams);
 		GeneralUtils.stopLevel();

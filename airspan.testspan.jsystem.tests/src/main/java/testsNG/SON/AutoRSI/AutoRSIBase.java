@@ -128,7 +128,6 @@ public class AutoRSIBase extends TestspanTest {
 				GeneralUtils.stopLevel();
 			}
 			if(!sonStatus.pciStatus.equals("Manual")){
-				report.report("Changing AutoPci state to Manual)");
 				pciInitAutoStatus = false;
 			}
 			if (!rsiInitAutoStatus || !pciInitAutoStatus) {
@@ -353,7 +352,7 @@ public class AutoRSIBase extends TestspanTest {
 		}
 		GeneralUtils.startLevel(dut.getNetspanName() + " configure "+(!rsiInitAutoStatus?"Auto RSI":"")+
 				(!rsiInitAutoStatus && !pciInitAutoStatus?" And ":"")+
-				(!pciInitAutoStatus?"AutoPCI":"")+" to Disable via NMS");
+				(!pciInitAutoStatus?"Auto PCI":"")+" to Disable via NMS");
 		boolean generalFlag = enodeBConfig.cloneAndSetSonProfileViaNetspan(dut, netspan.getCurrentSonProfileName(dut),
 				sonParams);
 		GeneralUtils.stopLevel();

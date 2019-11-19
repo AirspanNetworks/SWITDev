@@ -352,7 +352,8 @@ public class AutoRSIBase extends TestspanTest {
 			sonParams.setAutoPCIEnabled(false);
 		}
 		GeneralUtils.startLevel(dut.getNetspanName() + " configure "+(!rsiInitAutoStatus?"Auto RSI":"")+
-				(!pciInitAutoStatus?" And AutoPCI ":"")+" to Disable via NMS");
+				(!rsiInitAutoStatus && !pciInitAutoStatus?" And ":"")+
+				(!pciInitAutoStatus?"AutoPCI":"")+" to Disable via NMS");
 		boolean generalFlag = enodeBConfig.cloneAndSetSonProfileViaNetspan(dut, netspan.getCurrentSonProfileName(dut),
 				sonParams);
 		GeneralUtils.stopLevel();

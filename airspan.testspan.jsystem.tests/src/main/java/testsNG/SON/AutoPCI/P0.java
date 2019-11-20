@@ -190,6 +190,7 @@ public class P0 extends AutoPCIBase {
 		
 		if(!addingToEnbViaNmsNeighborWithStaticPCI(dut, addr.getHostName() + "_AutoPCI_"+random, IPAdress, pciStart+3, 0)){
 			report.report("Failed to add neighbor",Reporter.FAIL);
+			neighborsUtils.delete3rdPartyList(list3Party);
 			return;
 		}
 

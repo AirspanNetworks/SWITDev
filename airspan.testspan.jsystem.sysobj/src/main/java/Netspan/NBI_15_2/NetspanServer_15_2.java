@@ -2237,7 +2237,7 @@ public class NetspanServer_15_2 extends NetspanServer implements Netspan_15_2_ab
                 "NBI method \"Lte3rdPartyCreate\"  returned value: " + result.getErrorCode().toString());
             if (result.getErrorCode() != Netspan.NBI_15_2.Lte.ErrorCodes.OK) {
                 report.report("lte3RdPartyCreate via Netspan Failed : "
-                    + result.getLte3RdPartyResult().get(0).getResultString(), Reporter.WARNING);
+                    + result.getErrorString(), Reporter.WARNING);
                 return false;
             } else
                 return true;

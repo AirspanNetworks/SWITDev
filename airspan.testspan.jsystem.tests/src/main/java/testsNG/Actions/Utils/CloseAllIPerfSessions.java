@@ -20,7 +20,7 @@ import com.jcraft.jsch.Session;
 public class CloseAllIPerfSessions {
 	static String lastUpdateDate = "16/05/2018";
 	static String version = "1.0.7";
-	static String lastChanges = "Close ssh session also when exception was thrown and change pkill to -15 flag.";
+	static String lastChanges = "Close ssh session also when exception was thrown and change pkill to -9 flag.";
 	
 	public boolean closeAllIPerfSessions(String filePath) {
 		System.out.println("Start: Close All IPerf Sessions.");
@@ -108,7 +108,7 @@ public class CloseAllIPerfSessions {
 		boolean result = false;
 		Session session = null;
         try{
-        	System.out.println("Run: pkill -15 iperf");
+        	System.out.println("Run: pkill -9 iperf");
 	    	JSch jsch = new JSch();
 	    	session=jsch.getSession(iperfMachineDetails.getUsername(), iperfMachineDetails.getHostname(), 22);
 	    	session.setPassword(iperfMachineDetails.getPassword());
@@ -116,7 +116,7 @@ public class CloseAllIPerfSessions {
 	    	System.out.println("Connected to "+iperfMachineDetails.getMachineName());
 	    	session.connect();
 	    	if(session.isConnected()){
-		    	System.out.println("Run: pkill -15 iperf");
+		    	System.out.println("Run: pkill -9 iperf");
 		    	
 		    	ChannelShell  channelShell = (ChannelShell) session.openChannel("shell");
 		    	
@@ -124,7 +124,7 @@ public class CloseAllIPerfSessions {
 		    	OutputStream toServer = channelShell.getOutputStream();
 		    	channelShell.connect();  
 		    	final String endOfOutput = "endOfOutput"; // for understanding when to stop reading from output stream.
-		    	String command = "ps -aux | grep iperf ; pkill -15 iperf ; pkill -15 iperf ; sleep 3 ; echo ~~~~~~~~~~~~~pkill -15 iperf~~~~~~~~~~~ ; ps -aux | grep iperf ; echo "+endOfOutput+"\r\n";
+		    	String command = "ps -aux | grep iperf ; pkill -9 iperf ; pkill -9 iperf ; sleep 3 ; echo ~~~~~~~~~~~~~pkill -9 iperf~~~~~~~~~~~ ; ps -aux | grep iperf ; echo "+endOfOutput+"\r\n";
 				toServer.write(command.getBytes());
 				result = true;
 				try{Thread.sleep(2000);}catch(Exception e){e.printStackTrace();}
@@ -157,7 +157,7 @@ public class CloseAllIPerfSessions {
 	    		e1.printStackTrace();
 	    	}
 	    	if(!result){
-	    		System.out.println("FAILED to execute: pkill -15 iperf");
+	    		System.out.println("FAILED to execute: pkill -9 iperf");
 	    	}
 	    	e.printStackTrace();
 	    }

@@ -99,8 +99,8 @@ public class IPerfLinuxMachine extends IPerfMachine{
 	
 	@Override
 	public boolean stopIPerf() {
-		sendCommand("pkill -15 iperf").getElement0();
-		return sendCommand("pkill -15 iperf").getElement0();
+		sendCommand("pkill -9 iperf").getElement0();
+		return sendCommand("pkill -9 iperf").getElement0();
 	}
 
 	@Override

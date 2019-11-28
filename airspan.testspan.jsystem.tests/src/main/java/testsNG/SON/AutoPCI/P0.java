@@ -190,10 +190,12 @@ public class P0 extends AutoPCIBase {
 		
 		if(!addingToEnbViaNmsNeighborWithStaticPCI(dut, addr.getHostName() + "_AutoPCI_"+random, IPAdress, pciStart+3, random)){
 			report.report("Failed to add neighbor",Reporter.FAIL);
+			report.reportHtml("db get nghList", dut.lteCli("db get nghList") , true);
 			neighborsUtils.delete3rdPartyList(list3Party);
 			return;
 		}
 
+		report.reportHtml("db get nghList", dut.lteCli("db get nghList") , true);
 		report.report("Wait 15 seconds");
 		GeneralUtils.unSafeSleep(1000 * 15);
 		report.reportHtml("cell show autoPCI list=1", dut.lteCli("cell show autoPCI list=1"), true);

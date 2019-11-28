@@ -75,7 +75,7 @@ public class P0 extends AutoPCIBase {
 			if (indexPci == pciStart) {
 				indexPci++;
 			}
-			addingToEnbViaNmsNeighborWithStaticPCI(dut, addr.getHostName() + "_AutoPCI_" +i+"_"+ random, IPAdress, indexPci, i);
+			addingToEnbViaNmsNeighborWithStaticPCI(dut, addr.getHostName() + "_AutoPCI_" +i+"_"+ random, IPAdress, indexPci, random);
 		}
 		report.reportHtml("db get nghList", dut.lteCli("db get nghList") , true);
 		GeneralUtils.stopLevel();
@@ -188,7 +188,7 @@ public class P0 extends AutoPCIBase {
 		if(dut.getIpAddress().contains(":"))
         	IPAdress = "abcd::" + 0 + ":"+random+":" + separated[2] + ":" + separated[3];
 		
-		if(!addingToEnbViaNmsNeighborWithStaticPCI(dut, addr.getHostName() + "_AutoPCI_"+random, IPAdress, pciStart+3, 0)){
+		if(!addingToEnbViaNmsNeighborWithStaticPCI(dut, addr.getHostName() + "_AutoPCI_"+random, IPAdress, pciStart+3, random)){
 			report.report("Failed to add neighbor",Reporter.FAIL);
 			neighborsUtils.delete3rdPartyList(list3Party);
 			return;

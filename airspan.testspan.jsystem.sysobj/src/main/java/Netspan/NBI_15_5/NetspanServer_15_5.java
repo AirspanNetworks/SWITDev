@@ -2494,7 +2494,7 @@ public class NetspanServer_15_5 extends NetspanServer_15_2 implements Netspan_15
 		try {
 			LteUeGetResult result = soapHelper_15_5.getStatusSoap().enbConnectedUeStatusGet(enb.getNetspanName(), credentialsStatus);
 			if(result.getErrorCode() != Netspan.NBI_15_5.Status.ErrorCodes.OK){
-				report.report("getMaxUeSupported via Netspan Failed: " + result.getErrorString());
+				report.report("getMaxUeSupported via Netspan Failed: " + result.getErrorString(), Reporter.WARNING);
 			}else{
 				maxUeSupported = result.getCell().get(0).getActualMaxUeSupported().getValue();				
 			}

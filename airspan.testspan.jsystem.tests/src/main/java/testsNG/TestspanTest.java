@@ -148,7 +148,9 @@ public class TestspanTest extends SystemTestCase4 {
         eNodeB.setDeviceUnderTest(true);
         swapBanksBackIfNeeded(eNodeB);
         alarmsAndEvents.deleteAllAlarmsNode(eNodeB);
-        initCommandWatchInService(eNodeB);
+        if (!(this instanceof SWUpgrade)){
+        	initCommandWatchInService(eNodeB);        	
+        }
         initMemoryCPUCommand(eNodeB);
         PeripheralsConfig.getInstance().changeEnbState(eNodeB, EnbStates.IN_SERVICE);
         waitForAllRunningAndInService(eNodeB);

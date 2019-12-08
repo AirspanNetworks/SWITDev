@@ -148,11 +148,11 @@ public class TestspanTest extends SystemTestCase4 {
         eNodeB.setDeviceUnderTest(true);
         swapBanksBackIfNeeded(eNodeB);
         alarmsAndEvents.deleteAllAlarmsNode(eNodeB);
+        initMemoryCPUCommand(eNodeB);
+        PeripheralsConfig.getInstance().changeEnbState(eNodeB, EnbStates.IN_SERVICE);
         if (!(this instanceof SWUpgrade)){
         	initCommandWatchInService(eNodeB);        	
         }
-        initMemoryCPUCommand(eNodeB);
-        PeripheralsConfig.getInstance().changeEnbState(eNodeB, EnbStates.IN_SERVICE);
         waitForAllRunningAndInService(eNodeB);
         reportIfCMPWasSkipped(eNodeB);
         eNodeB.setCellContextNumber(1);

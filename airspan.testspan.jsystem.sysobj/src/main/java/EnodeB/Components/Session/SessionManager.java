@@ -2,6 +2,8 @@ package EnodeB.Components.Session;
 
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import EnodeB.Components.DAN;
 import EnodeB.Components.EnodeBComponent;
 import Utils.GeneralUtils;
 import Utils.Properties.TestspanConfigurationsManager;
@@ -34,17 +36,13 @@ public class SessionManager {
 		return this.sessions;
 	}
 
-	public boolean openSerialLogSession() {
-		return openSerialLogSession(true);
-	}
-	
 	/**
 	 * open Serial Log Session
 	 */
-	public boolean openSerialLogSession(boolean login) {
+	public boolean openSerialLogSession() {
 		serialLogLevel = setDefaultCommandSessionLevelFromPropFile(CONSOLE_LOG_LEVEL_PROPERTY_NAME);
 		if (enodeBComponent.serialCom != null) {
-			return openSerialSession(login);
+			return openSerialSession();
 		}
 		return false;
 	}
@@ -57,7 +55,7 @@ public class SessionManager {
 	public void openSerialLogSession(int logLevel) {
 		serialLogLevel = logLevel;
 		if (enodeBComponent.serialCom != null) {
-			openSerialSession(true);
+			openSerialSession();
 		}
 	}
 
@@ -114,13 +112,13 @@ public class SessionManager {
 		return logLevel;
 	}
 
-	private synchronized boolean openSerialSession(boolean login) {
+	private synchronized boolean openSerialSession() {
 		Session newConsoleSession = new Session(getEnodeBComponent().getName() + "_" + SERIAL_SESSION_NAME,
 				getEnodeBComponent(), getEnodeBComponent().serialCom.getSerial(), serialLogLevel);
 		boolean ans = newConsoleSession.waitForSessionToConnect(SESSION_WAIT_TIMEOUT);
 		getSessions().add(newConsoleSession);
 		setSerialSession(newConsoleSession);
-		if(login){
+		if(!(this.enodeBComponent instanceof DAN)){
 			boolean loginSuccess = newConsoleSession.loginSerial(enodeBComponent.getSerialUsername());
 			if (loginSuccess) {
 				String idResult = newConsoleSession.sendCommands(EnodeBComponent.SHELL_PROMPT, "id", "");

@@ -2360,16 +2360,12 @@ public abstract class EnodeB extends SystemObjectImpl {
 		return XLP.getNumberOfCells();
 	}
 
-	public String openSerialLogSession(SessionManager sessionManager) {
-		return openSerialLogSession(sessionManager,true);
-	}
-	
 	/**
 	 * open Serial Log Session if not opened
 	 */
-	public String openSerialLogSession(SessionManager sessionManager,boolean login) {
+	public String openSerialLogSession(SessionManager sessionManager) {
 		if (sessionManager.getSerialSession() == null) {
-			sessionManager.openSerialLogSession(login);
+			sessionManager.openSerialLogSession();
 			sessionManager.getSerialSession().setLoggedSession(true);
 			sessionManager.getSerialSession().setEnableCliBuffer(false);
 		}
@@ -2399,14 +2395,12 @@ public abstract class EnodeB extends SystemObjectImpl {
 		DAN[] dans = ((EnodeBWithDAN) this).getDans();
 		for (DAN dan : dans) {
 			SessionManager sessionManager = dan.getSessionManager();
-			String danSessionName = openSerialLogSession(sessionManager,false);
+			String danSessionName = openSerialLogSession(sessionManager);
 			dansSessionNames.add(danSessionName);
 		}
 		return dansSessionNames;
 	}
 
-	
-	
 	/**
 	 * Add all the open session in the XLP eNB to loggedSessions array in order to stream through Logger thread.
 	 */

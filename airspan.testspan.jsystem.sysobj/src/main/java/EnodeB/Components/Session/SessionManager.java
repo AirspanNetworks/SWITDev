@@ -34,13 +34,17 @@ public class SessionManager {
 		return this.sessions;
 	}
 
+	public boolean openSerialLogSession() {
+		return openSerialLogSession(true);
+	}
+	
 	/**
 	 * open Serial Log Session
 	 */
-	public boolean openSerialLogSession() {
+	public boolean openSerialLogSession(boolean login) {
 		serialLogLevel = setDefaultCommandSessionLevelFromPropFile(CONSOLE_LOG_LEVEL_PROPERTY_NAME);
 		if (enodeBComponent.serialCom != null) {
-			return openSerialSession();
+			return openSerialSession(login);
 		}
 		return false;
 	}
@@ -53,7 +57,7 @@ public class SessionManager {
 	public void openSerialLogSession(int logLevel) {
 		serialLogLevel = logLevel;
 		if (enodeBComponent.serialCom != null) {
-			openSerialSession();
+			openSerialSession(true);
 		}
 	}
 
@@ -110,19 +114,22 @@ public class SessionManager {
 		return logLevel;
 	}
 
-	private synchronized boolean openSerialSession() {
+	private synchronized boolean openSerialSession(boolean login) {
 		Session newConsoleSession = new Session(getEnodeBComponent().getName() + "_" + SERIAL_SESSION_NAME,
 				getEnodeBComponent(), getEnodeBComponent().serialCom.getSerial(), serialLogLevel);
 		boolean ans = newConsoleSession.waitForSessionToConnect(SESSION_WAIT_TIMEOUT);
 		getSessions().add(newConsoleSession);
 		setSerialSession(newConsoleSession);
-		boolean loginSuccess = newConsoleSession.loginSerial(enodeBComponent.getSerialUsername());
-		if (loginSuccess) {
-			String idResult = newConsoleSession.sendCommands(EnodeBComponent.SHELL_PROMPT, "id", "");
-			GeneralUtils.printToConsole("serial id: " + idResult);
-			GeneralUtils.printToConsole("Session " + newConsoleSession.getName() + " opened Status:" + ans);
+		if(login){
+			boolean loginSuccess = newConsoleSession.loginSerial(enodeBComponent.getSerialUsername());
+			if (loginSuccess) {
+				String idResult = newConsoleSession.sendCommands(EnodeBComponent.SHELL_PROMPT, "id", "");
+				GeneralUtils.printToConsole("serial id: " + idResult);
+				GeneralUtils.printToConsole("Session " + newConsoleSession.getName() + " opened Status:" + ans);
+			}
+			return loginSuccess;			
 		}
-		return loginSuccess;
+		return true;
 	}
 
 	public synchronized String openSession() {

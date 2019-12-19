@@ -99,6 +99,11 @@ public class Logger implements Runnable {
 	}
 
 	public synchronized void removeFromLoggedSessions(Session session) {
+		GeneralUtils.printToConsole("Log files in loggedSessions:");
+		for(Session ses:loggedSessions){
+			GeneralUtils.printToConsole(ses.getName());
+		}
+		GeneralUtils.printToConsole("End of log files in loggedSessions");
 		loggedSessions.removeIf(s -> s.getName().equals(session.getName()));
 	}
 

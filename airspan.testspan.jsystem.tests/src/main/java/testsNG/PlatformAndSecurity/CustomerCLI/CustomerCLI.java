@@ -21,7 +21,7 @@ public class CustomerCLI extends TestspanTest {
 	private EnodeB dut;
 	private Terminal ssh;
 	private List<String> testExpressions;
-
+	private final String promptSh= "sh-4.4";
 
 	/**
 	 * Tests
@@ -113,7 +113,9 @@ public class CustomerCLI extends TestspanTest {
 		String buffer = "";
 		try {
 			ssh.connect();
-			if(dut.isPreCommandCustomerCli()){
+			buffer = sendCommand("\\n");
+			GeneralUtils.printToConsole("result of enter command:"+buffer);
+			if(buffer.contains(promptSh)){
 				GeneralUtils.printToConsole("Sending lteCli command");
 				buffer = sendCommand("/bs/lteCli");
 				GeneralUtils.printToConsole("Result of lteCli command: ");
@@ -171,7 +173,10 @@ public class CustomerCLI extends TestspanTest {
 		String result ="";
 		try {
 			ssh.connect();
-			if(dut.isPreCommandCustomerCli()){
+			result = sendCommand("\\n");
+			GeneralUtils.printToConsole("result of enter command:"+result);
+			if(result.contains(promptSh)){
+				GeneralUtils.printToConsole("Sending lteCli command");
 				result = sendCommand("/bs/lteCli");
 				GeneralUtils.printToConsole("Result of lteCli command: ");
 				GeneralUtils.printToConsole(result);

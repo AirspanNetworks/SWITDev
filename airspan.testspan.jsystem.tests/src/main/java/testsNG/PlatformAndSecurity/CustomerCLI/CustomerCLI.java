@@ -118,6 +118,7 @@ public class CustomerCLI extends TestspanTest {
 				buffer = sendCommand("/bs/lteCli");
 				GeneralUtils.printToConsole("Result of lteCli command: ");
 				GeneralUtils.printToConsole(buffer);
+				GeneralUtils.unSafeSleep(2*1000);
 			}
 			buffer = sendCommand("show banks\n");
 			ssh.disconnect();
@@ -174,6 +175,7 @@ public class CustomerCLI extends TestspanTest {
 				result = sendCommand("/bs/lteCli");
 				GeneralUtils.printToConsole("Result of lteCli command: ");
 				GeneralUtils.printToConsole(result);
+				GeneralUtils.unSafeSleep(2*1000);
 			}
 			result = sendCommand(command);
 			result = cutResponseWithFilter(result,">>");

@@ -113,7 +113,7 @@ public class CustomerCLI extends TestspanTest {
 		String buffer = "";
 		try {
 			ssh.connect();
-			buffer = sendCommand("\\n");
+			buffer = sendCommand("\n");
 			GeneralUtils.printToConsole("result of enter command:"+buffer);
 			if(buffer.contains(promptSh)){
 				GeneralUtils.printToConsole("Sending lteCli command");
@@ -173,7 +173,7 @@ public class CustomerCLI extends TestspanTest {
 		String result ="";
 		try {
 			ssh.connect();
-			result = sendCommand("\\n");
+			result = sendCommand("\n");
 			GeneralUtils.printToConsole("result of enter command:"+result);
 			if(result.contains(promptSh)){
 				GeneralUtils.printToConsole("Sending lteCli command");

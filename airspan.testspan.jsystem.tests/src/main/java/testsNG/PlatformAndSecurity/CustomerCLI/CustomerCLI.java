@@ -7,6 +7,7 @@ import java.util.List;
 import Utils.PasswordUtils;
 import org.junit.Test;
 
+import EnodeB.AirHarmony1000;
 import EnodeB.EnodeB;
 import Utils.GeneralUtils;
 import Utils.SysObjUtils;
@@ -85,11 +86,11 @@ public class CustomerCLI extends TestspanTest {
 	@Test
 	@TestProperties(name = "multiple CLI access", returnParam = { "IsTestWasSuccessful" }, paramsExclude = {"IsTestWasSuccessful" })
 	public void multi_attempts(){
-		report.report("checking CLI with help command");
+		report.report("Checking CLI with help command");
 		if(multipleAccessToCli()) {
-			report.report("all CLI attempts passed");
+			report.report("All CLI attempts passed");
 		}else {
-			report.report("some attempts did not passed",Reporter.FAIL);
+			report.report("Some attempts did not pass",Reporter.FAIL);
 		}
 
 	}
@@ -113,16 +114,25 @@ public class CustomerCLI extends TestspanTest {
 		String buffer = "";
 		try {
 			ssh.connect();
-			buffer = sendCommand("\n");
-			GeneralUtils.unSafeSleep(2*1000);
-			GeneralUtils.printToConsole("result of enter command:"+buffer);
-			boolean shPrompt = buffer.contains(promptSh);
-			if(shPrompt){
-				GeneralUtils.printToConsole("Sending lteCli command");
-				buffer = sendCommand("/bs/lteCli\n");
-				GeneralUtils.printToConsole("Result of lteCli command: ");
-				GeneralUtils.printToConsole(buffer);
-				GeneralUtils.unSafeSleep(2*1000);
+			boolean isAH1000 = dut instanceof AirHarmony1000;
+			if(isAH1000){
+				buffer = sendCommand("\n");
+				GeneralUtils.unSafeSleep(500);
+				GeneralUtils.printToConsole("Result of new line command:"+buffer);
+				if(buffer.contains(promptSh)){
+					GeneralUtils.printToConsole("Sending lteCli command");
+					buffer = sendCommand("/bs/lteCli\n");
+					GeneralUtils.printToConsole("Result of lteCli command: ");
+					GeneralUtils.printToConsole(buffer);
+					GeneralUtils.unSafeSleep(500);
+				}else{
+					report.report("EnodeB is "+dut.getClass()+" but does not contain "+promptSh+" prompt",Reporter.WARNING);
+					ssh.disconnect();
+					return false;
+				}
+			}
+			if(!isAH1000){
+				buffer = sendCommand("show banks\n");				
 			}
 			ssh.disconnect();
 			report.report("checking if ' # Welcome to Airspan CLI # ' is in CLI.");
@@ -174,17 +184,26 @@ public class CustomerCLI extends TestspanTest {
 		String result ="";
 		try {
 			ssh.connect();
-			result = sendCommand("\n");
-			GeneralUtils.unSafeSleep(2*1000);
-			GeneralUtils.printToConsole("result of enter command:"+result);
-			if(result.contains(promptSh)){
-				GeneralUtils.printToConsole("Sending lteCli command");
-				result = sendCommand("/bs/lteCli\n");
-				GeneralUtils.printToConsole("Result of lteCli command: ");
-				GeneralUtils.printToConsole(result);
-				GeneralUtils.unSafeSleep(2*1000);
+			boolean isAH1000 = dut instanceof AirHarmony1000;
+			if(isAH1000){
+				result = sendCommand("\n");
+				GeneralUtils.unSafeSleep(500);
+				GeneralUtils.printToConsole("Result of new line command:"+result);
+				if(result.contains(promptSh)){
+					GeneralUtils.printToConsole("Sending lteCli command");
+					result = sendCommand("/bs/lteCli\n");
+					GeneralUtils.printToConsole("Result of lteCli command: ");
+					GeneralUtils.printToConsole(result);
+					GeneralUtils.unSafeSleep(500);
+				}else{
+					report.report("EnodeB is "+dut.getClass()+" but does not contain "+promptSh+" prompt",Reporter.WARNING);
+					return "";
+				}
 			}
 			result = sendCommand(command);
+			if(!isAH1000){
+				result = cutResponseWithFilter(result,">>");				
+			}
 			int len = result.length();
 			String debugResult = "";
 

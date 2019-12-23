@@ -114,7 +114,9 @@ public class CustomerCLI extends TestspanTest {
 		try {
 			ssh.connect();
 			if(dut.isPreCommandCustomerCli()){
-				sendCommand("/bs/lteCli");
+				buffer = sendCommand("/bs/lteCli");
+				GeneralUtils.printToConsole("Result of lteCli command: ");
+				GeneralUtils.printToConsole(buffer);
 			}
 			buffer = sendCommand("show banks\n");
 			ssh.disconnect();
@@ -168,7 +170,9 @@ public class CustomerCLI extends TestspanTest {
 		try {
 			ssh.connect();
 			if(dut.isPreCommandCustomerCli()){
-				sendCommand("/bs/lteCli");
+				result = sendCommand("/bs/lteCli");
+				GeneralUtils.printToConsole("Result of lteCli command: ");
+				GeneralUtils.printToConsole(result);
 			}
 			result = sendCommand(command);
 			result = cutResponseWithFilter(result,">>");

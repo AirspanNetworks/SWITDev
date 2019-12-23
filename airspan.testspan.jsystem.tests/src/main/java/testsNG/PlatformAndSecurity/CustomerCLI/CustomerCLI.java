@@ -119,7 +119,7 @@ public class CustomerCLI extends TestspanTest {
 			boolean shPrompt = buffer.contains(promptSh);
 			if(shPrompt){
 				GeneralUtils.printToConsole("Sending lteCli command");
-				buffer = sendCommand("/bs/lteCli");
+				buffer = sendCommand("/bs/lteCli\n");
 				GeneralUtils.printToConsole("Result of lteCli command: ");
 				GeneralUtils.printToConsole(buffer);
 				GeneralUtils.unSafeSleep(2*1000);
@@ -179,7 +179,7 @@ public class CustomerCLI extends TestspanTest {
 			GeneralUtils.printToConsole("result of enter command:"+result);
 			if(result.contains(promptSh)){
 				GeneralUtils.printToConsole("Sending lteCli command");
-				result = sendCommand("/bs/lteCli");
+				result = sendCommand("/bs/lteCli\n");
 				GeneralUtils.printToConsole("Result of lteCli command: ");
 				GeneralUtils.printToConsole(result);
 				GeneralUtils.unSafeSleep(2*1000);

@@ -104,7 +104,13 @@ public class Logger implements Runnable {
 			GeneralUtils.printToConsole(ses.getName());
 		}
 		GeneralUtils.printToConsole("End of log files in loggedSessions");
-		loggedSessions.removeIf(s -> s.getName().equals(session.getName()));
+		if(session != null){
+			GeneralUtils.printToConsole("Trying to remove log: "+session.getName());
+		}else{
+			GeneralUtils.printToConsole("Session is null. Not removing");
+			return;
+		}
+		loggedSessions.removeIf(s -> (s.getName() != null && s.getName().equals(session.getName())));
 	}
 
 

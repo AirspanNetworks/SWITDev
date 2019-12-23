@@ -192,7 +192,6 @@ public abstract class EnodeB extends SystemObjectImpl {
 	public boolean blackListed = false;
 	public boolean expecteInServiceState = true;
 	private String SkipCMP = "false";
-	private boolean preCommandCustomerCli = false;
 
 	public EnodeB() {
 		super();
@@ -2331,14 +2330,6 @@ public abstract class EnodeB extends SystemObjectImpl {
 
 	public void setSkipCMP(String skipCMP) {
 		SkipCMP = skipCMP;
-	}
-
-	public boolean isPreCommandCustomerCli() {
-		return preCommandCustomerCli;
-	}
-
-	public void setPreCommandCustomerCli(String preCommandCustomerCli) {
-		this.preCommandCustomerCli = Boolean.parseBoolean(preCommandCustomerCli);
 	}
 	
 	public Pair<Boolean, SwStatus> isSoftwareDownloadCompletedSuccessfully() {

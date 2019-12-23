@@ -116,14 +116,17 @@ public class CustomerCLI extends TestspanTest {
 			buffer = sendCommand("\n");
 			GeneralUtils.unSafeSleep(2*1000);
 			GeneralUtils.printToConsole("result of enter command:"+buffer);
-			if(buffer.contains(promptSh)){
+			boolean shPrompt = buffer.contains(promptSh);
+			if(shPrompt){
 				GeneralUtils.printToConsole("Sending lteCli command");
 				buffer = sendCommand("/bs/lteCli");
 				GeneralUtils.printToConsole("Result of lteCli command: ");
 				GeneralUtils.printToConsole(buffer);
 				GeneralUtils.unSafeSleep(2*1000);
 			}
-			buffer = sendCommand("show banks\n");
+			//if(!shPrompt){
+			//	buffer = sendCommand("show banks\n");				
+			//}
 			ssh.disconnect();
 			report.report("checking if ' # Welcome to Airspan CLI # ' is in CLI.");
 			reportMultiLineMessage(buffer);

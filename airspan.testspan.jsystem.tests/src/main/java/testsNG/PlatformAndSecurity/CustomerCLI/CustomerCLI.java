@@ -124,9 +124,6 @@ public class CustomerCLI extends TestspanTest {
 				GeneralUtils.printToConsole(buffer);
 				GeneralUtils.unSafeSleep(2*1000);
 			}
-			//if(!shPrompt){
-			//	buffer = sendCommand("show banks\n");				
-			//}
 			ssh.disconnect();
 			report.report("checking if ' # Welcome to Airspan CLI # ' is in CLI.");
 			reportMultiLineMessage(buffer);
@@ -188,7 +185,6 @@ public class CustomerCLI extends TestspanTest {
 				GeneralUtils.unSafeSleep(2*1000);
 			}
 			result = sendCommand(command);
-			//result = cutResponseWithFilter(result,">>");
 			int len = result.length();
 			String debugResult = "";
 

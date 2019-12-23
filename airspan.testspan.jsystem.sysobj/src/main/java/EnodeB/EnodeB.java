@@ -2337,7 +2337,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 		return preCommandCustomerCli;
 	}
 
-	public void setPerformLteCliCommand(String preCommandCustomerCli) {
+	public void setPreCommandCustomerCli(String preCommandCustomerCli) {
 		this.preCommandCustomerCli = Boolean.parseBoolean(preCommandCustomerCli);
 	}
 	

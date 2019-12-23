@@ -185,7 +185,7 @@ public class CustomerCLI extends TestspanTest {
 				GeneralUtils.unSafeSleep(2*1000);
 			}
 			result = sendCommand(command);
-			result = cutResponseWithFilter(result,">>");
+			//result = cutResponseWithFilter(result,">>");
 			int len = result.length();
 			String debugResult = "";
 

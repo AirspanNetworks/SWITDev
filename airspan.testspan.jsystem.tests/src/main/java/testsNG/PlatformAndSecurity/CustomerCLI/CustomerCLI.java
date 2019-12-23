@@ -113,6 +113,9 @@ public class CustomerCLI extends TestspanTest {
 		String buffer = "";
 		try {
 			ssh.connect();
+			if(dut.isPreCommandCustomerCli()){
+				sendCommand("/bs/lteCli");
+			}
 			buffer = sendCommand("show banks\n");
 			ssh.disconnect();
 			report.report("checking if ' # Welcome to Airspan CLI # ' is in CLI.");
@@ -164,6 +167,9 @@ public class CustomerCLI extends TestspanTest {
 		String result ="";
 		try {
 			ssh.connect();
+			if(dut.isPreCommandCustomerCli()){
+				sendCommand("/bs/lteCli");
+			}
 			result = sendCommand(command);
 			result = cutResponseWithFilter(result,">>");
 			int len = result.length();

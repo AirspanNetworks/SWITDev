@@ -114,6 +114,7 @@ public class CustomerCLI extends TestspanTest {
 		try {
 			ssh.connect();
 			buffer = sendCommand("\n");
+			GeneralUtils.unSafeSleep(2*1000);
 			GeneralUtils.printToConsole("result of enter command:"+buffer);
 			if(buffer.contains(promptSh)){
 				GeneralUtils.printToConsole("Sending lteCli command");
@@ -174,6 +175,7 @@ public class CustomerCLI extends TestspanTest {
 		try {
 			ssh.connect();
 			result = sendCommand("\n");
+			GeneralUtils.unSafeSleep(2*1000);
 			GeneralUtils.printToConsole("result of enter command:"+result);
 			if(result.contains(promptSh)){
 				GeneralUtils.printToConsole("Sending lteCli command");

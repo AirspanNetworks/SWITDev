@@ -114,6 +114,7 @@ public class CustomerCLI extends TestspanTest {
 		try {
 			ssh.connect();
 			if(dut.isPreCommandCustomerCli()){
+				GeneralUtils.printToConsole("Sending lteCli command");
 				buffer = sendCommand("/bs/lteCli");
 				GeneralUtils.printToConsole("Result of lteCli command: ");
 				GeneralUtils.printToConsole(buffer);

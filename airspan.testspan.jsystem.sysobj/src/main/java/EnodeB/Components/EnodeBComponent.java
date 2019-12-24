@@ -21,6 +21,7 @@ import EnodeB.Components.Log.LoggerEvent;
 import EnodeB.Components.Session.Session;
 import EnodeB.Components.Session.SessionManager;
 import Netspan.NetspanServer;
+import TestingServices.TestConfig;
 import Utils.*;
 import Utils.GeneralUtils.RebootType;
 import Utils.Snmp.MibReader;
@@ -93,7 +94,7 @@ public abstract class EnodeBComponent implements LogListener {
 
     private HashSet<String> corePathSet;
     private boolean isStateChangedToCoreDump;
-    private final String coreFtpSetver = "\\\\swit-cores\\Cores\\";
+    private String coreFtpSetver = "\\\\swit-cores\\Cores\\";
     private boolean deviceUnderTest;
     private int unexpectedReboot = 0;
     public int SWTypeInstnace;
@@ -222,6 +223,11 @@ public abstract class EnodeBComponent implements LogListener {
 		initSerialCom();
 		sessionManager = new SessionManager(this);
 		this.waitForSrialPromptAndEchoToSkipCMP = new WaitForSrialPromptAndEchoToSkipCMP(WAIT_FOR_SERIAL_PROMPT);
+		String coreServer = TestConfig.getInstace().getCoreFtpServer();
+		if(coreServer != null){
+			GeneralUtils.printToConsole("Setting core server to: "+coreServer);
+			coreFtpSetver = coreServer;
+		}
 	}
 
     protected void initScpClient(){

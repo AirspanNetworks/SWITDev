@@ -30,8 +30,10 @@ public class TestConfig extends SystemObjectImpl {
     private String loggerUploadAllUrl = "http://100.100.0.250/upload/upload.php";
 
     private Boolean SWUCliFallback;
+    
+    private String coreFtpServer = null;
 
-    public TestConfig() {
+	public TestConfig() {
     }
 
     public static TestConfig getInstace() {
@@ -214,4 +216,12 @@ public class TestConfig extends SystemObjectImpl {
     public void setSWUCliFallback(String sWUCliFallback) {
         SWUCliFallback = Boolean.parseBoolean(sWUCliFallback);
     }
+    
+    public String getCoreFtpServer() {
+		return coreFtpServer;
+	}
+
+	public void setCoreFtpServer(String coreFtpServer) {
+		this.coreFtpServer = coreFtpServer;
+	}
 }

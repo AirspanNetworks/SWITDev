@@ -128,6 +128,7 @@ public class CustomerCLI extends TestspanTest {
 				}else{
 					report.report("EnodeB is "+dut.getClass()+" but does not contain "+promptSh+" prompt",Reporter.WARNING);
 					ssh.disconnect();
+					reportMultiLineMessage(buffer);
 					return false;
 				}
 			}
@@ -197,6 +198,7 @@ public class CustomerCLI extends TestspanTest {
 					GeneralUtils.unSafeSleep(500);
 				}else{
 					report.report("EnodeB is "+dut.getClass()+" but does not contain "+promptSh+" prompt",Reporter.WARNING);
+					reportMultiLineMessage(result);
 					return "";
 				}
 			}

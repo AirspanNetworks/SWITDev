@@ -750,7 +750,8 @@ public abstract class EnodeBComponent implements LogListener {
     	if (deviceUnderTest) {
             if (!isExpectBooting()) {
             	failTestInCaseOfCoreOrPhyAssert(line);
-            }  else if (checkRebootStrings(line)) {
+            }
+            if (checkRebootStrings(line)) {
             	handleReboots();
             }
         }

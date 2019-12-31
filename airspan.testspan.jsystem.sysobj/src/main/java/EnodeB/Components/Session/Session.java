@@ -60,7 +60,7 @@ public class Session implements Runnable {
 	public static Reporter report = ListenerstManager.getInstance();
 
 	public Session(String name, EnodeBComponent enbComp, int logLevel) {
-		this(name, enbComp, new SSH(enbComp.getIpAddress(), enbComp.getUsername(), enbComp.getPassword()),logLevel);
+		this(name, enbComp, new SSH(enbComp.getIpAddress(), enbComp.getUsername(), enbComp.getPassword(), enbComp.getSshPort()),logLevel);
 	}
 
 	public Session(String name, EnodeBComponent enbComp, Terminal terminal, int logLevel) {

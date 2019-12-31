@@ -121,6 +121,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 	 * The enodeB version
 	 */
 	private String enodeBversion;
+
 	private int interHandoverEarfcn;
 	/**
 	 * The xlp.
@@ -219,6 +220,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 			XLP.setReadCommunity(connectInfo.getReadCommunity());
 		if (connectInfo.getWriteCommunity() != null)
 			XLP.setWriteCommunity(connectInfo.getWriteCommunity());
+		XLP.setSshPort(connectInfo.getSshPort());
 		XLP.debugFlags = getDebugFlags();
 		XLP.hardwareName = getControlComponenetHwName();
 		XLP.setName(getName());
@@ -483,6 +485,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 		this.phyVersion = phyVersion;
 	}
 
+	
 	/**
 	 * Gets the bandwidth.
 	 *

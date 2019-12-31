@@ -42,11 +42,26 @@ public class SSHConnector {
 	 * @param user the user to the server
 	 * @param password the password to the server
 	 */
-	public SSHConnector( String ipAddress, String user, String password ) {
+	public SSHConnector( String ipAddress, String user, String password) {
 		this.userName = user;
 		this.password = password;
 		this.host = ipAddress;
 		this.isConnected = false;
+	}
+	
+	/**
+	 * Instantiates a new SSH connector.
+	 * 
+	 * @param ipAddress the ip address
+	 * @param user the user to the server
+	 * @param password the password to the server
+	 */
+	public SSHConnector( String ipAddress, String user, String password, int port) {
+		this.userName = user;
+		this.password = password;
+		this.host = ipAddress;
+		this.isConnected = false;
+		this.port = port;
 	}
 
 	/**
@@ -55,7 +70,7 @@ public class SSHConnector {
 	 * number of times more, and sleep between each try a const mSec.
 	 */
 	public void initConnection() {
-		this.terminal = new SSH( this.getHost(), this.userName, this.password );
+		this.terminal = new SSH( this.getHost(), this.userName, this.password, this.port);
 		this.terminal.removePrompts();
 		this.terminal.setScrollEndTimeout( TIMEOUT );
 		this.terminal.setAsciiFilter( true );

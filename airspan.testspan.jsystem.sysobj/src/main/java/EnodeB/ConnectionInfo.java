@@ -10,7 +10,14 @@ public class ConnectionInfo extends SystemObjectImpl{
 	private String writeCommunity;
 	public SerialConnectionInfo serialInfo;
 	public SerialConnectionInfo[] danInfo;
+	private int sshPort = 22;
 
+	public int getSshPort() {
+		return sshPort;
+	}
+	public void setSshPort(int sshPort) {
+		this.sshPort = sshPort;
+	}
 	public String getIpAddress() {
 		return ipAddress;
 	}

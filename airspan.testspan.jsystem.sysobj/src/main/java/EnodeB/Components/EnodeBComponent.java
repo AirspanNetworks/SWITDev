@@ -76,6 +76,7 @@ public abstract class EnodeBComponent implements LogListener {
     private String scpUsername = PasswordUtils.ADMIN_USERNAME;
     private String scpPassword = PasswordUtils.ADMIN_PASSWORD;
     private int scpPort = 22;
+    private int sshPort = 22;
     private String serialUserName;
     private String serialPassword;
     private String serialSwitchUserCommand;
@@ -1099,6 +1100,14 @@ public abstract class EnodeBComponent implements LogListener {
 
     public void setScpPort(int scpPort) {
         this.scpPort = scpPort;
+    }
+    
+    public int getSshPort() {
+        return sshPort;
+    }
+
+    public void setSshPort(int sshPort) {
+        this.sshPort = sshPort;
     }
 
 	public String getAdminPassword() {

@@ -381,7 +381,7 @@ public class BasicAction extends Action {
 				report.report("Login needed:\n" + user_login.toString());
 				try {
 //					if (!cli.login(sleepTime * 1000, user_login)) {
-					if (!cli.CRTLogin(user_login)) {
+					if (!cli.CRTLogin(user_login, sleepTime * 1000)) {
 //						report.report("Login failed (Prompt: '" + current_pr.getPrompt() + "')", Reporter.WARNING);
 						throw new IOException("Login failed (Prompt: '" + current_pr.getPrompt() + "')");
 					}
@@ -392,12 +392,12 @@ public class BasicAction extends Action {
 					throw e;
 				}
 			}
-			current_pr = cli.waitWithGrace(sleepTime * 100);
+			current_pr = cli.waitWithGrace(sleepTime * 1000);
 			report.report("Session prepare completed (Prompt: '" + current_pr.getPrompt() + "')");
 			GeneralUtils.stopLevel();
 			
 			GeneralUtils.startLevel("Command execution - '" + serialCommand + "'");
-			Thread.sleep(100);
+			Thread.sleep(500);
 			String output_str = cli.exec_command(serialCommand, sleepTime * 1000, true, false);
 			
 			int status = Reporter.PASS;

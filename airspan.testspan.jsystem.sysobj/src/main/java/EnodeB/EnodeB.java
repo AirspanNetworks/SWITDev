@@ -192,6 +192,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 	public boolean blackListed = false;
 	public boolean expecteInServiceState = true;
 	private String SkipCMP = "false";
+	private String enodebIsDU = "false";
 
 	public EnodeB() {
 		super();
@@ -214,6 +215,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 		}
 		XLP.setParent(this);
 		XLP.setSkipCMP(getSkipCMP());
+		XLP.setEnodebIsDU(getEnodebIsDU());
 		XLP.setUsername(connectInfo.getUserName());
 		if (connectInfo.getReadCommunity() != null)
 			XLP.setReadCommunity(connectInfo.getReadCommunity());
@@ -2330,6 +2332,14 @@ public abstract class EnodeB extends SystemObjectImpl {
 
 	public void setSkipCMP(String skipCMP) {
 		SkipCMP = skipCMP;
+	}
+	
+	public String getEnodebIsDU() {
+		return enodebIsDU;
+	}
+
+	public void setEnodebIsDU(String enodebIsDU) {
+		this.enodebIsDU = enodebIsDU;
 	}
 	
 	public Pair<Boolean, SwStatus> isSoftwareDownloadCompletedSuccessfully() {

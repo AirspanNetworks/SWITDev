@@ -100,6 +100,7 @@ public abstract class EnodeBComponent implements LogListener {
     public int SWTypeInstnace;
     public ArrayList<String> debugFlags;
     public boolean SkipCMP = false;
+    public boolean enodebIsDU = false;
     public boolean skipDestTrap = false;
     private volatile WaitForSrialPromptAndEchoToSkipCMP waitForSrialPromptAndEchoToSkipCMP;
 
@@ -150,6 +151,15 @@ public abstract class EnodeBComponent implements LogListener {
         SkipCMP = Boolean.parseBoolean(skipCMP);
     }
 
+    public boolean isEnodebIsDU() {
+        return enodebIsDU;
+    }
+
+    public void setEnodebIsDU(String enodebIsDU) {
+    	this.enodebIsDU = Boolean.parseBoolean(enodebIsDU);
+    }
+
+    
     public boolean isSkipDestTrap() {
         return skipDestTrap;
     }
@@ -904,6 +914,10 @@ public abstract class EnodeBComponent implements LogListener {
     }
 
     public synchronized void echoToSkipCmpv2() {
+        if(isEnodebIsDU()){
+        	sendCommandsOnSession(sessionManager.getSerialSession().getName(), EnodeBComponent.SHELL_PROMPT, "/bs/bin/airspansu.sh", "#");        	
+        }
+    	
         sendCommandsOnSession(sessionManager.getSerialSession().getName(), EnodeBComponent.SHELL_PROMPT, "echo 'SKIP_CMPV2=1' > /bs/data/debug_security.cfg", "#");
 
         String response = "Response from enodeb to \"cat /bs/data/debug_security.cfg\" command:\n";

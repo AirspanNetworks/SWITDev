@@ -124,6 +124,10 @@ public class SessionManager {
 				String idResult = newConsoleSession.sendCommands(EnodeBComponent.SHELL_PROMPT, "id", "");
 				GeneralUtils.printToConsole("serial id: " + idResult);
 				GeneralUtils.printToConsole("Session " + newConsoleSession.getName() + " opened Status:" + ans);
+				if(enodeBComponent.isEnodebIsDU()){
+					String result = newConsoleSession.sendCommands(EnodeBComponent.SHELL_PROMPT,"/bs/bin/airspansu.sh","");
+					GeneralUtils.printToConsole("Response to airspansu: "+result);					
+				}
 			}
 			return loginSuccess;			
 		}

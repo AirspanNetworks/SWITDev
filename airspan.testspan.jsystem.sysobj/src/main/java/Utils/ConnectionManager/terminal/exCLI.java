@@ -10,6 +10,7 @@ import java.util.List;
 
 import javax.naming.TimeLimitExceededException;
 
+import Utils.GeneralUtils;
 import Utils.ConnectionManager.UserInfo.UserSequence;
 import systemobject.terminal.Cli;
 import systemobject.terminal.Terminal;
@@ -220,6 +221,7 @@ public class exCLI extends Cli {
             CRTLogin(instance, timeout);
         }
 
+        GeneralUtils.unSafeSleep(2*1000);
 		exPrompt current_pr = waitWithGrace(timeout);
 		if(current_pr.getPrompt() != prompts.getFinalPrompt().getPrompt()) {
 			return false;

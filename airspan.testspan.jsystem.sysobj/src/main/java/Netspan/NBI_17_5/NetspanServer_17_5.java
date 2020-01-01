@@ -39,6 +39,7 @@ import Netspan.API.Enums.SecurityProfileOptionalOrMandatory;
 import Netspan.API.Enums.ServerProtocolType;
 import Netspan.API.Enums.SnmpAgentVersion;
 import Netspan.API.Enums.SonAnrStates;
+import Netspan.API.Enums.TriggerQuantityTypes;
 import Netspan.API.Enums.X2ControlStateTypes;
 import Netspan.API.Lte.AlarmInfo;
 import Netspan.API.Lte.CarrierAggregationModes;
@@ -1582,9 +1583,14 @@ public class NetspanServer_17_5 extends NetspanServer implements Netspan_17_5_ab
                 if (mobilityParams.getThresholdBasedMeasurement() == EnabledStates.ENABLED) {
                     MobilityConnectedModeThresholdBasedListContainer listGaps = new MobilityConnectedModeThresholdBasedListContainer();
                 	MobilityConnectedModeThresholdBased gaps = new MobilityConnectedModeThresholdBased();
+                	
                 	gaps.setIsDefault(factoryDetails.createMobilityConnectedModeThresholdBasedIsDefault(true));
+                	gaps.setTriggerGapsTriggerQuantity(factoryDetails.
+                			createMobilityConnectedModeThresholdBasedTriggerGapsTriggerQuantity(TriggerQuantityTypes.RSRP));
                 	gaps.setTriggerGapsRsrpEventThreshold1(factoryDetails.
                 			createMobilityConnectedModeThresholdBasedTriggerGapsRsrpEventThreshold1(mobilityParams.getStartGap()));
+                	gaps.setStopGapsTriggerQuantity(factoryDetails.
+                			createMobilityConnectedModeThresholdBasedTriggerGapsTriggerQuantity(TriggerQuantityTypes.RSRP));
                 	gaps.setStopGapsRsrpEventThreshold1(factoryDetails.
                 			createMobilityConnectedModeThresholdBasedStopGapsRsrpEventThreshold1(mobilityParams.getStopGap()));
                 	listGaps.getMobilityConnectedModeThresholdBased().add(gaps);

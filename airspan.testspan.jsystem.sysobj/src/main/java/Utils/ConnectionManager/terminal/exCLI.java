@@ -210,7 +210,7 @@ public class exCLI extends Cli {
         for (exPrompt prompt : prompts){
         	if(prompt.getStringToSend() != null) {
 				sendString(prompt.getStringToSend() + '\r', true);
-				Thread.sleep(1500);
+				Thread.sleep(2500);
 			}
         }
 
@@ -223,6 +223,8 @@ public class exCLI extends Cli {
 
         GeneralUtils.unSafeSleep(2*1000);
 		exPrompt current_pr = waitWithGrace(timeout);
+		GeneralUtils.printToConsole("******current prompt: "+current_pr.getPrompt());
+		GeneralUtils.printToConsole("******final prompt: "+prompts.getFinalPrompt().getPrompt());
 		if(current_pr.getPrompt() != prompts.getFinalPrompt().getPrompt()) {
 			return false;
 		}

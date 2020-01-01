@@ -282,7 +282,7 @@ public class XLP extends EnodeBComponent {
 				running = getMajorVer(getRunningVersion());
 				enodebStandbyVersion = getMajorVer(getStandbyVersion());
 				GeneralUtils.printToConsole(
-						"SNMP returned running ver: " + enodebRunningVersion + " , standby: " + enodebStandbyVersion);
+						"SNMP returned running ver: " + running + " , standby: " + enodebStandbyVersion);
 				if (running == null || enodebStandbyVersion == null) {
 					GeneralUtils.printToConsole("One or more of the versions is null.");
 					setEnodebRunningVersion(((EnodeB) parent).getEnodeBversion());

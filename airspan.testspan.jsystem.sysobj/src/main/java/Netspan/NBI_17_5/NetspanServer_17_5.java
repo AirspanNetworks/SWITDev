@@ -1590,7 +1590,7 @@ public class NetspanServer_17_5 extends NetspanServer implements Netspan_17_5_ab
                 	gaps.setTriggerGapsRsrpEventThreshold1(factoryDetails.
                 			createMobilityConnectedModeThresholdBasedTriggerGapsRsrpEventThreshold1(mobilityParams.getStartGap()));
                 	gaps.setStopGapsTriggerQuantity(factoryDetails.
-                			createMobilityConnectedModeThresholdBasedTriggerGapsTriggerQuantity(TriggerQuantityTypes.RSRP));
+                			createMobilityConnectedModeThresholdBasedStopGapsTriggerQuantity(TriggerQuantityTypes.RSRP));
                 	gaps.setStopGapsRsrpEventThreshold1(factoryDetails.
                 			createMobilityConnectedModeThresholdBasedStopGapsRsrpEventThreshold1(mobilityParams.getStopGap()));
                 	listGaps.getMobilityConnectedModeThresholdBased().add(gaps);

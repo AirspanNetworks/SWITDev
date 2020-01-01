@@ -43,6 +43,7 @@ public class SSHConnector {
 	 * @param password the password to the server
 	 */
 	public SSHConnector( String ipAddress, String user, String password ) {
+		GeneralUtils.printToConsole("Using without port");
 		this.userName = user;
 		this.password = password;
 		this.host = ipAddress;
@@ -50,12 +51,29 @@ public class SSHConnector {
 	}
 
 	/**
+	 * Instantiates a new SSH connector.
+	 * 
+	 * @param ipAddress the ip address
+	 * @param user the user to the server
+	 * @param password the password to the server
+	 */
+	public SSHConnector( String ipAddress, String user, String password, int port) {
+		this.userName = user;
+		this.password = password;
+		this.host = ipAddress;
+		this.isConnected = false;
+		GeneralUtils.printToConsole("Constructor - Setting ssh port to: "+ port);
+		this.port = port;
+	}
+	
+	/**
 	 * Inits the connection with all the settings that were set, removing all the current
 	 * promts. The method includes a tryout mechanism: try to connect, if fails try const
 	 * number of times more, and sleep between each try a const mSec.
 	 */
 	public void initConnection() {
-		this.terminal = new SSH( this.getHost(), this.userName, this.password );
+		GeneralUtils.printToConsole("using port: "+this.port);
+		this.terminal = new SSH( this.getHost(), this.userName, this.password, this.port);
 		this.terminal.removePrompts();
 		this.terminal.setScrollEndTimeout( TIMEOUT );
 		this.terminal.setAsciiFilter( true );

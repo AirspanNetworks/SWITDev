@@ -54,6 +54,7 @@ public class BasicAction extends Action {
 	private PerformAction performAction = PerformAction.CountLines;
 	private int ammount = 1;
 	private String fileName;
+	private int sshPort = 22;
 	
 	private enum Comparison {
 		EQUAL_TO, BIGGER_THAN, SMALLER_THAN
@@ -440,7 +441,7 @@ public class BasicAction extends Action {
 		
 	@Test
 	@TestProperties(name = "Send Commands In Device", returnParam = "LastStatus", paramsInclude = { "Ip", "Password",
-			"UserName", "DebugCommands","SleepTime" })
+			"UserName", "DebugCommands","SleepTime", "Port" })
 	public void sendCommandsInDevice() {
 		boolean isNull = false;
 		if(ip == null){
@@ -470,7 +471,7 @@ public class BasicAction extends Action {
 			report.report(cmd);
 		}
 
-		SSHConnector ssh = new SSHConnector(ip, userName, password);
+		SSHConnector ssh = new SSHConnector(ip, userName, password, port);
 		ssh.initConnection();
 		
 		if(ssh.isConnected()){
@@ -656,5 +657,13 @@ public class BasicAction extends Action {
 			map.get("ExpectedPatern").setVisible(false);
 			map.get("ExpectedPatern").setValue(null);
 		}
+	}
+	
+	public int getSshPort() {
+		return sshPort;
+	}
+
+	public void setSshPort(int sshPort) {
+		this.sshPort = sshPort;
 	}
 }

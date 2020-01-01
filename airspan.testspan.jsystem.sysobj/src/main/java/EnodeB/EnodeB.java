@@ -221,6 +221,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 			XLP.setReadCommunity(connectInfo.getReadCommunity());
 		if (connectInfo.getWriteCommunity() != null)
 			XLP.setWriteCommunity(connectInfo.getWriteCommunity());
+		XLP.setSshPort(connectInfo.getSshPort());
 		XLP.debugFlags = getDebugFlags();
 		XLP.hardwareName = getControlComponenetHwName();
 		XLP.setName(getName());

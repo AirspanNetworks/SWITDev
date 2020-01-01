@@ -60,7 +60,8 @@ public class Session implements Runnable {
 	public static Reporter report = ListenerstManager.getInstance();
 
 	public Session(String name, EnodeBComponent enbComp, int logLevel) {
-		this(name, enbComp, new SSH(enbComp.getIpAddress(), enbComp.getUsername(), enbComp.getPassword()),logLevel);
+		this(name, enbComp, new SSH(enbComp.getIpAddress(), enbComp.getUsername(), enbComp.getPassword(), enbComp.getSshPort()),logLevel);
+		GeneralUtils.printToConsole("ssh port: "+enbComp.getSshPort());
 	}
 
 	public Session(String name, EnodeBComponent enbComp, Terminal terminal, int logLevel) {
@@ -231,7 +232,7 @@ public class Session implements Runnable {
 				
 				if(this.hostname != enbComp.getIpAddress() || !connected){//If the Terminal's hostname isn't updated.
 					GeneralUtils.printToConsole("EnodeBComponent's IP Address have been changed from: "+this.hostname+" to: "+enbComp.getIpAddress());
-					this.terminal = new SSH(enbComp.getIpAddress(), enbComp.getUsername(), enbComp.getPassword());
+					this.terminal = new SSH(enbComp.getIpAddress(), enbComp.getUsername(), enbComp.getPassword(),enbComp.getSshPort());
 					this.hostname = enbComp.getIpAddress();
 				}
 				

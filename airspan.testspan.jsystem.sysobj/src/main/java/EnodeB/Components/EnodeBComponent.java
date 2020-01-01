@@ -77,6 +77,7 @@ public abstract class EnodeBComponent implements LogListener {
     private String scpUsername = PasswordUtils.ADMIN_USERNAME;
     private String scpPassword = PasswordUtils.ADMIN_PASSWORD;
     private int scpPort = 22;
+    private int sshPort = 22;
     private String serialUserName;
     private String serialPassword;
     private String serialSwitchUserCommand;
@@ -103,6 +104,7 @@ public abstract class EnodeBComponent implements LogListener {
     public boolean enodebIsDU = false;
     public boolean skipDestTrap = false;
     private volatile WaitForSrialPromptAndEchoToSkipCMP waitForSrialPromptAndEchoToSkipCMP;
+    private volatile WaitForSrialPromptAndSendAirspanScript waitForSrialPromptAndSendAirspanScript;
 
 	/**
 	 * parent setter
@@ -770,9 +772,17 @@ public abstract class EnodeBComponent implements LogListener {
     private void handleReboots(){
     	failOrReportOverReboot();
         handleSkipCMP();
+        handleAirspanScript();
         setTrapDestenation();        	 
     }
 
+    private void handleAirspanScript(){
+    	if (enodebIsDU && (!this.waitForSrialPromptAndSendAirspanScript.isAlive())) {
+            this.waitForSrialPromptAndSendAirspanScript = new WaitForSrialPromptAndSendAirspanScript(WAIT_FOR_SERIAL_PROMPT);
+            this.waitForSrialPromptAndSendAirspanScript.start();
+        }
+    }
+    
     private void setTrapDestenation(){
     	if(skipDestTrap){
     		GeneralUtils.printToConsole("SkipTrapDest flag is true. Skipping setting trap destination");
@@ -895,6 +905,31 @@ public abstract class EnodeBComponent implements LogListener {
         }
     }
 
+    private class WaitForSrialPromptAndSendAirspanScript extends Thread {
+        private final long timeout;
+
+        public WaitForSrialPromptAndSendAirspanScript(long timeout) {
+            this.timeout = timeout;
+        }
+
+        public void run() {
+            long startTime = System.currentTimeMillis();
+            while ((System.currentTimeMillis() - startTime) < this.timeout) {
+                if (updateVersions()) {
+                    sendAirspanScript();
+                    break;
+                }
+                GeneralUtils.unSafeSleep(5000);
+            }
+            return;
+        }
+    }
+    
+    public void sendAirspanScript(){
+    	String result = sendCommandsOnSession(sessionManager.getSerialSession().getName(), EnodeBComponent.SHELL_PROMPT, "/bs/bin/airspansu.sh", "");
+		GeneralUtils.printToConsole("Response to airspansu: "+result);					
+    }
+    
     private boolean checkRebootStrings(String line) {
         for (String item : rebootStrings) {
             if (line.contains(item)) {
@@ -914,10 +949,6 @@ public abstract class EnodeBComponent implements LogListener {
     }
 
     public synchronized void echoToSkipCmpv2() {
-        if(isEnodebIsDU()){
-        	sendCommandsOnSession(sessionManager.getSerialSession().getName(), EnodeBComponent.SHELL_PROMPT, "/bs/bin/airspansu.sh", "#");        	
-        }
-    	
         sendCommandsOnSession(sessionManager.getSerialSession().getName(), EnodeBComponent.SHELL_PROMPT, "echo 'SKIP_CMPV2=1' > /bs/data/debug_security.cfg", "#");
 
         String response = "Response from enodeb to \"cat /bs/data/debug_security.cfg\" command:\n";
@@ -1106,6 +1137,14 @@ public abstract class EnodeBComponent implements LogListener {
         this.scpUsername = scpUsername;
     }
 
+    public int getSshPort() {
+        return sshPort;
+    }
+
+    public void setSshPort(int sshPort) {
+        this.sshPort = sshPort;
+    }
+    
     public String getScpPassword() {
         return scpPassword;
     }

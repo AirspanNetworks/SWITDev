@@ -1,5 +1,6 @@
 package EnodeB;
 
+import Utils.GeneralUtils;
 import jsystem.framework.system.SystemObjectImpl;
 
 public class ConnectionInfo extends SystemObjectImpl{
@@ -10,7 +11,16 @@ public class ConnectionInfo extends SystemObjectImpl{
 	private String writeCommunity;
 	public SerialConnectionInfo serialInfo;
 	public SerialConnectionInfo[] danInfo;
+	private int sshPort = 22;
 
+	public int getSshPort() {
+		return sshPort;
+	}
+	public void setSshPort(int sshPort) {
+		GeneralUtils.printToConsole("Setting ssh port to: "+ sshPort);
+		this.sshPort = sshPort;
+	}
+	
 	public String getIpAddress() {
 		return ipAddress;
 	}

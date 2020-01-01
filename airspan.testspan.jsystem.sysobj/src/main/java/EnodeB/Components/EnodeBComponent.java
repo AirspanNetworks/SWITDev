@@ -872,7 +872,7 @@ public abstract class EnodeBComponent implements LogListener {
             report.report(getName() + " - reboot detected");
         } else {
             unexpectedReboot++;
-            report.report(getName() + " - unexpected reboot detected!", Reporter.FAIL);
+            report.report(getName() + " - unexpected reboot detected!", Reporter.WARNING);
         }
     }
 

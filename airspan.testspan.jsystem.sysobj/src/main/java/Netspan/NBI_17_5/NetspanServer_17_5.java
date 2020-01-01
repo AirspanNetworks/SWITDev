@@ -1582,6 +1582,7 @@ public class NetspanServer_17_5 extends NetspanServer implements Netspan_17_5_ab
                 if (mobilityParams.getThresholdBasedMeasurement() == EnabledStates.ENABLED) {
                     MobilityConnectedModeThresholdBasedListContainer listGaps = new MobilityConnectedModeThresholdBasedListContainer();
                 	MobilityConnectedModeThresholdBased gaps = new MobilityConnectedModeThresholdBased();
+                	gaps.setIsDefault(factoryDetails.createMobilityConnectedModeThresholdBasedIsDefault(true));
                 	gaps.setTriggerGapsRsrpEventThreshold1(factoryDetails.
                 			createMobilityConnectedModeThresholdBasedTriggerGapsRsrpEventThreshold1(mobilityParams.getStartGap()));
                 	gaps.setStopGapsRsrpEventThreshold1(factoryDetails.

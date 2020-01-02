@@ -471,7 +471,7 @@ public class BasicAction extends Action {
 			report.report(cmd);
 		}
 
-		SSHConnector ssh = new SSHConnector(ip, userName, password, port);
+		SSHConnector ssh = new SSHConnector(ip, userName, password, sshPort);
 		ssh.initConnection();
 		
 		if(ssh.isConnected()){

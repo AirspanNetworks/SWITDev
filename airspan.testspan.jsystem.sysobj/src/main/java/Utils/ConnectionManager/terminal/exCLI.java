@@ -130,6 +130,8 @@ public class exCLI extends Cli {
 	public exPrompt waitWithGrace(long timeout) throws Exception {
 		exPrompt p;
 			try {
+				String temp = terminal.readInputBuffer();
+				GeneralUtils.printToConsole("Output from buffer:"+temp);
 				p = (exPrompt) terminal.waitForPrompt(Math.min(15 * 1000, timeout));
 			} catch (Exception e) {
 				if (!isGraceful())
@@ -210,7 +212,7 @@ public class exCLI extends Cli {
         for (exPrompt prompt : prompts){
         	if(prompt.getStringToSend() != null) {
 				sendString(prompt.getStringToSend() + '\r', true);
-				Thread.sleep(2500);
+				Thread.sleep(1500);
 			}
         }
 
@@ -223,8 +225,8 @@ public class exCLI extends Cli {
 
         GeneralUtils.unSafeSleep(2*1000);
 		exPrompt current_pr = waitWithGrace(timeout);
-		GeneralUtils.printToConsole("******current prompt: "+current_pr.getPrompt());
-		GeneralUtils.printToConsole("******final prompt: "+prompts.getFinalPrompt().getPrompt());
+		GeneralUtils.printToConsole("******current prompt: "+current_pr.toString());
+		GeneralUtils.printToConsole("******final prompt: "+prompts.getFinalPrompt().toString());
 		if(current_pr.getPrompt() != prompts.getFinalPrompt().getPrompt()) {
 			return false;
 		}

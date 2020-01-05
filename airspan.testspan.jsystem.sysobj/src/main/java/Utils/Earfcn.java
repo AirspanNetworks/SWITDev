@@ -114,6 +114,7 @@ public class Earfcn {
 		new LteBand(42, 41590, 43589, 3400000, 0),
 		new LteBand(43, 43590, 45589, 3600000, 0),
 		new LteBand(44, 45590, 46589, 703000, 0),
+		new LteBand(48, 55240, 56739, 3550000, 0),
 	            // Non-standard bands
 		new LteBand(50, 50000, 51709, 698000, 0),
 		new LteBand(51, 51710, 52159, 1390000, 0),

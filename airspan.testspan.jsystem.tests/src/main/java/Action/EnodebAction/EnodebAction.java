@@ -138,7 +138,7 @@ public class EnodebAction extends Action {
 		if (value > 1) {
 				report.report(
 						"Number of unexpected reboots in test for EnodeB " + eNodeB.getName() + " was more than 1",
-						Reporter.FAIL);
+						Reporter.WARNING);
 			}
 		String key = eNodeB.getNetspanName();
 		value += unexpectedInScenario.get(key);

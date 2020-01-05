@@ -892,8 +892,8 @@ public class TestspanTest extends SystemTestCase4 {
                 reason = "Number of unexpected reboots in test for EnodeB " + eNodeB.getName() + " was more than 0";
             }
             report.report("Number of unexpected reboots in test for EnodeB " + eNodeB.getName() + " was more than 0",
-                    Reporter.FAIL);
-            String keyProperty = eNodeB.getName() + "," + "Unexpected Reboots" + "," + "FAIL";
+                    Reporter.WARNING);
+            String keyProperty = eNodeB.getName() + "," + "Unexpected Reboots" + "," + "WARNING";
             testStats.put(keyProperty, value);
         }
 

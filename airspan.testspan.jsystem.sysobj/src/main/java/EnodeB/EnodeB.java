@@ -54,6 +54,7 @@ public abstract class EnodeB extends SystemObjectImpl {
 	public final long THREE_MIN = 3 * 60 * 1000;
 	public final long FOUR_MIN = 4 * 60 * 1000;
 	public final long FIVE_MIN = 5 * 60 * 1000;
+	protected final int thresholdLoggerUploadAll = 17;
 
 	protected final Pair[] expectedDurationsAndStageNamesOrderedForWarmReboot = {
 			new Pair<Long, String>((long) 0, "Warm Reboot."),
@@ -1242,9 +1243,25 @@ public abstract class EnodeB extends SystemObjectImpl {
 	 * @author Shahaf Shuhamy
 	 */
 	public void loggerUploadAll() {
-		XLP.lteCli("logger upload all");
+		String command = "loggers upload all";
+		String ver = getMajorVer(getRunningVersion());
+		if(ver != null && Double.valueOf(ver) < thresholdLoggerUploadAll){
+			command = "logger upload all";
+		}
+		GeneralUtils.printToConsole("Sending command for logger upload all: "+command);
+		XLP.lteCli(command);
 	}
 
+	private String getMajorVer(String ver) {
+		if (ver != null && ver.length() > 4) {
+			int start = ver.indexOf(".") + 1;
+			int end = ver.lastIndexOf(".");
+			if (end > 0)
+				return ver.substring(start, end);
+		}
+		return null;
+	}
+	
 	public String getManagementIp() {
 		String oid = MibReader.getInstance().resolveByName("asLteStkStackStatusActualManagementIpAddress");
 		String managementIp = "";

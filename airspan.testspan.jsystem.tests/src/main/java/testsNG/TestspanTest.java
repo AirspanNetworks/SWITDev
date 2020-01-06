@@ -699,7 +699,9 @@ public class TestspanTest extends SystemTestCase4 {
             testStatistics(logger, eNodeB);
             ScenarioUtils.getInstance().scenarioStatistics(logger, eNodeB);
         }
+        GeneralUtils.stopLevel();
 
+        GeneralUtils.startLevel(String.format("eNodeB %s link to logger upload all", eNodeB.getName()));
         Date date = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yy");
         String loggerUploadAllEnodebIP = eNodeB.getLoggerUploadAllEnodebIP();

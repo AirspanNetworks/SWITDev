@@ -1243,10 +1243,10 @@ public abstract class EnodeB extends SystemObjectImpl {
 	 * @author Shahaf Shuhamy
 	 */
 	public void loggerUploadAll() {
-		String command = "loggers upload all";
+		String command = "logger upload all";
 		String ver = getMajorVer(getRunningVersion());
-		if(ver != null && Double.valueOf(ver) < thresholdLoggerUploadAll){
-			command = "logger upload all";
+		if(ver != null && Double.valueOf(ver) >= thresholdLoggerUploadAll){
+			command = "loggers upload all";
 		}
 		GeneralUtils.printToConsole("Sending command for logger upload all: "+command);
 		XLP.lteCli(command);

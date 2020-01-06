@@ -527,6 +527,7 @@ public class TestspanTest extends SystemTestCase4 {
         //If Core dump occurs once, then == true
         eNodeB.clearTestParameters();
         eNodeB.setDeviceUnderTest(false);
+        eNodeB.setNodeLoggerUrl(eNodeB, TestConfig.getInstace().getLoggerUploadAllUrl());
         eNodeB.loggerUploadAll();
     }
 

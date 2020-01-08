@@ -706,8 +706,12 @@ public class TestspanTest extends SystemTestCase4 {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yy");
         String loggerUploadAllEnodebIP = eNodeB.getLoggerUploadAllEnodebIP();
         if (loggerUploadAllEnodebIP != null) {
+        	String link = LOGGER_UPLOAD_ALL_LINK;
+        	if(TestConfig.getInstace().getLoggerUploadLink() != null){
+        		link = TestConfig.getInstace().getLoggerUploadLink();
+        	}
             report.addLink(LOGGER_UPLOAD_ALL_DESC,
-                    String.format(LOGGER_UPLOAD_ALL_LINK, dateFormat.format(date), loggerUploadAllEnodebIP.replace(":", ".")));
+                    String.format(link, dateFormat.format(date), loggerUploadAllEnodebIP.replace(":", ".")));
         } else {
             report.report("Logger upload all not available, due to missing IP.");
         }

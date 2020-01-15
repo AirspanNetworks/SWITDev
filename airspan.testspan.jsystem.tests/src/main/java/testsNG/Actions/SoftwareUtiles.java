@@ -1361,8 +1361,11 @@ public class SoftwareUtiles {
 							Reporter.WARNING);
 					SoftwareStatus softwareStatus = netspanServer.getSoftwareStatus(eNodeB.getNetspanName(),
 							ImageType.RELAY);
+					GeneralUtils.printToConsole("Image type: "+softwareStatus.ImageType);
+					GeneralUtils.printToConsole("Running version: "+softwareStatus.RunningVersion);
 					if (softwareStatus != null) {
 						relayBuildFileName = "airunity-" + softwareStatus.RunningVersion + ".pak";
+						report.report("Setting current relay version from software image: "+relayBuildFileName);
 					}
 				}
 				String fsmBuild = StringUtils.EMPTY;

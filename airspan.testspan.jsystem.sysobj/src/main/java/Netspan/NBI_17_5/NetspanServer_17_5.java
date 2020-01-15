@@ -4896,6 +4896,7 @@ public class NetspanServer_17_5 extends NetspanServer implements Netspan_17_5_ab
 		} else {
 			SoftwareStatus newsoftwareStatus = null;
 			int numberOfSoftwareStatus = result.getNodeSoftwareStatus().get(0).getSoftwareStatus().size();
+			GeneralUtils.printToConsole("Size of software status: "+numberOfSoftwareStatus);
 			for(int i = 0; i < numberOfSoftwareStatus; i++){
 				NodeSoftwareStatus softwareStatus = result.getNodeSoftwareStatus().get(0).getSoftwareStatus().get(i);
 				if((numberOfSoftwareStatus == 1) || (imageType == null) || imageType.value().equals(softwareStatus.getImageType().getValue().value())){

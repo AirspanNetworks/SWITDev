@@ -28,15 +28,6 @@ public class TestConfig extends SystemObjectImpl {
     private String passCriteriaTPT;
     private String snifferMAC;
     private String loggerUploadAllUrl = "http://100.100.0.250/upload/upload.php";
-    private String loggerUploadLink = null;
-
-    public String getLoggerUploadLink() {
-		return loggerUploadLink;
-	}
-
-	public void setLoggerUploadLink(String loggerUploadLink) {
-		this.loggerUploadLink = loggerUploadLink;
-	}
 
 	private Boolean SWUCliFallback;
     

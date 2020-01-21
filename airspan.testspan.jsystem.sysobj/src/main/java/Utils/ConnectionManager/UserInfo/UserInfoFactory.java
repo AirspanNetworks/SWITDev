@@ -36,7 +36,7 @@ public final class UserInfoFactory {
 		ArrayList<exPrompt> result =  new ArrayList<>();
 		result.add(new exPrompt(PromptsCommandsInfo.PASSWORD_PATTERN, false, PromptsCommandsInfo.CntrC_COMMAND, false));
 		result.add(new exPrompt(PromptsCommandsInfo.LTECLI_PATTERN, false, PromptsCommandsInfo.CntrC_COMMAND, false));
-		result.add(new exPrompt(PromptsCommandsInfo.ROOT_PATTERN, false, PromptsCommandsInfo.EXIT_COMMAND, false));
+		result.add(new exPrompt(PromptsCommandsInfo.ROOT_PATTERN, false, PromptsCommandsInfo.EXIT_COMMAND, true));
 		result.add(new exPrompt(PromptsCommandsInfo.ADMIN_PATTERN, false, PromptsCommandsInfo.EXIT_COMMAND, false));
 		result.add(new exPrompt(PromptsCommandsInfo.ТNЕТ_PATTERN, false, PromptsCommandsInfo.QUIT_COMMAND, true));
 		result.add(new exPrompt(PromptsCommandsInfo.LOGIN_PATTERN, true));

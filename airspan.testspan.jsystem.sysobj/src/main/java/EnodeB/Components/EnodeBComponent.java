@@ -1014,7 +1014,11 @@ public abstract class EnodeBComponent implements LogListener {
         corePath += "\\";
         corePath += RunningVer;
         corePath += "\\";
-        String coreFolderName = coreFileName.substring(coreFileName.indexOf("core."), coreFileName.indexOf(RunningVer));
+        int startSubstring = coreFileName.indexOf("core.");
+        if(startSubstring == -1){
+        	startSubstring = coreFileName.indexOf("coreL2.");
+        }
+        String coreFolderName = coreFileName.substring(startSubstring, coreFileName.indexOf(RunningVer));
         corePath += coreFolderName;
         corePath += RunningVer;
 

@@ -31,7 +31,8 @@ public class LogsAction extends EnodebAction {
 	private final String LOG_ACTION = "LogAction";
 	private final String PROCESS_STRING = "Process";
 	private final String CLIENT_STRING = "Client";
-
+	
+	
 	/**
 	 * Static List that organizes all the open session in a scenario
 	 */
@@ -47,6 +48,17 @@ public class LogsAction extends EnodebAction {
 	private String inputProcess = EVERY_MODULE_STRING;
 	private String inputClient = EVERY_MODULE_STRING;
 
+	@Override
+	public void init() {
+		if (enbInTest == null) {
+			enbInTest = new ArrayList<EnodeB>();
+		}
+		if (duts != null) {
+			enbInTest.addAll(duts);
+		}
+		super.init();
+	}
+	
 	/**
 	 * This init method organises all the enB that requested foe streaming log.
 	 * every value in this list represents a set of params for creating a log session

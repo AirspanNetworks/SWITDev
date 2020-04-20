@@ -47,17 +47,6 @@ public class LogsAction extends EnodebAction {
 	private LogSessionParams.Modules inputModules = LogSessionParams.Modules.ALL;
 	private String inputProcess = EVERY_MODULE_STRING;
 	private String inputClient = EVERY_MODULE_STRING;
-
-	@Override
-	public void init() {
-		if (enbInTest == null) {
-			enbInTest = new ArrayList<EnodeB>();
-		}
-		if (duts != null) {
-			enbInTest.addAll(duts);
-		}
-		super.init();
-	}
 	
 	/**
 	 * This init method organises all the enB that requested foe streaming log.

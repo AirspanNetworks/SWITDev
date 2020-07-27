@@ -68,13 +68,13 @@ public class IPerfStream {
 	void generateIPerfCommands(){
 		if(!isRunningTraffic()){
 			String runTimeTraffic = (runTime != null ? (this.protocol == Protocol.TCP?String.valueOf(runTime+20):String.valueOf(runTime+10)):UEIPerf.IPERF_TIME_LIMIT);
-
+			boolean isIpv6 = this.destIpAddress != null && this.destIpAddress.contains(":");
 			if(this.protocol == Protocol.UDP){
 				String frame = this.frameSize == null?"1400":String.valueOf(this.frameSize);
-				this.iperfClientCommand = "-c " + this.destIpAddress + " -u -i 1 -p " + (5000+this.qci) + " -l " + frame + ".0B -b " + convertTo3DigitsAfterPoint(this.streamLoad) + "M -t " + runTimeTraffic;
-				this.iperfServerCommand = "-s -u -i 1 -p " + (5000+this.qci) + " -B " + this.srcIpAddress + " -l " + frame + ".0B -f k -t "+ runTimeTraffic;
+				this.iperfClientCommand = "-c " + this.destIpAddress + (isIpv6?" -V":"")+ " -u -i 1 -p " + (5000+this.qci) + " -l " + frame + ".0B -b " + convertTo3DigitsAfterPoint(this.streamLoad) + "M -t " + runTimeTraffic;
+				this.iperfServerCommand = "-s -u -i 1 -p " + (5000+this.qci) + (isIpv6?" -V ":" -B ") + this.srcIpAddress + " -l " + frame + ".0B -f k -t "+ runTimeTraffic;
 			}else if(this.protocol == Protocol.TCP){
-				this.iperfClientCommand = "-c " + this.destIpAddress;
+				this.iperfClientCommand = "-c " + this.destIpAddress + (isIpv6?" -V":"");
 				this.iperfServerCommand = "-s";
 				if(this.numberOfParallelIPerfStreams != null){
 					this.iperfClientCommand += " -P "+numberOfParallelIPerfStreams;
@@ -86,7 +86,7 @@ public class IPerfStream {
 					this.iperfClientCommand += " -w "+this.windowSizeInKbits+"k";
 					//this.iperfServerCommand += " -w "+this.windowSizeInKbits+"k";
 				}
-				this.iperfServerCommand += " -B " + this.srcIpAddress;
+				this.iperfServerCommand += (isIpv6?" -V ":" -B ") + this.srcIpAddress;
 				if(this.frameSize != null){
 					this.iperfClientCommand += " -M "+this.frameSize;
 					//this.iperfServerCommand += " -M "+this.frameSize;

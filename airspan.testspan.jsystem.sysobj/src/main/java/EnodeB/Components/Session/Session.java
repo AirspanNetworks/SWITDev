@@ -425,8 +425,7 @@ public class Session implements Runnable {
 				public void run() {
 					readInputBuffer();
 				}
-			}, getName() + " log buffer thread "+counterThreadDebug);
-			GeneralUtils.printToConsole("Creating log buffer thread "+counterThreadDebug++);
+			}, getName() + " log buffer thread "+counterThreadDebug++);
 			loggerBufferThread.start();
 		}
 

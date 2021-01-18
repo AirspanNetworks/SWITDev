@@ -433,14 +433,20 @@ public class Session implements Runnable {
 				@Override
 				public void run() {
 					readInputBuffer();
-					GeneralUtils.unSafeSleep(10000);
 				}
 			}, getName() + " log buffer thread "+counterThreadDebug++);
 			GeneralUtils.printToConsole("Creating log buffer thread "+getName()+" "+counterThreadDebug);
 			loggerBufferThread.start();
 		} else if (connected && loggerBufferThread != null && loggerBufferThread.isAlive()) {
-			GeneralUtils.unSafeSleep(5000);
-			if(loggerBufferThread.isAlive()){
+			boolean killThread = true;
+			for(int i=0;i<5;i++){
+				GeneralUtils.unSafeSleep(1000);
+				if(!loggerBufferThread.isAlive()){
+					killThread = false;
+					break;
+				}
+			}
+			if(killThread){
 				GeneralUtils.printToConsole("Thread "+loggerBufferThread.getName()+" was alive. killing it");				
 				loggerBufferThread.interrupt();
 			}

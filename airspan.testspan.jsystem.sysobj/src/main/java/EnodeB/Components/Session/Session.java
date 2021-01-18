@@ -438,8 +438,11 @@ public class Session implements Runnable {
 			GeneralUtils.printToConsole("Creating log buffer thread "+getName()+" "+counterThreadDebug);
 			loggerBufferThread.start();
 		} else if (connected && loggerBufferThread != null && loggerBufferThread.isAlive()) {
-			GeneralUtils.printToConsole("Thread "+loggerBufferThread.getName()+" was alive. killing it");
-			loggerBufferThread.interrupt();
+			GeneralUtils.unSafeSleep(5000);
+			if(loggerBufferThread.isAlive()){
+				GeneralUtils.printToConsole("Thread "+loggerBufferThread.getName()+" was alive. killing it");				
+				loggerBufferThread.interrupt();
+			}
 		}
 
 		String buffer = loggerBuffer;

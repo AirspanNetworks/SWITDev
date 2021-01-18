@@ -41,7 +41,8 @@ public class Session implements Runnable {
 	private boolean loggedSession;
 	private boolean shouldStayInCli = false;
 	private boolean isSessionInitialized = false;
-
+	public static int counterThreadDebug = 1;
+	
 	/**
 	 * Flag - Set to true if this session is being used by Action Log
 	 */
@@ -424,7 +425,8 @@ public class Session implements Runnable {
 				public void run() {
 					readInputBuffer();
 				}
-			}, getName() + " log buffer thread");
+			}, getName() + " log buffer thread "+counterThreadDebug);
+			GeneralUtils.printToConsole("Creating log buffer thread "+counterThreadDebug++);
 			loggerBufferThread.start();
 		}
 

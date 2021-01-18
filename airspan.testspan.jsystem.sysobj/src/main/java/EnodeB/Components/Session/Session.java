@@ -1,9 +1,17 @@
 package EnodeB.Components.Session;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.junit.runner.Result;
 
 import Utils.PasswordUtils;
 import systemobject.terminal.SSH;
@@ -420,6 +428,7 @@ public class Session implements Runnable {
 		// To avoid the synchronized method readInputBuffer() - use a thread
 		// that will call it and wait for it instead.
 		if (connected && (loggerBufferThread == null || !loggerBufferThread.isAlive())) {
+			//ExecutorService executor = Executors.newSingleThreadExecutor();
 			loggerBufferThread = new Thread(new Runnable() {
 				@Override
 				public void run() {
@@ -428,6 +437,9 @@ public class Session implements Runnable {
 			}, getName() + " log buffer thread "+counterThreadDebug++);
 			GeneralUtils.printToConsole("Creating log buffer thread "+getName()+" "+counterThreadDebug);
 			loggerBufferThread.start();
+		} else if (connected && loggerBufferThread != null && loggerBufferThread.isAlive()) {
+			GeneralUtils.printToConsole("Thread "+loggerBufferThread.getName()+" was alive. killing it");
+			loggerBufferThread.interrupt();
 		}
 
 		String buffer = loggerBuffer;
@@ -646,4 +658,25 @@ public class Session implements Runnable {
 	public void setSessionStreamsForLogAction(boolean sessionStreamsForLogAction) {
 		isSessionStreamsForLogAction = sessionStreamsForLogAction;
 	}
+	/*
+	class TaskTimeOut implements Callable<>{
+		
+		private final String name = getName() + " log buffer thread ";
+		public TaskTimeOut() {
+		}
+		
+		@Override
+		public Result call() throws Exception{
+			System.out.printf("%s: Staring\n", this.name);
+			try {
+				long duration = (long) (Math.random() * 10);
+				System.out.printf("%s: Waiting %d seconds for results.\n", this.name, duration);
+				TimeUnit.SECONDS.sleep(duration);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			return new Result(this.name, LocalDateTime.now().toString());
+		}
+			
+	}*/
 }

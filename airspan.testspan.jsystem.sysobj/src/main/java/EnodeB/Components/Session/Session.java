@@ -433,6 +433,7 @@ public class Session implements Runnable {
 				@Override
 				public void run() {
 					readInputBuffer();
+					GeneralUtils.unSafeSleep(10000);
 				}
 			}, getName() + " log buffer thread "+counterThreadDebug++);
 			GeneralUtils.printToConsole("Creating log buffer thread "+getName()+" "+counterThreadDebug);

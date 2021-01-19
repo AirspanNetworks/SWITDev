@@ -104,7 +104,7 @@ public abstract class EnodeBComponent implements LogListener {
     public boolean enodebIsDU = false;
     public boolean skipDestTrap = false;
     private volatile WaitForSrialPromptAndEchoToSkipCMP waitForSrialPromptAndEchoToSkipCMP;
-    private volatile WaitForSrialPromptAndSendAirspanScript waitForSrialPromptAndSendAirspanScript;
+    private volatile WaitForSerialPromptAndSendAirspanScript waitForSerialPromptAndSendAirspanScript;
 
 	/**
 	 * parent setter
@@ -235,6 +235,7 @@ public abstract class EnodeBComponent implements LogListener {
 		initSerialCom();
 		sessionManager = new SessionManager(this);
 		this.waitForSrialPromptAndEchoToSkipCMP = new WaitForSrialPromptAndEchoToSkipCMP(WAIT_FOR_SERIAL_PROMPT);
+		this.waitForSerialPromptAndSendAirspanScript = new WaitForSerialPromptAndSendAirspanScript(WAIT_FOR_SERIAL_PROMPT);
 		String coreServer = TestConfig.getInstace().getCoreFtpServer();
 		if(coreServer != null){
 			GeneralUtils.printToConsole("Setting core server to: "+coreServer);
@@ -775,9 +776,9 @@ public abstract class EnodeBComponent implements LogListener {
     }
 
     private void handleAirspanScript(){
-    	if (enodebIsDU && (!this.waitForSrialPromptAndSendAirspanScript.isAlive())) {
-            this.waitForSrialPromptAndSendAirspanScript = new WaitForSrialPromptAndSendAirspanScript(WAIT_FOR_SERIAL_PROMPT);
-            this.waitForSrialPromptAndSendAirspanScript.start();
+    	if (enodebIsDU && (!this.waitForSerialPromptAndSendAirspanScript.isAlive())) {
+            this.waitForSerialPromptAndSendAirspanScript = new WaitForSerialPromptAndSendAirspanScript(5*WAIT_FOR_SERIAL_PROMPT);
+            this.waitForSerialPromptAndSendAirspanScript.start();
         }
     }
     
@@ -903,10 +904,10 @@ public abstract class EnodeBComponent implements LogListener {
         }
     }
 
-    private class WaitForSrialPromptAndSendAirspanScript extends Thread {
+    private class WaitForSerialPromptAndSendAirspanScript extends Thread {
         private final long timeout;
 
-        public WaitForSrialPromptAndSendAirspanScript(long timeout) {
+        public WaitForSerialPromptAndSendAirspanScript(long timeout) {
             this.timeout = timeout;
         }
 

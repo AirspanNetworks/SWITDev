@@ -52,7 +52,7 @@ import testsNG.General.SWUpgrade;
 public class TestspanTest extends SystemTestCase4 {
 
     //private static final String LOGGER_UPLOAD_ALL_LINK = "//asil-swit/upload/%s/%s";
-    private static final String LOGGER_UPLOAD_ALL_LINK = "//192.168.58.70/ftp/cores/%s/";
+    private static final String LOGGER_UPLOAD_ALL_LINK = "\\\\192.168.58.70\\ftp\\cores\\%s\\";
 
     private static final String LOGGER_UPLOAD_ALL_DESC = "Logger upload all link";
     private ScpClient scpCli;

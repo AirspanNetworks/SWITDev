@@ -705,7 +705,7 @@ public class TestspanTest extends SystemTestCase4 {
 
         GeneralUtils.startLevel(String.format("eNodeB %s link to logger upload all", eNodeB.getName()));
         Date date = new Date();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yy");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd_MM_yy");
         report.addLink(LOGGER_UPLOAD_ALL_DESC,
                 String.format(LOGGER_UPLOAD_ALL_LINK, dateFormat.format(date))+"unhandled_files");
 

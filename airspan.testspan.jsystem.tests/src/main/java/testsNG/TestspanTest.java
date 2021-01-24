@@ -707,7 +707,7 @@ public class TestspanTest extends SystemTestCase4 {
         Date date = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd_MM_yy");
         report.addLink(LOGGER_UPLOAD_ALL_DESC,
-                String.format(LOGGER_UPLOAD_ALL_LINK, dateFormat.format(date))+"unhandled_files");
+                String.format(LOGGER_UPLOAD_ALL_LINK, "21_01_21"/*dateFormat.format(date)*/)+"unhandled_files");
 
         //String loggerUploadAllEnodebIP = eNodeB.getLoggerUploadAllEnodebIP();
         /*if (loggerUploadAllEnodebIP != null) {

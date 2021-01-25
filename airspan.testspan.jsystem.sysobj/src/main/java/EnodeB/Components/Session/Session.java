@@ -447,7 +447,7 @@ public class Session implements Runnable {
 			}
 			if(killThread){
 				GeneralUtils.printToConsole("Thread "+loggerBufferThread.getName()+" was alive. killing it");				
-				loggerBufferThread.interrupt();
+				loggerBufferThread.stop();
 			}
 		}
 

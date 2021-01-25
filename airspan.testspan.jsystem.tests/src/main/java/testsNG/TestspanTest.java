@@ -51,8 +51,8 @@ import testsNG.General.SWUpgrade;
  */
 public class TestspanTest extends SystemTestCase4 {
 
-    //private static final String LOGGER_UPLOAD_ALL_LINK = "//asil-swit/upload/%s/%s";
-    private static final String LOGGER_UPLOAD_ALL_LINK = "file:\\\\192.168.58.70\\ftp\\cores\\%s\\";
+    private static final String LOGGER_UPLOAD_ALL_LINK = "//asil-swit/upload/%s/%s";
+    //private static final String LOGGER_UPLOAD_ALL_LINK = "file:\\\\192.168.58.70\\ftp\\cores\\%s\\";
 
     private static final String LOGGER_UPLOAD_ALL_DESC = "Logger upload all link";
     private ScpClient scpCli;
@@ -704,18 +704,17 @@ public class TestspanTest extends SystemTestCase4 {
         GeneralUtils.stopLevel();
 
         GeneralUtils.startLevel(String.format("eNodeB %s link to logger upload all", eNodeB.getName()));
+        //report.addLink(LOGGER_UPLOAD_ALL_DESC,
+        //        String.format(LOGGER_UPLOAD_ALL_LINK, "21_01_21"/*dateFormat.format(date)*/)+"unhandled_files");
         Date date = new Date();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd_MM_yy");
-        report.addLink(LOGGER_UPLOAD_ALL_DESC,
-                String.format(LOGGER_UPLOAD_ALL_LINK, "21_01_21"/*dateFormat.format(date)*/)+"unhandled_files");
-
-        //String loggerUploadAllEnodebIP = eNodeB.getLoggerUploadAllEnodebIP();
-        /*if (loggerUploadAllEnodebIP != null) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yy");
+        String loggerUploadAllEnodebIP = eNodeB.getLoggerUploadAllEnodebIP();
+        if (loggerUploadAllEnodebIP != null) {
             report.addLink(LOGGER_UPLOAD_ALL_DESC,
-                    String.format(LOGGER_UPLOAD_ALL_LINK, dateFormat.format(date))+"unhandled_files");
+                    String.format(LOGGER_UPLOAD_ALL_LINK, dateFormat.format(date), loggerUploadAllEnodebIP.replace(":", ".")));
         } else {
             report.report("Logger upload all not available, due to missing IP.");
-        }*/
+        }
         GeneralUtils.stopLevel();
     }
 

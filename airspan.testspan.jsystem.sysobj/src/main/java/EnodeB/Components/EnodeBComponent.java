@@ -760,9 +760,9 @@ public abstract class EnodeBComponent implements LogListener {
     }
 
     private void handleLogEvents(String line){
-    	if (!isExpectBooting()) {
-    		failTestInCaseOfCoreOrPhyAssert(line);
-        }
+    	//if (!isExpectBooting()) {
+    	failTestInCaseOfCoreOrPhyAssert(line);
+        //}
         if (checkRebootStrings(line)) {
         	handleReboots();
         }

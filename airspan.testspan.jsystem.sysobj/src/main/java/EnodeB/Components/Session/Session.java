@@ -4,10 +4,13 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,7 +52,6 @@ public class Session implements Runnable {
 	private boolean loggedSession;
 	private boolean shouldStayInCli = false;
 	private boolean isSessionInitialized = false;
-	public static int counterThreadDebug = 1;
 	
 	/**
 	 * Flag - Set to true if this session is being used by Action Log
@@ -367,8 +369,27 @@ public class Session implements Runnable {
 	 */
 	private synchronized void readInputBuffer() {
 		try {
-			if (connected)
-				privateBuffer += terminal.readInputBuffer().replaceAll("\r", "");
+			if (connected){
+				ExecutorService executor = Executors.newCachedThreadPool();
+				Callable<Object> task = new Callable<Object>() {
+				   public Object call() throws Exception {
+						privateBuffer += terminal.readInputBuffer().replaceAll("\r", "");
+						return null;
+				   }
+				};
+				Future<Object> future = executor.submit(task);
+				try {
+				   Object result = future.get(3, TimeUnit.SECONDS); 
+				} catch (TimeoutException ex) {
+					GeneralUtils.printToConsole("TimeoutException has occured");
+				} catch (InterruptedException e) {
+				   // handle the interrupts
+				} catch (ExecutionException e) {
+				   // handle other exceptions
+				} finally {
+				   future.cancel(true); // may or may not desire this
+				}
+			}
 			else
 				return;
 		} catch (Exception e) {
@@ -434,21 +455,8 @@ public class Session implements Runnable {
 				public void run() {
 					readInputBuffer();
 				}
-			}, getName() + " log buffer thread "+counterThreadDebug++);
+			}, getName() + " log buffer thread");
 			loggerBufferThread.start();
-		} else if (connected && loggerBufferThread != null && loggerBufferThread.isAlive()) {
-			boolean killThread = true;
-			for(int i=0;i<5;i++){
-				GeneralUtils.unSafeSleep(1000);
-				if(!loggerBufferThread.isAlive()){
-					killThread = false;
-					break;
-				}
-			}
-			if(killThread){
-				GeneralUtils.printToConsole("Thread "+loggerBufferThread.getName()+" was alive. killing it");				
-				loggerBufferThread.stop();
-			}
 		}
 
 		String buffer = loggerBuffer;

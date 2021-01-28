@@ -712,7 +712,9 @@ public class TestspanTest extends SystemTestCase4 {
     		String link = TestConfig.getInstace().getLoggerUploadLink();
     		GeneralUtils.printToConsole("loggerUploadLink found in sut: "+link);
     		linkToLoggerAll = "file:" + link + "/" + dateFormat.format(date) + "/unhandled_files";
-    	} else {
+    		report.report("Link to logger upload all:");
+    		report.report(linkToLoggerAll);
+        } else {
     		String loggerUploadAllEnodebIP = eNodeB.getLoggerUploadAllEnodebIP();
     		if (loggerUploadAllEnodebIP != null) {
     			linkToLoggerAll = String.format(LOGGER_UPLOAD_ALL_LINK, dateFormat.format(date), loggerUploadAllEnodebIP.replace(":", "."));

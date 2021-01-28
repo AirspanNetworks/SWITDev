@@ -704,16 +704,24 @@ public class TestspanTest extends SystemTestCase4 {
         GeneralUtils.stopLevel();
 
         GeneralUtils.startLevel(String.format("eNodeB %s link to logger upload all", eNodeB.getName()));
-        //report.addLink(LOGGER_UPLOAD_ALL_DESC,
-         //       String.format(LOGGER_UPLOAD_ALL_LINK, "25_01_21"/*dateFormat.format(date)*/)+"unhandled_files");
         Date date = new Date();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yy");
-        String loggerUploadAllEnodebIP = eNodeB.getLoggerUploadAllEnodebIP();
-        if (loggerUploadAllEnodebIP != null) {
-            report.addLink(LOGGER_UPLOAD_ALL_DESC,
-                    String.format(LOGGER_UPLOAD_ALL_LINK, dateFormat.format(date), loggerUploadAllEnodebIP.replace(":", ".")));
-        } else {
-            report.report("Logger upload all not available, due to missing IP.");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yy");
+		String linkToLoggerAll = "";
+        if(TestConfig.getInstace().getLoggerUploadLink() != null){
+        	dateFormat = new SimpleDateFormat("dd_MM_yy");
+    		String link = TestConfig.getInstace().getLoggerUploadLink();
+    		GeneralUtils.printToConsole("loggerUploadLink found in sut: "+link);
+    		linkToLoggerAll = link + "/" + dateFormat.format(date) + "/unhandled_files";
+    	} else {
+    		String loggerUploadAllEnodebIP = eNodeB.getLoggerUploadAllEnodebIP();
+    		if (loggerUploadAllEnodebIP != null) {
+    			linkToLoggerAll = String.format(LOGGER_UPLOAD_ALL_LINK, dateFormat.format(date), loggerUploadAllEnodebIP.replace(":", "."));
+    		} else {
+    			report.report("Logger upload all not available, due to missing IP.");
+    		}
+    	}
+        if(!linkToLoggerAll.equals("")){
+			report.addLink(LOGGER_UPLOAD_ALL_DESC,linkToLoggerAll);
         }
         GeneralUtils.stopLevel();
     }

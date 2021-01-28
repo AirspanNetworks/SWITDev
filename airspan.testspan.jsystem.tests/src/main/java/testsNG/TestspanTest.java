@@ -711,7 +711,7 @@ public class TestspanTest extends SystemTestCase4 {
         	dateFormat = new SimpleDateFormat("dd_MM_yy");
     		String link = TestConfig.getInstace().getLoggerUploadLink();
     		GeneralUtils.printToConsole("loggerUploadLink found in sut: "+link);
-    		linkToLoggerAll = link + "/" + dateFormat.format(date) + "/unhandled_files";
+    		linkToLoggerAll = "file:" + link + "/" + dateFormat.format(date) + "/unhandled_files";
     	} else {
     		String loggerUploadAllEnodebIP = eNodeB.getLoggerUploadAllEnodebIP();
     		if (loggerUploadAllEnodebIP != null) {
@@ -721,7 +721,7 @@ public class TestspanTest extends SystemTestCase4 {
     		}
     	}
         if(!linkToLoggerAll.equals("")){
-			report.addLink(LOGGER_UPLOAD_ALL_DESC,linkToLoggerAll);
+			report.addLink(LOGGER_UPLOAD_ALL_DESC, linkToLoggerAll);
         }
         GeneralUtils.stopLevel();
     }

@@ -370,25 +370,7 @@ public class Session implements Runnable {
 	private synchronized void readInputBuffer() {
 		try {
 			if (connected){
-				ExecutorService executor = Executors.newCachedThreadPool();
-				Callable<Object> task = new Callable<Object>() {
-				   public Object call() throws Exception {
-						privateBuffer += terminal.readInputBuffer().replaceAll("\r", "");
-						return null;
-				   }
-				};
-				Future<Object> future = executor.submit(task);
-				try {
-				   Object result = future.get(3, TimeUnit.SECONDS); 
-				} catch (TimeoutException ex) {
-					GeneralUtils.printToConsole("TimeoutException has occured");
-				} catch (InterruptedException e) {
-				   // handle the interrupts
-				} catch (ExecutionException e) {
-				   // handle other exceptions
-				} finally {
-				   future.cancel(true); // may or may not desire this
-				}
+				privateBuffer += terminal.readInputBuffer().replaceAll("\r", "");
 			}
 			else
 				return;

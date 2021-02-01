@@ -711,20 +711,18 @@ public class TestspanTest extends SystemTestCase4 {
         	dateFormat = new SimpleDateFormat("dd_MM_yy");
     		String link = TestConfig.getInstace().getLoggerUploadLink();
     		GeneralUtils.printToConsole("loggerUploadLink found in sut: "+link);
-    		linkToLoggerAll = "file:" + link + "/" + dateFormat.format(date) + "/unhandled_files";
+    		//linkToLoggerAll = "file:" + link + "/" + dateFormat.format(date) + "/unhandled_files";
     		report.report("Link to logger upload all:");
-    		report.report(linkToLoggerAll);
+    		report.report("file:" + link + "/" + dateFormat.format(date) + "/unhandled_files");
         } else {
     		String loggerUploadAllEnodebIP = eNodeB.getLoggerUploadAllEnodebIP();
     		if (loggerUploadAllEnodebIP != null) {
     			linkToLoggerAll = String.format(LOGGER_UPLOAD_ALL_LINK, dateFormat.format(date), loggerUploadAllEnodebIP.replace(":", "."));
+    			report.addLink(LOGGER_UPLOAD_ALL_DESC, linkToLoggerAll);
     		} else {
     			report.report("Logger upload all not available, due to missing IP.");
     		}
     	}
-        if(!linkToLoggerAll.equals("")){
-			report.addLink(LOGGER_UPLOAD_ALL_DESC, linkToLoggerAll);
-        }
         GeneralUtils.stopLevel();
     }
 

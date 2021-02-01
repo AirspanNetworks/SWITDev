@@ -420,7 +420,6 @@ public class Session implements Runnable {
 		// To avoid the synchronized method readInputBuffer() - use a thread
 		// that will call it and wait for it instead.
 		if (connected && (loggerBufferThread == null || !loggerBufferThread.isAlive())) {
-			//ExecutorService executor = Executors.newSingleThreadExecutor();
 			loggerBufferThread = new Thread(new Runnable() {
 				@Override
 				public void run() {
@@ -646,25 +645,4 @@ public class Session implements Runnable {
 	public void setSessionStreamsForLogAction(boolean sessionStreamsForLogAction) {
 		isSessionStreamsForLogAction = sessionStreamsForLogAction;
 	}
-	/*
-	class TaskTimeOut implements Callable<>{
-		
-		private final String name = getName() + " log buffer thread ";
-		public TaskTimeOut() {
-		}
-		
-		@Override
-		public Result call() throws Exception{
-			System.out.printf("%s: Staring\n", this.name);
-			try {
-				long duration = (long) (Math.random() * 10);
-				System.out.printf("%s: Waiting %d seconds for results.\n", this.name, duration);
-				TimeUnit.SECONDS.sleep(duration);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			return new Result(this.name, LocalDateTime.now().toString());
-		}
-			
-	}*/
 }

@@ -344,7 +344,9 @@ public class LogsAction extends EnodebAction {
 	 */
 	private void stopSerialLogFile(LogSessionParams logSessionParams, Logger logger, SessionManager sessionManager) {
 		logger.closeEnodeBLog(logSessionParams.serialSessionName, LOG_ACTION);
-		sessionManager.getSerialSession().setSessionStreamsForLogAction(false);
+		if(sessionManager != null && sessionManager.getSerialSession() != null){
+			sessionManager.getSerialSession().setSessionStreamsForLogAction(false);			
+		}
 	}
 
 	/**
